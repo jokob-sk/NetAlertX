@@ -223,11 +223,15 @@
             // Page title - Name
             if (mac == "new") {
                 $('#pageTitle').html(`<i title="${getString("Gen_create_new_device")}" class="fa fa-square-plus"></i> ` +  getString("Gen_create_new_device"));
+                $('#devicePageInfoPlc .inner').html(`<i class="fa fa-circle-info"></i> ` +  getString("Gen_create_new_device_info"));
+                $('#devicePageInfoPlc').show();
             } else if (deviceData['devOwner'] == null || deviceData['devOwner'] == '' ||
                 (deviceData['devName'].toString()).indexOf(deviceData['devOwner']) != -1) {
                 $('#pageTitle').html(deviceData['devName']);
+                $('#devicePageInfoPlc').hide();
             } else {
                 $('#pageTitle').html(deviceData['devName'] + ' (' + deviceData['devOwner'] + ')');
+                $('#devicePageInfoPlc').hide();
             }
         };
 

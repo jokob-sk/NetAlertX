@@ -528,7 +528,7 @@ window.addEventListener("load", function() {
   // try to initialize 
   setTimeout(() => {
     initSelect2()
-    initializeiCheck();
+    // initializeiCheck();
   }, 1000);
 });
 

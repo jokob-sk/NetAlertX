@@ -17,7 +17,7 @@ showSpinner()
 $(document).ready(function() {
 
     // Load JSON data from the provided URL
-    $.getJSON('api/table_appevents.json', function(data) {
+    $.getJSON('/php/server/query_json.php?file=table_appevents.json', function(data) {
         // Process the JSON data and generate UI dynamically        
         processData(data)
 
@@ -89,7 +89,3 @@ function processData(data) {
 
 </script>
 
-<!-- Datatable -->
-<link rel="stylesheet" href="lib/datatables.net-bs/css/dataTables.bootstrap.min.css"/>
-<script src="lib/datatables.net/js/jquery.dataTables.min.js"></script>
-<script src="lib/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>

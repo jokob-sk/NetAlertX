@@ -115,14 +115,6 @@
 ?>
 
 
-<!-- ----------------------------------------------------------------------- -->
-<!-- Datatable -->
-  <link rel="stylesheet" href="lib/datatables.net-bs/css/dataTables.bootstrap.min.css">
-  <link rel="stylesheet" href="lib/datatables.net/css/select.dataTables.min.css">
-  <script src="lib/datatables.net/js/jquery.dataTables.min.js"></script>
-  <script src="lib/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
-  <script src="lib/datatables.net/js/dataTables.select.min.js"></script>
-
 <!-- page script ----------------------------------------------------------- -->
 <script>
   var deviceStatus    = 'all';
@@ -568,6 +560,12 @@ function initializeDatatable (status) {
     'order'        : tableOrder,   
     'select'       : true, // Enable selection   
 
+    'fixedHeader': true,
+    'fixedHeader': {
+        'header': true,
+        'footer': true
+    },
+
     'columnDefs'   : [
       {visible:   false,         targets: tableColumnHide },      
       {className: 'text-center', targets: [mapIndx(4), mapIndx(9), mapIndx(10), mapIndx(15), mapIndx(18)] },      
@@ -811,41 +809,15 @@ function handleLoadingDialog(needsReload = false)
 // the Miantenance section with a 'macs' query string identifying selected devices 
 function multiEditDevices()
 {
-  rows  = $('#tableDevices')[0].rows
+  // get selected devices
+  var selectedDevicesDataTableData = $('#tableDevices').DataTable().rows({ selected: true, page: 'current' }).data().toArray();
 
-  // Initialize an empty array to store selected rows
-  var selectedRows = [];
-
-  // console.log($('#tableDevices')[0].rows);
-  
-  // Loop through each row in the HTML collection
-  for (var i = 0; i < rows.length; i++) {
-      var row = rows[i];
-      // Check if the row has the 'selected' class
-      if (row.classList.contains('selected')) {
-          // If selected, push the row's data to the selectedRows array
-          selectedRows.push(row);
-      }
-  }
-
-  // Now, selectedRows contains all selected rows
-  console.log(selectedRows);
-
-  var devicesDataTableData = $('#tableDevices').dataTable().fnGetData();
-
-  var selectedDevices = [];
-
-  for (var i = 0; i < selectedRows.length; i++) {
-    selectedDevices.push(devicesDataTableData[selectedRows[i]._DT_RowIndex]);    
-  }
-
-  // Now, selectedDevices contains all selected devices
-  // console.log(selectedDevices);
-
+  console.log(selectedDevicesDataTableData);
+ 
   macs = ""
 
-  for (var i = 0; i < selectedDevices.length; i++) {
-    macs += selectedDevices[i][mapIndx(11)] + ",";  // [11] == MAC    
+  for (var j = 0; j < selectedDevicesDataTableData.length; j++) {
+    macs += selectedDevicesDataTableData[j][mapIndx(11)] + ",";  // [11] == MAC    
   }
 
   // redirect to the Maintenance section
@@ -860,12 +832,19 @@ function getMacsOfShownDevices() {
   rows  = $('#tableDevices')[0].rows
   macs = []
 
-  var devicesDataTableData = $('#tableDevices').dataTable().fnGetData();
+  // var devicesDataTableData = $('#tableDevices').dataTable().fnGetData();
+  var devicesDataTableData = $('#tableDevices').DataTable().rows({ selected: false, page: 'current' }).data().toArray();
+
+  console.log(devicesDataTableData);
+  
 
   var selectedDevices = [];
 
   // first row is the heading, skip
   for (var i = 1; i < rows.length; i++) {
+
+    // console.log(rows[i]._DT_RowIndex);
+    
     selectedDevices.push(devicesDataTableData[rows[i]._DT_RowIndex]);    
   }  
 

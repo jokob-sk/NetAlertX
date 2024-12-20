@@ -46,9 +46,6 @@
 
 </div>
 <!-- ./wrapper -->
-        
-<!-- Bootstrap 3.3.7 -->
-<script src="lib/bootstrap/bootstrap.min.js"></script>
 
 <!-- jQuery UI -->
 <script src="lib/jquery-ui/jquery-ui.min.js"></script>

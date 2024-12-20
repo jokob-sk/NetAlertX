@@ -173,14 +173,6 @@
   require 'php/templates/footer.php';
 ?>
 
-
-<!-- ----------------------------------------------------------------------- -->
-<!-- Datatable -->
-  <link rel="stylesheet" href="lib/datatables.net-bs/css/dataTables.bootstrap.min.css">
-  <script src="lib/datatables.net/js/jquery.dataTables.min.js"></script>
-  <script src="lib/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
-
-
 <!-- page script ----------------------------------------------------------- -->
 <script>
   var parPeriod       = 'nax_parPeriod';

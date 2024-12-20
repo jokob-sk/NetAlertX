@@ -42,7 +42,10 @@
   <link rel="stylesheet" href="lib/bootstrap/bootstrap.min.css">
   
   <!-- iCheck -->
+
+  <link rel="stylesheet" href="lib/iCheck/all.css">
   <script src="lib/iCheck/icheck.min.js"></script>
+
 
   <!-- Font Awesome -->
   <link rel="stylesheet" href="lib/font-awesome/fontawesome.min.css">
@@ -55,6 +58,12 @@
 
   <!-- Theme style -->
   <link rel="stylesheet" href="lib/AdminLTE/dist/css/AdminLTE.min.css">
+
+  <!-- Datatable -->
+
+  <link rel="stylesheet" href="lib/datatables/datatables.min.css">
+  <script src="lib/datatables/datatables.min.js"></script>
+
 
   <!-- AdminLTE Skins. We have chosen the skin-blue for this starter
         page. However, you can choose any other skin. Make sure you

@@ -2,12 +2,10 @@
 require 'php/templates/header.php';
 ?>
 
-<!-- Datatable -->
-<link rel="stylesheet" href="lib/datatables.net-bs/css/dataTables.bootstrap.min.css">
-<link rel="stylesheet" href="lib/datatables.net/css/select.dataTables.min.css">
-<script src="lib/datatables.net/js/jquery.dataTables.min.js"></script>
-<script src="lib/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
-<script src="lib/datatables.net/js/dataTables.select.min.js"></script>
+
+<!-- iCheck -->
+<link rel="stylesheet" href="lib/iCheck/all.css">
+<script src="lib/iCheck/icheck.min.js"></script>
 
 <div id="notifications" class="content-wrapper">
 

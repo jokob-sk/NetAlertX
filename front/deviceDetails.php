@@ -28,6 +28,14 @@
         &nbsp<small>Quering device info...</small>
       </h1>
 
+      <div id="devicePageInfoPlc" class="card-body bg-light">
+          <div class="small-box panel  rounded">
+              <div class="inner text-center">
+                  
+              </div>                    
+          </div>
+      </div>
+
       <!-- period selector -->
       <span class="breadcrumb" style="top: 0px;">
         <select class="form-control" id="period" onchange="javascript: periodChanged();">
@@ -180,15 +188,6 @@
 ?>
 
 
-<!-- ----------------------------------------------------------------------- -->
-<!-- iCkeck -->
-  <link rel="stylesheet" href="lib/iCheck/all.css">
-  <script src="lib/iCheck/icheck.min.js"></script>
-
-<!-- Datatable -->
-  <link rel="stylesheet" href="lib/datatables.net-bs/css/dataTables.bootstrap.min.css">
-  <script src="lib/datatables.net/js/jquery.dataTables.min.js"></script>
-  <script src="lib/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
 
 <!-- fullCalendar -->
   <link rel="stylesheet" href="lib/fullcalendar/fullcalendar.min.css">
