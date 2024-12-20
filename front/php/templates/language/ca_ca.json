@@ -62,6 +62,8 @@
     "CLEAR_NEW_FLAG_name": "Netejar indicador de nou",
     "DAYS_TO_KEEP_EVENTS_description": "Això és una configuració de manteniment. Especifica el nombre de dies que es conservaran els esdeveniments. Els esdeveniments antics s'esborraran periòdicament. També aplica als esdeveniments dels Connectors (Plugins).",
     "DAYS_TO_KEEP_EVENTS_name": "Esborrar esdeveniments més vells de",
+    "DISCOVER_PLUGINS_description": "",
+    "DISCOVER_PLUGINS_name": "",
     "DevDetail_Copy_Device_Title": "<i class=\"fa fa-copy\"></i> Copiar detalls des del dispositiu",
     "DevDetail_Copy_Device_Tooltip": "Copiar detalls del dispositius des de la llista desplegable. Tot el d'aquesta pàgina es sobre-escriurà",
     "DevDetail_DisplayFields_Title": "Pantalla",

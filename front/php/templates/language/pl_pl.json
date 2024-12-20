@@ -62,6 +62,8 @@
     "CLEAR_NEW_FLAG_name": "",
     "DAYS_TO_KEEP_EVENTS_description": "To jest ustawienie konserwacji. Określa ile dni mają być utrzymywane wpisy wydarzeń. Wszystkie starsze wpisy wydarzeń zostaną usunięte okresowo. Dotyczy także Historii Wydarzeń Pluginów.",
     "DAYS_TO_KEEP_EVENTS_name": "Usuń wydarzenia starsze niż",
+    "DISCOVER_PLUGINS_description": "",
+    "DISCOVER_PLUGINS_name": "",
     "DevDetail_Copy_Device_Title": "<i class=\"fa fa-copy\"></i>Kopiuj opis z urządzenia",
     "DevDetail_Copy_Device_Tooltip": "Kopiuj opis z urządzenia z listy rozwijanej. Wszystko na tej stronie zostanie nadpisane",
     "DevDetail_DisplayFields_Title": "",

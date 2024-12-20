@@ -62,6 +62,8 @@
     "CLEAR_NEW_FLAG_name": "Удалить новый флаг",
     "DAYS_TO_KEEP_EVENTS_description": "Это настройка обслуживания. Здесь указывается количество дней, в течение которых будут храниться записи о событиях. Все старые события будут периодически удаляться. Также применимо к истории событий плагина.",
     "DAYS_TO_KEEP_EVENTS_name": "Удалить события старше",
+    "DISCOVER_PLUGINS_description": "",
+    "DISCOVER_PLUGINS_name": "",
     "DevDetail_Copy_Device_Title": "Скопировать данные с устройства",
     "DevDetail_Copy_Device_Tooltip": "Скопируйте данные с устройства из раскрывающегося списка. Все на этой странице будет перезаписано",
     "DevDetail_DisplayFields_Title": "Дисплей",

@@ -8,7 +8,7 @@ You need to specify the network interface and the network mask. You can also con
 
 In this example, `--interface=eth0 192.168.1.0/24` represents a neighboring subnet. If this command returns no results, the network is not accessible due to your network or firewall restrictions.
 
-If direct scans are not possible (Wi-Fi Extenders, VPNs and inaccessible networks), check the remote [networks documentation](https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/REMOTE_NETWORKS.md). 
+If direct scans are not possible (Wi-Fi Extenders, VPNs and inaccessible networks), check the [remote networks documentation](https://github.com/jokob-sk/NetAlertX/blob/main/docs/REMOTE_NETWORKS.md). 
 
 > [!TIP] 
 > You may need to increase the time between scans `ARPSCAN_RUN_SCHD` and the timeout `ARPSCAN_RUN_TIMEOUT` (and similar settings for related plugins) when adding more subnets. If the timeout setting is exceeded, the scan is canceled to prevent the application from hanging due to rogue plugins.  

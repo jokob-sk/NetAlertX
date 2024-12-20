@@ -74,6 +74,8 @@
     "CLEAR_NEW_FLAG_name": "Neues Flag löschen",
     "DAYS_TO_KEEP_EVENTS_description": "Dies ist eine Wartungseinstellung. Spezifiziert wie viele Tage Events gespeichert bleiben. Alle älteren Events werden periodisch gelöscht. Wird auch auf die Plugins History angewendet.",
     "DAYS_TO_KEEP_EVENTS_name": "Ereignisse löschen, die älter sind als",
+    "DISCOVER_PLUGINS_description": "",
+    "DISCOVER_PLUGINS_name": "",
     "DevDetail_Copy_Device_Title": "Details von Gerät kopieren",
     "DevDetail_Copy_Device_Tooltip": "Details vom Gerät aus der Dropdown-Liste kopieren. Alles auf dieser Seite wird überschrieben",
     "DevDetail_DisplayFields_Title": "Anzeige",

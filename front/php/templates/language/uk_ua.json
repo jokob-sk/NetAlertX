@@ -62,6 +62,8 @@
     "CLEAR_NEW_FLAG_name": "Очистити новий прапор",
     "DAYS_TO_KEEP_EVENTS_description": "Це налаштування обслуговування. Це визначає кількість днів записів про події, які зберігатимуться. Усі старіші події періодично видалятимуться. Також застосовується до історії подій плагінів.",
     "DAYS_TO_KEEP_EVENTS_name": "Видалити події, старші за",
+    "DISCOVER_PLUGINS_description": "",
+    "DISCOVER_PLUGINS_name": "",
     "DevDetail_Copy_Device_Title": "Скопіюйте деталі з пристрою",
     "DevDetail_Copy_Device_Tooltip": "Скопіюйте деталі пристрою зі спадного списку. Усе на цій сторінці буде перезаписано",
     "DevDetail_DisplayFields_Title": "Дисплей",

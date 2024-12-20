@@ -62,6 +62,8 @@
     "CLEAR_NEW_FLAG_name": "",
     "DAYS_TO_KEEP_EVENTS_description": "Esta é uma definição de manutenção. Especifica o número de dias de entradas de eventos que serão mantidas. Todos os eventos mais antigos serão eliminados periodicamente. Também se aplica ao Histórico de eventos do plug-in.",
     "DAYS_TO_KEEP_EVENTS_name": "Excluir eventos mais antigos que",
+    "DISCOVER_PLUGINS_description": "",
+    "DISCOVER_PLUGINS_name": "",
     "DevDetail_Copy_Device_Title": "<i class=\"fa fa-copy\"></i> Copiar detalhes do dispositivo",
     "DevDetail_Copy_Device_Tooltip": "Copiar detalhes do dispositivo a partir da lista pendente. Tudo o que se encontra nesta página será substituído",
     "DevDetail_DisplayFields_Title": "",

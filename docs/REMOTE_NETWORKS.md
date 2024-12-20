@@ -2,6 +2,8 @@
 
 By design, local network scanners such as `arp-scan` use ARP (Address Resolution Protocol) to map IP addresses to MAC addresses on the local network. Since ARP operates at Layer 2 (Data Link Layer), it typically works only within a single broadcast domain, usually limited to a single router or network segment.
 
+To scan multiple locally accessible network segments, add them as subnets according to the [subnets](https://github.com/jokob-sk/NetAlertX/blob/main/docs/SUBNETS.md) documentation.
+
 ## Complex Use Cases
 
 The following network setups might make some devices undetectable. Check the specific setup to understand the cause and find potential workarounds to still report on these devices.
@@ -42,4 +44,6 @@ To create truly dummy devices, you can use a loopback IP address (e.g., `0.0.0.0
 
 ## NMAP and Fake MAC Addresses
 
-Scanning remote networks with NMAP is possible, but since it cannot retrieve the MAC address, you need to enable the `NMAPDEV_FAKE_MAC` setting. This will generate a fake MAC address based on the IP address, allowing you to track devices. However, this can lead to inconsistencies, especially if the IP address changes or a previously logged device is rediscovered. If this setting is disabled, only the IP address will be discovered, and devices with missing MAC addresses will be skipped.
+Scanning remote networks with NMAP is possible (vai the `NMAPDEV` plugin), but since it cannot retrieve the MAC address, you need to enable the `NMAPDEV_FAKE_MAC` setting. This will generate a fake MAC address based on the IP address, allowing you to track devices. However, this can lead to inconsistencies, especially if the IP address changes or a previously logged device is rediscovered. If this setting is disabled, only the IP address will be discovered, and devices with missing MAC addresses will be skipped.
+
+Check the [NMAPDEV plugin](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/nmap_dev_scan) for details

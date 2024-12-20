@@ -62,6 +62,8 @@
     "CLEAR_NEW_FLAG_name": "",
     "DAYS_TO_KEEP_EVENTS_description": "这是维护设置。它指定将保留的事件条目的天数。所有较旧的事件将被定期删除。也适用于插件事件历史记录。",
     "DAYS_TO_KEEP_EVENTS_name": "删除早于",
+    "DISCOVER_PLUGINS_description": "",
+    "DISCOVER_PLUGINS_name": "",
     "DevDetail_Copy_Device_Title": "<i class=\"fa fa-copy\"></i> 从设备复制详细信息",
     "DevDetail_Copy_Device_Tooltip": "从下拉列表中复制设备的详细信息。此页面上的所有内容都将被覆盖",
     "DevDetail_DisplayFields_Title": "",

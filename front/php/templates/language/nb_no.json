@@ -62,6 +62,8 @@
     "CLEAR_NEW_FLAG_name": "",
     "DAYS_TO_KEEP_EVENTS_description": "Dette er en vedlikeholdsinnstilling. Dette spesifiserer antall dager verdt med hendelsesoppføringer som vil beholdes. Alle eldre hendelser vil bli slettet med jevne mellomrom. Gjelder også for plugin-hendelseshistorikk.",
     "DAYS_TO_KEEP_EVENTS_name": "Slett hendelser eldre enn",
+    "DISCOVER_PLUGINS_description": "",
+    "DISCOVER_PLUGINS_name": "",
     "DevDetail_Copy_Device_Title": "<i class=\"fa fa-copy\"></i> Kopier detaljer fra enhet",
     "DevDetail_Copy_Device_Tooltip": "Kopier detaljer fra enheten via nedtrekks menyen. Alt på denne siden vil bli overskrevet",
     "DevDetail_DisplayFields_Title": "",

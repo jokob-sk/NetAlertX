@@ -62,6 +62,8 @@
     "CLEAR_NEW_FLAG_name": "Cancella nuova bandiera",
     "DAYS_TO_KEEP_EVENTS_description": "Questa è un'impostazione di manutenzione. Specifica il numero di giorni delle voci degli eventi che verranno conservati. Tutti gli eventi più vecchi verranno eliminati periodicamente. Si applica anche alla cronologia degli eventi del plugin (Plugin Events History).",
     "DAYS_TO_KEEP_EVENTS_name": "Elimina eventi più vecchi di",
+    "DISCOVER_PLUGINS_description": "",
+    "DISCOVER_PLUGINS_name": "",
     "DevDetail_Copy_Device_Title": "Copia dettagli dal dispositivo",
     "DevDetail_Copy_Device_Tooltip": "Copia i dettagli dal dispositivo dall'elenco a discesa. Tutto in questa pagina verrà sovrascritto",
     "DevDetail_DisplayFields_Title": "Visualizza",

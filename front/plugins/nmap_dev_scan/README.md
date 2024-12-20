@@ -11,6 +11,7 @@ NMAP-scan is a command-line tool to discover and fingerprint IP hosts on the loc
 - Enable the plugin by changing the RUN parameter from disabled to your preferred run time (usually: `schedule`).
   - Specify the schedule in the `NMAPDEV_RUN_SCHD` setting
 - Adjust the timeout if needed in the `NMAPDEV_RUN_TIMEOUT` setting
+- If scanning remote networks you may want to enable the `NMAPDEV_FAKE_MAC` setting. Please read the setting description carefully.
 - Review remaining settings
 - SAVE
 - Wait for the next scan to finish

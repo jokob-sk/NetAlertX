@@ -29,6 +29,7 @@ There is also an in-app Help / FAQ section that should be answering frequently a
 
 - [Synology Guide](/docs/SYNOLOGY_GUIDE.md)
 - [Subnets and VLANs configuration for arp-scan](/docs/SUBNETS.md)
+- [Scanning Remote Networks](/docs/REMOTE_NETWORKS.md)
 - [SMTP server config](/docs/SMTP.md)
 - [Custom Icon configuration and support](/docs/ICONS.md)
 - [Notifications](/docs/NOTIFICATIONS.md)
@@ -55,7 +56,6 @@ There is also an in-app Help / FAQ section that should be answering frequently a
 
 - [Manage devices (legacy docs)](/docs/DEVICE_MANAGEMENT.md)
 - [Random MAC/MAC icon meaning (legacy docs)](/docs/RANDOM_MAC.md)
-
 
 #### 🔎 Examples
 

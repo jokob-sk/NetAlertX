@@ -118,6 +118,9 @@ def run_plugin_scripts(db, all_plugins, runType, pluginsState = plugins_state())
         prefix = plugin["unique_prefix"]
 
         set = get_plugin_setting_obj(plugin, "RUN")
+        
+        # mylog('debug', [f'[run_plugin_scripts] plugin: {plugin}'])
+        # mylog('debug', [f'[run_plugin_scripts] set: {set}'])
         if set != None and set['value'] == runType:
             if runType != "schedule":
                 shouldRun = True

@@ -72,7 +72,7 @@ def main():
         # PUSHING/SENDING Plugins    
         
         # Get all plugin configurations
-        all_plugins = get_plugins_configs()
+        all_plugins = get_plugins_configs(False)
 
         mylog('verbose', [f'[{pluginName}] plugins_to_sync {plugins_to_sync}'])
         

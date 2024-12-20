@@ -181,7 +181,7 @@ def get_layer(plugin):
     return int(order.split('_')[1])
 
 #-------------------------------------------------------------------------------
-def get_plugins_configs():
+def get_plugins_configs(loadAll):
     pluginsList = []  # Create an empty list to store plugin configurations
     pluginsListSorted = []  # Sorted by "execution_order" : "Layer_0" first, Layer_N last
     
@@ -200,9 +200,14 @@ def get_plugins_configs():
             if not os.path.isfile(ignore_plugin_path):
                 # Construct the path to the config.json file within the plugin folder
                 config_path = os.path.join(pluginsPath, d, "config.json")
+
+                plugJson = json.loads(get_file_content(config_path))
+
+                # only laod plugin if needed
+                if loadAll or plugJson["unique_prefix"] in conf.LOADED_PLUGINS:
                 
-                # Load the contents of the config.json file as a JSON object and append it to pluginsList
-                pluginsList.append(json.loads(get_file_content(config_path)))
+                    # Load the contents of the config.json file as a JSON object and append it to pluginsList
+                    pluginsList.append(plugJson)
     
     # Sort pluginsList based on "execution_order"
     pluginsListSorted = sorted(pluginsList, key=get_layer)

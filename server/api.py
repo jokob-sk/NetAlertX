@@ -169,7 +169,7 @@ def periodic_write(interval=1):
     while not stop_event.is_set():
         with api_lock:
             for endpoint in apiEndpoints:
-                endpoint.try_write()  # Attempt to write each endpoint if necessary
+                endpoint.try_write(False)  # Attempt to write each endpoint if necessary
         time.sleep(interval)
 
 

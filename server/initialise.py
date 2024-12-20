@@ -9,7 +9,7 @@ import json
 import shutil
 import re
 
-
+# Register NetAlertX libraries
 import conf 
 from const import fullConfPath, applicationPath, fullConfFolder
 from helper import fixPermissions, collect_lang_strings, updateSubnets, initOrSetParam, isJsonObject, updateState, setting_value_to_python_type, timeNowTZ, get_setting_value, generate_random_string
@@ -17,7 +17,7 @@ from logger import mylog
 from api import update_api
 from scheduler import schedule_class
 from plugin import print_plugin_info, run_plugin_scripts
-from plugin_utils import get_plugins_configs, get_plugin_setting_obj, get_set_value_for_init
+from plugin_utils import get_plugins_configs, get_set_value_for_init
 from notification import write_notification
 
 #===============================================================================
@@ -156,7 +156,8 @@ def importConfigs (db, all_plugins):
     # ccd(key, default, config_dir, name, inputtype, options, group, events=[], desc = "", regex = "", setJsonMetadata = {}, overrideTemplate = {})
     
     conf.LOADED_PLUGINS = ccd('LOADED_PLUGINS', [] , c_d, 'Loaded plugins', '{"dataType":"array", "elements": [{"elementType" : "select", "elementOptions" : [{"multiple":"true", "ordeable": "true"}] ,"transformers": []}]}', '[]', 'General')
-    conf.SCAN_SUBNETS = ccd('SCAN_SUBNETS', ['192.168.1.0/24 --interface=eth1', '192.168.1.0/24 --interface=eth0'] , c_d, 'Subnets to scan', '{"dataType": "array","elements": [{"elementType": "input","elementOptions": [{"placeholder": "192.168.1.0/24 --interface=eth1"},{"suffix": "_in"},{"cssClasses": "col-sm-10"},{"prefillValue": "null"}],"transformers": []},{"elementType": "button","elementOptions": [{"sourceSuffixes": ["_in"]},{"separator": ""},{"cssClasses": "col-xs-12"},{"onClick": "addList(this, false)"},{"getStringKey": "Gen_Add"}],"transformers": []},{"elementType": "select","elementHasInputValue": 1,"elementOptions": [{"multiple": "true"},{"readonly": "true"},{"editable": "true"}],"transformers": []},{"elementType": "button","elementOptions": [{"sourceSuffixes": []},{"separator": ""},{"cssClasses": "col-xs-6"},{"onClick": "removeAllOptions(this)"},{"getStringKey": "Gen_Remove_All"}],"transformers": []},{"elementType": "button","elementOptions": [{"sourceSuffixes": []},{"separator": ""},{"cssClasses": "col-xs-6"},{"onClick": "removeFromList(this)"},{"getStringKey": "Gen_Remove_Last"}],"transformers": []}]}', '[]', 'General')    
+    conf.DISCOVER_PLUGINS = ccd('DISCOVER_PLUGINS', True , c_d, 'Discover plugins', """{"dataType": "boolean","elements": [{"elementType": "input","elementOptions": [{ "type": "checkbox" }],"transformers": []}]}""", '[]', 'General')
+    conf.SCAN_SUBNETS = ccd('SCAN_SUBNETS', ['192.168.1.0/24 --interface=eth1', '192.168.1.0/24 --interface=eth0'] , c_d, 'Subnets to scan', '''{"dataType": "array","elements": [{"elementType": "input","elementOptions": [{"placeholder": "192.168.1.0/24 --interface=eth1"},{"suffix": "_in"},{"cssClasses": "col-sm-10"},{"prefillValue": "null"}],"transformers": []},{"elementType": "button","elementOptions": [{"sourceSuffixes": ["_in"]},{"separator": ""},{"cssClasses": "col-xs-12"},{"onClick": "addList(this, false)"},{"getStringKey": "Gen_Add"}],"transformers": []},{"elementType": "select","elementHasInputValue": 1,"elementOptions": [{"multiple": "true"},{"readonly": "true"},{"editable": "true"}],"transformers": []},{"elementType": "button","elementOptions": [{"sourceSuffixes": []},{"separator": ""},{"cssClasses": "col-xs-6"},{"onClick": "removeAllOptions(this)"},{"getStringKey": "Gen_Remove_All"}],"transformers": []},{"elementType": "button","elementOptions": [{"sourceSuffixes": []},{"separator": ""},{"cssClasses": "col-xs-6"},{"onClick": "removeFromList(this)"},{"getStringKey": "Gen_Remove_Last"}],"transformers": []}]}''', '[]', 'General')    
     conf.LOG_LEVEL = ccd('LOG_LEVEL', 'verbose' , c_d, 'Log verboseness', '{"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]}', "['none', 'minimal', 'verbose', 'debug', 'trace']", 'General')
     conf.TIMEZONE = ccd('TIMEZONE', 'Europe/Berlin' , c_d, 'Time zone', '{"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]}', '[]', 'General')    
     conf.PLUGINS_KEEP_HIST = ccd('PLUGINS_KEEP_HIST', 250 , c_d, 'Keep history entries', '{"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type": "number"}] ,"transformers": []}]}', '[]', 'General') 
@@ -200,7 +201,12 @@ def importConfigs (db, all_plugins):
 
     # Plugins START
     # -----------------
-    all_plugins = get_plugins_configs()
+
+    necessary_plugins = ['UI', 'DBCLNP', 'INTRNT','MAINT','NEWDEV', 'SETPWD', 'SYNC', 'VNDRPDT', 'WORKFLOWS']
+    # make sure necessary plugins are loaded
+    conf.LOADED_PLUGINS += [plugin for plugin in necessary_plugins if plugin not in conf.LOADED_PLUGINS]
+
+    all_plugins = get_plugins_configs(conf.DISCOVER_PLUGINS)
 
     mylog('none', ['[Config] Plugins: Number of all plugins (including not loaded): ', len(all_plugins)])
 
@@ -213,23 +219,24 @@ def importConfigs (db, all_plugins):
     for plugin in all_plugins:
 
         # Header on the frontend and the app_state.json
-        updateState(f"Check plugin {index} of {len(all_plugins)}") 
+        updateState(f"Check plugin ({index}/{len(all_plugins)})") 
 
         index +=1
 
-        pref = plugin["unique_prefix"]  
-        print_plugin_info(plugin, ['display_name','description'])
+        pref = plugin["unique_prefix"]          
 
         all_plugins_prefixes.append(pref)
 
         # The below lines are used to determine if the plugin should be loaded, or skipped based on user settings (conf.LOADED_PLUGINS)
         # ...or based on if is already enabled, or if the default configuration loads the plugin (RUN function != disabled )   
 
-        # get default plugin run value
+        # get run value (computationally expensive)
         plugin_run = get_set_value_for_init(plugin, c_d, "RUN")
 
         # only include loaded plugins, and the ones that are enabled        
         if pref in conf.LOADED_PLUGINS or plugin_run != 'disabled' or plugin_run is None:
+
+            print_plugin_info(plugin, ['display_name','description'])
 
             stringSqlParams = []
             

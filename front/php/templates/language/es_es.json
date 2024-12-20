@@ -72,6 +72,8 @@
     "CLEAR_NEW_FLAG_name": "Eliminar la nueva bandera",
     "DAYS_TO_KEEP_EVENTS_description": "Esta es una configuración de mantenimiento. Esto especifica el número de días de entradas de eventos que se guardarán. Todos los eventos anteriores se eliminarán periódicamente.",
     "DAYS_TO_KEEP_EVENTS_name": "Eliminar eventos anteriores a",
+    "DISCOVER_PLUGINS_description": "",
+    "DISCOVER_PLUGINS_name": "",
     "DevDetail_Copy_Device_Title": "Copiar detalles del dispositivo",
     "DevDetail_Copy_Device_Tooltip": "Copiar detalles del dispositivo de la lista desplegable. Todo en esta página se sobrescribirá",
     "DevDetail_DisplayFields_Title": "Mostrar",

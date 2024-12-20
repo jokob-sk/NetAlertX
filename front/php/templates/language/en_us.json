@@ -62,6 +62,8 @@
     "CLEAR_NEW_FLAG_name": "Clear new flag",
     "DAYS_TO_KEEP_EVENTS_description": "This is a maintenance setting. This specifies the number of days worth of event entries that will be kept. All older events will be deleted periodically. Also applies on Plugin Events History.",
     "DAYS_TO_KEEP_EVENTS_name": "Delete events older than",
+    "DISCOVER_PLUGINS_description": "Disable this option to speed up initialization and settings saving. When disabled, plugins are not discovered, and you cannot add new plugins to the <code>LOADED_PLUGINS</code> setting.",
+    "DISCOVER_PLUGINS_name": "Discover plugins",
     "DevDetail_Copy_Device_Title": "Copy details from device",
     "DevDetail_Copy_Device_Tooltip": "Copy details from device from the dropdown list. Everything on this page will be overwritten",
     "DevDetail_DisplayFields_Title": "Display",
