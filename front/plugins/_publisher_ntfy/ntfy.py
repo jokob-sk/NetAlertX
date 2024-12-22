@@ -18,7 +18,7 @@ sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 import conf
 from const import confFileName, logPath
 from plugin_helper import Plugin_Objects, handleEmpty
-from logger import mylog, append_line_to_file
+from logger import mylog, Logger, append_line_to_file
 from helper import timeNowTZ, get_setting_value
 from notification import Notification_obj
 from database import DB
@@ -26,6 +26,9 @@ from pytz import timezone
 
 # Make sure the TIMEZONE for logging is correct
 conf.tz = timezone(get_setting_value('TIMEZONE'))
+
+# Make sure log level is initialized correctly
+Logger(get_setting_value('LOG_LEVEL'))
 
 pluginName = 'NTFY'
 

@@ -12,7 +12,7 @@ INSTALL_PATH="/app"
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from plugin_helper import Plugin_Objects
-from logger import mylog, append_line_to_file
+from logger import mylog, Logger, append_line_to_file
 from helper import timeNowTZ, get_setting_value 
 import conf
 from pytz import timezone
@@ -20,6 +20,9 @@ from const import logPath
 
 # Make sure the TIMEZONE for logging is correct
 conf.tz = timezone(get_setting_value('TIMEZONE'))
+
+# Make sure log level is initialized correctly
+Logger(get_setting_value('LOG_LEVEL'))
 
 pluginName = 'INTRSPD'
 

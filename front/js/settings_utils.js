@@ -1007,7 +1007,7 @@ function generateFormHtml(set, overrideValue) {
                         id="${`${event}_${setKey}`}"
                         data-myparam-setkey="${setKey}"
                         data-myparam="${setKey}"
-                        data-myparam-plugin="${setTypeObject.prefix || ''}"
+                        data-myparam-plugin="${setKey.split('_')[0] || ''}"
                         data-myevent="${event}"  
                         onclick="execute_settingEvent(this)">
                         <i title="${getString(event + "_event_tooltip")}" class="fa ${getString(event + "_event_icon")}"></i>

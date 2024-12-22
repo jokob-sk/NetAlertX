@@ -11,13 +11,16 @@ INSTALL_PATH="/app"
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from plugin_helper import Plugin_Objects, Plugin_Object
-from logger import mylog
+from logger import mylog, Logger
 from helper import timeNowTZ, get_setting_value 
 import conf
 from pytz import timezone
 
 # Make sure the TIMEZONE for logging is correct
 conf.tz = timezone(get_setting_value('TIMEZONE'))
+
+# Make sure log level is initialized correctly
+Logger(get_setting_value('LOG_LEVEL'))
 
 def main():
 

@@ -10,7 +10,7 @@ INSTALL_PATH="/app"
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from plugin_helper import Plugin_Objects, handleEmpty  # noqa: E402
-from logger import mylog  # noqa: E402
+from logger import mylog, Logger  # noqa: E402
 from helper import timeNowTZ, get_setting_value, hide_string  # noqa: E402
 from notification import Notification_obj  # noqa: E402
 from database import DB  # noqa: E402
@@ -20,6 +20,9 @@ from pytz import timezone
 
 # Make sure the TIMEZONE for logging is correct
 conf.tz = timezone(get_setting_value('TIMEZONE'))
+
+# Make sure log level is initialized correctly
+Logger(get_setting_value('LOG_LEVEL'))
 
 pluginName = "PUSHOVER"
 

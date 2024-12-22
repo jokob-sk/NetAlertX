@@ -18,23 +18,33 @@ from const import logPath
 from helper import timeNowTZ, get_setting_value 
 import conf
 from pytz import timezone
+from logger import mylog, Logger
 
 # Make sure the TIMEZONE for logging is correct
 conf.tz = timezone(get_setting_value('TIMEZONE'))
+
+# Make sure log level is initialized correctly
+Logger(get_setting_value('LOG_LEVEL'))
 
 pluginName = 'WEBMON'
 
 LOG_PATH = logPath + '/plugins'
 RESULT_FILE = os.path.join(LOG_PATH, f'last_result.{pluginName}.log')
 
-def main():
-    parser = argparse.ArgumentParser(description='Simple URL monitoring tool')
-    parser.add_argument('urls', action="store", help="URLs to check separated by ','")
-    values = parser.parse_args()
 
-    if values.urls:
+mylog('verbose', [f'[{pluginName}] In script'])
+
+def main():
+
+    values = get_setting_value('WEBMON_urls_to_check')
+
+    mylog('verbose', [f'[{pluginName}] Checking URLs: {values}'])
+   
+
+    if len(values) > 0:
         plugin_objects = Plugin_Objects(RESULT_FILE)
-        plugin_objects = service_monitoring(values.urls.split('=')[1].split(','), plugin_objects)
+        # plugin_objects = service_monitoring(values.urls.split('=')[1].split(','), plugin_objects)
+        plugin_objects = service_monitoring(values, plugin_objects)
         plugin_objects.write_result_file()
     else:
         return

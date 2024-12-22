@@ -31,7 +31,7 @@ Also consider decreasing the scanned subnet, e.g. from `/16` to `/24` if need be
 
 # Store temporary files in memory
 
-You can also store temporary files in application memory (`/app/api` and `/app/log` folders).
+You can also store temporary files in application memory (`/app/api` and `/app/log` folders). See highlighted lines `◀` below.
 
 ```yaml
 version: "3"
@@ -49,8 +49,8 @@ services:
       # (optional) useful for debugging if you have issues setting up the container
       - local/path/logs:/app/log
       # (API: OPTION 1) use for performance
-      - type: tmpfs
-        target: /app/api
+      - type: tmpfs              # ◀
+        target: /app/api         # ◀
       # (API: OPTION 2) use when debugging issues 
       # -  local/path/api:/app/api
     environment:

@@ -18,7 +18,7 @@ INSTALL_PATH="/app"
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64
-from logger import mylog, append_line_to_file
+from logger import mylog, Logger, append_line_to_file
 from helper import timeNowTZ, get_setting_value, check_IP_format
 from const import logPath, applicationPath, fullDbPath
 import conf
@@ -26,6 +26,9 @@ from pytz import timezone
 
 # Make sure the TIMEZONE for logging is correct
 conf.tz = timezone(get_setting_value('TIMEZONE'))
+
+# Make sure log level is initialized correctly
+Logger(get_setting_value('LOG_LEVEL'))
 
 pluginName = 'DDNS'
 

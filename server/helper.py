@@ -19,7 +19,6 @@ import random
 import string
 import ipaddress
 
-
 import conf
 from const import *
 from logger import mylog, logResult
@@ -336,13 +335,7 @@ def get_setting_value(key):
 
 #-------------------------------------------------------------------------------
 #  Convert the setting value to the corresponding python type
-import json
-import base64
-import hashlib
 
-import json
-import base64
-import hashlib
 
 def setting_value_to_python_type(set_type, set_value):
     value = '----not processed----'

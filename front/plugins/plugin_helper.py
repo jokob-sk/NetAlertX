@@ -10,7 +10,7 @@ INSTALL_PATH = "/app"
 sys.path.append(f"{INSTALL_PATH}/front/plugins")
 sys.path.append(f'{INSTALL_PATH}/server') 
 
-from logger import mylog
+from logger import mylog, Logger
 from const import confFileName
 
 #-------------------------------------------------------------------------------

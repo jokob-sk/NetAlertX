@@ -22,7 +22,16 @@ debugLevels = [
     ('none', 0), ('minimal', 1), ('verbose', 2), ('debug', 3), ('trace', 4)
 ]
 
-currentLevel = 0
+# use the LOG_LEVEL from the config, may be overridden
+currentLevel = conf.LOG_LEVEL
+
+#-------------------------------------------------------------------------------
+class Logger:
+    def __init__(self, LOG_LEVEL='verbose'):        
+        global currentLevel
+
+        currentLevel = LOG_LEVEL
+
 
 def mylog(requestedDebugLevel, n):
     setLvl = 0  
@@ -30,7 +39,7 @@ def mylog(requestedDebugLevel, n):
 
     #  Get debug urgency/relative weight
     for lvl in debugLevels:
-        if conf.LOG_LEVEL == lvl[0]:
+        if currentLevel == lvl[0]:
             setLvl = lvl[1]
         if requestedDebugLevel == lvl[0]:
             reqLvl = lvl[1]
