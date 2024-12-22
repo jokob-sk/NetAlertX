@@ -7,6 +7,9 @@ require 'php/templates/header.php';
 <link rel="stylesheet" href="lib/iCheck/all.css">
 <script src="lib/iCheck/icheck.min.js"></script>
 
+<!-- ----------------------------------------------------------------------- -->
+ 
+
 <div id="notifications" class="content-wrapper">
 
   

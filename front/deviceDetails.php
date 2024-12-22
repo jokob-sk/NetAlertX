@@ -17,6 +17,8 @@
 ?>
 
 
+
+
 <!-- Page ------------------------------------------------------------------ -->
   <div class="content-wrapper">
 
@@ -94,20 +96,10 @@
 
 <!-- tab page 2 ------------------------------------------------------------ -->
               <div class="tab-pane fade table-responsive" id="panSessions">
-
-                <!-- Datatable Session -->
-                <table id="tableSessions" class="table table-bordered table-hover table-striped ">
-                  <thead>
-                  <tr>
-                    <th><?= lang('DevDetail_SessionTable_Order');?></th>
-                    <th><?= lang('DevDetail_SessionTable_Connection');?></th>
-                    <th><?= lang('DevDetail_SessionTable_Disconnection');?></th>
-                    <th><?= lang('DevDetail_SessionTable_Duration');?></th>
-                    <th><?= lang('DevDetail_SessionTable_IP');?></th>
-                    <th><?= lang('DevDetail_SessionTable_Additionalinfo');?></th>
-                  </tr>
-                  </thead>
-                </table>
+              <?php  
+                  require 'deviceDetailsSessions.php';
+                ?>
+                
               </div>
 
         
@@ -123,35 +115,24 @@
               </div>
 
 <!-- tab page 3 ------------------------------------------------------------ -->
-              <div class="tab-pane fade table-responsive" id="panPresence">                 
+              <div class="tab-pane fade table-responsive" id="panPresence">        
+                
+                <?php
+                  // Include the other page
+                  include 'deviceDetailsPresence.php';
+                ?>
 
-                  <!-- Calendar -->
-                  <div id="calendar">
-                  </div>
               </div>
 
 <!-- tab page 4 ------------------------------------------------------------ -->
               <div class="tab-pane fade table-responsive" id="panEvents">
 
-                <!-- Hide Connections -->
-                <div class="text-center">
-                  <label>
-                    <input class="checkbox blue hidden" id="chkHideConnectionEvents" type="checkbox" checked>
-                    <?= lang('DevDetail_Events_CheckBox');?>
-                  </label>
-                </div>
+              <?php
+                  // Include the other page
+                  include 'deviceDetailsEvents.php';
+                ?>
+
                 
-                <!-- Datatable Events -->
-                <table id="tableEvents" class="table table-bordered table-hover table-striped ">
-                  <thead>
-                  <tr>
-                    <th><?= lang("DevDetail_Tab_EventsTableDate");?></th>
-                    <th><?= lang("DevDetail_Tab_EventsTableEvent");?></th>
-                    <th><?= lang("DevDetail_Tab_EventsTableIP");?></th>
-                    <th><?= lang("DevDetail_Tab_EventsTableInfo");?></th>
-                  </tr>
-                  </thead>
-                </table>
               </div>
 
 <!-- tab page 7 ------------------------------------------------------------ -->
@@ -187,16 +168,6 @@
   require 'php/templates/footer.php';
 ?>
 
-
-
-<!-- fullCalendar -->
-  <link rel="stylesheet" href="lib/fullcalendar/fullcalendar.min.css">
-  <link rel="stylesheet" href="lib/fullcalendar/fullcalendar.print.min.css" media="print">
-  <script src="lib/moment/moment.js"></script>
-  <script src="lib/fullcalendar/fullcalendar.min.js"></script>
-  <script src="lib/fullcalendar/locale-all.js"></script>
-  <!-- ----------------------------------------------------------------------- -->
-
   
   <!-- ----------------------------------------------------------------------- -->
 
@@ -221,18 +192,10 @@ switch ($UI_THEME) {
   mac                     = getMac()  // can also be rowID!! not only mac 
   var devicesList         = [];   // this will contain a list the database row IDs of the devices ordered by the position displayed in the UI  
 
-
   var pos                 = -1;  
   var parPeriod           = 'Front_Details_Period';
-  var parSessionsRows     = 'Front_Details_Sessions_Rows';
-  var parEventsRows       = 'Front_Details_Events_Rows';
-  var parEventsHide       = 'Front_Details_Events_Hide';
-  var period              = '1 month';
+
   var tab                 = 'tabDetails'
-  var sessionsRows        = 10;
-  var eventsRows          = 10;
-  var eventsHide          = true;
-  var skipRepeatedItems   = ['0 h (notify all events)', '1 h', '8 h', '24 h', '168 h (one week)'];
   var selectedTab         = 'tabDetails';
   var emptyArr            = ['undefined', "", undefined, null];
 
@@ -271,22 +234,15 @@ function main () {
   $('#chkHideConnectionEvents')[0].checked = eval(eventsHide == 'true');  
 
   // Initialize components with parameters
-  initializeTabs();
-  initializeDatatables();
-  initializeCalendar();    
+   	
 
-  // query data
-
-  getSessionsPresenceEvents();
-
-  // Force re-render calendar on tab change
-  // (bugfix for render error at left panel)
-  $(document).on('shown.bs.tab', 'a[data-toggle="tab"]', function (nav) {
-    if ($(nav.target).attr('href') == '#panPresence') {
-      $('#calendar').fullCalendar('rerenderEvents');
-    }
+  // Init tabs once DOM ready
+  $( document ).ready(function() {
+    initializeTabs();
   });
+  
 
+  
 
   // Events tab toggle conenction events
   $('input').on('ifToggled', function(event){
@@ -307,205 +263,11 @@ function main () {
 }
 
 
-
-// -----------------------------------------------------------------------------
-function initializeDatatables () {
-  // Sessions datatable
-  $('#tableSessions').DataTable({
-    'paging'      : true,
-    'lengthChange': true,
-    'lengthMenu'   : [[10, 25, 50, 100, 500, -1], [10, 25, 50, 100, 500, 'All']],
-    'searching'   : true,
-    'ordering'    : true,
-    'info'        : true,
-    'autoWidth'   : false,
-    'order'       : [[0,'desc'], [1,'desc']],
-
-    // Parameters
-    'pageLength'  : sessionsRows,
-
-    'columnDefs'  : [
-        {visible:   false,  targets: [0]},
-
-        // Replace HTML codes
-        {targets: [1,2,3,5],
-          'createdCell': function (td, cellData, rowData, row, col) {
-            $(td).html (translateHTMLcodes (cellData));
-        } }
-    ],
-
-    // Processing
-    'processing'  : true,
-    'language'    : {
-      processing: '<table><td width="130px" align="middle"><?= lang("DevDetail_Loading");?></td>'+
-                  '<td><i class="ion ion-ios-loop-strong fa-spin fa-2x fa-fw">'+
-                  '</td></table>',
-      emptyTable: 'No data',
-      "lengthMenu": "<?= lang('Events_Tablelenght');?>",
-      "search":     "<?= lang('Events_Searchbox');?>: ",
-      "paginate": {
-          "next":       "<?= lang('Events_Table_nav_next');?>",
-          "previous":   "<?= lang('Events_Table_nav_prev');?>"
-      },
-      "info":           "<?= lang('Events_Table_info');?>",
-    }
-  });
-
-  // Events datatable
-  $('#tableEvents').DataTable({
-    'paging'      : true,
-    'lengthChange': true,
-    'lengthMenu'   : [[10, 25, 50, 100, 500, -1], [10, 25, 50, 100, 500, 'All']],
-    'searching'   : true,
-    'ordering'    : true,
-    'info'        : true,
-    'autoWidth'   : false,
-    'order'       : [[0,'desc']],
-
-    // Parameters
-    'pageLength'  : eventsRows,
-
-    'columnDefs'  : [
-        // Replace HTML codes
-        {targets: [0],
-          'createdCell': function (td, cellData, rowData, row, col) {
-            $(td).html (translateHTMLcodes (cellData));
-        } }
-    ],
-
-    // Processing
-    'processing'  : true,
-    'language'    : {
-      processing: '<table><td width="130px" align="middle"><?= lang("DevDetail_Loading");?></td>'+
-                  '<td><i class="ion ion-ios-loop-strong fa-spin fa-2x fa-fw">'+
-                  '</td></table>',
-      emptyTable: 'No data',
-      "lengthMenu": "<?= lang('Events_Tablelenght');?>",
-      "search":     "<?= lang('Events_Searchbox');?>: ",
-      "paginate": {
-          "next":       "<?= lang('Events_Table_nav_next');?>",
-          "previous":   "<?= lang('Events_Table_nav_prev');?>"
-      },
-      "info":           "<?= lang('Events_Table_info');?>",
-    }
-  });
-};
-
-
-// -----------------------------------------------------------------------------
-function initializeCalendar () {
-  $('#calendar').fullCalendar({
-    editable          : false,
-    droppable         : false,
-    defaultView       : 'agendaMonth',
-
-    height            : 'auto',
-    firstDay          : 1,
-    allDaySlot        : false,
-    slotDuration      : '02:00:00',
-    slotLabelInterval : '04:00:00',
-    slotLabelFormat   : 'H:mm',
-    timeFormat        : 'H:mm', 
-    locale            : '<?= lang('Presence_CalHead_lang');?>',
-    header: {
-      left            : 'prev,next today',
-      center          : 'title',
-      right           : 'agendaYear,agendaMonth,agendaWeek'
-    },
-
-    views: {
-      agendaYear: {
-        type               : 'agenda',
-        duration           : { year: 1 },
-        buttonText         : '<?= lang('Presence_CalHead_year');?>',
-        columnHeaderFormat : ''
-      },
-
-      agendaMonth: {
-        type               : 'agenda',
-        duration           : { month: 1 },
-        buttonText         : '<?= lang('Presence_CalHead_month');?>',
-        columnHeaderFormat : 'D'
-      },
-      agendaWeek: {
-        buttonText         : '<?= lang('Presence_CalHead_week');?>',
-      },
-      agendaDay: {
-        type              : 'agenda',
-        duration          : { day: 1 },
-        buttonText        : '<?= lang('Presence_CalHead_day');?>',
-        slotLabelFormat   : 'H',
-        slotDuration      : '01:00:00'
-      }
-    },
-
-    viewRender: function(view) {
-      if (view.name === 'agendaYear') {
-        var listHeader  = $('.fc-day-header')[0];
-        var listContent = $('.fc-widget-content')[0];
-
-        for (i=0; i < listHeader.length-2 ; i++) {
-          listHeader[i].style.borderColor = 'transparent';
-          listContent[i+2].style.borderColor = 'transparent';
-
-          if (listHeader[i].innerHTML != '<span></span>') {
-            if (i==0) {
-              listHeader[i].style.borderLeftColor = '#808080';
-            } else {
-              listHeader[i-1].style.borderRightColor = '#808080';
-              listContent[i+1].style.borderRightColor = '#808080';
-            }
-            listHeader[i].style.paddingLeft = '10px';
-          }   
-        };    
-      }
-    },
- 
-    columnHeaderText: function(mom) {
-      switch ($('#calendar').fullCalendar('getView').name) {
-      case 'agendaYear':
-        if (mom.date() == 1) {
-          return mom.format('MMM');
-        } else {
-          return '';
-        }
-        break;
-      case 'agendaMonth':
-        return mom.date();
-        break;
-      case 'agendaWeek':
-        return mom.format ('ddd D');
-        break;
-      default:
-        return mom.date();
-      }
-    },
-
-    eventRender: function (event, element) {
-      $(element).tooltip({container: 'body', placement: 'bottom',
-                          title: event.tooltip});
-      // element.attr ('title', event.tooltip);  // Alternative tooltip
-    },
-      
-    loading: function( isLoading, view ) {
-        if (isLoading) {
-          showSpinner()
-        } else {
-          // setTimeout(() => {
-          //   updateIconPreview($('#txtIcon'))  
-          // }, 500);
-          
-          hideSpinner()
-        }
-    }
-
-  })
-}
-
-
 // -----------------------------------------------------------------------------
 function periodChanged () {
-  getSessionsPresenceEvents();
+  loadSessionsData();
+  loadPresenceData();
+  loadEventsData();
 }
 
 
@@ -556,33 +318,6 @@ function performSwitch(direction)
 
 
 // -----------------------------------------------------------------------------
-function getSessionsPresenceEvents () {
-  // Check MAC in url
-  var urlParams = new URLSearchParams(window.location.search);
-  mac = urlParams.get ('mac');
-  // Define Sessions datasource and query dada
-  $('#tableSessions').DataTable().ajax.url('php/server/events.php?action=getDeviceSessions&mac=' + mac +'&period='+ period).load();
-  
-  // Define Presence datasource and query data
-  $('#calendar').fullCalendar('removeEventSources');
-  $('#calendar').fullCalendar('addEventSource',
-  { url: 'php/server/events.php?action=getDevicePresence&mac=' + mac});
-
-  // Query events
-  getDeviceEvents();
-}
-
-
-// -----------------------------------------------------------------------------
-function getDeviceEvents () {
-  // Define Events datasource and query dada
-  hideConnections = $('#chkHideConnectionEvents')[0].checked;
-  $('#tableEvents').DataTable().ajax.url(
-    'php/server/events.php?action=getDeviceEvents&mac=' + mac +'&period='+ period +'&hideConnections='+ hideConnections).load();
-}
-
-
-// -----------------------------------------------------------------------------
 // Activate save & restore on any value change
 $(document).on('input', 'input:text', function() {  
   settingsChanged();
@@ -601,7 +336,10 @@ function initializeTabs () {
   {
     selectedTab = getCache(key);
   }
+  
   $('.nav-tabs a[id='+ selectedTab +']').tab('show');
+  // $('.nav-tabs a[id='+ selectedTab +']').parent().click();
+  //  $('.nav-tabs a[id="tabPlugins"]').tab('show');
 
   // When changed save new current tab
   $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
@@ -620,62 +358,10 @@ function initializeTabs () {
 }
 
 
-//-----------------------------------------------------------------------------------
-
-function initTable(tableId, mac){
-
-  // clear table
-  $("#"+tableId+" tbody").remove();
-
-  // Events datatable
-  $('#'+tableId).DataTable({
-  'paging'      : true,
-  'lengthChange': true,
-  'lengthMenu'   : [[10, 25, 50, 100, 500, -1], [10, 25, 50, 100, 500, 'All']],
-  'searching'   : true,
-  'ordering'    : true,
-  'info'        : true,
-  'autoWidth'   : false,
-  'order'       : [[0,'desc']],
-
-  // Parameters
-  'pageLength'  : 50,
-
-  'columnDefs'  : [
-      // Replace HTML codes
-      {targets: [0],
-        'createdCell': function (td, cellData, rowData, row, col) {
-          $(td).html (translateHTMLcodes (cellData));
-      } }
-  ],
-
-  // Processing
-  'processing'  : true,
-  'language'    : {
-      processing: '<table><td width="130px" align="middle"><?= lang("DevDetail_Loading");?></td>'+
-                  '<td><i class="ion ion-ios-loop-strong fa-spin fa-2x fa-fw">'+
-                  '</td></table>',
-      emptyTable: 'No data',
-      "lengthMenu": "<?= lang('Events_Tablelenght');?>",
-      "search":     "<?= lang('Events_Searchbox');?>: ",
-      "paginate": {
-          "next":       "<?= lang('Events_Table_nav_next');?>",
-          "previous":   "<?= lang('Events_Table_nav_prev');?>"
-      },
-      "info":           "<?= lang('Events_Table_info');?>",
-    }
-  });
-
-  $("#"+tableId).attr("data-mac", mac)
-
-}
-
-
 //------------------------------------------------------------------------------
 //  Render the small boxes on top
 async function renderSmallBoxes() {
-  
-  
+    
     try {
         // Show loading dialog
         showSpinner();

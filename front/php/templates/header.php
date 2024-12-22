@@ -32,14 +32,24 @@
   <!-- jQuery 3 -->
   <script src="lib/jquery/jquery.min.js"></script>
 
+  <!-- Bootstrap 3.3.7 -->
+  <link rel="stylesheet" href="lib/bootstrap/bootstrap.min.css">
+  <script src="lib/bootstrap/bootstrap.min.js"></script>
+
+  <!-- Datatable -->
+  <link rel="stylesheet" href="lib/datatables.net-bs/css/dataTables.bootstrap.min.css">
+  <link rel="stylesheet" href="lib/datatables.net/css/select.dataTables.min.css">
+  <script src="lib/datatables.net/js/jquery.dataTables.min.js"></script>
+  <script src="lib/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+  <script src="lib/datatables.net/js/dataTables.select.min.js"></script>
+
   <script src="js/common.js?v=<?php include 'php/templates/version.php'; ?>"></script>
   <script src="js/modal.js?v=<?php include 'php/templates/version.php'; ?>"></script>
   <script src="js/tests.js?v=<?php include 'php/templates/version.php'; ?>"></script>
   <script src="js/db_methods.js?v=<?php include 'php/templates/version.php'; ?>"></script>
   <script src="js/settings_utils.js?v=<?php include 'php/templates/version.php'; ?>"></script>
 
-  <!-- Bootstrap 3.3.7 -->
-  <link rel="stylesheet" href="lib/bootstrap/bootstrap.min.css">
+
   
   <!-- iCheck -->
 
@@ -59,10 +69,7 @@
   <!-- Theme style -->
   <link rel="stylesheet" href="lib/AdminLTE/dist/css/AdminLTE.min.css">
 
-  <!-- Datatable -->
 
-  <link rel="stylesheet" href="lib/datatables/datatables.min.css">
-  <script src="lib/datatables/datatables.min.js"></script>
 
 
   <!-- AdminLTE Skins. We have chosen the skin-blue for this starter

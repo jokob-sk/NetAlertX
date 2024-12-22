@@ -3,7 +3,8 @@
   require 'php/templates/header.php';  
   require 'php/templates/notification.php'; 
 ?>
-
+<!-- ----------------------------------------------------------------------- -->
+ 
 
 <!-- Page ------------------------------------------------------------------ -->
 <div class="content-wrapper">

@@ -1,0 +1,1 @@
+- Presence on device details breaks

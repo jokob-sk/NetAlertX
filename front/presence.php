@@ -189,9 +189,6 @@
   <link href="lib/fullcalendar-scheduler/scheduler.min.css" rel="stylesheet">
   <script src="lib/fullcalendar-scheduler/scheduler.min.js"></script>
 
-
-
-
 <!-- Dark-Mode Patch -->
 <?php
 switch ($UI_THEME) {

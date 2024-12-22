@@ -130,6 +130,11 @@ services:
       - local/path/db:/app/db      
       # (optional) useful for debugging if you have issues setting up the container
       - local/path/logs:/app/log
+      # (API: OPTION 1) use for performance
+      - type: tmpfs
+        target: /app/api
+      # (API: OPTION 2) use when debugging issues 
+      # -  local/path/api:/app/api
     environment:
       - TZ=Europe/Berlin      
       - PORT=20211

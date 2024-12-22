@@ -17,6 +17,11 @@ services:
       - ${APP_DATA_LOCATION}/netalertx/db:/app/db           
       # (optional) useful for debugging if you have issues setting up the container
       - ${DEV_LOCATION}/log:/app/log      
+      # (API: OPTION 1) use for performance
+      - type: tmpfs
+        target: /app/api
+      # (API: OPTION 2) use when debugging issues 
+      # - ${DEV_LOCATION}/api:/app/api
       # ---------------------------------------------------------------------------
       # DELETE START anyone trying to use this file: comment out / delete BELOW lines, they are only for development purposes
       - ${APP_DATA_LOCATION}/netalertx/dhcp_samples/dhcp1.leases:/mnt/dhcp1.leases
@@ -39,12 +44,15 @@ services:
       - ${DEV_LOCATION}/install/user-mapping.debian.sh:/app/install/user-mapping.debian.sh
       - ${DEV_LOCATION}/install/install.debian.sh:/app/install/install.debian.sh      
       - ${DEV_LOCATION}/install/install_dependencies.debian.sh:/app/install/install_dependencies.debian.sh      
-      - ${DEV_LOCATION}/api:/app/api
+
       - ${DEV_LOCATION}/front/php:/app/front/php      
       - ${DEV_LOCATION}/front/deviceDetails.php:/app/front/deviceDetails.php
       - ${DEV_LOCATION}/front/deviceDetailsEdit.php:/app/front/deviceDetailsEdit.php
       - ${DEV_LOCATION}/front/userNotifications.php:/app/front/userNotifications.php
       - ${DEV_LOCATION}/front/deviceDetailsTools.php:/app/front/deviceDetailsTools.php
+      - ${DEV_LOCATION}/front/deviceDetailsPresence.php:/app/front/deviceDetailsPresence.php
+      - ${DEV_LOCATION}/front/deviceDetailsSessions.php:/app/front/deviceDetailsSessions.php
+      - ${DEV_LOCATION}/front/deviceDetailsEvents.php:/app/front/deviceDetailsEvents.php
       - ${DEV_LOCATION}/front/devices.php:/app/front/devices.php
       - ${DEV_LOCATION}/front/events.php:/app/front/events.php
       - ${DEV_LOCATION}/front/plugins.php:/app/front/plugins.php

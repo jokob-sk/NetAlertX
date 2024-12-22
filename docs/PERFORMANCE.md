@@ -29,3 +29,31 @@ The more often you scan the networks the more resources, traffic and DB read/wri
 
 Also consider decreasing the scanned subnet, e.g. from `/16` to `/24` if need be.   
 
+# Store temporary files in memory
+
+You can also store temporary files in application memory (`/app/api` and `/app/log` folders).
+
+```yaml
+version: "3"
+services:
+  netalertx:
+    container_name: netalertx
+    # use the below line if you want to test the latest dev image
+    # image: "jokobsk/netalertx-dev:latest" 
+    image: "jokobsk/netalertx:latest"      
+    network_mode: "host"        
+    restart: unless-stopped
+    volumes:
+      - local/path/config:/app/config
+      - local/path/db:/app/db      
+      # (optional) useful for debugging if you have issues setting up the container
+      - local/path/logs:/app/log
+      # (API: OPTION 1) use for performance
+      - type: tmpfs
+        target: /app/api
+      # (API: OPTION 2) use when debugging issues 
+      # -  local/path/api:/app/api
+    environment:
+      - TZ=Europe/Berlin      
+      - PORT=20211
+```
