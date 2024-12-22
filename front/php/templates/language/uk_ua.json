@@ -62,8 +62,8 @@
     "CLEAR_NEW_FLAG_name": "Очистити новий прапор",
     "DAYS_TO_KEEP_EVENTS_description": "Це налаштування обслуговування. Це визначає кількість днів записів про події, які зберігатимуться. Усі старіші події періодично видалятимуться. Також застосовується до історії подій плагінів.",
     "DAYS_TO_KEEP_EVENTS_name": "Видалити події, старші за",
-    "DISCOVER_PLUGINS_description": "",
-    "DISCOVER_PLUGINS_name": "",
+    "DISCOVER_PLUGINS_description": "Вимкніть цю опцію, щоб прискорити ініціалізацію та збереження налаштувань. Якщо вимкнено, плагіни не виявляються, і ви не можете додавати нові плагіни до параметра <code>LOADED_PLUGINS</code>.",
+    "DISCOVER_PLUGINS_name": "Відкрийте для себе плагіни",
     "DevDetail_Copy_Device_Title": "Скопіюйте деталі з пристрою",
     "DevDetail_Copy_Device_Tooltip": "Скопіюйте деталі пристрою зі спадного списку. Усе на цій сторінці буде перезаписано",
     "DevDetail_DisplayFields_Title": "Дисплей",
@@ -321,7 +321,7 @@
     "Gen_Update_Value": "Оновити значення",
     "Gen_Warning": "УВАГА",
     "Gen_Work_In_Progress": "Робота триває, час залишити відгук на https://github.com/jokob-sk/NetAlertX/issues",
-    "Gen_create_new_device": "Створення фіктивного пристрою",
+    "Gen_create_new_device": "новий пристрій",
     "General_display_name": "Загальний",
     "General_icon": "<i class=\"fa fa-gears\"></i>",
     "HRS_TO_KEEP_NEWDEV_description": "Це налаштування обслуговування <b>ВИДАЛЕННЯ пристроїв</b>. Якщо ввімкнено (<code>0</code> вимкнено), пристрої, позначені як <b>Новий пристрій</b>, буде видалено, якщо час їхнього <b>першого сеансу</b> був старшим за вказані години в цьому налаштування. Використовуйте це налаштування, якщо ви хочете автоматично видаляти <b>Нові пристрої</b> через <code>X</code> годин.",
@@ -734,5 +734,6 @@
     "settings_system_label": "система",
     "settings_update_item_warning": "Оновіть значення нижче. Слідкуйте за попереднім форматом. <b>Перевірка не виконана.</b>",
     "test_event_icon": "fa-vial-circle- check",
-    "test_event_tooltip": "Перш ніж перевіряти налаштування, збережіть зміни."
+    "test_event_tooltip": "Перш ніж перевіряти налаштування, збережіть зміни.",
+    "Gen_create_new_device_info": "Пристрої зазвичай виявляють за допомогою <a target=\"_blank\" href=\"https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins\">плагінів</a>. Однак у деяких випадках може знадобитися додати пристрої вручну. Щоб дослідити конкретні сценарії, перегляньте <a target=\"_blank\" href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/REMOTE_NETWORKS.md\">документацію щодо віддалених мереж</a>."
 }
