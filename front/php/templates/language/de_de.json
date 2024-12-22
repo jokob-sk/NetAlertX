@@ -334,6 +334,7 @@
     "Gen_Warning": "Warnung",
     "Gen_Work_In_Progress": "Keine Finalversion, feedback bitte unter: https://github.com/jokob-sk/NetAlertX/issues",
     "Gen_create_new_device": "",
+    "Gen_create_new_device_info": "",
     "General_display_name": "Allgemein",
     "General_icon": "<i class=\"fa fa-gears\"></i>",
     "HRS_TO_KEEP_NEWDEV_description": "Dies ist eine Wartungseinstellung <b>DELETING devices</b>. Wenn aktiviert (<code>0</code> bedeutet deaktiviert), werden als <b>\"Neues Gerät\"</b> markierte Geräte gelöscht, wenn ihre <b>erste Sitzung</b> länger her ist als in dieser Einstellung angegeben. Verwenden Sie diese Einstellung, wenn Sie <b>Neue Geräte</b> nach <code>X</code> Stunden automatisch löschen wollen.",

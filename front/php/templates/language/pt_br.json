@@ -322,6 +322,7 @@
     "Gen_Warning": "Aviso",
     "Gen_Work_In_Progress": "Trabalho em andamento, um bom momento para enviar feedback em https://github.com/jokob-sk/NetAlertX/issues",
     "Gen_create_new_device": "",
+    "Gen_create_new_device_info": "",
     "General_display_name": "Geral",
     "General_icon": "<i class=\"fa fa-gears\"></i>",
     "HRS_TO_KEEP_NEWDEV_description": "Esta é uma configuração de manutenção. Se habilitada (<code>0</code> is disabled), dispositivos marcados como <b>Novo Dispositivo</b> serão excluídos se o tempo de <b>Primeira Sessão</b> for mais antigo que as horas especificadas nesta configuração. Use esta configuração se quiser excluir automaticamente <b>Novos Dispositivos</b> após <code>X</code> horas.",

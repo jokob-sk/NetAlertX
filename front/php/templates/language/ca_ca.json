@@ -322,6 +322,7 @@
     "Gen_Warning": "Advertència",
     "Gen_Work_In_Progress": "Work in progress, un bon moment per retroalimentació a https://github.com/jokob-sk/NetAlertX/issues",
     "Gen_create_new_device": "Nou dispositiu",
+    "Gen_create_new_device_info": "Els dispositius són típicament descobert utilitzant <a target=\"_blank\" href=\"https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins\">plugins</a>. Tanmateix, en certs casos, pots necessitar afegir dispositius a mà. Per explorar els temes concrets comproveu la <a target=\"_blank\" href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/REMOTE_NETWORKS.md\">documentació de Xarxes Remotes</a>.",
     "General_display_name": "General",
     "General_icon": "<i class=\"fa fa-gears\"></i>",
     "HRS_TO_KEEP_NEWDEV_description": "Això és un paràmetre de manteniment <b>ELIMINANT dispositius</b>. Si s'activa (<code>0</code> està desactivat), els dispositius marcats com <b>Dispositiu Nou</b> seran eliminats si el temps de <b>Primera Sessió</b> es més vell que les hores especificades en aquest paràmetre. Faci servir aquest paràmetre si vol auto-eliminar <b>Nous Dispositius</b> després de <code>X</code> hores.",
@@ -734,6 +735,5 @@
     "settings_system_label": "Sistema",
     "settings_update_item_warning": "Actualitza el valor sota. Sigues curós de seguir el format anterior. <b>No hi ha validació.</b>",
     "test_event_icon": "fa-vial-circle-check",
-    "test_event_tooltip": "Deseu els canvis primer abans de comprovar la configuració.",
-    "Gen_create_new_device_info": "Els dispositius són típicament descobert utilitzant <a target=\"_blank\" href=\"https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins\">plugins</a>. Tanmateix, en certs casos, pots necessitar afegir dispositius a mà. Per explorar els temes concrets comproveu la <a target=\"_blank\" href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/REMOTE_NETWORKS.md\">documentació de Xarxes Remotes</a>."
+    "test_event_tooltip": "Deseu els canvis primer abans de comprovar la configuració."
 }

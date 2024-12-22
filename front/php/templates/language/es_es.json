@@ -332,6 +332,7 @@
     "Gen_Warning": "Advertencia",
     "Gen_Work_In_Progress": "Trabajo en curso, un buen momento para hacer comentarios en https://github.com/jokob-sk/NetAlertX/issues",
     "Gen_create_new_device": "Crear un dispositivo ficticio",
+    "Gen_create_new_device_info": "",
     "General_display_name": "General",
     "General_icon": "<i class=\"fa fa-gears\"></i>",
     "HRS_TO_KEEP_NEWDEV_description": "Se trata de una configuración de mantenimiento <b>BORRAR dispositivos</b>. Si está activado (<code>0</code> está desactivado), los dispositivos marcados como <b>Nuevo dispositivo</b> se eliminarán si su fecha de <b>primera sesión</b> es anterior a las horas especificadas en este ajuste. Use este ajuste si desea eliminar automáticamente <b>Nuevos dispositivos</b> después de <code>X</code> horas.",

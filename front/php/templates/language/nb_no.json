@@ -322,6 +322,7 @@
     "Gen_Warning": "Advarsel",
     "Gen_Work_In_Progress": "Work in progress, gjerne kom med tilbakemeldinger på https://github.com/jokob-sk/NetAlertX/issues",
     "Gen_create_new_device": "",
+    "Gen_create_new_device_info": "",
     "General_display_name": "Generelt",
     "General_icon": "<i class=\"fa fa-gears\"></i>",
     "HRS_TO_KEEP_NEWDEV_description": "Dette er en vedlikeholdsinnstilling. Hvis aktivert (<code>0</code> er deaktivert), vil enheter merket som <b>Ny Enhet</b> bli slettet hvis tiden deres for <b>Første økt</b> var eldre enn de angitte timene i denne innstilling. Bruk denne innstillingen hvis du vil automatisk slette <b>Nye Enheter</b> etter <code>X</code> timer.",

@@ -322,6 +322,7 @@
     "Gen_Warning": "Uwaga",
     "Gen_Work_In_Progress": "Praca w toku, dobry czas na feedback https://github.com/jokob-sk/NetAlertX/issues",
     "Gen_create_new_device": "",
+    "Gen_create_new_device_info": "",
     "General_display_name": "Ogólne",
     "General_icon": "<i class=\"fa fa-gears\"></i>",
     "HRS_TO_KEEP_NEWDEV_description": "To jest ustawienie konserwacyjne. Jeżeli uruchomione (<code>0</code> jest wyłączone), urządzenie oznaczone jako <b>Nowe Urządzenie</b> zostanie usunięte jeżeli czas <b>Pierwszej Sesji</b> jest starszy niż godzina podana w tym ustawieniu. Uzyj tego ustawienia jeżeli chcesz automatycznie usuwać <b>Nowe Urządzenia</b> po <code>X</code> godzinach.",

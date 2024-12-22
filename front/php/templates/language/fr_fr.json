@@ -322,6 +322,7 @@
     "Gen_Warning": "Avertissement",
     "Gen_Work_In_Progress": "Travaux en cours, c'est le bon moment pour faire un retour via la liste d'anomalies sur Github https://github.com/jokob-sk/NetAlertX/issues",
     "Gen_create_new_device": "Créer un appareil fictif",
+    "Gen_create_new_device_info": "",
     "General_display_name": "Général",
     "General_icon": "<i class=\"fa fa-gears\"></i>",
     "HRS_TO_KEEP_NEWDEV_description": "Paramètre de maintenance. S'il est activé (<code>0</code> s'il est désactivé), les appareils marqués comme <b>Nouvel appareil</b> seront supprimés si leur durée depuis la <b>première session</b> est plus ancienne que le nombre d'heures paramétré. Utilisez ce paramétrage si vous voulez supprimer automatiquement les <b>Nouveaux appareils</b> après <code>X</code> heures.",

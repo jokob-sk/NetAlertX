@@ -322,6 +322,7 @@
     "Gen_Warning": "Avviso",
     "Gen_Work_In_Progress": "Lavori in corso, è quindi un buon momento per un feedback su https://github.com/jokob-sk/NetAlertX/issues",
     "Gen_create_new_device": "Nuovo dispositivo",
+    "Gen_create_new_device_info": "I dispositivi vengono generalmente rilevati utilizzando <a target=\"_blank\" href=\"https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins\">plugin</a>. Tuttavia, in alcuni casi, potrebbe essere necessario aggiungere manualmente i dispositivi. Per esplorare scenari specifici, consulta la <a target=\"_blank\" href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/REMOTE_NETWORKS.md\">documentazione sulle reti remote</a>.",
     "General_display_name": "Generale",
     "General_icon": "<i class=\"fa fa-gears\"></i>",
     "HRS_TO_KEEP_NEWDEV_description": "Questa è un'impostazione di manutenzione <b>ELIMINAZIONE dispositivi</b>. Se abilitata (<code>0</code> è disabilitata), tutti i dispositivi marcati con <b>Nuovo dispositivo</b> verranno eliminati se l'orario della <b>Prima sessione</b> è precedente all'orario di questa impostazione. Usa questa impostazione se vuoi eliminare automaticamente i <b>Nuovi dispositivi</b> dopo <code>X</code> ore.",
@@ -734,6 +735,5 @@
     "settings_system_label": "Sistema",
     "settings_update_item_warning": "Aggiorna il valore qui sotto. Fai attenzione a seguire il formato precedente. <b>La convalida non viene eseguita.</b>",
     "test_event_icon": "fa-vial-circle-check",
-    "test_event_tooltip": "Salva le modifiche prima di provare le nuove impostazioni.",
-    "Gen_create_new_device_info": "I dispositivi vengono generalmente rilevati utilizzando <a target=\"_blank\" href=\"https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins\">plugin</a>. Tuttavia, in alcuni casi, potrebbe essere necessario aggiungere manualmente i dispositivi. Per esplorare scenari specifici, consulta la <a target=\"_blank\" href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/REMOTE_NETWORKS.md\">documentazione sulle reti remote</a>."
+    "test_event_tooltip": "Salva le modifiche prima di provare le nuove impostazioni."
 }
