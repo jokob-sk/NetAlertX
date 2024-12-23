@@ -43,7 +43,7 @@ RUN phpenmod -v 8.2 sqlite3
 RUN apt-get install -y python3-venv
 RUN python3 -m venv myenv
 
-RUN /bin/bash -c "source myenv/bin/activate && update-alternatives --install /usr/bin/python python /usr/bin/python3 10 && pip3 install tplink-omada-client pycryptodome requests paho-mqtt scapy cron-converter pytz json2table dhcp-leases pyunifi speedtest-cli chardet python-nmap dnspython librouteros "
+RUN /bin/bash -c "source myenv/bin/activate && update-alternatives --install /usr/bin/python python /usr/bin/python3 10 && pip3 install tplink-omada-client wakeonlan pycryptodome requests paho-mqtt scapy cron-converter pytz json2table dhcp-leases pyunifi speedtest-cli chardet python-nmap dnspython librouteros "
 
 # Create a buildtimestamp.txt to later check if a new version was released
 RUN date +%s > ${INSTALL_DIR}/front/buildtimestamp.txt

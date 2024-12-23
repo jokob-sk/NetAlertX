@@ -1,0 +1,518 @@
+{
+  "code_name": "wake_on_lan",
+  "unique_prefix": "WOL",
+  "plugin_type": "other",
+  "execution_order" : "Layer_0",
+  "enabled": true,
+  "data_source": "script",
+  "data_filters": [
+    {
+      "compare_column": "Object_PrimaryID",
+      "compare_operator": "==",
+      "compare_field_id": "txtMacFilter",
+      "compare_js_template": "'{value}'.toString()",
+      "compare_use_quotes": true
+    }
+  ],
+  "show_ui": true,
+  "localized": ["display_name", "description", "icon"],
+  "display_name": [
+    {
+      "language_code": "en_us",
+      "string": "Wake on Lan (WOL)"
+    }
+  ],
+  "description": [
+    {
+      "language_code": "en_us",
+      "string": "Automatically wake your devices when they are down"
+    }
+  ],
+  "icon": [
+    {
+      "language_code": "en_us",
+      "string": "<i class=\"fa fa-satellite-dish\"></i>"
+    }
+  ],
+  "params": [],
+  "settings": [
+    {
+      "function": "RUN",
+      "events": ["run"],
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "select", "elementOptions": [], "transformers": [] }
+        ]
+      },
+
+      "default_value": "disabled",
+      "options": [
+        "disabled",
+        "once",
+        "schedule",
+        "always_after_scan",
+        "on_new_device",
+        "on_notification"
+      ],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "When to run"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "When the plugin should run. Good options are <code>always_after_scan</code>, <code>on_new_device</code>, <code>on_notification</code>"
+        }
+      ]
+    },
+    {
+      "function": "RUN_SCHD",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "input", "elementOptions": [], "transformers": [] }
+        ]
+      },
+      "default_value": "*/5 * * * *",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Schedule"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Only enabled if you select <code>schedule</code> in the <a href=\"#WOL_RUN\"><code>WOL_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes."
+        }
+      ]
+    },
+    {
+      "function": "devices_to_wake",
+      "events": ["run"],
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "select", "elementOptions": [], "transformers": [] }
+        ]
+      },
+
+      "default_value": "down",
+      "options": [
+        "offline",
+        "down"
+      ],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Devices to wake"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Select devices in what state should be woken up."
+        }
+      ]
+    },
+    {
+      "function": "broadcast_ips",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              { "placeholder": "Enter value" },
+              { "suffix": "_in" },
+              { "cssClasses": "col-sm-10" },
+              { "prefillValue": "null" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": ["_in"] },
+              { "separator": "" },
+              { "cssClasses": "col-xs-12" },
+              { "onClick": "addList(this, false)" },
+              { "getStringKey": "Gen_Add" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "select",
+            "elementHasInputValue": 1,
+            "elementOptions": [
+              { "multiple": "true" },
+              { "readonly": "true" },
+              { "editable": "true" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": [] },
+              { "separator": "" },
+              { "cssClasses": "col-xs-6" },
+              { "onClick": "removeAllOptions(this)" },
+              { "getStringKey": "Gen_Remove_All" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": [] },
+              { "separator": "" },
+              { "cssClasses": "col-xs-6" },
+              { "onClick": "removeFromList(this)" },
+              { "getStringKey": "Gen_Remove_Last" }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": ["255.255.255.255"],
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Broadcast IPs"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Which IPs are used to broadcast the wake on lan message."
+        }
+      ]
+    },
+    {
+      "function": "ports",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              { "placeholder": "Enter value" },
+              { "suffix": "_in" },
+              { "cssClasses": "col-sm-10" },
+              { "prefillValue": "null" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": ["_in"] },
+              { "separator": "" },
+              { "cssClasses": "col-xs-12" },
+              { "onClick": "addList(this, false)" },
+              { "getStringKey": "Gen_Add" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "select",
+            "elementHasInputValue": 1,
+            "elementOptions": [
+              { "multiple": "true" },
+              { "readonly": "true" },
+              { "editable": "true" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": [] },
+              { "separator": "" },
+              { "cssClasses": "col-xs-6" },
+              { "onClick": "removeAllOptions(this)" },
+              { "getStringKey": "Gen_Remove_All" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": [] },
+              { "separator": "" },
+              { "cssClasses": "col-xs-6" },
+              { "onClick": "removeFromList(this)" },
+              { "getStringKey": "Gen_Remove_Last" }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": ["9"],
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Ports"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Which Ports are used to broadcast the wake on lan message."
+        }
+      ]
+    },
+    {
+      "function": "CMD",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "readonly": "true" }],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": "python3 /app/front/plugins/wake_on_lan/wake_on_lan.py",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Command"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Command to run. This can not be changed"
+        }
+      ]
+    },
+    {
+      "function": "RUN_TIMEOUT",
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "number" }],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": 30,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Run timeout"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Maximum time in seconds to wait for the script to finish. If this time is exceeded the script is aborted."
+        }
+      ]
+    }
+  ],
+  "database_column_definitions": [
+    {
+      "column": "Index",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "none",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Index"
+        }
+      ]
+    },
+    {
+      "column": "Object_PrimaryID",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "device_name_mac",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "MAC"
+        }
+      ]
+    },
+    {
+      "column": "Object_SecondaryID",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "device_ip",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "IP"
+        }
+      ]
+    },
+    {
+      "column": "Watched_Value1",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Name"
+        }
+      ]
+    },
+    {
+      "column": "Watched_Value2",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Result"
+        }
+      ]
+    },
+    {
+      "column": "Watched_Value3",
+      "css_classes": "col-sm-2",
+      "show": false,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Device Type"
+        }
+      ]
+    },
+    {
+      "column": "Watched_Value4",
+      "css_classes": "col-sm-2",
+      "show": false,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "N/A"
+        }
+      ]
+    },
+    {
+      "column": "Dummy",
+      "css_classes": "col-sm-2",
+      "show": false,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Scan method"
+        }
+      ]
+    },
+    {
+      "column": "DateTimeCreated",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Created"
+        }
+      ]
+    },
+    {
+      "column": "DateTimeChanged",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Changed"
+        }
+      ]
+    },
+    {
+      "column": "Status",
+      "css_classes": "col-sm-1",
+      "show": true,
+      "type": "replace",
+      "default_value": "",
+      "options": [
+        {
+          "equals": "watched-not-changed",
+          "replacement": "<div style='text-align:center'><i class='fa-solid fa-square-check'></i><div></div>"
+        },
+        {
+          "equals": "watched-changed",
+          "replacement": "<div style='text-align:center'><i class='fa-solid fa-triangle-exclamation'></i></div>"
+        },
+        {
+          "equals": "new",
+          "replacement": "<div style='text-align:center'><i class='fa-solid fa-circle-plus'></i></div>"
+        },
+        {
+          "equals": "missing-in-last-scan",
+          "replacement": "<div style='text-align:center'><i class='fa-solid fa-question'></i></div>"
+        }
+      ],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Status"
+        }
+      ]
+    }
+  ]
+}

@@ -116,7 +116,7 @@ def get_device_data(some_setting):
         }
     ]
 
-    # Return the data to be detected by teh main application 
+    # Return the data to be detected by the main application 
     return device_data
 
 if __name__ == '__main__':

@@ -40,6 +40,23 @@ class Device_obj:
 
         return result[column_name] if result else None
 
+    # Get all down
+    def getDown(self):
+        self.db.sql.execute("""
+            SELECT * FROM Devices WHERE devAlertDown = 1 and devPresentLastScan = 0
+        """)
+        return self.db.sql.fetchall()
+    
+    # Get all down
+    def getOffline(self):
+        self.db.sql.execute("""
+            SELECT * FROM Devices WHERE devPresentLastScan = 0
+        """)
+        return self.db.sql.fetchall()
+
+
+    
+
 
 #-------------------------------------------------------------------------------
 # Removing devices from the CurrentScan DB table which the user chose to ignore by MAC or IP
