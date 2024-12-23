@@ -44,6 +44,6 @@ To create truly dummy devices, you can use a loopback IP address (e.g., `0.0.0.0
 
 ## NMAP and Fake MAC Addresses
 
-Scanning remote networks with NMAP is possible (vai the `NMAPDEV` plugin), but since it cannot retrieve the MAC address, you need to enable the `NMAPDEV_FAKE_MAC` setting. This will generate a fake MAC address based on the IP address, allowing you to track devices. However, this can lead to inconsistencies, especially if the IP address changes or a previously logged device is rediscovered. If this setting is disabled, only the IP address will be discovered, and devices with missing MAC addresses will be skipped.
+Scanning remote networks with NMAP is possible (via the `NMAPDEV` plugin), but since it cannot retrieve the MAC address, you need to enable the `NMAPDEV_FAKE_MAC` setting. This will generate a fake MAC address based on the IP address, allowing you to track devices. However, this can lead to inconsistencies, especially if the IP address changes or a previously logged device is rediscovered. If this setting is disabled, only the IP address will be discovered, and devices with missing MAC addresses will be skipped.
 
 Check the [NMAPDEV plugin](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/nmap_dev_scan) for details
