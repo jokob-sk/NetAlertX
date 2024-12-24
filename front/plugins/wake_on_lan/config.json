@@ -95,7 +95,7 @@
     },
     {
       "function": "devices_to_wake",
-      "events": ["run"],
+      "events": [],
       "type": {
         "dataType": "string",
         "elements": [
