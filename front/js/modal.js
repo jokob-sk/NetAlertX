@@ -65,7 +65,8 @@ function showModalWarning(
     message,
     btnCancel = getString("Gen_Cancel"),
     btnOK = getString("Gen_Okay"),
-    callbackFunction = null
+    callbackFunction = null,
+    triggeredBy = null
 ) {
     // set captions
     $("#modal-warning-title").html(title);
@@ -75,6 +76,10 @@ function showModalWarning(
 
     if (callbackFunction != null) {
         modalCallbackFunction = callbackFunction;
+    }
+
+    if (triggeredBy != null) {
+        $('#'+prefix).attr("data-myparam-triggered-by", triggeredBy)
     }
 
     // Show modal

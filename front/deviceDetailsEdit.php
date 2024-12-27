@@ -211,7 +211,7 @@
 
                     // Generate the input field HTML
                     const inputFormHtml = `<div class="form-group col-xs-12">
-                                              <label class="${obj.labelClasses}"> ${setting.setName}    
+                                              <label id="${setting.setKey}_label" class="${obj.labelClasses}" > ${setting.setName}    
                                                   <i my-set-key="${setting.setKey}"
                                                       title="${getString("Settings_Show_Description")}" 
                                                       class="fa fa-circle-info pointer helpIconSmallTopRight" 

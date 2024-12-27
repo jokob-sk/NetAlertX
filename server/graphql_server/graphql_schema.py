@@ -142,7 +142,8 @@ class Query(ObjectType):
                             (device["devPresentLastScan"] == 1 and 'online' in allowed_statuses) or
                             (device["devIsNew"] == 1 and 'new' in allowed_statuses) or
                             (device["devPresentLastScan"] == 0 and device["devAlertDown"] and 'down' in allowed_statuses) or
-                            (device["devPresentLastScan"] == 0 and 'offline' in allowed_statuses)
+                            (device["devPresentLastScan"] == 0  and 'offline' in allowed_statuses) and device["devIsArchived"] == 0 or 
+                            (device["devIsArchived"] == 1 and 'archived' in allowed_statuses)  
                         )
                     ]
                 elif status == "connected":

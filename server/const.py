@@ -88,7 +88,7 @@ sql_devices_tiles = """
                             FROM Devices
                             WHERE
                                 (instr((SELECT setValue FROM Statuses), 'online') > 0 AND devPresentLastScan = 1) OR
-                                (instr((SELECT setValue FROM Statuses), 'offline') > 0 AND devPresentLastScan = 0) OR
+                                (instr((SELECT setValue FROM Statuses), 'offline') > 0 AND devPresentLastScan = 0 AND devIsArchived = 0) OR
                                 (instr((SELECT setValue FROM Statuses), 'down') > 0 AND devPresentLastScan = 0 AND devAlertDown = 1) OR
                                 (instr((SELECT setValue FROM Statuses), 'new') > 0 AND devIsNew = 1) OR
                                 (instr((SELECT setValue FROM Statuses), 'archived') > 0 AND devIsArchived = 1)

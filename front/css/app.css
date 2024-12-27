@@ -1416,6 +1416,7 @@ input[readonly] {
     display: inline-block;
     padding: 0.1em;
     margin: 0.1em;
+    /* transition: font-size 0.3s;*/
 }
 
 .devicePropAction:hover
@@ -1424,6 +1425,32 @@ input[readonly] {
     padding: 0em;
     margin: 0em;
     
+}
+
+
+#panDetails .dataTables_wrapper .bottom div
+{
+    max-width: 34%;
+    display: block;
+    float:inline-end;
+    height: 2em;
+} 
+
+#panDetails .dataTables_wrapper .bottom .dataTables_info
+{
+    float:inline-start;
+}
+
+#panDetails .dataTables_wrapper .bottom .dataTables_length
+{
+    padding: 0.3em;
+}
+/* #panDetails .dataTables_wrapper .bottom .paging_simple_numbers */
+
+
+#panDetails #NEWDEV_devCustomProps_label
+{
+    display: none;
 }
 
 /* ----------------------------------------------------------------- */

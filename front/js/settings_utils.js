@@ -1159,7 +1159,8 @@ function generateFormHtml(settingsData, set, overrideValue, overrideOptions, ori
         $(document).ready(() => {
           $(`#${tableId}`).DataTable({
             ordering: false, // Disables sorting on all columns
-            searching: false // Disables the search box
+            searching: false, // Disables the search box
+            dom: "<'top'rt><'bottom'ipl>", // Move length dropdown to the bottom
           });
         });
 

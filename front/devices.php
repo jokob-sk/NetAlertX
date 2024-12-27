@@ -295,46 +295,46 @@ function renderInfoboxes(customData) {
     });
   }
 
-// -----------------------------------------------------------------------------
-// Define a function to filter data based on deviceStatus
-function filterDataByStatus(data, status) {
-  return data.filter(function(item) {
-    switch (status) {
-      case 'my_devices':
-        to_display = getSetting('UI_MY_DEVICES');
+// // -----------------------------------------------------------------------------
+// // Define a function to filter data based on deviceStatus
+// function filterDataByStatus(data, status) {
+//   return data.filter(function(item) {
+//     switch (status) {
+//       case 'my_devices':
+//         to_display = getSetting('UI_MY_DEVICES');
         
-        let result = true;
+//         let result = true;
 
-        if (!to_display.includes('down') && item.devPresentLastScan === 0 && item.devAlertDown !== 0) {
-            result = false;
-        } else if (!to_display.includes('new') && item.devIsNew === 1) {
-            result = false;
-        } else if (!to_display.includes('archived') && item.devIsArchived === 1) {
-            result = false;
-        } else if (!to_display.includes('offline') && item.devPresentLastScan === 0) {
-            result = false;
-        } else if (!to_display.includes('online') && item.devPresentLastScan === 1) {
-            result = false;
-        }  
+//         if (!to_display.includes('down') && item.devPresentLastScan === 0 && item.devAlertDown !== 0) {
+//             result = false;
+//         } else if (!to_display.includes('new') && item.devIsNew === 1) {
+//             result = false;
+//         } else if (!to_display.includes('archived') && item.devIsArchived === 1) {
+//             result = false;
+//         } else if (!to_display.includes('offline') && item.devPresentLastScan === 0) {
+//             result = false;
+//         } else if (!to_display.includes('online') && item.devPresentLastScan === 1) {
+//             result = false;
+//         }  
 
-        return result; // Include all items for 'my_devices' status
-      case 'connected':
-        return item.devPresentLastScan === 1;
-      case 'favorites':
-        return item.devFavorite === 1;
-      case 'new':
-        return item.devIsNew === 1;
-      case 'offline':
-        return item.devPresentLastScan === 0;
-      case 'down':
-        return (item.devPresentLastScan === 0 && item.devAlertDown  !== 0);
-      case 'archived':
-        return item.devIsArchived === 1;
-      default:
-        return true; // Include all items for unknown statuses
-    }
-  });
-}
+//         return result; // Include all items for 'my_devices' status
+//       case 'connected':
+//         return item.devPresentLastScan === 1;
+//       case 'favorites':
+//         return item.devFavorite === 1;
+//       case 'new':
+//         return item.devIsNew === 1;
+//       case 'offline':
+//         return item.devPresentLastScan === 0;
+//       case 'down':
+//         return (item.devPresentLastScan === 0 && item.devAlertDown  !== 0);
+//       case 'archived':
+//         return item.devIsArchived === 1;
+//       default:
+//         return true; // Include all items for unknown statuses
+//     }
+//   });
+// }
 
 
 // Map column index to column name for GraphQL query
@@ -792,6 +792,11 @@ function initializeDatatable (status) {
           
           hideSpinner();
           
+    },
+    createdRow: function(row, data, dataIndex) {
+        // add devMac to the table row
+        $(row).attr('my-devMac', data[mapIndx(11)]); 
+                
     }
     
   });
@@ -919,7 +924,7 @@ function renderCustomProps(custProps, mac) {
           onClickEvent = `alert('Not implemented')`;
           break;
         case "delete_dev":
-          onClickEvent = `deleteDeviceByMac('${mac}')`;
+          onClickEvent = `askDelDevDTInline('${mac}')`;
           break;
         default:
           break;
