@@ -501,7 +501,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
           } 
           
           // INPUT
-          inputFormHtml = generateFormHtml(set, valIn);
+          inputFormHtml = generateFormHtml(settingsData, set, valIn, null, null);
 
                 // construct final HTML for the setting
                 setHtml += inputFormHtml + overrideHtml + `
@@ -565,13 +565,12 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
           setType     = set["setType"]
           setCodeName = set["setKey"]
 
-          console.log(prefix);
+          // console.log(prefix);
 
-          const setTypeObject = JSON.parse(setType.replace(/'/g, '"'));         
+          const setTypeObject = JSON.parse(processQuotes(setType))      
           // console.log(setTypeObject);
 
           const dataType = setTypeObject.dataType;
-          
 
           // get the element with the input value(s)
           let elements = setTypeObject.elements.filter(element => element.elementHasInputValue === 1);
@@ -602,12 +601,18 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
             onClick,
             onChange,
             customParams,
-            customId
+            customId,
+            columns
           } = handleElementOptions('none', elementOptions, transformers, val = "");
 
           let value;
 
-          if (dataType === "string" || 
+          if (dataType === "string" && elementWithInputValue.elementType === "datatable" ) {
+
+            value = collectTableData(`#${setCodeName}_table`)
+            settingsArray.push([prefix, setCodeName, dataType, btoa(JSON.stringify(value))]);
+
+          } else if (dataType === "string" || 
               (dataType === "integer" && (inputType === "number" || inputType === "text"))) {
            
             value = $('#' + setCodeName).val();
@@ -646,9 +651,15 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
                 }
               });
             }
-          
+
             value = JSON.stringify(temps);
 
+            settingsArray.push([prefix, setCodeName, dataType, value]);
+
+          
+          } else if (dataType === "none") {
+            // no value to save
+            value = ""
             settingsArray.push([prefix, setCodeName, dataType, value]);
 
           } else if (dataType === "json") {
@@ -675,7 +686,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
 
           console.log(settingsArray);
           console.log( JSON.stringify(settingsArray));
-          // return;
+          // return;  // 🐛 🔺
           // trigger a save settings event in the backend
           $.ajax({
           method: "POST",
@@ -735,12 +746,14 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
     {
       // check if config file has been updated
       $.get('/php/server/query_json.php', { file: 'app_state.json', nocache: Date.now() }, function(appState) {   
+
+        console.log("Settings: Got app_state.json");       
         
         fileModificationTime = <?php echo filemtime($confPath)*1000;?>;  
 
         // console.log(appState["settingsImported"]*1000)
         importedMiliseconds = parseInt((appState["settingsImported"]*1000));
-        humanReadable = (new Date(importedMiliseconds)).toLocaleString("en-UK", { timeZone: "<?php echo $timeZone?>" });
+        
 
         // check if displayed settings are outdated
         if(appState["showSpinner"] || fileModificationTime > importedMiliseconds)
@@ -754,6 +767,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
           checkInitialization();
         }
 
+        humanReadable = (new Date(importedMiliseconds)).toLocaleString("en-UK", { timeZone: "<?php echo $timeZone?>" });
         document.getElementById('lastImportedTime').innerHTML = humanReadable; 
       })
 

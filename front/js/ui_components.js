@@ -98,11 +98,22 @@ function generateApiToken(elem, length) {
 }
 
 
+
+
+// ----------------------------------------------
+// Updates the icon preview  
+function updateAllIconPreviews() {
+  $(".iconInputVal").each((index, el)=>{
+    updateIconPreview(el)
+  })
+}
+
 // ----------------------------------------------
 // Updates the icon preview  
 function updateIconPreview(elem) {
-  const targetElement = $('[my-customid="NEWDEV_devIcon_preview"]');
-  const iconInput = $("#NEWDEV_devIcon");
+
+  const previewSpan =  $(elem).parent().find(".iconPreview");
+  const iconInput = $(elem);
 
   let attempts = 0;
 
@@ -110,10 +121,10 @@ function updateIconPreview(elem) {
     let value = iconInput.val();
 
     if (value) {
-      targetElement.html(atob(value));
+      previewSpan.html(atob(value));
       iconInput.off('change input').on('change input', function () {
-        let newValue = $(this).val();
-        targetElement.html(atob(newValue));
+        let newValue = $(elem).val();
+        previewSpan.html(atob(newValue));
       });
       return; // Stop retrying if successful
     } 
@@ -449,7 +460,7 @@ function showIconSelection() {
       iconDiv.addEventListener('click', () => {
         selectElement.value = value; // Update the select element value
         $(`#${modalId}`).modal('hide'); // Hide the modal
-        updateIconPreview();
+        updateAllIconPreviews();
       });
     }
   });

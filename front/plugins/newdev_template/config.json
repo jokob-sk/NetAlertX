@@ -6,7 +6,11 @@
   "enabled": true,
   "data_source": "template",
   "show_ui": false,
-  "localized": ["display_name", "description", "icon"],
+  "localized": [
+    "display_name",
+    "description",
+    "icon"
+  ],
   "display_name": [
     {
       "language_code": "en_us",
@@ -34,21 +38,41 @@
           {
             "elementType": "input",
             "elementOptions": [
-              { "placeholder": "Enter value" },
-              { "suffix": "_in" },
-              { "cssClasses": "col-sm-10" },
-              { "prefillValue": "null" }
+              {
+                "placeholder": "Enter value"
+              },
+              {
+                "suffix": "_in"
+              },
+              {
+                "cssClasses": "col-sm-10"
+              },
+              {
+                "prefillValue": "null"
+              }
             ],
             "transformers": []
           },
           {
             "elementType": "button",
             "elementOptions": [
-              { "sourceSuffixes": ["_in"] },
-              { "separator": "" },
-              { "cssClasses": "col-xs-12" },
-              { "onClick": "addList(this, false)" },
-              { "getStringKey": "Gen_Add" }
+              {
+                "sourceSuffixes": [
+                  "_in"
+                ]
+              },
+              {
+                "separator": ""
+              },
+              {
+                "cssClasses": "col-xs-12"
+              },
+              {
+                "onClick": "addList(this, false)"
+              },
+              {
+                "getStringKey": "Gen_Add"
+              }
             ],
             "transformers": []
           },
@@ -56,31 +80,57 @@
             "elementType": "select",
             "elementHasInputValue": 1,
             "elementOptions": [
-              { "multiple": "true" },
-              { "readonly": "true" },
-              { "editable": "true" }
+              {
+                "multiple": "true"
+              },
+              {
+                "readonly": "true"
+              },
+              {
+                "editable": "true"
+              }
             ],
             "transformers": []
           },
           {
             "elementType": "button",
             "elementOptions": [
-              { "sourceSuffixes": [] },
-              { "separator": "" },
-              { "cssClasses": "col-xs-6" },
-              { "onClick": "removeAllOptions(this)" },
-              { "getStringKey": "Gen_Remove_All" }
+              {
+                "sourceSuffixes": []
+              },
+              {
+                "separator": ""
+              },
+              {
+                "cssClasses": "col-xs-6"
+              },
+              {
+                "onClick": "removeAllOptions(this)"
+              },
+              {
+                "getStringKey": "Gen_Remove_All"
+              }
             ],
             "transformers": []
           },
           {
             "elementType": "button",
             "elementOptions": [
-              { "sourceSuffixes": [] },
-              { "separator": "" },
-              { "cssClasses": "col-xs-6" },
-              { "onClick": "removeFromList(this)" },
-              { "getStringKey": "Gen_Remove_Last" }
+              {
+                "sourceSuffixes": []
+              },
+              {
+                "separator": ""
+              },
+              {
+                "cssClasses": "col-xs-6"
+              },
+              {
+                "onClick": "removeFromList(this)"
+              },
+              {
+                "getStringKey": "Gen_Remove_Last"
+              }
             ],
             "transformers": []
           }
@@ -88,7 +138,10 @@
       },
       "default_value": [],
       "options": [],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -110,21 +163,41 @@
           {
             "elementType": "input",
             "elementOptions": [
-              { "placeholder": "Enter value" },
-              { "suffix": "_in" },
-              { "cssClasses": "col-sm-10" },
-              { "prefillValue": "null" }
+              {
+                "placeholder": "Enter value"
+              },
+              {
+                "suffix": "_in"
+              },
+              {
+                "cssClasses": "col-sm-10"
+              },
+              {
+                "prefillValue": "null"
+              }
             ],
             "transformers": []
           },
           {
             "elementType": "button",
             "elementOptions": [
-              { "sourceSuffixes": ["_in"] },
-              { "separator": "" },
-              { "cssClasses": "col-xs-12" },
-              { "onClick": "addList(this, false)" },
-              { "getStringKey": "Gen_Add" }
+              {
+                "sourceSuffixes": [
+                  "_in"
+                ]
+              },
+              {
+                "separator": ""
+              },
+              {
+                "cssClasses": "col-xs-12"
+              },
+              {
+                "onClick": "addList(this, false)"
+              },
+              {
+                "getStringKey": "Gen_Add"
+              }
             ],
             "transformers": []
           },
@@ -132,31 +205,57 @@
             "elementType": "select",
             "elementHasInputValue": 1,
             "elementOptions": [
-              { "multiple": "true" },
-              { "readonly": "true" },
-              { "editable": "true" }
+              {
+                "multiple": "true"
+              },
+              {
+                "readonly": "true"
+              },
+              {
+                "editable": "true"
+              }
             ],
             "transformers": []
           },
           {
             "elementType": "button",
             "elementOptions": [
-              { "sourceSuffixes": [] },
-              { "separator": "" },
-              { "cssClasses": "col-xs-6" },
-              { "onClick": "removeAllOptions(this)" },
-              { "getStringKey": "Gen_Remove_All" }
+              {
+                "sourceSuffixes": []
+              },
+              {
+                "separator": ""
+              },
+              {
+                "cssClasses": "col-xs-6"
+              },
+              {
+                "onClick": "removeAllOptions(this)"
+              },
+              {
+                "getStringKey": "Gen_Remove_All"
+              }
             ],
             "transformers": []
           },
           {
             "elementType": "button",
             "elementOptions": [
-              { "sourceSuffixes": [] },
-              { "separator": "" },
-              { "cssClasses": "col-xs-6" },
-              { "onClick": "removeFromList(this)" },
-              { "getStringKey": "Gen_Remove_Last" }
+              {
+                "sourceSuffixes": []
+              },
+              {
+                "separator": ""
+              },
+              {
+                "cssClasses": "col-xs-6"
+              },
+              {
+                "onClick": "removeFromList(this)"
+              },
+              {
+                "getStringKey": "Gen_Remove_Last"
+              }
             ],
             "transformers": []
           }
@@ -164,7 +263,10 @@
       },
       "default_value": [],
       "options": [],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -186,21 +288,41 @@
           {
             "elementType": "input",
             "elementOptions": [
-              { "placeholder": "Enter value" },
-              { "suffix": "_in" },
-              { "cssClasses": "col-sm-10" },
-              { "prefillValue": "null" }
+              {
+                "placeholder": "Enter value"
+              },
+              {
+                "suffix": "_in"
+              },
+              {
+                "cssClasses": "col-sm-10"
+              },
+              {
+                "prefillValue": "null"
+              }
             ],
             "transformers": []
           },
           {
             "elementType": "button",
             "elementOptions": [
-              { "sourceSuffixes": ["_in"] },
-              { "separator": "" },
-              { "cssClasses": "col-xs-12" },
-              { "onClick": "addList(this, false)" },
-              { "getStringKey": "Gen_Add" }
+              {
+                "sourceSuffixes": [
+                  "_in"
+                ]
+              },
+              {
+                "separator": ""
+              },
+              {
+                "cssClasses": "col-xs-12"
+              },
+              {
+                "onClick": "addList(this, false)"
+              },
+              {
+                "getStringKey": "Gen_Add"
+              }
             ],
             "transformers": []
           },
@@ -208,31 +330,59 @@
             "elementType": "select",
             "elementHasInputValue": 1,
             "elementOptions": [
-              { "multiple": "true" },
-              { "readonly": "true" },
-              { "editable": "true" }
+              {
+                "multiple": "true"
+              },
+              {
+                "readonly": "true"
+              },
+              {
+                "editable": "true"
+              }
             ],
-            "transformers": ["base64"]
+            "transformers": [
+              "base64"
+            ]
           },
           {
             "elementType": "button",
             "elementOptions": [
-              { "sourceSuffixes": [] },
-              { "separator": "" },
-              { "cssClasses": "col-xs-6" },
-              { "onClick": "removeFromList(this)" },
-              { "getStringKey": "Gen_Remove_Last" }
+              {
+                "sourceSuffixes": []
+              },
+              {
+                "separator": ""
+              },
+              {
+                "cssClasses": "col-xs-6"
+              },
+              {
+                "onClick": "removeFromList(this)"
+              },
+              {
+                "getStringKey": "Gen_Remove_Last"
+              }
             ],
             "transformers": []
           },
           {
             "elementType": "button",
             "elementOptions": [
-              { "sourceSuffixes": [] },
-              { "separator": "" },
-              { "cssClasses": "col-xs-6" },
-              { "onClick": "removeAllOptions(this)" },
-              { "getStringKey": "Gen_Remove_All" }
+              {
+                "sourceSuffixes": []
+              },
+              {
+                "separator": ""
+              },
+              {
+                "cssClasses": "col-xs-6"
+              },
+              {
+                "onClick": "removeAllOptions(this)"
+              },
+              {
+                "getStringKey": "Gen_Remove_All"
+              }
             ],
             "transformers": []
           }
@@ -251,7 +401,10 @@
         "Iy4q"
       ],
       "options": [],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -272,14 +425,21 @@
         "elements": [
           {
             "elementType": "input",
-            "elementOptions": [{ "type": "checkbox" }],
+            "elementOptions": [
+              {
+                "type": "checkbox"
+              }
+            ],
             "transformers": []
           }
         ]
       },
       "default_value": false,
       "options": [],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -300,7 +460,11 @@
         "elements": [
           {
             "elementType": "input",
-            "elementOptions": [{ "readonly": "true" }],
+            "elementOptions": [
+              {
+                "readonly": "true"
+              }
+            ],
             "transformers": []
           }
         ]
@@ -308,7 +472,10 @@
       "maxLength": 50,
       "default_value": "",
       "options": [],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -337,7 +504,10 @@
       "maxLength": 50,
       "default_value": "",
       "options": [],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -358,7 +528,11 @@
         "elements": [
           {
             "elementType": "input",
-            "elementOptions": [{ "readonly": "true" }],
+            "elementOptions": [
+              {
+                "readonly": "true"
+              }
+            ],
             "transformers": []
           }
         ]
@@ -366,7 +540,10 @@
       "maxLength": 50,
       "default_value": "(unknown)",
       "options": [],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -382,16 +559,25 @@
     },
     {
       "function": "devIcon",
-      "events": ["copy_icons", "add_icon"],
+      "events": [
+        "copy_icons",
+        "add_icon"
+      ],
       "type": {
         "dataType": "string",
         "elements": [
           {
             "elementType": "span",
             "elementOptions": [
-              { "cssClasses": "input-group-addon iconPreview" },
-              { "getStringKey": "Gen_SelectIcon" },
-              { "customId": "NEWDEV_devIcon_preview" }
+              {
+                "cssClasses": "input-group-addon iconPreview"
+              },
+              {
+                "getStringKey": "Gen_SelectIcon"
+              },
+              {
+                "customId": "NEWDEV_devIcon_preview"
+              }
             ],
             "transformers": []
           },
@@ -399,18 +585,24 @@
             "elementType": "select",
             "elementHasInputValue": 1,
             "elementOptions": [
-              { "cssClasses": "col-xs-12" },
+              {
+                "cssClasses": "iconInputVal"
+              },
               {
                 "onChange": "updateIconPreview(this)"
               },
-              { "customParams": "NEWDEV_devIcon,NEWDEV_devIcon_preview" }
+              {
+                "customParams": "NEWDEV_devIcon,NEWDEV_devIcon_preview"
+              }
             ],
             "transformers": []
-          }          
+          }
         ]
       },
       "default_value": "",
-      "options": ["{value}"],
+      "options": [
+        "{value}"
+      ],
       "options_params": [
         {
           "name": "value",
@@ -418,7 +610,10 @@
           "value": "WITH RECURSIVE SettingsIcons AS (SELECT REPLACE(REPLACE(REPLACE(setValue, '[', ''), ']', ''), '''', '') AS icon_list FROM Settings WHERE setKey = 'UI_ICONS'), SplitIcons AS (SELECT TRIM(SUBSTR(icon_list, 1, INSTR(icon_list || ',', ',') - 1)) AS icon, SUBSTR(icon_list, INSTR(icon_list || ',', ',') + 1) AS remaining_icons FROM SettingsIcons WHERE icon_list <> '' UNION ALL SELECT TRIM(SUBSTR(remaining_icons, 1, INSTR(remaining_icons || ',', ',') - 1)) AS icon, SUBSTR(remaining_icons, INSTR(remaining_icons || ',', ',') + 1) AS remaining_icons FROM SplitIcons WHERE remaining_icons <> '') SELECT DISTINCT * FROM (SELECT icon as name, icon as id  FROM SplitIcons UNION SELECT  '❌None' AS name, '' AS id  UNION SELECT devIcon AS name, devIcon AS id FROM Devices WHERE devIcon <> '') AS combined_results;"
         }
       ],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -434,16 +629,24 @@
     },
     {
       "function": "devOwner",
-      "events": ["add_option"],
+      "events": [
+        "add_option"
+      ],
       "type": {
         "dataType": "string",
         "elements": [
-          { "elementType": "select", "elementOptions": [], "transformers": [] }
+          {
+            "elementType": "select",
+            "elementOptions": [],
+            "transformers": []
+          }
         ]
       },
       "maxLength": 30,
       "default_value": "",
-      "options": ["{value}"],
+      "options": [
+        "{value}"
+      ],
       "options_params": [
         {
           "name": "value",
@@ -451,7 +654,10 @@
           "value": "SELECT DISTINCT '' as id, '❌None' as name UNION SELECT devOwner as id, devOwner as name FROM (SELECT devOwner FROM Devices UNION SELECT 'House' ) AS all_devices ORDER BY id;"
         }
       ],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -467,16 +673,24 @@
     },
     {
       "function": "devType",
-      "events": ["add_option"],
+      "events": [
+        "add_option"
+      ],
       "type": {
         "dataType": "string",
         "elements": [
-          { "elementType": "select", "elementOptions": [], "transformers": [] }
+          {
+            "elementType": "select",
+            "elementOptions": [],
+            "transformers": []
+          }
         ]
       },
       "maxLength": 30,
       "default_value": "",
-      "options": ["{value}"],
+      "options": [
+        "{value}"
+      ],
       "options_params": [
         {
           "name": "value",
@@ -489,7 +703,10 @@
           "value": "UI_LANG"
         }
       ],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -518,7 +735,10 @@
       "maxLength": 250,
       "default_value": "",
       "options": [],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -528,7 +748,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "The vendor of the device. If set to empty or <code>(unknown)</code> teh app will try to auto-detect it."
+          "string": "The vendor of the device. If set to empty or <code>(unknown)</code> the app will try to auto-detect it."
         }
       ]
     },
@@ -539,14 +759,21 @@
         "elements": [
           {
             "elementType": "input",
-            "elementOptions": [{ "type": "checkbox" }],
+            "elementOptions": [
+              {
+                "type": "checkbox"
+              }
+            ],
             "transformers": []
           }
         ]
       },
       "default_value": 0,
       "options": [],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -562,16 +789,24 @@
     },
     {
       "function": "devGroup",
-      "events": ["add_option"],
+      "events": [
+        "add_option"
+      ],
       "type": {
         "dataType": "string",
         "elements": [
-          { "elementType": "select", "elementOptions": [], "transformers": [] }
+          {
+            "elementType": "select",
+            "elementOptions": [],
+            "transformers": []
+          }
         ]
       },
       "maxLength": 10,
       "default_value": "",
-      "options": ["{value}"],
+      "options": [
+        "{value}"
+      ],
       "options_params": [
         {
           "name": "value",
@@ -579,7 +814,10 @@
           "value": "SELECT DISTINCT '' as id, '❌None' as name UNION SELECT devGroup as id, devGroup as name FROM (SELECT devGroup FROM Devices WHERE devGroup <> '' UNION SELECT 'Personal' UNION SELECT 'Always on' UNION SELECT 'Friends' UNION SELECT 'Others' ) AS all_devices ORDER BY id;"
         }
       ],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -595,16 +833,24 @@
     },
     {
       "function": "devLocation",
-      "events": ["add_option"],
+      "events": [
+        "add_option"
+      ],
       "type": {
         "dataType": "string",
         "elements": [
-          { "elementType": "select", "elementOptions": [], "transformers": [] }
+          {
+            "elementType": "select",
+            "elementOptions": [],
+            "transformers": []
+          }
         ]
       },
       "maxLength": 250,
       "default_value": "",
-      "options": ["{value}"],
+      "options": [
+        "{value}"
+      ],
       "options_params": [
         {
           "name": "value",
@@ -612,7 +858,10 @@
           "value": "SELECT DISTINCT '' AS id, '❌None' AS name UNION SELECT devLocation AS id, devLocation AS name FROM Devices WHERE devLocation NOT IN ('', 'null') AND devLocation IS NOT NULL UNION SELECT 'Bathroom' AS id, 'Bathroom' AS name UNION SELECT 'Bedroom', 'Bedroom' UNION SELECT 'Dining room', 'Dining room' UNION SELECT 'Hall', 'Hall' UNION SELECT 'Kitchen', 'Kitchen' UNION SELECT 'Laundry', 'Laundry' UNION SELECT 'Living room', 'Living room' UNION SELECT 'Study', 'Study' UNION SELECT 'Attic', 'Attic' UNION SELECT 'Basement', 'Basement' UNION SELECT 'Garage', 'Garage' UNION SELECT 'Back yard', 'Back yard' UNION SELECT 'Garden', 'Garden' UNION SELECT 'Terrace', 'Terrace' ORDER BY id;"
         }
       ],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -631,12 +880,19 @@
       "type": {
         "dataType": "string",
         "elements": [
-          { "elementType": "textarea", "elementOptions": [], "transformers": [] }
+          {
+            "elementType": "textarea",
+            "elementOptions": [],
+            "transformers": []
+          }
         ]
       },
       "default_value": "",
       "options": [],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -657,7 +913,11 @@
         "elements": [
           {
             "elementType": "input",
-            "elementOptions": [{ "readonly": "true" }],
+            "elementOptions": [
+              {
+                "readonly": "true"
+              }
+            ],
             "transformers": []
           }
         ]
@@ -665,7 +925,10 @@
       "format": "date-time",
       "default_value": "",
       "options": [],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -686,7 +949,11 @@
         "elements": [
           {
             "elementType": "input",
-            "elementOptions": [{ "readonly": "true" }],
+            "elementOptions": [
+              {
+                "readonly": "true"
+              }
+            ],
             "transformers": []
           }
         ]
@@ -694,7 +961,10 @@
       "format": "date-time",
       "default_value": "",
       "options": [],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -715,14 +985,21 @@
         "elements": [
           {
             "elementType": "input",
-            "elementOptions": [{ "type": "checkbox" }],
+            "elementOptions": [
+              {
+                "type": "checkbox"
+              }
+            ],
             "transformers": []
           }
         ]
       },
       "default_value": 0,
       "options": [],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -743,14 +1020,21 @@
         "elements": [
           {
             "elementType": "input",
-            "elementOptions": [{ "type": "checkbox" }],
+            "elementOptions": [
+              {
+                "type": "checkbox"
+              }
+            ],
             "transformers": []
           }
         ]
       },
       "default_value": 1,
       "options": [],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -771,14 +1055,21 @@
         "elements": [
           {
             "elementType": "input",
-            "elementOptions": [{ "type": "checkbox" }],
+            "elementOptions": [
+              {
+                "type": "checkbox"
+              }
+            ],
             "transformers": []
           }
         ]
       },
       "default_value": 1,
       "options": [],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -799,14 +1090,21 @@
         "elements": [
           {
             "elementType": "input",
-            "elementOptions": [{ "type": "checkbox" }],
+            "elementOptions": [
+              {
+                "type": "checkbox"
+              }
+            ],
             "transformers": []
           }
         ]
       },
       "default_value": 1,
       "options": [],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -827,14 +1125,21 @@
         "elements": [
           {
             "elementType": "input",
-            "elementOptions": [{ "type": "checkbox" }],
+            "elementOptions": [
+              {
+                "type": "checkbox"
+              }
+            ],
             "transformers": []
           }
         ]
       },
       "default_value": 0,
       "options": [],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -853,11 +1158,17 @@
       "type": {
         "dataType": "string",
         "elements": [
-          { "elementType": "select", "elementOptions": [], "transformers": [] }
+          {
+            "elementType": "select",
+            "elementOptions": [],
+            "transformers": []
+          }
         ]
       },
       "default_value": 0,
-      "options": ["{value}"],
+      "options": [
+        "{value}"
+      ],
       "options_params": [
         {
           "name": "value",
@@ -865,7 +1176,10 @@
           "value": "SELECT '0' as id, '0 (notify all)' as name UNION SELECT '168' as id, '1 week' as name UNION SELECT '24' as id, '1 day' as name UNION SELECT '8' as id, '8 h' as name UNION SELECT '1' as id, '1 h' as name"
         }
       ],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -886,7 +1200,11 @@
         "elements": [
           {
             "elementType": "input",
-            "elementOptions": [{ "readonly": "true" }],
+            "elementOptions": [
+              {
+                "readonly": "true"
+              }
+            ],
             "transformers": []
           }
         ]
@@ -894,7 +1212,10 @@
       "format": "date-time",
       "default_value": "",
       "options": [],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -915,14 +1236,21 @@
         "elements": [
           {
             "elementType": "input",
-            "elementOptions": [{ "type": "checkbox" }],
+            "elementOptions": [
+              {
+                "type": "checkbox"
+              }
+            ],
             "transformers": []
           }
         ]
       },
       "default_value": 1,
       "options": [],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -943,14 +1271,21 @@
         "elements": [
           {
             "elementType": "input",
-            "elementOptions": [{ "type": "checkbox" }],
+            "elementOptions": [
+              {
+                "type": "checkbox"
+              }
+            ],
             "transformers": []
           }
         ]
       },
       "default_value": 1,
       "options": [],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -971,14 +1306,21 @@
         "elements": [
           {
             "elementType": "input",
-            "elementOptions": [{ "type": "checkbox" }],
+            "elementOptions": [
+              {
+                "type": "checkbox"
+              }
+            ],
             "transformers": []
           }
         ]
       },
       "default_value": 0,
       "options": [],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -994,15 +1336,23 @@
     },
     {
       "function": "devParentMAC",
-      "events": ["go_to_node"],
+      "events": [
+        "go_to_node"
+      ],
       "type": {
         "dataType": "string",
         "elements": [
-          { "elementType": "select", "elementOptions": [], "transformers": [] }
+          {
+            "elementType": "select",
+            "elementOptions": [],
+            "transformers": []
+          }
         ]
       },
       "default_value": "",
-      "options": ["{value}"],
+      "options": [
+        "{value}"
+      ],
       "options_params": [
         {
           "name": "value",
@@ -1015,7 +1365,10 @@
           "value": "KNWN_target_macs"
         }
       ],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -1043,7 +1396,10 @@
       },
       "default_value": 0,
       "options": [],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -1071,7 +1427,10 @@
       },
       "default_value": "",
       "options": [],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -1099,7 +1458,10 @@
       },
       "default_value": "",
       "options": [],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -1112,9 +1474,114 @@
           "string": "The network site."
         }
       ]
-    }   
+    },
+    {
+      "function": "devCustomProps",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "datatable",
+            "elementHasInputValue": 1,
+            "elementOptions": [
+              {
+                "columns": [
+                  {
+                    "settingKey": "CUSTPROP_icon",
+                    "optionsOverride":"setting.CUSTPROP_icon",
+                    "typeOverride": {
+                      "dataType": "string",
+                      "elements": [
+                        {
+                          "elementType": "span",
+                          "elementOptions": [
+                            {
+                              "cssClasses": "input-group-addon iconPreview"
+                            },
+                            {
+                              "getStringKey": "Gen_SelectIcon"
+                            },
+                            {
+                              "customId": "CUSTPROP_icon_preview"
+                            }
+                          ],
+                          "transformers": []
+                        },
+                        {
+                          "elementType": "select",
+                          "elementHasInputValue": 1,
+                          "elementOptions": [
+                            {
+                              "cssClasses": "iconInputVal"
+                            },
+                            {
+                              "onChange": "updateIconPreview(this)"
+                            },
+                            {
+                              "customParams": "CUSTPROP_icon,CUSTPROP_icon_preview"
+                            }
+                          ],
+                          "transformers": []
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "settingKey": "CUSTPROP_type",
+                    "optionsOverride":"setting.CUSTPROP_type",
+                    "typeOverride": {
+                      "dataType": "string",
+                      "elements": [
+                        {
+                          "elementType": "select",
+                          "elementOptions": [],
+                          "transformers": []
+                        }
+                      ]
+                    }
+                  },                  
+                  {
+                    "settingKey": "CUSTPROP_name"
+                  },
+                  {
+                    "settingKey": "CUSTPROP_args"
+                  },
+                  {
+                    "settingKey": "CUSTPROP_notes"
+                  },
+                  {
+                    "settingKey": "CUSTPROP_show"
+                  },
+                  {
+                    "settingKey": "CUSTPROP_actions"
+                  }
+                ]
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": "WwogIFsKICAgIHsKICAgICAgIkNVU1RQUk9QX2ljb24iOiAiUEdrZ1kyeGhjM005SW1aaGN5Qm1ZUzEwY21GemFDMWhiSFFpUGp3dmFUND0iCiAgICB9LAogICAgewogICAgICAiQ1VTVFBST1BfdHlwZSI6ICJkZWxldGVfZGV2IgogICAgfSwKICAgIHsKICAgICAgIkNVU1RQUk9QX25hbWUiOiAiIgogICAgfSwKICAgIHsKICAgICAgIkNVU1RQUk9QX2FyZ3MiOiAiRGVsZXRlIGRldmljZSIKICAgIH0sCiAgICB7CiAgICAgICJDVVNUUFJPUF9ub3RlcyI6ICIiCiAgICB9LAogICAgewogICAgICAiQ1VTVFBST1Bfc2hvdyI6IHRydWUKICAgIH0KICBdCl0=",
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Properties"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Custom device properties to store additional data or to perform an action on the device. Check the <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/CUSTOM_PROPERTIES.md\" target=\"_blank\">documentation on Custom Properties</a> for additional details."
+        }
+      ]
+    }
   ],
-  "required": [
-  ],
+  "required": [],
   "additionalProperties": false
 }

@@ -475,6 +475,20 @@ class DB():
         
         self.sql.execute(""" DROP VIEW IF EXISTS Sessions_Devices;""")
         self.sql.execute("""CREATE VIEW Sessions_Devices AS SELECT * FROM Sessions LEFT JOIN "Devices" ON ses_MAC = devMac;""")
+
+
+        # add fields if missing
+
+        # devCustomProps column
+        devCustomProps_missing = self.sql.execute ("""
+            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='devCustomProps'
+          """).fetchone()[0] == 0
+
+        if devCustomProps_missing :
+          mylog('verbose', ["[upgradeDB] Adding devCustomProps to the Devices table"])
+          self.sql.execute("""
+            ALTER TABLE "Devices" ADD "devCustomProps" TEXT
+          """)
         
         # -------------------------------------------------------------------------
         # Settings table setup

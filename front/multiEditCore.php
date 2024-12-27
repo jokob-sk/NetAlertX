@@ -81,7 +81,7 @@
         
         settingsData = res["data"];
 
-        excludedColumns = ["NEWDEV_devMac", "NEWDEV_devFirstConnection", "NEWDEV_devLastConnection", "NEWDEV_devLastNotification", "NEWDEV_devLastIP", "NEWDEV_devStaticIP", "NEWDEV_devScan", "NEWDEV_devPresentLastScan" ]
+        excludedColumns = ["NEWDEV_devMac", "NEWDEV_devFirstConnection", "NEWDEV_devLastConnection", "NEWDEV_devLastNotification", "NEWDEV_devLastIP", "NEWDEV_devStaticIP", "NEWDEV_devScan", "NEWDEV_devPresentLastScan", "NEWDEV_devCustomProps" ]
         
         const relevantColumns = settingsData.filter(set =>
             set.setGroup === "NEWDEV" &&
@@ -90,21 +90,21 @@
             !set.setKey.includes("__metadata")
         );
 
-        const generateSimpleForm = columns => {
+        const generateSimpleForm = multiEditColumns => {
             const form = $('#multi-edit-form');
             const numColumns = 2; // Number of columns
 
             // Calculate number of elements per column
-            const elementsPerColumn = Math.ceil(columns.length / numColumns);
+            const elementsPerColumn = Math.ceil(multiEditColumns.length / numColumns);
 
             // Divide columns equally
             for (let i = 0; i < numColumns; i++) {
                 const column = $('<div>').addClass('col-md-6');
 
                 // Append form groups to the column
-                for (let j = i * elementsPerColumn; j < Math.min((i + 1) * elementsPerColumn, columns.length); j++) {
+                for (let j = i * elementsPerColumn; j < Math.min((i + 1) * elementsPerColumn, multiEditColumns.length); j++) {
 
-                  const setTypeObject  = JSON.parse(columns[j].setType.replace(/'/g, '"'));         
+                  const setTypeObject  = JSON.parse(multiEditColumns[j].setType.replace(/'/g, '"'));         
 
                   // get the element with the input value(s)
                   let elements = setTypeObject.elements.filter(element => element.elementHasInputValue === 1);
@@ -135,37 +135,38 @@
                     onClick,
                     onChange,
                     customParams,
-                    customId
+                    customId,
+                    columns
                   } = handleElementOptions('none', elementOptions, transformers, val = "");
 
                   //  render based on element type 
                   if (elementType === 'select') {
 
-                    targetLocation = columns[j].setKey + "_generateSetOptions"
+                    targetLocation = multiEditColumns[j].setKey + "_generateSetOptions"
 
-                    generateOptionsOrSetOptions(columns[j].setKey, [], targetLocation, generateOptions)
+                    generateOptionsOrSetOptions(multiEditColumns[j].setKey, [], targetLocation, generateOptions, null)
 
-                    console.log(columns[j].setKey)
+                    console.log(multiEditColumns[j].setKey)
                     //  Handle Icons as they need a preview                 
-                    if(columns[j].setKey == 'NEWDEV_devIcon')
+                    if(multiEditColumns[j].setKey == 'NEWDEV_devIcon')
                     {
                       input = `
                             <span class="input-group-addon iconPreview" my-customid="NEWDEV_devIcon_preview"></span>
                             <select  class="form-control"
                                       onChange="updateIconPreview(this)"
                                       my-customparams="NEWDEV_devIcon,NEWDEV_devIcon_preview"
-                                      id="${columns[j].setKey}"
-                                      data-my-column="${columns[j].setKey}" 
-                                      data-my-targetColumns="${columns[j].setKey.replace('NEWDEV_','')}" >
+                                      id="${multiEditColumns[j].setKey}"
+                                      data-my-column="${multiEditColumns[j].setKey}" 
+                                      data-my-targetColumns="${multiEditColumns[j].setKey.replace('NEWDEV_','')}" >
                               <option id="${targetLocation}"></option>
                             </select>`
                       
                     } else{                      
 
                       input = `<select  class="form-control"
-                                      id="${columns[j].setKey}"
-                                      data-my-column="${columns[j].setKey}" 
-                                      data-my-targetColumns="${columns[j].setKey.replace('NEWDEV_','')}" >
+                                      id="${multiEditColumns[j].setKey}"
+                                      data-my-column="${multiEditColumns[j].setKey}" 
+                                      data-my-targetColumns="${multiEditColumns[j].setKey.replace('NEWDEV_','')}" >
                               <option id="${targetLocation}"></option>
                             </select>`
                     }
@@ -178,20 +179,20 @@
                     
 
                     input =  `<input  class="${inputClass}" 
-                                      id="${columns[j].setKey}"  
-                                      my-customid="${columns[j].setKey}"  
-                                      data-my-column="${columns[j].setKey}" 
-                                      data-my-targetColumns="${columns[j].setKey.replace('NEWDEV_','')}" 
+                                      id="${multiEditColumns[j].setKey}"  
+                                      my-customid="${multiEditColumns[j].setKey}"  
+                                      data-my-column="${multiEditColumns[j].setKey}" 
+                                      data-my-targetColumns="${multiEditColumns[j].setKey.replace('NEWDEV_','')}" 
                                       type="${inputType}">`
                   }
 
           
                   const inputEntry  = `<div class="form-group col-sm-12" >
-                                          <label class="col-sm-3 control-label">${columns[j].setName}</label>
+                                          <label class="col-sm-3 control-label">${multiEditColumns[j].setName}</label>
                                           <div class="col-sm-9">
                                             <div class="input-group red-hover-border">
                                               ${input}
-                                              <span class="input-group-addon pointer red-hover-background" onclick="massUpdateField('${columns[j].setKey}');" title="${getString('Device_MultiEdit_Tooltip')}">
+                                              <span class="input-group-addon pointer red-hover-background" onclick="massUpdateField('${multiEditColumns[j].setKey}');" title="${getString('Device_MultiEdit_Tooltip')}">
                                                 <i class="fa fa-save"></i>
                                               </span>
                                             </div>

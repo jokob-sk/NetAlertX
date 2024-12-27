@@ -226,7 +226,8 @@ def create_new_devices (db):
                         devGroup, 
                         devComments, 
                         devLogEvents, 
-                        devLocation"""
+                        devLocation,
+                        devCustomProps"""
 
     newDevDefaults = f"""{get_setting_value('NEWDEV_devAlertEvents')}, 
                         {get_setting_value('NEWDEV_devAlertDown')}, 
@@ -240,7 +241,9 @@ def create_new_devices (db):
                         '{sanitize_SQL_input(get_setting_value('NEWDEV_devGroup'))}', 
                         '{sanitize_SQL_input(get_setting_value('NEWDEV_devComments'))}', 
                         {get_setting_value('NEWDEV_devLogEvents')}, 
-                        '{sanitize_SQL_input(get_setting_value('NEWDEV_devLocation'))}'"""
+                        '{sanitize_SQL_input(get_setting_value('NEWDEV_devLocation'))}',
+                        '{sanitize_SQL_input(get_setting_value('NEWDEV_devCustomProps'))}'
+                        """
 
     # Fetch data from CurrentScan skipping ignored devices by IP and MAC
     query = f"""SELECT cur_MAC, cur_Name, cur_Vendor, cur_ScanMethod, cur_IP, cur_SyncHubNodeName, cur_NetworkNodeMAC, cur_PORT, cur_NetworkSite, cur_SSID, cur_Type 

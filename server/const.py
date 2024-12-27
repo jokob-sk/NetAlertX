@@ -59,6 +59,7 @@ sql_devices_all = """
                         IFNULL(devSSID, '') AS devSSID,
                         IFNULL(devSyncHubNode, '') AS devSyncHubNode,
                         IFNULL(devSourcePlugin, '') AS devSourcePlugin,
+                        IFNULL(devCustomProps, '') AS devCustomProps,
                         CASE 
                             WHEN devIsNew = 1 THEN 'New'
                             WHEN devPresentLastScan = 1 THEN 'On-line'

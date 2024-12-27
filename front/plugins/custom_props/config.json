@@ -1,0 +1,370 @@
+{
+  "code_name": "custom_props",
+  "unique_prefix": "CUSTPROP",
+  "plugin_type": "system",
+  "enabled": true,
+  "data_source": "template",
+  "show_ui": false,
+  "localized": ["display_name", "description", "icon"],
+  "display_name": [
+    {
+      "language_code": "en_us",
+      "string": "Custom properties"
+    }
+  ],
+  "description": [
+    {
+      "language_code": "en_us",
+      "string": "Settings related to the custom properties functionality on a device."
+    }
+  ],
+  "icon": [
+    {
+      "language_code": "en_us",
+      "string": "<i class=\"fa fa-list\"></i>"
+    }
+  ],
+  "params": [],
+  "settings": [
+    {
+      "function": "icon",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              { "placeholder": "Enter value" },
+              { "suffix": "_in" },
+              { "cssClasses": "col-sm-10" },
+              { "prefillValue": "null" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": ["_in"] },
+              { "separator": "" },
+              { "cssClasses": "col-xs-12" },
+              { "onClick": "addList(this,false)" },
+              { "getStringKey": "Gen_Add" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "select",
+            "elementHasInputValue": 1,
+            "elementOptions": [
+              { "multiple": "true" },
+              { "readonly": "true" },
+              { "editable": "true" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": [] },
+              { "separator": "" },
+              { "cssClasses": "col-xs-6" },
+              { "onClick": "removeAllOptions(this)" },
+              { "getStringKey": "Gen_Remove_All" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": [] },
+              { "separator": "" },
+              { "cssClasses": "col-xs-6" },
+              { "onClick": "removeFromList(this)" },
+              { "getStringKey": "Gen_Remove_Last" }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 50,
+      "default_value": [
+        "PGkgY2xhc3M9ImZhcyBmYS10cmFzaC1hbHQiPjwvaT4=",
+        "PGkgY2xhc3M9ImZhcyBmYS1leHRlcm5hbC1saW5rLWFsdCI+PC9pPg==",
+        "PGkgY2xhc3M9ImZhcyBmYS1hcnJvdy1yaWdodCI+PC9pPg==",
+        "PGkgY2xhc3M9ImZhcyBmYS1zZWFyY2giPjwvaT4=",
+        "PGkgY2xhc3M9ImZhcyBmYS1jb2dzIj48L2k+",
+        "PGkgY2xhc3M9ImZhcyBmYS1leWUiPjwvaT4=",
+        "PGkgY2xhc3M9ImZhcyBmYS1kYXRhYmFzZSI+PC9pPg=="
+      ],
+      "options": [],
+      "localized": ["name","description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Icon"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "List of icons that can be used on a custom property."
+        }
+      ]
+    },
+    {
+      "function": "type",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              { "placeholder": "Enter value" },
+              { "suffix": "_in" },
+              { "cssClasses": "col-sm-10" },
+              { "prefillValue": "null" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": ["_in"] },
+              { "separator": "" },
+              { "cssClasses": "col-xs-12" },
+              { "onClick": "addList(this,false)" },
+              { "getStringKey": "Gen_Add" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "select",
+            "elementHasInputValue": 1,
+            "elementOptions": [
+              { "multiple": "true" },
+              { "readonly": "true" },
+              { "editable": "true" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": [] },
+              { "separator": "" },
+              { "cssClasses": "col-xs-6" },
+              { "onClick": "removeAllOptions(this)" },
+              { "getStringKey": "Gen_Remove_All" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": [] },
+              { "separator": "" },
+              { "cssClasses": "col-xs-6" },
+              { "onClick": "removeFromList(this)" },
+              { "getStringKey": "Gen_Remove_Last" }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 50,
+      "default_value": [
+        "none",
+        "data",
+        "link",
+        "link_new_tab",
+        "show_notes",
+        "delete_dev",
+        "run_plugin"
+      ],
+      "options": [],
+      "localized": ["name","description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Type"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "List of property types. The default ones have specific functionality associated with it."
+        }
+      ]
+    },
+    {
+      "function": "args",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 50,
+      "default_value": "",
+      "options": [],
+      "localized": ["name","description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Arguments"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Arguments for the property type."
+        }
+      ]
+    },
+    {
+      "function": "name",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 50,
+      "default_value": "",
+      "options": [],
+      "localized": ["name","description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Name"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Name of the property displayed on hover."
+        }
+      ]
+    },
+    {
+      "function": "notes",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 50,
+      "default_value": "",
+      "options": [],
+      "localized": ["name","description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Notes"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Additional notes."
+        }
+      ]
+    },
+    {
+      "function": "show",
+      "type": {
+        "dataType": "boolean",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "checkbox" }],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": true,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Show"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Show in device list."
+        }
+      ]
+    },
+    {
+      "function": "actions",
+      "type": {
+        "dataType": "none",
+        "elements": [
+          {
+            "elementType": "span",
+            "elementOptions": [
+              {
+                "cssClasses": "input-group-addon pointer actionIcon"
+              },
+              {
+                "placeholder": "<i class=\"far fa-trash-alt\"></i>"
+              },
+              {
+                "onClick": "removeDataTableRow(this)"
+              }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "span",
+            "elementOptions": [
+              {
+                "cssClasses": "input-group-addon pointer actionIcon"
+              },
+              {
+                "placeholder": "<i class=\"far fa-clone\"></i>"
+              },
+              {
+                "onClick": "cloneDataTableRow(this)"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 50,
+      "default_value": [
+      ],
+      "options": [],
+      "localized": ["name","description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Action"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Actions on the property."
+        }
+      ]
+    }
+  ]
+}

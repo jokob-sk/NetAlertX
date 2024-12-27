@@ -246,6 +246,68 @@ function settingsCollectedCorrectly(settingsArray, settingsJSON_DB) {
 // -------------------------------------------------------------------
 
 // ---------------------------------------------------------
+// Add row to datatable
+function addDataTableRow(el)
+{
+  alert("a")
+}
+
+// ---------------------------------------------------------
+// Clone datatable row
+function cloneDataTableRow(el){
+
+  console.log(el);
+  
+  const id = "NEWDEV_devCustomProps_table"; // Your table ID
+  const table = $('#'+id).DataTable();
+
+  
+  // Get the 'my-index' attribute from the closest tr element
+  const myIndex = parseInt($(el).closest("tr").attr("my-index"));
+
+  // Find the row in the table with the matching 'my-index'
+  const row = table.rows().nodes().to$().filter(`[my-index="${myIndex}"]`).first().get(0);
+  
+  // Clone the row (including its data and controls)
+  let clonedRow = $(row).clone(true, true); // The true arguments copy the data and event handlers
+
+
+  $(clonedRow).attr("my-index",table.rows().count())
+
+
+  console.log(clonedRow);
+  
+
+  // Add the cloned row to the DataTable
+  table.row.add(clonedRow[0]).draw();
+}
+
+// ---------------------------------------------------------
+// Remove current datatable row
+function removeDataTableRow(el) {
+  console.log(el);
+
+  const id = "NEWDEV_devCustomProps_table"; // Your table ID
+  const table = $('#'+id).DataTable();
+
+  if(table.rows().count() > 1)
+  {
+    // Get the 'my-index' attribute from the closest tr element
+    const myIndex = parseInt($(el).closest("tr").attr("my-index"));
+
+    // Find the row in the table with the matching 'my-index'
+    const row = table.rows().nodes().to$().filter(`[my-index="${myIndex}"]`).first().get(0);
+    
+    // Remove the row from the DataTable
+    table.row(row).remove().draw();
+  }
+  else
+  {
+    showMessage (getString("CustProps_cant_remove"), 3000, "modal_red");  
+  }
+}
+
+// ---------------------------------------------------------
 // Add item to list
 function addList(element, clearInput = true) {
   const fromId = $(element).attr("my-input-from");
@@ -551,7 +613,7 @@ function overrideToggle(element) {
 }
 
 
-
+// ---------------------------------------------------------
 // Generate options or set options based on the provided parameters
 function generateOptionsOrSetOptions(
   setKey,
@@ -559,14 +621,21 @@ function generateOptionsOrSetOptions(
   placeholder, // ID of the HTML element where dropdown should be rendered (will be replaced)
   processDataCallback, // Callback function to generate entries based on options
   targetField, // Target field or element where selected value should be applied or updated
-  transformers = [] // Transformers to be applied to the values
+  transformers = [], // Transformers to be applied to the values
+  overrideOptions = null // override options if available  
 ) {
 
   // console.log(setKey);
 
-  // NOTE {value} options to replace with a setting or SQL value are handled in the cacheSettings() function
-  options = arrayToObject(createArray(getSettingOptions(setKey)))
+  // console.log(overrideOptions);
+  // console.log( getSettingOptions(setKey));
+  // console.log( setKey);
 
+  // NOTE {value} options to replace with a setting or SQL value are handled in the cacheSettings() function
+  options = arrayToObject(createArray(overrideOptions ? overrideOptions : getSettingOptions(setKey)))
+
+  
+  
   // Call to render lists
   renderList(
     options,
@@ -655,6 +724,7 @@ const handleElementOptions = (setKey, elementOptions, transformers, val) => {
   let onChange = "console.log('onChange - Not implemented');";
   let customParams = "";
   let customId = "";
+  let columns = [];
 
 
   elementOptions.forEach((option) => {
@@ -708,6 +778,9 @@ const handleElementOptions = (setKey, elementOptions, transformers, val) => {
     if (option.customId) {
       customId = option.customId;
     }
+    if (option.columns) {
+      columns = option.columns;
+    }
   });
 
   if (transformers.includes("sha256")) {
@@ -730,7 +803,8 @@ const handleElementOptions = (setKey, elementOptions, transformers, val) => {
     onClick,
     onChange,
     customParams,
-    customId
+    customId,
+    columns
   };
 };
 
@@ -863,7 +937,7 @@ function genListWithInputSet(options, valuesArray, targetField, transformers, pl
 
 // ------------------------------------------------------------------------------
 // Generate the form control for setting
-function generateFormHtml(set, overrideValue) {
+function generateFormHtml(settingsData, set, overrideValue, overrideOptions, originalSetKey) {
   let inputHtml = '';
 
 
@@ -872,13 +946,13 @@ function generateFormHtml(set, overrideValue) {
   const setType = set['setType'];
 
   // console.log(setType);
+  // console.log(setTypeEscaped); // Final transformed result
   // console.log(setKey);
   // console.log(overrideValue);
-  // console.log(inVal);
-  
+  // console.log(inVal);  
 
   // Parse the setType JSON string
-  const setTypeObject = JSON.parse(setType.replace(/'/g, '"'));
+  const setTypeObject = JSON.parse(processQuotes(setType))
   const dataType = setTypeObject.dataType;
   const elements = setTypeObject.elements || [];
 
@@ -903,14 +977,12 @@ function generateFormHtml(set, overrideValue) {
       onClick,
       onChange,
       customParams,
-      customId
+      customId,
+      columns
     } = handleElementOptions(setKey, elementOptions, transformers, inVal);
 
     // Override value
-    const val = valRes;
-
-    // console.log(val);
-    
+    let val = valRes;
 
     // Generate HTML based on elementType
     switch (elementType) {
@@ -921,20 +993,21 @@ function generateFormHtml(set, overrideValue) {
         inputHtml += `<select onChange="settingsChanged();${onChange}" 
                               my-data-type="${dataType}" 
                               my-editable="${editable}" 
-                              class="form-control ${addCss}" 
+                              class="form-control ${addCss} ${cssClasses}" 
                               name="${setKey}" 
                               id="${setKey}" 
                               my-customparams="${customParams}" 
                               my-customid="${customId}" 
+                              my-originalSetKey="${originalSetKey}" 
                               ${multi}>
                           <option value="" id="${setKey + "_temp_"}"></option>
                         </select>`;
 
-        generateOptionsOrSetOptions(setKey, createArray(val), `${setKey}_temp_`, generateOptions, null, transformers);
+        generateOptionsOrSetOptions(setKey, createArray(val), `${setKey}_temp_`, generateOptions, null, transformers, overrideOptions);
         break;
 
       case 'input':
-        const checked = val === 'True' || val === '1' ? 'checked' : '';
+        const checked = val === 'True' || val === 'true' ||  val === '1' ? 'checked' : '';
         const inputClass = inputType === 'checkbox' ? 'checkbox' : 'form-control';
 
         inputHtml += `<input 
@@ -943,6 +1016,7 @@ function generateFormHtml(set, overrideValue) {
                         my-data-type="${dataType}" 
                         my-customparams="${customParams}" 
                         my-customid="${customId}" 
+                        my-originalSetKey="${originalSetKey}"
                         id="${setKey}${suffix}" 
                         type="${inputType}" 
                         value="${val}" 
@@ -957,6 +1031,7 @@ function generateFormHtml(set, overrideValue) {
                         class="btn btn-primary ${cssClasses}" 
                         my-customparams="${customParams}" 
                         my-customid="${customId}" 
+                        my-originalSetKey="${originalSetKey}"
                         my-input-from="${sourceIds}" 
                         my-input-to="${setKey}" 
                         onclick="${onClick}">
@@ -969,6 +1044,7 @@ function generateFormHtml(set, overrideValue) {
                         class="form-control input" 
                         my-customparams="${customParams}" 
                         my-customid="${customId}" 
+                        my-originalSetKey="${originalSetKey}"
                         my-data-type="${dataType}" 
                         id="${setKey}" 
                         ${readOnly}>${val}</textarea>`;
@@ -979,9 +1055,114 @@ function generateFormHtml(set, overrideValue) {
                         class="${cssClasses}" 
                         my-data-type="${dataType}" 
                         my-customparams="${customParams}" 
-                        my-customid="${customId}">
-                        ${getString(getStringKey)}
+                        my-customid="${customId}"
+                        my-originalSetKey="${originalSetKey}"
+                        onclick="${onClick}">
+                        ${getString(getStringKey)}${placeholder}
                       </span>`;
+        break;
+      case 'datatable':
+
+        const tableId = `${setKey}_table`;
+        let datatableHtml = `<table id="${tableId}" class="table table-striped">`;
+
+        // Dynamic array creation
+        let emptyVal = [];
+
+        let columnSettings = [];
+
+        // Generate table headers
+        datatableHtml += '<thead><tr>';
+
+        columns.forEach(column => {
+          let columnSetting = getSetObject(settingsData, column.settingKey) || {};
+
+          datatableHtml += `<th>${columnSetting.setName}</th>`;
+
+          if(column.typeOverride)
+          {
+            columnSetting["setType"] = JSON.stringify(column.typeOverride);
+          }
+
+          if(column.optionsOverride)
+          {
+            if (column.optionsOverride.startsWith("setting.")) {
+              columnSetting["setOptions"] = getSetting(column.optionsOverride.replace("setting.",""));
+            } else {
+              columnSetting["setOptions"] = column.optionsOverride;
+            }            
+          }
+
+          columnSettings.push(columnSetting)
+          
+          // helper for if val is empty
+          emptyVal.push(''); 
+        });
+        datatableHtml += '</tr></thead>';
+
+        // Generate table body
+        datatableHtml += '<tbody>';
+
+        if(val.length > 0 && isBase64(val))
+        {
+          val = atob(val)
+          // console.log(val);
+          val = JSON.parse(val)
+        }else{
+          // init empty
+          val = [emptyVal]
+        }
+
+        let index = 0;
+        val.forEach(rowData => {
+            datatableHtml += `<tr my-index="${index}">`;
+            
+            let j = 0;
+            columnSettings.forEach(set => {
+                // Extract the value for the current column based on the new structure
+                let columnOverrideValue = rowData[j] && Object.values(rowData[j])[0];
+
+                if(columnOverrideValue == undefined)
+                {
+                  columnOverrideValue = ""
+                }
+        
+                // Create unique key to prevent dropdown data duplication
+                const oldKey = set["setKey"];
+                set["setKey"] = oldKey + "_" + index;
+        
+                // Generate the cell HTML using the extracted value
+                const cellHtml = generateFormHtml(
+                    settingsData,
+                    set,
+                    columnOverrideValue.toString(),
+                    set["setOptions"],
+                    oldKey
+                );
+                datatableHtml += `<td> <div class="input-group"> ${cellHtml} </div></td>`;
+        
+                // Restore the original key
+                set["setKey"] = oldKey;
+        
+                j++;
+            });
+            datatableHtml += '</tr>';
+            index++;
+        });
+        
+        
+        datatableHtml += '</tbody></table>';
+
+        inputHtml += datatableHtml;
+
+        // Initialize DataTable with jQuery
+        $(document).ready(() => {
+          $(`#${tableId}`).DataTable({
+            ordering: false, // Disables sorting on all columns
+            searching: false // Disables the search box
+          });
+        });
+
         break;
 
       default:
@@ -991,10 +1172,6 @@ function generateFormHtml(set, overrideValue) {
 
   // Generate event HTML if applicable
   let eventsHtml = '';
-
-  // console.log(setTypeObject);
-  
-  // console.log(set);
  
   const eventsList = createArray(set['setEvents']); 
   // inline buttons events
@@ -1018,5 +1195,69 @@ function generateFormHtml(set, overrideValue) {
   // Combine and return the final HTML
   return inputHtml + eventsHtml;
 }
+
+// -----------------------------------------------------
+// Return the setting object by setKey
+function getSetObject(settingsData, setKey) {
+
+  found = false;
+  result = ""
+
+  settingsData.forEach(function(set) {
+   
+    if (set.setKey == setKey) {
+      // console.log(set);      
+      
+      result = set;
+      return;
+      
+    }   
+    
+  });
+
+  if(result == "")
+  {
+    console.error(settingsData);
+    console.error(`Setting not found: ${setKey}`);
+  }
+
+  return result;
+}
+
+// ---------------------------------------
+// Collect DataTable data
+function collectTableData(tableSelector) {
+  const table = $(tableSelector).DataTable();
+
+  let tableData = [];
+
+  table.rows().every(function () {
+      const rowData = [];
+      const cells = $(this.node()).find('td');
+
+      cells.each((index, cell) => {
+          const input = $(cell).find('input, select, textarea');
+          
+          if (input.length) {
+              if (input.attr('type') === 'checkbox') {
+                  // For checkboxes, check if they are checked
+                  rowData[index] = { [input.attr("my-originalsetkey")] : input.prop('checked') };
+              } else {
+                  // Generic sync for other inputs (text, select, textarea)
+                  rowData[index] =  { [input.attr("my-originalsetkey")] : input.val() };
+              }
+          } else {
+              // Handle plain text
+              // rowData[index] = { [input.attr("my-originalsetkey")] : $(cell).text()};
+              console.log(`Nothig to collect: ${$(cell).html()}`)
+          }
+      });
+
+      tableData.push(rowData); 
+  });
+
+  return tableData;  
+}
+
 
 

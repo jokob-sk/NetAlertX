@@ -48,6 +48,7 @@
   <script src="js/tests.js?v=<?php include 'php/templates/version.php'; ?>"></script>
   <script src="js/db_methods.js?v=<?php include 'php/templates/version.php'; ?>"></script>
   <script src="js/settings_utils.js?v=<?php include 'php/templates/version.php'; ?>"></script>
+  <script src="js/device.js?v=<?php include 'php/templates/version.php'; ?>"></script>
 
 
   

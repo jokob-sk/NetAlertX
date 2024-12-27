@@ -144,6 +144,10 @@ function main () {
   //initialize the table headers in the correct order
   var availableColumns = getSettingOptions("UI_device_columns").split(",");
   headersDefaultOrder = availableColumns.map(val => getString(val));
+
+  console.log(headersDefaultOrder);
+  
+
   var selectedColumns = JSON.parse(getSetting("UI_device_columns").replace(/'/g, '"'));
 
   // generate default order lists of given length
@@ -181,6 +185,9 @@ function main () {
 // mapping the default order to the user specified one
 function mapIndx(oldIndex)
 {
+  // console.log(oldIndex);
+  // console.log(tableColumnOrder);
+  
   for(i=0;i<tableColumnOrder.length;i++)
   {
     if(tableColumnOrder[i] == oldIndex)
@@ -359,7 +366,8 @@ function mapColumnIndexToFieldName(index, tableColumnVisible) {
     "devSSID", 
     "devSourcePlugin",
     "devPresentLastScan",
-    "devAlertDown"
+    "devAlertDown",
+    "devCustomProps"
   ];
 
   // console.log("OrderBy: " + columnNames[tableColumnOrder[index]]);  
@@ -469,6 +477,7 @@ function initializeDatatable (status) {
                 devStatus
                 devParentChildrenCount
                 devIpLong
+                devCustomProps
               }
               count
             }
@@ -535,7 +544,8 @@ function initializeDatatable (status) {
                 device.devSSID || "",
                 device.devSourcePlugin || "",
                 device.devPresentLastScan || "",
-                device.devAlertDown || ""
+                device.devAlertDown || "",
+                device.devCustomProps || ""
             ];
 
             const newRow = [];
@@ -647,6 +657,17 @@ function initializeDatatable (status) {
         'createdCell': function (td, cellData, rowData, row, col) {
             if (!emptyArr.includes(cellData)){
               $(td).html (`<span class="anonymizeIp">${cellData}<span>`);
+            } else {
+              $(td).html ('');
+            }
+        } 
+      },
+
+      // Custom Properties     
+      {targets: [mapIndx(26)],
+        'createdCell': function (td, cellData, rowData, row, col) {
+            if (!emptyArr.includes(cellData)){
+              $(td).html (`<span>${renderCustomProps(cellData, rowData[mapIndx(11)])}<span>`);
             } else {
               $(td).html ('');
             }
@@ -830,33 +851,87 @@ function multiEditDevices()
 // -----------------------------------------------------------------------------
 // Function collects shown devices from the DataTable  
 function getMacsOfShownDevices() {
-
-  rows  = $('#tableDevices')[0].rows
-  macs = []
+  rows = $('#tableDevices')[0].rows;
+  macs = [];
 
   // var devicesDataTableData = $('#tableDevices').dataTable().fnGetData();
   var devicesDataTableData = $('#tableDevices').DataTable().rows({ selected: false, page: 'current' }).data().toArray();
 
   console.log(devicesDataTableData);
-  
 
   var selectedDevices = [];
 
   // first row is the heading, skip
   for (var i = 1; i < rows.length; i++) {
-
-    // console.log(rows[i]._DT_RowIndex);
+    var rowIndex = rows[i]._DT_RowIndex;
     
-    selectedDevices.push(devicesDataTableData[rows[i]._DT_RowIndex]);    
-  }  
+    // Ensure the rowIndex is valid and within bounds of devicesDataTableData
+    if (rowIndex >= 0 && rowIndex < devicesDataTableData.length) {
+      selectedDevices.push(devicesDataTableData[rowIndex]);    
+    } else {
+      console.log(`Invalid rowIndex: ${rowIndex} at row ${i}`);
+    }
+  }
 
   for (var j = 0; j < selectedDevices.length; j++) {
-    macs.push(selectedDevices[j][mapIndx(11)]);  // mapIndx(11) == MAC    
+    // Ensure that selectedDevices[j] is not undefined
+    if (selectedDevices[j]) {
+      macs.push(selectedDevices[j][mapIndx(11)]);  // mapIndx(11) == MAC
+    } else {
+      console.log(`selectedDevices[${j}] is undefined`);
+    }
   }
 
   return macs;
-  
 }
+
+// -----------------------------------------------------------------------------
+// Handle custom actions/properties on a device    
+// -----------------------------------------------------------------------------
+// Handle custom actions/properties on a device    
+function renderCustomProps(custProps, mac) {
+  // Decode and parse the custom properties
+
+  // console.log(custProps);  
+
+  const props = JSON.parse(atob(custProps));
+  let html = "";
+
+  props.forEach((propGroup, index) => {
+    const propMap = Object.fromEntries(
+      propGroup.map(prop => Object.entries(prop)[0]) // Convert array of objects to key-value pairs
+    );
+
+    if (propMap["CUSTPROP_show"] === true) { // Render if visible
+      let onClickEvent = "";
+
+      switch (propMap["CUSTPROP_type"]) {
+        case "show_notes":
+          onClickEvent = `showModalOK('${propMap["CUSTPROP_name"]}','${propMap["CUSTPROP_notes"]}')`;
+          break;
+        case "link":
+          onClickEvent = `window.location.href='${propMap["CUSTPROP_args"]}';`;
+          break;
+        case "link_new_tab":
+          onClickEvent = `openInNewTab('${propMap["CUSTPROP_args"]}')`;
+          break;
+        case "run_plugin":
+          onClickEvent = `alert('Not implemented')`;
+          break;
+        case "delete_dev":
+          onClickEvent = `deleteDeviceByMac('${mac}')`;
+          break;
+        default:
+          break;
+      }
+
+      html += `<span class="pointer" onclick="${onClickEvent}"  title="${propMap["CUSTPROP_name"]} ${propMap["CUSTPROP_args"]}">  ${atob(propMap["CUSTPROP_icon"])} </span>`;
+    }
+  });
+
+  return html;
+}
+
 
 
 // -----------------------------------------------------------------------------

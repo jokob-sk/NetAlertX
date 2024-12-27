@@ -227,11 +227,7 @@ function initializeCalendar() {
     loading: function( isLoading, view ) {
         if (isLoading) {
           showSpinner()
-        } else {
-          // setTimeout(() => {
-          //   updateIconPreview($('#txtIcon'))  
-          // }, 500);
-          
+        } else {          
           hideSpinner()
         }
     }

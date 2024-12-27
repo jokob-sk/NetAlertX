@@ -356,6 +356,8 @@ function saveSettings()
               $txt .= $setKey . "='" . $val . "'\n";
           } elseif ($dataType == 'integer') {
               $txt .= $setKey . "=" . $settingValue . "\n";
+          } elseif ($dataType == 'none') {
+              $txt .= $setKey . "=''\n";
           } elseif ($dataType == 'json') {
               $txt .= $setKey . "=" . $settingValue . "\n";
           } elseif ($dataType == 'boolean') {
@@ -551,6 +553,7 @@ function decodeSpecialChars($str) {
 
 
 // -------------------------------------------------------------------------------------------
+// used in Export CSV
 function getDevicesColumns(){
 
   $columns = ["devMac", 
@@ -582,7 +585,8 @@ function getDevicesColumns(){
               "devSyncHubNode",
               "devSite",
               "devSSID",
-              "devSourcePlugin"
+              "devSourcePlugin",
+              "devCustomProps"
             ]; 
               
   return $columns;

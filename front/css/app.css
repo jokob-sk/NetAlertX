@@ -1382,9 +1382,36 @@ input[readonly] {
 }
 
 /* ----------------------------------------------------------------- */
-/* MODAL popups */
+/* Device details */
 /* ----------------------------------------------------------------- */
 
+.dataTables_length label .form-control, .dataTables_filter label .form-control
+{
+    float: none;
+}
+
+
+.form-inline .input-group
+{
+    width: 100%;
+}
+
+.input-group .actionIcon
+{
+    height: 2.4em;
+}
+
+.input-group .actionIcon:hover
+{
+    backdrop-filter: brightness(50%);
+    background-color: rgba(0, 0, 0, 0.2); /* darkens the background */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: box-shadow 0.1s ease-in-out, background-color 0.1s ease-in-out;
+}
+
+/* ----------------------------------------------------------------- */
+/* MODAL popups */
+/* ----------------------------------------------------------------- */
 #modal-input-textarea
 {
     width: 100%;

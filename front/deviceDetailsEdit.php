@@ -16,24 +16,19 @@
     <div class="pull-right">
         <button type="button" 
                 class="btn btn-default pa-btn pa-btn-delete"  
-                style="margin-left:0px;" 
-                id="btnDeleteEvents"   
-                onclick="askDeleteDeviceEvents()">   
-                <?= lang('DevDetail_button_DeleteEvents');?> 
-        </button>
-        <button type="button" 
-                class="btn btn-default pa-btn pa-btn-delete"  
                 style="margin-left:0px;"  
                 id="btnDelete"   
                 onclick="askDeleteDevice()">   
-                <?= lang('DevDetail_button_Delete');?> 
+                  <i class="fas fa-trash-alt"></i> 
+                  <?= lang('DevDetail_button_Delete');?> 
         </button>
         <button type="button" 
                 class="btn btn-primary pa-btn" 
                 style="margin-left:6px; "  
                 id="btnSave"     
                 onclick="setDeviceData()" >     
-                <?= lang('DevDetail_button_Save');?> 
+                  <i class="fas fa-save"></i>
+                  <?= lang('DevDetail_button_Save');?> 
         </button>
     </div>
     </div>
@@ -83,32 +78,55 @@
             DevDetail_MainInfo_Title: {
                 data: ["devMac", "devLastIP", "devName", "devOwner", "devType", "devVendor", "devGroup", "devIcon", "devLocation", "devComments"], 
                 docs: "https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEVICE_MANAGEMENT.md",
-                iconClass: "fa fa-pencil"
+                iconClass: "fa fa-pencil",
+                inputGroupClasses: "field-group col-lg-4 col-sm-6 col-xs-12",
+                labelClasses: "col-sm-4 col-xs-12 control-label",
+                inputClasses: "col-sm-8 col-xs-12 input-group"
             },
             // Group for session information
             DevDetail_SessionInfo_Title: {
                 data: ["devStatus", "devLastConnection", "devFirstConnection"],
                 docs: "https://github.com/jokob-sk/NetAlertX/blob/main/docs/SESSION_INFO.md",
-                iconClass: "fa fa-calendar"
+                iconClass: "fa fa-calendar",
+                inputGroupClasses: "field-group col-lg-4 col-sm-6 col-xs-12",
+                labelClasses: "col-sm-4 col-xs-12 control-label",
+                inputClasses: "col-sm-8 col-xs-12 input-group"
             },
              // Group for event and alert settings
              DevDetail_EveandAl_Title: {
                 data: ["devAlertEvents", "devAlertDown", "devSkipRepeated"],
                 docs: "https://github.com/jokob-sk/NetAlertX/blob/main/docs/NOTIFICATIONS.md",
-                iconClass: "fa fa-bell"
+                iconClass: "fa fa-bell",
+                inputGroupClasses: "field-group col-lg-4 col-sm-6 col-xs-12",
+                labelClasses: "col-sm-4 col-xs-12 control-label",
+                inputClasses: "col-sm-8 col-xs-12 input-group"
             },
             // Group for network details
             DevDetail_MainInfo_Network_Title: {
                 data: ["devParentMAC", "devParentPort", "devSSID", "devSite"],
                 docs: "https://github.com/jokob-sk/NetAlertX/blob/main/docs/NETWORK_TREE.md",
-                iconClass: "fa fa-network-wired"
+                iconClass: "fa fa-network-wired",
+                inputGroupClasses: "field-group col-lg-4 col-sm-6 col-xs-12",
+                labelClasses: "col-sm-4 col-xs-12 control-label",
+                inputClasses: "col-sm-8 col-xs-12 input-group"
             },
             // Group for other fields like static IP, archived status, etc.
             DevDetail_DisplayFields_Title: {
                 data: ["devStaticIP", "devIsNew", "devFavorite", "devIsArchived"],
                 docs: "https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEVICE_DISPLAY_SETTINGS.md",
-                iconClass: "fa fa-list-check"
-
+                iconClass: "fa fa-list-check",
+                inputGroupClasses: "field-group col-lg-4 col-sm-6 col-xs-12",
+                labelClasses: "col-sm-4 col-xs-12 control-label",
+                inputClasses: "col-sm-8 col-xs-12 input-group"
+            },
+            // Group for Custom properties.
+            DevDetail_CustomProperties_Title: {
+                data: ["devCustomProps"],
+                docs: "https://github.com/jokob-sk/NetAlertX/blob/main/docs/CUSTOM_PROPERTIES.md",
+                iconClass: "fa fa-list",
+                inputGroupClasses: "field-group col-lg-12 col-sm-12 col-xs-12",
+                labelClasses: "col-sm-12 col-xs-12 control-label",
+                inputClasses: "col-sm-12 col-xs-12 input-group"
             }
         };
 
@@ -126,7 +144,7 @@
 
             // Loop over each field group to generate sections for each category
             Object.entries(fieldGroups).forEach(([groupName, obj]) => {
-                const groupDiv = $('<div>').addClass('field-group col-lg-4 col-sm-6 col-xs-12'); // Create a div for each group with responsive Bootstrap classes
+                const groupDiv = $('<div>').addClass(obj.inputGroupClasses); // Create a div for each group with responsive Bootstrap classes
                 
                 // Add group title and documentation link
                 groupDiv.append(`<h5><i class="${obj.iconClass}"></i>  ${getString(groupName)} 
@@ -137,7 +155,7 @@
                                     </span> 
                                   </h5>
                                   <hr>
-                                  `);
+                                `);
 
                 // Filter relevant settings for the current group
                 const groupSettings = settings.filter(set => obj.data.includes(set.setKey.replace('NEWDEV_', '')));
@@ -193,15 +211,15 @@
 
                     // Generate the input field HTML
                     const inputFormHtml = `<div class="form-group col-xs-12">
-                                              <label class="col-sm-4 col-xs-12 control-label"> ${setting.setName}    
+                                              <label class="${obj.labelClasses}"> ${setting.setName}    
                                                   <i my-set-key="${setting.setKey}"
                                                       title="${getString("Settings_Show_Description")}" 
                                                       class="fa fa-circle-info pointer helpIconSmallTopRight" 
                                                       onclick="showDescriptionPopup(this)">
                                                   </i>
                                               </label>
-                                              <div class="col-sm-8 col-xs-12 input-group">
-                                                  ${generateFormHtml(setting, fieldData.toString())}
+                                              <div class="${obj.inputClasses}">
+                                                  ${generateFormHtml(settingsData, setting, fieldData.toString(), null, null)}
                                                   ${inlineControl}
                                               </div>
                                           </div>`;
@@ -214,8 +232,8 @@
             });
 
 
-            // wait until everything is initialized to update icon
-            updateIconPreview();
+            // wait until everything is initialized to update icons
+            updateAllIconPreviews();
 
             // update readonly fields
             handleReadOnly(settingsData, disabledFields);
@@ -317,64 +335,7 @@
     showModalOK("Info", getString($(e).attr("my-set-key") + '_description'))
   }
 
-  // -----------------------------------------------------------------------------
-  function askDeleteDeviceEvents () {
-    // Check MAC
-    if (mac == '') {
-      return;
-    }
 
-    // Ask delete device Events 
-    showModalWarning ('<?= lang('DevDetail_button_DeleteEvents');?>', '<?= lang('DevDetail_button_DeleteEvents_Warning');?>',
-      '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Delete');?>', 'deleteDeviceEvents');
-  }
-
-  function deleteDeviceEvents () {
-    // Check MAC
-    if (mac == '') {
-      return;
-    }
-
-    // Delete device events
-    $.get('php/server/devices.php?action=deleteDeviceEvents&mac='+ mac, function(msg) {
-      showMessage (msg);
-    });
-
-    // Deactivate controls
-    $('#panDetails :input').attr('disabled', true);
-  }
-
-  // -----------------------------------------------------------------------------
-  function askDeleteDevice () {
-    // Check MAC
-    if (mac == '') {
-      return;
-    }
-
-    // Ask delete device
-    showModalWarning ('Delete Device', 'Are you sure you want to delete this device?<br>(maybe you prefer to archive it)',
-      '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Delete');?>', 'deleteDevice');
-  }
-
-
-  // -----------------------------------------------------------------------------
-  function deleteDevice () {
-    // Check MAC
-    if (mac == '') {
-      return;
-    }
-
-    // Delete device
-    $.get('php/server/devices.php?action=deleteDevice&mac='+ mac, function(msg) {
-      showMessage (msg);
-    });
-
-    // Deactivate controls
-    $('#panDetails :input').attr('disabled', true);
-
-    // refresh API
-    updateApi("devices,appevents")
-  }
 
   // -----------------------------------------------------------------------------
   function setDeviceData(direction = '', refreshCallback = '') {
@@ -396,51 +357,53 @@
 
     showSpinner();
 
-     // update data to server
-     $.get('php/server/devices.php?action=setDeviceData&mac='+ $('#NEWDEV_devMac').val()
-      + '&name='           + encodeURIComponent($('#NEWDEV_devName').val().replace(/'/g, ""))
-      + '&owner='          + encodeURIComponent($('#NEWDEV_devOwner').val().replace(/'/g, ""))
-      + '&type='           + $('#NEWDEV_devType').val().replace(/'/g, "")
-      + '&vendor='         + encodeURIComponent($('#NEWDEV_devVendor').val().replace(/'/g, ""))
-      + '&icon='           + encodeURIComponent($('#NEWDEV_devIcon').val())
-      + '&favorite='       + ($('#NEWDEV_devFavorite')[0].checked * 1)
-      + '&group='          + encodeURIComponent($('#NEWDEV_devGroup').val().replace(/'/g, ""))
-      + '&location='       + encodeURIComponent($('#NEWDEV_devLocation').val().replace(/'/g, ""))
-      + '&comments='       + encodeURIComponent(encodeSpecialChars($('#NEWDEV_devComments').val()))
-      + '&networknode='    + $('#NEWDEV_devParentMAC').val()
-      + '&networknodeport=' + $('#NEWDEV_devParentPort').val()
-      + '&ssid='            + $('#NEWDEV_devSSID').val()
-      + '&networksite='     + $('#NEWDEV_devSite').val()
-      + '&staticIP='       + ($('#NEWDEV_devStaticIP')[0].checked * 1)
-      + '&scancycle='      + "1"
-      + '&alertevents='    + ($('#NEWDEV_devAlertEvents')[0].checked * 1)
-      + '&alertdown='      + ($('#NEWDEV_devAlertDown')[0].checked * 1)
-      + '&skiprepeated='   + $('#NEWDEV_devSkipRepeated').val().split(' ')[0]
-      + '&newdevice='      + ($('#NEWDEV_devIsNew')[0].checked * 1)
-      + '&archived='       + ($('#NEWDEV_devIsArchived')[0].checked * 1)
-      + '&devFirstConnection='       + ($('#NEWDEV_devFirstConnection').val())
-      + '&devLastConnection='       + ($('#NEWDEV_devLastConnection').val())
-      + '&ip='             + ($('#NEWDEV_devLastIP').val())
-      + '&createNew='          + createNew
-      , function(msg) {
-      
-        showMessage (msg);
+     // Update data to server using POST
+$.post('php/server/devices.php?action=setDeviceData', {
+    mac: $('#NEWDEV_devMac').val(),
+    name: encodeURIComponent($('#NEWDEV_devName').val().replace(/'/g, "")),
+    owner: encodeURIComponent($('#NEWDEV_devOwner').val().replace(/'/g, "")),
+    type: $('#NEWDEV_devType').val().replace(/'/g, ""),
+    vendor: encodeURIComponent($('#NEWDEV_devVendor').val().replace(/'/g, "")),
+    icon: encodeURIComponent($('#NEWDEV_devIcon').val()),
+    favorite: ($('#NEWDEV_devFavorite')[0].checked * 1),
+    group: encodeURIComponent($('#NEWDEV_devGroup').val().replace(/'/g, "")),
+    location: encodeURIComponent($('#NEWDEV_devLocation').val().replace(/'/g, "")),
+    comments: encodeURIComponent(encodeSpecialChars($('#NEWDEV_devComments').val())),
+    networknode: $('#NEWDEV_devParentMAC').val(),
+    networknodeport: $('#NEWDEV_devParentPort').val(),
+    ssid: $('#NEWDEV_devSSID').val(),
+    networksite: $('#NEWDEV_devSite').val(),
+    staticIP: ($('#NEWDEV_devStaticIP')[0].checked * 1),
+    scancycle: "1",
+    alertevents: ($('#NEWDEV_devAlertEvents')[0].checked * 1),
+    alertdown: ($('#NEWDEV_devAlertDown')[0].checked * 1),
+    skiprepeated: $('#NEWDEV_devSkipRepeated').val().split(' ')[0],
+    newdevice: ($('#NEWDEV_devIsNew')[0].checked * 1),
+    archived: ($('#NEWDEV_devIsArchived')[0].checked * 1),
+    devFirstConnection: ($('#NEWDEV_devFirstConnection').val()),
+    devLastConnection: ($('#NEWDEV_devLastConnection').val()),
+    devCustomProps: btoa(JSON.stringify(collectTableData("#NEWDEV_devCustomProps_table"))),
+    ip: ($('#NEWDEV_devLastIP').val()),
+    createNew: createNew
+}, function(msg) {
+    showMessage(msg);
 
-        // Remove navigation prompt "Are you sure you want to leave..."
-        window.onbeforeunload = null;
-        somethingChanged      = false;
+    // Remove navigation prompt "Are you sure you want to leave..."
+    window.onbeforeunload = null;
+    somethingChanged = false;
 
-        // refresh API
-        updateApi("devices,appevents")
+    // refresh API
+    updateApi("devices,appevents");
 
-        // Callback fuction
-        if (typeof refreshCallback == 'function') {
-          refreshCallback(direction);
-        }
+    // Callback function
+    if (typeof refreshCallback == 'function') {
+        refreshCallback(direction);
+    }
 
-      // everything loaded 
-      hideSpinner();
-    });
+    // Everything loaded
+    hideSpinner();
+});
+
   }
 
   //-----------------------------------------------------------------------------------

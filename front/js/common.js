@@ -171,7 +171,7 @@ function cacheSettings()
 }
 
 // -----------------------------------------------------------------------------
-// Get a setting value by key
+// Get a setting options value by key
 function getSettingOptions (key) {
 
   // handle initial load to make sure everything is set-up and cached
@@ -352,6 +352,30 @@ function getLangCode() {
 // -----------------------------------------------------------------------------
 // String utilities
 // -----------------------------------------------------------------------------
+
+// ----------------------------------------------------
+/**
+ * Replaces double quotes within single-quoted strings, then converts all single quotes to double quotes,
+ * while preserving the intended structure.
+ *
+ * @param {string} inputString - The input string to process.
+ * @returns {string} - The processed string with transformations applied.
+ */
+function processQuotes(inputString) {
+  // Step 1: Replace double quotes within single-quoted strings
+  let tempString = inputString.replace(/'([^']*?)'/g, (match, p1) => {
+    const escapedContent = p1.replace(/"/g, '_escaped_double_quote_'); // Temporarily replace double quotes
+    return `'${escapedContent}'`;
+  });
+
+  // Step 2: Replace all single quotes with double quotes
+  tempString = tempString.replace(/'/g, '"');
+
+  // Step 3: Restore escaped double quotes
+  const processedString = tempString.replace(/_escaped_double_quote_/g, "'");
+
+  return processedString;
+}
 
 // ----------------------------------------------------
 function jsonSyntaxHighlight(json) {

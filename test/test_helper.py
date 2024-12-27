@@ -29,7 +29,7 @@ def test_updateSubnets():
     assert len(result) == 2
 
 # -------------------------------------------------------------------------------
-# Function to insert 10,000 random device entries
+# Function to insert N random device entries
 def insert_devices(db_path, num_entries=1):
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
@@ -85,9 +85,10 @@ def insert_devices(db_path, num_entries=1):
         devSite, 
         devSSID, 
         devSyncHubNode, 
-        devSourcePlugin
+        devSourcePlugin,
+        devCustomProps
     )
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
     """
 
     # List of device types, vendors, groups, locations
@@ -128,6 +129,7 @@ def insert_devices(db_path, num_entries=1):
         dev_ssid = ""  # Left as NULL
         dev_sync_hub_node = ""  # Left as NULL
         dev_source_plugin = ""  # Left as NULL
+        dev_devCustomProps = ""  # Left as NULL
 
         # Execute the insert query
         cursor.execute(insert_query, (
@@ -160,7 +162,8 @@ def insert_devices(db_path, num_entries=1):
             dev_site, 
             dev_ssid, 
             dev_sync_hub_node, 
-            dev_source_plugin
+            dev_source_plugin,
+            dev_devCustomProps
         ))
 
         # Commit after every 1000 rows to improve performance

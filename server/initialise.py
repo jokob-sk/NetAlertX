@@ -202,7 +202,7 @@ def importConfigs (db, all_plugins):
     # Plugins START
     # -----------------
 
-    necessary_plugins = ['UI', 'DBCLNP', 'INTRNT','MAINT','NEWDEV', 'SETPWD', 'SYNC', 'VNDRPDT', 'WORKFLOWS']
+    necessary_plugins = ['UI', 'CUSTPROP', 'DBCLNP', 'INTRNT','MAINT','NEWDEV', 'SETPWD', 'SYNC', 'VNDRPDT', 'WORKFLOWS']
     # make sure necessary plugins are loaded
     conf.LOADED_PLUGINS += [plugin for plugin in necessary_plugins if plugin not in conf.LOADED_PLUGINS]
 

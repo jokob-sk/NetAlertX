@@ -65,6 +65,48 @@
 
 <?php } ?>
 
+
+<!-- Delete Events -->
+<h4 class=""><i class="fa-solid fa-bell"></i>
+        <?= lang("DevDetail_button_DeleteEvents") ?>
+    </h4>
+    <h5 class="">
+        <?= lang("DevDetail_button_DeleteEvents_Warning") ?>
+    </h5>
+    <br>
+    <div style="width:100%; text-align: center; margin-bottom: 50px;">
+        <button type="button" 
+                class="btn btn-default pa-btn pa-btn-delete"  
+                style="margin-left:0px;" 
+                id="btnDeleteEvents"   
+                onclick="askDeleteDeviceEvents()">   
+                  <?= lang('DevDetail_button_DeleteEvents');?> 
+        </button>
+        <br>
+        <div id="wol_output" style="margin-top: 10px;"></div>
+    </div>
+
+<!-- Reset Custom Proprties -->
+<h4 class=""><i class="fa-solid fa-list"></i>
+        <?= lang("DevDetail_CustomProperties_Title") ?> 
+    </h4>
+    <h5 class="">
+        <?= lang("DevDetail_CustomProps_reset_info") ?>
+    </h5>
+    <br>
+    <div style="width:100%; text-align: center; margin-bottom: 50px;">
+        <button type="button" 
+                class="btn btn-default pa-btn pa-btn-delete"  
+                style="margin-left:0px;" 
+                id="btnDeleteEvents"   
+                onclick="askResetDeviceProps()">   
+                    <?= lang("Gen_Reset") ?> 
+        </button>
+        <br>
+        <div id="wol_output" style="margin-top: 10px;"></div>
+    </div>
+
+
 <!-- SPEEDTEST -->
 <?php if ($_REQUEST["mac"] == "Internet") { ?>
     <h4 class=""><i class="fa-solid fa-gauge-high"></i>
@@ -334,6 +376,56 @@
             }
 
             return devicesList;
+        }
+
+        // ----------------------------------------------------------------
+
+        // -----------------------------------------------------------------------------
+        function askDeleteDeviceEvents () {
+            // Check MAC
+            if (mac == '') {
+                return;
+            }
+
+            // Ask delete device Events 
+            showModalWarning ('<?= lang('DevDetail_button_DeleteEvents');?>', '<?= lang('DevDetail_button_DeleteEvents_Warning');?>',
+            '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Delete');?>', 'deleteDeviceEvents');
+        }
+
+        function deleteDeviceEvents () {
+            // Check MAC
+            if (mac == '') {
+                return;
+            }
+
+            // Delete device events
+            $.get('php/server/devices.php?action=deleteDeviceEvents&mac='+ mac, function(msg) {
+            showMessage (msg);
+            });
+        }
+
+        // -----------------------------------------------------------------------------
+        function askResetDeviceProps () {
+            // Check MAC
+            if (mac == '') {
+                return;
+            }
+
+            // Ask Resert Custom properties 
+            showModalWarning ('<?= lang('Gen_Reset');?>', '<?= lang('DevDetail_CustomProps_reset_info');?>',
+            '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Delete');?>', 'resetDeviceProps');
+        }
+
+        function resetDeviceProps () {
+            // Check MAC
+            if (mac == '') {
+                return;
+            }
+
+            // Execute
+            $.get('php/server/devices.php?action=resetDeviceProps&mac='+ mac, function(msg) {
+            showMessage (msg);
+            });
         }
 
         // ----------------------------------------------------------------

@@ -347,7 +347,8 @@
         "Device_TableHead_LastIP",
         "Device_TableHead_Status",
         "Device_TableHead_MAC_full",
-        "Device_TableHead_SourcePlugin"
+        "Device_TableHead_SourcePlugin",
+        "Device_TableHead_CustomProps"
       ],
       "options": [
         "Device_TableHead_Name",
@@ -375,7 +376,8 @@
         "Device_TableHead_SSID",
         "Device_TableHead_SourcePlugin",
         "Device_TableHead_PresentLastScan",
-        "Device_TableHead_AlertDown"
+        "Device_TableHead_AlertDown",
+        "Device_TableHead_CustomProps"
       ],
       "localized": ["name", "description"],
       "name": [

@@ -62,6 +62,7 @@ class Device(ObjectType):
     devSSID = String() 
     devSyncHubNode = String() 
     devSourcePlugin = String()
+    devCustomProps = String()
     devStatus = String()
     devIsRandomMac = Int()  
     devParentChildrenCount = Int() 
