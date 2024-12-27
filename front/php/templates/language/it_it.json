@@ -185,6 +185,7 @@
     "DevDetail_button_Delete": "Elimina dispositivo",
     "DevDetail_button_DeleteEvents": "Elimina eventi",
     "DevDetail_button_DeleteEvents_Warning": "Sei sicuro di voler eliminare tutti gli eventi di questo dispositivo?<br><br>(questa azione cancellerà la <b>Cronologia eventi</b> e le <b>Sessioni</b> e potrebbe aiutare con costanti (persistenti ) notifiche)",
+    "DevDetail_button_Delete_ask": "",
     "DevDetail_button_OverwriteIcons": "Sovrascrivi icone",
     "DevDetail_button_OverwriteIcons_Tooltip": "Sovrascrivi le icone di tutti i dispositivi con lo stesso tipo di dispositivo",
     "DevDetail_button_OverwriteIcons_Warning": "Sei sicuro di voler sovrascrivere tutte le icone di tutti i dispositivi con lo stesso tipo di dispositivo come l'attuale tipo di dispositivo?",

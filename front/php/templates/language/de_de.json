@@ -197,6 +197,7 @@
     "DevDetail_button_Delete": "Gerät löschen",
     "DevDetail_button_DeleteEvents": "Ereignisse löschen",
     "DevDetail_button_DeleteEvents_Warning": "Sind Sie sicher, dass Sie alle Ereignisse dieses Geräts löschen möchten? (dies löscht den Ereignisverlauf und die Sitzungen und könnte bei ständigen (anhaltenden) Benachrichtigungen helfen)",
+    "DevDetail_button_Delete_ask": "",
     "DevDetail_button_OverwriteIcons": "Symbole überschreiben",
     "DevDetail_button_OverwriteIcons_Tooltip": "Symbole aller Geräte mit demselben Gerätetyp überschreiben",
     "DevDetail_button_OverwriteIcons_Warning": "Bist du sicher, dass du alle Symbole aller Geräte mit dem gleichen Gerätetyp wie dem aktuellen Gerätetyp überschreiben willst?",

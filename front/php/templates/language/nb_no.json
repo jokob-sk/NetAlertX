@@ -185,6 +185,7 @@
     "DevDetail_button_Delete": "Slett Enhet",
     "DevDetail_button_DeleteEvents": "Slett Hendelser",
     "DevDetail_button_DeleteEvents_Warning": "Er du sikker på at du vil slette alle hendelser på denne enheten?<br><br>(dette vil tømme <b>hendelsesloggen</b> og <b>øktene</b> og kan hjelpe med konstante (vedvarende) varslinger)",
+    "DevDetail_button_Delete_ask": "",
     "DevDetail_button_OverwriteIcons": "Overskriv ikoner",
     "DevDetail_button_OverwriteIcons_Tooltip": "Overskriv ikoner på alle enheter med samme enhetstype",
     "DevDetail_button_OverwriteIcons_Warning": "Er du sikker på at du vil overskrive alle ikonene på alle enheter med samme enhetstype som gjeldende enhetstype?",

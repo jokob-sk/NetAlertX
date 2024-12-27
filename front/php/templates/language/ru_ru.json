@@ -185,6 +185,7 @@
     "DevDetail_button_Delete": "Удалить устройство",
     "DevDetail_button_DeleteEvents": "Удалить события",
     "DevDetail_button_DeleteEvents_Warning": "Вы уверены, что хотите удалить все события на этом устройстве?<br><br>(это очистит <b>Историю событий</b> и <b>Сеансы</b> и может помочь с постоянными (настойчивыми) уведомлениями)",
+    "DevDetail_button_Delete_ask": "",
     "DevDetail_button_OverwriteIcons": "Перезаписать значки",
     "DevDetail_button_OverwriteIcons_Tooltip": "Перезаписать значки всех устройств одного типа",
     "DevDetail_button_OverwriteIcons_Warning": "Вы уверены, что хотите перезаписать все значки всех устройств с тем же типом устройства, что и текущий тип устройства?",

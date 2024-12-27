@@ -185,6 +185,7 @@
     "DevDetail_button_Delete": "Usuń Urządzenie",
     "DevDetail_button_DeleteEvents": "Usuń Wydarzenia",
     "DevDetail_button_DeleteEvents_Warning": "Jesteś pewien, że chcesz usunąć wszystkie Wydarzenia tego urządzenia?<br><br>(wyczyści to <b>Historię Wydarzeń</b> i <b>Sesje</b> i może pomóc ze stałymi powiadomieniami)",
+    "DevDetail_button_Delete_ask": "",
     "DevDetail_button_OverwriteIcons": "Nadpisz Ikony",
     "DevDetail_button_OverwriteIcons_Tooltip": "Nadpisz ikony dla urządzeń o tym samym typie",
     "DevDetail_button_OverwriteIcons_Warning": "Czy na pewno chcesz nadpisać wszystkie ikony dla urządzeń o tym samym typie co to urządzenie?",

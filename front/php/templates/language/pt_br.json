@@ -185,6 +185,7 @@
     "DevDetail_button_Delete": "Excluir dispositivo",
     "DevDetail_button_DeleteEvents": "Excluir eventos",
     "DevDetail_button_DeleteEvents_Warning": "Tem certeza de que deseja excluir todos os eventos deste dispositivo?<br><br>(isso limpará o <b>Histórico de eventos</b> e as <b>sessões</b> e poderá ajudar com constantes (persistentes) notificações)",
+    "DevDetail_button_Delete_ask": "",
     "DevDetail_button_OverwriteIcons": "Substituir ícones",
     "DevDetail_button_OverwriteIcons_Tooltip": "Substituir ícones de todos os dispositivos pelo mesmo tipo de dispositivo",
     "DevDetail_button_OverwriteIcons_Warning": "Tem certeza de que deseja substituir todos os ícones de todos os dispositivos pelo mesmo tipo de dispositivo do tipo de dispositivo atual?",

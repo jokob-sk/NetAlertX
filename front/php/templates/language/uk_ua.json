@@ -185,6 +185,7 @@
     "DevDetail_button_Delete": "Видалити пристрій",
     "DevDetail_button_DeleteEvents": "Видалити події",
     "DevDetail_button_DeleteEvents_Warning": "Ви впевнені, що бажаєте видалити всі події цього пристрою?<br><br>(це очистить <b>історію подій</b> і <b>сеанси</b> та може допомогти з постійними (постійними) ) сповіщення)",
+    "DevDetail_button_Delete_ask": "",
     "DevDetail_button_OverwriteIcons": "Перезаписати значки",
     "DevDetail_button_OverwriteIcons_Tooltip": "Перезаписати піктограми всіх пристроїв одним типом пристрою",
     "DevDetail_button_OverwriteIcons_Warning": "Ви впевнені, що бажаєте перезаписати всі піктограми всіх пристроїв тим самим типом пристрою, що й поточний тип пристрою?",

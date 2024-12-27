@@ -185,6 +185,7 @@
     "DevDetail_button_Delete": "Supprimer l'appareil",
     "DevDetail_button_DeleteEvents": "Supprimer les événements",
     "DevDetail_button_DeleteEvents_Warning": "Êtes-vous sûr de vouloir supprimer tous les Événements de cet appareil ?<br><br>(cela supprimera l'<b>Historique des événements</b> et les <b>Sessions</b> et peur aider pour les notifications persistantes)",
+    "DevDetail_button_Delete_ask": "",
     "DevDetail_button_OverwriteIcons": "Remplacer les icônes",
     "DevDetail_button_OverwriteIcons_Tooltip": "Remplacer les icônes de tous les appareils de ce type",
     "DevDetail_button_OverwriteIcons_Warning": "Êtes-vous sûr de vouloir remplacer toutes les icônes de tous les appareils du même type que l'appareil actuel ?",

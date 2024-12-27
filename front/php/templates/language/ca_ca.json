@@ -185,6 +185,7 @@
     "DevDetail_button_Delete": "Eliminar dispositiu",
     "DevDetail_button_DeleteEvents": "Eliminar Esdeveniments",
     "DevDetail_button_DeleteEvents_Warning": "Estàs segur que vols eliminar tots els esdeveniments d'aquest dispositiu?<br><br>(això esborrarà la <b>Historial d'esdeveniments</b> i la <b>Sessions</b> i pot ajudar amb les notificacions constants (persistents)",
+    "DevDetail_button_Delete_ask": "",
     "DevDetail_button_OverwriteIcons": "Sobreescriure icones",
     "DevDetail_button_OverwriteIcons_Tooltip": "Sobreescriure icones de tots els dispositius amb el mateix tipus de dispositiu",
     "DevDetail_button_OverwriteIcons_Warning": "Estàs segur que vols sobreescriure totes les icones de tots els dispositius amb el mateix tipus de dispositiu que el tipus de dispositiu actual?",
