@@ -91,7 +91,7 @@
             { "elementType": "input", "elementOptions": [], "transformers": [] }
           ]
         },
-        "default_value": "*/1 * * * *",
+        "default_value": "*/5 * * * *",
         "options": [],
         "localized": ["name", "description"],
         "name": [
