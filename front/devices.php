@@ -925,7 +925,7 @@ function renderCustomProps(custProps, mac) {
           break;
       }
 
-      html += `<span class="pointer" onclick="${onClickEvent}"  title="${propMap["CUSTPROP_name"]} ${propMap["CUSTPROP_args"]}">  ${atob(propMap["CUSTPROP_icon"])} </span>`;
+      html += `<div class="pointer devicePropAction" onclick="${onClickEvent}"  title="${propMap["CUSTPROP_name"]} ${propMap["CUSTPROP_args"]}">  ${atob(propMap["CUSTPROP_icon"])} </div>`;
     }
   });
 

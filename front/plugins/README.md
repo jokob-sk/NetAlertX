@@ -29,15 +29,17 @@ Device-detecting plugins insert values into the `CurrentScan` database table.  T
 | `ARPSCAN`     | 🔍      | ARP-scan on current network               |           |          | Script       | [arp_scan](/front/plugins/arp_scan/)                              |
 | `AVAHISCAN`   | 🆎      | Avahi (mDNS-based) name resolution        |           |          | Script       | [avahi_scan](/front/plugins/avahi_scan/)                          |
 | `CSVBCKP`     | ⚙       | CSV devices backup                        |           |          | Script       | [csv_backup](/front/plugins/csv_backup/)                          |
+| `CUSTPROP`    | ⚙       | Managing custom device properties values  |           |  Yes     | Template     | [custom_props](/front/plugins/custom_props/)                          |
 | `DBCLNP`      | ⚙       | Database cleanup                          |           |  Yes*    | Script       | [db_cleanup](/front/plugins/db_cleanup/)                          |
 | `DDNS`        | ⚙       | DDNS update                               |           |          | Script       | [ddns_update](/front/plugins/ddns_update/)                        |
 | `DHCPLSS`     | 🔍/📥/🆎| Import devices from DHCP leases          |           |          | Script       | [dhcp_leases](/front/plugins/dhcp_leases/)                        |
 | `DHCPSRVS`    | ♻       | DHCP servers                              |           |          | Script       | [dhcp_servers](/front/plugins/dhcp_servers/)                      |
-| `FREEBOX`     | 🔍/♻/🆎 | Pull data and names from Freebox/Iliadbox |          |          | Script       | [freebox](/front/plugins/freebox/)                                 |
+| `FREEBOX`     | 🔍/♻/🆎| Pull data and names from Freebox/Iliadbox |          |          | Script       | [freebox](/front/plugins/freebox/)                                 |
 | `ICMP`        | 🔍      | ICMP (ping) status checker                |           |          | Script       | [icmp_scan](/front/plugins/icmp_scan/)                            |
 | `INTRNT`      | 🔍      | Internet IP scanner                       |           |          | Script       | [internet_ip](/front/plugins/internet_ip/)                        |
 | `INTRSPD`     | ♻       | Internet speed test                       |           |          | Script       | [internet_speedtest](/front/plugins/internet_speedtest/)          |
 | `IPNEIGH`     | 🔍       | Scan ARP (IPv4) and NDP (IPv6) tables    |           |          | Script       | [ipneigh](/front/plugins/ipneigh/)                                |
+| `LUCIRPC`     | 🔍       | Import connected devices from OpenWRT    |           |          | Script       | [luci_import](/front/plugins/luci_import/)                                |
 | `MAINT`       | ⚙       | Maintenance of logs, etc.                 |           |          | Script       | [maintenance](/front/plugins/maintenance/)                        |
 | `MQTT`        | ▶️      | MQTT for synching to Home Assistant       |           |          | Script       | [_publisher_mqtt](/front/plugins/_publisher_mqtt/)                |
 | `NBTSCAN`     | 🆎       | Nbtscan (NetBIOS-based) name resolution  |           |          | Script       | [nbtscan_scan](/front/plugins/nbtscan_scan/)                      |

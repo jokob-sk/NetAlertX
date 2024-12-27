@@ -1409,6 +1409,23 @@ input[readonly] {
     transition: box-shadow 0.1s ease-in-out, background-color 0.1s ease-in-out;
 }
 
+.devicePropAction
+{    
+    width: 1.2em;
+    height: 1.2em;
+    display: inline-block;
+    padding: 0.1em;
+    margin: 0.1em;
+}
+
+.devicePropAction:hover
+{    
+    font-size: larger;
+    padding: 0em;
+    margin: 0em;
+    
+}
+
 /* ----------------------------------------------------------------- */
 /* MODAL popups */
 /* ----------------------------------------------------------------- */
@@ -1746,7 +1763,8 @@ input[readonly] {
 
 table.dataTable tbody > tr.selected
 {
-  color:red;
+  /* color:red; */
+  color: #353c42;
 }
 
 /* -----------------------------------------------------------------------------
