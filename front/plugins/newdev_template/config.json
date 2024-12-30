@@ -2,7 +2,7 @@
   "code_name": "newdev_template",
   "template_type": "database-entry",
   "unique_prefix": "NEWDEV",
-  "plugin_type": "system",
+  "plugin_type": "core",
   "enabled": true,
   "data_source": "template",
   "show_ui": false,

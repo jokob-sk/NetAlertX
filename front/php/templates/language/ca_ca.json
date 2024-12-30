@@ -248,6 +248,8 @@
     "Donations_Title": "Donacions",
     "ENABLE_PLUGINS_description": "Habilita la <a target=\"_blank\" href=\"https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins\">connectors</a> funcionalitat. Carregar els connectors requereix més recursos de maquinari així podries voler desactivar-los en un sistema de baixos recursos.",
     "ENABLE_PLUGINS_name": "Activa els connectors(Plugins)",
+    "ENCRYPTION_KEY_description": "",
+    "ENCRYPTION_KEY_name": "",
     "Email_display_name": "Correu electrònic",
     "Email_icon": "<i class=\"fa fa-at\"></i>",
     "Events_Loading": "Carregant ...",

@@ -1,6 +1,7 @@
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
 import base64
+import os
 import hashlib
 
 
@@ -42,3 +43,17 @@ def decrypt_data(data, encryption_key):
     cipher = AES.new(key, AES.MODE_CBC, iv)
     pt = unpad(cipher.decrypt(ct), AES.block_size)
     return pt.decode('utf-8')
+
+
+#-------------------------------------------------------------------------------
+def get_random_bytes(length):
+    # Generate random bytes
+    random_bytes = os.urandom(length)
+    
+    # Convert bytes to hexadecimal string
+    hex_string = random_bytes.hex()
+    
+    # Format hexadecimal string with hyphens
+    formatted_hex = '-'.join(hex_string[i:i+2] for i in range(0, len(hex_string), 2))
+    
+    return formatted_hex

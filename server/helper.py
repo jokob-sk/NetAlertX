@@ -825,7 +825,7 @@ def extract_ip_addresses(text):
     ip_addresses = re.findall(ip_pattern, text)
     return ip_addresses
 
-
+#-------------------------------------------------------------------------------
 def generate_random_string(length):
     characters = string.ascii_letters + string.digits
     return ''.join(random.choice(characters) for _ in range(length))

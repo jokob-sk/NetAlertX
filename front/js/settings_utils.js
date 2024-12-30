@@ -1245,7 +1245,7 @@ function collectTableData(tableSelector) {
                   rowData[index] = { [input.attr("my-originalsetkey")] : input.prop('checked') };
               } else {
                   // Generic sync for other inputs (text, select, textarea)
-                  rowData[index] =  { [input.attr("my-originalsetkey")] : input.val() };
+                  rowData[index] =  { [input.attr("my-originalsetkey")] : input.val().replace(/'/g, "").replace(/"/g, "") };
               }
           } else {
               // Handle plain text

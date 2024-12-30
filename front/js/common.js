@@ -455,6 +455,8 @@ function utf8ToBase64(str) {
 // General utilities
 // -----------------------------------------------------------------------------
 
+
+
 // check if JSON object
 function isJsonObject(value) {
   return typeof value === 'object' && value !== null && !Array.isArray(value);

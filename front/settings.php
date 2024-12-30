@@ -53,6 +53,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
  
 
 <script src="lib/crypto/crypto-js.min.js"></script>
+<script src="lib/bcrypt/bcrypt.min.js"></script>
 
 
 <div id="settingsPage" class="content-wrapper">
@@ -710,7 +711,8 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
                 clearCache()
               } else{
                 // something went wrong                
-                write_notification("[Important] DO NOT REFERSH the page. Open the browser DEV console (F12). Please take a screenshot of it. Submit it (with the nginx and php error logs) as a new issue here: https://github.com/jokob-sk/NetAlertX/issues", 'interrupt')
+                write_notification("[Important] Please take a screenshot of the Console tab in the browser (F12) and next error. Submit it (with the nginx and php error logs) as a new issue here: https://github.com/jokob-sk/NetAlertX/issues", 'interrupt')
+                write_notification(data, 'interrupt')
 
                 console.log("🔽");
                 console.log(settingsArray);

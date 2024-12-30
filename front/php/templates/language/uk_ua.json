@@ -248,6 +248,8 @@
     "Donations_Title": "Пожертви",
     "ENABLE_PLUGINS_description": "Вмикає функції <a target=\"_blank\" href=\"https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins\">плагінів</a>. Завантаження плагінів вимагає більше апаратних ресурсів, тому ви можете вимкнути їх у системі з низьким енергоспоживанням.",
     "ENABLE_PLUGINS_name": "Увімкнути плагіни",
+    "ENCRYPTION_KEY_description": "",
+    "ENCRYPTION_KEY_name": "",
     "Email_display_name": "Електронна пошта",
     "Email_icon": "<i class=\"fa fa-at\"></i>",
     "Events_Loading": "Завантаження...",

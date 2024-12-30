@@ -1,7 +1,7 @@
 {
   "code_name": "custom_props",
   "unique_prefix": "CUSTPROP",
-  "plugin_type": "system",
+  "plugin_type": "core",
   "enabled": true,
   "data_source": "template",
   "show_ui": false,

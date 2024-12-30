@@ -248,6 +248,8 @@
     "Donations_Title": "捐款",
     "ENABLE_PLUGINS_description": "启用<a target=\"_blank\" href=\"https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins\">插件</a>功能。加载插件需要更多硬件资源，因此您可能需要在低功耗系统上禁用它们。",
     "ENABLE_PLUGINS_name": "启用插件",
+    "ENCRYPTION_KEY_description": "",
+    "ENCRYPTION_KEY_name": "",
     "Email_display_name": "Email",
     "Email_icon": "<i class=\"fa fa-at\"></i>",
     "Events_Loading": "加载中...",

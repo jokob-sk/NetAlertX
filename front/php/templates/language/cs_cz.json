@@ -248,6 +248,8 @@
     "Donations_Title": "",
     "ENABLE_PLUGINS_description": "",
     "ENABLE_PLUGINS_name": "",
+    "ENCRYPTION_KEY_description": "",
+    "ENCRYPTION_KEY_name": "",
     "Email_display_name": "",
     "Email_icon": "",
     "Events_Loading": "",

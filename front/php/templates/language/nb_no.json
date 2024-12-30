@@ -248,6 +248,8 @@
     "Donations_Title": "Donasjoner",
     "ENABLE_PLUGINS_description": "Aktiverer <a target=\"_blank\" href=\"https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins\">plugins</a> funksjonaliten. Å laste inn plugins krever mer maskinvareressurser, så det kan være lurt å deaktivere dem på et system med lav strøm.",
     "ENABLE_PLUGINS_name": "Aktiver Plugins",
+    "ENCRYPTION_KEY_description": "",
+    "ENCRYPTION_KEY_name": "",
     "Email_display_name": "E-post",
     "Email_icon": "<i class=\"fa fa-at\"></i>",
     "Events_Loading": "Laster...",

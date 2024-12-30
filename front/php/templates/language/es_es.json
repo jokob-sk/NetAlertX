@@ -258,6 +258,8 @@
     "Donations_Title": "Donaciones",
     "ENABLE_PLUGINS_description": "Habilita la funcionalidad de los <a target=\"_blank\" href=\"https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins\">complementos</a>. Cargar los complementos requiere más recursos de hardware, así que quizás quieras desactivarlo en hardware poco potente.",
     "ENABLE_PLUGINS_name": "Habilitar complementos",
+    "ENCRYPTION_KEY_description": "",
+    "ENCRYPTION_KEY_name": "",
     "Email_display_name": "Email",
     "Email_icon": "<i class=\"fa fa-at\"></i>",
     "Events_Loading": "Cargando...",

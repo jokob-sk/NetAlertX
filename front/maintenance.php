@@ -482,7 +482,12 @@ function ImportPastedCSV()
 {   
   var csv = $('#modal-input-textarea').val();
 
+  console.log(csv);
+
   csvBase64 = utf8ToBase64(csv);   
+
+  console.log(csvBase64);
+  
 
   $.post('php/server/devices.php?action=ImportCSV', { content: csvBase64 }, function(msg) {
       showMessage(msg);

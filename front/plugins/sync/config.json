@@ -1,7 +1,7 @@
 {
   "code_name": "sync",
   "unique_prefix": "SYNC",
-  "plugin_type": "system",
+  "plugin_type": "core",
   "enabled": true,
   "data_source": "script",
   "mapped_to_table": "CurrentScan",
