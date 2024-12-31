@@ -263,7 +263,7 @@ function cleanLog($logFile)
 
   $path = "";
 
-  $allowedFiles = ['app.log', 'app_front.log', 'IP_changes.log', 'stdout.log', 'stderr.log', 'app.php_errors.log', 'execution_queue.log'];
+  $allowedFiles = ['app.log', 'app_front.log', 'IP_changes.log', 'stdout.log', 'stderr.log', 'app.php_errors.log', 'execution_queue.log', 'db_is_locked.log'];
   
   if(in_array($logFile, $allowedFiles))
   {
@@ -274,7 +274,7 @@ function cleanLog($logFile)
   {
     // purge content
     $file = fopen($path, "w") or die("Unable to open file!");
-    fwrite($file, "[".$timestamp. "] Log file manually purged" .PHP_EOL."");
+    fwrite($file, "");
     fclose($file);
     displayMessage('File <code>'.$logFile.'</code> purged.', FALSE, TRUE, TRUE, TRUE);      
   } else
