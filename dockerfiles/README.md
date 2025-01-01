@@ -1,4 +1,3 @@
-[![GitHub Committed](https://img.shields.io/github/last-commit/jokob-sk/NetAlertX?color=40ba12&label=Committed&logo=GitHub&logoColor=fff&style=for-the-badge)](https://github.com/jokob-sk/NetAlertX)
 [![Docker Size](https://img.shields.io/docker/image-size/jokobsk/netalertx?label=Size&logo=Docker&color=0aa8d2&logoColor=fff&style=for-the-badge)](https://hub.docker.com/r/jokobsk/netalertx)
 [![Docker Pulls](https://img.shields.io/docker/pulls/jokobsk/netalertx?label=Pulls&logo=docker&color=0aa8d2&logoColor=fff&style=for-the-badge)](https://hub.docker.com/r/jokobsk/netalertx)
 [![GitHub Release](https://img.shields.io/github/v/release/jokob-sk/NetAlertX?color=0aa8d2&logoColor=fff&logo=GitHub&style=for-the-badge)](https://github.com/jokob-sk/NetAlertX/releases)
@@ -67,12 +66,11 @@ See alternative [docked-compose examples](https://github.com/jokob-sk/NetAlertX/
 ### Initial setup
 
 - If unavailable, the app generates a default `app.conf` and `app.db` file on the first run.
-- The preferred way is to manage the configuration via the Settings section in the UI.
-- You can modify [app.conf](https://github.com/jokob-sk/NetAlertX/tree/main/config) directly, if needed.
+- The preferred way is to manage the configuration via the Settings section in the UI, if UI is inaccessible you can modify [app.conf](https://github.com/jokob-sk/NetAlertX/tree/main/back) in the `/app/config/` folder directly 
 
-### Setting up scanning
+### Setting up scanners
 
-You have to specify which network(s) should be scanned. This is done by entering subnets that are accessible from the host. Please specify at least one valid subnet and interface in the `SCAN_SUBNETS` setting and see the documentation on [How to set up multiple SUBNETS, VLANs and what are limitations](https://github.com/jokob-sk/NetAlertX/blob/main/docs/SUBNETS.md) for troubleshooting and more advanced scenarios. 
+You have to specify which network(s) should be scanned. This is done by entering subnets that are accessible from the host. If you use the default `ARPSCAN` plugin, you have to specify at least one valid subnet and interface in the `SCAN_SUBNETS` setting. See the documentation on [How to set up multiple SUBNETS, VLANs and what are limitations](https://github.com/jokob-sk/NetAlertX/blob/main/docs/SUBNETS.md) for troubleshooting and more advanced scenarios. 
 
 If you are running PiHole you can synchronize devices directly. Check the [PiHole configuration guide](https://github.com/jokob-sk/NetAlertX/blob/main/docs/PIHOLE_GUIDE.md) for details. 
 

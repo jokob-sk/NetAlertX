@@ -365,7 +365,7 @@ def setting_value_to_python_type(set_type, set_value):
     transformers    = element_with_input_value.get('transformers', [])
 
     # Convert value based on dataType and elementType
-    if dataType == 'string' and elementType in ['input', 'select', 'textarea']:
+    if dataType == 'string' and elementType in ['input', 'select', 'textarea', 'datatable']:
         value = reverseTransformers(str(set_value), transformers)
 
     elif dataType == 'integer' and (elementType == 'input' or elementType == 'select'):    

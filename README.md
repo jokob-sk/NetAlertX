@@ -19,8 +19,8 @@ Head to [https://netalertx.com/](https://netalertx.com/) for more gifs and scree
   <summary>📷 Click for more screenshots</summary>
 
   | ![Main screen][main] | ![device_details 1][device_details]  | ![Screen network][network] |
-  | ![presence][presence] | ![maintenance][maintenance] | ![settings][settings]  |
   |----------------------|----------------------|----------------------|
+  | ![presence][presence] | ![maintenance][maintenance] | ![settings][settings]  |
   | ![sync_hub][sync_hub] | ![report1][report1] | ![device_nmap][device_nmap]  |
 
 </details>
@@ -92,8 +92,6 @@ Thank you to all the wonderful people who are sponsoring this project.
 |---|
 
 <!-- SPONSORS-LIST DO NOT MODIFY ABOVE -->
-
-
 
 <details>
   <summary>Click for more ways to donate</summary>

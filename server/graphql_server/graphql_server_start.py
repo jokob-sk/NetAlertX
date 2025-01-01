@@ -32,8 +32,9 @@ def graphql_endpoint():
     api_token_value = get_setting_value("API_TOKEN")
 
     if incoming_header_token != f"Bearer {api_token_value}":
-        mylog('verbose', [f'[graphql_server] Unauthorized access attempt'])
-        return jsonify({"error": "Unauthorized"}), 401
+        msg = '[graphql_server] Unauthorized access attempt - make sure your GRAPHQL_PORT and API_TOKEN settings are correct.'
+        mylog('verbose', [msg])
+        return jsonify({"error": msg}), 401
 
     # Retrieve and log request data
     data = request.get_json()

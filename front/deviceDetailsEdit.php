@@ -358,51 +358,51 @@
     showSpinner();
 
      // Update data to server using POST
-$.post('php/server/devices.php?action=setDeviceData', {
-    mac: $('#NEWDEV_devMac').val(),
-    name: encodeURIComponent($('#NEWDEV_devName').val().replace(/'/g, "")),
-    owner: encodeURIComponent($('#NEWDEV_devOwner').val().replace(/'/g, "")),
-    type: $('#NEWDEV_devType').val().replace(/'/g, ""),
-    vendor: encodeURIComponent($('#NEWDEV_devVendor').val().replace(/'/g, "")),
-    icon: encodeURIComponent($('#NEWDEV_devIcon').val()),
-    favorite: ($('#NEWDEV_devFavorite')[0].checked * 1),
-    group: encodeURIComponent($('#NEWDEV_devGroup').val().replace(/'/g, "")),
-    location: encodeURIComponent($('#NEWDEV_devLocation').val().replace(/'/g, "")),
-    comments: encodeURIComponent(encodeSpecialChars($('#NEWDEV_devComments').val())),
-    networknode: $('#NEWDEV_devParentMAC').val(),
-    networknodeport: $('#NEWDEV_devParentPort').val(),
-    ssid: $('#NEWDEV_devSSID').val(),
-    networksite: $('#NEWDEV_devSite').val(),
-    staticIP: ($('#NEWDEV_devStaticIP')[0].checked * 1),
-    scancycle: "1",
-    alertevents: ($('#NEWDEV_devAlertEvents')[0].checked * 1),
-    alertdown: ($('#NEWDEV_devAlertDown')[0].checked * 1),
-    skiprepeated: $('#NEWDEV_devSkipRepeated').val().split(' ')[0],
-    newdevice: ($('#NEWDEV_devIsNew')[0].checked * 1),
-    archived: ($('#NEWDEV_devIsArchived')[0].checked * 1),
-    devFirstConnection: ($('#NEWDEV_devFirstConnection').val()),
-    devLastConnection: ($('#NEWDEV_devLastConnection').val()),
-    devCustomProps: btoa(JSON.stringify(collectTableData("#NEWDEV_devCustomProps_table"))),
-    ip: ($('#NEWDEV_devLastIP').val()),
-    createNew: createNew
-}, function(msg) {
-    showMessage(msg);
+    $.post('php/server/devices.php?action=setDeviceData', {
+        mac: $('#NEWDEV_devMac').val(),
+        name: encodeURIComponent($('#NEWDEV_devName').val().replace(/'/g, "")),
+        owner: encodeURIComponent($('#NEWDEV_devOwner').val().replace(/'/g, "")),
+        type: $('#NEWDEV_devType').val().replace(/'/g, ""),
+        vendor: encodeURIComponent($('#NEWDEV_devVendor').val().replace(/'/g, "")),
+        icon: encodeURIComponent($('#NEWDEV_devIcon').val()),
+        favorite: ($('#NEWDEV_devFavorite')[0].checked * 1),
+        group: encodeURIComponent($('#NEWDEV_devGroup').val().replace(/'/g, "")),
+        location: encodeURIComponent($('#NEWDEV_devLocation').val().replace(/'/g, "")),
+        comments: encodeURIComponent(encodeSpecialChars($('#NEWDEV_devComments').val())),
+        networknode: $('#NEWDEV_devParentMAC').val(),
+        networknodeport: $('#NEWDEV_devParentPort').val(),
+        ssid: $('#NEWDEV_devSSID').val(),
+        networksite: $('#NEWDEV_devSite').val(),
+        staticIP: ($('#NEWDEV_devStaticIP')[0].checked * 1),
+        scancycle: "1",
+        alertevents: ($('#NEWDEV_devAlertEvents')[0].checked * 1),
+        alertdown: ($('#NEWDEV_devAlertDown')[0].checked * 1),
+        skiprepeated: $('#NEWDEV_devSkipRepeated').val().split(' ')[0],
+        newdevice: ($('#NEWDEV_devIsNew')[0].checked * 1),
+        archived: ($('#NEWDEV_devIsArchived')[0].checked * 1),
+        devFirstConnection: ($('#NEWDEV_devFirstConnection').val()),
+        devLastConnection: ($('#NEWDEV_devLastConnection').val()),
+        devCustomProps: btoa(JSON.stringify(collectTableData("#NEWDEV_devCustomProps_table"))),
+        ip: ($('#NEWDEV_devLastIP').val()),
+        createNew: createNew
+    }, function(msg) {
+        showMessage(msg);
 
-    // Remove navigation prompt "Are you sure you want to leave..."
-    window.onbeforeunload = null;
-    somethingChanged = false;
+        // Remove navigation prompt "Are you sure you want to leave..."
+        window.onbeforeunload = null;
+        somethingChanged = false;
 
-    // refresh API
-    updateApi("devices,appevents");
+        // refresh API
+        updateApi("devices,appevents");
 
-    // Callback function
-    if (typeof refreshCallback == 'function') {
-        refreshCallback(direction);
-    }
+        // Callback function
+        if (typeof refreshCallback == 'function') {
+            refreshCallback(direction);
+        }
 
-    // Everything loaded
-    hideSpinner();
-});
+        // Everything loaded
+        hideSpinner();
+    });
 
   }
 

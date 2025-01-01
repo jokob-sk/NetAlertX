@@ -897,7 +897,7 @@ function getMacsOfShownDevices() {
 function renderCustomProps(custProps, mac) {
   // Decode and parse the custom properties
 
-  // console.log(custProps);  
+  console.log(custProps);  
 
   const props = JSON.parse(atob(custProps));
   let html = "";

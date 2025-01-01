@@ -5,7 +5,7 @@ To download and install NetAlertX on the hardware/server directly use the `curl`
 > [!NOTE]
 > This is an Experimental feature 🧪 and it relies on community support.
 >
-> Looking for maintainers for this installation method 🙂
+> 🙏 Looking for maintainers for this installation method 🙂
 >
 > There is no guarantee that the install script or any other script will gracefully handle other installed software.
 > Data loss is a possibility, **it is recommended to install NetAlertX using the supplied Docker image**.
@@ -35,6 +35,9 @@ Some facts about what and where something will be changed/installed by the HW in
 - **EXPERIMENTAL** and not recommended way to install NetAlertX.
 
 ## 📥 Installation via CURL
+
+> [!TIP]  
+> If the below fails try grabbing and installing one of the [previous releases](https://github.com/jokob-sk/NetAlertX/releases) and run the installation from the zip package.
 
 ```bash
 curl -o install.debian.sh https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/install/install.debian.sh && sudo chmod +x install.debian.sh && sudo ./install.debian.sh
