@@ -152,16 +152,17 @@ def main():
         if "l3connectivities" in host and isinstance(host["l3connectivities"], list):
             for ip in [ip for ip in host["l3connectivities"] if ip.get("reachable")]:
                 mac: str = host.get("l2ident", {}).get("id", "(unknown)")
-                plugin_objects.add_object(
-                    primaryId=mac,
-                    secondaryId=ip.get("addr", "(unknown)"),
-                    watched1=host.get("primary_name", "(unknown)"),
-                    watched2=host.get("vendor_name", "(unknown)"),
-                    watched3=map_device_type(host.get("host_type", "unknown")),
-                    watched4=datetime.fromtimestamp(ip.get("last_time_reachable", 0)),
-                    extra="",
-                    foreignKey=mac,
-                )
+                if mac != '(unknown)':
+                    plugin_objects.add_object(
+                        primaryId=mac,
+                        secondaryId=ip.get("addr", "0.0.0.0"),
+                        watched1=host.get("primary_name", "(unknown)"),
+                        watched2=host.get("vendor_name", "(unknown)"),
+                        watched3=map_device_type(host.get("host_type", "")),
+                        watched4=datetime.fromtimestamp(ip.get("last_time_reachable", 0)),
+                        extra="",
+                        foreignKey=mac,
+                    )
         else:
             # Optional: Log or handle hosts without 'l3connectivities'
             mylog("verbose", [f"[{pluginName}] Host missing 'l3connectivities': {host}"])
