@@ -117,7 +117,7 @@ class Query(ObjectType):
             device["devIpLong"] = format_ip_long(device.get("devLastIP", ""))
 
         
-        mylog('none', f'[graphql_schema] devices_data: {devices_data}')
+        mylog('verbose', f'[graphql_schema] devices_data: {devices_data}')
 
 
 
@@ -127,14 +127,14 @@ class Query(ObjectType):
             # Define status-specific filtering
             if options.status:
                 status = options.status
-                mylog('none', f'[graphql_schema] Applying status filter: {status}')
+                mylog('verbose', f'[graphql_schema] Applying status filter: {status}')
 
                 # Example filtering based on the "status"
                 if status == "my_devices":
                     # Include devices matching criteria in UI_MY_DEVICES
                     allowed_statuses = get_setting_value("UI_MY_DEVICES")  
 
-                    mylog('none', f'[graphql_schema] allowed_statuses: {allowed_statuses}')
+                    mylog('verbose', f'[graphql_schema] allowed_statuses: {allowed_statuses}')
 
                     devices_data = [
                         device for device in devices_data
@@ -219,9 +219,9 @@ class Query(ObjectType):
             return SettingResult(settings=[], count=0)
 
 
-        mylog('none', f'[graphql_schema] settings_data: {settings_data}')
+        mylog('verbose', f'[graphql_schema] settings_data: {settings_data}')
 
-        # # Convert to Setting objects
+        # Convert to Setting objects
         settings = [Setting(**setting) for setting in settings_data]
 
         return SettingResult(settings=settings, count=len(settings))
