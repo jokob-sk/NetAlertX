@@ -192,14 +192,6 @@ function isSHA256(value) {
 }
 
 // -------------------------------------------------------------------
-// Utility function to check if the value is already Base64
-function isBase64(value) {
-  const base64Regex =
-    /^(?:[A-Za-z0-9+\/]{4})*?(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=)?$/;
-  return base64Regex.test(value);
-}
-
-// -------------------------------------------------------------------
 // Validation
 // -------------------------------------------------------------------
 function settingsCollectedCorrectly(settingsArray, settingsJSON_DB) {

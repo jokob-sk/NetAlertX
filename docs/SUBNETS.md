@@ -2,7 +2,7 @@
 
 You need to specify the network interface and the network mask. You can also configure multiple subnets and specify VLANs (see VLAN exceptions below).
 
-`ARPSCAN` can scan multiple networks if the network allows it. To scan networks directly, the subnets must be accessible from the network where NetAlertX is running. This means NetAlertX needs to have access to the interface attached to that subnet. You can verify this by running the following command in the container:
+`ARPSCAN` can scan multiple networks if the network allows it. To scan networks directly, the subnets must be accessible from the network where NetAlertX is running. This means NetAlertX needs to have access to the interface attached to that subnet. You can verify this by running the following command in the container (replace the interface and ip mask):
 
 `sudo arp-scan --interface=eth0 192.168.1.0/24`
 
@@ -45,18 +45,24 @@ Specify the network filter, which **significantly** speeds up the scan process. 
 
 **Example value:** `--interface=eth0`
 
-The adapter will probably be `eth0` or `eth1`. (Check `System Info` > `Network Hardware` or run `iwconfig` in the container to find your interface name(s)).
+The adapter will probably be `eth0` or `eth1`. (Check `System Info` > `Network Hardware`, or run `iwconfig` in the container to find your interface name(s)).
 
 ![Network hardware](/docs/img/SUBNETS/system_info-network_hardware.png)
 
 > [!TIP]  
-> As an alternative to `iwconfig`, run `ip -o link show | awk -F': ' '!/lo|vir|docker/ {print $2}'` in your container to find your interface name(s) (e.g.: `eth0`, `eth1`).
+> As an alternative to `iwconfig`, run `ip -o link show | awk -F': ' '!/lo|vir|docker/ {print $2}'` in your container to find your interface name(s) (e.g.: `eth0`, `eth1`):
+> ```bash
+> Synology-NAS:/# ip -o link show | awk -F': ' '!/lo|vir|docker/ {print $2}'
+> sit0@NONE
+> eth1
+> eth0
+> ```
 
 ### VLANs
 
-**Example value:** `-vlan=107`
+**Example value:** `--vlan=107`
 
-- Append `-vlan=107` to the interface field (e.g.: `eth0 -vlan=107`) for multiple VLANs. More details are available in this [comment](https://github.com/jokob-sk/NetAlertX/issues/170#issuecomment-1419902988).
+- Append `--vlan=107` to the `SCAN_SUBNETS` field (e.g.: `192.168.1.0/24 --interface=vmbr0 --vlan=107`) for multiple VLANs.
 
 #### VLANs on a Hyper-V Setup
 

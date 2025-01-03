@@ -83,9 +83,7 @@ Get notified about a new release, what new functionality you can use and about b
 
 [![GitHub Sponsors](https://img.shields.io/github/sponsors/jokob-sk?style=social)](https://github.com/sponsors/jokob-sk)
 
-Thank you to all the wonderful people who are sponsoring this project. 
-
-> preventing my burnout😅 are:
+Thank you to all the wonderful people who are sponsoring this project (private sponsors are hidden). 
 
 <!-- SPONSORS-LIST DO NOT MODIFY BELOW -->
 | All Sponsors |

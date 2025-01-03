@@ -148,18 +148,23 @@ def main():
         foreignKey=freebox["mac"],
     )
     for host in hosts:
-        for ip in [ip for ip in host["l3connectivities"] if ip["reachable"]]:
-            mac: str = host["l2ident"]["id"]
-            plugin_objects.add_object(
-                primaryId=mac,
-                secondaryId=ip["addr"],
-                watched1=host["primary_name"],
-                watched2=host["vendor_name"] if host["vendor_name"] else "(unknown)",
-                watched3=map_device_type(host["host_type"]),
-                watched4=datetime.fromtimestamp(ip["last_time_reachable"]),
-                extra="",
-                foreignKey=mac,
-            )
+        # Check if 'l3connectivities' exists and is a list
+        if "l3connectivities" in host and isinstance(host["l3connectivities"], list):
+            for ip in [ip for ip in host["l3connectivities"] if ip.get("reachable")]:
+                mac: str = host.get("l2ident", {}).get("id", "(unknown)")
+                plugin_objects.add_object(
+                    primaryId=mac,
+                    secondaryId=ip.get("addr", "(unknown)"),
+                    watched1=host.get("primary_name", "(unknown)"),
+                    watched2=host.get("vendor_name", "(unknown)"),
+                    watched3=map_device_type(host.get("host_type", "unknown")),
+                    watched4=datetime.fromtimestamp(ip.get("last_time_reachable", 0)),
+                    extra="",
+                    foreignKey=mac,
+                )
+        else:
+            # Optional: Log or handle hosts without 'l3connectivities'
+            mylog("verbose", [f"[{pluginName}] Host missing 'l3connectivities': {host}"])
 
     # commit result
     plugin_objects.write_result_file()

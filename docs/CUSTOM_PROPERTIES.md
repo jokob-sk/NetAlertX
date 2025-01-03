@@ -1,10 +1,10 @@
-# Custom Properties for Network Devices
+# Custom Properties for Devices
 
 ![Custom Properties](/docs/img/CUSTOM_PROPERTIES/Device_Custom_Properties.png)
 
 ## Overview
 
-This functionality allows you to define **custom properties** for network devices, which can store and display additional information on the device listing page. By marking properties as visible, you can enhance the user interface with quick actions, notes, or external links.
+This functionality allows you to define **custom properties** for devices, which can store and display additional information on the device listing page. By marking properties as visible, you can enhance the user interface with quick actions, notes, or external links.
 
 ### Key Features:
 - **Customizable Properties**: Define specific properties for each device.

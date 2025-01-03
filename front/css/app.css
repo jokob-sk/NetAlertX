@@ -287,11 +287,6 @@ body
     margin-left: 150px;    
 }
 
-#settingsPage
-{
-    display: grid;
-}
-
 
 @media (max-width: 767px) {
     .main-header .logo {
@@ -892,6 +887,33 @@ height: 50px;
     width:19%;         
 } */
 }
+
+/* Hide unusable buttons on the settings page for the NEWDEV plugin*/
+#settingsPage #add_option_NEWDEV_devGroup, 
+#settingsPage #add_option_NEWDEV_devLocation, 
+#settingsPage #add_option_NEWDEV_devOwner,
+#settingsPage #copy_icons_NEWDEV_devIcon,
+#settingsPage #add_icon_NEWDEV_devIcon,
+#settingsPage #add_option_NEWDEV_devType
+{
+    display: none;
+}
+
+
+
+#settingsPage
+{
+    display: grid;
+}
+
+
+#settingsPage .small-box .inner .card-title {
+    overflow: hidden;
+    text-overflow: ellipsis;        
+    white-space: nowrap;
+    color: white;
+}
+  
 
 .settingswrap
 {
@@ -1678,13 +1700,6 @@ input[readonly] {
     }
   }
 
-#settingsPage .small-box .inner .card-title {
-    overflow: hidden;
-    text-overflow: ellipsis;        
-    white-space: nowrap;
-    color: white;
-}
-  
 
 .textOverflow
 {

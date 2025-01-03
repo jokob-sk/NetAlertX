@@ -1,4 +1,3 @@
-version: "3"
 services:
   netalertx:
     privileged: true
@@ -43,8 +42,7 @@ services:
       - ${DEV_LOCATION}/install/start.debian.sh:/app/install/start.debian.sh
       - ${DEV_LOCATION}/install/user-mapping.debian.sh:/app/install/user-mapping.debian.sh
       - ${DEV_LOCATION}/install/install.debian.sh:/app/install/install.debian.sh      
-      - ${DEV_LOCATION}/install/install_dependencies.debian.sh:/app/install/install_dependencies.debian.sh      
-
+      - ${DEV_LOCATION}/install/install_dependencies.debian.sh:/app/install/install_dependencies.debian.sh
       - ${DEV_LOCATION}/front/php:/app/front/php      
       - ${DEV_LOCATION}/front/deviceDetails.php:/app/front/deviceDetails.php
       - ${DEV_LOCATION}/front/deviceDetailsEdit.php:/app/front/deviceDetailsEdit.php
@@ -73,8 +71,8 @@ services:
       - ${DEV_LOCATION}/front/plugins:/app/front/plugins      
       # DELETE END anyone trying to use this file: comment out / delete ABOVE lines, they are only for development purposes
       # ---------------------------------------------------------------------------
-    environment:
-      # - APP_CONF_OVERRIDE={"SCAN_SUBNETS":"['192.168.1.0/24 --interface=eth1']","UI_theme":"Dark"}
+    environment:      
+      # - APP_CONF_OVERRIDE={"SCAN_SUBNETS":"['192.168.1.0/24 --interface=eth1']","GRAPHQL_PORT":"20223","UI_theme":"Light"}
       - TZ=${TZ}
       - PORT=${PORT}      
       # ❗ DANGER ZONE BELOW - Setting ALWAYS_FRESH_INSTALL=true will delete the content of the /db & /config folders

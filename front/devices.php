@@ -295,48 +295,7 @@ function renderInfoboxes(customData) {
     });
   }
 
-// // -----------------------------------------------------------------------------
-// // Define a function to filter data based on deviceStatus
-// function filterDataByStatus(data, status) {
-//   return data.filter(function(item) {
-//     switch (status) {
-//       case 'my_devices':
-//         to_display = getSetting('UI_MY_DEVICES');
-        
-//         let result = true;
-
-//         if (!to_display.includes('down') && item.devPresentLastScan === 0 && item.devAlertDown !== 0) {
-//             result = false;
-//         } else if (!to_display.includes('new') && item.devIsNew === 1) {
-//             result = false;
-//         } else if (!to_display.includes('archived') && item.devIsArchived === 1) {
-//             result = false;
-//         } else if (!to_display.includes('offline') && item.devPresentLastScan === 0) {
-//             result = false;
-//         } else if (!to_display.includes('online') && item.devPresentLastScan === 1) {
-//             result = false;
-//         }  
-
-//         return result; // Include all items for 'my_devices' status
-//       case 'connected':
-//         return item.devPresentLastScan === 1;
-//       case 'favorites':
-//         return item.devFavorite === 1;
-//       case 'new':
-//         return item.devIsNew === 1;
-//       case 'offline':
-//         return item.devPresentLastScan === 0;
-//       case 'down':
-//         return (item.devPresentLastScan === 0 && item.devAlertDown  !== 0);
-//       case 'archived':
-//         return item.devIsArchived === 1;
-//       default:
-//         return true; // Include all items for unknown statuses
-//     }
-//   });
-// }
-
-
+// -----------------------------------------------------------------------------
 // Map column index to column name for GraphQL query
 function mapColumnIndexToFieldName(index, tableColumnVisible) {
   // the order is important, don't change it!
@@ -377,6 +336,7 @@ function mapColumnIndexToFieldName(index, tableColumnVisible) {
 
 
 // ---------------------------------------------------------
+// Initializes the main devices list datatable
 function initializeDatatable (status) {
   
   if(!status)
@@ -808,9 +768,7 @@ function initializeDatatable (status) {
 // -----------------------------------------------------------------------------
 function handleLoadingDialog(needsReload = false)
 {
-
-  // console.log('needsReload:');
-  // console.log(needsReload); 
+  // console.log(`needsReload: ${needsReload}`); 
 
   $.get('/php/server/query_logs.php?file=execution_queue.log&nocache=' + Date.now(), function(data) {     
 
@@ -892,49 +850,54 @@ function getMacsOfShownDevices() {
 
 // -----------------------------------------------------------------------------
 // Handle custom actions/properties on a device    
-// -----------------------------------------------------------------------------
-// Handle custom actions/properties on a device    
 function renderCustomProps(custProps, mac) {
   // Decode and parse the custom properties
 
-  console.log(custProps);  
+  if (!isBase64(custProps)) {
 
-  const props = JSON.parse(atob(custProps));
-  let html = "";
+    console.error(`Unable to decode CustomProps for ${mac}`);    
+    console.error(custProps);    
+    
+  } else{
+    const props = JSON.parse(atob(custProps));
+    let html = "";
 
-  props.forEach((propGroup, index) => {
-    const propMap = Object.fromEntries(
-      propGroup.map(prop => Object.entries(prop)[0]) // Convert array of objects to key-value pairs
-    );
+    props.forEach((propGroup, index) => {
+      const propMap = Object.fromEntries(
+        propGroup.map(prop => Object.entries(prop)[0]) // Convert array of objects to key-value pairs
+      );
 
-    if (propMap["CUSTPROP_show"] === true) { // Render if visible
-      let onClickEvent = "";
+      if (propMap["CUSTPROP_show"] === true) { // Render if visible
+        let onClickEvent = "";
 
-      switch (propMap["CUSTPROP_type"]) {
-        case "show_notes":
-          onClickEvent = `showModalOK('${propMap["CUSTPROP_name"]}','${propMap["CUSTPROP_notes"]}')`;
-          break;
-        case "link":
-          onClickEvent = `window.location.href='${propMap["CUSTPROP_args"]}';`;
-          break;
-        case "link_new_tab":
-          onClickEvent = `openInNewTab('${propMap["CUSTPROP_args"]}')`;
-          break;
-        case "run_plugin":
-          onClickEvent = `alert('Not implemented')`;
-          break;
-        case "delete_dev":
-          onClickEvent = `askDelDevDTInline('${mac}')`;
-          break;
-        default:
-          break;
+        switch (propMap["CUSTPROP_type"]) {
+          case "show_notes":
+            onClickEvent = `showModalOK('${propMap["CUSTPROP_name"]}','${propMap["CUSTPROP_notes"]}')`;
+            break;
+          case "link":
+            onClickEvent = `window.location.href='${propMap["CUSTPROP_args"]}';`;
+            break;
+          case "link_new_tab":
+            onClickEvent = `openInNewTab('${propMap["CUSTPROP_args"]}')`;
+            break;
+          case "run_plugin":
+            onClickEvent = `alert('Not implemented')`;
+            break;
+          case "delete_dev":
+            onClickEvent = `askDelDevDTInline('${mac}')`;
+            break;
+          default:
+            break;
+        }
+
+        html += `<div class="pointer devicePropAction" onclick="${onClickEvent}"  title="${propMap["CUSTPROP_name"]} ${propMap["CUSTPROP_args"]}">  ${atob(propMap["CUSTPROP_icon"])} </div>`;
       }
+    });
 
-      html += `<div class="pointer devicePropAction" onclick="${onClickEvent}"  title="${propMap["CUSTPROP_name"]} ${propMap["CUSTPROP_args"]}">  ${atob(propMap["CUSTPROP_icon"])} </div>`;
-    }
-  });
+    return html;
+  }
 
-  return html;
+  return "Error, check browser Console log"
 }
 
 

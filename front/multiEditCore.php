@@ -17,14 +17,14 @@
         <h3 class="box-title"><?= lang('Gen_Selected_Devices');?></h3>
 
       </div>
-    <div class="deviceSelector col-md-9 col-sm-12" style="z-index:5"></div> 
+    <div class="deviceSelector col-md-11 col-sm-11" style="z-index:5"></div> 
 
-    <div class="col-md-3"> 
-      <button type="button" class="btn btn-default" onclick="markAllSelected()"> 
-        <i class="fa-solid fa-circle-check"></i>  <?= lang('Gen_Add_All');?>
+    <div class="col-md-1"> 
+      <button type="button" class="btn btn-default col-md-12" onclick="markAllSelected()" title="<?= lang('Gen_Add_All');?>"> 
+        <i class="fa-solid fa-circle-check"></i>  
       </button>
-      <button type="button" class="btn btn-default"  onclick="markAllNotSelected()"> 
-        <i class="fa-solid fa-circle-xmark"></i>  <?= lang('Gen_Remove_All');?>
+      <button type="button" class="btn btn-default col-md-12"  onclick="markAllNotSelected()" title="<?= lang('Gen_Remove_All');?>"> 
+        <i class="fa-solid fa-circle-xmark"></i>  
       </button>
     </div>
 
