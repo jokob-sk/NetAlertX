@@ -732,4 +732,8 @@ input[type="password"]::-webkit-caps-lock-indicator {
   background-color: #000 !important;
 }
 
+.callout code {
+  background-color: #fff !important;
+  color:#000 !important;
+}
 

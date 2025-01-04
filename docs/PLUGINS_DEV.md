@@ -12,6 +12,9 @@ NetAlertX comes with a plugin system to feed events from third-party scripts int
 
 ### 🎥 Watch the video:
 
+> [!TIP]
+> Read this guide [Development environment setup guide](/docs/DEV_ENV_SETUP.md) to set up your local environment for development. 👩‍💻
+
 [![Watch the video](/docs/img/YouTube_thumbnail.png)](https://youtu.be/cdbxlwiWhv8)
 
 ### 📸 Screenshots

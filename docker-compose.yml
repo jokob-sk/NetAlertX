@@ -39,10 +39,6 @@ services:
       - ${DEV_LOCATION}/front/lib:/app/front/lib
       - ${DEV_LOCATION}/front/js:/app/front/js
       - ${DEV_LOCATION}/front/report_templates:/front/report_templates
-      - ${DEV_LOCATION}/install/start.debian.sh:/app/install/start.debian.sh
-      - ${DEV_LOCATION}/install/user-mapping.debian.sh:/app/install/user-mapping.debian.sh
-      - ${DEV_LOCATION}/install/install.debian.sh:/app/install/install.debian.sh      
-      - ${DEV_LOCATION}/install/install_dependencies.debian.sh:/app/install/install_dependencies.debian.sh
       - ${DEV_LOCATION}/front/php:/app/front/php      
       - ${DEV_LOCATION}/front/deviceDetails.php:/app/front/deviceDetails.php
       - ${DEV_LOCATION}/front/deviceDetailsEdit.php:/app/front/deviceDetailsEdit.php
@@ -62,7 +58,7 @@ services:
       - ${DEV_LOCATION}/front/presence.php:/app/front/presence.php
       - ${DEV_LOCATION}/front/settings.php:/app/front/settings.php      
       - ${DEV_LOCATION}/front/systeminfo.php:/app/front/systeminfo.php      
-      - ${DEV_LOCATION}/front/account.php:/app/front/account.php      
+      - ${DEV_LOCATION}/front/cloud_services.php:/app/front/cloud_services.php      
       - ${DEV_LOCATION}/front/report.php:/app/front/report.php      
       - ${DEV_LOCATION}/front/workflows.php:/app/front/workflows.php      
       - ${DEV_LOCATION}/front/appEventsCore.php:/app/front/appEventsCore.php      

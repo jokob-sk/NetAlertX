@@ -937,11 +937,14 @@ function generateFormHtml(settingsData, set, overrideValue, overrideOptions, ori
   const setKey = set['setKey'];
   const setType = set['setType'];
 
+  // if (setKey == '') {
+    
   // console.log(setType);
-  // console.log(setTypeEscaped); // Final transformed result
   // console.log(setKey);
   // console.log(overrideValue);
   // console.log(inVal);  
+
+  // }
 
   // Parse the setType JSON string
   const setTypeObject = JSON.parse(processQuotes(setType))
@@ -975,6 +978,16 @@ function generateFormHtml(settingsData, set, overrideValue, overrideOptions, ori
 
     // Override value
     let val = valRes;
+
+    // if (setKey == '') {
+    
+    //   console.log(setType);
+    //   console.log(setKey);
+    //   console.log(overrideValue);
+    //   console.log(inVal);  
+    //   console.log(val);  
+    
+    //   }
 
     // Generate HTML based on elementType
     switch (elementType) {

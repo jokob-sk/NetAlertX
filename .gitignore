@@ -11,6 +11,7 @@ front/log/*
 front/api/*
 /api/*
 **/plugins/**/*.log
+**/plugins/cloud_services/*
 **/%40eaDir/
 **/@eaDir/
 
@@ -24,10 +25,10 @@ __pycache__/
 **/pialert.db_bak
 .*.swp
 
-front/img/account/*
-**/account.php
-**/account.js
-front/css/account.css
+front/img/cloud_services/*
+**/cloud_services.php
+**/cloud_services.js
+front/css/cloud_services.css
 
 docker-compose.yml.ffsb42
 .env.omada.ffsb42
