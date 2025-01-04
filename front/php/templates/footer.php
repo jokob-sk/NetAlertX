@@ -32,8 +32,7 @@
       | <a href="https://github.com/jokob-sk/NetAlertX/issues"><i class="fa-solid fa-bug"></i></a> 
       | <a href="https://github.com/jokob-sk/NetAlertX/"><i class="fa-brands fa-github"></i></a> 
       | <a href="https://discord.gg/UQnnHNYV"><i class="fa-brands fa-discord"></i></a> 
-      | <a href="mailto:jokob@duck.com?subject=NetAlertX"><i class="fa-solid fa-envelope"></i></a> 
-      | <a href="https://github.com/pucherot/Pi.Alert">&copy;</a> 
+      | <a href="mailto:netalertx@gmail.com?subject=NetAlertX"><i class="fa-solid fa-envelope"></i></a> 
       | <?= lang('Maintenance_built_on');?>:  <?php include 'php/templates/build.php'; ?> 
       |  Version:  <?php include 'php/templates/version.php'; ?> 
       |     
