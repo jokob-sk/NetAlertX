@@ -894,6 +894,7 @@ height: 50px;
 #settingsPage #add_option_NEWDEV_devOwner,
 #settingsPage #copy_icons_NEWDEV_devIcon,
 #settingsPage #add_icon_NEWDEV_devIcon,
+#settingsPage #add_option_NEWDEV_devSite,
 #settingsPage #add_option_NEWDEV_devType
 {
     display: none;

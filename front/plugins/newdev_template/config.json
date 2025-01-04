@@ -1446,18 +1446,30 @@
     },
     {
       "function": "devSite",
+      "events": [
+        "add_option"
+      ],
       "type": {
         "dataType": "string",
         "elements": [
           {
-            "elementType": "input",
+            "elementType": "select",
             "elementOptions": [],
             "transformers": []
           }
         ]
       },
       "default_value": "",
-      "options": [],
+      "options": [
+        "{value}"
+      ],
+      "options_params": [
+        {
+          "name": "value",
+          "type": "sql",
+          "value": "SELECT DISTINCT '' AS id, '❌None' AS name UNION SELECT devSite AS id, devSite AS name FROM Devices WHERE devSite NOT IN ('', 'null') AND devSite IS NOT NULL UNION SELECT 'default' AS id, 'default' AS name UNION SELECT 'home', 'home' ORDER BY id;"
+        }
+      ],
       "localized": [
         "name",
         "description"
@@ -1488,7 +1500,7 @@
                 "columns": [
                   {
                     "settingKey": "CUSTPROP_icon",
-                    "optionsOverride":"setting.CUSTPROP_icon",
+                    "optionsOverride": "setting.CUSTPROP_icon",
                     "typeOverride": {
                       "dataType": "string",
                       "elements": [
@@ -1528,7 +1540,7 @@
                   },
                   {
                     "settingKey": "CUSTPROP_type",
-                    "optionsOverride":"setting.CUSTPROP_type",
+                    "optionsOverride": "setting.CUSTPROP_type",
                     "typeOverride": {
                       "dataType": "string",
                       "elements": [
@@ -1539,7 +1551,7 @@
                         }
                       ]
                     }
-                  },                  
+                  },
                   {
                     "settingKey": "CUSTPROP_name"
                   },
