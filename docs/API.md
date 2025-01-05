@@ -1,7 +1,134 @@
-## API endpoints
+# API endpoints
 
-NetAlertX comes with a simple API. These API endpoints are static files, that are periodically updated based on your settings. 
+NetAlertX comes with a couple of API endpoints. All requests need to be authorized (executed in a logged in browser session) or you have to pass the value of the `API_TOKEN` settings as authorization bearer, for example:
 
+```graphql
+curl 'http://host:GRAPHQL_PORT/graphql' \
+  -X POST \
+  -H 'Authorization: Bearer API_TOKEN' \
+  -H 'Content-Type: application/json' \
+  --data '{
+    "query": "query GetDevices($options: PageQueryOptionsInput) { devices(options: $options) { devices { rowid devMac devName devOwner devType devVendor devLastConnection devStatus } count } }",
+    "variables": {
+      "options": {
+        "page": 1,
+        "limit": 10,
+        "sort": [{ "field": "devName", "order": "asc" }],
+        "search": "",
+        "status": "connected"
+      }
+    }
+  }'
+```
+
+## API Endpoint: GraphQL
+
+Endpoint URL: `php/server/query_graphql.php`
+Host: `same as front end (web ui)`
+Port: `20212` or as defined by the `GRAPHQL_PORT` setting
+
+### Example Query to Fetch Devices
+
+First, let's define the GraphQL query to fetch devices with pagination and sorting options.
+
+```graphql
+query GetDevices($options: PageQueryOptionsInput) {
+  devices(options: $options) {
+    devices {
+      rowid
+      devMac
+      devName
+      devOwner
+      devType
+      devVendor
+      devLastConnection
+      devStatus
+    }
+    count
+  }
+}
+```
+
+### `curl` Command
+
+You can use the following `curl` command to execute the query. 
+
+```sh
+curl 'http://host:GRAPHQL_PORT/graphql'   -X POST   -H 'Authorization: Bearer API_TOKEN'  -H 'Content-Type: application/json'   --data '{
+    "query": "query GetDevices($options: PageQueryOptionsInput) { devices(options: $options) { devices { rowid devMac devName devOwner devType devVendor devLastConnection devStatus } count } }",
+    "variables": {
+      "options": {
+        "page": 1,
+        "limit": 10,
+        "sort": [{ "field": "devName", "order": "asc" }],
+        "search": "",
+        "status": "connected"
+      }
+    }
+  }'
+```
+
+### Explanation:
+
+1. **GraphQL Query**:
+   - The `query` parameter contains the GraphQL query as a string.
+   - The `variables` parameter contains the input variables for the query.
+
+2. **Query Variables**:
+   - `page`: Specifies the page number of results to fetch.
+   - `limit`: Specifies the number of results per page.
+   - `sort`: Specifies the sorting options, with `field` being the field to sort by and `order` being the sort order (`asc` for ascending or `desc` for descending).
+   - `search`: A search term to filter the devices.
+   - `status`: The status filter to apply (valid values are `my_devices` (determined by the `UI_MY_DEVICES` setting), `connected`, `favorites`, `new`, `down`, `archived`, `offline`).
+
+3. **`curl` Command**:
+   - The `-X POST` option specifies that we are making a POST request.
+   - The `-H "Content-Type: application/json"` option sets the content type of the request to JSON.
+   - The `-d` option provides the request payload, which includes the GraphQL query and variables.
+
+### Sample Response
+
+The response will be in JSON format, similar to the following:
+
+```json
+{
+  "data": {
+    "devices": {
+      "devices": [
+        {
+          "rowid": 1,
+          "devMac": "00:11:22:33:44:55",
+          "devName": "Device 1",
+          "devOwner": "Owner 1",
+          "devType": "Type 1",
+          "devVendor": "Vendor 1",
+          "devLastConnection": "2025-01-01T00:00:00Z",
+          "devStatus": "connected"
+        },
+        {
+          "rowid": 2,
+          "devMac": "66:77:88:99:AA:BB",
+          "devName": "Device 2",
+          "devOwner": "Owner 2",
+          "devType": "Type 2",
+          "devVendor": "Vendor 2",
+          "devLastConnection": "2025-01-02T00:00:00Z",
+          "devStatus": "connected"
+        }
+      ],
+      "count": 2
+    }
+  }
+}
+```
+
+## API Endpoint: JSON files 
+
+These API endpoint are static files, that are periodically updated. 
+
+Endpoint URL: `php/server/query_json.php?file=<file name>`
+Host: `same as front end (web ui)`
+Port: `20211` or as defined by the $PORT docker environment variable (same as the port for the web ui)
 
 ### When are the endpoints updated
 
@@ -9,7 +136,7 @@ The endpoints are updated when objects in the API endpoints are changed.
 
 ### Location of the endpoints
 
-In the container, these files are located under the `/app/api/` folder. You can acces sthem via the `/php/server/query_json.php?file=user_notifications.json` endpoint.
+In the container, these files are located under the `/app/api/` folder. You can access them via the `/php/server/query_json.php?file=user_notifications.json` endpoint.
 
 ### Available endpoints
 
@@ -94,4 +221,42 @@ Example JSON of the `table_devices.json` endpoint with two Devices (database row
 }
 
 ```
+
+## API Endpoint: /log files
+
+To retrieve files from the `/app/log` folder. 
+
+Endpoint URL: `php/server/query_logs.php?file=<file name>`
+Host: `same as front end (web ui)`
+Port: `20211` or as defined by the $PORT docker environment variable (same as the port for the web ui)
+
+| File                     | Description                                      |
+|--------------------------|--------------------------------------------------|
+| `IP_changes.log`         | Logs of IP address changes                       |
+| `app.log`                | Main application log                             |
+| `app.php_errors`.log     | PHP error log                                    |
+| `app_front.log`          | Frontend application log                         |
+| `app_nmap.log`           | Logs of Nmap scan results                        |
+| `db_is_locked.log`       | Logs when the database is locked                 |
+| `execution_queue.log`    | Logs of execution queue activities               |
+| `plugins/`               | Directory for plugin-related files (not accessible) |
+| `report_output.html`     | HTML report output                               |
+| `report_output.json`     | JSON format report output                        |
+| `report_output.txt`      | Text format report output                        |
+| `stderr.log`             | Logs of standard error output                    |
+| `stdout.log`             | Logs of standard output                          |
+
+
+## API Endpoint: /config files
+
+To retrieve files from the `/app/config` folder. 
+
+Endpoint URL: `php/server/query_config.php?file=<file name>`
+Host: `same as front end (web ui)`
+Port: `20211` or as defined by the $PORT docker environment variable (same as the port for the web ui)
+
+| File                     | Description                                      |
+|--------------------------|--------------------------------------------------|
+| `devices.csv`            | Devices csv file                                 |
+| `app.conf`               | Application config file                          |
 

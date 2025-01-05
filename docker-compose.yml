@@ -15,7 +15,7 @@ services:
       # - ${APP_DATA_LOCATION}/netalertx_dev/db:/app/db      
       - ${APP_DATA_LOCATION}/netalertx/db:/app/db           
       # (optional) useful for debugging if you have issues setting up the container
-      - ${DEV_LOCATION}/log:/app/log      
+      - ${APP_DATA_LOCATION}/netalertx/log:/app/log      
       # (API: OPTION 1) use for performance
       - type: tmpfs
         target: /app/api

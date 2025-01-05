@@ -225,8 +225,15 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
 
                   pluginsData = res["data"];  
 
-                  // Sort settingsData alphabetically based on the "setGroup" property
+                  // Sort settingsData alphabetically, ensuring "General" is always first
                   settingsData.sort((a, b) => {
+                      if (a["setGroup"] === "General") {
+                          return -1; // Place "General" first
+                      }
+                      if (b["setGroup"] === "General") {
+                          return 1; // Place "General" first
+                      }
+                      // For other values, sort alphabetically
                       if (a["setGroup"] < b["setGroup"]) {
                           return -1;
                       }
