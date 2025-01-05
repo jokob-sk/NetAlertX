@@ -5,11 +5,15 @@ The synchronization plugin is designed to synchronize data across multiple insta
 1. **💻 Devices**: Sends an encrypted `table_devices.json` file to synchronize the entire Devices database table.
 2. **🔌 Plugin Data**: Sends encrypted `last_result.log` files for individual plugins.
 
-> **Note:** `[n]` indicates a setting specified for the node instance, and `[n,h]` indicates a setting used on both the node and the hub instances.
+
+> [!TIP]
+> This plugin is usually used if you need to monitor inaccessible networks (WAN, VLAN etc.). Read the [Remote networks documentation](/docs/REMOTE_NETWORKS.md) for more details about these scenarios.
 
 ### Synchronization Modes
 
-The plugin operates in three different modes based on the configuration settings:
+The plugin operates in three different modes based on the configuration settings.
+
+> **Note:** `[n]` indicates a setting specified for the node instance, and `[n,h]` indicates a setting used on both the node and the hub instances.
 
 1. **Mode 1: PUSH (NODE)** - Sends data from the node to the hub.
    - This mode is activated if `SYNC_hub_url` is set and either `SYNC_devices` or `SYNC_plugins` is enabled.

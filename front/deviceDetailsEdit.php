@@ -70,7 +70,7 @@
         // columns to hide
         hiddenFields = ["NEWDEV_devScan", "NEWDEV_devPresentLastScan" ]
         // columns to disable - conditional depending if a new dummy device is created
-        disabledFields =  mac == "new" ? ["NEWDEV_devLastNotification", "NEWDEV_devFirstConnection", "NEWDEV_devLastConnection"] : ["NEWDEV_devLastNotification", "NEWDEV_devFirstConnection", "NEWDEV_devLastConnection", "NEWDEV_devMac", "NEWDEV_devLastIP" ];
+        disabledFields =  mac == "new" ? ["NEWDEV_devLastNotification", "NEWDEV_devFirstConnection", "NEWDEV_devLastConnection"] : ["NEWDEV_devLastNotification", "NEWDEV_devFirstConnection", "NEWDEV_devLastConnection", "NEWDEV_devMac", "NEWDEV_devLastIP", "NEWDEV_devSyncHubNode" ];
         
         // Grouping of fields into categories with associated documentation links
         const fieldGroups = {
@@ -103,7 +103,7 @@
             },
             // Group for network details
             DevDetail_MainInfo_Network_Title: {
-                data: ["devParentMAC", "devParentPort", "devSSID", "devSite"],
+                data: ["devParentMAC", "devParentPort", "devSSID", "devSite", "devSyncHubNode"],
                 docs: "https://github.com/jokob-sk/NetAlertX/blob/main/docs/NETWORK_TREE.md",
                 iconClass: "fa fa-network-wired",
                 inputGroupClasses: "field-group col-lg-4 col-sm-6 col-xs-12",

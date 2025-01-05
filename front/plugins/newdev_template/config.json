@@ -1488,6 +1488,42 @@
       ]
     },
     {
+      "function": "devSyncHubNode",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "readonly": "true"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 50,
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Sync Node"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The name of the Sync Node. Uneditable - Auto-populated via the <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/sync/README.md\" target=\"_blank\">Sync plugin</a> if enabled."
+        }
+      ]
+    },
+    {
       "function": "devCustomProps",
       "type": {
         "dataType": "string",

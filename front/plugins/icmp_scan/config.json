@@ -5,6 +5,7 @@
   "execution_order" : "Layer_4",
   "enabled": true,
   "data_source": "script",
+  "mapped_to_table": "CurrentScan",
   "show_ui": true,
   "data_filters": [
     {
