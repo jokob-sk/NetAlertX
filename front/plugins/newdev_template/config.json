@@ -1467,7 +1467,7 @@
         {
           "name": "value",
           "type": "sql",
-          "value": "SELECT DISTINCT '' AS id, '❌None' AS name UNION SELECT devSite AS id, devSite AS name FROM Devices WHERE devSite NOT IN ('', 'null') AND devSite IS NOT NULL UNION SELECT 'default' AS id, 'default' AS name UNION SELECT 'home', 'home' ORDER BY id;"
+          "value": "SELECT DISTINCT '' AS id, '❌None' AS name UNION SELECT devSite AS id, devSite AS name FROM Devices WHERE devSite NOT IN ('', 'null') AND devSite IS NOT NULL ORDER BY id;"
         }
       ],
       "localized": [
