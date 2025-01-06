@@ -89,7 +89,7 @@ def get_entries(plugin_objects: Plugin_Objects) -> Plugin_Objects:
                     primaryId   = mac_address,
                     secondaryId = address,
                     watched1    = address,
-                    watched2    = host_name,
+                    watched2    = comment if comment else host_name,
                     watched3    = last_seen,
                     watched4    = '',
                     extra       = '',
