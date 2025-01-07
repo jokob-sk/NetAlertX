@@ -1,27 +1,16 @@
 #!/usr/bin/env python
 
 import os
-import pathlib
-import argparse
-import subprocess
 import sys
-import hashlib
-import csv
-import sqlite3
-import re
-from io import StringIO
-from datetime import datetime
 
 # Register NetAlertX directories
 INSTALL_PATH="/app"
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64
-from logger import mylog, Logger, append_line_to_file
-from helper import timeNowTZ, get_setting_value
-from const import logPath, applicationPath, fullDbPath
-from database import DB
-from device import Device_obj
+from plugin_helper import Plugin_Objects
+from logger import mylog, Logger
+from helper import get_setting_value
+from const import logPath
 import conf
 from pytz import timezone
 from librouteros import connect
@@ -81,6 +70,7 @@ def get_entries(plugin_objects: Plugin_Objects) -> Plugin_Objects:
             comment = lease.get('comment')
             last_seen = lease.get('last-seen')
             status = lease.get('status')
+            device_name = comment or host_name or "(unknown)"
     
             mylog('verbose', [f"ID: {lease_id}, Address: {address}, MAC Address: {mac_address}, Host Name: {host_name}, Comment: {comment}, Last Seen: {last_seen}, Status: {status}"])
 
@@ -89,9 +79,9 @@ def get_entries(plugin_objects: Plugin_Objects) -> Plugin_Objects:
                     primaryId   = mac_address,
                     secondaryId = address,
                     watched1    = address,
-                    watched2    = host_name,
-                    watched3    = last_seen,
-                    watched4    = '',
+                    watched2    = device_name,
+                    watched3    = host_name,
+                    watched4    = last_seen,
                     extra       = '',
                     helpVal1    = comment, 
                     foreignKey  = mac_address)
