@@ -6,8 +6,8 @@
 
 # NetAlertX 🖧🔍 Network scanner & notification framework
 
-  | 🐳 [Docker hub](https://registry.hub.docker.com/r/jokobsk/netalertx) |  📑 [Docker guide](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md) |🆕 [Release notes](https://github.com/jokob-sk/NetAlertX/releases) | 📚 [All Docs](https://github.com/jokob-sk/NetAlertX/tree/main/docs) | 🔌 [Plugins](https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/README.md) |
-  |----------------------|----------------------| ----------------------|  ----------------------| ----------------------| 
+  | [🐳 Docker hub](https://registry.hub.docker.com/r/jokobsk/netalertx) | [📑 Docker guide](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md) | [🚀 Release notes](https://github.com/jokob-sk/NetAlertX/releases) | [📚 Docs](https://github.com/jokob-sk/NetAlertX/tree/main/docs) | [🔌 Plugins](https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/README.md) |
+|----------------------|----------------------| ----------------------|  ----------------------| ----------------------| 
 
 <a href="https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/GENERAL/github_social_image.jpg" target="_blank">
   <img src="https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/GENERAL/github_social_image.jpg" width="1000px" />

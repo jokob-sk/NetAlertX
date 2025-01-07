@@ -48,6 +48,7 @@ def main():
 
     timeout = get_setting_value('ICMP_RUN_TIMEOUT')
     args = get_setting_value('ICMP_ARGS')
+    in_regex = get_setting_value('ICMP_IN_REGEX')
  
     # Create a database connection
     db = DB()  # instance of class DB
@@ -62,9 +63,19 @@ def main():
     # Retrieve devices
     all_devices = device_handler.getAll()
 
-    mylog('verbose', [f'[{pluginName}] Devices to PING: {len(all_devices)}'])   
+    # Compile the regex for efficiency if it will be used multiple times
+    regex_pattern = re.compile(in_regex)
 
-    for device in all_devices:
+    # Filter devices based on the regex match
+    filtered_devices = [
+        device for device in all_devices 
+        if regex_pattern.match(device['devLastIP'])
+    ]
+
+
+    mylog('verbose', [f'[{pluginName}] Devices to PING: {len(filtered_devices)}'])   
+
+    for device in filtered_devices:
         is_online, output = execute_scan(device['devLastIP'], timeout, args)
 
         mylog('verbose', [f'[{pluginName}] ip: "{device['devLastIP']}" is_online: "{is_online}"'])

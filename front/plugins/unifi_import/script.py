@@ -213,7 +213,7 @@ def get_unifi_val(obj, key, default='null'):
                 if result not in ['','None', None, 'null']:
                     return result
     
-    mylog('debug', [f'[{pluginName}] Value not found for key "{key}" in obj "{json.dumps(obj)}"'])
+    mylog('trace', [f'[{pluginName}] Value not found for key "{key}" in obj "{json.dumps(obj)}"'])
     return default
 
 

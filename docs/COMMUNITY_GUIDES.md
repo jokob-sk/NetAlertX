@@ -1,6 +1,6 @@
 # Community Guides
 
-Use the official installation guides at first and use community content as supplementary material. Open an issue if you'd like to add your link to the list 🙏 
+Use the official installation guides at first and use community content as supplementary material. Open an issue or PR if you'd like to add your link to the list 🙏 (Ordered by last update time)
 
 - ▶ [Home Lab Network Monitoring - Scotti-BYTE Enterprise Consulting Services](https://www.youtube.com/watch?v=0DryhzrQSJA) (July 2024)
 - 📄 [How to Install NetAlertX on Your Synology NAS - Marius hosting](https://mariushosting.com/how-to-install-pi-alert-on-your-synology-nas/) (Updated frequently)
@@ -12,5 +12,3 @@ Use the official installation guides at first and use community content as suppl
 - ▶ [Pi.Alert auf Synology & Docker by - Jürgen Barth](https://www.youtube.com/watch?v=-ouvA2UNu-A) (March 2023)
 - ▶ [Top Docker Container for Home Server Security - VirtualizationHowto](https://www.youtube.com/watch?v=tY-w-enLF6Q) (March 2023)
 - ▶ [Pi.Alert or WatchYourLAN can alert you to unknown devices appearing on your WiFi or LAN network - Danie van der Merwe](https://www.youtube.com/watch?v=v6an9QG2xF0) (November 2022)
-
-> Ordered by last update time. 

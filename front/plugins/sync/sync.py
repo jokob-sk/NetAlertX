@@ -125,8 +125,6 @@ def main():
     # Mode 2: PULL/GET (HUB)
     
     # PULLING DEVICES 
-    
-    file_dir = os.path.join(pluginsPath, 'sync')
     file_prefix = 'last_result'
     
     # pull data from nodes if specified
@@ -145,7 +143,7 @@ def main():
             log_file_name = f'{file_prefix}.{node_name}.log'
 
             # Write decoded data to log file
-            with open(os.path.join(file_dir, log_file_name), 'wb') as log_file:
+            with open(os.path.join(LOG_PATH, log_file_name), 'wb') as log_file:
                 log_file.write(decoded_data)
 
             message = f'[{pluginName}] Device data from node "{node_name}" written to {log_file_name}'
@@ -157,7 +155,7 @@ def main():
     # Create the file path
 
     # Get all "last_result" files from the sync folder, decode, rename them, and get the list of files
-    files_to_process = decode_and_rename_files(file_dir, file_prefix)
+    files_to_process = decode_and_rename_files(LOG_PATH, file_prefix)
     
     if len(files_to_process) > 0:
                 
@@ -181,11 +179,11 @@ def main():
 
                 # Store e.g. Node_1 from last_result.encoded.Node_1.1.log
                 tmp_SyncHubNodeName = ''
-                if len(file_name.split('.')) > 3:
-                    tmp_SyncHubNodeName = file_name.split('.')[2]   
+                if len(file_name.split('.')) > 2:
+                    tmp_SyncHubNodeName = file_name.split('.')[1]   
 
 
-                file_path = f"{INSTALL_PATH}/front/plugins/sync/{file_name}"
+                file_path = f"{LOG_PATH}/{file_name}"
                 
                 with open(file_path, 'r') as f:
                     data = json.load(f)
@@ -197,7 +195,7 @@ def main():
                             
                 # Rename the file to "processed_" + current name
                 new_file_name = f"processed_{file_name}"
-                new_file_path = os.path.join(file_dir, new_file_name)
+                new_file_path = os.path.join(LOG_PATH, new_file_name)
 
                 # Overwrite if the new file already exists
                 if os.path.exists(new_file_path):

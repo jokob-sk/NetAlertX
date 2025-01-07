@@ -132,6 +132,34 @@
       ]
     },
     {
+      "function": "IN_REGEX",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": ".*",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Inclusion REGEX"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "REGEX to specify which IPs are included in the scan. Examples: <code>192.168.1.*|10.0.0.1|172.16.5.*</code> (specific IPs or ranges). Use <code>.*</code> to include all IPs."
+        }
+      ]
+    },
+    {
       "function": "RUN_SCHD",
       "type": {
         "dataType": "string",
