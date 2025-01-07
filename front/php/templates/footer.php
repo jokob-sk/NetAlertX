@@ -28,11 +28,10 @@
     
     <!-- To the right -->
     <div class="pull-right no-hidden-xs">
-      | <a href="https://github.com/jokob-sk/NetAlertX/tree/main/docs#documentation-overview" target="_blank">Docs <i class="fa fa-circle-question"></i></a>
-      | <a href="https://github.com/jokob-sk/NetAlertX/issues"><i class="fa-solid fa-bug"></i></a> 
-      | <a href="https://github.com/jokob-sk/NetAlertX/"><i class="fa-brands fa-github"></i></a> 
-      | <a href="https://discord.gg/UQnnHNYV"><i class="fa-brands fa-discord"></i></a> 
-      | <a href="mailto:netalertx@gmail.com?subject=NetAlertX"><i class="fa-solid fa-envelope"></i></a> 
+      | <a href="https://gurubase.io/g/netalertx" target="_blank" title="Ask AI"><i class="fa-regular fa-comment-dots fa-flip-horizontal"></i></a> 
+      | <a href="https://github.com/jokob-sk/NetAlertX/tree/main/docs#documentation-overview" target="_blank" title="Documentation"><i class="fa fa-book"></i></a>
+      | <a href="https://github.com/jokob-sk/NetAlertX/issues" target="_blank"><i class="fa-solid fa-bug" title="Report a bug"></i></a> 
+      | <a href="https://discord.com/invite/NczTUTWyRr" target="_blank"><i class="fa-brands fa-discord" title="Join Discord"></i></a> 
       | <?= lang('Maintenance_built_on');?>:  <?php include 'php/templates/build.php'; ?> 
       |  Version:  <?php include 'php/templates/version.php'; ?> 
       |     

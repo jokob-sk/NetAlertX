@@ -6,9 +6,6 @@
 docker-compose.yml
 Dockerfile
 Dockerfile.debian
-dockerfiles/LICENSE
-dockerfiles/README.md
-dockerfiles/README_ES.md
 docs
 LICENSE.txt
 README.md
@@ -16,4 +13,3 @@ CONTRIBUTING
 FUNDING.yml
 config/.gitignore
 db/.gitignore
-

@@ -8,8 +8,8 @@
 Get visibility of what's going on on your WIFI/LAN network. Schedule scans for devices, port changes and get alerts if unknown devices or changes are found. Write your own [Plugins](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins#readme) with auto-generated UI and in-build notification system. Build out and easily maintain your network source of truth (NSoT).
 
 
-| [🐳 Docker hub](https://registry.hub.docker.com/r/jokobsk/netalertx) | [📑 Docker guide](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md) | [🚀 Release notes](https://github.com/jokob-sk/NetAlertX/releases) | [📚 Docs](https://github.com/jokob-sk/NetAlertX/tree/main/docs) | [🔌 Plugins](https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/README.md) |
-|----------------------|----------------------| ----------------------|  ----------------------| ----------------------| 
+| [📑 Docker guide](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md) | [🚀 Releases](https://github.com/jokob-sk/NetAlertX/releases) | [📚 Docs](https://github.com/jokob-sk/NetAlertX/tree/main/docs) | [🔌 Plugins](https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/README.md) | [🤖 Ask AI](https://gurubase.io/g/netalertx)
+|----------------------| ----------------------|  ----------------------| ----------------------| ----------------------| 
 
 ![showcase][showcase] 
 
