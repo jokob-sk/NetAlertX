@@ -1,7 +1,7 @@
 #!/usr/bin/with-contenv bash
 
 echo "---------------------------------------------------------"
-echo "[INSTALL]                                    Run setup.sh"
+echo "[INSTALL]                                    Run init.sh"
 echo "---------------------------------------------------------"
 
 export INSTALL_DIR=/app  # Specify the installation directory here

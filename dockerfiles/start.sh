@@ -19,7 +19,7 @@ echo "oneshot" > /etc/s6-overlay/s6-rc.d/SetupOneshot/type
 echo "longrun" > /etc/s6-overlay/s6-rc.d/php-fpm/type
 echo "longrun" > /etc/s6-overlay/s6-rc.d/nginx/type
 echo "longrun" > /etc/s6-overlay/s6-rc.d/$APP_NAME/type
-echo -e "${INSTALL_DIR}/dockerfiles/setup.sh" > /etc/s6-overlay/s6-rc.d/SetupOneshot/up
+echo -e "${INSTALL_DIR}/dockerfiles/init.sh" > /etc/s6-overlay/s6-rc.d/SetupOneshot/up
 echo -e "#!/bin/execlineb -P\n/usr/sbin/php-fpm83 -F" > /etc/s6-overlay/s6-rc.d/php-fpm/run
 echo -e '#!/bin/execlineb -P\nnginx -g "daemon off;"' > /etc/s6-overlay/s6-rc.d/nginx/run
 echo -e '#!/bin/execlineb -P
@@ -38,6 +38,5 @@ touch /etc/s6-overlay/s6-rc.d/user/contents.d/{SetupOneshot,php-fpm,nginx,$APP_N
 touch /etc/s6-overlay/s6-rc.d/nginx/dependencies.d/php-fpm
 touch /etc/s6-overlay/s6-rc.d/$APP_NAME/dependencies.d/nginx
 
-
-
-rm -f $0
+# this removes the current file
+# rm -f $0

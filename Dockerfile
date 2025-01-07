@@ -69,7 +69,7 @@ COPY --from=builder --chown=nginx:www-data ${INSTALL_DIR}/ ${INSTALL_DIR}/
 COPY install/crontab /etc/crontabs/root
 
 # Start all required services
-RUN ${INSTALL_DIR}/dockerfiles/pre-setup.sh
+RUN ${INSTALL_DIR}/dockerfiles/start.sh
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=2 \
     CMD curl -sf -o /dev/null ${LISTEN_ADDR}:${PORT}/php/server/query_json.php?file=app_state.json
