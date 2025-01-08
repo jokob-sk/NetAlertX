@@ -34,6 +34,12 @@ Confirm SNMP enabled
 show snmp
 ````
 
+### Setup for (old) procurve switches
+
+```
+snmpwalk -v 2c -c XXXXXX -On -Ovq 192.168.45.58 .1.3.6.1.2.1.4.22.1.3.102
+```
+
 ### Notes
 
 - Only IPv4 supported.

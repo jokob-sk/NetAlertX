@@ -203,8 +203,13 @@ def get_plugins_configs(loadAll):
 
                 plugJson = json.loads(get_file_content(config_path))
 
-                # only load plugin if needed
-                if loadAll or plugJson["unique_prefix"] in conf.LOADED_PLUGINS:
+                # Only load plugin if needed
+                # Fetch the list of enabled plugins from the config, default to an empty list if not set
+                enabledPlugins = getattr(conf, "LOADED_PLUGINS", [])
+
+                # Load all plugins if `loadAll` is True, the plugin is in the enabled list, 
+                # or no specific plugins are enabled (enabledPlugins is empty)
+                if loadAll or plugJson["unique_prefix"] in enabledPlugins or enabledPlugins == []:
                 
                     # Load the contents of the config.json file as a JSON object and append it to pluginsList
                     pluginsList.append(plugJson)

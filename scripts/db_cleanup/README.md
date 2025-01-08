@@ -36,3 +36,7 @@ For each MAC or IP address provided, the script:
 
 - Date : 23-Dec-2024 - version 1.0
 - Author: [laxduke](https://github.com/laxduke)
+
+
+> [!NOTE]
+> This is a community supplied script and not maintained. 

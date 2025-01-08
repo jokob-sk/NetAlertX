@@ -4,7 +4,7 @@
 [![Discord](https://img.shields.io/discord/1274490466481602755?color=0aa8d2&logoColor=fff&logo=Discord&style=for-the-badge)](https://discord.gg/NczTUTWyRr)
 
 
-# NetAlertX 🖧🔍 Network scanner & notification framework
+# NetAlertX - Network scanner & notification framework
 
 | [📑 Docker guide](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md) | [🚀 Releases](https://github.com/jokob-sk/NetAlertX/releases) | [📚 Docs](https://github.com/jokob-sk/NetAlertX/tree/main/docs) | [🔌 Plugins](https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/README.md) | [🤖 Ask AI](https://gurubase.io/g/netalertx)
 |----------------------| ----------------------|  ----------------------| ----------------------| ----------------------| 
