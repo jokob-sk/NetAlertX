@@ -126,8 +126,8 @@ if [ ! -f "${INSTALL_DIR}/front/buildtimestamp.txt" ]; then
 fi
 
 # Start crond service in the background
-# echo "[INSTALL] Starting crond service..."
-# crond -f -d 8 > /dev/null 2>&1 &
+echo "[INSTALL] Starting crond service..."
+crond -f -d 8 > /dev/null 2>&1 &
 
 echo -e "
             [ENV] PATH                      is ${PATH}
