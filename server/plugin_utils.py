@@ -203,7 +203,7 @@ def get_plugins_configs(loadAll):
 
                 plugJson = json.loads(get_file_content(config_path))
 
-                # only laod plugin if needed
+                # only load plugin if needed
                 if loadAll or plugJson["unique_prefix"] in conf.LOADED_PLUGINS:
                 
                     # Load the contents of the config.json file as a JSON object and append it to pluginsList

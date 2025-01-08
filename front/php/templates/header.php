@@ -185,13 +185,13 @@
           </li>			
           <!-- Clear cache & Reload -->		 
           <li>
-            <a id="reload-button" href='#' role="button" span class='fa fa-repeat' onclick='clearCache()'></a>
+            <a id="reload-button" href='#' role="button" span  onclick='clearCache()'>🔃</a>
           </li>	
           <!-- Full Screen -->		 
           <li>
             <a id="fullscreen-button" href='#' role="button" span class='fa fa-arrows-alt' onclick='toggleFullscreen()'></a>
           </li>	                
-          <!-- Full Screen -->		 
+          <!-- Notifications -->		 
           <li>
             <a id="notifications-button" href='userNotifications.php' role="button" span class='fa-solid fa-bell'></a>
             <span  id="unread-notifications-bell-count" title="" class="badge bg-red unread-notifications-bell" >0</span>

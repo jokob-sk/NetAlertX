@@ -273,7 +273,8 @@ function setDeviceData() {
                             devFirstConnection, 
                             devLastIP,
                             devGUID,
-                            devCustomProps
+                            devCustomProps,
+                            devSourcePlugin
                         ) VALUES (
                           '$mac',
                           '$name',
@@ -300,7 +301,8 @@ function setDeviceData() {
                           '$devFirstConnection',
                           '$ip',
                           '$devNewGuid',
-                          '$devCustomProps'
+                          '$devCustomProps',
+                          'DUMMY'
                         )";
   }
 
