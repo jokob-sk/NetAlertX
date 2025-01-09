@@ -57,13 +57,13 @@ Supported browsers: Chrome, Firefox
 ## 📃 Everything else
 <!--- --------------------------------------------------------------------- --->
 
-### Get notified what's new
+### 📧 Get notified what's new
 
 Get notified about a new release, what new functionality you can use and about breaking changes. 
 
 ![Follow and star][follow_star] 
 
-### Other Alternative Apps
+### 🔀 Other Alternative Apps
 
 - [PiAlert by leiweibau](https://github.com/leiweibau/Pi.Alert/) (maintained, bare-metal install)
 - [WatchYourLAN](https://github.com/aceberg/WatchYourLAN) - Lightweight network IP scanner with web GUI (Open source)
@@ -89,7 +89,7 @@ Thank you to everyone who appreciates this tool and donates.
 
 </details>
 
-### 🙏Contributors
+### 🏗 Contributors
 
 This project would be nothing without the amazing work of the community, with special thanks to: 
 

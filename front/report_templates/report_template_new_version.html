@@ -1,14 +1,9 @@
 <!--
 #---------------------------------------------------------------------------------#
-#  NetAlertX                                                                       #
+#  NetAlertX                                                                      #
 #  Open Source Network Guard / WIFI & LAN intrusion detector                      #  
 #                                                                                 #
-# report_template_new_version - Back module. Template to email reporting in text  #
-#---------------------------------------------------------------------------------#
-#    Puche      2021        pi.alert.application@gmail.com   GNU GPLv3            #
-#    jokob-sk   2022        jokob.sk@gmail.com               GNU GPLv3            #
-#    leiweibau  2022        https://github.com/leiweibau     GNU GPLv3            #
-#    cvc90      2023        https://github.com/cvc90         GNU GPLv3            #
+#  report_template.html - Back module. Template to email reporting in HTML format #
 #---------------------------------------------------------------------------------#
 -->
 
@@ -21,61 +16,55 @@
     <font face=sans-serif>
     <table align=center width=100% cellpadding=0 cellspacing=0 style="border-radius: 5px;">
         <tr>
-        <td bgcolor=#3c8dbc  align=center style="padding: 20px 10px 10px 10px; font-size: 30px; font-weight: bold; color:#ffffff; border-top-right-radius: 5px; border-top-left-radius: 5px; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2)">
-            Net<b>Alert</b><sup>x</sup> 
-            <svg version="1.0" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" height="24pt" viewBox="0 0 30 30" width="24pt">
-                <g fill="#000000" stroke="none" transform="translate(0.000000,30) scale(0.02,-0.02)">
-                <path d="M605 1473 c-16 -3 -34 -9 -39 -14 -6 -5 -20 -9 -33 -9 -13 0 -23 -5 -23 -10 0 -5 -3 -9 -7 -8 -14 4 -53 -13 -53 -22 0 -5 -6 -7 -14 -4 -7 3 -27 -6 -44 -20 -16 -15 -34 -26 -39 -26 -6 0 -18 -10 -29 -21 -10 -12 -29 -25 -42 -30 -13 -5 -21 -13 -18 -18 3 -5 -4 -11 -15 -14 -12 -3 -18 -10 -15 -15 3 -5 -6 -14 -19 -20 -14 -7 -25 -18 -25 -27 0 -8 -5 -15 -12 -15 -9 0 -9 -3 -1 -11 9 -9 29 4 80 51 37 34 87 75 110 90 44 30 167 90 184 90 18 0 89 40 89 50 0 6 -1 9 -2 9 -2 -1 -16 -4 -33 -6z"></path>
-                <path d="M883 1454 c15 -8 55 -23 90 -34 82 -26 201 -97 257 -155 25 -25 58 -52 73 -59 l28 -12 -111 -98 -111 -97 -27 27 c-165 168 -463 163 -636 -10 l-36 -37 -58 49 c-175 149 -185 155 -200 135 -8 -10 -20 -32 -27 -49 -8 -17 -21 -36 -30 -44 -9 -7 -13 -21 -10 -31 4 -12 1 -21 -9 -25 -9 -4 -16 -11 -15 -18 1 -6 -3 -24 -9 -39 -7 -16 -10 -33 -6 -38 3 -5 0 -9 -6 -9 -7 0 -10 -7 -6 -15 3 -8 2 -15 -2 -15 -5 0 -8 -20 -7 -45 0 -25 -2 -45 -5 -45 -8 0 -5 -155 4 -207 4 -24 12 -45 17 -49 5 -3 9 -14 9 -25 0 -10 4 -27 10 -37 16 -29 43 -97 42 -104 -1 -5 3 -8 10 -8 6 0 9 -3 6 -6 -4 -3 1 -14 10 -23 31 -33 52 -61 52 -70 0 -5 8 -11 19 -14 14 -3 91 57 286 225 151 129 274 227 281 224 7 -3 130 -97 273 -210 160 -126 266 -203 275 -200 17 7 66 78 66 97 0 8 9 22 20 32 11 10 20 26 20 36 0 10 5 21 10 24 6 4 8 10 5 15 -6 10 14 50 30 62 6 5 5 8 -4 8 -11 0 -11 3 -1 15 7 8 9 15 4 15 -5 0 -2 5 6 10 11 7 12 10 2 10 -9 0 -11 7 -6 23 10 30 11 96 2 91 -5 -3 -8 -18 -8 -33 0 -15 -4 -31 -9 -36 -5 -6 -24 -53 -42 -105 -34 -102 -84 -199 -105 -207 -13 -5 -474 351 -474 367 0 5 31 37 70 71 38 35 72 69 75 77 10 26 -25 63 -81 88 -105 46 -254 24 -323 -50 -35 -37 -22 -67 54 -127 36 -28 65 -57 65 -64 0 -7 -10 -20 -22 -28 -13 -8 -117 -96 -233 -196 -116 -99 -215 -181 -221 -181 -10 0 -37 35 -76 100 -8 14 -29 65 -47 114 -27 76 -31 102 -32 190 -1 58 6 132 15 175 17 77 88 241 104 241 5 0 52 -34 103 -75 52 -42 104 -78 117 -81 21 -6 67 21 112 65 8 8 49 30 90 50 70 32 82 35 172 34 90 0 102 -3 170 -35 40 -20 90 -49 112 -67 21 -17 47 -31 57 -31 10 0 59 34 109 76 56 47 96 74 105 70 25 -9 124 -237 125 -287 0 -8 6 -23 13 -32 18 -26 10 129 -9 158 -8 13 -11 30 -8 40 5 13 4 16 -4 11 -8 -4 -12 0 -12 11 0 10 -7 27 -15 37 -8 10 -12 23 -9 27 3 5 0 9 -6 9 -6 0 -8 5 -5 10 3 6 2 10 -3 10 -5 0 -15 14 -22 30 -7 17 -16 30 -21 30 -5 0 -9 5 -9 11 0 7 -11 22 -25 35 -14 13 -25 25 -25 28 0 11 -50 55 -70 61 -11 3 -20 10 -20 15 0 13 -72 60 -81 54 -4 -2 -13 5 -19 16 -6 12 -21 20 -35 20 -14 0 -25 5 -25 10 0 6 -8 10 -19 10 -10 0 -35 7 -54 15 -20 8 -53 15 -74 15 l-38 -1 28 -15z m16 -545 c52 -26 60 -34 49 -44 -34 -33 -183 -155 -188 -155 -6 0 -161 119 -184 141 -12 11 14 33 79 64 75 37 162 35 244 -6z"></path>
-                <path d="M673 437 l-82 -72 89 -3 c50 -1 131 -1 181 0 l92 3 -95 73 c-53 39 -97 72 -99 71 -2 0 -41 -33 -86 -72z m125 -3 c31 -21 19 -34 -34 -34 -47 0 -57 13 -26 36 22 18 33 17 60 -2z"></path>
-                <path d="M369 175 c-23 -20 -48 -34 -56 -31 -7 3 -13 4 -13 2 0 -7 52 -38 67 -40 8 -1 24 -11 36 -21 12 -11 31 -21 41 -22 11 -2 25 -8 32 -14 7 -6 25 -12 41 -14 15 -2 29 -4 31 -6 1 -1 7 -3 12 -4 6 -1 11 -4 13 -5 20 -18 315 -13 351 6 16 8 36 14 45 14 9 0 21 4 27 8 5 5 35 19 66 31 31 13 71 36 87 52 17 16 36 29 43 29 7 0 0 12 -15 25 l-28 25 -369 0 -368 0 -43 -35z m741 -15 c0 -13 -99 -62 -193 -94 -101 -35 -201 -38 -317 -9 -147 37 -223 79 -183 102 24 14 693 15 693 1z"></path>
-                </g>
-                </svg>
-        </td>
+            <td bgcolor=#3c8dbc  align=center style="padding: 20px 10px 10px 10px; font-size: 20px; color:#ffffff; border-top-right-radius: 5px; border-top-left-radius: 5px; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2)">
+                <img src="https://netalertx.com/favicon.ico" alt="NetAlertX Logo" style="vertical-align: middle;" width="32" height="32" />
+                Net<b>Alert</b><sup>x</sup>
+            </td>
         </tr>
         <tr> 
-            <td bgcolor=#2656f1 width=100% align=center style="padding: 20px 10px 10px 10px; font-size: 20px; font-weight: bold; color:#ffffff; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2)">
-                <a style="color:#ffffff;cursor:pointer;" href="https://github.com/jokob-sk/NetAlertX/releases">🆕 New version available 🆕</a>
+            <td bgcolor=#2656f1 width=100% align=center style="padding: 10px 10px 10px 10px; font-size: 20px; color:#ffffff; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2)">
+                <a style="color:#ffffff;cursor:pointer;" href="https://github.com/jokob-sk/NetAlertX/releases">New version available</a>
             </td>             
         </tr>
         
         <tr>
-        <td>
-            <table width=100% border=0 bgcolor=#4b99d3 cellpadding=5px cellspacing=0 style="border-collapse: collapse; font-size: 15px; text-align:center; color:#ffffff">            <tr>
-                <td width=100% bgcolor="#3c8dbc"> Report Date: <b><REPORT_DATE></b> </td>
-            </tr>
-            </table>
-        </td>
+            <td>
+                <table width=100% border=0 bgcolor=#4b99d3 cellpadding=5px cellspacing=0 style="border-collapse: collapse; font-size: 15px; text-align:center; color:#ffffff">            <tr>
+                    <td width=100% bgcolor="#3c8dbc"> Report Date: <b><REPORT_DATE></b> </td>
+                </tr>
+                </table>
+            </td>
         </tr>
 
         <tr>
-        <td  height=200 valign=top style="padding: 10px">            
+            <td  height=200 valign=top style="padding: 10px">
                 
-                <NEW_DEVICES_TABLE>            
-                <DOWN_DEVICES_TABLE>            
-                <DOWN_RECONNECTED_TABLE>            
-                <EVENTS_TABLE>                            
-                <PLUGINS_TABLE>
-				
-        </td>
+                    
+                    <NEW_DEVICES_TABLE>            
+                    <DOWN_DEVICES_TABLE>  
+                    <DOWN_RECONNECTED_TABLE>              
+                    <EVENTS_TABLE>                            
+                    <PLUGINS_TABLE>
+                    
+            </td>
         </tr>
         
         <tr>
-        <td>
-            <table width=100% bgcolor=#3c8dbc cellpadding=5px cellspacing=0 style="font-size: 13px; font-weight: bold; border-bottom-left-radius: 5px; border-bottom-right-radius: 5px;">
-               <tr>
-                    <td width=50% style="text-align:center;color: white;" bgcolor="#3c8dbc">
-						<a href="https://github.com/jokob-sk/NetAlertX" target="_blank" style="color: white">NetAlertX</a>
-						<a href=".." target="_blank" style="color: white"> (<SERVER_NAME>)</a>
-						<br><span style="display:inline-block;color: white; transform: rotate(180deg)">&copy;</span>2022 
-						<a style="color: white" href="mailto:jokob@duck.com?subject=NetAlertX">jokob-sk</a> | <b>Built on: <BUILD_DATE> </b> | <b> Version: <BUILD_VERSION> </b> |
-					    <a href="https://github.com/jokob-sk/NetAlertX/tree/main/docs" target="_blank" style="color: white"> 
-						<span>Docs <i class="fa fa-circle-question"></i>
-					    </a><span>
-					</td>                    
-                </tr>
-            </table>
-        </td>
+            <td>
+                <table width=100% bgcolor=#3c8dbc cellpadding=5px cellspacing=0 style="font-size: 13px; font-weight: bold; border-bottom-left-radius: 5px; border-bottom-right-radius: 5px;">
+                <tr>
+                        <td width=50% style="text-align:center;color: white;" bgcolor="#3c8dbc">
+                            <a href="https://github.com/jokob-sk/NetAlertX" target="_blank" style="color: white">NetAlertX</a>
+                            <a href=".." target="_blank" style="color: white"> (<SERVER_NAME>)</a>
+                            <br><span style="display:inline-block;color: white; transform: rotate(180deg)">&copy;</span>2022 
+                            <a style="color: white" href="mailto:jokob@duck.com?subject=NetAlertX">jokob-sk</a> | <b>Built on: <BUILD_DATE> </b> | <b> Version: <BUILD_VERSION> </b> |
+                            <a href="https://github.com/jokob-sk/NetAlertX/tree/main/docs" target="_blank" style="color: white"> 
+                            <span>Docs <i class="fa fa-circle-question"></i>
+                            </a><span>
+                        </td>                           
+                    </tr>
+                </table>
+            </td>
         </tr>
     </table>
     </font>

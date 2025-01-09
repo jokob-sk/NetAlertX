@@ -81,7 +81,7 @@
         
         settingsData = res["data"];
 
-        excludedColumns = ["NEWDEV_devMac", "NEWDEV_devFirstConnection", "NEWDEV_devLastConnection", "NEWDEV_devLastNotification", "NEWDEV_devStaticIP", "NEWDEV_devScan", "NEWDEV_devPresentLastScan", "NEWDEV_devCustomProps" ]
+        excludedColumns = ["NEWDEV_devMac", "NEWDEV_devFirstConnection", "NEWDEV_devLastConnection", "NEWDEV_devLastNotification", "NEWDEV_devScan", "NEWDEV_devPresentLastScan", "NEWDEV_devCustomProps" ]
         
         const relevantColumns = settingsData.filter(set =>
             set.setGroup === "NEWDEV" &&
