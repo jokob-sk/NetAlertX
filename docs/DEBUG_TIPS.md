@@ -74,7 +74,7 @@ Sometimes specific log sections are needed to debug issues. The Devices and Curr
 
 ### unable to resolve host
 
-* Check that your `SCAN_SUBNETS` variable is using the correct mask and `--interface` as outlined in the instructions above. 
+* Check that your `SCAN_SUBNETS` variable is using the correct mask and `--interface`. See teh [subnets docs for details](/docs/SUBNETS.md).  
 
 ### Invalid JSON
 
@@ -95,4 +95,4 @@ The link above will probably break in time too. Go to https://packages.debian.or
 
 ### Only Router and own device show up
 
-Make sure that the subnet and interface in SCAN_SUBNETS are the correct ones. If your device/NAS has multiple ethernet ports, you probably need to change eth0 to something else!
+Make sure that the subnet and interface in `SCAN_SUBNETS` are correct. If your device/NAS has multiple ethernet ports, you probably need to change `eth0` to something else.

@@ -38,7 +38,7 @@ Copying the HTML code from [Font Awesome](https://fontawesome.com/search?o=r&m=f
 > [!NOTE] 
 > If you want to mass-apply an icon to all devices of the same device type (Field: Type), you can click the mass-copy button (next to the "+" button). A confirmation prompt is displayed. If you proceed, icons of all devices set to the same device type as the current device, will be overwritten with the current device's icon.
 
-- The blue dropdown contains all icons already used in the app for device icons. You need to navigate away or refresh the page once you add a new icon. 
+- The dropdown contains all icons already used in the app for device icons. You might need to navigate away or refresh the page once you add a new icon. 
 
 ## 🌟 Pro Font Awesome icons
 

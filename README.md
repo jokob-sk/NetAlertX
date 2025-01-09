@@ -29,16 +29,16 @@ Get visibility of what's going on on your WIFI/LAN network and enable presence d
 
 ### Scanners
 
-The app scans your network for, **New devices**, **New connections** (re-connections), **Disconnections**, **"Always Connected" devices down**, Devices **IP changes** and **Internet IP address changes**. Discovery & scan methods include: **arp-scan**,  **Pi-hole - DB import**,  **Pi-hole - DHCP leases import**, **Generic DHCP leases import**. **UNIFI controller import**, **SNMP-enabled router import**. Check the [Plugins](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins#readme) docs for more info on individual scans. 
+The app scans your network for **New devices**, **New connections** (re-connections), **Disconnections**, **"Always Connected" devices down**, Devices **IP changes** and **Internet IP address changes**. Discovery & scan methods include: **arp-scan**,  **Pi-hole - DB import**,  **Pi-hole - DHCP leases import**, **Generic DHCP leases import**, **UNIFI controller import**, **SNMP-enabled router import**. Check the [Plugins](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins#readme) docs for a full lits of avaliable plugins. 
 
 ### Notification gateways
 
-Send notifications to more than 80+ services, including Telegram via [Apprise](https://hub.docker.com/r/caronc/apprise), or use [Pushsafer](https://www.pushsafer.com/), [Pushover](https://www.pushover.net/), or [NTFY](https://ntfy.sh/). 
+Send notifications to more than 80+ services, including Telegram via [Apprise](https://hub.docker.com/r/caronc/apprise), or use native [Pushsafer](https://www.pushsafer.com/), [Pushover](https://www.pushover.net/), or [NTFY](https://ntfy.sh/) publishers. 
 
 ### Integrations and Plugins
 
-Feed your data and device changes into [Home Assistant](https://github.com/jokob-sk/NetAlertX/blob/main/docs/HOME_ASSISTANT.md), read [API endpoints](https://github.com/jokob-sk/NetAlertX/blob/main/docs/API.md), or use [Webhooks](https://github.com/jokob-sk/NetAlertX/blob/main/docs/WEBHOOK_N8N.md) to setup custom automation flows.  |
-Build your own scanners with the [Plugin system](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins#readme) |
+Feed your data and device changes into [Home Assistant](https://github.com/jokob-sk/NetAlertX/blob/main/docs/HOME_ASSISTANT.md), read [API endpoints](https://github.com/jokob-sk/NetAlertX/blob/main/docs/API.md), or use [Webhooks](https://github.com/jokob-sk/NetAlertX/blob/main/docs/WEBHOOK_N8N.md) to setup custom automation flows. You can also 
+build your own scanners with the [Plugin system](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins#readme) in as little as [15 minutes](https://www.youtube.com/watch?v=cdbxlwiWhv8).
 
 
 ## 📚 Documentation
@@ -53,23 +53,26 @@ Supported browsers: Chrome, Firefox
 - [[Development] API docs](https://github.com/jokob-sk/NetAlertX/blob/main/docs/API.md)
 - [[Development] Custom Plugins](https://github.com/jokob-sk/NetAlertX/blob/main/docs/PLUGINS_DEV.md)
 
-## 🔔 Get notified what's new
+
+## 📃 Everything else
+<!--- --------------------------------------------------------------------- --->
+
+### Get notified what's new
 
 Get notified about a new release, what new functionality you can use and about breaking changes. 
 
 ![Follow and star][follow_star] 
 
-### ⭐ Sponsors
+### Other Alternative Apps
 
-[![GitHub Sponsors](https://img.shields.io/github/sponsors/jokob-sk?style=social)](https://github.com/sponsors/jokob-sk)
+- [PiAlert by leiweibau](https://github.com/leiweibau/Pi.Alert/) (maintained, bare-metal install)
+- [WatchYourLAN](https://github.com/aceberg/WatchYourLAN) - Lightweight network IP scanner with web GUI (Open source)
+- [Fing](https://www.fing.com/) - Network scanner app for your Internet security (Commercial, Phone App, Proprietary hardware)
+- [NetBox](https://netboxlabs.com/) - Network management software (Commercial)
 
-Thank you to all the wonderful people who are sponsoring this project (private sponsors are hidden). 
+### 💙 Donations
 
-<!-- SPONSORS-LIST DO NOT MODIFY BELOW -->
-| All Sponsors |
-|---|
-
-<!-- SPONSORS-LIST DO NOT MODIFY ABOVE -->
+Thank you to everyone who appreciates this tool and donates. 
 
 <details>
   <summary>Click for more ways to donate</summary>
@@ -92,26 +95,13 @@ This project would be nothing without the amazing work of the community, with sp
 
 > [pucherot/Pi.Alert](https://github.com/pucherot/Pi.Alert) (the original creator of PiAlert), [leiweibau](https://github.com/leiweibau/Pi.Alert): Dark mode (and much more), [Macleykun](https://github.com/Macleykun) (Help with Dockerfile clean-up), [vladaurosh](https://github.com/vladaurosh) for Alpine re-base help, [Final-Hawk](https://github.com/Final-Hawk) (Help with NTFY, styling and other fixes), [TeroRERO](https://github.com/terorero) (Spanish translations), [Data-Monkey](https://github.com/Data-Monkey), (Split-up of the python.py file and more), [cvc90](https://github.com/cvc90) (Spanish translation and various UI work) to name a few. Check out all the [amazing contributors](https://github.com/jokob-sk/NetAlertX/graphs/contributors). 
 
-
-## 📃 Everything else
-<!--- --------------------------------------------------------------------- --->
-
-### Other Alternative Apps
-
-- [PiAlert by leiweibau](https://github.com/leiweibau/Pi.Alert/) (maintained, bare-metal install)
-- [WatchYourLAN](https://github.com/aceberg/WatchYourLAN) - Lightweight network IP scanner with web GUI (Open source)
-- [Fing](https://www.fing.com/) - Network scanner app for your Internet security (Commercial, Phone App, Proprietary hardware)
-- [NetBox](https://netboxlabs.com/) - Network management software (Commercial)
-
 ### 🌍 Translations 
 
-Proudly using [Weblate](https://hosted.weblate.org/projects/pialert/).
+Proudly using [Weblate](https://hosted.weblate.org/projects/pialert/). Help out and suggest languages in the [online portal of Weblate](https://hosted.weblate.org/projects/pialert/core/).
 
 <a href="https://hosted.weblate.org/engage/pialert/">
   <img src="https://hosted.weblate.org/widget/pialert/core/multi-auto.svg" alt="Translation status" />
 </a>
-
-Help out and suggest languages in the [online portal of Weblate](https://hosted.weblate.org/projects/pialert/core/).
 
 ### License
 >  GPL 3.0 | [Read more here](LICENSE.txt) | Source of the [animated GIF (Loading Animation)](https://commons.wikimedia.org/wiki/File:Loading_Animation.gif) | Source of the [selfhosted Fonts](https://github.com/adobe-fonts/source-sans)

@@ -2,7 +2,6 @@
 
 The Main Info section is where most of the device identifiable information is stored and edited. Some of the information is autodetected via various plugins. Initial values for most of the fields can be specified in the `NEWDEV` plugin.
 
-
 > [!NOTE] 
 >
 > You can multi-edit devices by selecting them in the main Devices view, from the Mainetence section, or via the CSV Export functionality under Maintenance. More info can be found in the [Devices Bulk-editing docs](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEVICES_BULK_EDITING.md).
@@ -10,12 +9,11 @@ The Main Info section is where most of the device identifiable information is st
 
  ![Main Info](/docs/img/DEVICE_MANAGEMENT/DeviceManagement_MainInfo.png)
 
-
 ## Main Info
 
   - **MAC**: MAC addres of the device. Not editable, unless creating a new dummy device.
   - **Last IP**: IP addres of the device. Not editable, unless creating a new dummy device.
-  - **Name**: Friendly device name. Autodetected via various 🆎 Name discovery [plugins](https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/README.md).
+  - **Name**: Friendly device name. Autodetected via various 🆎 Name discovery [plugins](https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/README.md). The app attaches `(IP match)` if the name is discovered via an IP match and not MAC match which could mean the name could be incorrect as IPs might change.
   - **Icon**: Partially autodetected. Select an existing or [add a custom icon](https://github.com/jokob-sk/NetAlertX/blob/main/docs/ICONS.md). You can also auto-apply the same icon on all devices of the same type. 
   - **Owner**: Device owner (The list is self-populated with existing owners and you can add custom values).
   - **Type**: Select a device type from the dropdown list (`Smartphone`, `Tablet`,
