@@ -124,7 +124,7 @@ The response will be in JSON format, similar to the following:
 
 ## API Endpoint: JSON files 
 
-These API endpoint are static files, that are periodically updated. 
+This API endpoint retrieves static files, that are periodically updated. 
 
 Endpoint URL: `php/server/query_json.php?file=<file name>`
 Host: `same as front end (web ui)`
@@ -144,8 +144,6 @@ You can access the following files:
 
   | File name | Description | 
   |----------------------|----------------------| 
-  | `notification_text.txt` | The plain text version of the last notification. |
-  | `notification_text.html` | The full HTML of the last email notification. |
   | `notification_json_final.json` | The json version of the last notification (e.g. used for webhooks - [sample JSON](https://github.com/jokob-sk/NetAlertX/blob/main/front/report_templates/webhook_json_sample.json)). |
   | `table_devices.json` | The current (at the time of the last update as mentioned above on this page) state of all of the available Devices detected by the app. |  
   | `table_plugins_events.json` | The list of the unprocessed (pending) notification events (plugins_events DB table). |
@@ -156,7 +154,6 @@ You can access the following files:
   | `table_settings.json` | The content of the settings table. |
   | `app_state.json` | Contains the current application state. |
   
-  Current/latest state of the aforementioned files depends on your settings.
 
 ### JSON Data format
 
@@ -224,27 +221,27 @@ Example JSON of the `table_devices.json` endpoint with two Devices (database row
 
 ## API Endpoint: /log files
 
-To retrieve files from the `/app/log` folder. 
+This API endpoint retrieves files from the `/app/log` folder. 
 
 Endpoint URL: `php/server/query_logs.php?file=<file name>`
 Host: `same as front end (web ui)`
 Port: `20211` or as defined by the $PORT docker environment variable (same as the port for the web ui)
 
-| File                     | Description                                      |
-|--------------------------|--------------------------------------------------|
-| `IP_changes.log`         | Logs of IP address changes                       |
-| `app.log`                | Main application log                             |
-| `app.php_errors`.log     | PHP error log                                    |
-| `app_front.log`          | Frontend application log                         |
-| `app_nmap.log`           | Logs of Nmap scan results                        |
-| `db_is_locked.log`       | Logs when the database is locked                 |
-| `execution_queue.log`    | Logs of execution queue activities               |
-| `plugins/`               | Directory for plugin-related files (not accessible) |
-| `report_output.html`     | HTML report output                               |
-| `report_output.json`     | JSON format report output                        |
-| `report_output.txt`      | Text format report output                        |
-| `stderr.log`             | Logs of standard error output                    |
-| `stdout.log`             | Logs of standard output                          |
+| File                     | Description                                                   |
+|--------------------------|---------------------------------------------------------------|
+| `IP_changes.log`         | Logs of IP address changes                                    |
+| `app.log`                | Main application log                                          |
+| `app.php_errors.log`     | PHP error log                                                 |
+| `app_front.log`          | Frontend application log                                      |
+| `app_nmap.log`           | Logs of Nmap scan results                                     |
+| `db_is_locked.log`       | Logs when the database is locked                              |
+| `execution_queue.log`    | Logs of execution queue activities                            |
+| `plugins/`               | Directory for temporary plugin-related files (not accessible) |
+| `report_output.html`     | HTML report output                                            |
+| `report_output.json`     | JSON format report output                                     |
+| `report_output.txt`      | Text format report output                                     |
+| `stderr.log`             | Logs of standard error output                                 |
+| `stdout.log`             | Logs of standard output                                       |
 
 
 ## API Endpoint: /config files

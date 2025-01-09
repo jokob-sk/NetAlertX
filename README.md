@@ -13,8 +13,6 @@ Get visibility of what's going on on your WIFI/LAN network. Schedule scans for d
 
 ![showcase][showcase] 
 
-Head to [https://netalertx.com/](https://netalertx.com/) for more gifs and screenshots 📷.
-
 <details>
   <summary>📷 Click for more screenshots</summary>
 
@@ -22,6 +20,8 @@ Head to [https://netalertx.com/](https://netalertx.com/) for more gifs and scree
   |----------------------|----------------------|----------------------|
   | ![presence][presence] | ![maintenance][maintenance] | ![settings][settings]  |
   | ![sync_hub][sync_hub] | ![report1][report1] | ![device_nmap][device_nmap]  |
+
+  Head to [https://netalertx.com/](https://netalertx.com/) for even more gifs and screenshots 📷.
 
 </details>
 
