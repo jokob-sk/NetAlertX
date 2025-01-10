@@ -11,7 +11,11 @@
   
 ?>
 
-<!-- ----------------------------------------------------------------------- -->
+<script>
+  // show spinning icon
+  showSpinner()
+</script> 
+
  
 
 <!-- Page ------------------------------------------------------------------ -->
@@ -484,6 +488,8 @@
       return;
     }
 
+    sortTopologyBy = createArray(getSetting("UI_TOPOLOGY_SORT"))
+
     devicesListnew = rawData["data"].map(item =>  { 
       return {
           "name": item[0], 
@@ -497,13 +503,30 @@
           "port": item[18]
         };
     }).sort((a, b) => {
-        // First sort by name alphabetically
-        const nameCompare = a.name.localeCompare(b.name);
-        if (nameCompare !== 0) {
+      // Helper to safely parse port into an integer; invalid ports become Infinity for sorting
+      const parsePort = (port) => {
+        const parsed = parseInt(port, 10);
+        return isNaN(parsed) ? Infinity : parsed;
+      };
+
+      switch (sortTopologyBy[0]) {
+        case "Name":
+          // First sort by name alphabetically
+          const nameCompare = a.name.localeCompare(b.name);
+          if (nameCompare !== 0) {
             return nameCompare;
-        }
-        // If names are the same, sort by port numerically
-        return a.port - b.port;
+          }
+          // If names are the same, sort by port numerically
+          return parsePort(a.port) - parsePort(b.port);
+
+        case "Port":
+          // Sort by port numerically
+          return parsePort(a.port) - parsePort(b.port);
+
+        default:
+          // Default: Sort by rowid (as a fallback)
+          return a.rowid - b.rowid;
+      }
     });
 
     setCache('devicesListNew', JSON.stringify(devicesListnew));
@@ -884,9 +907,6 @@
       setTimeout("location.reload();", 500); // refresh page 
     }
   }
-
-  // show spinning icon
-  showSpinner()
 
   // init device names where macs are used
   initDeviceNamesFromMACs();

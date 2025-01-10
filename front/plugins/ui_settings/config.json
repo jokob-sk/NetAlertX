@@ -493,6 +493,34 @@
           "string": "UI theme to use. System will auto switch between Light and Dark."
         }
       ]
+    },
+    {
+      "function": "TOPOLOGY_SORT",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [{ "multiple": "false", "orderable": "false" }],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": "Name",
+      "options": ["Name","Port"],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Sort by in Network"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Based on which value should the network topology view be ordered."
+        }
+      ]
     }
   ]
 }
