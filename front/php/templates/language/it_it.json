@@ -1,7 +1,7 @@
 {
     "API_CUSTOM_SQL_description": "Puoi specificare una query SQL personalizzata che genererà un file JSON e quindi lo esporrà tramite l'<a href=\"/api/table_custom_endpoint.json\" target=\"_blank\"><code>table_custom_endpoint.json</code>endpoint del file</a>.",
     "API_CUSTOM_SQL_name": "Endpoint personalizzato",
-    "API_TOKEN_description": "Token API per proteggere la comunicazione, puoi generarne uno o inserire qualsiasi valore. Viene inviato nell'intestazione della richiesta. Usato nel plugin <code>SYNC</code>, server GraphQL.",
+    "API_TOKEN_description": "Token API per comunicazioni sicure. Generane uno o inserisci un valore qualsiasi. Viene inviato nell'intestazione della richiesta e utilizzato nel plugin <code>SYNC</code>, nel server GraphQL e in altri endpoint API. Puoi utilizzare gli endpoint API per creare integrazioni personalizzate come descritto nella a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/API.md\" target=\"_blank\">documentazione API</a>.",
     "API_TOKEN_name": "Token API",
     "API_display_name": "API",
     "API_icon": "<i class=\"fa fa-arrow-down-up-across-line\"></i>",
