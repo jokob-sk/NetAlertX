@@ -495,7 +495,7 @@
       ]
     },
     {
-      "function": "TOPOLOGY_SORT",
+      "function": "TOPOLOGY_ORDER",
       "type": {
         "dataType": "array",
         "elements": [
@@ -512,7 +512,7 @@
       "name": [
         {
           "language_code": "en_us",
-          "string": "Sort by in Network"
+          "string": "Order by in Network"
         }
       ],
       "description": [

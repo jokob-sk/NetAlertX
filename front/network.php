@@ -488,7 +488,7 @@
       return;
     }
 
-    sortTopologyBy = createArray(getSetting("UI_TOPOLOGY_SORT"))
+    orderTopologyBy = createArray(getSetting("UI_TOPOLOGY_ORDER"))
 
     devicesListnew = rawData["data"].map(item =>  { 
       return {
@@ -509,7 +509,7 @@
         return isNaN(parsed) ? Infinity : parsed;
       };
 
-      switch (sortTopologyBy[0]) {
+      switch (orderTopologyBy[0]) {
         case "Name":
           // First sort by name alphabetically
           const nameCompare = a.name.localeCompare(b.name);
