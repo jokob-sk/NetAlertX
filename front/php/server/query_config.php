@@ -11,8 +11,9 @@ require dirname(__FILE__).'/../server/init.php';
 //------------------------------------------------------------------------------
 // Handle incoming requests
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    // Get query string parameter ?file=settings_table.json
+    // Get query string parameters ?file=settings_table.json&download=true
     $file = isset($_GET['file']) ? $_GET['file'] : null;
+    $download = isset($_GET['download']) ? $_GET['download'] === 'true' : false;
 
     // Check if file parameter is provided
     if ($file) {
@@ -21,9 +22,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
         // Check if the file exists
         if (file_exists($filePath)) {
-            // Send the response back to the client
-            header('Content-Type: text/plain');
-            echo file_get_contents($filePath);
+            // Handle download behavior
+            if ($download) {
+                // Force file download
+                header('Content-Description: File Transfer');
+                header('Content-Type: application/octet-stream');
+                header('Content-Disposition: attachment; filename="' . basename($filePath) . '"');
+                header('Expires: 0');
+                header('Cache-Control: must-revalidate');
+                header('Pragma: public');
+                header('Content-Length: ' . filesize($filePath));
+                readfile($filePath);
+                exit;
+            } else {
+                // Display file content
+                header('Content-Type: text/plain');
+                echo file_get_contents($filePath);
+            }
         } else {
             // File not found response
             http_response_code(404);

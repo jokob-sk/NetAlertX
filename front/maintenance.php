@@ -209,26 +209,38 @@ $db->close();
                 </div>
         </div>
         <div class="tab-pane" id="tab_BackupRestore">
-                <div class="db_info_table">
-                  <div class="db_info_table_row">
-                        <div class="db_tools_table_cell_a" >
-                            <button type="button" class="btn btn-default pa-btn bg-green dbtools-button" id="btnExportCSV" onclick="ExportCSV()"><?= lang('Maintenance_Tool_ExportCSV');?></button>
-                        </div>
-                        <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_ExportCSV_text');?></div>
-                    </div>
-                    <div class="db_info_table_row">
-                        <div class="db_tools_table_cell_a" >
-                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnImportCSV" onclick="askImportCSV()"><?= lang('Maintenance_Tool_ImportCSV');?></button>
-                        </div>
-                        <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_ImportCSV_text');?></div>
-                    </div>
-                    <div class="db_info_table_row">
-                        <div class="db_tools_table_cell_a" >
-                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnImportPastedCSV" onclick="askImportPastedCSV()"><?= lang('Maintenance_Tool_ImportPastedCSV');?></button>
-                        </div>
-                        <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_ImportPastedCSV_text');?></div>
-                    </div>                    
-                 </div>
+          <div class="db_info_table">
+            <div class="db_info_table_row">
+              <div class="db_tools_table_cell_a" >
+                  <button type="button" class="btn btn-default pa-btn bg-green dbtools-button" id="btnExportCSV" onclick="ExportCSV()"><?= lang('Maintenance_Tool_ExportCSV');?></button>
+              </div>
+              <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_ExportCSV_text');?></div>
+            </div>
+            <div class="db_info_table_row">
+                <div class="db_tools_table_cell_a" >
+                    <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnImportCSV" onclick="askImportCSV()"><?= lang('Maintenance_Tool_ImportCSV');?></button>
+                </div>
+                <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_ImportCSV_text');?></div>
+            </div>
+            <div class="db_info_table_row">
+                <div class="db_tools_table_cell_a" >
+                    <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnImportPastedCSV" onclick="askImportPastedCSV()"><?= lang('Maintenance_Tool_ImportPastedCSV');?></button>
+                </div>
+                <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_ImportPastedCSV_text');?></div>
+            </div>  
+            <div class="db_info_table_row">
+              <div class="db_tools_table_cell_a" >
+                  <button type="button" class="btn btn-default pa-btn bg-green dbtools-button" id="btnDownloadConfig" onclick="DownloadConfig()"><?= lang('Maintenance_Tool_DownloadConfig');?></button>
+              </div>
+              <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_DownloadConfig_text');?></div>
+            </div>   
+            <div class="db_info_table_row">
+                <div class="db_tools_table_cell_a" >
+                    <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnImportPastedConfig" onclick="askImportPastedConfig()"><?= lang('Maintenance_Tool_ImportPastedConfig');?></button>
+                </div>
+                <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_ImportPastedConfig_text');?></div>
+            </div>                 
+          </div>
         </div>
         <!-- ---------------------------Logging-------------------------------------------- -->
         <div class="tab-pane" id="tab_Logging">
@@ -444,6 +456,44 @@ function restartBackend() {
       }
     })
 }
+
+// -----------------------------------------------------------
+// Import pasted Config ASK
+function askImportPastedConfig() {
+
+  // Add new icon as base64 string 
+  showModalInput ('<i class="fa fa-square-plus pointer"></i> <?= lang('Maintenance_Tool_ImportConfig_noti');?>', '<?= lang('Maintenance_Tool_ImportPastedConfig_noti_text');?>',
+    '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Okay');?>', 'UploadConfig');
+}
+
+// -----------------------------------------------------------
+// Upload Settings Config
+function UploadConfig()
+{ 
+  // alert("aaa")
+
+  appConf = $('#modal-input-textarea').val()
+  // encode for import
+  appConfBase64 = btoa(appConf)
+
+  // import
+  $.post('php/server/query_replace_config.php', { config: appConfBase64 }, function(msg) {
+    console.log(msg);            
+    // showMessage(msg);            
+    write_notification(`[Maintenance] Settings imported from backup: ${msg}`, 'interrupt');
+  });
+
+}
+
+// -----------------------------------------------------------
+// Download Settings Config
+function DownloadConfig()
+{ 
+  // Execute
+  openInNewTab("php/server/query_config.php?file=app.conf&download=true")
+}
+
+
 
 // -----------------------------------------------------------
 // Export CSV
