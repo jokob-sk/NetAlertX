@@ -48,7 +48,9 @@ Historical data is stored in the `app.db` database (See [Database overview](http
 
 The safest approach to backups is to backup all of the above, by taking regular file system backups (I use [Kopia](https://github.com/kopia/kopia)). 
 
-Arguably, the most time is spent setting up the device list, so if only one file is kept I'd recommend to have a latest backup of the `devices_<timestamp>.csv` or `devices.csv` file, followed by the `app.conf` file. 
+Arguably, the most time is spent setting up the device list, so if only one file is kept I'd recommend to have a latest backup of the `devices_<timestamp>.csv` or `devices.csv` file, followed by the `app.conf` file. You can also download `app.conf` and `devices.csv` file in the Maintenance section:
+
+![Backup and Restore Section in Maintenance](/docs/img/BACKUPS/Maintenance_Backup_Restore.png)
 
 ### Scenario 1: Full backup
 
