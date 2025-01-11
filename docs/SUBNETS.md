@@ -22,7 +22,7 @@ If direct scans are not possible (Wi-Fi Extenders, VPNs and inaccessible network
 
 * **Examples for one and two subnets:**
   * One subnet: `SCAN_SUBNETS = ['192.168.1.0/24 --interface=eth0']`
-  * Two subnets: `SCAN_SUBNETS = ['192.168.1.0/24 --interface=eth0','192.168.1.0/24 --interface=eth1 -vlan=107']`
+  * Two subnets: `SCAN_SUBNETS = ['192.168.1.0/24 --interface=eth0','192.168.1.0/24 --interface=eth1 --vlan=107']`
 
 If you get timeout messages, decrease the network mask (e.g.: from `/16` to `/24`) or increase the `TIMEOUT` setting (e.g.: `ARPSCAN_RUN_TIMEOUT` to `300` (5-minute timeout)) for the plugin and the interval between scans (e.g.: `ARPSCAN_RUN_SCHD` to `*/10 * * * *` (scans every 10 minutes)).
 
@@ -89,7 +89,6 @@ By default, Hyper-V only allows untagged packets through to the VM interface, bl
 2. Within the VM, set up sub-interfaces for each VLAN to enable scanning. On Ubuntu 22.04, Netplan can be used. In /etc/netplan/00-installer-config.yaml, add VLAN definitions:
 
   ```yaml
-
       network:
         ethernets:
           eth0:

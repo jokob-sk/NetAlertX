@@ -10,8 +10,12 @@
 
 //------------------------------------------------------------------------------
 // DB File Path
-$DBFILE = dirname(__FILE__).'/../../../db/app.db';
-$DBFILE_LOCKED_FILE = dirname(__FILE__).'/../../../log/db_is_locked.log';
+// $DBFILE = dirname(__FILE__).'/../../../db/app.db';
+// $DBFILE_LOCKED_FILE = dirname(__FILE__).'/../../../log/db_is_locked.log';
+$scriptDir = realpath(dirname(__FILE__)); // Resolves symlinks to the actual physical path
+$DBFILE = $scriptDir . '/../../../db/app.db';
+$DBFILE_LOCKED_FILE = $scriptDir . '/../../../log/db_is_locked.log';
+
 
 //------------------------------------------------------------------------------
 // check if authenticated
@@ -31,6 +35,14 @@ function SQLite3_connect($trytoreconnect = true, $retryCount = 0) {
         // Connect to database
         global $db_locked;
         $db_locked = false;
+
+        if (!file_exists($DBFILE)) {
+            die("Database file not found: $DBFILE");
+        }
+        if (!file_exists(dirname($DBFILE_LOCKED_FILE))) {
+            die("Log directory not found: " . dirname($DBFILE_LOCKED_FILE));
+        }
+       
 
         // Write unlock status to the locked file
         file_put_contents($DBFILE_LOCKED_FILE, '0');
@@ -70,7 +82,7 @@ class CustomDatabaseWrapper {
     private $maxRetries;
     private $retryDelay;
 
-    public function __construct($filename, $flags = SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE, $maxRetries = 10, $retryDelay = 1000, $encryptionKey = null) {
+    public function __construct($filename, $flags = SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE, $maxRetries = 3, $retryDelay = 1000, $encryptionKey = null) {
         $this->sqlite = new SQLite3($filename, $flags, $encryptionKey);
         $this->maxRetries = $maxRetries;
         $this->retryDelay = $retryDelay;
@@ -116,7 +128,7 @@ class CustomDatabaseWrapper {
         file_put_contents($DBFILE_LOCKED_FILE, '0');
 
         $message = 'Error executing query (attempts: ' . $attempts . '), query: ' . $query;        
-        write_notification($message);
+        // write_notification($message);
         error_log("Query failed after {$this->maxRetries} attempts: " . $this->sqlite->lastErrorMsg());        
     }
 

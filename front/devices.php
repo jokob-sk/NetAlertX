@@ -201,35 +201,61 @@ function mapIndx(oldIndex)
 //  Query total numbers of Devices by status
 //------------------------------------------------------------------------------
 function getDevicesTotals() {
+    maxDelay = 180; //cap at 180 seconds
 
-  // Fetch data via AJAX
-  $.ajax({
-      url: '/php/server/query_json.php',
-      type: "GET",
-      dataType: "json",
-      data: {
-          file: 'table_devices_tiles.json', // Pass the file parameter
-          nocache: Date.now() // Prevent caching with a timestamp
-      },
-      success: function(response) {
-          if (response && response.data) {
-              resultJSON = response.data[0]; // Assuming the structure {"data": [ ... ]}
-              
-              // Save the result to cache
-              setCache("getDevicesTotals", JSON.stringify(resultJSON));
+    let maxRetries = Math.ceil(Math.log2(maxDelay)); // Calculate maximum retries to cap at maxDelay seconds
+    let attempt = 0;
+    let calledUpdateAPI = false;
 
-              // Process the fetched data
-              processDeviceTotals(resultJSON);
-          } else {
-              console.error("Invalid response format from API");
-          }
-      },
-      error: function(xhr, status, error) {
-          console.error("Failed to fetch devices data:", error);
-      }
-  });
+    function fetchDataWithBackoff() {
+        // Calculate the delay (2^attempt seconds, capped at maxDelay seconds)
+        const delay = Math.min(2 ** attempt, maxDelay) * 1000;
 
-  
+        // Attempt to fetch data
+        $.ajax({
+            url: '/php/server/query_json.php',
+            type: "GET",
+            dataType: "json",
+            data: {
+                file: 'table_devices_tiles.json', // Pass the file parameter
+                nocache: Date.now() // Prevent caching with a timestamp
+            },
+            success: function(response) {
+                if (response && response.data) {
+                    const resultJSON = response.data[0]; // Assuming the structure {"data": [ ... ]}
+
+                    // Save the result to cache
+                    setCache("getDevicesTotals", JSON.stringify(resultJSON));
+
+                    // Process the fetched data
+                    processDeviceTotals(resultJSON);
+                } else {
+                    console.error("Invalid response format from API");
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("Failed to fetch devices data (Attempt " + (attempt + 1) + "):", error);
+
+                //  try updating the API once
+                if(calledUpdateAPI == false)
+                {
+                  calledUpdateAPI = true;
+                  updateApi("devices_tiles");
+                }
+
+                // Retry logic
+                if (attempt < maxRetries) {
+                    attempt++;
+                    setTimeout(fetchDataWithBackoff, delay);
+                } else {
+                    console.error("Maximum retries reached. Unable to fetch devices data.");
+                }
+            }
+        });
+    }
+
+    // Start the first fetch attempt
+    fetchDataWithBackoff();
 }
 
 function processDeviceTotals(devicesData) {
