@@ -48,7 +48,7 @@ build your own scanners with the [Plugin system](https://github.com/jokob-sk/Net
 Supported browsers: Chrome, Firefox
 
 - [[Installation] Docker](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md) 
-- [[Installation] Home Assistant](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Falexbelgium%2Fhassio-addons) 
+- [[Installation] Home Assistant](https://github.com/alexbelgium/hassio-addons/tree/master/netalertx) 
 - [[Installation] Bare metal](https://github.com/jokob-sk/NetAlertX/blob/main/docs/HW_INSTALL.md) 
 - [[Installation] Unraid App](https://unraid.net/community/apps) 
 - [[Setup] Usage and Configuration](https://github.com/jokob-sk/NetAlertX/blob/main/docs/README.md)
