@@ -389,7 +389,7 @@
     {
       "column": "Object_PrimaryID",
       "mapped_to_column": "cur_MAC",
-      "css_classes": "col-sm-2",
+      "css_classes": "col-sm-3",
       "show": true,
       "type": "device_name_mac",
       "default_value": "",
@@ -398,15 +398,7 @@
       "name": [
         {
           "language_code": "en_us",
-          "string": "MAC"
-        },
-        {
-          "language_code": "es_es",
-          "string": "MAC"
-        },
-        {
-          "language_code": "de_de",
-          "string": "MAC"
+          "string": "MAC (name)"
         }
       ]
     },
@@ -423,14 +415,6 @@
         {
           "language_code": "en_us",
           "string": "IP"
-        },
-        {
-          "language_code": "es_es",
-          "string": "IP"
-        },
-        {
-          "language_code": "de_de",
-          "string": "IP"
         }
       ]
     },
@@ -446,7 +430,7 @@
       "name": [
         {
           "language_code": "en_us",
-          "string": "Name"
+          "string": "Resolved Name"
         }
       ]
     },

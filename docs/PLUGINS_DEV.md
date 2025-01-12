@@ -660,7 +660,7 @@ The UI will adjust how columns are displayed in the UI based on the resolvers de
 | Type Definitions |  |
 | `device_mac` | The value is considered to be a MAC address, and a link pointing to the device with the given MAC address is generated. |
 | `device_ip` | The value is considered to be an IP address. A link pointing to the device with the given IP is generated. The IP is checked against the last detected IP address and translated into a MAC address, which is then used for the link itself. |
-| `device_name_mac` | The value is considered to be a MAC address, and a link pointing to the device with the given IP is generated. The link label is resolved as the target device name. |
+| `device_name_mac` | The value is considered to be a MAC address, and a link pointing to the device with the given MAC is generated. The link label is resolved as the target device name. |
 | `url` | The value is considered to be a URL, so a link is generated. |
 | `textbox_save` | Generates an editable and saveable text box that saves values in the database. Primarily intended for the `UserData` database column in the `Plugins_Objects` table. |
 | `url_http_https` | Generates two links with the `https` and `http` prefix as lock icons. |

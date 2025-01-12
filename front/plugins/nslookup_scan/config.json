@@ -230,7 +230,7 @@
     },
     {
       "column": "Object_PrimaryID",
-      "css_classes": "col-sm-2",
+      "css_classes": "col-sm-3",
       "show": true,
       "type": "device_name_mac",
       "default_value": "",
@@ -239,11 +239,7 @@
       "name": [
         {
           "language_code": "en_us",
-          "string": "MAC"
-        },
-        {
-          "language_code": "es_es",
-          "string": "MAC"
+          "string": "MAC (name)"
         }
       ]
     },
@@ -258,10 +254,6 @@
       "name": [
         {
           "language_code": "en_us",
-          "string": "IP"
-        },
-        {
-          "language_code": "es_es",
           "string": "IP"
         }
       ]

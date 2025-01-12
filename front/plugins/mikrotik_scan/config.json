@@ -265,7 +265,7 @@
     {
       "column": "Object_PrimaryID",
       "mapped_to_column": "cur_MAC",
-      "css_classes": "col-sm-2",
+      "css_classes": "col-sm-3",
       "show": true,
       "type": "device_name_mac",
       "default_value": "",

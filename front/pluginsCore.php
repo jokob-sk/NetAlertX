@@ -135,7 +135,10 @@ function processColumnValue(dbColumnDef, value, index, type) {
           <span>`;
       break;
     case 'device_name_mac':
-      value = createDeviceLink(value);
+      value = `<div class="text-center"> ${value} 
+                <br/> 
+                (${createDeviceLink(value)}) 
+              </div>`;
       break;
     case 'device_mac':
       value = `<span class="anonymizeMac"><a href="/deviceDetails.php?mac=${value}" target="_blank">${value}</a><span>`;
