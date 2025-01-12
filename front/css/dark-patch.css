@@ -737,3 +737,7 @@ input[type="password"]::-webkit-caps-lock-indicator {
   color:#000 !important;
 }
 
+.thresholdFormControl
+{
+  color:#000;   
+}

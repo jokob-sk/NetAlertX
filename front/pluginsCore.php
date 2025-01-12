@@ -153,7 +153,7 @@ function processColumnValue(dbColumnDef, value, index, type) {
       $.each(dbColumnDef.options, function(index, obj) {
         if(Number(value) < Number(obj.maximum) && valueTmp == '') 
         {
-          valueTmp = `<div style="background-color:${obj.hexColor}">${value}</div>`
+          valueTmp = `<div class="thresholdFormControl" style="background-color:${obj.hexColor}">${value}</div>`
           // return;
         }
       });
@@ -371,7 +371,7 @@ function getHistoryData(prefix, colDefinitions, pluginObj) {
   // Extract history data for the plugin, limiting to the first 50 entries for performance
   return pluginHistory
     .filter((history, index) => history.Plugin === prefix && index < 50) // Filter history for the specific plugin
-    .map(history => colDefinitions.map(colDef => history[colDef.column] || '')); // Map to the defined columns
+    .map(object => colDefinitions.map(colDef => getFormControl(colDef, object[colDef.column], object["Index"], colDefinitions, object)));
 }
 
 function generateTabNavigation(prefix, objectCount, eventCount, historyCount) {
