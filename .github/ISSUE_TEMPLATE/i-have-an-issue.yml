@@ -60,10 +60,11 @@ body:
     required: false
 - type: dropdown
   attributes:
-    label: What branch are you running?
+    label: What installation are you running?
     options:
-      - Production
-      - Dev
+      - Production (netalertx)
+      - Dev (netalertx-dev)
+      - Home Assistant (addon)
   validations:
     required: true
 - type: textarea
