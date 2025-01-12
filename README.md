@@ -2,6 +2,7 @@
 [![Docker Pulls](https://img.shields.io/docker/pulls/jokobsk/netalertx?label=Pulls&logo=docker&color=0aa8d2&logoColor=fff&style=for-the-badge)](https://hub.docker.com/r/jokobsk/netalertx)
 [![GitHub Release](https://img.shields.io/github/v/release/jokob-sk/NetAlertX?color=0aa8d2&logoColor=fff&logo=GitHub&style=for-the-badge)](https://github.com/jokob-sk/NetAlertX/releases)
 [![Discord](https://img.shields.io/discord/1274490466481602755?color=0aa8d2&logoColor=fff&logo=Discord&style=for-the-badge)](https://discord.gg/NczTUTWyRr)
+[![Home Assistant](https://img.shields.io/badge/Repo-blue?logo=home-assistant&style=for-the-badge&color=0aa8d2&logoColor=fff&label=Add)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Falexbelgium%2Fhassio-addons)
 
 # NetAlertX - Network, presence scanner and alert framework
 
@@ -47,6 +48,7 @@ build your own scanners with the [Plugin system](https://github.com/jokob-sk/Net
 Supported browsers: Chrome, Firefox
 
 - [[Installation] Docker](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md) 
+- [[Installation] Home Assistant](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Falexbelgium%2Fhassio-addons) 
 - [[Installation] Bare metal](https://github.com/jokob-sk/NetAlertX/blob/main/docs/HW_INSTALL.md) 
 - [[Installation] Unraid App](https://unraid.net/community/apps) 
 - [[Setup] Usage and Configuration](https://github.com/jokob-sk/NetAlertX/blob/main/docs/README.md)

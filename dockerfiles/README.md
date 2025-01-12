@@ -2,7 +2,7 @@
 [![Docker Pulls](https://img.shields.io/docker/pulls/jokobsk/netalertx?label=Pulls&logo=docker&color=0aa8d2&logoColor=fff&style=for-the-badge)](https://hub.docker.com/r/jokobsk/netalertx)
 [![GitHub Release](https://img.shields.io/github/v/release/jokob-sk/NetAlertX?color=0aa8d2&logoColor=fff&logo=GitHub&style=for-the-badge)](https://github.com/jokob-sk/NetAlertX/releases)
 [![Discord](https://img.shields.io/discord/1274490466481602755?color=0aa8d2&logoColor=fff&logo=Discord&style=for-the-badge)](https://discord.gg/NczTUTWyRr)
-
+[![Home Assistant](https://img.shields.io/badge/Repo-blue?logo=home-assistant&style=for-the-badge&color=0aa8d2&logoColor=fff&label=Add)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Falexbelgium%2Fhassio-addons)
 
 # NetAlertX - Network scanner & notification framework
 
@@ -97,4 +97,4 @@ You can read or watch several [community configuration guides](https://github.co
 - Bitcoin: `1N8tupjeCK12qRVU2XrV17WvKK7LCawyZM`
 - Ethereum: `0x6e2749Cb42F4411bc98501406BdcD82244e3f9C7`
 
-> 📧 Email me at [jokob@duck.com](mailto:jokob@duck.com?subject=NetAlertX) if you want to get in touch or if I should add other sponsorship platforms.
+> 📧 Email me at [netalertx@gmail.com](mailto:netalertx@gmail.com?subject=NetAlertX Donations) if you want to get in touch or if I should add other sponsorship platforms.
