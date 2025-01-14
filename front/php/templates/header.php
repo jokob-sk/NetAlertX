@@ -70,9 +70,6 @@
   <!-- Theme style -->
   <link rel="stylesheet" href="lib/AdminLTE/dist/css/AdminLTE.min.css">
 
-
-
-
   <!-- AdminLTE Skins. We have chosen the skin-blue for this starter
         page. However, you can choose any other skin. Make sure you
         apply the skin class to the body tag so the changes take effect. -->
@@ -107,6 +104,8 @@
 <!-- Servertime to the right of the hostname -->
 <script>
 
+  // -------------------------------------------------------------
+  // Updates the backend application state/status in the header
   function updateState(){
     $.get('/php/server/query_json.php', { file: 'app_state.json', nocache: Date.now() }, function(appState) {    
 
@@ -117,18 +116,45 @@
     })
   }
 
-  function show_pia_servertime() {
+  // -------------------------------------------------------------
+  // updates the date and time in the header
+  function update_servertime() {
+    // Get the current date and time in the specified time zone
+    let timeZone = "<?php echo $timeZone ?>";
+    let now = new Date();
 
-    // datetime in timeZone in the "en-UK" locale
-    let time = new Date().toLocaleString("en-UK", { timeZone: "<?php echo $timeZone?>" });
+    // Convert to the specified time zone
+    let formatter = new Intl.DateTimeFormat("en-UK", {
+      timeZone: timeZone,
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false, // Use 24-hour format
+    });
+    let parts = formatter.formatToParts(now);
 
-    if (document.getElementById) { 
-      document.getElementById("PIA_Servertime_place").innerHTML = '('+time+')'; 
-    } 
-    
-    setTimeout("show_pia_servertime()", 1000);
+    // Extract date components
+    let day = parts.find(p => p.type === "day").value;
+    let month = parts.find(p => p.type === "month").value;
+    let year = parts.find(p => p.type === "year").value;
+
+    // Extract time components
+    let hour = parts.find(p => p.type === "hour").value;
+    let minute = parts.find(p => p.type === "minute").value;
+    let second = parts.find(p => p.type === "second").value;
+
+    // Construct the date and time in DD-MMM-YYYY HH:MM:SS format
+    let formattedDateTime = `${day}-${month}-${year} ${hour}:${minute}:${second}`;
+
+    if (document.getElementById) {
+      document.getElementById("PIA_Servertime_place").innerHTML = '(' + formattedDateTime + ')';
+    }
+
+    setTimeout(update_servertime, 1000); // Call recursively every second
   }
-
 
 </script>
 
@@ -137,15 +163,13 @@
 <!-- ----------------------------------------------------------------------- -->
 <!-- Layout Boxed Yellow -->
 
-<body class="hold-transition fixed <?php echo $pia_skin_selected;?> sidebar-mini" onLoad="show_pia_servertime();" >
+<body class="hold-transition fixed <?php echo $pia_skin_selected;?> sidebar-mini" onLoad="update_servertime();" >
 <!-- Site wrapper -->
 <div class="wrapper">
 
 
   <!-- Main Header -->
   <header class="main-header">
-
-  
 
 <!-- ----------------------------------------------------------------------- -->
     <!-- Logo -->
@@ -468,7 +492,7 @@ function workInProgress() {
   //--------------------------------------------------------------
 
   // Update server time in the header
-  show_pia_servertime()
+  update_servertime()
 
   // Update server state in the header
   updateState()
