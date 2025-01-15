@@ -108,12 +108,12 @@ def execute_name_lookup(ip, timeout):
     output = ""
 
     try:
-        mylog('verbose', [f'[{pluginName}] DEBUG CMD :', args])
+        mylog('debug', [f'[{pluginName}] DEBUG CMD :', args])
         
         # Run the subprocess with a forced timeout
         output = subprocess.check_output(args, universal_newlines=True, stderr=subprocess.STDOUT, timeout=timeout)
 
-        mylog('verbose', [f'[{pluginName}] DEBUG OUTPUT : {output}'])
+        mylog('debug', [f'[{pluginName}] DEBUG OUTPUT : {output}'])
         
         domain_name = ''
 
@@ -129,20 +129,20 @@ def execute_name_lookup(ip, timeout):
                 else:
                     mylog('verbose', [f'[{pluginName}] ⚠ ERROR - Unexpected output format: {line}'])
 
-        mylog('verbose', [f'[{pluginName}] Domain Name: {domain_name}'])
+        mylog('debug', [f'[{pluginName}] Domain Name: {domain_name}'])
 
         return domain_name
 
     except subprocess.CalledProcessError as e:
-        mylog('verbose', [f'[{pluginName}] ⚠ ERROR - {e.output}'])                    
+        mylog('none', [f'[{pluginName}] ⚠ ERROR - {e.output}'])                    
 
     except subprocess.TimeoutExpired:
-        mylog('verbose', [f'[{pluginName}] TIMEOUT - the process forcefully terminated as timeout reached']) 
+        mylog('none', [f'[{pluginName}] TIMEOUT - the process forcefully terminated as timeout reached']) 
 
     if output == "":
-        mylog('verbose', [f'[{pluginName}] Scan: FAIL - check logs']) 
+        mylog('none', [f'[{pluginName}] Scan: FAIL - check logs']) 
     else: 
-        mylog('verbose', [f'[{pluginName}] Scan: SUCCESS'])
+        mylog('debug', [f'[{pluginName}] Scan: SUCCESS'])
 
     return ''   
 
@@ -151,13 +151,13 @@ def ensure_avahi_running(attempt=1, max_retries=2):
     """
     Ensure that D-Bus is running and the Avahi daemon is started, with recursive retry logic.
     """
-    mylog('verbose', [f'[{pluginName}] Attempt {attempt} - Ensuring D-Bus and Avahi daemon are running...'])
+    mylog('debug', [f'[{pluginName}] Attempt {attempt} - Ensuring D-Bus and Avahi daemon are running...'])
 
     # Check rc-status
     try:
         subprocess.run(['rc-status'], check=True)
     except subprocess.CalledProcessError as e:
-        mylog('verbose', [f'[{pluginName}] ⚠ ERROR - Failed to check rc-status: {e.output}'])
+        mylog('none', [f'[{pluginName}] ⚠ ERROR - Failed to check rc-status: {e.output}'])
         return
 
     # Create OpenRC soft level
@@ -167,42 +167,42 @@ def ensure_avahi_running(attempt=1, max_retries=2):
     try:
         subprocess.run(['rc-update', 'add', 'avahi-daemon'], check=True)
     except subprocess.CalledProcessError as e:
-        mylog('verbose', [f'[{pluginName}] ⚠ ERROR - Failed to add Avahi to runlevel: {e.output}'])
+        mylog('none', [f'[{pluginName}] ⚠ ERROR - Failed to add Avahi to runlevel: {e.output}'])
         return
 
     # Start the D-Bus service
     try:
         subprocess.run(['rc-service', 'dbus', 'start'], check=True)
     except subprocess.CalledProcessError as e:
-        mylog('verbose', [f'[{pluginName}] ⚠ ERROR - Failed to start D-Bus: {e.output}'])
+        mylog('none', [f'[{pluginName}] ⚠ ERROR - Failed to start D-Bus: {e.output}'])
         return
 
     # Check Avahi status
     status_output = subprocess.run(['rc-service', 'avahi-daemon', 'status'], capture_output=True, text=True)
     if 'started' in status_output.stdout:
-        mylog('verbose', [f'[{pluginName}] Avahi Daemon is already running.'])
+        mylog('debug', [f'[{pluginName}] Avahi Daemon is already running.'])
         return
 
-    mylog('verbose', [f'[{pluginName}] Avahi Daemon is not running, attempting to start... (Attempt {attempt})'])
+    mylog('none', [f'[{pluginName}] Avahi Daemon is not running, attempting to start... (Attempt {attempt})'])
 
     # Start the Avahi daemon
     try:
         subprocess.run(['rc-service', 'avahi-daemon', 'start'], check=True)
     except subprocess.CalledProcessError as e:
-        mylog('verbose', [f'[{pluginName}] ⚠ ERROR - Failed to start Avahi daemon: {e.output}'])
+        mylog('none', [f'[{pluginName}] ⚠ ERROR - Failed to start Avahi daemon: {e.output}'])
 
     # Check status after starting
     status_output = subprocess.run(['rc-service', 'avahi-daemon', 'status'], capture_output=True, text=True)
     if 'started' in status_output.stdout:
-        mylog('verbose', [f'[{pluginName}] Avahi Daemon successfully started.'])
+        mylog('debug', [f'[{pluginName}] Avahi Daemon successfully started.'])
         return
 
     # Retry if not started and attempts are left
     if attempt < max_retries:
-        mylog('verbose', [f'[{pluginName}] Retrying... ({attempt + 1}/{max_retries})'])
+        mylog('debug', [f'[{pluginName}] Retrying... ({attempt + 1}/{max_retries})'])
         ensure_avahi_running(attempt + 1, max_retries)
     else:
-        mylog('verbose', [f'[{pluginName}] ⚠ ERROR - Avahi Daemon failed to start after {max_retries} attempts.'])
+        mylog('none', [f'[{pluginName}] ⚠ ERROR - Avahi Daemon failed to start after {max_retries} attempts.'])
 
     # rc-update add avahi-daemon
     # rc-service avahi-daemon status
