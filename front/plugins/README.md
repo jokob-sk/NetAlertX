@@ -40,6 +40,7 @@ Device-detecting plugins insert values into the `CurrentScan` database table.  T
 | `INTRSPD`     | ♻       | Internet speed test                       |           |          | Script       | [internet_speedtest](/front/plugins/internet_speedtest/)          |
 | `IPNEIGH`     | 🔍       | Scan ARP (IPv4) and NDP (IPv6) tables    |           |          | Script       | [ipneigh](/front/plugins/ipneigh/)                                |
 | `LUCIRPC`     | 🔍       | Import connected devices from OpenWRT    |           |          | Script       | [luci_import](/front/plugins/luci_import/)                                |
+| `ASUSWRT`     | 🔍       | Import connected devices from AsusWRT    |           |          | Script       | [asuswrt_import](/front/plugins/asuswrt_import/)                                |
 | `MAINT`       | ⚙       | Maintenance of logs, etc.                 |           |          | Script       | [maintenance](/front/plugins/maintenance/)                        |
 | `MQTT`        | ▶️      | MQTT for synching to Home Assistant       |           |          | Script       | [_publisher_mqtt](/front/plugins/_publisher_mqtt/)                |
 | `NBTSCAN`     | 🆎       | Nbtscan (NetBIOS-based) name resolution  |           |          | Script       | [nbtscan_scan](/front/plugins/nbtscan_scan/)                      |
