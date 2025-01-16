@@ -12,3 +12,9 @@ This Plugin is using awesome [asusrouter](https://github.com/Vaskivskyi/asusrout
 ### Notes
 
 - In case an existing imported device is renamed in Asus Router it will not be renamed in NetAlertX. In this case it has to be done manually or the device should be removed and it will appear on the next scan.  
+
+## Other info
+
+Version: 1.0.0
+Date: 16.1.2025
+Author: @labmonkey
