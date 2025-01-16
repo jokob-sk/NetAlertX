@@ -1,0 +1,528 @@
+{
+  "code_name": "asuswrt_import",
+  "show_ui": true,
+  "unique_prefix": "ASUSWRT",
+  "plugin_type": "device_scanner",
+  "execution_order": "Layer_1",
+  "enabled": true,
+  "data_source": "script",
+  "mapped_to_table": "CurrentScan",
+  "data_filters": [
+    {
+      "compare_column": "Object_PrimaryID",
+      "compare_operator": "==",
+      "compare_field_id": "txtMacFilter",
+      "compare_js_template": "'{value}'.toString()",
+      "compare_use_quotes": true
+    }
+  ],
+  "localized": [
+    "display_name",
+    "description",
+    "icon"
+  ],
+  "display_name": [
+    {
+      "language_code": "en_us",
+      "string": "AsusWRT device import"
+    }
+  ],
+  "description": [
+    {
+      "language_code": "en_us",
+      "string": "The plugin is used to import connected devices from AsusWRT"
+    }
+  ],
+  "icon": [
+    {
+      "language_code": "en_us",
+      "string": "<i class=\"fa fa-search\"></i>"
+    }
+  ],
+  "params": [],
+  "settings": [
+    {
+      "function": "RUN",
+      "events": [
+        "run"
+      ],
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": "disabled",
+      "options": [
+        "disabled",
+        "once",
+        "schedule"
+      ],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "When to run"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "When the plugin should run. Good options are <code>schedule</code>"
+        }
+      ]
+    },
+    {
+      "function": "RUN_SCHD",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": "*/5 * * * *",
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Schedule"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Only enabled if you select <code>schedule</code> in the <a href=\"#SYNC_RUN\"><code>SYNC_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes."
+        }
+      ]
+    },
+    {
+      "function": "CMD",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "readonly": "true"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": "python3 /app/front/plugins/asuswrt_import/script.py",
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Command"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Command to run. This can not be changed"
+        }
+      ]
+    },
+    {
+      "function": "RUN_TIMEOUT",
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "type": "number"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": 30,
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Run timeout"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Maximum time in seconds to wait for the script to finish. If this time is exceeded the script is aborted."
+        }
+      ]
+    },
+    {
+      "function": "host",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": "192.168.1.1",
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Router ip"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Router ip(do not include <code>http://</code> or <code>https://</code>)."
+        }
+      ]
+    },
+    {
+      "function": "user",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": "admin",
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Router user"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "User name used to login into your router."
+        }
+      ]
+    },
+    {
+      "function": "password",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "type": "password"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Router password"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Password used to login into your router."
+        }
+      ]
+    },
+    {
+      "function": "ssl",
+      "type": {
+        "dataType": "boolean",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "type": "checkbox"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": false,
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Router SSL"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "If your router enforces SSL connections."
+        }
+      ]
+    }
+  ],
+  "database_column_definitions": [
+    {
+      "column": "Index",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "none",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Index"
+        }
+      ]
+    },
+    {
+      "column": "Object_PrimaryID",
+      "css_classes": "col-sm-2",
+      "default_value": "",
+      "localized": [
+        "name"
+      ],
+      "mapped_to_column": "cur_MAC",
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "MAC address"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Dirección MAC"
+        },
+        {
+          "language_code": "de_de",
+          "string": "MAC Adresse"
+        }
+      ],
+      "options": [],
+      "show": true,
+      "type": "device_mac"
+    },
+    {
+      "column": "Object_SecondaryID",
+      "css_classes": "col-sm-2",
+      "default_value": "",
+      "localized": [
+        "name"
+      ],
+      "mapped_to_column": "cur_IP",
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "IP"
+        },
+        {
+          "language_code": "es_es",
+          "string": "IP"
+        },
+        {
+          "language_code": "de_de",
+          "string": "IP"
+        }
+      ],
+      "options": [],
+      "show": true,
+      "type": "device_ip"
+    },
+    {
+      "column": "Watched_Value1",
+      "css_classes": "col-sm-2",
+      "default_value": "",
+      "localized": [
+        "name"
+      ],
+      "mapped_to_column": "cur_Name",
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Hostname"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Nombre de host"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Name des Hosts"
+        }
+      ],
+      "options": [],
+      "show": true,
+      "type": "label"
+    },
+    {
+      "column": "Watched_Value2",
+      "mapped_to_column": "cur_Vendor",
+      "css_classes": "col-sm-2",
+      "default_value": "",
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Vendor"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Proveedor"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Hersteller"
+        }
+      ],
+      "options": [],
+      "show": true,
+      "type": "label"
+    },
+    {
+      "column": "Dummy",
+      "mapped_to_column": "cur_ScanMethod",
+      "mapped_to_column_data": {
+        "value": "ASUSWRT"
+      },
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Scan method"
+        }
+      ]
+    },
+    {
+      "column": "DateTimeCreated",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Created"
+        }
+      ]
+    },
+    {
+      "column": "DateTimeChanged",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Changed"
+        }
+      ]
+    },
+    {
+      "column": "Status",
+      "css_classes": "col-sm-1",
+      "show": true,
+      "type": "replace",
+      "default_value": "",
+      "options": [
+        {
+          "equals": "watched-not-changed",
+          "replacement": "<div style='text-align:center'><i class='fa-solid fa-square-check'></i><div></div>"
+        },
+        {
+          "equals": "watched-changed",
+          "replacement": "<div style='text-align:center'><i class='fa-solid fa-triangle-exclamation'></i></div>"
+        },
+        {
+          "equals": "new",
+          "replacement": "<div style='text-align:center'><i class='fa-solid fa-circle-plus'></i></div>"
+        },
+        {
+          "equals": "missing-in-last-scan",
+          "replacement": "<div style='text-align:center'><i class='fa-solid fa-question'></i></div>"
+        }
+      ],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Status"
+        }
+      ]
+    }
+  ]
+}
