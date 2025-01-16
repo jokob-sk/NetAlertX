@@ -72,5 +72,5 @@ services:
       - TZ=${TZ}
       - PORT=${PORT}      
       # ❗ DANGER ZONE BELOW - Setting ALWAYS_FRESH_INSTALL=true will delete the content of the /db & /config folders
-      - ALWAYS_FRESH_INSTALL=${ALWAYS_FRESH_INSTALL}
+      - ALWAYS_FRESH_INSTALL=true
       
