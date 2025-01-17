@@ -307,6 +307,8 @@ function processDeviceTotals(devicesData) {
 //------------------------------------------------------------------------------
 //  Render the info boxes/tiles on top
 function renderInfoboxes(customData) {
+  if(customData.length > 0)
+  {
     $.ajax({
       url: 'php/components/tile_cards.php', // PHP script URL
       type: 'POST', // Use POST method to send data
@@ -320,6 +322,7 @@ function renderInfoboxes(customData) {
       }
     });
   }
+}
 
 // -----------------------------------------------------------------------------
 // Map column index to column name for GraphQL query
@@ -833,7 +836,7 @@ function multiEditDevices()
   }
 
   // redirect to the Maintenance section
-  window.location.href = window.location.origin + '/maintenance.php#tab_multiEdit?macs=' + macs.slice(0, -1);
+  window.location.href = './maintenance.php#tab_multiEdit?macs=' + macs.slice(0, -1);
 }
 
 

@@ -751,7 +751,7 @@ function navigateToDeviceWithIp (ip) {
       {
         mac = obj.devMac;
 
-        window.open(window.location.origin +'/deviceDetails.php?mac=' + mac , "_blank");
+        window.open('./deviceDetails.php?mac=' + mac , "_blank");
       }
     });
     
