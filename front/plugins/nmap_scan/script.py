@@ -75,7 +75,6 @@ def main():
             foreignKey  = entry.mac           
         )
 
-    # generate last_result.log file
     plugin_objects.write_result_file()
         
 #-------------------------------------------------------------------------------

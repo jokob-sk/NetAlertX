@@ -1300,6 +1300,11 @@ input[readonly] {
     min-width: 40px;
 }
 
+.iconPreview svg{
+    min-width: 20px;
+    max-width: 20px;
+}
+
 
 .dummyDevice 
 {
@@ -1464,6 +1469,8 @@ input[readonly] {
 {
     display: none;
 }
+
+
 
 #panDetails #NEWDEV_devCustomProps_label
 {

@@ -79,7 +79,7 @@
                 data: ["devMac", "devLastIP", "devName", "devOwner", "devType", "devVendor", "devGroup", "devIcon", "devLocation", "devComments"], 
                 docs: "https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEVICE_MANAGEMENT.md",
                 iconClass: "fa fa-pencil",
-                inputGroupClasses: "field-group col-lg-4 col-sm-6 col-xs-12",
+                inputGroupClasses: "field-group main-group col-lg-4 col-sm-6 col-xs-12",
                 labelClasses: "col-sm-4 col-xs-12 control-label",
                 inputClasses: "col-sm-8 col-xs-12 input-group"
             },
@@ -88,7 +88,7 @@
                 data: ["devStatus", "devLastConnection", "devFirstConnection"],
                 docs: "https://github.com/jokob-sk/NetAlertX/blob/main/docs/SESSION_INFO.md",
                 iconClass: "fa fa-calendar",
-                inputGroupClasses: "field-group col-lg-4 col-sm-6 col-xs-12",
+                inputGroupClasses: "field-group session-group col-lg-4 col-sm-6 col-xs-12",
                 labelClasses: "col-sm-4 col-xs-12 control-label",
                 inputClasses: "col-sm-8 col-xs-12 input-group"
             },
@@ -97,7 +97,7 @@
                 data: ["devAlertEvents", "devAlertDown", "devSkipRepeated"],
                 docs: "https://github.com/jokob-sk/NetAlertX/blob/main/docs/NOTIFICATIONS.md",
                 iconClass: "fa fa-bell",
-                inputGroupClasses: "field-group col-lg-4 col-sm-6 col-xs-12",
+                inputGroupClasses: "field-group alert-group col-lg-4 col-sm-6 col-xs-12",
                 labelClasses: "col-sm-4 col-xs-12 control-label",
                 inputClasses: "col-sm-8 col-xs-12 input-group"
             },
@@ -106,7 +106,7 @@
                 data: ["devParentMAC", "devParentPort", "devSSID", "devSite", "devSyncHubNode"],
                 docs: "https://github.com/jokob-sk/NetAlertX/blob/main/docs/NETWORK_TREE.md",
                 iconClass: "fa fa-network-wired",
-                inputGroupClasses: "field-group col-lg-4 col-sm-6 col-xs-12",
+                inputGroupClasses: "field-group network-group col-lg-4 col-sm-6 col-xs-12",
                 labelClasses: "col-sm-4 col-xs-12 control-label",
                 inputClasses: "col-sm-8 col-xs-12 input-group"
             },
@@ -115,7 +115,7 @@
                 data: ["devStaticIP", "devIsNew", "devFavorite", "devIsArchived"],
                 docs: "https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEVICE_DISPLAY_SETTINGS.md",
                 iconClass: "fa fa-list-check",
-                inputGroupClasses: "field-group col-lg-4 col-sm-6 col-xs-12",
+                inputGroupClasses: "field-group display-group col-lg-4 col-sm-6 col-xs-12",
                 labelClasses: "col-sm-4 col-xs-12 control-label",
                 inputClasses: "col-sm-8 col-xs-12 input-group"
             },
@@ -124,7 +124,7 @@
                 data: ["devCustomProps"],
                 docs: "https://github.com/jokob-sk/NetAlertX/blob/main/docs/CUSTOM_PROPERTIES.md",
                 iconClass: "fa fa-list",
-                inputGroupClasses: "field-group col-lg-12 col-sm-12 col-xs-12",
+                inputGroupClasses: "field-group cutprop-group col-lg-12 col-sm-12 col-xs-12",
                 labelClasses: "col-sm-12 col-xs-12 control-label",
                 inputClasses: "col-sm-12 col-xs-12 input-group"
             }

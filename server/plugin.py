@@ -11,13 +11,15 @@ from collections import namedtuple
 # Register NetAlertX modules
 import conf
 from const import pluginsPath, logPath, applicationPath, reportTemplatesPath
-from logger import mylog
+from logger import mylog, Logger 
 from helper import timeNowTZ,  updateState, get_file_content, write_file, get_setting, get_setting_value
 from api import update_api
 from plugin_utils import logEventStatusCounts, get_plugin_string, get_plugin_setting_obj, print_plugin_info, list_to_csv, combine_plugin_objects, resolve_wildcards_arr, handle_empty, custom_plugin_decoder, decode_and_rename_files
 from notification import Notification_obj, write_notification
 from execution_log import ExecutionLog
 
+# Make sure log level is initialized correctly
+Logger(get_setting_value('LOG_LEVEL'))
 
 #-------------------------------------------------------------------------------
 class plugin_param:
@@ -316,7 +318,7 @@ def execute_plugin(db, all_plugins, plugin, pluginsState = plugins_state() ):
             
             # keep current instance log file, delete all from other nodes
             if filename != 'last_result.log' and os.path.exists(full_path):
-                os.remove(full_path)
+                os.remove(full_path) # DEBUG:TODO uncomment 🐛
                 mylog('verbose', [f'[Plugins] Processed and deleted file: {full_path} '])   
 
     
@@ -453,7 +455,6 @@ def execute_plugin(db, all_plugins, plugin, pluginsState = plugins_state() ):
                 sqlParams.append(tuple(base_params))
             else:
                 mylog('none', ['[Plugins] Skipped invalid sql result'])
-
     
     # check if the subprocess / SQL query failed / there was no valid output
     if len(sqlParams) == 0: 
@@ -461,7 +462,7 @@ def execute_plugin(db, all_plugins, plugin, pluginsState = plugins_state() ):
         return pluginsState 
     else: 
         mylog('verbose', ['[Plugins] SUCCESS, received ', len(sqlParams), ' entries'])  
-        mylog('debug',   ['[Plugins] sqlParam entries: ', sqlParams])
+        # mylog('debug',   ['[Plugins] sqlParam entries: ', sqlParams]) # not working for som reason
 
     # process results if any
     if len(sqlParams) > 0:               
@@ -605,7 +606,6 @@ def process_plugin_events(db, plugin, pluginsState, plugEventsArr):
 
                 # combine all DB insert and update events into one for history
                 history_to_insert.append(values)
-
             
             mylog('debug', ['[Plugins] pluginEvents      count: ', len(pluginEvents)])
             mylog('debug', ['[Plugins] pluginObjects     count: ', len(pluginObjects)])
@@ -614,6 +614,10 @@ def process_plugin_events(db, plugin, pluginsState, plugEventsArr):
             mylog('debug', ['[Plugins] history_to_insert count: ', len(history_to_insert)])
             mylog('debug', ['[Plugins] objects_to_insert count: ', len(objects_to_insert)])
             mylog('debug', ['[Plugins] objects_to_update count: ', len(objects_to_update)])
+            
+            mylog('trace', ['[Plugins] objects_to_update: ', objects_to_update])
+            mylog('trace', ['[Plugins] events_to_insert: ', events_to_insert])
+            mylog('trace', ['[Plugins] history_to_insert: ', history_to_insert])
 
             logEventStatusCounts('pluginEvents', pluginEvents)
             logEventStatusCounts('pluginObjects', pluginObjects)

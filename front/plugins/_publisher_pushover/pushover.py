@@ -27,9 +27,7 @@ Logger(get_setting_value('LOG_LEVEL'))
 pluginName = "PUSHOVER"
 
 LOG_PATH = logPath + '/plugins'
-RESULT_FILE = os.path.join(LOG_PATH, "last_result.log")
-
-
+RESULT_FILE = os.path.join(LOG_PATH, f'last_result.{pluginName}.log')
 
 
 def main():

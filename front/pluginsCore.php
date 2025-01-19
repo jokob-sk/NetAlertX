@@ -368,10 +368,16 @@ function getObjectData(prefix, colDefinitions, pluginObj) {
 }
 
 function getHistoryData(prefix, colDefinitions, pluginObj) {
-  // Extract history data for the plugin, limiting to the first 50 entries for performance
+  
   return pluginHistory
-    .filter((history, index) => history.Plugin === prefix && index < 50) // Filter history for the specific plugin
-    .map(object => colDefinitions.map(colDef => getFormControl(colDef, object[colDef.column], object["Index"], colDefinitions, object)));
+  .filter(history => history.Plugin === prefix) // First, filter based on the plugin prefix
+    .sort((a, b) => b.Index - a.Index) // Then, sort by the Index field in descending order
+    .slice(0, 50) // Limit the result to the first 50 entries
+    .map(object => 
+        colDefinitions.map(colDef => 
+            getFormControl(colDef, object[colDef.column], object["Index"], colDefinitions, object)
+        )
+    );
 }
 
 function generateTabNavigation(prefix, objectCount, eventCount, historyCount) {

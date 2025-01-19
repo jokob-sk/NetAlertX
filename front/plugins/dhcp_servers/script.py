@@ -2,6 +2,7 @@
 # Based on the work of https://github.com/leiweibau/Pi.Alert
 
 import subprocess
+import os
 from datetime import datetime
 
 import sys
@@ -15,6 +16,8 @@ from logger import mylog, Logger
 from helper import timeNowTZ, get_setting_value 
 import conf
 from pytz import timezone
+from const import logPath
+
 
 # Make sure the TIMEZONE for logging is correct
 conf.tz = timezone(get_setting_value('TIMEZONE'))
@@ -22,10 +25,16 @@ conf.tz = timezone(get_setting_value('TIMEZONE'))
 # Make sure log level is initialized correctly
 Logger(get_setting_value('LOG_LEVEL'))
 
+pluginName = 'DHCPSRVS'
+
+LOG_PATH = logPath + '/plugins'
+LOG_FILE = os.path.join(LOG_PATH, f'script.{pluginName}.log')
+RESULT_FILE = os.path.join(LOG_PATH, f'last_result.{pluginName}.log')
+
 def main():
 
     mylog('verbose', ['[DHCPSRVS] In script'])
-    RESULT_FILE = 'last_result.log'
+    
     last_run_logfile = open(RESULT_FILE, 'a') 
     last_run_logfile.write("")
     

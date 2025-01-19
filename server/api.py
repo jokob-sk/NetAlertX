@@ -151,9 +151,9 @@ class api_endpoint_class:
                 execution_log.finalize_event("update_api")
                 self.is_ad_hoc_user_event = False
 
-        else:
-            # Debugging if write is skipped
-            mylog('trace', [f'[API] api_endpoint_class: Skipping write for {self.fileName}, debounce time not passed.'])
+        # else:
+        #     # Debugging if write is skipped
+        #     mylog('trace', [f'[API] api_endpoint_class: Skipping write for {self.fileName}, debounce time not passed.'])
 
 
 
