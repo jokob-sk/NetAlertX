@@ -68,8 +68,6 @@ def main():
 
         new_internet_IP, cmd_output = check_internet_IP( PREV_IP, DIG_GET_IP_ARG)   
 
-        #todo: use `curl ifconfig.me/ip` if above fails
-
         if new_internet_IP == no_internet_ip:
             time.sleep(1*i) # Exponential backoff strategy
         else:

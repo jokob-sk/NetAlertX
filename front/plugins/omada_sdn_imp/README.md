@@ -65,7 +65,8 @@ can not fix some of tplinks OMADA SDN own limitations/bugs:
 
 
 
-### Other info
+## Other info
 
+- Version: 1.0
 - Author : [Flying Toto](https://github.com/FlyingToto)
-- Date : 04-Jul-2024 - version 1.0
+- Release Date: 04-Jul-2024 

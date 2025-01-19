@@ -5,3 +5,9 @@ Plugin for pinging existing devices via the [ping](https://linux.die.net/man/8/p
 ### Usage
 
 - Check the Settings page for details.
+
+## Other info
+
+- Version: 1.0.0
+- Author: [jokob-sk](https://github.com/jokob-sk)
+- Release Date: 19.1.2025 

@@ -34,7 +34,8 @@ For each MAC or IP address provided, the script:
 
 ### Other info
 
-- Date : 23-Dec-2024 - version 1.0
+- Version: 1.0
+- Release Date: 23-Dec-2024
 - Author: [laxduke](https://github.com/laxduke)
 
 

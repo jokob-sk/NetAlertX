@@ -8,3 +8,10 @@ Plugin to run regular Internet connectivity and IP checks. Change the [dig utili
 ### Usage
 
 - Check the Settings page for details.
+
+
+## Other info
+
+- Version: 1.0.0
+- Author: [jokob-sk](https://github.com/jokob-sk)
+- Release Date: 1.1.2023 

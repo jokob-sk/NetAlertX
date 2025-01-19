@@ -50,7 +50,8 @@ If the Freebox is your gateway you need to find its HTTPS (or HTTP if you prefer
 As address, you can either use the public IP of the Freebox, or the unique domain name you found on http://mafreebox.freebox.fr:80/api_version listed as `api_domain`.
 
 
-### Other info
+## Other info
 
-- Author : [KayJay7](https://github.com/KayJay7) & [Lucide](https://github.com/Lucide)
-- Date : 2-Dec-2024 - version 1.0
+- Version: 1.0
+- Author: [KayJay7](https://github.com/KayJay7) & [Lucide](https://github.com/Lucide)
+- Release Date: 2-Dec-2024

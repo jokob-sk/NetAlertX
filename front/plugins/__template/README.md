@@ -21,3 +21,7 @@ To set up the plugin correctly, make sure...
 ### Notes
 
 - Additional notes, limitations, Author info. 
+
+- Version: 1.0.0
+- Author: `<your github handle>`
+- Release Date: `<release date>`

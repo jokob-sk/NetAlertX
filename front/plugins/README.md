@@ -28,8 +28,9 @@ Device-detecting plugins insert values into the `CurrentScan` database table.  T
 | `APPRISE`     | ▶️      | Apprise notification proxy                |           |          | Script       | [_publisher_apprise](/front/plugins/_publisher_apprise/)          |
 | `ARPSCAN`     | 🔍      | ARP-scan on current network               |           |          | Script       | [arp_scan](/front/plugins/arp_scan/)                              |
 | `AVAHISCAN`   | 🆎      | Avahi (mDNS-based) name resolution        |           |          | Script       | [avahi_scan](/front/plugins/avahi_scan/)                          |
+| `ASUSWRT`     | 🔍       | Import connected devices from AsusWRT    |           |          | Script       | [asuswrt_import](/front/plugins/asuswrt_import/)                  |
 | `CSVBCKP`     | ⚙       | CSV devices backup                        |           |          | Script       | [csv_backup](/front/plugins/csv_backup/)                          |
-| `CUSTPROP`    | ⚙       | Managing custom device properties values  |           |  Yes     | Template     | [custom_props](/front/plugins/custom_props/)                          |
+| `CUSTPROP`    | ⚙       | Managing custom device properties values  |           |  Yes     | Template     | [custom_props](/front/plugins/custom_props/)                      |
 | `DBCLNP`      | ⚙       | Database cleanup                          |           |  Yes*    | Script       | [db_cleanup](/front/plugins/db_cleanup/)                          |
 | `DDNS`        | ⚙       | DDNS update                               |           |          | Script       | [ddns_update](/front/plugins/ddns_update/)                        |
 | `DHCPLSS`     | 🔍/📥/🆎| Import devices from DHCP leases          |           |          | Script       | [dhcp_leases](/front/plugins/dhcp_leases/)                        |
@@ -39,8 +40,7 @@ Device-detecting plugins insert values into the `CurrentScan` database table.  T
 | `INTRNT`      | 🔍      | Internet IP scanner                       |           |          | Script       | [internet_ip](/front/plugins/internet_ip/)                        |
 | `INTRSPD`     | ♻       | Internet speed test                       |           |          | Script       | [internet_speedtest](/front/plugins/internet_speedtest/)          |
 | `IPNEIGH`     | 🔍       | Scan ARP (IPv4) and NDP (IPv6) tables    |           |          | Script       | [ipneigh](/front/plugins/ipneigh/)                                |
-| `LUCIRPC`     | 🔍       | Import connected devices from OpenWRT    |           |          | Script       | [luci_import](/front/plugins/luci_import/)                                |
-| `ASUSWRT`     | 🔍       | Import connected devices from AsusWRT    |           |          | Script       | [asuswrt_import](/front/plugins/asuswrt_import/)                                |
+| `LUCIRPC`     | 🔍       | Import connected devices from OpenWRT    |           |          | Script       | [luci_import](/front/plugins/luci_import/)                        |
 | `MAINT`       | ⚙       | Maintenance of logs, etc.                 |           |          | Script       | [maintenance](/front/plugins/maintenance/)                        |
 | `MQTT`        | ▶️      | MQTT for synching to Home Assistant       |           |          | Script       | [_publisher_mqtt](/front/plugins/_publisher_mqtt/)                |
 | `NBTSCAN`     | 🆎       | Nbtscan (NetBIOS-based) name resolution  |           |          | Script       | [nbtscan_scan](/front/plugins/nbtscan_scan/)                      |
@@ -57,7 +57,7 @@ Device-detecting plugins insert values into the `CurrentScan` database table.  T
 | `SETPWD`      | ⚙       | Set password                              |           |  Yes     | Template     | [set_password](/front/plugins/set_password/)                      |
 | `SMTP`        | ▶️      | Email notifications                       |           |          | Script       | [_publisher_email](/front/plugins/_publisher_email/)              |
 | `SNMPDSC`     | 🔍/📥   | SNMP device import & sync                 |           |          | Script       | [snmp_discovery](/front/plugins/snmp_discovery/)                  |
-| `SYNC`        | 🔍/⚙/📥| Sync & import from NetAlertX instances    |   🖧 🔄   | Yes     | Script       | [sync](/front/plugins/sync/)                                     |
+| `SYNC`        | 🔍/⚙/📥| Sync & import from NetAlertX instances    |   🖧 🔄   | Yes     | Script        | [sync](/front/plugins/sync/)                                      |
 | `TELEGRAM`    | ▶️      | Telegram notifications                    |           |          | Script       | [_publisher_telegram](/front/plugins/_publisher_telegram/)        |
 | `UI`          | ♻       | UI specific settings                      |           |  Yes     | Template     | [ui_settings](/front/plugins/ui_settings/)                        |
 | `UNDIS`       | 🔍/📥   | Create dummy devices  ❌                 |           |          | Script       | [undiscoverables](/front/plugins/undiscoverables/)                |
@@ -69,7 +69,7 @@ Device-detecting plugins insert values into the `CurrentScan` database table.  T
 
 
 > \* The database cleanup plugin (`DBCLNP`) is not _required_ but the app will become unusable after a while if not executed.
-> \** The Undiscoverables plugin (`UNDIS`) inserts only user-specified dummy devices.
+> \*\* The Undiscoverables plugin (`UNDIS`) inserts only user-specified dummy devices.
 > ❌ marked for removal
 > ⌚It's recommended to use the same schedule interval for all plugins responsible for discovering new devices.
 

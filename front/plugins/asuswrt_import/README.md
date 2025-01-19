@@ -15,6 +15,7 @@ This Plugin is using awesome [asusrouter](https://github.com/Vaskivskyi/asusrout
 
 ## Other info
 
-Version: 1.0.0
-Date: 16.1.2025
-Author: @labmonkey
+- Version: 1.0.0
+- Author: [labmonkey](https://github.com/labmonkey)
+- Release Date: 16.1.2025 
+

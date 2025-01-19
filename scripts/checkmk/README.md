@@ -17,8 +17,9 @@ For more details, see the [Checkmk Local Checks Documentation](https://docs.chec
 
 ### Other info
 
-- Date : 08-Jan-2025 - version 1.0
+- Version: 1.0
 - Author: N/A
+- Release Date: 08-Jan-2025 
 
 > [!NOTE]
 > This is a community supplied script and not maintained. 
