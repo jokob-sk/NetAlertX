@@ -462,7 +462,7 @@ def execute_plugin(db, all_plugins, plugin, pluginsState = plugins_state() ):
         return pluginsState 
     else: 
         mylog('verbose', ['[Plugins] SUCCESS, received ', len(sqlParams), ' entries'])  
-        # mylog('debug',   ['[Plugins] sqlParam entries: ', sqlParams]) # not working for som reason
+        mylog('debug',   ['[Plugins] sqlParam entries: ', sqlParams]) 
 
     # process results if any
     if len(sqlParams) > 0:               

@@ -120,8 +120,8 @@
 <!-- page script ----------------------------------------------------------- -->
 <script>
   var deviceStatus    = 'all';
-  var tableRows       = getCookie ("nax_parTableRows") == "" ? 10 : getCookie ("nax_parTableRows") ;
-  var tableOrder      = getCookie ("nax_parTableOrder") == "" ? [[3,'desc'], [0,'asc']] : JSON.parse(getCookie ("nax_parTableOrder")) ;
+  var tableRows       = getCache ("nax_parTableRows") == "" ? 10 : getCache ("nax_parTableRows") ;
+  var tableOrder      = getCache ("nax_parTableOrder") == "" ? [[3,'desc'], [0,'asc']] : JSON.parse(getCache ("nax_parTableOrder")) ;
   
   var tableColumnHide = [];
   var tableColumnOrder = [];
@@ -740,11 +740,11 @@ function initializeDatatable (status) {
 
       // Save cookie Rows displayed, and Parameters rows & order
       $('#tableDevices').on( 'length.dt', function ( e, settings, len ) {
-            setCookie ("nax_parTableRows", len, 129600); // save for 90 days
+            setCache ("nax_parTableRows", len, 129600); // save for 90 days
           } );
             
           $('#tableDevices').on( 'order.dt', function () {
-            setCookie ("nax_parTableOrder", JSON.stringify (table.order()), 129600); // save for 90 days
+            setCache ("nax_parTableOrder", JSON.stringify (table.order()), 129600); // save for 90 days
           } );
 
           // add multi-edit button
