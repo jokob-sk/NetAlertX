@@ -38,7 +38,6 @@ LOG_FILE = os.path.join(LOG_PATH, f'script.{pluginName}.log')
 RESULT_FILE = os.path.join(LOG_PATH, f'last_result.{pluginName}.log')
 
 
-
 no_internet_ip = '0.0.0.0'
 
 def main():
@@ -55,10 +54,13 @@ def main():
     PREV_IP         = values.prev_ip.split('=')[1]        
     DIG_GET_IP_ARG  = get_setting_value("INTRNT_DIG_GET_IP_ARG")
 
+    new_internet_IP = no_internet_ip
+
     mylog('verbose', [f'[{pluginName}] INTRNT_DIG_GET_IP_ARG: ', DIG_GET_IP_ARG])     
 
+    # METHOD 1: dig
     # perform the new IP lookup N times specified by the INTRNT_TRIES setting
-    new_internet_IP = ""
+    
     INTRNT_RETRIES  = get_setting_value("INTRNT_RETRIES")
     retries_needed  = 0
 
@@ -66,11 +68,21 @@ def main():
 
         new_internet_IP, cmd_output = check_internet_IP( PREV_IP, DIG_GET_IP_ARG)   
 
+        #todo: use `curl ifconfig.me/ip` if above fails
+
         if new_internet_IP == no_internet_ip:
             time.sleep(1*i) # Exponential backoff strategy
         else:
             retries_needed = i
             break
+
+    # METHOD 2: curl
+    if new_internet_IP == no_internet_ip:
+        new_internet_IP, cmd_output = fallback_check_ip()
+        mylog('verbose', [f'[{pluginName}] Curl Fallback (new_internet_IP|cmd_output): {new_internet_IP} | {cmd_output}'])   
+
+    #  logging
+    append_line_to_file (logPath + '/IP_changes.log', '['+str(timeNowTZ()) +']\t'+ new_internet_IP +'\n')    
 
     plugin_objects = Plugin_Objects(RESULT_FILE)    
     
@@ -110,9 +122,6 @@ def check_internet_IP ( PREV_IP, DIG_GET_IP_ARG ):
 
     mylog('verbose', [f'[{pluginName}]          previous_IP : {previous_IP}']) 
 
-    #  logging
-    append_line_to_file (logPath + '/IP_changes.log', '['+str(timeNowTZ()) +']\t'+ internet_IP +'\n')          
-
     return internet_IP, cmd_output
     
 
@@ -138,6 +147,21 @@ def get_internet_IP (DIG_GET_IP_ARG):
         IP = no_internet_ip
 
     return IP, cmd_output
+
+#-------------------------------------------------------------------------------
+def fallback_check_ip():
+    """Fallback mechanism using `curl ifconfig.me/ip`."""
+    try:
+        cmd_output = subprocess.check_output(['curl', '-s', 'ifconfig.me/ip'], text=True).strip()
+        if cmd_output and re.match(r"^\d{1,3}(\.\d{1,3}){3}$", cmd_output):
+            mylog('verbose', [f'[{pluginName}] Fallback IP retrieved via curl: {cmd_output}'])
+            return cmd_output, f'Fallback via curl: "{cmd_output}"'
+        else:
+            mylog('verbose', [f'[{pluginName}] Invalid IP received from fallback'])
+            return no_internet_ip, f'Fallback via curl failed: "{cmd_output}"'
+    except Exception as e:
+        mylog('none', [f'[{pluginName}] Fallback curl exception: {e}'])
+        return no_internet_ip, f'Fallback via curl exception: "{e}"'
 
 #===============================================================================
 # BEGIN

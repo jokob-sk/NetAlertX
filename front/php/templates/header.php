@@ -209,7 +209,7 @@
           </li>			
           <!-- Clear cache & Reload -->		 
           <li>
-            <a id="reload-button" href='#' role="button" span  onclick='clearCache()'>🔃</a>
+            <a id="reload-button" href='#' role="button" span  onclick='clearCache()' class='fa-solid fa-rotate'></a>
           </li>	
           <!-- Full Screen -->		 
           <li>

@@ -1460,6 +1460,10 @@ input[readonly] {
 }
 /* #panDetails .dataTables_wrapper .bottom .paging_simple_numbers */
 
+#panDetails #NEWDEV_devIcon
+{
+    display: none;
+}
 
 #panDetails #NEWDEV_devCustomProps_label
 {
