@@ -20,7 +20,7 @@ RUN pip install openwrt-luci-rpc asusrouter asyncio aiohttp graphene flask netif
     && bash -c "find ${INSTALL_DIR} -type f \( -name '*.sh' -o -name '*.py'  -o -name 'speedtest-cli' \) -exec chmod 750 {} \;"
 
 # Append Iliadbox certificate to aiofreepybox
-RUN cat install/freebox_certificate.pem >> /opt/venv/lib/python3.12/site-packages/aiofreepybox/freebox_certificates.pem
+RUN cat ${INSTALL_DIR}/install/freebox_certificate.pem >> /opt/venv/lib/python3.12/site-packages/aiofreepybox/freebox_certificates.pem
 
 # second stage
 FROM alpine:3.20 AS runner
