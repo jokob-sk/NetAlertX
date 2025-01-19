@@ -20,7 +20,14 @@ echo "longrun" > /etc/s6-overlay/s6-rc.d/php-fpm/type
 echo "longrun" > /etc/s6-overlay/s6-rc.d/nginx/type
 echo "longrun" > /etc/s6-overlay/s6-rc.d/$APP_NAME/type
 echo -e "${INSTALL_DIR}/dockerfiles/init.sh" > /etc/s6-overlay/s6-rc.d/SetupOneshot/up
-echo -e "#!/bin/execlineb -P\n/usr/sbin/crond -f -d 8" > /etc/s6-overlay/s6-rc.d/crond/run
+echo -e '#!/bin/execlineb -P
+
+        if { echo
+        "
+            [INSTALL] Starting crond service...
+
+        " }' > /etc/s6-overlay/s6-rc.d/crond/run
+echo -e "/usr/sbin/crond -f" >> /etc/s6-overlay/s6-rc.d/crond/run
 echo -e "#!/bin/execlineb -P\n/usr/sbin/php-fpm83 -F" > /etc/s6-overlay/s6-rc.d/php-fpm/run
 echo -e '#!/bin/execlineb -P\nnginx -g "daemon off;"' > /etc/s6-overlay/s6-rc.d/nginx/run
 echo -e '#!/bin/execlineb -P
@@ -39,4 +46,4 @@ touch /etc/s6-overlay/s6-rc.d/nginx/dependencies.d/php-fpm
 touch /etc/s6-overlay/s6-rc.d/$APP_NAME/dependencies.d/nginx
 
 # this removes the current file
-# rm -f $0
+rm -f $0

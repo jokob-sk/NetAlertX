@@ -5,7 +5,7 @@ ARG INSTALL_DIR=/app
 ENV PYTHONUNBUFFERED=1
 
 # Install build dependencies
-RUN apk add --no-cache bash python3 python3-dev gcc musl-dev libffi-dev openssl-dev git\
+RUN apk add --no-cache bash python3 python3-dev gcc musl-dev libffi-dev openssl-dev git \
     && python -m venv /opt/venv
 
 # Enable venv
@@ -20,20 +20,7 @@ RUN pip install openwrt-luci-rpc asusrouter asyncio aiohttp graphene flask netif
     && bash -c "find ${INSTALL_DIR} -type f \( -name '*.sh' -o -name '*.py'  -o -name 'speedtest-cli' \) -exec chmod 750 {} \;"
 
 # Append Iliadbox certificate to aiofreepybox
-RUN printf "\n-----BEGIN CERTIFICATE-----\n\
-MIICOjCCAcCgAwIBAgIUI0Tu7zsrBJACQIZgLMJobtbdNn4wCgYIKoZIzj0EAwIw\n\
-TDELMAkGA1UEBhMCSVQxDjAMBgNVBAgMBUl0YWx5MQ4wDAYDVQQKDAVJbGlhZDEd\n\
-MBsGA1UEAwwUSWxpYWRib3ggRUNDIFJvb3QgQ0EwHhcNMjAxMTI3MDkzODEzWhcN\n\
-NDAxMTIyMDkzODEzWjBMMQswCQYDVQQGEwJJVDEOMAwGA1UECAwFSXRhbHkxDjAM\n\
-BgNVBAoMBUlsaWFkMR0wGwYDVQQDDBRJbGlhZGJveCBFQ0MgUm9vdCBDQTB2MBAG\n\
-ByqGSM49AgEGBSuBBAAiA2IABMryJyb2loHNAioY8IztN5MI3UgbVHVP/vZwcnre\n\
-ZvJOyDvE4HJgIti5qmfswlnMzpNbwf/MkT+7HAU8jJoTorRm1wtAnQ9cWD3Ebv79\n\
-RPwtjjy3Bza3SgdVxmd6fWPUKaNjMGEwHQYDVR0OBBYEFDUij/4lpoJ+kOXRyrcM\n\
-jf2RPzOqMB8GA1UdIwQYMBaAFDUij/4lpoJ+kOXRyrcMjf2RPzOqMA8GA1UdEwEB\n\
-/wQFMAMBAf8wDgYDVR0PAQH/BAQDAgGGMAoGCCqGSM49BAMCA2gAMGUCMQC6eUV1\n\
-pFh4UpJOTc1JToztN4ttnQR6rIzxMZ6mNCe+nhjkohWp24pr7BpUYSbEizYCMAQ6\n\
-LCiBKV2j7QQGy7N1aBmdur17ZepYzR1YV0eI+Kd978aZggsmhjXENQYVTmm/XA==\n\
------END CERTIFICATE-----\n" >> /opt/venv/lib/python3.12/site-packages/aiofreepybox/freebox_certificates.pem
+RUN cat install/freebox_certificate.pem >> /opt/venv/lib/python3.12/site-packages/aiofreepybox/freebox_certificates.pem
 
 # second stage
 FROM alpine:3.20 AS runner
@@ -55,10 +42,9 @@ ENV S6_CMD_WAIT_FOR_SERVICES_MAXTIME=0
 
 RUN apk update --no-cache \
     && apk add --no-cache bash zip lsblk gettext-envsubst sudo mtr tzdata s6-overlay \
-    && apk add --no-cache curl arp-scan iproute2 iproute2-ss nmap nmap-scripts traceroute nbtscan avahi avahi-tools openrc dbus net-tools net-snmp-tools bind-tools awake ca-certificates  \
+    && apk add --no-cache curl arp-scan iproute2 iproute2-ss nmap nmap-scripts traceroute nbtscan avahi avahi-tools openrc dbus net-tools net-snmp-tools bind-tools awake ca-certificates \
     && apk add --no-cache sqlite php83 php83-fpm php83-cgi php83-curl php83-sqlite3 php83-session \
     && apk add --no-cache python3 nginx \
-    && apk add --no-cache dcron \
     && ln -s /usr/bin/awake /usr/bin/wakeonlan \
     && bash -c "install -d -m 750 -o nginx -g www-data ${INSTALL_DIR} ${INSTALL_DIR}" \
     && rm -f /etc/nginx/http.d/default.conf
@@ -66,7 +52,7 @@ RUN apk update --no-cache \
 COPY --from=builder --chown=nginx:www-data ${INSTALL_DIR}/ ${INSTALL_DIR}/
 
 # Add crontab file
-COPY install/crontab /etc/crontabs/root
+COPY --chmod=600 --chown=root:root install/crontab /etc/crontabs/root
 
 # Start all required services
 RUN ${INSTALL_DIR}/dockerfiles/start.sh
