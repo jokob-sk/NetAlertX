@@ -32,7 +32,7 @@ function renderList(
       // remove first item containing the SQL query
       options.shift();
 
-      const apiUrl = `php/server/dbHelper.php?action=read&rawSql=${encodeURIComponent(sqlQuery)}`;
+      const apiUrl = `php/server/dbHelper.php?action=read&rawSql=${btoa(encodeURIComponent(sqlQuery))}`;
 
       $.get(apiUrl, function (sqlOptionsData) {
         

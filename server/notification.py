@@ -78,7 +78,8 @@ class Notification_obj:
             #     mylog('debug', ['[Notification] notiStruc:', json.dumps(notiStruc.__dict__, indent=4)])
             
             Text = ""
-            HTML = ""                        
+            HTML = ""       
+            template_file_path = reportTemplatesPath + 'report_template.html'                 
 
 
             # Open text Template
@@ -90,17 +91,17 @@ class Notification_obj:
             # Open html Template
             mylog('verbose', ['[Notification] Open html Template'])
 
-            # select template type depoending if running latest version or an older one
-            if conf.newVersionAvailable :
-                template_file_path = reportTemplatesPath + 'report_template_new_version.html'
-            else:
-                template_file_path = reportTemplatesPath + 'report_template.html'
-
-            mylog('verbose', ['[Notification] Using template', template_file_path])
             template_file = open(template_file_path, 'r')   
             mail_html = template_file.read()
             template_file.close()
 
+            # prepare new version text
+            newVersionText = ''
+            if conf.newVersionAvailable :
+                newVersionText = '🚀A new version is available.'
+            
+            mail_text = mail_text.replace ('<NEW_VERSION>', newVersionText)
+            mail_html = mail_html.replace ('<NEW_VERSION>', newVersionText)
 
             # Report "REPORT_DATE" in Header & footer
             timeFormated = timeNowTZ().strftime ('%Y-%m-%d %H:%M')

@@ -63,7 +63,7 @@ require_once  $_SERVER['DOCUMENT_ROOT'] . '/php/templates/security.php';
   }
 
   if (isset ($_REQUEST['rawSql'])) {
-    $rawSql = $_REQUEST['rawSql'];    
+    $rawSql = urldecode(base64_decode($_REQUEST['rawSql']));    
   }
 
   if (isset ($_REQUEST['dbtable'])) {

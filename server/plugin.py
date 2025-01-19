@@ -913,8 +913,6 @@ def handle_test(runType, db, all_plugins, pluginsState):
     mylog('minimal', ['[', timeNowTZ(), '] [Test] START Test: ', runType])
     
     # Prepare test samples
-    sample_txt = get_file_content(reportTemplatesPath + 'report_sample.txt')    
-    sample_html = get_file_content(reportTemplatesPath + 'report_sample.html')    
     sample_json = json.loads(get_file_content(reportTemplatesPath + 'webhook_json_sample.json'))[0]["body"]["attachments"][0]["text"]
     
     # Create fake notification

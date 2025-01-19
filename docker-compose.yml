@@ -38,7 +38,6 @@ services:
       - ${DEV_LOCATION}/back/update_vendors.sh:/app/back/update_vendors.sh
       - ${DEV_LOCATION}/front/lib:/app/front/lib
       - ${DEV_LOCATION}/front/js:/app/front/js
-      - ${DEV_LOCATION}/front/report_templates:/front/report_templates
       - ${DEV_LOCATION}/front/php:/app/front/php      
       - ${DEV_LOCATION}/front/deviceDetails.php:/app/front/deviceDetails.php
       - ${DEV_LOCATION}/front/deviceDetailsEdit.php:/app/front/deviceDetailsEdit.php

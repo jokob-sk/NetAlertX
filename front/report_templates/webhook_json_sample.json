@@ -18,37 +18,36 @@
           "title_link": "",
           "text": {
             "new_devices_meta": {
-              "title": "🆕New devices",
-              "columnNames": [
-                "MAC",
-                "Datetime",
-                "IP",
-                "Event Type",
-                "Device name",
-                "Comments"
-              ]
+                "title": "🆕 New devices",
+                "columnNames": [
+                    "MAC",
+                    "Datetime",
+                    "IP",
+                    "Event Type",
+                    "Device name",
+                    "Comments"
+                ]
             },
             "new_devices": [
               {
-                "MAC": "74:ac:74:ac:74:ac",
-                "Datetime": "2023-01-30 22:15:09",
-                "IP": "192.168.1.1",
+                "MAC": "00:1a:76:e3:26:4a",
+                "Datetime": "2025-01-06 11:05:00+11:00",
+                "IP": "192.168.1.82",
                 "Event Type": "New Device",
-                "Device name": "(name not found)",
-                "Comments": null,
-                "Device Vendor": null
+                "Device name": "(unknown) TEST",
+                "Comments": ""
               }
             ],
             "down_devices_meta": {
-              "title": "Down devices",
-              "columnNames": [
-                "MAC",
-                "Datetime",
-                "IP",
-                "Event Type",
-                "Device name",
-                "Comments"
-              ]
+                "title": "🔴 Down devices",
+                "columnNames": [
+                    "devName",
+                    "eve_MAC",
+                    "devVendor",
+                    "eve_IP",
+                    "eve_DateTime",
+                    "eve_EventType"
+                ]
             },
             "down_devices": [],
             "events_meta": {
@@ -64,12 +63,12 @@
             },
             "down_reconnected": [
               {
-                "devName": "Phone - Pixel",
+                "devName": "Phone - Moto 82",
                 "eve_MAC": "74:ac:74:ac:74:ac",
-                "devVendor": "Google",
+                "devVendor": "Motorola Mobility LLC, a Lenovo Company",
                 "eve_IP": "192.168.1.167",
-                "DownTime": "2024-05-26 09:06:56+10:00",
-                "ConnectedTime": "2024-05-26 09:13:24+10:00"
+                "eve_DateTime": "2025-01-11 10:05:01+11:00",
+                "eve_EventType": "Down Reconnected"
               }
             ],
             "down_reconnected_meta": {
@@ -79,8 +78,8 @@
                 "eve_MAC",
                 "devVendor",
                 "eve_IP",
-                "DownTime",
-                "ConnectedTime"
+                "eve_DateTime",
+                "eve_EventType"
               ]
             },
             "events": [
@@ -90,8 +89,7 @@
                 "IP": "192.168.1.92",
                 "Event Type": "Disconnected",
                 "Device name": "(name not found)",
-                "Comments": null,
-                "Device Vendor": null
+                "Comments": null
               },
               {
                 "MAC": "74:ac:74:ac:74:ac",
@@ -99,45 +97,34 @@
                 "IP": "192.168.1.150",
                 "Event Type": "Disconnected",
                 "Device name": "(name not found)",
-                "Comments": null,
-                "Device Vendor": null
+                "Comments": null
               }
             ],
             "plugins_meta": {
-              "title": "Plugins",
+              "title": "🔌 Plugins",
               "columnNames": [
-                "Plugin",
-                "Object_PrimaryID",
-                "Object_SecondaryID",
-                "DateTimeChanged",
-                "Watched_Value1",
-                "Watched_Value2",
-                "Watched_Value3",
-                "Watched_Value4",
-                "Status",
-                "Extra",
-                "UserData",
-                "ForeignKey",
-                "SyncHubNodeName"
+                  "Plugin",
+                  "Object_PrimaryID",
+                  "Object_SecondaryID",
+                  "DateTimeChanged",
+                  "Watched_Value1",
+                  "Watched_Value2",
+                  "Watched_Value3",
+                  "Watched_Value4",
+                  "Status"
               ]
             },
             "plugins": [
               {
-                "Index": 138,
-                "Plugin": "INTRSPD",
-                "Object_PrimaryID": "Speedtest",
-                "Object_SecondaryID": "2023-10-08 02:01:16+02:00",
-                "DateTimeCreated": "2023-10-08 02:01:16",
-                "DateTimeChanged": "2023-10-08 02:32:15",
-                "Watched_Value1": "-1",
-                "Watched_Value2": "-1",
-                "Watched_Value3": "null",
-                "Watched_Value4": "null",
-                "Status": "missing-in-last-scan",
-                "Extra": "null",
-                "UserData": "null",
-                "ForeignKey": "null",
-                "SyncHubNodeName": "null"
+                "Plugin": "ARPSCAN",
+                "Object_PrimaryID": "74:ac:74:ac:74:ac",
+                "Object_SecondaryID": "192.168.1.114",
+                "DateTimeChanged": "2025-01-11 12:21:00",
+                "Watched_Value1": "192.168.1.114",
+                "Watched_Value2": "Microsoft Corporation",
+                "Watched_Value3": "192.168.1.0/24 --interface=eth1",
+                "Watched_Value4": "",
+                "Status": "new"
               }
             ]
           }
