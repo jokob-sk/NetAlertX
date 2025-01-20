@@ -1331,8 +1331,8 @@ input[readonly] {
     top: -6px;
     position: absolute;
     z-index: 1;
-    left: 0px;
-    font-size: large;
+    left: 4px;
+    font-size: smaller;
 }
 
 .drag
@@ -1397,6 +1397,7 @@ input[readonly] {
 {
     display: none;
     padding-top: 2em;
+    cursor: default;
 }
 
 /* ----------------------------------------------------------------- */
@@ -1619,6 +1620,20 @@ input[readonly] {
 }
 
 /* ----------------------------------------------------------------- */
+/* EVENTS page */
+/* ----------------------------------------------------------------- */
+
+.eventsPeriodSelectWrap{
+    display: inline;
+    float: right;
+}
+
+.eventsPage #tableEventsTitle
+{
+    float: left ;
+}
+
+/* ----------------------------------------------------------------- */
 /* PLUGINS page */
 /* ----------------------------------------------------------------- */
 
@@ -1800,10 +1815,7 @@ input[readonly] {
 ----------------------------------------------------------------------------- */
 #multiEditPlc
 {
-    position: fixed;
-    bottom: 50px;
-    right:  0px;
-    z-index: 10;
+    padding-right: 10px;
 }
 
 

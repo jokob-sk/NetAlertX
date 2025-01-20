@@ -59,35 +59,11 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
 <div id="settingsPage" class="content-wrapper">
 
 <!-- Content header--------------------------------------------------------- -->
-    <section class="content-header">
 
-      <div class="col-sm-5">
-        <h1 id="pageTitle col-sm-3">
-            <i class="fa fa-cog"></i>
-            <?= lang('Navigation_Settings');?> 
-            <a style="cursor:pointer">
-              <span>
-                <i id='toggleSettings' onclick="toggleAllSettings()" class="settings-expand-icon fa fa-angle-double-down"></i>
-              </span> 
-            </a>
-        </h1>
-      </div>
-
-      <div class="col-sm-7 settingsImportedTimestamp" title="<?= lang("settings_imported");?> ">
-        <div class="settingsImported ">
-          <?= lang("settings_imported_label");?>:          
-
-          <span id="lastImportedTime"></span>
-        </div>    
-      </div>
-
-    </section>
     <section class="content-header">
 
     <div  class ="bg-white color-palette box box-solid box-primary  col-sm-12  panel panel-default panel-title" > 
-      <!-- Settings imported time -->
-
-      
+       
       <a data-toggle="collapse" href="#settingsOverview">
         <div class ="settings-group col-sm-12 panel-heading panel-title">
             <i class="<?= lang("settings_enabled_icon");?>"></i>  <?= lang("settings_enabled");?>  
@@ -142,6 +118,15 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
 
     <section class=" padding-bottom  col-sm-12">
       <!-- needed so the filter & save button don't hide the settings -->
+            <!-- Settings imported time -->
+
+      <div class="col-sm-7 settingsImportedTimestamp" style="display:none" title="<?= lang("settings_imported");?> ">
+        <div class="settingsImported ">
+          <?= lang("settings_imported_label");?>:          
+
+          <span id="lastImportedTime"></span>
+        </div>    
+      </div>
     </section>
 
 

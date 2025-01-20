@@ -1,47 +1,16 @@
 <?php
-#---------------------------------------------------------------------------------#
-#  NetAlertX                                                                       #
-#  Open Source Network Guard / WIFI & LAN intrusion detector                      #  
-#                                                                                 #
-#  maintenance.php - Front module. Server side. Maintenance                       #
-#---------------------------------------------------------------------------------#
-#    Puche      2021        pi.alert.application@gmail.com   GNU GPLv3            #
-#    jokob-sk   2022        jokob.sk@gmail.com               GNU GPLv3            #
-#    leiweibau  2022        https://github.com/leiweibau     GNU GPLv3            #
-#    cvc90      2023        https://github.com/cvc90         GNU GPLv3            #
-#---------------------------------------------------------------------------------#
-
- 
-
-//------------------------------------------------------------------------------
-?>
-
-
-
-<?php
   require 'php/templates/header.php';
+  require 'php/templates/notification.php';
 ?>
 
-<!-- ----------------------------------------------------------------------- -->
- 
-  
 <!-- Page ------------------------------------------------------------------ -->
 <div class="content-wrapper" id="maintenancePage">
 
-<!-- Content header--------------------------------------------------------- -->
-    <section class="content-header">
-    <?php require 'php/templates/notification.php'; ?>
-      <h1 id="pageTitle">
-        <i class="fa fa-wrench"></i>         
-        <?= lang('Maintenance_Title');?>
-      </h1>
-    </section>
-
-    <!-- Main content ---------------------------------------------------------- -->
-    <section class="content">
+<!-- Main content ---------------------------------------------------------- -->
+<section class="content">
 
 
-  <?php
+<?php
 
 // Size and last mod of DB ------------------------------------------------------
 
@@ -91,10 +60,11 @@ $db->close();
                     <div class="db_info_table_row">                      
                         <div class="db_info_table_cell" style="min-width: 140px"><?= lang('Maintenance_version');?>
                           <a href="https://github.com/jokob-sk/NetAlertX/blob/main/docs/VERSIONS.md" target="_blank"> <span><i class="fa fa-circle-question"></i></a><span>
-
                         </div>
                         <div class="db_info_table_cell">
-                        <div class="version" id="version" data-build-time="<?php echo file_get_contents( "buildtimestamp.txt");?>"><?php echo '<span id="new-version-text" class="myhidden">' .lang('Maintenance_new_version').'</span>'.'<span id="current-version-text" class="myhidden">' .lang('Maintenance_current_version').'</span>';?></div>
+                        <div class="version" id="version" data-build-time="<?php echo file_get_contents( "buildtimestamp.txt");?>">
+                          <?php echo '<span id="new-version-text" class="myhidden"><i class="fa-solid fa-rocket fa-beat"></i> ' .lang('Maintenance_new_version').'</span>'.'<span id="current-version-text" class="myhidden">' .lang('Maintenance_current_version').'</span>';?>
+                        </div>
                         </div>
                     </div>
                     <div class="db_info_table_row">

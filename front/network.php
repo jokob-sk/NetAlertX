@@ -1,6 +1,7 @@
 <?php
 
   require 'php/templates/header.php';
+  require 'php/templates/notification.php';
 
   // online / offline badges HTML snippets 
   define('badge_online', '<div class="badge bg-green text-white" style="width: 60px;">Online</div>');
@@ -15,21 +16,13 @@
   // show spinning icon
   showSpinner()
 </script> 
-
  
 
 <!-- Page ------------------------------------------------------------------ -->
 <div class="content-wrapper">
 
-  <!-- Content header--------------------------------------------------------- -->
-  <section class="content-header">
-  <?php require 'php/templates/notification.php'; ?>
-    <h1 id="pageTitle">
-      <i class="fa fa-network-wired"></i> <?= lang('Network_Title');?>
-      <span class="helpIconSmallTopRight"> <a target="_blank" href="https://github.com/jokob-sk/NetAlertX/blob/main/docs/NETWORK_TREE.md"><i class="fa fa-circle-question"></i></a><span>
-    </h1>    
-  </section>
 
+  <span class="networkHelpIcon"> <a target="_blank" href="https://github.com/jokob-sk/NetAlertX/blob/main/docs/NETWORK_TREE.md"><i class="fa fa-circle-question"></i></a></span>
 
   <div id="networkTree" class="drag"></div>
 

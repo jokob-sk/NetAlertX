@@ -1,4 +1,4 @@
-FROM alpine:3.20 AS builder
+FROM alpine:3.21 AS builder
 
 ARG INSTALL_DIR=/app
 
@@ -14,7 +14,7 @@ ENV PATH="/opt/venv/bin:$PATH"
 COPY . ${INSTALL_DIR}/
 
 
-RUN pip install openwrt-luci-rpc asusrouter asyncio aiohttp graphene flask netifaces tplink-omada-client wakeonlan pycryptodome requests paho-mqtt scapy cron-converter pytz json2table dhcp-leases pyunifi speedtest-cli chardet python-nmap dnspython librouteros git+https://github.com/foreign-sub/aiofreepybox.git \
+RUN pip install openwrt-luci-rpc asusrouter asyncio aiohttp graphene flask tplink-omada-client wakeonlan pycryptodome requests paho-mqtt scapy cron-converter pytz json2table dhcp-leases pyunifi speedtest-cli chardet python-nmap dnspython librouteros git+https://github.com/foreign-sub/aiofreepybox.git \
     && bash -c "find ${INSTALL_DIR} -type d -exec chmod 750 {} \;" \
     && bash -c "find ${INSTALL_DIR} -type f -exec chmod 640 {} \;" \
     && bash -c "find ${INSTALL_DIR} -type f \( -name '*.sh' -o -name '*.py'  -o -name 'speedtest-cli' \) -exec chmod 750 {} \;"
@@ -23,7 +23,7 @@ RUN pip install openwrt-luci-rpc asusrouter asyncio aiohttp graphene flask netif
 RUN cat ${INSTALL_DIR}/install/freebox_certificate.pem >> /opt/venv/lib/python3.12/site-packages/aiofreepybox/freebox_certificates.pem
 
 # second stage
-FROM alpine:3.20 AS runner
+FROM alpine:3.21 AS runner
 
 ARG INSTALL_DIR=/app
 

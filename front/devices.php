@@ -28,14 +28,6 @@
 <!-- Page ------------------------------------------------------------------ -->
   <div class="content-wrapper">
 
-<!-- Content header--------------------------------------------------------- -->
-    <section class="content-header">
-      <h1 id="pageTitle">
-          <i class="fa fa-laptop"></i>
-          <?= lang('Device_Title');?>
-      </h1>
-    </section>
-
 <!-- Main content ---------------------------------------------------------- -->
     <section class="content">
 
@@ -78,6 +70,9 @@
                 <h3 id="tableDevicesTitle" class="box-title text-gray "></h3>  
               </div>    
               <div  class="dummyDevice col-md-3 ">
+                <span id="multiEditPlc">
+                  <!-- multi edit button placeholder -->
+                </span>
                 <span>
                   <a href="deviceDetails.php?mac=new"><i title="<?= lang('Gen_create_new_device');?>" class="fa fa-square-plus"></i> <?= lang('Gen_create_new_device');?></a>
                 </span>
@@ -106,7 +101,7 @@
 <!-- ----------------------------------------------------------------------- -->
     </section>
     <!-- /.content -->
-    <div id="multiEditPlc" class="col-md-2"></div>
+    
   </div>
   <!-- /.content-wrapper -->
 
@@ -749,9 +744,9 @@ function initializeDatatable (status) {
 
           // add multi-edit button
           $('#multiEditPlc').append(
-              `<button type="submit" id="multiEdit" class="btn btn-primary" style="display:none" onclick="multiEditDevices();">
-                <i class="fa fa-pencil pointer" ></i>  ${getString("Device_MultiEdit")}
-              </button>`)
+              `<span type="submit" id="multiEdit" class="pointer " style="display:none" onclick="multiEditDevices();">
+                <a href="#"><i class="fa fa-pencil " ></i>  ${getString("Device_MultiEdit")} </a>
+              </span>`)
 
           // Event listener for row selection in DataTable
           $('#tableDevices').on('click', 'tr', function (e) {

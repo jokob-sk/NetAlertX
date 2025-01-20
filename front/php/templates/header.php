@@ -356,7 +356,10 @@
         <!-- Maintenance menu item -->
         <li class=" treeview  <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('maintenance.php') ) ){ echo 'active menu-open'; } ?>">
           <a href="#" onclick="openUrl(['./maintenance.php'])">
-          <div class="info-icon-nav myhidden" id="version" data-build-time="<?php echo file_get_contents( "buildtimestamp.txt");?>">🆕</div>
+          <!-- NEW version available -->
+          <div class="info-icon-nav myhidden" id="version" title="<?= lang('new_version_available');?>" data-build-time="<?php echo file_get_contents( "buildtimestamp.txt");?>">
+            <i class="fa-solid fa-rocket fa-beat"></i>
+          </div>
           <i class="fa fa-fw fa-wrench"></i> <span><?= lang('Navigation_Maintenance');?></span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
@@ -430,17 +433,14 @@
         </li>
 
         <!-- About menu item -->
-        <li class=" treeview <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('donations.php', 'help_faq.php', 'systeminfo.php' ) ) ){ echo 'active menu-open'; } ?>">
+        <li class=" treeview <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('help_faq.php', 'systeminfo.php' ) ) ){ echo 'active menu-open'; } ?>">
           <a href="#">
           <i class="fa fa-fw fa-info"></i> <span><?= lang('Navigation_About');?></span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>
           </a>
-          <ul class="treeview-menu " style="display: <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('donations.php', 'help_faq.php', 'systeminfo.php' ) ) ){ echo 'block'; } else {echo 'none';} ?>;">
-            <li>
-              <a href="donations.php">  <?= lang("Navigation_Donations");?> </a>
-            </li>
+          <ul class="treeview-menu " style="display: <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('help_faq.php', 'systeminfo.php' ) ) ){ echo 'block'; } else {echo 'none';} ?>;">
             <li>
               <a href="help_faq.php">  <?= lang("Navigation_HelpFAQ");?> </a>
             </li>

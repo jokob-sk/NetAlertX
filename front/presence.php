@@ -19,14 +19,6 @@
 <!-- Page ------------------------------------------------------------------ -->
   <div class="content-wrapper">
 
-<!-- Content header--------------------------------------------------------- -->
-    <section class="content-header">
-      <h1 id="pageTitle">
-        <i class="fa fa-calendar"></i>
-        <?= lang('Presence_Title');?>
-      </h1>
-    </section>
-
 <!-- Main content ---------------------------------------------------------- -->
     <section class="content">
 

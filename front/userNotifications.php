@@ -11,18 +11,6 @@ require 'php/templates/header.php';
  
 
 <div id="notifications" class="content-wrapper">
-
-  
-  <!-- Content header--------------------------------------------------------- -->
-  <section class="content-header ">
-    
-    <h1 id="pageTitle">
-      <i class="fa fa-bell"></i>     
-      <?= lang('Navigation_Notifications');?>
-    </h1>
-
-    </section>
-
   <section class="content">
     <div class="box box-gray col-xs-12" >
       <div class="box-header">

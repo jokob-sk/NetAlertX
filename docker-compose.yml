@@ -62,7 +62,6 @@ services:
       - ${DEV_LOCATION}/front/workflows.php:/app/front/workflows.php      
       - ${DEV_LOCATION}/front/appEventsCore.php:/app/front/appEventsCore.php      
       - ${DEV_LOCATION}/front/multiEditCore.php:/app/front/multiEditCore.php      
-      - ${DEV_LOCATION}/front/donations.php:/app/front/donations.php      
       - ${DEV_LOCATION}/front/plugins:/app/front/plugins      
       # DELETE END anyone trying to use this file: comment out / delete ABOVE lines, they are only for development purposes
       # ---------------------------------------------------------------------------

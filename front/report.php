@@ -1,31 +1,14 @@
 <?php
 
-#---------------------------------------------------------------------------------#
-#  NetAlertX                                                                       #
-#  Open Source Network Guard / WIFI & LAN intrusion detector                      #  
-#                                                                                 #
-#  report.php - Front module. Server side. Manage Devices                         #
-#---------------------------------------------------------------------------------#          #
-#    jokob-sk   2022        jokob.sk@gmail.com               GNU GPLv3            #
-#    leiweibau  2022        https://github.com/leiweibau     GNU GPLv3            #
-#    cvc90      2023        https://github.com/cvc90         GNU GPLv3            #
-#---------------------------------------------------------------------------------#
-
   require 'php/templates/header.php';
+  require 'php/templates/notification.php';
   
 ?>
+
 <!-- Page ------------------------------------------------------------------ -->
 <div class="content-wrapper">
 
 <!-- Content header--------------------------------------------------------- -->
-    <section class="content-header">
-    <?php require 'php/templates/notification.php'; ?>
-      <h1 id="pageTitle">
-        <i class="fa fa-paper-plane"></i>
-        <?= lang('Navigation_Report') ;?>	
-      </h1>
-    </section>
-
     <!-- Main content ---------------------------------------------------------- -->
     <section class="content tab-content">	
 

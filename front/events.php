@@ -1,17 +1,3 @@
-<!--
-#---------------------------------------------------------------------------------#
-#  NetAlertX                                                                       #
-#  Open Source Network Guard / WIFI & LAN intrusion detector                      #  
-#                                                                                 #
-#  events.php - Front module. Events page                                         #
-#---------------------------------------------------------------------------------#
-#    Puche      2021        pi.alert.application@gmail.com   GNU GPLv3            #
-#    jokob-sk   2022        jokob.sk@gmail.com               GNU GPLv3            #
-#    leiweibau  2022        https://github.com/leiweibau     GNU GPLv3            #
-#    cvc90      2023        https://github.com/cvc90         GNU GPLv3            #
-#---------------------------------------------------------------------------------#
--->
-
 <?php
   require 'php/templates/header.php';  
 ?>
@@ -19,26 +5,7 @@
 <!-- ----------------------------------------------------------------------- -->
  
 <!-- Page ------------------------------------------------------------------ -->
-  <div class="content-wrapper">
-
-<!-- Content header--------------------------------------------------------- -->
-    <section class="content-header">
-      <h1 id="pageTitle">
-        <i class="fa fa-bolt"></i>
-        <?= lang('Events_Title');?>
-      </h1>
-
-      <!-- period selector -->
-      <span class="breadcrumb" style="top: 0px;">
-        <select class="form-control" id="period" onchange="javascript: periodChanged();">
-          <option value="1 day"><?= lang('Events_Periodselect_today');?></option>
-          <option value="7 days"><?= lang('Events_Periodselect_LastWeek');?></option>
-          <option value="1 month" selected><?= lang('Events_Periodselect_LastMonth');?></option>
-          <option value="1 year"><?= lang('Events_Periodselect_LastYear');?></option>
-          <option value="100 years"><?= lang('Events_Periodselect_All');?></option>
-        </select>
-      </span>
-    </section>
+  <div class="content-wrapper eventsPage">
 
 <!-- Main content ---------------------------------------------------------- -->
     <section class="content">
@@ -123,15 +90,31 @@
 <!-- datatable ------------------------------------------------------------- -->
       <div class="row">
         <div class="col-xs-12">
+
           <div id="tableEventsBox" class="box">
 
             <!-- box-header -->
-            <div class="box-header">
-              <h3 id="tableEventsTitle" class="box-title text-gray">Events</h3>
+            <div class="box-header col-xs-12">
+              <h3 id="tableEventsTitle" class="box-title text-gray col-xs-10">Events</h3>
+              <div class="eventsPeriodSelectWrap col-xs-2">
+                <select class="form-control" id="period" onchange="javascript: periodChanged();">
+                  <option value="1 day"><?= lang('Events_Periodselect_today');?></option>
+                  <option value="7 days"><?= lang('Events_Periodselect_LastWeek');?></option>
+                  <option value="1 month" selected><?= lang('Events_Periodselect_LastMonth');?></option>
+                  <option value="1 year"><?= lang('Events_Periodselect_LastYear');?></option>
+                  <option value="100 years"><?= lang('Events_Periodselect_All');?></option>
+                </select>
+              </div>
+              
             </div>
+
+            
 
             <!-- table -->
             <div class="box-body table-responsive">
+
+              
+
               <table id="tableEvents" class="table table-bordered table-hover table-striped ">
                 <thead>
                 <tr>

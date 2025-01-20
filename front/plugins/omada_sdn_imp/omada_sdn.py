@@ -36,8 +36,6 @@ import subprocess
 import multiprocessing
 
 
-# import netifaces
-
 # Define the installation path and extend the system path for plugin imports
 INSTALL_PATH = "/app"
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])

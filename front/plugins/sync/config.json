@@ -146,7 +146,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Encryption key used to encrypt the data before sending and for decryption on the hub. The key needs to be the same on the hub and on the nodes."
+          "string": "The encryption key is used to secure data by encrypting it before transmission and decrypting it upon arrival at the hub. For the system to function correctly, the encryption key must be identical on both the hub and all the nodes. Similarly, the <code>API_TOKEN</code> must also be set to the same value across the hub and all the nodes to ensure proper authentication and communication."
         }
       ]
     },
@@ -222,7 +222,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "If specified, the hub will pull Devices data from the listed nodes."
+          "string": "If specified, the hub will pull Devices data from the listed nodes. The <code>API_TOKEN</code> and <code>SYNC_encryption_key</code> must be set to the same value across the hub and all the nodes to ensure proper authentication and communication."
         }
       ]
     },
