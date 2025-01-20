@@ -8,7 +8,7 @@ import json
 from const import fullDbPath, sql_devices_stats, sql_devices_all, sql_generateGuid
 
 from logger import mylog
-from helper import json_obj, initOrSetParam, row_to_json, timeNowTZ#, split_string #, updateState
+from helper import json_obj, initOrSetParam, row_to_json, timeNowTZ
 from appevent import AppEvent_obj
 
 class DB():

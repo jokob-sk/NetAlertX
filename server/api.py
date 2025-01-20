@@ -7,8 +7,9 @@ import datetime
 import conf  
 from const import (apiPath, sql_appevents, sql_devices_all, sql_events_pending_alert, sql_settings, sql_plugins_events, sql_plugins_history, sql_plugins_objects,sql_language_strings, sql_notifications_all, sql_online_history, sql_devices_tiles)
 from logger import mylog
-from helper import write_file, get_setting_value, updateState, timeNowTZ
-from execution_log import ExecutionLog
+from helper import write_file, get_setting_value, timeNowTZ
+from app_state import updateState
+from user_events_queue import UserEventsQueue
 from notification import write_notification
 
 # Import the start_server function
@@ -31,12 +32,10 @@ def update_api(db, all_plugins, forceUpdate, updateOnlyDataSources=[], is_ad_hoc
     start_periodic_write(interval=1)
 
     # Update app_state.json and retrieve app_state to check if GraphQL server is running
-    app_state = updateState("Update: API", None, None, None, None)
+    app_state = updateState()
     
-    folder = apiPath 
-
     # Save plugins    
-    write_file(folder + 'plugins.json', json.dumps({"data": all_plugins}))  
+    write_file(apiPath + 'plugins.json', json.dumps({"data": all_plugins}))  
 
     # Prepare database tables we want to expose 
     dataSourcesSQLs = [
@@ -57,7 +56,7 @@ def update_api(db, all_plugins, forceUpdate, updateOnlyDataSources=[], is_ad_hoc
     # Save selected database tables
     for dsSQL in dataSourcesSQLs:
         if not updateOnlyDataSources or dsSQL[0] in updateOnlyDataSources:
-            api_endpoint_class(db, forceUpdate, dsSQL[1], folder + 'table_' + dsSQL[0] + '.json', is_ad_hoc_user_event)
+            api_endpoint_class(db, forceUpdate, dsSQL[1], apiPath + 'table_' + dsSQL[0] + '.json', is_ad_hoc_user_event)
             
     # Start the GraphQL server
     graphql_port_value = get_setting_value("GRAPHQL_PORT")
@@ -87,7 +86,7 @@ class api_endpoint_class:
         self.path = path
         self.fileName = path.split('/')[-1]
         self.hash = hash(json.dumps(self.jsonData))
-        self.debounce_interval = 5  # Time to wait before writing
+        self.debounce_interval = 3  # Time in seconds to wait before writing
         self.changeDetectedWhen  = None
         # self.last_update_time = current_time - datetime.timedelta(minutes=1)  # Last time data was updated
         self.is_ad_hoc_user_event = is_ad_hoc_user_event
@@ -147,7 +146,7 @@ class api_endpoint_class:
             # Update user event execution log
             # mylog('verbose', [f'[API] api_endpoint_class: is_ad_hoc_user_event {self.is_ad_hoc_user_event}'])
             if self.is_ad_hoc_user_event:
-                execution_log = ExecutionLog()
+                execution_log = UserEventsQueue()
                 execution_log.finalize_event("update_api")
                 self.is_ad_hoc_user_event = False
 

@@ -12,11 +12,12 @@ from collections import namedtuple
 import conf
 from const import pluginsPath, logPath, applicationPath, reportTemplatesPath
 from logger import mylog, Logger 
-from helper import timeNowTZ,  updateState, get_file_content, write_file, get_setting, get_setting_value
+from helper import timeNowTZ, get_file_content, write_file, get_setting, get_setting_value
+from app_state import updateState
 from api import update_api
 from plugin_utils import logEventStatusCounts, get_plugin_string, get_plugin_setting_obj, print_plugin_info, list_to_csv, combine_plugin_objects, resolve_wildcards_arr, handle_empty, custom_plugin_decoder, decode_and_rename_files
 from notification import Notification_obj, write_notification
-from execution_log import ExecutionLog
+from user_events_queue import UserEventsQueue
 
 # Make sure log level is initialized correctly
 Logger(get_setting_value('LOG_LEVEL'))
@@ -102,12 +103,7 @@ class plugin_param:
         self.multiplyTimeout        = multiplyTimeout    
 
 #-------------------------------------------------------------------------------
-class plugins_state:
-    def __init__(self, processScan = False):
-        self.processScan        = processScan
-
-#-------------------------------------------------------------------------------
-def run_plugin_scripts(db, all_plugins, runType, pluginsState = plugins_state()):
+def run_plugin_scripts(db, all_plugins, runType):
 
     # Header
     updateState("Run: Plugins")
@@ -140,16 +136,13 @@ def run_plugin_scripts(db, all_plugins, runType, pluginsState = plugins_state())
                         
             print_plugin_info(plugin, ['display_name'])
             mylog('debug', ['[Plugins] CMD: ', get_plugin_setting_obj(plugin, "CMD")["value"]])
-            pluginsState = execute_plugin(db, all_plugins, plugin, pluginsState) 
+            execute_plugin(db, all_plugins, plugin) 
             #  update last run time
             if runType == "schedule":
                 for schd in conf.mySchedules:
                     if schd.service == prefix:          
                         # note the last time the scheduled plugin run was executed
                         schd.last_run = timeNowTZ()
-
-    return pluginsState
-
 
 
 # Function to run a plugin command
@@ -167,20 +160,15 @@ def run_plugin(command, set_RUN_TIMEOUT, plugin):
 
 #-------------------------------------------------------------------------------
 # Executes the plugin command specified in the setting with the function specified as CMD 
-def execute_plugin(db, all_plugins, plugin, pluginsState = plugins_state() ):
+def execute_plugin(db, all_plugins, plugin ):
     sql = db.sql  
-
-
-    if pluginsState is None:
-        mylog('debug', ['[Plugins] pluginsState is None'])   
-        pluginsState = plugins_state()
 
     # ------- necessary settings check  --------
     set = get_plugin_setting_obj(plugin, "CMD")
 
     #  handle missing "function":"CMD" setting
     if set == None:                
-        return pluginsState
+        return
 
     set_CMD = set["value"]
 
@@ -394,7 +382,7 @@ def execute_plugin(db, all_plugins, plugin, pluginsState = plugins_state() ):
         #  handle missing "function":"DB_PATH" setting
         if set == None:                
             mylog('none', ['[Plugins] ⚠ ERROR: DB_PATH setting for plugin type sqlite-db-query missing.'])
-            return pluginsState
+            return 
         
         fullSqlitePath = set["value"]
 
@@ -408,7 +396,7 @@ def execute_plugin(db, all_plugins, plugin, pluginsState = plugins_state() ):
         except sqlite3.Error as e:            
             mylog('none',[f'[Plugins] ⚠ ERROR: DB_PATH setting ({fullSqlitePath}) for plugin {plugin["unique_prefix"]}. Did you mount it correctly?'])
             mylog('none',[f'[Plugins] ⚠ ERROR: ATTACH DATABASE failed with SQL ERROR: ', e])
-            return pluginsState            
+            return             
 
         for row in arr:
             # There has to be always 9 or 13 columns
@@ -459,7 +447,7 @@ def execute_plugin(db, all_plugins, plugin, pluginsState = plugins_state() ):
     # check if the subprocess / SQL query failed / there was no valid output
     if len(sqlParams) == 0: 
         mylog('none', [f'[Plugins] No output received from the plugin "{plugin["unique_prefix"]}"'])
-        return pluginsState 
+        return  
     else: 
         mylog('verbose', ['[Plugins] SUCCESS, received ', len(sqlParams), ' entries'])  
         mylog('debug',   ['[Plugins] sqlParam entries: ', sqlParams]) 
@@ -468,17 +456,24 @@ def execute_plugin(db, all_plugins, plugin, pluginsState = plugins_state() ):
     if len(sqlParams) > 0:               
 
         # create objects
-        pluginsState = process_plugin_events(db, plugin, pluginsState, sqlParams)
+        process_plugin_events(db, plugin, sqlParams)
 
         # update API endpoints
-        update_api(db, all_plugins, False, ["plugins_events","plugins_objects", "plugins_history", "appevents"])  
+        endpoints = ["plugins_events","plugins_objects", "plugins_history", "appevents"]
+
+        # check if we need to update devices api endpoint as well to prevent long user waits on Loading...
+        userUpdatedDevices = UserEventsQueue().has_update_devices
+        if userUpdatedDevices:
+            endpoints += ["devices"]
+
+        update_api(db, all_plugins, True, endpoints, userUpdatedDevices)  
     
-    return pluginsState
+    return 
 
 
 #-------------------------------------------------------------------------------
 # Check if watched values changed for the given plugin
-def process_plugin_events(db, plugin, pluginsState, plugEventsArr):    
+def process_plugin_events(db, plugin, plugEventsArr):    
       
     sql = db.sql
 
@@ -780,13 +775,14 @@ def process_plugin_events(db, plugin, pluginsState, plugEventsArr):
         db.commitDB()
 
         # perform scan if mapped to CurrentScan table
-        if dbTable == 'CurrentScan':
-            pluginsState.processScan = True
+        if dbTable == 'CurrentScan':            
+            updateState("Process scan: True", None, None, None, None, True) # set processScan = True in the appState
+             
 
     db.commitDB()
 
 
-    return pluginsState
+    return
 
 
 #-------------------------------------------------------------------------------
@@ -844,14 +840,15 @@ class plugin_object_class:
         self.watchedHash  = str(hash(tmp))
 
 
+
 #===============================================================================
 # Handling of  user initialized front-end events
 #===============================================================================
-def check_and_run_user_event(db, all_plugins, pluginsState):
+def check_and_run_user_event(db, all_plugins):
     """
     Process user events from the execution queue log file and notify the user about executed events.
     """
-    execution_log = ExecutionLog()
+    execution_log = UserEventsQueue()
 
     # Track whether to show notification for executed events
     executed_events = []
@@ -859,7 +856,10 @@ def check_and_run_user_event(db, all_plugins, pluginsState):
     # Read the log file to get the lines
     lines = execution_log.read_log()
     if not lines:
-        return pluginsState  # Exit early if the log file is empty
+        mylog('debug', ['[check_and_run_user_event] User Execution Queue is empty'])
+        return   # Exit early if the log file is empty
+    else:
+        mylog('debug', ['[check_and_run_user_event] Process User Execution Queue:' +  ', '.join(map(str, lines))])
 
     for line in lines:
         # Extract event name and parameters from the log line
@@ -871,11 +871,11 @@ def check_and_run_user_event(db, all_plugins, pluginsState):
         
         # Process each event type
         if event == 'test':
-            pluginsState = handle_test(param, db, all_plugins, pluginsState)
+            handle_test(param, db, all_plugins)
             executed_events.append(f"test with param {param}")
             execution_log.finalize_event("test")
         elif event == 'run':
-            pluginsState = handle_run(param, db, all_plugins, pluginsState)
+            handle_run(param, db, all_plugins)
             executed_events.append(f"run with param {param}")
             execution_log.finalize_event("run")               
         elif event == 'update_api':
@@ -892,27 +892,27 @@ def check_and_run_user_event(db, all_plugins, pluginsState):
         mylog('minimal', ['[check_and_run_user_event] INFO: Executed events: ', executed_events_message])
         write_notification(f"[Ad-hoc events] Events executed: {executed_events_message}", "interrupt", timeNowTZ())
 
-    return pluginsState
+    return
 
 
 
 #-------------------------------------------------------------------------------
-def handle_run(runType, db, all_plugins, pluginsState):
+def handle_run(runType, db, all_plugins):
     
     mylog('minimal', ['[', timeNowTZ(), '] START Run: ', runType])
     
     # run the plugin to run
     for plugin in all_plugins:
         if plugin["unique_prefix"] == runType:                
-            pluginsState = execute_plugin(db, all_plugins, plugin, pluginsState) 
+            execute_plugin(db, all_plugins, plugin) 
 
     mylog('minimal', ['[', timeNowTZ(), '] END Run: ', runType])
-    return pluginsState
+    return 
 
 
 
 #-------------------------------------------------------------------------------
-def handle_test(runType, db, all_plugins, pluginsState):
+def handle_test(runType, db, all_plugins):
 
     mylog('minimal', ['[', timeNowTZ(), '] [Test] START Test: ', runType])
     
@@ -924,12 +924,12 @@ def handle_test(runType, db, all_plugins, pluginsState):
     notificationObj = notification.create(sample_json, "")
 
     # Run test
-    pluginsState = handle_run(runType, db, all_plugins, pluginsState)
+    handle_run(runType, db, all_plugins)
 
     # Remove sample notification
     notificationObj.remove(notificationObj.GUID)    
 
     mylog('minimal', ['[Test] END Test: ', runType])
 
-    return pluginsState
+    return 
 

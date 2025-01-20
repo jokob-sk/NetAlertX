@@ -4,7 +4,7 @@ import os
 from const import pluginsPath, logPath, applicationPath, reportTemplatesPath
 from logger import mylog
 
-class ExecutionLog:
+class UserEventsQueue:
     """
     Handles the execution queue log file, allowing reading, writing,
     and removing processed events.
@@ -14,12 +14,23 @@ class ExecutionLog:
         self.log_path = logPath
         self.log_file = os.path.join(self.log_path, "execution_queue.log")
 
+
+    def has_update_devices(self):
+        lines = self.read_log()
+
+        for line in lines:
+            if 'update_api|devices' in line:
+                return True
+
+        return False
+
     def read_log(self):
         """
         Reads the log file and returns all lines.
         Returns an empty list if the file doesn't exist.
         """
         if not os.path.exists(self.log_file):
+            mylog('none', ['[UserEventsQueue] Log file not found: ', self.log_file])
             return []  # No log file, return empty list
         with open(self.log_file, "r") as file:
             return file.readlines()
@@ -61,7 +72,7 @@ class ExecutionLog:
         self.write_log(updated_lines)
 
 
-        mylog('minimal', ['[ExecutionLog] Processed event: ', event])
+        mylog('minimal', ['[UserEventsQueue] Processed event: ', event])
 
         return removed
 

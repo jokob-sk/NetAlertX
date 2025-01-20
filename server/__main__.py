@@ -25,7 +25,8 @@ import subprocess
 import conf
 from const import *
 from logger import  mylog
-from helper import  filePermissions, timeNowTZ, updateState, get_setting_value
+from helper import  filePermissions, timeNowTZ, get_setting_value
+from app_state import updateState
 from api import update_api
 from networkscan import process_scan
 from initialise import importConfigs
@@ -89,7 +90,7 @@ def main ():
     while True:
 
         # re-load user configuration and plugins   
-        all_plugins = importConfigs(db, all_plugins)
+        all_plugins, imported = importConfigs(db, all_plugins)
 
         # update time started
         conf.loop_start_time = timeNowTZ()       
@@ -98,11 +99,11 @@ def main ():
 
         # Handle plugins executed ONCE
         if conf.plugins_once_run == False:
-            pluginsState = run_plugin_scripts(db, all_plugins, 'once')  
+            run_plugin_scripts(db, all_plugins, 'once')  
             conf.plugins_once_run = True
-
-        # check if there is a front end initiated event which needs to be executed
-        pluginsState = check_and_run_user_event(db, all_plugins, pluginsState)
+        
+        # check if user is waiting for api_update
+        check_and_run_user_event(db, all_plugins)
 
         # Update API endpoints              
         update_api(db, all_plugins, False)
@@ -121,27 +122,27 @@ def main ():
             startTime = startTime.replace (microsecond=0) 
 
             # Check if any plugins need to run on schedule
-            pluginsState = run_plugin_scripts(db, all_plugins, 'schedule', pluginsState) 
+            run_plugin_scripts(db, all_plugins, 'schedule') 
 
             # determine run/scan type based on passed time
             # --------------------------------------------
            
-            # Runs plugin scripts which are set to run every timne after a scans finished            
-            pluginsState = run_plugin_scripts(db, all_plugins, 'always_after_scan', pluginsState)
-
+            # Runs plugin scripts which are set to run every time after a scans finished            
+            run_plugin_scripts(db, all_plugins, 'always_after_scan')             
             
             # process all the scanned data into new devices
-            mylog('debug', [f'[MAIN] processScan: {pluginsState.processScan}'])
+            processScan = updateState("Check scan").processScan
+            mylog('debug', [f'[MAIN] processScan: {processScan}'])
             
-            if pluginsState.processScan == True:   
-                mylog('debug', "[MAIN] start processig scan results")  
-                pluginsState.processScan = False
+            if processScan == True:   
+                mylog('debug', "[MAIN] start processig scan results")
                 process_scan(db)
+                updateState("Scan processed", None, None, None, None, False)
                           
             # --------
             # Reporting   
             # run plugins before notification processing (e.g. Plugins to discover device names)
-            pluginsState = run_plugin_scripts(db, all_plugins, 'before_name_updates', pluginsState)
+            run_plugin_scripts(db, all_plugins, 'before_name_updates')
 
             # Resolve devices names
             mylog('debug','[Main] Resolve devices names')
@@ -155,7 +156,7 @@ def main ():
             #  new devices were found
             if len(newDevices) > 0:
                 #  run all plugins registered to be run when new devices are found                    
-                pluginsState = run_plugin_scripts(db, all_plugins, 'on_new_device', pluginsState)                
+                run_plugin_scripts(db, all_plugins, 'on_new_device')
 
             # Notification handling
             # ----------------------------------------
@@ -170,11 +171,9 @@ def main ():
             # run all enabled publisher gateways 
             if notificationObj.HasNotifications:                
                 
-                pluginsState = run_plugin_scripts(db, all_plugins, 'on_notification', pluginsState) 
+                run_plugin_scripts(db, all_plugins, 'on_notification') 
                 notification.setAllProcessed()
                 notification.clearPendingEmailFlag()
-                
-
                 
             else:
                 mylog('verbose', ['[Notification] No changes to report'])
