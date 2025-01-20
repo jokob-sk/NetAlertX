@@ -207,7 +207,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Router ip(do not include <code>http://</code> or <code>https://</code>)."
+          "string": "Router ip(do not include port, <code>http://</code> or <code>https://</code>)."
         }
       ]
     },
@@ -239,6 +239,37 @@
         {
           "language_code": "en_us",
           "string": "User name used to login into your router."
+        }
+      ]
+    },
+    {
+      "function": "port",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Router port"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Router port. Leave empty for default."
         }
       ]
     },
