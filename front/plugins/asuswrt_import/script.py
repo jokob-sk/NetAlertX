@@ -77,8 +77,13 @@ def get_device_data():
     # Create aiohttp session
     session = aiohttp.ClientSession(loop=loop)
 
+    port = get_setting_value("ASUSWRT_port").strip()
+
+    mylog("verbose", [f"[{pluginName}] Connecting to the Router..."])
+
     router = AsusRouter(  # required - both IP and URL supported
         hostname=get_setting_value("ASUSWRT_host"),  # required
+        port=(None if not port else port),  # optional
         username=get_setting_value("ASUSWRT_user"),  # required
         password=get_setting_value("ASUSWRT_password"),  # required
         use_ssl=get_setting_value("ASUSWRT_ssl"),  # optional
@@ -86,13 +91,8 @@ def get_device_data():
     )
 
     # Connect to the router
+    # Throws an error in case of failure
     loop.run_until_complete(router.async_connect())
-
-    if router.connected:
-        mylog("verbose", [f"[{pluginName}] logged in successfully."])
-    else:
-        mylog("error", [f"[{pluginName}] failed to login."])
-        return []
 
     # Now you can use the router object to call methods
     clients = loop.run_until_complete(router.async_get_data(AsusData.CLIENTS))
