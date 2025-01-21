@@ -11,7 +11,8 @@ This Plugin is using awesome [asusrouter](https://github.com/Vaskivskyi/asusrout
 
 ### Notes
 
-- In case an existing imported device is renamed in Asus Router it will not be renamed in NetAlertX. In this case it has to be done manually or the device should be removed and it will appear on the next scan.  
+- In case an existing imported device is renamed in Asus Router it will not be renamed in NetAlertX. In this case it has to be done manually or the device should be removed and it will appear on the next scan. 
+- Only clients listed in the main AsusWRT interface are imported. If using plugins, such as the `YazFi plugin`, check the [Asus routers DHCPLSS guide](/front/plugins/dhcp_leases/ASUS_ROUTERS.md) for a possible workaround.
 
 ## Other info
 
