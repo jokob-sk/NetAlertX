@@ -55,7 +55,7 @@ else
   echo "Config file saved to ${INSTALL_DIR}/config/app_conf_override.json"
 fi
 
-# 🔻 FOR BACKWARD COMPATIBILITY - REMOVE AFTER 12/12/2024
+# 🔻 FOR BACKWARD COMPATIBILITY - REMOVE AFTER 12/12/2025
 
 # Check if pialert.db exists, then create a symbolic link to app.db
 if [ -f "${INSTALL_DIR_OLD}/db/${OLD_APP_NAME}.db" ]; then
@@ -66,7 +66,7 @@ fi
 if [ -f "${INSTALL_DIR_OLD}/config/${OLD_APP_NAME}.conf" ]; then
     ln -s "${INSTALL_DIR_OLD}/config/${OLD_APP_NAME}.conf" "${INSTALL_DIR}/config/${CONF_FILE}"
 fi
-# 🔺 FOR BACKWARD COMPATIBILITY - REMOVE AFTER 12/12/2024
+# 🔺 FOR BACKWARD COMPATIBILITY - REMOVE AFTER 12/12/2025
 
 # Copy starter .db and .conf if they don't exist
 cp -na "${INSTALL_DIR}/back/${CONF_FILE}" "${INSTALL_DIR}/config/${CONF_FILE}"
@@ -81,6 +81,13 @@ if [ -n "${TZ}" ]; then
   # set TimeZone in container
   cp /usr/share/zoneinfo/$TZ /etc/localtime
   echo $TZ > /etc/timezone
+fi
+
+# if custom variables not set we do not need to do anything
+if [ -n "${LOADED_PLUGINS}" ]; then
+  FILECONF="${INSTALL_DIR}/config/${CONF_FILE}"
+  echo "[INSTALL] Setup custom LOADED_PLUGINS variable"
+  sed -i "\#^LOADED_PLUGINS=#c\LOADED_PLUGINS=${LOADED_PLUGINS}" "${FILECONF}"
 fi
 
 echo "[INSTALL] Setup NGINX"

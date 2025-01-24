@@ -312,8 +312,7 @@ def importConfigs (db, all_plugins):
     
     # -----------------
     # HANDLE APP_CONF_OVERRIDE via app_conf_override.json
-    
-    # Assuming fullConfFolder is defined elsewhere
+
     app_conf_override_path = fullConfFolder + '/app_conf_override.json'
 
     if os.path.exists(app_conf_override_path):
