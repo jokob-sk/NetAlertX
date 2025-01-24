@@ -92,5 +92,5 @@ dnsmasq.leases
 
 ## Other Info
 
-Publishing date: 22.1.2025
-Author: [EinKantHolz - odin](https://github.com/EinKantHolz)
+- Publishing date: 22.1.2025
+- Author: [EinKantHolz - odin](https://github.com/EinKantHolz)

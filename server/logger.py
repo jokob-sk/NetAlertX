@@ -4,6 +4,10 @@ import datetime
 import threading
 import queue
 import time
+import logging
+
+# NetAlertX imports
+
 import conf
 from const import *
 
@@ -17,6 +21,16 @@ def timeNowTZ():
         return datetime.datetime.now().replace(microsecond=0)
 
 #-------------------------------------------------------------------------------
+# Map custom debug levels to Python logging levels
+custom_to_logging_levels = {
+    'none': logging.NOTSET,
+    'minimal': logging.WARNING,
+    'verbose': logging.INFO,
+    'debug': logging.DEBUG,
+    'trace': logging.DEBUG,  # Can map to DEBUG or lower custom level if needed
+}
+
+#-------------------------------------------------------------------------------
 # More verbose as the numbers go up
 debugLevels = [
     ('none', 0), ('minimal', 1), ('verbose', 2), ('debug', 3), ('trace', 4)
@@ -25,6 +39,10 @@ debugLevels = [
 # use the LOG_LEVEL from the config, may be overridden
 currentLevel = conf.LOG_LEVEL
 
+# tracking log levels
+setLvl = 0  
+reqLvl = 0  
+
 #-------------------------------------------------------------------------------
 class Logger:
     def __init__(self, LOG_LEVEL='verbose'):        
@@ -32,10 +50,36 @@ class Logger:
 
         currentLevel = LOG_LEVEL
 
+        # Automatically set up custom logging handler
+        self.setup_logging()
+
+    def setup_logging(self):
+        root_logger = logging.getLogger()
+        # Clear existing handlers to prevent duplicates
+        if root_logger.hasHandlers():
+            root_logger.handlers.clear()
+
+        # Create the custom handler
+        my_log_handler = MyLogHandler()
+        # my_log_handler.setLevel(custom_to_logging_levels.get(currentLevel, logging.NOTSET))
+
+        # Optional: Add a formatter for consistent log message format
+        # formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        formatter = logging.Formatter('%(message)s', datefmt='%H:%M:%S')
+        my_log_handler.setFormatter(formatter)
+
+        # Attach the handler to the root logger
+        root_logger.addHandler(my_log_handler)
+        root_logger.setLevel(custom_to_logging_levels.get(currentLevel, logging.NOTSET))
+
+# for python logging
+class MyLogHandler(logging.Handler):
+    def emit(self, record):
+        log_entry = self.format(record)
+        log_queue.put(log_entry)
 
 def mylog(requestedDebugLevel, n):
-    setLvl = 0  
-    reqLvl = 0  
+    global setLvl, reqLvl  
 
     #  Get debug urgency/relative weight
     for lvl in debugLevels:
@@ -86,22 +130,13 @@ def file_print(*args):
     result = timeNowTZ().strftime('%H:%M:%S') + ' '   
     
     for arg in args:                
-        result += str(arg)        
+        result += str(arg)       
+
+    logging.log(custom_to_logging_levels.get(currentLevel, logging.NOTSET), result)  # Forward to Python's logging system 
     print(result)
 
     # Ensure the log writer thread is running
     start_log_writer_thread()
-
-    # Queue the log entry for writing
-    append_to_file_with_timeout( result, 5)
-
-#-------------------------------------------------------------------------------
-# Function to append to the file with a timeout
-def append_to_file_with_timeout(data, timeout):
-    try:
-        log_queue.put_nowait(data)
-    except queue.Full:
-        print("Log queue is full, dropping log entry:" + data)
 
 #-------------------------------------------------------------------------------
 def print_log(pText):
