@@ -5,7 +5,7 @@ import datetime
 
 # Register NetAlertX modules 
 import conf  
-from const import (apiPath, sql_appevents, sql_devices_all, sql_events_pending_alert, sql_settings, sql_plugins_events, sql_plugins_history, sql_plugins_objects,sql_language_strings, sql_notifications_all, sql_online_history, sql_devices_tiles)
+from const import (apiPath, sql_appevents, sql_devices_all, sql_events_pending_alert, sql_settings, sql_plugins_events, sql_plugins_history, sql_plugins_objects,sql_language_strings, sql_notifications_all, sql_online_history, sql_devices_tiles, sql_devices_filters)
 from logger import mylog
 from helper import write_file, get_setting_value, timeNowTZ
 from app_state import updateState
@@ -50,6 +50,7 @@ def update_api(db, all_plugins, forceUpdate, updateOnlyDataSources=[], is_ad_hoc
         ["notifications", sql_notifications_all],
         ["online_history", sql_online_history],
         ["devices_tiles", sql_devices_tiles],
+        ["devices_filters", sql_devices_filters],
         ["custom_endpoint", conf.API_CUSTOM_SQL],
     ]
 

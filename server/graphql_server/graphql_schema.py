@@ -20,6 +20,10 @@ class SortOptionsInput(InputObjectType):
     field = String()
     order = String()
 
+class FilterOptionsInput(InputObjectType):
+    filterColumn = String()
+    filterValue = String()
+
 
 class PageQueryOptionsInput(InputObjectType):
     page = Int()
@@ -27,6 +31,7 @@ class PageQueryOptionsInput(InputObjectType):
     sort = List(SortOptionsInput)
     search = String()
     status = String()
+    filters = List(FilterOptionsInput)
 
 
 # Device ObjectType
@@ -162,7 +167,14 @@ class Query(ObjectType):
                 elif status == "offline":
                     devices_data = [device for device in devices_data if device["devPresentLastScan"] == 0]
 
-            
+            # additional filters
+            if options.filters:
+                for filter in options.filters:
+                    if filter.filterColumn and filter.filterValue:
+                        devices_data = [
+                            device for device in devices_data 
+                            if str(device.get(filter.filterColumn, "")).lower() == str(filter.filterValue).lower()
+                        ]
 
             # Filter data if a search term is provided
             if options.search:

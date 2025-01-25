@@ -1245,6 +1245,20 @@ input[readonly] {
 /*                    Devices page                                   */
 /* ----------------------------------------------------------------- */
 
+
+#columnFilters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* Add spacing between items */
+}
+
+.filter-group {
+    flex: 1  100px; 
+    box-sizing: border-box; /* Ensure padding and borders are included in the width */
+    padding: 1em;
+    padding-top: 0;
+}
+
 .modal-header .close
 {
     display: flex;

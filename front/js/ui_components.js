@@ -508,8 +508,52 @@ function showIconSelection() {
   
 }
 
+// "Device_TableHead_Owner",
+// "Device_TableHead_Type",
+// "Device_TableHead_Group",
+// "Device_TableHead_Status",
+// "Device_TableHead_Location",
+// "Device_TableHead_Vendor",
+// "Device_TableHead_SyncHubNodeName",
+// "Device_TableHead_NetworkSite",
+// "Device_TableHead_SSID",
+// "Device_TableHead_SourcePlugin"
 
+// -----------------------------------------------------------------------------
+// Get teh correct db column code name based on table header title string
+function getColumnNameFromLangString(headStringKey) {
+  columnNameMap = {
+    "Device_TableHead_Name": "devName",
+    "Device_TableHead_Owner": "devOwner",
+    "Device_TableHead_Type": "devType",
+    "Device_TableHead_Icon": "devIcon",
+    "Device_TableHead_Favorite": "devFavorite",
+    "Device_TableHead_Group": "devGroup",
+    "Device_TableHead_FirstSession": "devFirstConnection",
+    "Device_TableHead_LastSession": "devLastConnection",
+    "Device_TableHead_LastIP": "devLastIP",
+    "Device_TableHead_MAC": "devMac",
+    "Device_TableHead_Status": "devStatus",
+    "Device_TableHead_MAC_full": "devMac",
+    "Device_TableHead_LastIPOrder": "devIpLong",
+    "Device_TableHead_Rowid": "rowid",
+    "Device_TableHead_Parent_MAC": "devParentMAC",
+    "Device_TableHead_Connected_Devices": "devParentChildrenCount",
+    "Device_TableHead_Location": "devLocation",
+    "Device_TableHead_Vendor": "devVendor",
+    "Device_TableHead_Port": "devParentPort",
+    "Device_TableHead_GUID": "devGUID",
+    "Device_TableHead_SyncHubNodeName": "devSyncHubNode",
+    "Device_TableHead_NetworkSite": "devSite",
+    "Device_TableHead_SSID": "devSSID",
+    "Device_TableHead_SourcePlugin": "devSourcePlugin",
+    "Device_TableHead_PresentLastScan": "devPresentLastScan",
+    "Device_TableHead_AlertDown": "devAlertDown",
+    "Device_TableHead_CustomProps": "devCustomProps"
+  };
 
+  return columnNameMap[headStringKey] || "";
+}
 
 
 // -----------------------------------------------------------------------------

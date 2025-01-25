@@ -105,6 +105,35 @@ sql_devices_tiles = """
                             (SELECT COUNT(*) FROM MyDevicesFilter) AS my_devices
                         FROM Statuses; 
                     """
+sql_devices_filters = """
+                    SELECT DISTINCT 'devSite' AS columnName, devSite AS columnValue
+                        FROM Devices WHERE devSite NOT IN ('', 'null') AND devSite IS NOT NULL
+                    UNION
+                    SELECT DISTINCT 'devSourcePlugin' AS columnName, devSourcePlugin AS columnValue
+                        FROM Devices WHERE devSourcePlugin NOT IN ('', 'null') AND devSourcePlugin IS NOT NULL
+                    UNION
+                    SELECT DISTINCT 'devOwner' AS columnName, devOwner AS columnValue
+                        FROM Devices WHERE devOwner NOT IN ('', 'null') AND devOwner IS NOT NULL
+                    UNION
+                    SELECT DISTINCT 'devType' AS columnName, devType AS columnValue
+                        FROM Devices WHERE devType NOT IN ('', 'null') AND devType IS NOT NULL
+                    UNION
+                    SELECT DISTINCT 'devGroup' AS columnName, devGroup AS columnValue
+                        FROM Devices WHERE devGroup NOT IN ('', 'null') AND devGroup IS NOT NULL
+                    UNION
+                    SELECT DISTINCT 'devLocation' AS columnName, devLocation AS columnValue
+                        FROM Devices WHERE devLocation NOT IN ('', 'null') AND devLocation IS NOT NULL
+                    UNION
+                    SELECT DISTINCT 'devVendor' AS columnName, devVendor AS columnValue
+                        FROM Devices WHERE devVendor NOT IN ('', 'null') AND devVendor IS NOT NULL
+                    UNION
+                    SELECT DISTINCT 'devSyncHubNode' AS columnName, devSyncHubNode AS columnValue
+                        FROM Devices WHERE devSyncHubNode NOT IN ('', 'null') AND devSyncHubNode IS NOT NULL
+                    UNION
+                    SELECT DISTINCT 'devSSID' AS columnName, devSSID AS columnValue
+                        FROM Devices WHERE devSSID NOT IN ('', 'null') AND devSSID IS NOT NULL
+                    ORDER BY columnName;
+                    """
 sql_devices_stats =  """SELECT Online_Devices as online, Down_Devices as down, All_Devices as 'all', Archived_Devices as archived, 
                         (select count(*) from Devices a where devIsNew = 1 ) as new, 
                         (select count(*) from Devices a where devName = '(unknown)' or devName = '(name not found)' ) as unknown 

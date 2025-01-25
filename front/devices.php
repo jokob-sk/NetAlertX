@@ -32,9 +32,8 @@
     <section class="content">
 
       <!-- Tile toggle cards ------------------------------------------------------- -->
-      <div class="row" id="TileCards">
+      <div class="row " id="TileCards">
         <!-- Placeholder ------------------------------------------------------- -->
-
       </div>
 
 <!-- Device presence / Activity Chart ------------------------------------------------------- -->
@@ -42,7 +41,7 @@
       <div class="row" id="DevicePresence">
           <div class="col-md-12">
           <div class="box" id="clients">
-              <div class="box-header with-border">
+              <div class="box-header ">
                 <h3 class="box-title"><?= lang('Device_Shortcut_OnlineChart');?> </h3> 
               </div>
               <div class="box-body">
@@ -57,6 +56,15 @@
               <!-- /.box-body -->
             </div>
           </div>
+      </div>
+
+      <!-- Device Filters ------------------------------------------------------- -->
+      <div class="box box-aqua hidden" id="columnFiltersWrap">
+        <div class="box-header ">
+          <h3 class="box-title"><?= lang('Devices_Filters');?> </h3> 
+        </div>
+        <!-- Placeholder ------------------------------------------------------- -->
+         <div id="columnFilters" ></div>
       </div>
 
 <!-- datatable ------------------------------------------------------------- -->
@@ -132,6 +140,8 @@
 function main () {
 
   showSpinner();
+
+  initFilters();
 
   // render tiles
   getDevicesTotals();
@@ -320,6 +330,184 @@ function renderInfoboxes(customData) {
 }
 
 // -----------------------------------------------------------------------------
+//Render filters if specified
+let columnFilters = [];
+
+function initFilters() {
+    // Attempt to fetch data
+    $.ajax({
+        url: '/php/server/query_json.php',
+        type: "GET",
+        dataType: "json",
+        data: {
+            file: 'table_devices_filters.json', // Pass the file parameter
+            nocache: Date.now() // Prevent caching with a timestamp
+        },
+        success: function(response) {
+            if (response && response.data) {                
+                
+                let resultJSON = response.data; 
+
+                // Save the result to cache
+                setCache("devicesFilters", JSON.stringify(resultJSON));
+
+                // Get the displayed filters from settings
+                const displayedFilters = createArray(getSetting("UI_columns_filters"));
+
+                // Clear any existing filters in the DOM
+                $('#columnFilters').empty();
+
+                console.log(displayedFilters);
+
+                // Ensure displayedFilters is an array and not empty
+                if (Array.isArray(displayedFilters) && displayedFilters.length > 0) {
+                    $('#columnFiltersWrap').removeClass("hidden");
+
+                    displayedFilters.forEach(columnHeaderStringKey => {
+                      // Get the column name using the mapping function
+                      const columnName = getColumnNameFromLangString(columnHeaderStringKey);
+
+                      // Ensure columnName is valid before proceeding
+                      if (columnName) {
+                          // Add the filter to the columnFilters array as [columnName, columnHeaderStringKey]
+                          columnFilters.push([columnName, columnHeaderStringKey]);
+                      } else {
+                          console.warn(`Invalid column header string key: ${columnHeaderStringKey}`);
+                      }
+                    });
+
+                    // Filter resultJSON to include only entries with columnName in columnFilters
+                    resultJSON = resultJSON.filter(entry => 
+                        columnFilters.some(filter => filter[0] === entry.columnName)
+                    );
+
+                    // Expand resultJSON to include the columnHeaderStringKey
+                    resultJSON.forEach(entry => {
+                        // Find the matching columnHeaderStringKey from columnFilters
+                        const matchingFilter = columnFilters.find(filter => filter[0] === entry.columnName);
+
+                        // Add the columnHeaderStringKey to the entry
+                        if (matchingFilter) {
+                            entry['columnHeaderStringKey'] = matchingFilter[1];
+                        }
+                    });
+
+                    console.log(resultJSON);
+
+                    // Transforming the data
+                    const transformed = {
+                      filters: []
+                    };
+
+                    // Group data by columnName
+                    resultJSON.forEach(entry => {
+                      const existingFilter = transformed.filters.find(filter => filter.column === entry.columnName);
+
+                      if (existingFilter) {
+                        // Add the unique columnValue to options if not already present
+                        if (!existingFilter.options.includes(entry.columnValue)) {
+                          existingFilter.options.push(entry.columnValue);
+                        }
+                      } else {
+                        // Create a new filter entry
+                        transformed.filters.push({
+                          column: entry.columnName,
+                          headerKey: entry.columnHeaderStringKey,
+                          options: [entry.columnValue]
+                        });
+                      }
+                    });
+
+                    // Sort options alphabetically for better readability
+                    transformed.filters.forEach(filter => {
+                      filter.options.sort();
+                    });
+
+                    // Output the result
+                    transformedJson =  transformed
+
+                    // Process the fetched data
+                    renderFilters(transformedJson);
+                } else {
+                    console.log("No filters to display.");
+                }
+            } else {
+                console.error("Invalid response format from API");
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Failed to fetch devices data 'table_devices_filters.json':", error);
+        }
+    });
+}
+
+
+// -------------------------------------------
+// Server side component
+function renderFilters(customData) {
+
+  console.log(JSON.stringify(customData));
+  
+  // Load filter data from the JSON file
+  $.ajax({
+    url: 'php/components/devices_filters.php', // PHP script URL
+    data: { filterObject: JSON.stringify(customData) }, // Send customData as JSON
+    type: 'POST',
+    dataType: 'html',
+    success: function(response) {
+      console.log(response);
+
+      $('#columnFilters').html(response); // Replace container content with fetched HTML
+      $('#columnFilters').removeClass('hidden'); // Show the filters container
+
+      // Trigger the draw after select change
+      $('.filter-dropdown').on('change', function() {
+          // Collect filters
+          const columnFilters = collectFilters();
+
+          // Update DataTable with the new filters or search value (if applicable)
+          $('#tableDevices').DataTable().draw();
+          
+          // Optionally, apply column filters (if using filters for individual columns)
+          const table = $('#tableDevices').DataTable();
+          table.columnFilters = columnFilters;  // Apply your column filters logic
+          table.draw();
+      });
+
+    },
+    error: function(xhr, status, error) {
+      console.error('Error fetching filters:', error);
+    }
+  });
+}
+
+// -------------------------------------------
+// Function to collect filters
+function collectFilters() {
+    const columnFilters = [];
+
+    // Loop through each filter group
+    document.querySelectorAll('.filter-group').forEach(filterGroup => {
+        const dropdown = filterGroup.querySelector('.filter-dropdown');
+        
+        if (dropdown) {
+            const filterColumn = dropdown.getAttribute('data-column');
+            const filterValue = dropdown.value;
+            
+            if (filterValue && filterColumn) {
+                columnFilters.push({
+                    filterColumn: filterColumn,
+                    filterValue: filterValue
+                });
+            }
+        }
+    });
+
+    return columnFilters;
+}
+
+
+// -----------------------------------------------------------------------------
 // Map column index to column name for GraphQL query
 function mapColumnIndexToFieldName(index, tableColumnVisible) {
   // the order is important, don't change it!
@@ -411,8 +599,6 @@ function initializeDatatable (status) {
   }
 
   // todo: dynamically filter based on status
-
-
   var table = $('#tableDevices').DataTable({
     "serverSide": true,
     "processing": true,
@@ -469,7 +655,13 @@ function initializeDatatable (status) {
         `;
 
         console.log(d);
-               
+
+        // Handle empty filters
+        let columnFilters = collectFilters();
+        if (columnFilters.length === 0) {
+            columnFilters = [];
+        }
+
 
         // Prepare query variables for pagination, sorting, and search
         let query = {
@@ -484,7 +676,8 @@ function initializeDatatable (status) {
                 "order": d.order[0].dir.toUpperCase()  // Sort direction (ASC/DESC)
               }] : [],  // Default to an empty array if no sorting is defined
               "search": d.search.value,  // Search query
-              "status": deviceStatus
+              "status": deviceStatus,
+              "filters" : columnFilters
             }
             
           }

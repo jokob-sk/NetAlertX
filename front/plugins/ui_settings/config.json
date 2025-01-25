@@ -394,6 +394,82 @@
       ]
     },
     {
+      "function": "columns_filters",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [{ "multiple": "true", "ordeable": "true" }],
+            "transformers": ["getString"]
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": [] },
+              { "separator": "" },
+              { "cssClasses": "col-xs-4" },
+              { "onClick": "selectAll(this)" },
+              { "getStringKey": "Gen_Add_All" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": [] },
+              { "separator": "" },
+              { "cssClasses": "col-xs-4" },
+              { "onClick": "unselectAll(this)" },
+              { "getStringKey": "Gen_Remove_All" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": [] },
+              { "separator": "" },
+              { "cssClasses": "col-xs-4" },
+              { "onClick": "selectChange(this)" },
+              { "getStringKey": "Gen_Change" }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 50,
+      "default_value": [
+        "Device_TableHead_Type",
+        "Device_TableHead_SyncHubNodeName",
+        "Device_TableHead_SourcePlugin"
+      ],
+      "options": [
+        "Device_TableHead_Owner",
+        "Device_TableHead_Type",
+        "Device_TableHead_Group",
+        "Device_TableHead_Location",
+        "Device_TableHead_Vendor",
+        "Device_TableHead_SyncHubNodeName",
+        "Device_TableHead_NetworkSite",
+        "Device_TableHead_SSID",
+        "Device_TableHead_SourcePlugin"
+      ],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Column Filters"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Which column filters should be displayed in the main Devices screen."
+        }
+      ]
+    },
+    {
       "function": "shown_cards",
       "type": {
         "dataType": "array",
