@@ -60,7 +60,6 @@ Device-detecting plugins insert values into the `CurrentScan` database table.  T
 | `SYNC`        | 🔍/⚙/📥| Sync & import from NetAlertX instances    |   🖧 🔄   | Yes     | Script        | [sync](/front/plugins/sync/)                                      |
 | `TELEGRAM`    | ▶️      | Telegram notifications                    |           |          | Script       | [_publisher_telegram](/front/plugins/_publisher_telegram/)        |
 | `UI`          | ♻       | UI specific settings                      |           |  Yes     | Template     | [ui_settings](/front/plugins/ui_settings/)                        |
-| `UNDIS`       | 🔍/📥   | Create dummy devices  ❌                 |           |          | Script       | [undiscoverables](/front/plugins/undiscoverables/)                |
 | `UNFIMP`      | 🔍/📥/🆎| UniFi device import & sync               |  🖧       |          | Script       | [unifi_import](/front/plugins/unifi_import/)                      |
 | `VNDRPDT`     | ⚙       | Vendor database update                    |           |          | Script       | [vendor_update](/front/plugins/vendor_update/)                    |
 | `WEBHOOK`     | ▶️      | Webhook notifications                     |           |          | Script       | [_publisher_webhook](/front/plugins/_publisher_webhook/)          |
@@ -69,7 +68,6 @@ Device-detecting plugins insert values into the `CurrentScan` database table.  T
 
 
 > \* The database cleanup plugin (`DBCLNP`) is not _required_ but the app will become unusable after a while if not executed.
-> \*\* The Undiscoverables plugin (`UNDIS`) inserts only user-specified dummy devices.
 > ❌ marked for removal
 > ⌚It's recommended to use the same schedule interval for all plugins responsible for discovering new devices.
 

@@ -126,7 +126,7 @@ You can show or hide the UI on the "Plugins" page and "Plugins" tab for a plugin
  If the `data_source` is set to `script` the `CMD` setting (that you specify in the `settings` array section in the `config.json`) contains an executable Linux command, that usually generates a `last_result.<prefix>.log` file (not required if you don't import any data into the app). The `last_result.<prefix>.log` file needs to be saved in `/api/log/plugins`. 
 
 > [!IMPORTANT]
-> A lot of the work is taken care of by the [`plugin_helper.py` library](/front/plugins/plugin_helper.py). You don't need to manage the `last_result.<prefix>.log` file if using the helper objects. Check other `script.py` of other plugins for details (The [Undicoverables plugins `script.py` file](/front/plugins/undiscoverables/script.py) is a good example).
+> A lot of the work is taken care of by the [`plugin_helper.py` library](/front/plugins/plugin_helper.py). You don't need to manage the `last_result.<prefix>.log` file if using the helper objects. Check other `script.py` of other plugins for details.
  
  The content of the `last_result.<prefix>.log` file needs to contain the columns as defined in the "Column order and values" section above. The order of columns can't be changed. After every scan it should contain only the results from the latest scan/execution. 
 
