@@ -8,6 +8,7 @@ This Plugin is using awesome [asusrouter](https://github.com/Vaskivskyi/asusrout
 
 - Enable the `ASUSWRT` plugin
 - Head to **Settings** > **AsusWRT device import** to adjust the default values.
+- If you have troubles configuring the plugin set the `LOG_LEVEL='debug'` to get a more detailed error message.
 
 ### Notes
 

@@ -1253,10 +1253,14 @@ input[readonly] {
 }
 
 .filter-group {
-    flex: 1  100px; 
     box-sizing: border-box; /* Ensure padding and borders are included in the width */
     padding: 1em;
     padding-top: 0;
+}
+
+.filter-dropdown
+{
+    width:7em
 }
 
 .modal-header .close

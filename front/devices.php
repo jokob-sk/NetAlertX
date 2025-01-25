@@ -446,7 +446,7 @@ function initFilters() {
 // Server side component
 function renderFilters(customData) {
 
-  console.log(JSON.stringify(customData));
+  // console.log(JSON.stringify(customData));
   
   // Load filter data from the JSON file
   $.ajax({
@@ -455,7 +455,7 @@ function renderFilters(customData) {
     type: 'POST',
     dataType: 'html',
     success: function(response) {
-      console.log(response);
+      // console.log(response);
 
       $('#columnFilters').html(response); // Replace container content with fetched HTML
       $('#columnFilters').removeClass('hidden'); // Show the filters container

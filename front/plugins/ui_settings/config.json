@@ -465,7 +465,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Which column filters should be displayed in the main Devices screen."
+          "string": "Which column filters should be displayed in the main Devices screen. Remove all to hide the Filters section."
         }
       ]
     },
