@@ -28,6 +28,7 @@ docker run -d --rm --network=host \
   -v local_path/config:/app/config \
   -v local_path/db:/app/db \
   --mount type=tmpfs,target=/app/api \
+  -e PUID=200 -e PGID=300 \
   -e TZ=Europe/Berlin \
   -e PORT=20211 \
   jokobsk/netalertx:latest
@@ -40,6 +41,8 @@ See alternative [docked-compose examples](https://github.com/jokob-sk/NetAlertX/
 | Variable | Description | Default |
 | :------------- |:-------------| -----:|
 | `PORT`      |Port of the web interface  |  `20211` |
+| `PUID`      |Application User UID  |  `102` |
+| `PUID`      |Application User GID  |  `82` |
 | `LISTEN_ADDR`      |Set the specific IP Address for the listener address for the nginx webserver (web interface). This could be useful when using multiple subnets to hide the web interface from all untrusted networks. |  `0.0.0.0` |
 |`TZ` |Time zone to display stats correctly. Find your time zone [here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)  |  `Europe/Berlin` |
 |`APP_CONF_OVERRIDE` | JSON override for settings, e.g. `{"SCAN_SUBNETS":"['192.168.1.0/24 --interface=eth1']","GRAPHQL_PORT":"20212"}`  |  `N/A` |

@@ -4,8 +4,8 @@ echo "---------------------------------------------------------
 [INSTALL]                                    Run init.sh
 ---------------------------------------------------------"
 
-DEFAULT_PUID=200
-DEFAULT_GID=200
+DEFAULT_PUID=102
+DEFAULT_GID=82
 
 PUID=${PUID:-${DEFAULT_PUID}}
 PGID=${PGID:-${DEFAULT_GID}}
