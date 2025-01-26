@@ -1,8 +1,36 @@
 #!/usr/bin/with-contenv bash
 
-echo "---------------------------------------------------------"
-echo "[INSTALL]                                    Run init.sh"
-echo "---------------------------------------------------------"
+echo "---------------------------------------------------------
+[INSTALL]                                    Run init.sh
+---------------------------------------------------------"
+
+DEFAULT_PUID=200
+DEFAULT_GID=200
+
+PUID=${PUID:-${DEFAULT_PUID}}
+PGID=${PGID:-${DEFAULT_GID}}
+
+echo "[INSTALL] Setting up user UID and GID"
+
+if ! groupmod -o -g "$PGID" www-data && [ "$PGID" != "$DEFAULT_GID" ] ; then
+   echo "Failed to set user GID to ${PGID}, trying with default GID ${DEFAULT_GID}"
+   groupmod -o -g "$DEFAULT_GID" www-data
+fi
+if ! usermod -o -u "$PUID" nginx && [ "$PUID" != "$DEFAULT_PUID" ] ; then
+   echo "Failed to set user UID to ${PUID}, trying with default PUID ${DEFAULT_PUID}"
+   usermod -o -u "$DEFAULT_PUID" nginx
+fi
+
+echo "
+---------------------------------------------------------
+GID/UID
+---------------------------------------------------------
+User UID:    $(id -u nginx)
+User GID:    $(getent group www-data | cut -d: -f3)
+---------------------------------------------------------"
+
+chown nginx:nginx /run/nginx/ /var/log/nginx/ /var/lib/nginx/ /var/lib/nginx/tmp/
+chgrp www-data /var/www/localhost/htdocs/
 
 export INSTALL_DIR=/app  # Specify the installation directory here
 
@@ -119,8 +147,7 @@ touch "${INSTALL_DIR}"/api/user_notifications.json
 mkdir -p "${INSTALL_DIR}"/log/plugins
 
 echo "[INSTALL] Fixing permissions after copied starter config & DB"
-chown -R nginx:www-data "${INSTALL_DIR}"/{config,log,db,api}
-chown -R nginx:www-data "${INSTALL_DIR}"/api/user_notifications.json
+chown -R nginx:www-data "${INSTALL_DIR}"
 
 chmod 750 "${INSTALL_DIR}"/{config,log,db}
 find "${INSTALL_DIR}"/{config,log,db} -type f -exec chmod 640 {} \;
