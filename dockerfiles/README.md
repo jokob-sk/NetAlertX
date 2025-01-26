@@ -38,17 +38,18 @@ See alternative [docked-compose examples](https://github.com/jokob-sk/NetAlertX/
 
 ### Docker environment variables
 
-| Variable | Description | Default |
-| :------------- |:-------------| -----:|
+| Variable | Description | Example Value |
+| :------------- |:------------------------| -----:|
 | `PORT`      |Port of the web interface  |  `20211` |
 | `PUID`      |Application User UID  |  `102` |
-| `PUID`      |Application User GID  |  `82` |
+| `PGID`      |Application User GID  |  `82` |
 | `LISTEN_ADDR`      |Set the specific IP Address for the listener address for the nginx webserver (web interface). This could be useful when using multiple subnets to hide the web interface from all untrusted networks. |  `0.0.0.0` |
 |`TZ` |Time zone to display stats correctly. Find your time zone [here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)  |  `Europe/Berlin` |
-|`APP_CONF_OVERRIDE` | JSON override for settings, e.g. `{"SCAN_SUBNETS":"['192.168.1.0/24 --interface=eth1']","GRAPHQL_PORT":"20212"}`  |  `N/A` |
-|`ALWAYS_FRESH_INSTALL` | If `true` will delete the content of the `/db` & `/config` folders. For testing purposes. Can be coupled with [watchtower](https://github.com/containrrr/watchtower) to have an always freshly installed `netalertx`/`netalertx-dev` image.   |    `N/A` |
+|`LOADED_PLUGINS` | Default [plugins](https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/README.md) to load. Plugins cannot be loaded with `APP_CONF_OVERRIDE`, you need to use this variable instead and then specify the plugins settings with `APP_CONF_OVERRIDE`. |  `["PIHOLE","ASUSWRT"]` |
+|`APP_CONF_OVERRIDE` | JSON override for settings (except `LOADED_PLUGINS`).   |  `{"SCAN_SUBNETS":"['192.168.1.0/24 --interface=eth1']","GRAPHQL_PORT":"20212"}` |
+|`ALWAYS_FRESH_INSTALL` | ⚠ If `true` will delete the content of the `/db` & `/config` folders. For testing purposes. Can be coupled with [watchtower](https://github.com/containrrr/watchtower) to have an always freshly installed `netalertx`/`netalertx-dev` image.   |    `true` |
 
-> You can override the default GraphQL port setting `GRAPHQL_PORT` (set to `20212`) by using the `APP_CONF_OVERRIDE` env variable. 
+> You can override the default GraphQL port setting `GRAPHQL_PORT` (set to `20212`) by using the `APP_CONF_OVERRIDE` env variable. `LOADED_PLUGINS` and settings in `APP_CONF_OVERRIDE` can be specified via the UI as well.
 
 ### Docker paths
 
@@ -71,7 +72,7 @@ See alternative [docked-compose examples](https://github.com/jokob-sk/NetAlertX/
 - If unavailable, the app generates a default `app.conf` and `app.db` file on the first run.
 - The preferred way is to manage the configuration via the Settings section in the UI, if UI is inaccessible you can modify [app.conf](https://github.com/jokob-sk/NetAlertX/tree/main/back) in the `/app/config/` folder directly 
 
-### Setting up scanners
+#### Setting up scanners
 
 You have to specify which network(s) should be scanned. This is done by entering subnets that are accessible from the host. If you use the default `ARPSCAN` plugin, you have to specify at least one valid subnet and interface in the `SCAN_SUBNETS` setting. See the documentation on [How to set up multiple SUBNETS, VLANs and what are limitations](https://github.com/jokob-sk/NetAlertX/blob/main/docs/SUBNETS.md) for troubleshooting and more advanced scenarios. 
 
@@ -80,19 +81,18 @@ If you are running PiHole you can synchronize devices directly. Check the [PiHol
 > [!NOTE]
 > You can bulk-import devices via the [CSV import method](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEVICES_BULK_EDITING.md).
 
-#### 🧭 Community guides
+#### Community guides
 
 You can read or watch several [community configuration guides](https://github.com/jokob-sk/NetAlertX/blob/main/docs/COMMUNITY_GUIDES.md) in Chinese, Korean, German, or French. 
 
 > Please note these might be outdated. Rely on official documentation first. 
  
-### **Common issues** 
+#### Common issues
 
-💡 Before creating a new issue, please check if a similar issue was [already resolved](https://github.com/jokob-sk/NetAlertX/issues?q=is%3Aissue+is%3Aclosed). 
+- Before creating a new issue, please check if a similar issue was [already resolved](https://github.com/jokob-sk/NetAlertX/issues?q=is%3Aissue+is%3Aclosed). 
+- Check also common issues and [debugging tips](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEBUG_TIPS.md). 
 
-⚠ Check also common issues and [debugging tips](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEBUG_TIPS.md). 
-
-## ❤ Support me 
+## 💙 Support me 
 
 | [![GitHub](https://i.imgur.com/emsRCPh.png)](https://github.com/sponsors/jokob-sk) | [![Buy Me A Coffee](https://i.imgur.com/pIM6YXL.png)](https://www.buymeacoffee.com/jokobsk) | [![Patreon](https://i.imgur.com/MuYsrq1.png)](https://www.patreon.com/user?u=84385063) | 
 | --- | --- | --- | 
