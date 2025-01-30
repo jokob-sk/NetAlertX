@@ -99,30 +99,3 @@ DEV_LOCATION=/path/to/local/source/code
 ```
 
 To run the container execute: `sudo docker-compose --env-file /path/to/.env up`
-
-### Example 4
-
-Courtesy of [pbek](https://github.com/pbek). The volume `netalertx_db` is used by the db directory. The two config files are mounted directly from a local folder to their places in the config folder. You can backup the `docker-compose.yaml` folder and the docker volumes folder.
-
-```yaml
-  netalertx:
-    # use the below line if you want to test the latest dev image
-    # image: "jokobsk/netalertx-dev:latest" 
-    image: jokobsk/netalertx
-    ports:
-      - "80:20211/tcp"
-    environment:
-      - TZ=Europe/Vienna
-    networks:
-      local:
-        ipv4_address: 192.168.1.2
-    restart: unless-stopped
-    volumes:
-      - netalertx_db:/app/db
-      - ./netalertx/:/app/config/      
-      # (API: OPTION 1) use for performance
-      - type: tmpfs
-        target: /app/api
-      # (API: OPTION 2) use when debugging issues 
-      # -  local/path/api:/app/api
-```
