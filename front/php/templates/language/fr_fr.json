@@ -48,7 +48,7 @@
     "BackDevices_DBTools_ImportCSVError": "Le fichier CSV n'a pas pu être importé. Assurez-vous que le format est correct.",
     "BackDevices_DBTools_ImportCSVMissing": "Le fichier CSV est introuvable sous <b>/config/devices.csv.</b>",
     "BackDevices_DBTools_Purge": "Les sauvegardes les plus anciennes ont été supprimées",
-    "BackDevices_DBTools_UpdDev": "Appareil mis à jour avec succès",
+    "BackDevices_DBTools_UpdDev": "Appareil mis à jour avec succès. La liste principale des appareils peut prendre un peu de temps à se mettre à jour si un scan est en cours.",
     "BackDevices_DBTools_UpdDevError": "Erreur lors de la mise à jour de l'appareil",
     "BackDevices_DBTools_Upgrade": "Base de données mise à niveau avec succès",
     "BackDevices_DBTools_UpgradeError": "La mise à niveau de la base de données a échoué",
