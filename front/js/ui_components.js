@@ -231,37 +231,64 @@ function copyToClipboard(buttonElement) {
 // Simple Sortable Table columns 
 // -----------------------------------------------------------------------------
 
+// Function to handle column sorting when a user clicks on a table header
 function sortColumn(element) {
-  var th = $(element).closest('th');
-  var table = th.closest('table');
-  var columnIndex = th.index();
-  var ascending = !th.data('asc');
+  var th = $(element).closest('th'); // Get the clicked table header
+  var table = th.closest('table'); // Find the closest table
+  var columnIndex = th.index(); // Get the index of the column
+  var ascending = !th.data('asc'); // Toggle sorting order
   sortTable(table, columnIndex, ascending);
-  th.data('asc', ascending);
+  th.data('asc', ascending); // Store sorting order
 }
 
+// Function to sort the table based on the selected column
 function sortTable(table, columnIndex, ascending) {
-  var tbody = table.find('tbody');
-  var rows = tbody.find('tr').toArray().sort(comparer(columnIndex));
+  var tbody = table.find('tbody'); // Get the table body
+  var rows = tbody.find('tr').toArray().sort(comparer(columnIndex)); // Convert rows to an array and sort
   if (!ascending) {
-    rows = rows.reverse();
+    rows = rows.reverse(); // Reverse order if descending
   }
   for (var i = 0; i < rows.length; i++) {
-    tbody.append(rows[i]);
+    tbody.append(rows[i]); // Append sorted rows back to the table
   }
 }
 
+// Function to compare values in the selected column
 function comparer(index) {
-  return function(a, b) {
+  return function (a, b) {
     var valA = getCellValue(a, index);
     var valB = getCellValue(b, index);
-    return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.localeCompare(valB);
+
+    // Check if both values are valid IP addresses, and sort numerically if so
+    if (isIPAddress(valA) && isIPAddress(valB)) {
+      return ipToNum(valA) - ipToNum(valB);
+    }
+
+    // If both values are numbers, sort numerically
+    if ($.isNumeric(valA) && $.isNumeric(valB)) {
+      return valA - valB;
+    }
+
+    // Otherwise, sort as text
+    return valA.localeCompare(valB);
   };
 }
 
+// Function to get the text value from a table cell
 function getCellValue(row, index) {
-  return $(row).children('td').eq(index).text();
+  return $(row).children('td').eq(index).text().trim(); // Get text from the specified column and trim spaces
 }
+
+// Function to check if a string is a valid IPv4 address
+function isIPAddress(value) {
+  return /^\d{1,3}(\.\d{1,3}){3}$/.test(value); // Regular expression to match IPv4 format
+}
+
+// Function to convert an IP address to a numeric value for sorting
+function ipToNum(ip) {
+  return ip.split('.').reduce((acc, octet) => (acc << 8) + parseInt(octet, 10), 0);
+}
+
 
 // ----------------------------------------------------------------------------- 
 // handling events 

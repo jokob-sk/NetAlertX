@@ -578,7 +578,7 @@ Each element may also have associated events (e.g., running a scan or triggering
     
 ##### Supported settings `function` values
 
-You can have any `"function": "my_custom_name"` custom name, however, the ones listed below have a specific functionality attached to them. If you use a custom name, then the setting is mostly used as an input parameter for the `params` section.
+You can have any `"function": "my_custom_name"` custom name, however, the ones listed below have a specific functionality attached to them. 
 
 | Setting | Description |
 | ------- | ----------- |
