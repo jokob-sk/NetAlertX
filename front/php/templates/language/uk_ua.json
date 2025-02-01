@@ -48,7 +48,7 @@
     "BackDevices_DBTools_ImportCSVError": "Не вдалося імпортувати файл CSV. Переконайтеся, що формат правильний.",
     "BackDevices_DBTools_ImportCSVMissing": "Не вдалося знайти файл CSV у <b>/config/devices.csv.</b>",
     "BackDevices_DBTools_Purge": "Найстаріші резервні копії видалено",
-    "BackDevices_DBTools_UpdDev": "Пристрій успішно оновлено",
+    "BackDevices_DBTools_UpdDev": "Пристрій успішно оновлено. Перезавантаження основного списку пристроїв може знадобитися деякий час, якщо триває сканування.",
     "BackDevices_DBTools_UpdDevError": "Помилка оновлення пристрою",
     "BackDevices_DBTools_Upgrade": "Базу даних успішно оновлено",
     "BackDevices_DBTools_UpgradeError": "Не вдалося оновити базу даних",
