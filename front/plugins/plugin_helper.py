@@ -1,5 +1,5 @@
 from time import strftime
-import pytz
+import pytz, all_timezones
 import sys
 import re
 import base64
@@ -35,6 +35,8 @@ def read_config_file():
 
 configFile = read_config_file()
 timeZoneSetting = configFile['TIMEZONE']
+if timeZoneSetting not in all_timezones:
+    timeZoneSetting = const.default_tz
 timeZone = pytz.timezone(timeZoneSetting)
 
 # -------------------------------------------------------------------

@@ -40,9 +40,9 @@
 
       <div class="row" id="DevicePresence">
           <div class="col-md-12">
-          <div class="box" id="clients">
+            <div class="box" id="clients">
               <div class="box-header ">
-                <h3 class="box-title"><?= lang('Device_Shortcut_OnlineChart');?> </h3> 
+                <h3 class="box-title col-md-12"><?= lang('Device_Shortcut_OnlineChart');?> </h3> 
               </div>
               <div class="box-body">
                 <div class="chart">
@@ -61,7 +61,7 @@
       <!-- Device Filters ------------------------------------------------------- -->
       <div class="box box-aqua hidden" id="columnFiltersWrap">
         <div class="box-header ">
-          <h3 class="box-title"><?= lang('Devices_Filters');?> </h3> 
+          <h3 class="box-title col-md-12"><?= lang('Devices_Filters');?> </h3> 
         </div>
         <!-- Placeholder ------------------------------------------------------- -->
          <div id="columnFilters" ></div>

@@ -20,7 +20,7 @@ fullDbPath          = applicationPath + dbPath
 vendorsPath         = '/usr/share/arp-scan/ieee-oui.txt'
 vendorsPathNewest   = '/usr/share/arp-scan/ieee-oui_all_filtered.txt'
 
-       
+default_tz          = 'Europe/Berlin'
 
 
 #===============================================================================

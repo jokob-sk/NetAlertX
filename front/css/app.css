@@ -1529,6 +1529,14 @@ input[readonly] {
     flex-direction:column;
     justify-content:center;
 }
+.networkHelpIcon
+{
+  padding: 5px;
+  margin-left: 5px;
+  top: 55px;
+  position: absolute;
+  z-index:5;
+}
 #networkTree .netNodeText
 { 
     position: absolute;
@@ -1589,7 +1597,7 @@ input[readonly] {
 
 .spanNetworkTree {
     display: inline-block;
-    width: 120px;
+    width: 135px;
     white-space: nowrap;
     overflow: hidden !important;
     text-overflow: ellipsis;
@@ -1632,6 +1640,10 @@ input[readonly] {
 @media (max-width: 767px) {
 
     .networkNodeTabHeaders .node-name
+    {
+        display: none;
+    }
+    .dev-detail-tab-name
     {
         display: none;
     }

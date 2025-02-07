@@ -464,9 +464,8 @@
   require 'php/templates/footer.php';
 ?>
 
-
-<script src="lib/treeviz/index.js"></script>
-<script src="lib/treeviz/require.js"></script>
+<script src="lib/treeviz/bundle.js"></script> 
+<script src="lib/treeviz/bundle.js.map"></script> 
 
 
 <script defer>
@@ -526,7 +525,6 @@
 
     // Init global variable
     deviceListGlobal = devicesListnew;
-
     
     // create tree
     initTree(getHierarchy());
@@ -538,377 +536,413 @@
 
 
 <script defer>
-  // ---------------------------------------------------------------------------
-  // Tree functionality
-  // ---------------------------------------------------------------------------
-  
-  // ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Tree functionality
+// ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
+var leafNodesCount = 0;
+var visibleNodesCount = 0;
+var parentNodesCount = 0;
+var hiddenMacs = []; // hidden children
+var hiddenChildren = [];
+var deviceListGlobal = null; 
+
+
+
+
+// ---------------------------------------------------------------------------
+// Recursively get children nodes and build a tree
+function getChildren(node, list, path, visited = [])
+{
+    var children = [];
+
+    // Check for infinite recursion by seeing if the node has been visited before
+    if (visited.includes(node.mac.toLowerCase())) {
+        console.error("Infinite recursion detected at node:", node.mac);
+        write_notification("[ERROR] ⚠ Infinite recursion detected. You probably have assigned the Internet node to another children node or to itself. Please open a new issue on GitHub and describe how you did it.", 'interrupt')
+        return { error: "Infinite recursion detected", node: node.mac };
+    }
+
+    // Add current node to visited list
+    visited.push(node.mac.toLowerCase());
+
+    // Loop through all items to find children of the current node
+    for (var i in list) {
+        if (list[i].parentMac.toLowerCase() == node.mac.toLowerCase() && !hiddenMacs.includes(list[i].parentMac)) {   
+
+            visibleNodesCount++;
+
+            // Process children recursively, passing a copy of the visited list
+            children.push(getChildren(list[i], list, path + ((path == "") ? "" : '|') + list[i].parentMac, visited));
+        }
+    }
+
+    // Track leaf and parent node counts
+    if (children.length == 0) {
+        leafNodesCount++;
+    } else {
+        parentNodesCount++;
+    }
+
+    return { 
+        name: node.name,
+        path: path,
+        mac: node.mac,
+        port: node.port,
+        id: node.mac,
+        parentMac: node.parentMac,
+        icon: node.icon,
+        type: node.type,
+        status: node.status,
+        hasChildren: children.length > 0 || hiddenMacs.includes(node.mac),
+        hiddenChildren: hiddenMacs.includes(node.mac),
+        qty: children.length,
+        children: children
+    };
+}
+
+// ---------------------------------------------------------------------------  
+function getHierarchy()
+{ 
+  for(i in deviceListGlobal)
+  {      
+    if(deviceListGlobal[i].mac == 'Internet')
+    { 
+      return (getChildren(deviceListGlobal[i], deviceListGlobal, ''))
+      break;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+function getFlatData() {
+  var result = [];
   var leafNodesCount = 0;
-  var visibleNodesCount = 0;
   var parentNodesCount = 0;
-  var hiddenMacs = []; // hidden children
-  var hiddenChildren = [];
-  var deviceListGlobal = null; 
+  var visibleNodesCount = 0;
   
+  for (let node of deviceListGlobal) {
+    let path = "";
+    let childrenCount = 0;
 
-  
-
-  // ---------------------------------------------------------------------------
-  // Recursively get children nodes and build a tree
-  function getChildren(node, list, path, visited = [])
-  {
-      var children = [];
-
-      // Check for infinite recursion by seeing if the node has been visited before
-      if (visited.includes(node.mac.toLowerCase())) {
-          console.error("Infinite recursion detected at node:", node.mac);
-          write_notification("[ERROR] ⚠ Infinite recursion detected. You probably have assigned the Internet node to another children node or to itself. Please open a new issue on GitHub and describe how you did it.", 'interrupt')
-          return { error: "Infinite recursion detected", node: node.mac };
-      }
-
-      // Add current node to visited list
-      visited.push(node.mac.toLowerCase());
-
-      // Loop through all items to find children of the current node
-      for (var i in list) {
-          if (list[i].parentMac.toLowerCase() == node.mac.toLowerCase() && !hiddenMacs.includes(list[i].parentMac)) {   
-
-              visibleNodesCount++;
-
-              // Process children recursively, passing a copy of the visited list
-              children.push(getChildren(list[i], list, path + ((path == "") ? "" : '|') + list[i].parentMac, visited));
-          }
-      }
-
-      // Track leaf and parent node counts
-      if (children.length == 0) {
-          leafNodesCount++;
-      } else {
-          parentNodesCount++;
-      }
-
-      return { 
-          name: node.name,
-          path: path,
-          mac: node.mac,
-          port: node.port,
-          id: node.mac,
-          parentMac: node.parentMac,
-          icon: node.icon,
-          type: node.type,
-          status: node.status,
-          hasChildren: children.length > 0 || hiddenMacs.includes(node.mac),
-          hiddenChildren: hiddenMacs.includes(node.mac),
-          qty: children.length,
-          children: children
-      };
-  }
-
-
-  // ---------------------------------------------------------------------------
-  
-  function getHierarchy()
-  { 
-    for(i in deviceListGlobal)
-    {      
-      if(deviceListGlobal[i].mac == 'Internet')
-      { 
-        return (getChildren(deviceListGlobal[i], deviceListGlobal, ''))
-        break;
-      }
+    // count children of this node
+    for (let nodeTmp of deviceListGlobal) {
+        if (nodeTmp.parentMac === node.mac) {
+            childrenCount++;
+        }
     }
-  }
-
-
-  // ---------------------------------------------------------------------------
-  function toggleSubTree(parentMac, treePath)
-  {
-    treePath = treePath.split('|')
-
-    if(!hiddenMacs.includes(parentMac))
-    {
-      hiddenMacs.push(parentMac)
-    }
-    else
-    {
-      removeItemFromArray(hiddenMacs, parentMac)
-    }
-
-    // updatedTree = myHierarchy;
-    updatedTree = getHierarchy()
-
-    myTree.refresh(updatedTree);
-
-    // re-attach any onclick events
-    attachTreeEvents();   
-  }
-  
-  // --------------------------------------------------------------------------- 
-  function attachTreeEvents()
-  {
-    //  toggle subtree functionality
-    $("div[data-mytreemac]").each(function(){
-        $(this).attr('onclick', 'toggleSubTree("'+$(this).attr('data-mytreemac')+'","'+ $(this).attr('data-mytreepath')+'")')        
-    }); 
-  }
-
-  // --------------------------------------------------------------------------- 
-  // Handle network node click - select correct tab in the bottom table
-  function handleNodeClick(event)
-  {
-    // console.log(event.target.offsetParent.offsetParent)
-
-    const targetTabMAC = $(event.target.offsetParent.offsetParent).attr("data-mytreemacmain");    
-
-    var targetTab = $(`a[data-mytabmac="${targetTabMAC}"]`);
-  
-    // Simulate a click event on the target tab
-    targetTab.click();
-  }
-
-  // --------------------------------------------------------------------------- 
-  var myTree;
-  var visibleTreeArea = $(window).height()-155;
-  var nodeWidth = 160;
-  var emSize;
-  var nodeHeight;
-  var sizeCoefficient = 1
-
-  function initTree(myHierarchy)
-  {
-    console.log(myHierarchy)
-
-    // calculate the drawing area based on teh tree width and available screen size
-    var treeAreaHeight = visibleTreeArea > 800 ? 800 : visibleTreeArea;
-    let screenWidth = $('.content-header').width();
-    let treeWidth = (nodeWidth + 20) *  parentNodesCount;
-    let treeAreaWidth  =  screenWidth < treeWidth ? treeWidth : screenWidth;
-
-    // init the drawing area size
-    $("#networkTree").attr('style', `height:${treeAreaHeight}px; width:${treeAreaWidth}px`)
-
-    if(myHierarchy.type == "")
-    {
-      showModalOk(getString('Network_Configuration_Error'), getString('Network_Root_Not_Configured'))      
-      
-      return;
-    }
-
-    // calculate the font size of the leaf nodes to fit everything into the tree area
-    leafNodesCount == 0 ? 1 : leafNodesCount;
-    emSize = ((treeAreaHeight/(25*leafNodesCount)).toFixed(2));
-    emSize = emSize > 1 ? 1 : emSize;
-
-    // nodeHeight = ((emSize*100*0.30).toFixed(0))
-    nodeHeight = ((emSize*100*0.30).toFixed(0))
-
-    console.log(Treeviz);
-
-    myTree = Treeviz.create({
-      htmlId: "networkTree",
-      renderNode:  nodeData =>  {
-        var fontSize = "font-size:"+emSize+"em;";
-
-        (!emptyArr.includes(nodeData.data.port )) ? port =  nodeData.data.port : port = "";
-
-        (port == "" || port == 0 || port == 'None' ) ? portBckgIcon = `<i class="fa fa-wifi"></i>` : portBckgIcon = `<i class="fa fa-ethernet"></i>`;
-
-        portHtml = (port == "" || port == 0 || port == 'None' ) ? "" : port
-
-        // Build HTML for individual nodes in the network diagram        
-        deviceIcon = (!emptyArr.includes(nodeData.data.icon )) ?  
-                  `<div class="netIcon">
-                        ${atob(nodeData.data.icon)}
-                  </div>` : "";
-        devicePort = `<div  class="netPort" 
-                            style="width:${emSize*sizeCoefficient}em;height:${emSize*sizeCoefficient}em">
-                        ${portHtml}</div> 
-                      <div  class="portBckgIcon" 
-                            style="margin-left:-${emSize*sizeCoefficient}em;">
-                            ${portBckgIcon}
-                      </div>`;
-        collapseExpandIcon = nodeData.data.hiddenChildren ? 
-                            "square-plus" : "square-minus";
-                            
-        // generate +/- icon if node has children nodes
-        collapseExpandHtml = nodeData.data.hasChildren ? 
-                      `<div class="netCollapse" 
-                            style="font-size:${emSize*sizeCoefficient}em;top:${1/2*emSize*sizeCoefficient}em" 
-                            data-mytreepath="${nodeData.data.path}" 
-                            data-mytreemac="${nodeData.data.mac}">
-                        <i class="fa fa-${collapseExpandIcon} pointer"></i>
-                      </div>` : "";
-
-        selectedNodeMac = $(".nav-tabs-custom .active a").attr('data-mytabmac')
-
-        highlightedCss = nodeData.data.mac == selectedNodeMac ? 
-                      " highlightedNode" : "";
-
-        // css indicating online/offline status
-        statusCss = ` netStatus-${nodeData.data.status}`;
-
-        return result = `<div class="box ${nodeData.data.hasChildren ? "pointer":""} ${statusCss} ${highlightedCss}"
-                              data-mytreemacmain="${nodeData.data.mac}"
-                              style="height:${nodeData.settings.nodeHeight}px;${fontSize}"
-                          >
-                            <div class="netNodeText">
-                              <strong>${devicePort}  ${deviceIcon}
-                                <span class="spanNetworkTree anonymizeDev" >${nodeData.data.name}</span>
-                              </strong>
-                              ${collapseExpandHtml}
-                            </div>
-                          </div>`;
-      },
-
-      onNodeClick:  nodeData =>  {
-        console.log(this)
-      },
-      mainAxisNodeSpacing: 'auto',
-      // mainAxisNodeSpacing: 3,
-      secondaryAxisNodeSpacing: 0.3,
-      nodeHeight: nodeHeight.toString(),
-      marginTop: '5',
-      hasZoom: true,
-      hasPan: true,
-      // marginLeft: '15',
-      idKey: "id",
-      hasFlatData: false,
-      linkWidth: (nodeData) => 3,
-      linkColor: (nodeData) => "#ffcc80",
-      onNodeClick: (nodeData) => handleNodeClick(nodeData),
-        relationnalField: "children",
-      });
-      
-
-
-      myTree.refresh(myHierarchy);
-
-      // hide spinning icon
-      hideSpinner()
-    }
-
-  // ---------------------------------------------------------------------------
-  // Tabs functionality
-  // ---------------------------------------------------------------------------
-  // Register events on tab change
-  
-  $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {   
-
-    initButtons()
-
-  });
-
-
-  // ---------------------------------------------------------------------------
-  function initTab()
-  {
-    key = "activeNetworkTab"
-
-    // default selection
-    selectedTab = "Internet_id"
-
-    // the #target from the url
-    target = getQueryString('mac') 
-
-    // update cookie if target specified
-    if(target != "")
-    {      
-      setCache(key, target.replaceAll(":","_")+'_id') // _id is added so it doesn't conflict with AdminLTE tab behavior
-    }
-
-    // get the tab id from the cookie (already overridden by the target)
-    if(!emptyArr.includes(getCache(key)))
-    {
-      selectedTab = getCache(key);
-    }
-
-    // Activate panel
-    $('.nav-tabs a[id='+ selectedTab +']').tab('show');
-
-    // When changed save new current tab
-    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-      setCache(key, $(e.target).attr('id'))
-    });
     
-  }
-
-  // ---------------------------------------------------------------------------
-  function initDeviceNamesFromMACs()
-  {
-    $('.mac-to-name').each(function() {
-        var dataMacValue = $(this).attr('my-data-mac');
-
-        if(dataMacValue =="" )
-        {
-          $(this).html(getString("Network_Root"))
-        }
-        else{
-          $(this).html(getNameByMacAddress(dataMacValue));
-        }
-
+    // store parent and leaf node count
+    if (childrenCount === 0) {
+        leafNodesCount++;
+    } else {
+        parentNodesCount++;
+    }
+    
+    if (!hiddenMacs.includes(node.parentMac)) {   
+      if (!((node.parentMac == "") && node.mac != "Internet")) {  // skip leaf nodes without father that are not the root
+        visibleNodesCount++;
         
-    });
-    
-  }
-
-  // ---------------------------------------------------------------------------
-  function initButtons()
-  { 
-
-    var currentNodeMac = $(".tab-content .active td[data-mynodemac]").attr('data-mynodemac'); 
-
-    // change highlighted node in the tree
-    selNode = $("#networkTree .highlightedNode")[0]
-
-    // console.log(selNode)
-
-    if(selNode)
-    {
-      $(selNode).attr('class',  $(selNode).attr('class').replace('highlightedNode'))
+        result.push({
+            name: node.name,
+            path: path,
+            mac: node.mac, // Replacing "mac" with "id"
+            parentMac: node.mac == "Internet" ? "" : node.parentMac, // Replacing "parentMac" with "father"
+            port: node.port,
+            icon: node.icon,
+            type: node.type,
+            status: node.status,
+            hasChildren: childrenCount > 0 || hiddenMacs.includes(node.mac),
+            hiddenChildren: hiddenMacs.includes(node.mac),
+            qty: childrenCount,
+        });
+      }
     }
-
-    newSelNode = $("#networkTree div[data-mytreemacmain='"+currentNodeMac+"']")[0]
-    
-    $(newSelNode).attr('class',  $(newSelNode).attr('class') + ' highlightedNode')
-
-
-    // init the Assign buttons
-    $('#unassignedDevices  button[data-myleafmac]').each(function(){
-      $(this).attr('onclick', `updateLeaf("${$(this).attr('data-myleafmac')}","${currentNodeMac}")`)
-    }); 
-
-    // init Unassign buttons
-    $('#assignedDevices button[data-myleafmac]').each(function(){
-      $(this).attr('onclick', `updateLeaf("${$(this).attr('data-myleafmac')}","")`)
-    }); 
+      
   }
 
-  // ---------------------------------------------------------------------------
-  function updateLeaf(leafMac,nodeMac)
+  return result;
+}
+  
+//---------------------------------------------------------------------------
+function toggleSubTree(parentMac, treePath)
+{
+  treePath = treePath.split('|')
+
+  if(!hiddenMacs.includes(parentMac))
   {
-    console.log(leafMac) // child
-    console.log(nodeMac) // parent
-    console.log(nodeMac != "") // parent
-
-    // prevent the assignment of the Internet root node avoiding recursion when generating the network tree topology
-    if(leafMac.toLowerCase().includes('internet') && nodeMac != "")
-    {
-      showMessage(getString('Network_Cant_Assign'))
-    }
-    else{
-      saveData('updateNetworkLeaf', leafMac, nodeMac);
-      setTimeout("location.reload();", 500); // refresh page 
-    }
+    hiddenMacs.push(parentMac)
+  }
+  else
+  {
+    removeItemFromArray(hiddenMacs, parentMac)
   }
 
-  // init device names where macs are used
-  initDeviceNamesFromMACs();
+  updatedTree = getHierarchy()
+  myTree.refresh(updatedTree);
 
-  // init selected (first) tab
-  initTab();  
+  // re-attach any onclick events
+  attachTreeEvents();   
+}
 
-  // init Assign/Unassign buttons
+// --------------------------------------------------------------------------- 
+function attachTreeEvents()
+{
+  //  toggle subtree functionality
+  $("div[data-mytreemac]").each(function(){
+      $(this).attr('onclick', 'toggleSubTree("'+$(this).attr('data-mytreemac')+'","'+ $(this).attr('data-mytreepath')+'")')        
+  }); 
+}
+
+// --------------------------------------------------------------------------- 
+// Handle network node click - select correct tab in the bottom table
+function handleNodeClick(nodeData)
+{    
+  const targetTabMAC = nodeData.data.mac;    
+
+  var targetTab = $(`a[data-mytabmac="${targetTabMAC}"]`);
+
+  // Simulate a click event on the target tab
+  targetTab.click();
+}
+
+// --------------------------------------------------------------------------- 
+var myTree;
+var visibleTreeArea = $(window).height()-155;
+var nodeWidth = 120;
+var emSize;
+var nodeHeight;
+var sizeCoefficient = 1.4
+
+function initTree(myHierarchy)
+{
+  // calculate the drawing area based on teh tree width and available screen size
+  var treeAreaHeight = visibleTreeArea > 800 ? 800 : visibleTreeArea;
+  let screenWidth = $('.content-header').width();
+  let treeWidth = (nodeWidth + 20) *  parentNodesCount;
+  let treeAreaWidth  =  screenWidth < treeWidth ? treeWidth : screenWidth;
+
+  // init the drawing area size
+  $("#networkTree").attr('style', `height:${treeAreaHeight}px; width:${treeAreaWidth}px`)
+
+  if(myHierarchy.type == "")
+  {
+    showModalOk(getString('Network_Configuration_Error'), getString('Network_Root_Not_Configured'))      
+    
+    return;
+  }
+
+  // calculate the font size of the leaf nodes to fit everything into the tree area
+  leafNodesCount == 0 ? 1 : leafNodesCount;
+  emSize = ((treeAreaHeight/(25*leafNodesCount)).toFixed(2));
+  emSize = emSize > 1 ? 1 : emSize;
+
+  // nodeHeight = ((emSize*100*0.30).toFixed(0))
+  nodeHeight = ((emSize*100*0.30).toFixed(0))
+
+  console.log(Treeviz);
+
+  myTree = Treeviz.create({
+    htmlId: "networkTree",
+    renderNode:  nodeData =>  {
+
+      var fontSize = "font-size:"+emSize+"em;";
+
+      (!emptyArr.includes(nodeData.data.port )) ? port =  nodeData.data.port : port = "";
+
+      (port == "" || port == 0 || port == 'None' ) ? portBckgIcon = `<i class="fa fa-wifi"></i>` : portBckgIcon = `<i class="fa fa-ethernet"></i>`;
+
+      portHtml = (port == "" || port == 0 || port == 'None' ) ? "" : port;
+      
+      // Build HTML for individual nodes in the network diagram        
+      deviceIcon = (!emptyArr.includes(nodeData.data.icon )) ?  
+                `<div class="netIcon">
+                      ${atob(nodeData.data.icon)}
+                </div>` : "";
+      devicePort = `<div  class="netPort" 
+                          style="width:${emSize*sizeCoefficient}em;height:${emSize*sizeCoefficient}em">
+                      ${portHtml}</div> 
+                    <div  class="portBckgIcon" 
+                          style="margin-left:-${emSize*sizeCoefficient}em;">
+                          ${portBckgIcon}
+                    </div>`;
+      collapseExpandIcon = nodeData.data.hiddenChildren ? 
+                          "square-plus" : "square-minus";
+                          
+      // generate +/- icon if node has children nodes
+      collapseExpandHtml = nodeData.data.hasChildren ? 
+                    `<div class="netCollapse" 
+                          style="font-size:${emSize*sizeCoefficient}em;top:${emSize/6}em" 
+                          data-mytreepath="${nodeData.data.path}" 
+                          data-mytreemac="${nodeData.data.mac}">
+                      <i class="fa fa-${collapseExpandIcon} pointer"></i>
+                    </div>` : "";
+
+      selectedNodeMac = $(".nav-tabs-custom .active a").attr('data-mytabmac')
+
+      highlightedCss = nodeData.data.mac == selectedNodeMac ? 
+                    " highlightedNode" : "";
+
+      // css indicating online/offline status
+      statusCss = ` netStatus-${nodeData.data.status}`;
+
+      return result = `<div class="box ${nodeData.data.hasChildren ? "pointer":""} ${statusCss} ${highlightedCss}"
+                            data-mytreemacmain="${nodeData.data.mac}"
+                            style="height:${nodeData.settings.nodeHeight}px;${fontSize}"
+                        >
+                          <div class="netNodeText">
+                            <strong>${devicePort}  ${deviceIcon}
+                              <span class="spanNetworkTree anonymizeDev" >${nodeData.data.name}</span>
+                            </strong>
+                            ${collapseExpandHtml}
+                          </div>
+                        </div>`;
+    },
+    mainAxisNodeSpacing: 'auto',
+    secondaryAxisNodeSpacing: 0.3,
+    nodeHeight: nodeHeight.toString(),
+    marginTop: '5',
+    isHorizontal : true,
+    hasZoom: true,
+    hasPan: true,
+    marginLeft: '15',
+    idKey: "mac",
+    hasFlatData: false,
+    relationnalField: "children",
+    linkWidth: (nodeData) => 3,
+    linkColor: (nodeData) => "#ffcc80",
+    onNodeClick: (nodeData) => handleNodeClick(nodeData),
+  });      
+
+  console.log(deviceListGlobal);
+  myTree.refresh(myHierarchy);
+
+  // hide spinning icon
+  hideSpinner()
+}
+
+
+// ---------------------------------------------------------------------------
+// Tabs functionality
+// ---------------------------------------------------------------------------
+// Register events on tab change
+
+$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {   
+
   initButtons()
+
+});
+
+
+// ---------------------------------------------------------------------------
+function initTab()
+{
+  key = "activeNetworkTab"
+
+  // default selection
+  selectedTab = "Internet_id"
+
+  // the #target from the url
+  target = getQueryString('mac') 
+
+  // update cookie if target specified
+  if(target != "")
+  {      
+    setCache(key, target.replaceAll(":","_")+'_id') // _id is added so it doesn't conflict with AdminLTE tab behavior
+  }
+
+  // get the tab id from the cookie (already overridden by the target)
+  if(!emptyArr.includes(getCache(key)))
+  {
+    selectedTab = getCache(key);
+  }
+
+  // Activate panel
+  $('.nav-tabs a[id='+ selectedTab +']').tab('show');
+
+  // When changed save new current tab
+  $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+    setCache(key, $(e.target).attr('id'))
+  });
+  
+}
+
+// ---------------------------------------------------------------------------
+function initDeviceNamesFromMACs()
+{
+  $('.mac-to-name').each(function() {
+      var dataMacValue = $(this).attr('my-data-mac');
+
+      if(dataMacValue =="" )
+      {
+        $(this).html(getString("Network_Root"))
+      }
+      else{
+        $(this).html(getNameByMacAddress(dataMacValue));
+      }
+  });
+  
+}
+
+// ---------------------------------------------------------------------------
+function initButtons()
+{ 
+
+  var currentNodeMac = $(".tab-content .active td[data-mynodemac]").attr('data-mynodemac'); 
+
+  // change highlighted node in the tree
+  selNode = $("#networkTree .highlightedNode")[0]
+
+  // console.log(selNode)
+
+  if(selNode)
+  {
+    $(selNode).attr('class',  $(selNode).attr('class').replace('highlightedNode'))
+  }
+
+  newSelNode = $("#networkTree div[data-mytreemacmain='"+currentNodeMac+"']")[0]
+  
+  $(newSelNode).attr('class',  $(newSelNode).attr('class') + ' highlightedNode')
+
+
+  // init the Assign buttons
+  $('#unassignedDevices  button[data-myleafmac]').each(function(){
+    $(this).attr('onclick', `updateLeaf("${$(this).attr('data-myleafmac')}","${currentNodeMac}")`)
+  }); 
+
+  // init Unassign buttons
+  $('#assignedDevices button[data-myleafmac]').each(function(){
+    $(this).attr('onclick', `updateLeaf("${$(this).attr('data-myleafmac')}","")`)
+  }); 
+}
+
+// ---------------------------------------------------------------------------
+function updateLeaf(leafMac,nodeMac)
+{
+  console.log(leafMac) // child
+  console.log(nodeMac) // parent
+  console.log(nodeMac != "") // parent
+
+  // prevent the assignment of the Internet root node avoiding recursion when generating the network tree topology
+  if(leafMac.toLowerCase().includes('internet') && nodeMac != "")
+  {
+    showMessage(getString('Network_Cant_Assign'))
+  }
+  else{
+    saveData('updateNetworkLeaf', leafMac, nodeMac);
+    setTimeout("location.reload();", 500); // refresh page 
+  }
+}
+
+// init device names where macs are used
+initDeviceNamesFromMACs();
+
+// init selected (first) tab
+initTab();  
+
+// init Assign/Unassign buttons
+initButtons()
 
 </script>
 

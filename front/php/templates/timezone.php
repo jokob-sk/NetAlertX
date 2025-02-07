@@ -8,6 +8,7 @@ $configFolderPath = dirname(__FILE__)."/../../../config/";
 $config_file = "app.conf";
 $logFolderPath = "/app/log/";
 $log_file = "app_front.log";
+$default_tz = "Europe/Berlin";
 
 
 $fullConfPath = $configFolderPath.$config_file;
@@ -29,7 +30,13 @@ foreach ($config_file_lines as $line)
 
 if($timeZone == "")
 {
-  $timeZone = "Europe/Berlin";
+  $timeZone = $default_tz;
+}
+
+// Validate the timezone
+if (!in_array($timeZone, timezone_identifiers_list())) {
+  error_log("Invalid timezone '$timeZone' in config. Falling back to default: '$default_tz' ");
+  $timeZone = $default_tz;
 }
 
 date_default_timezone_set($timeZone);
