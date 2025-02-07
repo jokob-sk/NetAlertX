@@ -161,7 +161,7 @@ def importConfigs (db, all_plugins):
     conf.DISCOVER_PLUGINS = ccd('DISCOVER_PLUGINS', True , c_d, 'Discover plugins', """{"dataType": "boolean","elements": [{"elementType": "input","elementOptions": [{ "type": "checkbox" }],"transformers": []}]}""", '[]', 'General')
     conf.SCAN_SUBNETS = ccd('SCAN_SUBNETS', ['192.168.1.0/24 --interface=eth1', '192.168.1.0/24 --interface=eth0'] , c_d, 'Subnets to scan', '''{"dataType": "array","elements": [{"elementType": "input","elementOptions": [{"placeholder": "192.168.1.0/24 --interface=eth1"},{"suffix": "_in"},{"cssClasses": "col-sm-10"},{"prefillValue": "null"}],"transformers": []},{"elementType": "button","elementOptions": [{"sourceSuffixes": ["_in"]},{"separator": ""},{"cssClasses": "col-xs-12"},{"onClick": "addList(this, false)"},{"getStringKey": "Gen_Add"}],"transformers": []},{"elementType": "select","elementHasInputValue": 1,"elementOptions": [{"multiple": "true"},{"readonly": "true"},{"editable": "true"}],"transformers": []},{"elementType": "button","elementOptions": [{"sourceSuffixes": []},{"separator": ""},{"cssClasses": "col-xs-6"},{"onClick": "removeAllOptions(this)"},{"getStringKey": "Gen_Remove_All"}],"transformers": []},{"elementType": "button","elementOptions": [{"sourceSuffixes": []},{"separator": ""},{"cssClasses": "col-xs-6"},{"onClick": "removeFromList(this)"},{"getStringKey": "Gen_Remove_Last"}],"transformers": []}]}''', '[]', 'General')    
     conf.LOG_LEVEL = ccd('LOG_LEVEL', 'verbose' , c_d, 'Log verboseness', '{"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]}', "['none', 'minimal', 'verbose', 'debug', 'trace']", 'General')
-    conf.TIMEZONE = ccd('TIMEZONE', const.default_tz , c_d, 'Time zone', '{"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]}', '[]', 'General')    
+    conf.TIMEZONE = ccd('TIMEZONE', default_tz , c_d, 'Time zone', '{"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]}', '[]', 'General')    
     conf.PLUGINS_KEEP_HIST = ccd('PLUGINS_KEEP_HIST', 250 , c_d, 'Keep history entries', '{"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type": "number"}] ,"transformers": []}]}', '[]', 'General') 
     conf.REPORT_DASHBOARD_URL = ccd('REPORT_DASHBOARD_URL', 'http://netalertx/' , c_d, 'NetAlertX URL', '{"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]}', '[]', 'General')
     conf.DAYS_TO_KEEP_EVENTS = ccd('DAYS_TO_KEEP_EVENTS', 90 , c_d, 'Delete events days', '{"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type": "number"}] ,"transformers": []}]}', '[]', 'General')
@@ -183,9 +183,9 @@ def importConfigs (db, all_plugins):
             raise UnknownTimeZoneError(f"Invalid timezone: {conf.TIMEZONE}")
         conf.tz = timezone(conf.TIMEZONE)
     except UnknownTimeZoneError:
-        conf.tz = timezone(const.default_tz)  # Init Default
+        conf.tz = timezone(default_tz)  # Init Default
         conf.TIMEZONE = ccd('TIMEZONE', conf.tz , c_d, '_KEEP_', '_KEEP_', '[]', 'General')
-        mylog('none', [f"[Config] Invalid timezone '{conf.TIMEZONE}', defaulting to {const.default_tz}."])
+        mylog('none', [f"[Config] Invalid timezone '{conf.TIMEZONE}', defaulting to {default_tz}."])
 
     # TODO cleanup later ----------------------------------------------------------------------------------
     # init all time values as we have timezone - all this shoudl be moved into plugin/plugin settings

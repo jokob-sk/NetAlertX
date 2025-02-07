@@ -11,7 +11,7 @@ sys.path.append(f"{INSTALL_PATH}/front/plugins")
 sys.path.append(f'{INSTALL_PATH}/server') 
 
 from logger import mylog, Logger
-from const import confFileName
+from const import confFileName, default_tz
 
 #-------------------------------------------------------------------------------
 def read_config_file():
@@ -36,7 +36,7 @@ def read_config_file():
 configFile = read_config_file()
 timeZoneSetting = configFile['TIMEZONE']
 if timeZoneSetting not in all_timezones:
-    timeZoneSetting = const.default_tz
+    timeZoneSetting = default_tz
 timeZone = pytz.timezone(timeZoneSetting)
 
 # -------------------------------------------------------------------
