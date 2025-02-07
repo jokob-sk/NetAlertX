@@ -348,16 +348,17 @@
     const createNew = mac === 'new' ? 1 : 0;
 
     const devLastIP = $('#NEWDEV_devLastIP').val();
+    const newMac = $('#NEWDEV_devMac').val()
 
     // Validate MAC and Last IP
-    if (mac === '' || !(isValidIPv4(devLastIP) || isValidIPv6(devLastIP))) {
+    if (mac === '' || !isValidMac(newMac) || !( isValidIPv4(devLastIP) || isValidIPv6(devLastIP) )) {
       showMessage(getString("DeviceEdit_ValidMacIp"), 5000, "modal_red");
       return;
     }
 
     showSpinner();
 
-     // Update data to server using POST
+    // Update data to server using POST
     $.post('php/server/devices.php?action=setDeviceData', {
         mac: $('#NEWDEV_devMac').val(),
         name: encodeURIComponent($('#NEWDEV_devName').val().replace(/'/g, "")),
@@ -403,7 +404,6 @@
         // Everything loaded
         hideSpinner();
     });
-
   }
 
   //-----------------------------------------------------------------------------------

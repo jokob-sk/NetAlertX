@@ -776,6 +776,11 @@ function checkMacOrInternet(inputStr) {
   }
 }
 
+// Alias
+function isValidMac(value) {
+  return checkMacOrInternet(value);
+}
+
 // -----------------------------------------------------------------------------
 // Gte MAC from query string
 function getMac(){
