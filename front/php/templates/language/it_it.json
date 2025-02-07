@@ -48,7 +48,7 @@
     "BackDevices_DBTools_ImportCSVError": "Impossibile importare il file CSV. Assicurati che il formato del file sia corretto.",
     "BackDevices_DBTools_ImportCSVMissing": "Impossibile trovare il file CSV in <b>/config/devices.csv.</b>",
     "BackDevices_DBTools_Purge": "I backup più vecchi sono stati eliminati",
-    "BackDevices_DBTools_UpdDev": "Dispositivo aggiornato correttamente",
+    "BackDevices_DBTools_UpdDev": "Dispositivo aggiornato correttamente. L'elenco dei dispositivi principali potrebbe richiedere del tempo per ricaricarsi se è in corso una scansione.",
     "BackDevices_DBTools_UpdDevError": "Errore durante l'aggiornamento del dispositivo",
     "BackDevices_DBTools_Upgrade": "Database aggiornato correttamente",
     "BackDevices_DBTools_UpgradeError": "Aggiornamento del database non riuscito",
