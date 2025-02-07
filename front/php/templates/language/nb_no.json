@@ -328,6 +328,7 @@
     "Gen_Upd_Fail": "Oppdatering feilet",
     "Gen_Update": "Oppdater",
     "Gen_Update_Value": "Oppdater verdi",
+    "Gen_ValidIcon": "",
     "Gen_Warning": "Advarsel",
     "Gen_Work_In_Progress": "Work in progress, gjerne kom med tilbakemeldinger på https://github.com/jokob-sk/NetAlertX/issues",
     "Gen_create_new_device": "",

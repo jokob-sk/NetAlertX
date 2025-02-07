@@ -5,8 +5,11 @@
   "enabled": true,
   "data_source": "script",
   "show_ui": false,
-  "localized": ["display_name", "description", "icon"],
-
+  "localized": [
+    "display_name",
+    "description",
+    "icon"
+  ],
   "display_name": [
     {
       "language_code": "en_us",
@@ -53,15 +56,20 @@
       "value": "CSVBCKP_location"
     }
   ],
-
   "settings": [
     {
       "function": "RUN",
-      "events": ["run"],
+      "events": [
+        "run"
+      ],
       "type": {
         "dataType": "string",
         "elements": [
-          { "elementType": "select", "elementOptions": [], "transformers": [] }
+          {
+            "elementType": "select",
+            "elementOptions": [],
+            "transformers": []
+          }
         ]
       },
       "default_value": "schedule",
@@ -72,7 +80,10 @@
         "always_after_scan",
         "on_new_device"
       ],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -109,14 +120,21 @@
         "elements": [
           {
             "elementType": "input",
-            "elementOptions": [{ "readonly": "true" }],
+            "elementOptions": [
+              {
+                "readonly": "true"
+              }
+            ],
             "transformers": []
           }
         ]
       },
       "default_value": "python3 /app/front/plugins/csv_backup/script.py overwrite={overwrite} location={location}",
       "options": [],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -151,12 +169,38 @@
       "type": {
         "dataType": "string",
         "elements": [
-          { "elementType": "input", "elementOptions": [], "transformers": [] }
+          {
+            "elementType": "span",
+            "elementOptions": [
+              {
+                "cssClasses": "input-group-addon validityCheck"
+              },
+              {
+                "getStringKey": "Gen_ValidIcon"
+              }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "onChange": "validateRegex(this)"
+              },
+              {
+                "base64Regex": "Xig/OlwqfCg/OlswLTldfFsxLTVdWzAtOV18WzAtOV0rLVswLTldK3xcKi9bMC05XSspKVxzKyg/OlwqfCg/OlswLTldfDFbMC05XXwyWzAtM118WzAtOV0rLVswLTldK3xcKi9bMC05XSspKVxzKyg/OlwqfCg/OlsxLTldfFsxMl1bMC05XXwzWzAxXXxbMC05XSstWzAtOV0rfFwqL1swLTldKykpXHMrKD86XCp8KD86WzEtOV18MVswLTJdfFswLTldKy1bMC05XSt8XCovWzAtOV0rKSlccysoPzpcKnwoPzpbMC02XXxbMC02XS1bMC02XXxcKi9bMC05XSspKSQ="
+              }
+            ],
+            "transformers": []
+          }
         ]
       },
       "default_value": "0 2 * * 3",
       "options": [],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -193,14 +237,21 @@
         "elements": [
           {
             "elementType": "input",
-            "elementOptions": [{ "type": "number" }],
+            "elementOptions": [
+              {
+                "type": "number"
+              }
+            ],
             "transformers": []
           }
         ]
       },
       "default_value": 30,
       "options": [],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -237,14 +288,21 @@
         "elements": [
           {
             "elementType": "input",
-            "elementOptions": [{ "type": "checkbox" }],
+            "elementOptions": [
+              {
+                "type": "checkbox"
+              }
+            ],
             "transformers": []
           }
         ]
       },
       "default_value": false,
       "options": [],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -279,12 +337,19 @@
       "type": {
         "dataType": "string",
         "elements": [
-          { "elementType": "input", "elementOptions": [], "transformers": [] }
+          {
+            "elementType": "input",
+            "elementOptions": [],
+            "transformers": []
+          }
         ]
       },
       "default_value": "/app/config",
       "options": [],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -315,6 +380,5 @@
       ]
     }
   ],
-
   "database_column_definitions": []
 }

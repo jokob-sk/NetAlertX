@@ -124,7 +124,30 @@
       "type": {
         "dataType": "string",
         "elements": [
-          { "elementType": "input", "elementOptions": [], "transformers": [] }
+          {
+            "elementType": "span",
+            "elementOptions": [
+              {
+                "cssClasses": "input-group-addon validityCheck"
+              },
+              {
+                "getStringKey": "Gen_ValidIcon"
+              }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "onChange": "validateRegex(this)"
+              },
+              {
+                "base64Regex": "Xig/OlwqfCg/OlswLTldfFsxLTVdWzAtOV18WzAtOV0rLVswLTldK3xcKi9bMC05XSspKVxzKyg/OlwqfCg/OlswLTldfDFbMC05XXwyWzAtM118WzAtOV0rLVswLTldK3xcKi9bMC05XSspKVxzKyg/OlwqfCg/OlsxLTldfFsxMl1bMC05XXwzWzAxXXxbMC05XSstWzAtOV0rfFwqL1swLTldKykpXHMrKD86XCp8KD86WzEtOV18MVswLTJdfFswLTldKy1bMC05XSt8XCovWzAtOV0rKSlccysoPzpcKnwoPzpbMC02XXxbMC02XS1bMC02XXxcKi9bMC05XSspKSQ="
+              }
+            ],
+            "transformers": []
+          }
         ]
       },
       "default_value": "0 4 * * 3",

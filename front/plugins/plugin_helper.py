@@ -1,5 +1,6 @@
 from time import strftime
-import pytz, all_timezones
+import pytz
+from pytz import timezone, all_timezones, UnknownTimeZoneError
 import sys
 import re
 import base64

@@ -328,6 +328,7 @@
     "Gen_Upd_Fail": "Не вдалося оновити",
     "Gen_Update": "оновлення",
     "Gen_Update_Value": "Оновити значення",
+    "Gen_ValidIcon": "",
     "Gen_Warning": "УВАГА",
     "Gen_Work_In_Progress": "Робота триває, час залишити відгук на https://github.com/jokob-sk/NetAlertX/issues",
     "Gen_create_new_device": "новий пристрій",

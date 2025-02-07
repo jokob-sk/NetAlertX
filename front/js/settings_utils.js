@@ -717,6 +717,7 @@ const handleElementOptions = (setKey, elementOptions, transformers, val) => {
   let customParams = "";
   let customId = "";
   let columns = [];
+  let base64Regex = "";
 
 
   elementOptions.forEach((option) => {
@@ -773,6 +774,9 @@ const handleElementOptions = (setKey, elementOptions, transformers, val) => {
     if (option.columns) {
       columns = option.columns;
     }
+    if (option.base64Regex) {
+      base64Regex = option.base64Regex;
+    }
   });
 
   if (transformers.includes("sha256")) {
@@ -796,7 +800,8 @@ const handleElementOptions = (setKey, elementOptions, transformers, val) => {
     onChange,
     customParams,
     customId,
-    columns
+    columns,
+    base64Regex
   };
 };
 
@@ -973,7 +978,8 @@ function generateFormHtml(settingsData, set, overrideValue, overrideOptions, ori
       onChange,
       customParams,
       customId,
-      columns
+      columns,
+      base64Regex
     } = handleElementOptions(setKey, elementOptions, transformers, inVal);
 
     // Override value
@@ -1022,6 +1028,7 @@ function generateFormHtml(settingsData, set, overrideValue, overrideOptions, ori
                         my-customparams="${customParams}" 
                         my-customid="${customId}" 
                         my-originalSetKey="${originalSetKey}"
+                        my-base64Regex="${base64Regex}"
                         id="${setKey}${suffix}" 
                         type="${inputType}" 
                         value="${val}" 

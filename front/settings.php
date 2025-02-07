@@ -595,7 +595,8 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
             onChange,
             customParams,
             customId,
-            columns
+            columns,
+            base64Regex
           } = handleElementOptions('none', elementOptions, transformers, val = "");
 
           let value;

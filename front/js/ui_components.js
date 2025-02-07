@@ -171,7 +171,47 @@ function updateIconPreview(elem) {
   tryUpdateIcon();
 }
 
+// ----------------------------------------------
+// Validate the value based on regex
+// ⚠ IMPORTANT: use the below to get a valid REGEX ⚠
+// const regexStr = String.raw`^(?:\*|(?:[0-9]|[1-5][0-9]|[0-9]+-[0-9]+|\*/[0-9]+))\s+(?:\*|(?:[0-9]|1[0-9]|2[0-3]|[0-9]+-[0-9]+|\*/[0-9]+))\s+(?:\*|(?:[1-9]|[12][0-9]|3[01]|[0-9]+-[0-9]+|\*/[0-9]+))\s+(?:\*|(?:[1-9]|1[0-2]|[0-9]+-[0-9]+|\*/[0-9]+))\s+(?:\*|(?:[0-6]|[0-6]-[0-6]|\*/[0-9]+))$`;
+// console.log(btoa(regexStr));
+function validateRegex(elem) {
+  const iconSpan  = $(elem).parent().find(".validityCheck");
+  const inputElem = $(elem);
+  const regexTmp  = atob($(inputElem).attr("my-base64Regex")); // Decode base64 regex
 
+  console.log(regexTmp);
+  const regex = new RegExp(regexTmp); // Convert to a valid RegExp object
+  
+  let attempts = 0;
+
+  function tryUpdateValidityResultIcon() {
+      let value = inputElem.val().trim(); // Ensure trimmed value
+
+      if (value === "") {
+          attempts++;
+          if (attempts < 10) {
+              setTimeout(tryUpdateValidityResultIcon, 1000); // Retry after 1 sec if empty
+          } else {
+              console.error("Input value is empty after 10 attempts");
+          }
+          return;
+      }
+
+      // Validate against regex
+      if (regex.test(value)) {
+          iconSpan.html("<i class='fa-regular fa-check'></i>");
+      } else {
+          iconSpan.html("<i class='fa-regular fa-xmark'></i>");
+      }
+  }
+
+  // Attach real-time validation on input change
+  inputElem.on("input", tryUpdateValidityResultIcon);
+
+  tryUpdateValidityResultIcon(); // Initial validation
+}
 
 // -----------------------------------------------------------------------------
 // Nice checkboxes with iCheck
