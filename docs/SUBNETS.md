@@ -8,17 +8,17 @@ You need to specify the network interface and the network mask. You can also con
 
 In this example, `--interface=eth0 192.168.1.0/24` represents a neighboring subnet. If this command returns no results, the network is not accessible due to your network or firewall restrictions.
 
-If direct scans are not possible (Wi-Fi Extenders, VPNs and inaccessible networks), check the [remote networks documentation](https://github.com/jokob-sk/NetAlertX/blob/main/docs/REMOTE_NETWORKS.md). 
+If direct scans are not possible (Wi-Fi Extenders, VPNs and inaccessible networks), check the [remote networks documentation](./REMOTE_NETWORKS.md). 
 
 > [!TIP] 
 > You may need to increase the time between scans `ARPSCAN_RUN_SCHD` and the timeout `ARPSCAN_RUN_TIMEOUT` (and similar settings for related plugins) when adding more subnets. If the timeout setting is exceeded, the scan is canceled to prevent the application from hanging due to rogue plugins.  
-> Check [debugging plugins](/docs/DEBUG_PLUGINS.md) for more tips.
+> Check [debugging plugins](./DEBUG_PLUGINS.md) for more tips.
 
 ## Example Values
 
 > [!NOTE] 
 > Please use the UI to configure settings as it ensures the config file is in the correct format. Edit `app.conf` directly only when really necessary.  
-> ![Settings location](/docs/img/SUBNETS/subnets-setting-location.png)
+> ![Settings location](./img/SUBNETS/subnets-setting-location.png)
 
 * **Examples for one and two subnets:**
   * One subnet: `SCAN_SUBNETS = ['192.168.1.0/24 --interface=eth0']`
@@ -47,7 +47,7 @@ Specify the network filter, which **significantly** speeds up the scan process. 
 
 The adapter will probably be `eth0` or `eth1`. (Check `System Info` > `Network Hardware`, or run `iwconfig` in the container to find your interface name(s)).
 
-![Network hardware](/docs/img/SUBNETS/system_info-network_hardware.png)
+![Network hardware](./img/SUBNETS/system_info-network_hardware.png)
 
 > [!TIP]  
 > As an alternative to `iwconfig`, run `ip -o link show | awk -F': ' '!/lo|vir|docker/ {print $2}'` in your container to find your interface name(s) (e.g.: `eth0`, `eth1`):

@@ -8,17 +8,17 @@ If you are not on the latest version, the app will notify you, that a new releas
 
 If any notification occurs and an email is sent, the email will contain a note that a new version is available. See the sample email below:
 
-![Sample email if a new version is available](/docs/img/VERSIONS/new-version-available-email.png)
+![Sample email if a new version is available](./img/VERSIONS/new-version-available-email.png)
 
 ### 🆕 In the UI
 
 In the UI via a notification Icon and via a custom message in the Maintenance section.
 
-![UI screenshot if a new version is available](/docs/img/VERSIONS/new-version-available-maintenance.png)
+![UI screenshot if a new version is available](./img/VERSIONS/new-version-available-maintenance.png)
 
 For a comparison, this is how the UI looks like if you are on the latest stable image:
 
-![UI screenshot if on latest version](/docs/img/VERSIONS/latest-version-maintenance.png)
+![UI screenshot if on latest version](./img/VERSIONS/latest-version-maintenance.png)
 
 ## Implementation details
 

@@ -6,7 +6,7 @@
 ## STEPS: 
 
 > [!TIP] 
-> In short: The application will auto-migrate the database, config, and all device information. A ticker message on top will be displayed until you update your docker mount points. It's always good to have a [backup strategy](https://github.com/jokob-sk/NetAlertX/blob/main/docs/BACKUPS.md) in place.
+> In short: The application will auto-migrate the database, config, and all device information. A ticker message on top will be displayed until you update your docker mount points. It's always good to have a [backup strategy](./BACKUPS.md) in place.
 
 1. Backup your current config and database (optional `devices.csv` to have a backup) (See bellow tip if facing issues)
 2. Stop the container 
@@ -38,7 +38,7 @@ The application installation folder in the docker container has changed from `/h
 
 
 > [!NOTE] 
-> The application uses symlinks linking the old db and config locations to the new ones, so data loss should not occur. [Backup strategies](https://github.com/jokob-sk/NetAlertX/blob/main/docs/BACKUPS.md) are still recommended to backup your setup.
+> The application uses symlinks linking the old db and config locations to the new ones, so data loss should not occur. [Backup strategies](./BACKUPS.md) are still recommended to backup your setup.
 
 
 # Examples

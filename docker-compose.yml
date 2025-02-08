@@ -28,6 +28,8 @@ services:
       - ${APP_DATA_LOCATION}/netalertx/dhcp_samples/pihole_dhcp_full.leases:/etc/pihole/dhcp.leases      
       - ${APP_DATA_LOCATION}/netalertx/dhcp_samples/pihole_dhcp_2.leases:/etc/pihole/dhcp2.leases      
       - ${APP_DATA_LOCATION}/pihole/etc-pihole/pihole-FTL.db:/etc/pihole/pihole-FTL.db    
+      - ${DEV_LOCATION}/mkdocs.yml:/app/mkdocs.yml
+      - ${DEV_LOCATION}/docs:/app/docs
       - ${DEV_LOCATION}/server:/app/server            
       - ${DEV_LOCATION}/test:/app/test            
       - ${DEV_LOCATION}/dockerfiles:/app/dockerfiles

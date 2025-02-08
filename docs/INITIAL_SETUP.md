@@ -12,22 +12,22 @@
 
 - Define networks to scan by entering accessible subnets.
 - Default plugin: **ARPSCAN** → Requires at least one valid subnet + interface in `SCAN_SUBNETS`.
-- 📖 [Subnet & VLAN setup guide](https://github.com/jokob-sk/NetAlertX/blob/main/docs/SUBNETS.md) (for troubleshooting and advanced scenarios).
+- 📖 [Subnet & VLAN setup guide](./SUBNETS.md) (for troubleshooting and advanced scenarios).
 
 ### 🔄 PiHole Sync
 - If using **PiHole**, devices can be synced automatically.  
-- 📖 [PiHole configuration guide](https://github.com/jokob-sk/NetAlertX/blob/main/docs/PIHOLE_GUIDE.md).
+- 📖 [PiHole configuration guide](./PIHOLE_GUIDE.md).
 
 ### 📦 Bulk Import
 > [!NOTE]  
-> You can bulk-import devices via the [CSV import method](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEVICES_BULK_EDITING.md).
+> You can bulk-import devices via the [CSV import method](./DEVICES_BULK_EDITING.md).
 
 ---
 
 ## 🌍 Community Guides
 
 - Various community-written configuration guides in **Chinese, Korean, German, French**.  
-- 📖 [Community Guides](https://github.com/jokob-sk/NetAlertX/blob/main/docs/COMMUNITY_GUIDES.md)  
+- 📖 [Community Guides](./COMMUNITY_GUIDES.md)  
 
 > ⚠️ **Note:** These guides may be outdated. Always refer to the official documentation first.
 
@@ -37,4 +37,4 @@
 
 Before creating a new issue:
 - Check if a similar issue was [already resolved](https://github.com/jokob-sk/NetAlertX/issues?q=is%3Aissue+is%3Aclosed).
-- Review [common debugging tips](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEBUG_TIPS.md).
+- Review [common debugging tips](./DEBUG_TIPS.md).

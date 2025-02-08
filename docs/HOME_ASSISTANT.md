@@ -3,7 +3,7 @@
 NetAlertX comes with MQTT support, allowing you to show all detected devices as devices in Home Assistant. It also supplies a collection of stats, such as number of online devices.
 
 > [!TIP]
-> You can install NetAlertX also as a Home Assistant addon [![Home Assistant](https://img.shields.io/badge/Repo-blue?logo=home-assistant&style=for-the-badge&color=0aa8d2&logoColor=fff&label=Add)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Falexbelgium%2Fhassio-addons) via the [alexbelgium/hassio-addons](https://github.com/alexbelgium/hassio-addons/).
+> You can install NetAlertX also as a Home Assistant addon [![Home Assistant](https://img.shields.io/badge/Repo-blue?logo=home-assistant&style=for-the-badge&color=0aa8d2&logoColor=fff&label=Add)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Falexbelgium%2Fhassio-addons) via the [alexbelgium/hassio-addons](https://github.com/alexbelgium/hassio-addons/). This is only possible if you run a supervised instance of Home Assistant. If not, you can still run NetAlertX in a separate Docker container and follow this guide to configure MQTT.
 
 ## ⚠ Note 
 
@@ -21,15 +21,17 @@ NetAlertX comes with MQTT support, allowing you to show all detected devices as 
 2. Configure a user name and password on your broker.
 
 3. Note down the following details that you will need to configure NetAlertX:
-   - MQTT host url (usually your Home Assistant IP)
-   - MQTT broker port
-   - User
-   - Password
+
+      - MQTT host url (usually your Home Assistant IP)
+      - MQTT broker port
+      - User
+      - Password
 
 4. Open the _NetAlertX_ > _Settings_ > _MQTT_ settings group
-   - Enable MQTT
-   - Fill in the details from above
-   - Fill in remaining settings as per description
+
+      - Enable MQTT
+      - Fill in the details from above
+      - Fill in remaining settings as per description
 
 ![Configuration Example][configuration] 
 
@@ -40,9 +42,9 @@ NetAlertX comes with MQTT support, allowing you to show all detected devices as 
   | ![Screen 3][list] | ![Screen 4][overview] | 
   
 
-  [configuration]:   /docs/img/HOME_ASISSTANT/HomeAssistant-Configuration.png           "configuration"
-  [sensors]:         /docs/img/HOME_ASISSTANT/HomeAssistant-Device-as-Sensors.png       "sensors"
-  [history]:         /docs/img/HOME_ASISSTANT/HomeAssistant-Device-Presence-History.png "history"
-  [list]:            /docs/img/HOME_ASISSTANT/HomeAssistant-Devices-List.png            "list"  
-  [overview]:        /docs/img/HOME_ASISSTANT/HomeAssistant-Overview-Card.png           "overview"
+  [configuration]:   ./img/HOME_ASISSTANT/HomeAssistant-Configuration.png           "configuration"
+  [sensors]:         ./img/HOME_ASISSTANT/HomeAssistant-Device-as-Sensors.png       "sensors"
+  [history]:         ./img/HOME_ASISSTANT/HomeAssistant-Device-Presence-History.png "history"
+  [list]:            ./img/HOME_ASISSTANT/HomeAssistant-Devices-List.png            "list"  
+  [overview]:        ./img/HOME_ASISSTANT/HomeAssistant-Overview-Card.png           "overview"
 

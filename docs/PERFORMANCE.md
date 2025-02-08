@@ -6,7 +6,7 @@ Most performance issues are caused by a big database or large log files. Enablin
 
 You can always check the size of your database and database tables under the Maintenance page. 
 
-![Db size check](/docs/img/PERFORMANCE/db_size_check.png)
+![Db size check](./img/PERFORMANCE/db_size_check.png)
 
 > [!NOTE]
 > For around 100 devices the database should be approximately `50MB` and none of the entries (rows) should exceed the value of `10 000` on a healthy system. These numbers will depend on your network activity and settings. 

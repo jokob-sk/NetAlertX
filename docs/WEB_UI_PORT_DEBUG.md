@@ -5,7 +5,7 @@
 When opening an issue please:
 
 1. Include a screenshot of what you see when accessing `HTTP://<your rpi IP>/20211` (or your custom port)
-1. [Follow steps 1, 2, 3, 4  on this page](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEBUG_TIPS.md) 
+1. [Follow steps 1, 2, 3, 4  on this page](./DEBUG_TIPS.md) 
 1. Execute the following in the container to see the processes and their ports and submit a screenshot of the result:
    1. `sudo apk add lsof`
    1. `sudo lsof -i`
@@ -13,7 +13,7 @@ When opening an issue please:
    1. if you get `nginx: [emerg] bind() to 0.0.0.0:20211 failed (98: Address in use)` try using a different port number
 
 
-![lsof ports](/docs/img/WEB_UI_PORT_DEBUG/container_port.png)
+![lsof ports](./img/WEB_UI_PORT_DEBUG/container_port.png)
 
 ## 2. JavaScript issues 
 
@@ -48,4 +48,4 @@ In the container execute:
 > [!TIP]
 > You can try to start the container without mapping the `/app/config` and `/app/db` dirs and if the UI shows up then the issue is most likely related to your file system permissions or file ownership. 
 
-Please read the [Permissions troubleshooting guide](/docs/FILE_PERMISSIONS.md) and provide a screesnhot of the permissions and ownership in the `/app/db` and `app/config` directories. 
+Please read the [Permissions troubleshooting guide](./FILE_PERMISSIONS.md) and provide a screesnhot of the permissions and ownership in the `/app/db` and `app/config` directories. 

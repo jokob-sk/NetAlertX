@@ -4,20 +4,20 @@ The Main Info section is where most of the device identifiable information is st
 
 > [!NOTE] 
 >
-> You can multi-edit devices by selecting them in the main Devices view, from the Mainetence section, or via the CSV Export functionality under Maintenance. More info can be found in the [Devices Bulk-editing docs](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEVICES_BULK_EDITING.md).
+> You can multi-edit devices by selecting them in the main Devices view, from the Mainetence section, or via the CSV Export functionality under Maintenance. More info can be found in the [Devices Bulk-editing docs](./DEVICES_BULK_EDITING.md).
 
 
- ![Main Info](/docs/img/DEVICE_MANAGEMENT/DeviceManagement_MainInfo.png)
+ ![Main Info](./img/DEVICE_MANAGEMENT/DeviceManagement_MainInfo.png)
 
 ## Main Info
 
   - **MAC**: MAC addres of the device. Not editable, unless creating a new dummy device.
   - **Last IP**: IP addres of the device. Not editable, unless creating a new dummy device.
   - **Name**: Friendly device name. Autodetected via various 🆎 Name discovery [plugins](https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/README.md). The app attaches `(IP match)` if the name is discovered via an IP match and not MAC match which could mean the name could be incorrect as IPs might change.
-  - **Icon**: Partially autodetected. Select an existing or [add a custom icon](https://github.com/jokob-sk/NetAlertX/blob/main/docs/ICONS.md). You can also auto-apply the same icon on all devices of the same type. 
+  - **Icon**: Partially autodetected. Select an existing or [add a custom icon](./ICONS.md). You can also auto-apply the same icon on all devices of the same type. 
   - **Owner**: Device owner (The list is self-populated with existing owners and you can add custom values).
   - **Type**: Select a device type from the dropdown list (`Smartphone`, `Tablet`,
-      `Laptop`, `TV`, `router`, etc.) or add a new device type. If you want the device to act as a **Network device** (and be able to be a network node in the Network view), select a type under Network Devices or add a new Network Device type in Settings. More information can be found in the [Network Setup docs](https://github.com/jokob-sk/NetAlertX/blob/main/docs/NETWORK_TREE.md). 
+      `Laptop`, `TV`, `router`, etc.) or add a new device type. If you want the device to act as a **Network device** (and be able to be a network node in the Network view), select a type under Network Devices or add a new Network Device type in Settings. More information can be found in the [Network Setup docs](./NETWORK_TREE.md). 
   - **Vendor**: The manufacturing vendor. Automatically updated by NetAlertX when empty or unknown, can be edited.
   - **Group**: Select a group (`Always on`, `Personal`, `Friends`, etc.) or type
       your own Group name.
@@ -32,11 +32,11 @@ The Main Info section is where most of the device identifiable information is st
 
 You can create dummy devices from the Devices listing screen. 
 
-![Create Dummy Device](/docs/img/DEVICE_MANAGEMENT/Devices_CreateDummyDevice.png)
+![Create Dummy Device](./img/DEVICE_MANAGEMENT/Devices_CreateDummyDevice.png)
 
 The **MAC** field and the **Last IP** field will then become editable.
 
-![Save Dummy Device](/docs/img/DEVICE_MANAGEMENT/DeviceEdit_SaveDummyDevice.png)
+![Save Dummy Device](./img/DEVICE_MANAGEMENT/DeviceEdit_SaveDummyDevice.png)
 
 
 > [!NOTE] 

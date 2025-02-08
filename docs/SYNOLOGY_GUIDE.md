@@ -9,18 +9,18 @@ The folders you are creating below will contain the configuration and the databa
 1. Create a parent folder named `netalertx`
 2. Create a `db` sub-folder
 
-![Folder structure](/docs/img/SYNOLOGY/01_Create_folder_structure.png)
-![Folder structure](/docs/img/SYNOLOGY/02_Create_folder_structure_db.png)
-![Folder structure](/docs/img/SYNOLOGY/03_Create_folder_structure_db.png)
+![Folder structure](./img/SYNOLOGY/01_Create_folder_structure.png)
+![Folder structure](./img/SYNOLOGY/02_Create_folder_structure_db.png)
+![Folder structure](./img/SYNOLOGY/03_Create_folder_structure_db.png)
 
 3. Create a `config` sub-folder
 
-![Folder structure](/docs/img/SYNOLOGY/04_Create_folder_structure_config.png)
+![Folder structure](./img/SYNOLOGY/04_Create_folder_structure_config.png)
 
 4. Note down the folders Locations:
 
-![Getting the location](/docs/img/SYNOLOGY/05_Access_folder_properties.png)
-![Getting the location](/docs/img/SYNOLOGY/06_Note_location.png)
+![Getting the location](./img/SYNOLOGY/05_Access_folder_properties.png)
+![Getting the location](./img/SYNOLOGY/06_Note_location.png)
 
 5. Open **Container manager** -> **Project** and click **Create**.
 6. Fill in the details:
@@ -49,7 +49,7 @@ services:
       - PORT=20211
 ```
 
-![Project settings](/docs/img/SYNOLOGY/07_Create_project.png)
+![Project settings](./img/SYNOLOGY/07_Create_project.png)
 
 7. Replace the paths to your volume and/or comment out unnecessary line(s):
 
@@ -63,12 +63,12 @@ services:
       # - local/path/logs:/app/log <- commented out with # ⚠
 ```
 
-![Adjusting docker-compose](/docs/img/SYNOLOGY/08_Adjust_docker_compose_volumes.png)
+![Adjusting docker-compose](./img/SYNOLOGY/08_Adjust_docker_compose_volumes.png)
 
 8. (optional) Change the port number from `20211` to an unused port if this port is already used.
 9. Build the project:
 
-![Build](/docs/img/SYNOLOGY/09_Run_and_build.png)
+![Build](./img/SYNOLOGY/09_Run_and_build.png)
 
 10. Navigate to `<Synology URL>:20211` (or your custom port).
-11. Read the [Subnets](/docs/SUBNETS.md) and [Plugins](/front/plugins/README.md) docs to complete your setup. 
+11. Read the [Subnets](./SUBNETS.md) and [Plugins](/front/plugins/README.md) docs to complete your setup. 

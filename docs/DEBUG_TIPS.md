@@ -2,14 +2,13 @@
 
 Please follow tips 1 - 4 to get a more detailed error. 
 
-## 1. More Logging 📃
+## 1. More Logging 
 
 When debugging an issue always set the highest log level:
 
 `LOG_LEVEL='trace'`
 
-
-## 2. Surfacing errors when container restarts 🔁
+## 2. Surfacing errors when container restarts 
 
 Start the container via the **terminal** with a command similar to this one:
 
@@ -25,7 +24,7 @@ docker run --rm --network=host \
 
 > ⚠ Please note, don't use the `-d` parameter so you see the error when the container crashes. Use this error in your issue description.
 
-## 3. Check the _dev image and open issues ❓
+## 3. Check the _dev image and open issues 
 
 If possible, check if your issue got fixed in the `_dev` image before opening a new issue. The container is:
 
@@ -35,7 +34,7 @@ If possible, check if your issue got fixed in the `_dev` image before opening a 
 
 Please also search [open issues](https://github.com/jokob-sk/NetAlertX/issues).
 
-## 4. Disable restart behavior 🛑
+## 4. Disable restart behavior 
 
 To prevent a Docker container from automatically restarting in a Docker Compose file, specify the restart policy as `no`:
 
@@ -60,39 +59,6 @@ Sometimes specific log sections are needed to debug issues. The Devices and Curr
 5. Open a new issue and post (redacted) output into the issue description (or send to the netalertx@gmail.com email if sensitive data present).
 6. Please set `LOG_LEVEL` to `debug` or lower.
 
-## 📃Common issues
+## Common issues
 
-### Permissions
-
-* If facing issues (AJAX errors, can't write to DB, empty screen, etc,) make sure permissions are set correctly, and check the logs under `/app/log`. 
-* To solve permission issues you can try setting the owner and group of the `app.db` by executing the following on the host system: `docker exec netalertx chown -R www-data:www-data /app/db/app.db`. 
-* If still facing issues, try to map the app.db file (⚠ not folder) to `:/app/db/app.db` (see [docker-compose Examples](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md#-docker-composeyml-examples) for details)
-
-### Container restarts / crashes
-
-* Check the logs for details. Often a required setting for a notification method is missing. 
-
-### unable to resolve host
-
-* Check that your `SCAN_SUBNETS` variable is using the correct mask and `--interface`. See teh [subnets docs for details](/docs/SUBNETS.md).  
-
-### Invalid JSON
-
-Check the [Invalid JSON errors debug help](/docs/DEBUG_INVALID_JSON.md) docs on how to proceed.
-
-### sudo execution failing (e.g.: on arpscan) on a Raspberry Pi 4 
-
-> sudo: unexpected child termination condition: 0
-
-Resolution based on [this issue](https://github.com/linuxserver/docker-papermerge/issues/4#issuecomment-1003657581)
-
-```
-wget ftp.us.debian.org/debian/pool/main/libs/libseccomp/libseccomp2_2.5.3-2_armhf.deb
-sudo dpkg -i libseccomp2_2.5.3-2_armhf.deb
-```
-
-The link above will probably break in time too. Go to https://packages.debian.org/sid/armhf/libseccomp2/download to find the new version number and put that in the url.
-
-### Only Router and own device show up
-
-Make sure that the subnet and interface in `SCAN_SUBNETS` are correct. If your device/NAS has multiple ethernet ports, you probably need to change `eth0` to something else.
+See [Common issues](./COMMON_ISSUES.md) for details. 

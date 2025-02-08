@@ -9,11 +9,11 @@ There are 4 ways how to influence notifications:
 
 > [!NOTE]
 > It's recommended to use the same schedule interval for all plugins responsible for scanning devices, otherwise false positives might be reported if different devices are discovered by different plugins. Check the **Settings** > **Enabled settings** section for a warning:
-> ![Schedules out-of-sync](/docs/img/NOTIFICATIONS/Schedules_out-of-sync.png)
+> ![Schedules out-of-sync](./img/NOTIFICATIONS/Schedules_out-of-sync.png)
 
 ## Device settings 💻
 
-![Device notification settings](/docs/img/NOTIFICATIONS/Device-notification-settings.png)
+![Device notification settings](./img/NOTIFICATIONS/Device-notification-settings.png)
 
 There are 4 settings on the device for influencing notifications. You can:
 
@@ -23,7 +23,7 @@ There are 4 settings on the device for influencing notifications. You can:
 
 ## Plugin settings 🔌
 
-![Plugin notification settings](/docs/img/NOTIFICATIONS/Plugin-notification-settings.png)
+![Plugin notification settings](./img/NOTIFICATIONS/Plugin-notification-settings.png)
 
 On almost all plugins there are 2 core settings, `<plugin>_WATCH` and `<plugin>_REPORT_ON`. 
 
@@ -34,7 +34,7 @@ Click the **Read more in the docs.** Link at the top of each plugin to get more 
 
 ## Global settings ⚙
 
-![Global notification settings](/docs/img/NOTIFICATIONS/Global-notification-settings.png)
+![Global notification settings](./img/NOTIFICATIONS/Global-notification-settings.png)
 
 In Notification Processing settings, you can specify blanket rules. These allow you to specify exceptions to the Plugin and Device settings and will override those.
 
@@ -45,7 +45,7 @@ In Notification Processing settings, you can specify blanket rules. These allow 
 
 ## Ignoring devices 🔕
 
-![Ignoring new devices](/docs/img/NOTIFICATIONS/NEWDEV_ignores.png)
+![Ignoring new devices](./img/NOTIFICATIONS/NEWDEV_ignores.png)
 
 You can completely ignore detected devices globally. This could be because your instance detects docker containers, you want to ignore devices from a specific manufacturer via MAC rules or you want to ignore devices on a specific IP range. 
 

@@ -6,6 +6,7 @@
 ### Development Guidelines
 
 **Priority Order (Highest to Lowest):**
+
 1. 🔼 Fixing core bugs that lack workarounds.
 2. 🔵 Adding core functionality that unlocks other features (e.g., plugins).
 3. 🔵 Refactoring to enable faster development.
@@ -14,12 +15,14 @@
 💡 **Design Philosophy:**  
 Focus on core functionality and integrate with existing tools rather than reinventing the wheel.  
 Examples:
+
 - Using **Apprise** for notifications instead of implementing multiple separate gateways.
 - Implementing **regex-based validation** instead of one-off validation for each setting.
 
 📌 **Note on UI requests:**  
-UI changes have lower priority due to framework limitations and mobile support constraints.  
-PRs are welcome, but **keep them small & focused**.
+
+- UI changes have lower priority due to framework limitations and mobile support constraints.  
+- PRs are welcome, but **keep them small & focused**.
 
 ## 1. Download the code:
 
@@ -76,7 +79,7 @@ Most code changes can be tetsed without rebuilding the container. When working o
 
 1. You can usually restart the backend via Maintenance > Logs > Restart server
 
-![image](/docs/img/DEV_ENV_SETUP/Maintenance_Logs_Restart_server.png)
+![image](./img/DEV_ENV_SETUP/Maintenance_Logs_Restart_server.png)
 
 2. If above doesn't work, SSH into the container and kill & restart the main script loop 
 
@@ -88,6 +91,7 @@ Most code changes can be tetsed without rebuilding the container. When working o
 ## ➕ Contributing & Pull Requests
 
 **Before submitting a PR, please ensure:**
+
 ✔ Changes are **backward-compatible** with existing installs.  
 ✔ No unnecessary changes are made.  
 ✔ New features are **reusable**, not narrowly scoped.  
@@ -98,10 +102,12 @@ Most code changes can be tetsed without rebuilding the container. When working o
 - Fresh install (no DB/config).
 - Existing DB/config compatibility.
 - Notification testing:
+
   - Email  
   - Apprise (e.g., Telegram)  
   - Webhook (e.g., Discord)  
   - MQTT (e.g., Home Assistant)  
+
 - Settings persistence.
 - Updating a Device
 - Plugin functionality.

@@ -13,9 +13,9 @@ NetAlertX comes with a plugin system to feed events from third-party scripts int
 ### 🎥 Watch the video:
 
 > [!TIP]
-> Read this guide [Development environment setup guide](/docs/DEV_ENV_SETUP.md) to set up your local environment for development. 👩‍💻
+> Read this guide [Development environment setup guide](./DEV_ENV_SETUP.md) to set up your local environment for development. 👩‍💻
 
-[![Watch the video](/docs/img/YouTube_thumbnail.png)](https://youtu.be/cdbxlwiWhv8)
+[![Watch the video](./img/YouTube_thumbnail.png)](https://youtu.be/cdbxlwiWhv8)
 
 ### 📸 Screenshots
 
@@ -503,7 +503,7 @@ Below are some general additional notes, when defining `params`:
 #### ⚙ Setting object structure
 
 > [!NOTE] 
-> The settings flow and when Plugin specific settings are applied is described under the [Settings system](/docs/SETTINGS_SYSTEM.md).
+> The settings flow and when Plugin specific settings are applied is described under the [Settings system](./SETTINGS_SYSTEM.md).
 
 Required attributes are:
 
@@ -593,7 +593,7 @@ You can have any `"function": "my_custom_name"` custom name, however, the ones l
 |  | - "before_config_save" - run before the config is marked as saved. Useful if your plugin needs to modify the `app.conf` file. |
 | `RUN_SCHD` | (required if you include "schedule" in the above `RUN` function) Cron-like scheduling is used if the `RUN` setting is set to `schedule`. |
 | `CMD` | (required) Specifies the command that should be executed. |
-| `API_SQL` | (not implemented) Generates a `table_` + `code_name` + `.json` file as per [API docs](https://github.com/jokob-sk/NetAlertX/blob/main/docs/API.md). |
+| `API_SQL` | (not implemented) Generates a `table_` + `code_name` + `.json` file as per [API docs](./API.md). |
 | `RUN_TIMEOUT` | (optional) Specifies the maximum execution time of the script. If not specified, a default value of 10 seconds is used to prevent hanging. |
 | `WATCH` | (optional) Specifies which database columns are watched for changes for this particular plugin. If not specified, no notifications are sent. |
 | `REPORT_ON` | (optional) Specifies when to send a notification. Supported options are: |
@@ -776,8 +776,8 @@ The UI will adjust how columns are displayed in the UI based on the resolvers de
         }
 ```
 
-[screen1]: https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/plugins.png                    "Screen 1"
-[screen2]: https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/plugins_settings.png           "Screen 2"
-[screen3]: https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/plugins_json_settings.png      "Screen 3"
-[screen4]: https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/plugins_json_ui.png            "Screen 4"
-[screen5]: https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/plugins_device_details.png     "Screen 5"
+[screen1]: https://raw.githubusercontent.com/jokob-sk/NetAlertX/main./img/plugins.png                    "Screen 1"
+[screen2]: https://raw.githubusercontent.com/jokob-sk/NetAlertX/main./img/plugins_settings.png           "Screen 2"
+[screen3]: https://raw.githubusercontent.com/jokob-sk/NetAlertX/main./img/plugins_json_settings.png      "Screen 3"
+[screen4]: https://raw.githubusercontent.com/jokob-sk/NetAlertX/main./img/plugins_json_ui.png            "Screen 4"
+[screen5]: https://raw.githubusercontent.com/jokob-sk/NetAlertX/main./img/plugins_device_details.png     "Screen 5"

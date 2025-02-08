@@ -8,33 +8,24 @@
 
 ---
 
-## 📚 Table of Contents
+## Installation
 
-{% include "_toc.md" %}
+### Docker (Fully Supported)
 
----
+- [Follow the official installation guide](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md).
 
-## 📥 Installation
+### Bare-Metal 
 
-### 🐳 Docker (Fully Supported)
-The recommended installation method is via Docker.  
-👉 [Follow the official installation guide](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md).
-
-### 💻 Bare-Metal / On-Server (Experimental - looking ofr maintainers)
-- 🧪 [(Experimental) On-hardware installation](https://github.com/jokob-sk/NetAlertX/blob/main/docs/HW_INSTALL.md)  
-- Alternative bare-metal forks:
-  - ✅ [leiweibau's fork](https://github.com/leiweibau/Pi.Alert/) (maintained)
-  - ❌ [pucherot's original code](https://github.com/pucherot/Pi.Alert/) (unmaintained)
-
-
+- 🧪 [(Experimental) On-hardware installation](./HW_INSTALL.md) (looking for maintainers)  
 
 ---
 
 ## Help and Support
 
 Before opening an issue:
-- 🔍 [Check common issues](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEBUG_TIPS.md#common-issues).
+
+- 🔍 [Check common issues](./DEBUG_TIPS.md#common-issues).
 - 📌 [Look at closed issues](https://github.com/jokob-sk/NetAlertX/issues?q=is%3Aissue+is%3Aclosed).
-- ⚠ **Enable debugging** before reporting: [Debug Guide](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEBUG_TIPS.md).
+- ⚠ **Enable debugging** before reporting: [Debug Guide](./DEBUG_TIPS.md).
 
 ❗ **Follow the issue template** for faster resolution.

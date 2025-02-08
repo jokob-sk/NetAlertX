@@ -1,8 +1,8 @@
 ## Icons overview
 
-Icons are used to visually distinguish devices in the app in most of the device listing tables and the [network tree](/docs/NETWORK_TREE.md). 
+Icons are used to visually distinguish devices in the app in most of the device listing tables and the [network tree](./NETWORK_TREE.md). 
 
-![Raspberry Pi with a brand icon](/docs/img/ICONS/devices-icons.png)
+![Raspberry Pi with a brand icon](./img/ICONS/devices-icons.png)
 
 ### Icons Support
 
@@ -19,19 +19,19 @@ You can assign icons individually on each device in the Details tab.
 
 Copying the SVG (for example from [iconify.design](https://icon-sets.iconify.design/)): 
 
-![iconify svg](/docs/img/ICONS/iconify_design_copy_svg.png)
+![iconify svg](./img/ICONS/iconify_design_copy_svg.png)
 
 Copying the HTML code from [Font Awesome](https://fontawesome.com/search?o=r&m=free).
 
-![Font awesome](/docs/img/ICONS/font_awesome_copy_html.png)
+![Font awesome](./img/ICONS/font_awesome_copy_html.png)
 
 2. Navigate to the device you want to use the icon on and click the "+" icon:
 
-![preview](/docs/img/ICONS/device_add_icon.png)
+![preview](./img/ICONS/device_add_icon.png)
 
 3. Paste in the copied HTML or SVG code and click "OK":
 
-![Paste SVG](/docs/img/ICONS/paste-svg.png)
+![Paste SVG](./img/ICONS/paste-svg.png)
 
 6. "Save" the device
 

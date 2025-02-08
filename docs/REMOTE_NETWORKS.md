@@ -2,7 +2,7 @@
 
 By design, local network scanners such as `arp-scan` use ARP (Address Resolution Protocol) to map IP addresses to MAC addresses on the local network. Since ARP operates at Layer 2 (Data Link Layer), it typically works only within a single broadcast domain, usually limited to a single router or network segment.
 
-To scan multiple locally accessible network segments, add them as subnets according to the [subnets](https://github.com/jokob-sk/NetAlertX/blob/main/docs/SUBNETS.md) documentation.
+To scan multiple locally accessible network segments, add them as subnets according to the [subnets](./SUBNETS.md) documentation.
 
 ## Complex Use Cases
 
@@ -38,7 +38,7 @@ If you have servers in different networks, you can set up separate NetAlertX ins
 
 If you don't need to discover new devices and only need to report on their status (`online`, `offline`, `down`), you can manually enter devices and check their status using the [`ICMP` plugin](https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/icmp_scan/), which uses the `ping` command internally.
 
-For more information on how to add devices manually (or dummy devices), refer to the [Device Management](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEVICE_MANAGEMENT.md) documentation.
+For more information on how to add devices manually (or dummy devices), refer to the [Device Management](./DEVICE_MANAGEMENT.md) documentation.
 
 To create truly dummy devices, you can use a loopback IP address (e.g., `0.0.0.0` or `127.0.0.1`) so they appear online.
 

@@ -1,16 +1,23 @@
 site_name: NetAlertX Docs
 site_url: https://jokob-sk.github.io/NetAlertX/
+repo_url: https://github.com/jokob-sk/NetAlertX/
+edit_uri: blob/main/docs/
+static_dir: docs/img
 nav:
   - Home: index.md
-  - Installation:
-      - Installation: HW_INSTALL.md
-      - Migration Guide: MIGRATION.md
+  - Installation: 
+      - Installation options: INSTALLATION.md
+      - Docker Guide: https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md    
       - Docker Compose: DOCKER_COMPOSE.md
       - Docker File Permissions: FILE_PERMISSIONS.md
       - Synology Guide: SYNOLOGY_GUIDE.md
       - Community Guides: COMMUNITY_GUIDES.md
+      - Bare-metal (Experimental): HW_INSTALL.md
+      - Migration Guide: MIGRATION.md
+      - Common issues: COMMON_ISSUES.md
   - Setup:
       - Subnets: SUBNETS.md
+      - Common issues: COMMON_ISSUES.md
       - Remote Networks: REMOTE_NETWORKS.md      
       - Notifications Guide: NOTIFICATIONS.md
       - Emails: SMTP.md
@@ -38,11 +45,65 @@ nav:
       - Debugging Web UI Port: WEB_UI_PORT_DEBUG.md
   - Development:
       - Environment Setup: DEV_ENV_SETUP.md
+      - Custom Plugins: PLUGINS_DEV.md
       - Frontend Development: FRONTEND_DEVELOPMENT.md
-      - Development: PLUGINS_DEV.md
       - Webhook Secret: WEBHOOK_SECRET.md
       - API: API.md
       - Database: DATABASE.md
       - Settings: SETTINGS_SYSTEM.md
       - Updates: UPDATES.md
       - Versions: VERSIONS.md
+
+
+theme:
+  name: material
+  features:
+    - announce.dismiss
+    - content.action.edit
+    - content.action.view
+    - content.code.annotate
+    - content.code.copy
+    # - content.code.select
+    # - content.footnote.tooltips
+    # - content.tabs.link
+    - content.tooltips
+    # - header.autohide
+    # - navigation.expand
+    - navigation.footer
+    - navigation.indexes
+    # - navigation.instant
+    # - navigation.instant.prefetch
+    # - navigation.instant.progress
+    # - navigation.prune
+    - navigation.sections
+    - navigation.tabs
+    # - navigation.tabs.sticky
+    - navigation.top
+    - navigation.tracking
+    - search.highlight
+    - search.share
+    - search.suggest
+    - toc.follow
+    # - toc.integrate
+  palette:
+    - scheme: slate  # Default to dark mode
+      primary: indigo  # Dark blue
+      accent: deep-purple  # Adjust accent color if needed
+      toggle:
+        icon: material/lightbulb
+        name: Switch to light mode
+    - scheme: default  # Light mode (optional)
+      primary: black
+      accent: deep-purple
+      toggle:
+        icon: material/lightbulb-outline
+        name: Switch to dark mode
+markdown_extensions:
+  - admonition
+plugins:
+  - gh-admonitions
+  - search
+font:
+  text: Roboto
+  code: Roboto Mono
+  favicon: https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/front/img/NetAlertX_logo.png

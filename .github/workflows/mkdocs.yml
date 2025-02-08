@@ -18,7 +18,9 @@ jobs:
           python-version: '3.9'
 
       - name: Install MkDocs
-        run: pip install mkdocs mkdocs-material
+        run: |
+          pip install mkdocs mkdocs-material
+          pip install mkdocs-github-admonitions-plugin
 
       - name: Deploy MkDocs
         run: mkdocs gh-deploy --force

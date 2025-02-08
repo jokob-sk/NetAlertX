@@ -2,7 +2,7 @@
 
 The **Sessions Section** provides details about a device's connection history. This data is automatically detected and cannot be edited by the user.
 
- ![Session info](/docs/img/SESSION_INFO/DeviceDetails_SessionInfo.png)
+ ![Session info](./img/SESSION_INFO/DeviceDetails_SessionInfo.png)
 
 ---
 
@@ -57,6 +57,6 @@ When a new connection is detected, the system creates a session record:
 
 The session information is then used to display the device presence under **Monitoring** -> **Presence**.
 
-![Monitoring Device Presence](/docs/img/SESSION_INFO/Monitoring_Presence.png)
+![Monitoring Device Presence](./img/SESSION_INFO/Monitoring_Presence.png)
 
 

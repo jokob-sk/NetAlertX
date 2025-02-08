@@ -9,7 +9,7 @@ For a more in-depth overview on how plugins work check the [Plugins development 
 ### Prerequisites
 
 - Make sure you read and followed the specific plugin setup instructions.
-- Ensure you have [debug enabled (see More Logging)](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEBUG_TIPS.md#1-more-logging-) 
+- Ensure you have [debug enabled (see More Logging)](./DEBUG_TIPS.md#1-more-logging-) 
 
 ### Potential issues
 
@@ -75,7 +75,7 @@ In the above output notice the section logging how many events are produced by t
 
 These values, if formatted correctly, will also show up in the UI:
 
-![Plugins table](/docs/img/DEBUG_PLUGINS/plugin_objects_pihole.png)
+![Plugins table](./img/DEBUG_PLUGINS/plugin_objects_pihole.png)
 
 
 ### Sharing application state

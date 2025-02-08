@@ -4,7 +4,7 @@ NetAlertX comes with 2 plugins suitable for integarting with your existing PiHol
 
 ## Approach 1: `DHCPLSS` Plugin - Import devices from the PiHole DHCP leases file
 
-![DHCPLSS sample settings](/docs/img/PIHOLE_GUIDE/DHCPLSS_pihole_settings.png)
+![DHCPLSS sample settings](./img/PIHOLE_GUIDE/DHCPLSS_pihole_settings.png)
 
 ### Settings
 
@@ -25,7 +25,7 @@ Check the [DHCPLSS plugin readme](https://github.com/jokob-sk/NetAlertX/tree/mai
 
 ## Approach 2: `PIHOLE` Plugin - Import devices directly from the PiHole database
 
-![DHCPLSS sample settings](/docs/img/PIHOLE_GUIDE/PIHOLE_settings.png)
+![DHCPLSS sample settings](./img/PIHOLE_GUIDE/PIHOLE_settings.png)
 
 | Setting | Description | Recommended value |
 | :------------- | :------------- | :-------------| 
@@ -42,4 +42,4 @@ Check the [PiHole plugin readme](https://github.com/jokob-sk/NetAlertX/tree/main
 | `:/etc/pihole/pihole-FTL.db` |  PiHole's `pihole-FTL.db` database file.  |
 
 
-Check out other [plugins](/front/plugins/README.md) that can help you discover more about your network or check how to scan [Remote networks](/docs/REMOTE_NETWORKS.md).
+Check out other [plugins](/front/plugins/README.md) that can help you discover more about your network or check how to scan [Remote networks](./REMOTE_NETWORKS.md).

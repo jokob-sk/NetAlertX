@@ -2,7 +2,7 @@
 
 Make sure you have a root device with the MAC `Internet` (No other MAC addresses are currently supported as the root node) set to a network device type (e.g.: **Type**:`Router`).
 
-> 💡 Tip: You can add dummy devices via the [Create dummy device](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEVICE_MANAGEMENT.md#dummy-devices) button in the Devices listing page.
+> 💡 Tip: You can add dummy devices via the [Create dummy device](./DEVICE_MANAGEMENT.md#dummy-devices) button in the Devices listing page.
 
 > 💡 Tip: Export your configuration of the Network and Devices once in a while via the Export CSV feature under **Maintenance** -> **Backup/Restore** -> **CSV Export**.   
 
@@ -17,7 +17,7 @@ Make sure you have a root device with the MAC `Internet` (No other MAC addresses
 
 > [!NOTE] 
 >
-> [Bulk-edit devices](/docs/DEVICES_BULK_EDITING.md) by using the _CSV Export_ functionality in the _Maintenance_ section. You can use this to fix `Internet` node assignment issues. 
+> [Bulk-edit devices](./DEVICES_BULK_EDITING.md) by using the _CSV Export_ functionality in the _Maintenance_ section. You can use this to fix `Internet` node assignment issues. 
 
 ## 🔍Detailed example:
 
@@ -27,7 +27,7 @@ In this example you will setup a device named `rapberrypi` as a `Switch` in our 
 
 - Go to the `Devices` (1) page:
 
-![Device details](/docs/img/NETWORK_TREE/Device_Details_Network_Type.png)
+![Device details](./img/NETWORK_TREE/Device_Details_Network_Type.png)
 
 - In the (2) `Details` tab navigate to the the `Type` (3) dropdown and select the type `Switch` (4).
 
@@ -42,7 +42,7 @@ In this example you will setup a device named `rapberrypi` as a `Switch` in our 
 
 - Navigate to your `Network` (1) page:
 
-![Network page](/docs/img/NETWORK_TREE/Network_Page.png)
+![Network page](./img/NETWORK_TREE/Network_Page.png)
 
 - Notice the newly added `raspberrypi` (2) tab which now represents a network node, also showing up in the tree (3).
 - As we asssigned the `raspberrypi` in the previous (1) Device details page section to the `Internet` parent network node in step (6), the link is also showing up in the tree diagram (4)
@@ -52,7 +52,7 @@ In this example you will setup a device named `rapberrypi` as a `Switch` in our 
 
 - After clicking the `Assign` button in the previous section, the `(AppleTV)` (1) device is now connected to our `raspberrypi` (2).
 
-![Network page with 2 levels](/docs/img/NETWORK_TREE/Network_Page_2_Levels.png)
+![Network page with 2 levels](./img/NETWORK_TREE/Network_Page_2_Levels.png)
 
 - You can see the `raspberrypi` represents the Network node type `Switch` (3)
 - The `(AppleTV)` to `raspberrypi` connection is also displayed in the table of `Connected devices` (4).

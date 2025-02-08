@@ -23,15 +23,15 @@
 
 
 
-  [screen1]: /docs/img/DATABASE/CurrentScan.png
-  [screen2]: /docs/img/DATABASE/Devices.png
-  [screen4]: /docs/img/DATABASE/Events.png  
-  [screen6]: /docs/img/DATABASE/Online_History.png
-  [screen7]: /docs/img/DATABASE/Parameters.png
-  [screen10]: /docs/img/DATABASE/Plugins_Events.png
-  [screen11]: /docs/img/DATABASE/Plugins_History.png
-  [screen12]: /docs/img/DATABASE/Plugins_Language_Strings.png
-  [screen13]: /docs/img/DATABASE/Plugins_Objects.png  
-  [screen15]: /docs/img/DATABASE/Sessions.png
-  [screen16]: /docs/img/DATABASE/Settings.png
+  [screen1]: ./img/DATABASE/CurrentScan.png
+  [screen2]: ./img/DATABASE/Devices.png
+  [screen4]: ./img/DATABASE/Events.png  
+  [screen6]: ./img/DATABASE/Online_History.png
+  [screen7]: ./img/DATABASE/Parameters.png
+  [screen10]: ./img/DATABASE/Plugins_Events.png
+  [screen11]: ./img/DATABASE/Plugins_History.png
+  [screen12]: ./img/DATABASE/Plugins_Language_Strings.png
+  [screen13]: ./img/DATABASE/Plugins_Objects.png  
+  [screen15]: ./img/DATABASE/Sessions.png
+  [screen16]: ./img/DATABASE/Settings.png
 

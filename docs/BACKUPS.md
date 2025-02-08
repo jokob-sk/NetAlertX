@@ -18,7 +18,7 @@ To decide on a backup strategy, check where the data is stored:
 
 ### Core Configuration
 
-The core application configuration is in the `app.conf` file (See [Settings System](https://github.com/jokob-sk/NetAlertX/blob/main/docs/SETTINGS_SYSTEM.md) for details), such as:
+The core application configuration is in the `app.conf` file (See [Settings System](./SETTINGS_SYSTEM.md) for details), such as:
 
 - Notification settings
 - Scanner settings
@@ -37,7 +37,7 @@ The core device data is backed up to the `devices_<timestamp>.csv` or `devices.c
 
 ### Historical data
 
-Historical data is stored in the `app.db` database (See [Database overview](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DATABASE.md) for details). This data includes:
+Historical data is stored in the `app.db` database (See [Database overview](./DATABASE.md) for details). This data includes:
 
 - Plugin objects
 - Plugin historical entries
@@ -50,7 +50,7 @@ The safest approach to backups is to backup all of the above, by taking regular 
 
 Arguably, the most time is spent setting up the device list, so if only one file is kept I'd recommend to have a latest backup of the `devices_<timestamp>.csv` or `devices.csv` file, followed by the `app.conf` file. You can also download `app.conf` and `devices.csv` file in the Maintenance section:
 
-![Backup and Restore Section in Maintenance](/docs/img/BACKUPS/Maintenance_Backup_Restore.png)
+![Backup and Restore Section in Maintenance](./img/BACKUPS/Maintenance_Backup_Restore.png)
 
 ### Scenario 1: Full backup
 
@@ -81,6 +81,6 @@ Even with a corrupted database you can recover what I would argue is 99% of the 
 
 - upload the `app.conf` file into the mounted `/app/config/` folder as described in the [Setup documentation](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md#docker-paths).
 - rename the `devices_<timestamp>.csv` to `devices.csv` and place it in the `/app/config` folder
-- Restore the `devices.csv` backup via the [Maintenance section](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEVICES_BULK_EDITING.md)
+- Restore the `devices.csv` backup via the [Maintenance section](./DEVICES_BULK_EDITING.md)
 
 

@@ -10,11 +10,11 @@ The source of truth for user-defined values is the `app.conf` file. Editing the 
 
 #### Settings database table
 
-The `Settings` database table contains settings for App run purposes. The table is recreated every time the App restarts. The settings are loaded from the source-of-truth, that is the `app.conf` file. A high-level overview on the database structure can be found in the [database documentation](/docs/DATABASE.md). 
+The `Settings` database table contains settings for App run purposes. The table is recreated every time the App restarts. The settings are loaded from the source-of-truth, that is the `app.conf` file. A high-level overview on the database structure can be found in the [database documentation](./DATABASE.md). 
 
 #### table_settings.json
 
-This is the [API endpoint](/docs/API.md) that reflects the state of the `Settings` database table. Settings can be accessed with the:
+This is the [API endpoint](./API.md) that reflects the state of the `Settings` database table. Settings can be accessed with the:
 
 * `getSetting(key)` JavaScript method
 
@@ -74,4 +74,4 @@ Here's a high-level description of the code:
 
 _____________________
 
-[screen1]: https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/plugins_json_settings.png      "Screen 1"
+[screen1]: https://raw.githubusercontent.com/jokob-sk/NetAlertX/main./img/plugins_json_settings.png      "Screen 1"

@@ -1,6 +1,6 @@
 # Custom Properties for Devices
 
-![Custom Properties](/docs/img/CUSTOM_PROPERTIES/Device_Custom_Properties.png)
+![Custom Properties](./img/CUSTOM_PROPERTIES/Device_Custom_Properties.png)
 
 ## Overview
 
@@ -41,7 +41,7 @@ Custom properties are structured as a list of objects, where each property inclu
 
 ## Usage on the Device Listing Page
 
-![Custom Properties](/docs/img/CUSTOM_PROPERTIES/Device_Custom_Properties_vid.gif)
+![Custom Properties](./img/CUSTOM_PROPERTIES/Device_Custom_Properties_vid.gif)
 
 Visible properties (`CUSTPROP_show: true`) are displayed as interactive icons in the device listing. Each icon can perform one of the following actions based on the `CUSTPROP_type`:
 

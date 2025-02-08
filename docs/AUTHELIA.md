@@ -1,6 +1,8 @@
-(DRAFT) Authelia support
+## Authelia support
 
-
+> [!WARNING] 
+>
+> This is community contributed content and work in progress. Contributions are welcome. 
 
 ```yaml
 theme: dark
