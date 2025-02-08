@@ -328,7 +328,7 @@
     "Gen_Upd_Fail": "Échec de la mise à jour",
     "Gen_Update": "Mise à jour",
     "Gen_Update_Value": "Valeur à mettre à jour",
-    "Gen_ValidIcon": "",
+    "Gen_ValidIcon": "<i class=\"fa-solid fa-chevron-right \"></i>",
     "Gen_Warning": "Avertissement",
     "Gen_Work_In_Progress": "Travaux en cours, c'est le bon moment pour faire un retour via la liste d'anomalies sur Github https://github.com/jokob-sk/NetAlertX/issues",
     "Gen_create_new_device": "Nouvel appareil",
