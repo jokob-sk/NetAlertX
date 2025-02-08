@@ -180,8 +180,7 @@ function validateRegex(elem) {
   const iconSpan  = $(elem).parent().find(".validityCheck");
   const inputElem = $(elem);
   const regexTmp  = atob($(inputElem).attr("my-base64Regex")); // Decode base64 regex
-
-  console.log(regexTmp);
+  
   const regex = new RegExp(regexTmp); // Convert to a valid RegExp object
   
   let attempts = 0;

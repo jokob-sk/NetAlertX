@@ -4,14 +4,36 @@ on:
     types: [published]
 
 jobs:
-  post-release:
+  post-discord:
     runs-on: ubuntu-latest
     steps:
       - name: Wait for 15 minutes
         run: sleep 900  # 15 minutes delay
 
-      # Post to Twitter
-      - name: Post to Twitter
+      - name: Post to Discord
+        run: |
+          curl -X POST -H "Content-Type: application/json" \
+          -d '{"content": "🎉 New release: **${{ github.event.release.name }}** is live! 🚀\nCheck it out here: ${{ github.event.release.html_url }}"}' \
+          ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+  post-twitter:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for 15 minutes
+        run: sleep 900  # 15 minutes delay     
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Create tweet file
+        run: |
+          echo "🎉 New release: **${{ github.event.release.name }}** is live! 🚀" > .github/tweet.md
+          echo "Check it out here: ${{ github.event.release.html_url }}" >> .github/tweet.md
+          git add .github/tweet.md
+          git commit -m "Add release tweet for ${{ github.event.release.name }}"
+          git push
+
+      - name: Tweet
         uses: twitter-together/action@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -19,14 +41,3 @@ jobs:
           TWITTER_ACCESS_TOKEN_SECRET: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
           TWITTER_API_KEY: ${{ secrets.TWITTER_API_KEY }}
           TWITTER_API_SECRET_KEY: ${{ secrets.TWITTER_API_SECRET_KEY }}
-        with:
-          tweet: |
-            🎉 New release: **${{ github.event.release.name }}** is live! 🚀
-            Check it out here: ${{ github.event.release.html_url }}
-
-      # Post to Discord
-      - name: Post to Discord
-        run: |
-          curl -X POST -H "Content-Type: application/json" \
-          -d '{"content": "🎉 New release: **${{ github.event.release.name }}** is live! 🚀\nCheck it out here: ${{ github.event.release.html_url }}"}' \
-          ${{ secrets.DISCORD_WEBHOOK_URL }}
