@@ -3,6 +3,24 @@
 >[!NOTE]
 > Replace `/development` with the path where your code files will be stored. The default container name is `netalertx` so there might be a conflict with your running containers.
 
+### Development Guidelines
+
+**Priority Order (Highest to Lowest):**
+1. 🔼 Fixing core bugs that lack workarounds.
+2. 🔵 Adding core functionality that unlocks other features (e.g., plugins).
+3. 🔵 Refactoring to enable faster development.
+4. 🔽 UI improvements (PRs welcome).
+
+💡 **Design Philosophy:**  
+Focus on core functionality and integrate with existing tools rather than reinventing the wheel.  
+Examples:
+- Using **Apprise** for notifications instead of implementing multiple separate gateways.
+- Implementing **regex-based validation** instead of one-off validation for each setting.
+
+📌 **Note on UI requests:**  
+UI changes have lower priority due to framework limitations and mobile support constraints.  
+PRs are welcome, but **keep them small & focused**.
+
 ## 1. Download the code:
 
 - `mkdir /development`
@@ -67,4 +85,24 @@ Most code changes can be tetsed without rebuilding the container. When working o
 
 3. If none of the above work, restart the docker image. This is usually the last resort as sometimes the Docker engine becomes unresponsive and the whole engine needs to be restarted. 
 
+## ➕ Contributing & Pull Requests
 
+**Before submitting a PR, please ensure:**
+✔ Changes are **backward-compatible** with existing installs.  
+✔ No unnecessary changes are made.  
+✔ New features are **reusable**, not narrowly scoped.  
+✔ Features are implemented via **plugins** if possible.  
+
+### ✅ Suggested Test Cases
+
+- Fresh install (no DB/config).
+- Existing DB/config compatibility.
+- Notification testing:
+  - Email  
+  - Apprise (e.g., Telegram)  
+  - Webhook (e.g., Discord)  
+  - MQTT (e.g., Home Assistant)  
+- Settings persistence.
+- Updating a Device
+- Plugin functionality.
+- Error log inspection.

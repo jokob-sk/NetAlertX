@@ -2,58 +2,47 @@ site_name: NetAlertX Docs
 site_url: https://jokob-sk.github.io/NetAlertX/
 nav:
   - Home: index.md
-  - API: API.md
-  - Authentication:
+  - Installation:
+      - Installation: HW_INSTALL.md
+      - Migration Guide: MIGRATION.md
+      - Docker Compose: DOCKER_COMPOSE.md
+      - Docker File Permissions: FILE_PERMISSIONS.md
+      - Synology Guide: SYNOLOGY_GUIDE.md
+      - Community Guides: COMMUNITY_GUIDES.md
+  - Setup:
+      - Subnets: SUBNETS.md
+      - Remote Networks: REMOTE_NETWORKS.md      
+      - Notifications Guide: NOTIFICATIONS.md
+      - Emails: SMTP.md
       - Authelia: AUTHELIA.md
-  - Backups: BACKUPS.md
-  - Community Guides: COMMUNITY_GUIDES.md
-  - Customization:
-      - Custom Properties: CUSTOM_PROPERTIES.md
-      - Device Display Settings: DEVICE_DISPLAY_SETTINGS.md
-  - Database:
-      - Overview: DATABASE.md
+      - Backups: BACKUPS.md      
       - Performance: PERFORMANCE.md
-  - Debugging:
-      - Debugging Invalid JSON: DEBUG_INVALID_JSON.md
-      - Debugging Plugins: DEBUG_PLUGINS.md
-      - Debugging Tips: DEBUG_TIPS.md
-  - Development:
-      - Setup: DEV_ENV_SETUP.md
-      - Frontend Development: FRONTEND_DEVELOPMENT.md
-  - Devices:
+      - Home Assistant: HOME_ASSISTANT.md
+      - Reverse DNS: REVERSE_DNS.md
+      - Pi-hole Guide: PIHOLE_GUIDE.md
+      - Reverse Proxy: REVERSE_PROXY.md
+      - Webhooks (n8n): WEBHOOK_N8N.md
+  - Device guides:
       - Management: DEVICE_MANAGEMENT.md
       - Bulk Editing: DEVICES_BULK_EDITING.md
       - Random MAC: RANDOM_MAC.md
-  - Docker:
-      - Docker Compose: DOCKER_COMPOSE.md
-      - File Permissions: FILE_PERMISSIONS.md
-  - Home Assistant: HOME_ASSISTANT.md
-  - Hardware:
-      - Installation: HW_INSTALL.md
-  - Icons: ICONS.md
-  - Migration Guide: MIGRATION.md
-  - Network:
-      - Tree: NETWORK_TREE.md
-      - Remote Networks: REMOTE_NETWORKS.md
-      - Subnets: SUBNETS.md
-      - Reverse DNS: REVERSE_DNS.md
-  - Notifications:
-      - Overview: NOTIFICATIONS.md
-      - SMTP: SMTP.md
-  - Performance: PERFORMANCE.md
-  - Pi-hole Guide: PIHOLE_GUIDE.md
-  - Plugins:
+      - Custom Properties: CUSTOM_PROPERTIES.md
+      - Device Display Settings: DEVICE_DISPLAY_SETTINGS.md
+      - Session Info: SESSION_INFO.md
+      - Icons: ICONS.md
+      - Network Topology: NETWORK_TREE.md
+  - Troubleshooting:
+      - Debugging Tips: DEBUG_TIPS.md
+      - Debugging Invalid JSON: DEBUG_INVALID_JSON.md
+      - Debugging Plugins: DEBUG_PLUGINS.md
+      - Debugging Web UI Port: WEB_UI_PORT_DEBUG.md
+  - Development:
+      - Environment Setup: DEV_ENV_SETUP.md
+      - Frontend Development: FRONTEND_DEVELOPMENT.md
       - Development: PLUGINS_DEV.md
-      - Webhook (n8n): WEBHOOK_N8N.md
       - Webhook Secret: WEBHOOK_SECRET.md
-  - Proxy & Reverse DNS:
-      - Reverse Proxy: REVERSE_PROXY.md
-  - Session Info: SESSION_INFO.md
-  - Settings:
-      - System Settings: SETTINGS_SYSTEM.md
-  - Synology Guide: SYNOLOGY_GUIDE.md
-  - Updates & Versions:
+      - API: API.md
+      - Database: DATABASE.md
+      - Settings: SETTINGS_SYSTEM.md
       - Updates: UPDATES.md
       - Versions: VERSIONS.md
-  - Web UI:
-      - Debugging Web UI Port: WEB_UI_PORT_DEBUG.md
