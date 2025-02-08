@@ -1,7 +1,7 @@
 site_name: NetAlertX Docs
 site_url: https://jokob-sk.github.io/NetAlertX/
 nav:
-  - Home: README.md
+  - Home: index.md
   - API: API.md
   - Authentication:
       - Authelia: AUTHELIA.md
