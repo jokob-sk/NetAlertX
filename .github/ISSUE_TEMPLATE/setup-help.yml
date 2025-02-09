@@ -26,8 +26,6 @@ body:
   attributes:
     label: What I want to do
     description: Describe what you want to achieve.
-    placeholder: |
-     
   validations:
     required: false
 - type: textarea
