@@ -3,6 +3,8 @@ site_url: https://jokob-sk.github.io/NetAlertX/
 repo_url: https://github.com/jokob-sk/NetAlertX/
 edit_uri: blob/main/docs/
 docs_dir: docs
+site_description: >-
+  The main documentation resource for NetAlertX - a network scanner and presence detector
 # static_dir: docs/img
 nav:
   - Home: index.md
@@ -10,61 +12,82 @@ nav:
   - Installation: 
       - Installation options: INSTALLATION.md
       - Quick setup: INITIAL_SETUP.md
-      - Docker Guide: https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md    
-      - Docker Compose: DOCKER_COMPOSE.md
-      - Docker File Permissions: FILE_PERMISSIONS.md
-      - Synology Guide: SYNOLOGY_GUIDE.md
-      - Community Guides: COMMUNITY_GUIDES.md
-      - Bare-metal (Experimental): HW_INSTALL.md
-      - Migration Guide: MIGRATION.md
-      - Common issues: COMMON_ISSUES.md
-      - Docker Updates: UPDATES.md
+      - Docker:
+        - Docker Guide: https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md    
+        - Docker Compose: DOCKER_COMPOSE.md
+        - Docker File Permissions: FILE_PERMISSIONS.md
+        - Docker Updates: UPDATES.md
+      - Other:
+        - Synology Guide: SYNOLOGY_GUIDE.md
+        - Community Guides: COMMUNITY_GUIDES.md
+        - Bare-metal (Experimental): HW_INSTALL.md
+        - Migration Guide: MIGRATION.md
+      - Help:
+        - Common issues: COMMON_ISSUES.md      
   - Setup:
-      - Subnets: SUBNETS.md
-      - Enable Plugins: https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/README.md  
-      - Common issues: COMMON_ISSUES.md
-      - Remote Networks: REMOTE_NETWORKS.md      
-      - Notifications Guide: NOTIFICATIONS.md
-      - Emails: SMTP.md
-      - Authelia: AUTHELIA.md
-      - Backups: BACKUPS.md      
-      - Performance: PERFORMANCE.md
-      - Home Assistant: HOME_ASSISTANT.md
-      - Reverse DNS: REVERSE_DNS.md
-      - Pi-hole Guide: PIHOLE_GUIDE.md
-      - Reverse Proxy: REVERSE_PROXY.md
-      - Webhooks (n8n): WEBHOOK_N8N.md
+      - Getting started:
+        - Subnets: SUBNETS.md
+        - Enable Plugins: https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/README.md  
+        - Pi-hole Guide: PIHOLE_GUIDE.md
+        - Home Assistant: HOME_ASSISTANT.md
+        - Emails: SMTP.md
+        - Backups: BACKUPS.md   
+      - Advanced guides:
+        - Remote Networks: REMOTE_NETWORKS.md      
+        - Notifications Guide: NOTIFICATIONS.md        
+        - Authelia: AUTHELIA.md   
+        - Performance: PERFORMANCE.md      
+        - Reverse DNS: REVERSE_DNS.md  
+        - Reverse Proxy: REVERSE_PROXY.md
+        - Webhooks (n8n): WEBHOOK_N8N.md
+      - Help:
+        - Common issues: COMMON_ISSUES.md
+        - Random MAC: RANDOM_MAC.md
+      
   - Device guides:
-      - Management: DEVICE_MANAGEMENT.md
-      - Bulk Editing: DEVICES_BULK_EDITING.md
-      - Random MAC: RANDOM_MAC.md
-      - Custom Properties: CUSTOM_PROPERTIES.md
-      - Device Display Settings: DEVICE_DISPLAY_SETTINGS.md
-      - Session Info: SESSION_INFO.md
-      - Icons: ICONS.md
-      - Network Topology: NETWORK_TREE.md
+      - Editing Devices:
+        - Management: DEVICE_MANAGEMENT.md
+        - Bulk Editing: DEVICES_BULK_EDITING.md
+        - Custom Properties: CUSTOM_PROPERTIES.md
+        - Device Display Settings: DEVICE_DISPLAY_SETTINGS.md
+        - Session Info: SESSION_INFO.md
+      - Icons and Topology:
+        - Icons: ICONS.md
+        - Network Topology: NETWORK_TREE.md
   - Troubleshooting:
       - Debugging Tips: DEBUG_TIPS.md
       - Debugging Invalid JSON: DEBUG_INVALID_JSON.md
       - Debugging Plugins: DEBUG_PLUGINS.md
       - Debugging Web UI Port: WEB_UI_PORT_DEBUG.md
   - Development:
-      - Environment Setup: DEV_ENV_SETUP.md
-      - Custom Plugins: PLUGINS_DEV.md
-      - Frontend Development: FRONTEND_DEVELOPMENT.md
-      - Webhook Secret: WEBHOOK_SECRET.md
-      - API: API.md
-      - Database: DATABASE.md
-      - Settings: SETTINGS_SYSTEM.md
-      - Versions: VERSIONS.md
+      - Plugin and app development:
+        - Environment Setup: DEV_ENV_SETUP.md
+        - Custom Plugins: PLUGINS_DEV.md
+        - Frontend Development: FRONTEND_DEVELOPMENT.md
+        - Database: DATABASE.md
+        - Settings: SETTINGS_SYSTEM.md
+        - Versions: VERSIONS.md
+      - Integrations:
+        - Webhook Secret: WEBHOOK_SECRET.md
+        - API: API.md     
 
 
 theme:
   name: material
   logo: img/NetAlertX_logo.png  # Reference the favicon here
   favicon: img/NetAlertX_logo.png
+  metadata:
+    description: "NetAlertX Documentation - The go-to resource for all things related to NetAlertX."
+    image: "https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/front/img/NetAlertX_logo.png"
   extra:
     home_hide_sidebar: true
+    social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/jokob-sk
+    - icon: fontawesome/brands/docker
+      link: https://hub.docker.com/r/jokobsk/netalertx/
+    - icon: fontawesome/brands/x-twitter
+      link: https://x.com/NetAlertX
   features:
     - announce.dismiss
     - content.action.edit

@@ -9,7 +9,7 @@ For a more in-depth overview on how plugins work check the [Plugins development 
 ### Prerequisites
 
 - Make sure you read and followed the specific plugin setup instructions.
-- Ensure you have [debug enabled (see More Logging)](./DEBUG_TIPS.md#1-more-logging-) 
+- Ensure you have [debug enabled (see More Logging)](./DEBUG_TIPS.md) 
 
 ### Potential issues
 

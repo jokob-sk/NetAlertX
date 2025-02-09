@@ -6,6 +6,10 @@ Often if the application is misconfigured the `Loading...` dialog is continuousl
 
 One of the most common issues is not configuring `SCAN_SUBNETS` correctly. If this setting is misconfigured you will only see one or two devices in your devices list after a scan. Please read the [subnets docs](./SUBNETS.md) carefully to resolve this.
 
+### Duplicate devices and notifications
+
+The app uses the MAC address as an unique identifier for devices. If a new MAC is detected a new device is added to the application and corresponding notifications are triggered. This means that if the MAC of an existing device changes, the device will be logged as a new device. You can usually prevent this from happenning by changing the device configuration (in Android, iOS, or Windows) for your network. See the [Random Macs](./RANDOM_MAC.md) guide for details. 
+
 ### Permissions
 
 Make sure you [File permissions](./FILE_PERMISSIONS.md) are set correctly.
