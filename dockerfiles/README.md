@@ -9,8 +9,8 @@
 | [📑 Docker guide](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md) | [🚀 Releases](https://github.com/jokob-sk/NetAlertX/releases) | [📚 Docs](https://github.com/jokob-sk/NetAlertX/tree/main/docs) | [🔌 Plugins](https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/README.md) | [🤖 Ask AI](https://gurubase.io/g/netalertx)
 |----------------------| ----------------------|  ----------------------| ----------------------| ----------------------| 
 
-<a href="https://raw.githubusercontent.com/jokob-sk/NetAlertX/main./img/GENERAL/github_social_image.jpg" target="_blank">
-  <img src="https://raw.githubusercontent.com/jokob-sk/NetAlertX/main./img/GENERAL/github_social_image.jpg" width="1000px" />
+<a href="https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/GENERAL/github_social_image.jpg" target="_blank">
+  <img src="https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/GENERAL/github_social_image.jpg" width="1000px" />
 </a>
 
 Head to [https://netalertx.com/](https://netalertx.com/) for more gifs and screenshots 📷.

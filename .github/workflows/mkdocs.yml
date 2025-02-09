@@ -19,8 +19,7 @@ jobs:
 
       - name: Install MkDocs
         run: |
-          pip install mkdocs mkdocs-material
-          pip install mkdocs-github-admonitions-plugin
+          pip install mkdocs mkdocs-material && pip install mkdocs-github-admonitions-plugin 
 
       - name: Deploy MkDocs
         run: mkdocs gh-deploy --force
