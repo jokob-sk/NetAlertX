@@ -7,7 +7,7 @@ body:
     label: Is there an existing issue for this?
     description: Please search to see if an open or closed issue already exists for the bug you encountered.
     options:
-    - label: I have searched the existing open and closed issues and I checked the docs https://github.com/jokob-sk/NetAlertX/tree/main/docs
+    - label: I have searched the existing open and closed issues and I checked the docs https://jokob-sk.github.io/NetAlertX/
       required: true
 - type: checkboxes
   attributes:

@@ -97,18 +97,18 @@ Most code changes can be tetsed without rebuilding the container. When working o
 ✔ New features are **reusable**, not narrowly scoped.  
 ✔ Features are implemented via **plugins** if possible.  
 
-### ✅ Suggested Test Cases
+### Mandatory Test Cases
 
 - Fresh install (no DB/config).
 - Existing DB/config compatibility.
 - Notification testing:
 
-  - Email  
-  - Apprise (e.g., Telegram)  
-  - Webhook (e.g., Discord)  
-  - MQTT (e.g., Home Assistant)  
+    - Email  
+    - Apprise (e.g., Telegram)  
+    - Webhook (e.g., Discord)  
+    - MQTT (e.g., Home Assistant)  
 
-- Settings persistence.
+- Updating Settings and their persistence.
 - Updating a Device
 - Plugin functionality.
 - Error log inspection.

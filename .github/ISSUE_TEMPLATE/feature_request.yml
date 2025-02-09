@@ -46,7 +46,7 @@ body:
 - type: checkboxes
   attributes:
     label: Can I help implement this? 👩‍💻👨‍💻 
-    description: The maintainer will provide guidance and help. The implementer will read the PR guidelines https://github.com/jokob-sk/NetAlertX/tree/main/docs#-pull-requests-prs
+    description: The maintainer will provide guidance and help. The implementer will read the PR guidelines https://jokob-sk.github.io/NetAlertX/DEV_ENV_SETUP/
     options:
     - label: "Yes"
     - label: "No"

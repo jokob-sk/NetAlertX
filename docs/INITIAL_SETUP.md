@@ -36,5 +36,7 @@
 ## 🛠️ Common Issues
 
 Before creating a new issue:
+
 - Check if a similar issue was [already resolved](https://github.com/jokob-sk/NetAlertX/issues?q=is%3Aissue+is%3Aclosed).
 - Review [common debugging tips](./DEBUG_TIPS.md).
+- Check [Common Issues](./COMMON_ISSUES.md)

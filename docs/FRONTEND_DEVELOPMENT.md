@@ -1,4 +1,4 @@
-# 🖼 Frontend development 
+# Frontend development 
 
 This page contains tips for frontend development when extending NetAlertX. Guiding principles are:
 

@@ -2,11 +2,14 @@ site_name: NetAlertX Docs
 site_url: https://jokob-sk.github.io/NetAlertX/
 repo_url: https://github.com/jokob-sk/NetAlertX/
 edit_uri: blob/main/docs/
-static_dir: docs/img
+docs_dir: docs
+# static_dir: docs/img
 nav:
   - Home: index.md
+
   - Installation: 
       - Installation options: INSTALLATION.md
+      - Quick setup: INITIAL_SETUP.md
       - Docker Guide: https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md    
       - Docker Compose: DOCKER_COMPOSE.md
       - Docker File Permissions: FILE_PERMISSIONS.md
@@ -15,8 +18,10 @@ nav:
       - Bare-metal (Experimental): HW_INSTALL.md
       - Migration Guide: MIGRATION.md
       - Common issues: COMMON_ISSUES.md
+      - Docker Updates: UPDATES.md
   - Setup:
       - Subnets: SUBNETS.md
+      - Enable Plugins: https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/README.md  
       - Common issues: COMMON_ISSUES.md
       - Remote Networks: REMOTE_NETWORKS.md      
       - Notifications Guide: NOTIFICATIONS.md
@@ -51,12 +56,15 @@ nav:
       - API: API.md
       - Database: DATABASE.md
       - Settings: SETTINGS_SYSTEM.md
-      - Updates: UPDATES.md
       - Versions: VERSIONS.md
 
 
 theme:
   name: material
+  logo: img/NetAlertX_logo.png  # Reference the favicon here
+  favicon: img/NetAlertX_logo.png
+  extra:
+    home_hide_sidebar: true
   features:
     - announce.dismiss
     - content.action.edit
@@ -103,7 +111,5 @@ markdown_extensions:
 plugins:
   - gh-admonitions
   - search
-font:
-  text: Roboto
-  code: Roboto Mono
-  favicon: https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/front/img/NetAlertX_logo.png
+
+favicon: /img/NetAlertX_logo.png

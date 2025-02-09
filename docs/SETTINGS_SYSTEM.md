@@ -74,4 +74,4 @@ Here's a high-level description of the code:
 
 _____________________
 
-[screen1]: https://raw.githubusercontent.com/jokob-sk/NetAlertX/main./img/plugins_json_settings.png      "Screen 1"
+[screen1]: https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/plugins_json_settings.png      "Screen 1"
