@@ -32,7 +32,7 @@ The App generates two `app.conf` entries for every setting (Since version 23.8+)
 > [!NOTE] 
 > This is the preferred way adding settings going forward. I'll be likely migrating all app settings into plugin-based settings.
 
-Plugin settings are loaded dynamically from the `config.json` of individual plugins. If a setting isn't defined in the `app.conf` file, it is initialized via the `default_value` property of a setting from the `config.json` file. Check the [Plugins documentation](https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/README.md#-setting-object-structure), section `⚙ Setting object structure` for details on the structure of the setting.
+Plugin settings are loaded dynamically from the `config.json` of individual plugins. If a setting isn't defined in the `app.conf` file, it is initialized via the `default_value` property of a setting from the `config.json` file. Check the [Plugins documentation](https://github.com/jokob-sk/NetAlertX/blob/main/docs/PLUGINS.md#-setting-object-structure), section `⚙ Setting object structure` for details on the structure of the setting.
 
 ![Screen 1][screen1]
 

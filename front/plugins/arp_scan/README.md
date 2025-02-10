@@ -7,7 +7,7 @@ An alternative to on-network scanners is to enable some other Device scanners/im
 > Note: The scan time itself depends on the number of IP addresses to check so set this up carefully with the appropriate network mask and interface.
 
 > [!NOTE]
-> If you have a lot of offline devices, which should be online, look into using, or substituing, ARP scan with other scans, such as `NMAPDEV`. The [ARP scan protocol uses](https://networkencyclopedia.com/arp-command/) a cache so results may not be 100% reliable. You can find all available network scanning options (marked as `🔍 dev scanner`) in the [Plugins overview](https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/README.md) readme.   
+> If you have a lot of offline devices, which should be online, look into using, or substituing, ARP scan with other scans, such as `NMAPDEV`. The [ARP scan protocol uses](https://networkencyclopedia.com/arp-command/) a cache so results may not be 100% reliable. You can find all available network scanning options (marked as `🔍 dev scanner`) in the [Plugins overview](https://github.com/jokob-sk/NetAlertX/blob/main/docs/PLUGINS.md) readme.   
 
 ### Usage
 

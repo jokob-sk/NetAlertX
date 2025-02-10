@@ -1,11 +1,11 @@
   
-  # A high-level description of the database structure
+# A high-level description of the database structure
 
   ⚠ Disclaimer: As I'm not the original author, some of the information might be inaccurate. Feel free to submit a PR to correct anything within this page or documentation in general. 
 
   The MAC address is used as a foreign key in most cases. 
 
-  ## 🔍Tables overview
+## 🔍Tables overview
   
   | Table name | Description  | Sample data |
   |----------------------|----------------------| ----------------------| 

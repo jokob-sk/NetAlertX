@@ -11,7 +11,7 @@ nav:
 
   - Installation: 
       - Installation options: INSTALLATION.md
-      - Quick setup: INITIAL_SETUP.md
+      - Quick setup: INITIAL_SETUP.md      
       - Docker:
         - Docker Guide: https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md    
         - Docker Compose: DOCKER_COMPOSE.md
@@ -27,7 +27,7 @@ nav:
   - Setup:
       - Getting started:
         - Subnets: SUBNETS.md
-        - Enable Plugins: https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/README.md  
+        - Enable Plugins: PLUGINS.md  
         - Pi-hole Guide: PIHOLE_GUIDE.md
         - Home Assistant: HOME_ASSISTANT.md
         - Emails: SMTP.md

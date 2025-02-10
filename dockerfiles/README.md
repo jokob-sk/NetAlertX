@@ -6,7 +6,7 @@
 
 # NetAlertX - Network scanner & notification framework
 
-| [📑 Docker guide](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md) | [🚀 Releases](https://github.com/jokob-sk/NetAlertX/releases) | [📚 Docs](https://jokob-sk.github.io/NetAlertX/) | [🔌 Plugins](https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/README.md) | [🤖 Ask AI](https://gurubase.io/g/netalertx)
+| [📑 Docker guide](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md) | [🚀 Releases](https://github.com/jokob-sk/NetAlertX/releases) | [📚 Docs](https://jokob-sk.github.io/NetAlertX/) | [🔌 Plugins](https://github.com/jokob-sk/NetAlertX/blob/main/docs/PLUGINS.md) | [🤖 Ask AI](https://gurubase.io/g/netalertx)
 |----------------------| ----------------------|  ----------------------| ----------------------| ----------------------| 
 
 <a href="https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/GENERAL/github_social_image.jpg" target="_blank">
@@ -21,7 +21,7 @@ Head to [https://netalertx.com/](https://netalertx.com/) for more gifs and scree
 ## 📕 Basic Usage 
 
 > [!WARNING]
-> You will have to run the container on the `host` network and specify `SCAN_SUBNETS` unless you use other [plugin scanners](https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/README.md). The initial scan can take a few minutes, so please wait 5-10 minutes for the initial discovery to finish.
+> You will have to run the container on the `host` network and specify `SCAN_SUBNETS` unless you use other [plugin scanners](https://github.com/jokob-sk/NetAlertX/blob/main/docs/PLUGINS.md). The initial scan can take a few minutes, so please wait 5-10 minutes for the initial discovery to finish.
 
 ```yaml
 docker run -d --rm --network=host \
@@ -45,7 +45,7 @@ See alternative [docked-compose examples](https://github.com/jokob-sk/NetAlertX/
 | `PGID`      |Application User GID  |  `82` |
 | `LISTEN_ADDR`      |Set the specific IP Address for the listener address for the nginx webserver (web interface). This could be useful when using multiple subnets to hide the web interface from all untrusted networks. |  `0.0.0.0` |
 |`TZ` |Time zone to display stats correctly. Find your time zone [here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)  |  `Europe/Berlin` |
-|`LOADED_PLUGINS` | Default [plugins](https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/README.md) to load. Plugins cannot be loaded with `APP_CONF_OVERRIDE`, you need to use this variable instead and then specify the plugins settings with `APP_CONF_OVERRIDE`. |  `["PIHOLE","ASUSWRT"]` |
+|`LOADED_PLUGINS` | Default [plugins](https://github.com/jokob-sk/NetAlertX/blob/main/docs/PLUGINS.md) to load. Plugins cannot be loaded with `APP_CONF_OVERRIDE`, you need to use this variable instead and then specify the plugins settings with `APP_CONF_OVERRIDE`. |  `["PIHOLE","ASUSWRT"]` |
 |`APP_CONF_OVERRIDE` | JSON override for settings (except `LOADED_PLUGINS`).   |  `{"SCAN_SUBNETS":"['192.168.1.0/24 --interface=eth1']","GRAPHQL_PORT":"20212"}` |
 |`ALWAYS_FRESH_INSTALL` | ⚠ If `true` will delete the content of the `/db` & `/config` folders. For testing purposes. Can be coupled with [watchtower](https://github.com/containrrr/watchtower) to have an always freshly installed `netalertx`/`netalertx-dev` image.   |    `true` |
 
@@ -62,7 +62,7 @@ See alternative [docked-compose examples](https://github.com/jokob-sk/NetAlertX/
 | ✅ | `:/app/db` | Folder which will contain the `app.db` database file  | 
 | | `:/app/log` |  Logs folder useful for debugging if you have issues setting up the container  | 
 | | `:/app/api` |  A simple [API endpoint](https://github.com/jokob-sk/NetAlertX/blob/main/docs/API.md) containing static (but regularly updated) json and other files.   | 
-| | `:/app/front/plugins/<plugin>/ignore_plugin` | Map a file `ignore_plugin` to ignore a plugin. Plugins can be soft-disabled via settings. More in the [Plugin docs](https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/README.md).  | 
+| | `:/app/front/plugins/<plugin>/ignore_plugin` | Map a file `ignore_plugin` to ignore a plugin. Plugins can be soft-disabled via settings. More in the [Plugin docs](https://github.com/jokob-sk/NetAlertX/blob/main/docs/PLUGINS.md).  | 
 | | `:/etc/resolv.conf` | Use a custom `resolv.conf` file for [better name resolution](https://github.com/jokob-sk/NetAlertX/blob/main/docs/REVERSE_DNS.md).  | 
 
 > Use separate `db` and `config` directories, do not nest them.
