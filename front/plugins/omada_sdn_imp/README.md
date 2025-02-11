@@ -1,33 +1,31 @@
 ## Overview
 
 The OMADA SDN plugin aims at synchronizing data between NetAlertX and a TPLINK OMADA SND controler by leveraging a tplink omada python library.
-#### features:
+
+#### Features
+
 1. extract list of OMADA Clients from OMADA and sync them up with NetAlertX
 2. extract list of OAMDA Devices (switches and access points) and sync them up with NetAlertX
 
 > [!TIP]
-> some omada devices are apparently not fully compatible with the API which might lead to partial results.
+> Some omada devices are apparently not fully compatible with the API which might lead to partial results.
 
 ### Quick setup guide
 
 1. You SHOULD (ie: strongly recommend) set up an account in your OMADA SDN console dedicated to NetAlertX OMADA_SDN plugin.
-- you should set  USER TYPE = Local USer
-- you should set  USER ROLE = Administrator  (if you use a read-only role you won't be able to sync names from NetAlerX to OMADA SDN)
+- you should set USER TYPE = Local User
+- you should set USER ROLE = Administrator  (if you use a read-only role you won't be able to sync names from NetAlerX to OMADA SDN)
 - you can set  Site Privileges = All Sites (or limit it to specific sites )
 
 2. populate the variables in NetAlertX as instructed in the config plugin page.
 
-
-
-
 #### Required Settings
 
-- OMDSDN_url
-- OMDSDN_sites
-- OMDSDN_username
-- OMDSDN_password
-- OMDSDN_force_overwrite
-
+- `OMDSDN_url`
+- `OMDSDN_sites`
+- `OMDSDN_username`
+- `OMDSDN_password` (if using special characters, make sure they are python-friendly (e.g. `~`))
+- `OMDSDN_force_overwrite`
 
 ### Usage
 
@@ -36,7 +34,7 @@ The OMADA SDN plugin aims at synchronizing data between NetAlertX and a TPLINK O
 ### Notes
 
 #### features not implemented yet:
-3. extract list of OAMDA router Devices (er605...) and sync them up with NetAlertX 
+3. Extract list of OAMDA router Devices (er605...) and sync them up with NetAlertX 
 (I need to setup my own er605 however due to its limitations I have no use for it, and due to limitations of opensense dhcp servers, I can't deploy it yet without breaking dhcp self registration into opnsense unbound - see below)
  
 #### know limitations:
@@ -61,8 +59,6 @@ can not fix some of tplinks OMADA SDN own limitations/bugs:
 - opnsense new kea dhcp server doesn't support dns self registration (yet) ref: https://github.com/opnsense/core/pull/7362
 5. incompatible devices: 
 - OMADA EAP245 - to be fair to tp-link, this access point works inside OMADA SDN, so it might be an issue with our omada python library but we can't extract data from it.
-
-
 
 
 ## Other info
