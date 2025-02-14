@@ -19,6 +19,12 @@ An alternative to on-network scanners is to enable some other Device scanners/im
 - SAVE
 - Wait for the next scan to finish
 
+### Common issues
+
+#### IP flipping on Google Nest devices
+
+Some devices might flip IP addresses after each scan triggering false notifications. This is because some devices respond to broadcast calls and thus different IPs after scans are logged. To preven this you can try to use the `--exclude-broadcast` flag in the `ARPSCAN_ARGS` setting or change the `SCAN_SUBNETS` setting from e.g.: `192.168.1.0/24` to `192.168.1.1-192.168.1.254` to exclude the broadcast address `192.168.1.255` from the scanned range.
+
 #### Examples
 
 Settings:
