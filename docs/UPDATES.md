@@ -1,6 +1,6 @@
-# Docker Update Strategies for NetAlertX
+# Docker Update Strategies to upgrade NetAlertX
 
-This guide outlines several approaches for updating Docker containers, specifically using NetAlertX. Each method offers different benefits depending on the situation. Here are the methods:
+This guide outlines approaches for updating Docker containers, usually when upgrading to a newer version of NetAlertX. Each method offers different benefits depending on the situation. Here are the methods:
 
 - Manual: Direct commands to stop, remove, and rebuild containers.
 - Dockcheck: Semi-automated with more control, suited for bulk updates.
