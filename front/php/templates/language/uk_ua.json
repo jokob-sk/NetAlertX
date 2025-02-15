@@ -1,5 +1,5 @@
 {
-    "API_CUSTOM_SQL_description": "Ви можете вказати спеціальний SQL-запит, який створить файл JSON, а потім відкриє його через кінцеву точку файлу <a href=\"/api/table_custom_endpoint.json\" target=\"_blank\"><code>table_custom_endpoint.json</code></a>.",
+    "API_CUSTOM_SQL_description": "Ви можете вказати спеціальний SQL-запит, який створить файл JSON, а потім відкриє його через кінцеву точку файлу <a href=\"/php/server/query_json.php?file=table_custom_endpoint.json\" target=\"_blank\"><code>table_custom_endpoint.json</code></a>.",
     "API_CUSTOM_SQL_name": "Спеціальна кінцева точка",
     "API_TOKEN_description": "Маркер API для безпечного зв’язку. Згенеруйте один або введіть будь-яке значення. Він надсилається в заголовку запиту та використовується в плагіні <code>SYNC</code>, сервері GraphQL та інших кінцевих точках API. Ви можете використовувати кінцеві точки API для створення спеціальних інтеграцій, як описано в <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/API.md\" target=\"_blank\">API документація</a>.",
     "API_TOKEN_name": "Маркер API",

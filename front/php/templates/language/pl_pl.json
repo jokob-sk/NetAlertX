@@ -1,5 +1,5 @@
 {
-    "API_CUSTOM_SQL_description": "Możesz określić własne zapytanie SQL które będzie generowało plik JSON i udostępnić je poprzez plik typu endpoint <a href=\"/api/table_custom_endpoint.json\" target=\"_blank\"><code>table_custom_endpoint.json</code> </a>.",
+    "API_CUSTOM_SQL_description": "Możesz określić własne zapytanie SQL które będzie generowało plik JSON i udostępnić je poprzez plik typu endpoint <a href=\"/php/server/query_json.php?file=table_custom_endpoint.json\" target=\"_blank\"><code>table_custom_endpoint.json</code> </a>.",
     "API_CUSTOM_SQL_name": "Własny endpoint",
     "API_TOKEN_description": "",
     "API_TOKEN_name": "",

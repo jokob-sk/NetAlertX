@@ -1,5 +1,5 @@
 {
-    "API_CUSTOM_SQL_description": "Vous pouvez spécifier votre propre requête SQL qui retournera un fichier JSON et l'exposer via <a href=\"/api/table_custom_endpoint.json\" target=\"_blank\"><code>table_custom_endpoint.json</code> le point de terminaison de fichier</a>.",
+    "API_CUSTOM_SQL_description": "Vous pouvez spécifier votre propre requête SQL qui retournera un fichier JSON et l'exposer via <a href=\"/php/server/query_json.php?file=table_custom_endpoint.json\" target=\"_blank\"><code>table_custom_endpoint.json</code> le point de terminaison de fichier</a>.",
     "API_CUSTOM_SQL_name": "Point de terminaison personnalisé",
     "API_TOKEN_description": "Vous pouvez renseigner ou générer un jeton API pour sécuriser les échanges. Il est transmis dans le header de la requête, et utilisé dans le plugin <code>SYNC</code>, le serveur GraphQL et d'autres usages API. Vous pouvez utiliser les points de terminaison API pour créer des intégrations spécifiques, comme décrit dans la <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/API.md\" target=\"_blank\">documentation de l'API</a>.",
     "API_TOKEN_name": "Jeton d'API",

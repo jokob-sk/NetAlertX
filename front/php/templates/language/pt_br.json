@@ -1,5 +1,5 @@
 {
-    "API_CUSTOM_SQL_description": "Você pode especificar uma consulta SQL personalizada que irá gerar um arquivo JSON e, em seguida, expô-lo por meio do <a href=\"/api/table_custom_endpoint.json\" target=\"_blank\"><code>table_custom_endpoint.json</code> endpoint do arquivo</a>.",
+    "API_CUSTOM_SQL_description": "Você pode especificar uma consulta SQL personalizada que irá gerar um arquivo JSON e, em seguida, expô-lo por meio do <a href=\"/php/server/query_json.php?file=table_custom_endpoint.json\" target=\"_blank\"><code>table_custom_endpoint.json</code> endpoint do arquivo</a>.",
     "API_CUSTOM_SQL_name": "Endpoint customizado",
     "API_TOKEN_description": "API token para comunicação segura, você pode gerar um valor ou inserir qualquer valor. Este é enviado no cabeçalho da requisição. Usado no <code>SYNC</code> plugin, servidor GraphQL .",
     "API_TOKEN_name": "API token",

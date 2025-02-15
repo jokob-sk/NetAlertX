@@ -1,5 +1,5 @@
 {
-    "API_CUSTOM_SQL_description": "Du kan spesifisere en egendefinert SQL-Spørring som vil generere en JSON-fil og deretter eksponere den via <a href=\"/api/table_custom_endpoint.json\" target=\"_blank\"><code>table_custom_endpoint.json</code> file endpoint</a>.",
+    "API_CUSTOM_SQL_description": "Du kan spesifisere en egendefinert SQL-Spørring som vil generere en JSON-fil og deretter eksponere den via <a href=\"/php/server/query_json.php?file=table_custom_endpoint.json\" target=\"_blank\"><code>table_custom_endpoint.json</code> file endpoint</a>.",
     "API_CUSTOM_SQL_name": "Egendefinert endepunkt",
     "API_TOKEN_description": "",
     "API_TOKEN_name": "",

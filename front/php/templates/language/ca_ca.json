@@ -1,5 +1,5 @@
 {
-    "API_CUSTOM_SQL_description": "Pots especificar una consulta SQL personalitzada que generarà un fitxer JSON i el mostrarà mitjançant <a href=\"/api/table_custom_endpoint.json\" target=\"_blank\"><code>table_custom_endpoint.json</code> file endpoint</a>.",
+    "API_CUSTOM_SQL_description": "Pots especificar una consulta SQL personalitzada que generarà un fitxer JSON i el mostrarà mitjançant <a href=\"/php/server/query_json.php?file=table_custom_endpoint.json\" target=\"_blank\"><code>table_custom_endpoint.json</code> file endpoint</a>.",
     "API_CUSTOM_SQL_name": "Punt final personalitzat",
     "API_TOKEN_description": "Token API per assegurar les comunicacions, pots generar-ne un o introduir un valor clau. S'enviarà a la capçalera de la petició <code>SYNC</code> plugin, servidor GraphQL i altres endpoints API. Pots fer servir els endpoints API per crear integracions personalitzades tal com es descriu a <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/API.md\" target=\"_blank\">la documentació API</a>.",
     "API_TOKEN_name": "Token API",

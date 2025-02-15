@@ -1,5 +1,5 @@
 {
-    "API_CUSTOM_SQL_description": "Benutzerdefinierte SQL-Abfrage, welche eine JSON-Datei generiert und diese mit dem <a href=\"/api/table_custom_endpoint.json\" target=\"_blank\">Dateiendpunkt <code>table_custom_endpoint.json</code></a> zur Verfügung stellt.",
+    "API_CUSTOM_SQL_description": "Benutzerdefinierte SQL-Abfrage, welche eine JSON-Datei generiert und diese mit dem <a href=\"/php/server/query_json.php?file=table_custom_endpoint.json\" target=\"_blank\">Dateiendpunkt <code>table_custom_endpoint.json</code></a> zur Verfügung stellt.",
     "API_CUSTOM_SQL_name": "Benutzerdefinierte SQL-Abfrage",
     "API_TOKEN_description": "API-Token zur Absicherung der Kommunikation – Sie können einen generieren oder einen beliebigen Wert eingeben. Er wird im Anfrage-Header übermittelt. Wird im <code>SYNC</code>-Plugin und GraphQL-Server verwendet.",
     "API_TOKEN_name": "API-Schlüssel",

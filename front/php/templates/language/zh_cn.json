@@ -1,5 +1,5 @@
 {
-    "API_CUSTOM_SQL_description": "您可以指定一个自定义 SQL 查询，它将生成一个 JSON 文件，然后通过 <a href=\"/api/table_custom_endpoint.json\" target=\"_blank\"><code>table_custom_endpoint.json</code> 文件端点</a> 公开它。",
+    "API_CUSTOM_SQL_description": "您可以指定一个自定义 SQL 查询，它将生成一个 JSON 文件，然后通过 <a href=\"/php/server/query_json.php?file=table_custom_endpoint.json\" target=\"_blank\"><code>table_custom_endpoint.json</code> 文件端点</a> 公开它。",
     "API_CUSTOM_SQL_name": "自定义终点",
     "API_TOKEN_description": "",
     "API_TOKEN_name": "",
