@@ -32,6 +32,7 @@ NetAlertX comes with MQTT support, allowing you to show all detected devices as 
       - Enable MQTT
       - Fill in the details from above
       - Fill in remaining settings as per description
+      - set MQTT_RUN to schedule or on_notification depending on requirements
 
 ![Configuration Example][configuration] 
 

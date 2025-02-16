@@ -1,9 +1,9 @@
 # 🔌 Plugins
 
-NetAlertX supports additional plugins to extend its functionality, each with its own settings and options. Plugins can be loaded via the General -> `LOADED_PLUGINS` setting. For custom plugin development, refer to the [Plugin development guide](/docs/PLUGINS_DEV.md).   
+NetAlertX supports additional plugins to extend its functionality, each with its own settings and options. Plugins can be loaded via the General -> `LOADED_PLUGINS` setting. For custom plugin development, refer to the [Plugin development guide](./PLUGINS_DEV.md).   
 
 >[!NOTE]
-> Please check this [Plugins debugging guide](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEBUG_PLUGINS.md) and the corresponding Plugin documentation in the below table if you are facing issues.  
+> Please check this [Plugins debugging guide](./DEBUG_PLUGINS.md) and the corresponding Plugin documentation in the below table if you are facing issues.  
 
 ## ⚡ Quick start
 
@@ -12,10 +12,10 @@ NetAlertX supports additional plugins to extend its functionality, each with its
 
 1. Pick your `🔍 dev scanner` plugin (e.g. `ARPSCAN` or `NMAPDEV`), or import devices into the application with an `📥 importer` plugin. (See **✅Enabling plugins** below)
 2. Pick a `▶️ publisher` plugin, if you want to send notifications. If you don't see a publisher you'd like to use, look at the  [📚_publisher_apprise](/front/plugins/_publisher_apprise/) plugin which is a proxy for over 80 notification services. 
-3. Setup your [Network topology diagram](/docs/NETWORK_TREE.md)
-4. Fine-tune [Notifications](/docs/NOTIFICATIONS.md)
-5. [Backup your setup](/docs/BACKUPS.md)
-6. Contribute and [Create custom plugins](/docs/PLUGINS_DEV.md)
+3. Setup your [Network topology diagram](./NETWORK_TREE.md)
+4. Fine-tune [Notifications](./NOTIFICATIONS.md)
+5. [Backup your setup](./BACKUPS.md)
+6. Contribute and [Create custom plugins](./PLUGINS_DEV.md)
 
 
 ## 📑 Available Plugins
@@ -74,7 +74,7 @@ Device-detecting plugins insert values into the `CurrentScan` database table.  T
 ## Plugin types
 
 
-| Plugin type    | Icon | Description                                                      | When to run                         | Required | Data source [?](/docs/PLUGINS_DEV.md) |
+| Plugin type    | Icon | Description                                                      | When to run                         | Required | Data source [?](./PLUGINS_DEV.md) |
 | -------------- | ---- | ---------------------------------------------------------------- | ----------------------------------- | -------- | ------------------------------------- |
 | publisher      | ▶️    | Sending notifications to services.                               | `on_notification`                   | ✖        | Script                                |
 | dev scanner    | 🔍    | Create devices in the app, manages online/offline device status. | `schedule`                          | ✖        | Script / SQLite DB                    |
@@ -109,4 +109,4 @@ Plugins can be enabled via Settings, and can be disabled as needed.
 
 ## 🆕 Developing new custom plugins
 
-If you want to develop a custom plugin, please read this [Plugin development guide](/docs/PLUGINS_DEV.md).
+If you want to develop a custom plugin, please read this [Plugin development guide](./PLUGINS_DEV.md).
