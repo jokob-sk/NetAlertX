@@ -633,7 +633,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "The host (IP) where the UNIFI controller is runnig. Do NOT include the protocol (e.g. <code>https://</code>)"
+          "string": "The host (IP) where the UNIFI controller is running. Do NOT include the protocol (e.g. <code>https://</code>)"
         },
         {
           "language_code": "es_es",
@@ -665,7 +665,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "The port number where the UNIFI controller is runnig. Usually it is <code>8443</code>, for UDM(P) devices its 443."
+          "string": "The port number where the UNIFI controller is running. Usually it is <code>8443</code>, for UDM(P) devices its 443."
         },
         {
           "language_code": "es_es",
