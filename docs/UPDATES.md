@@ -10,6 +10,9 @@ You can choose any approach that fits your workflow.
 
 > In the examples I assume that the container name is `netalertx` and the image name is `netalertx` as well.
 
+> [!NOTE]
+> See also [Backup strategies](./BACKUPS.md) to be on the safe side.  
+
 ## 1. Manual Updates
 
 Use this method when you need precise control over a single container or when dealing with a broken container that needs immediate attention.

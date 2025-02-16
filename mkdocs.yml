@@ -32,6 +32,7 @@ nav:
         - Home Assistant: HOME_ASSISTANT.md
         - Emails: SMTP.md
         - Backups: BACKUPS.md   
+        - Security: SECURITY.md
       - Advanced guides:
         - Remote Networks: REMOTE_NETWORKS.md      
         - Notifications Guide: NOTIFICATIONS.md        

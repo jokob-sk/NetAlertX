@@ -1,8 +1,8 @@
-# 💾 Backing things up
+# Backing things up
 
 > [!NOTE]
 > To backup 99% of your configuration backup at least the `/app/config` folder. Please read the whole page (or at least "Scenario 2: Corrupted database") for details.
-> Please also note that database definitions might change over versions. The safest way is to restore your older backups into the **same version** of the app and then gradually upgarde between releases to the latest version.
+> Note that database definitions might change over time. The safest way is to restore your older backups into the **same version** of the app they were taken from and then gradually upgarde between releases to the latest version.
 
 There are 3 artifacts that can be used to backup the application:
 
@@ -11,6 +11,46 @@ There are 3 artifacts that can be used to backup the application:
 | `/db/app.db`       | Database file(s)  | The database file might be in an uncommitted state or corrupted |
 | `/config/app.conf` | Configuration file |  Can be overridden with the [`APP_CONF_OVERRIDE` env variable](https://github.com/jokob-sk/NetAlertX/tree/main/dockerfiles#docker-environment-variables).  |
 | `/config/devices.csv`  | CSV file containing device information |     Doesn't contain historical data        |
+
+
+## Backup strategies
+
+The safest approach to backups is to backup everything, by taking regular file system backups (I use [Kopia](https://github.com/kopia/kopia)). 
+
+Arguably, the most time is spent setting up the device list, so if only one file is kept I'd recommend to have a latest backup of the `devices_<timestamp>.csv` or `devices.csv` file, followed by the `app.conf` file. You can also download `app.conf` and `devices.csv` file in the Maintenance section:
+
+![Backup and Restore Section in Maintenance](./img/BACKUPS/Maintenance_Backup_Restore.png)
+
+### Scenario 1: Full backup
+
+End-result: Full restore
+
+#### 💾 Source artifacts:
+
+- `/app/db/app.db` (uncorrupted)
+- `/app/config/app.conf`
+
+#### 📥 Recovery:
+
+To restore the application map the above files as described in the [Setup documentation](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md#docker-paths). 
+
+
+### Scenario 2: Corrupted database
+
+End-result: Partial restore (historical data and some plugin data will be missing)
+
+#### 💾 Source artifacts:
+
+- `/app/config/app.conf`
+- `/app/config/devices_<timestamp>.csv` or `/app/config/devices.csv`
+
+#### 📥 Recovery:
+
+Even with a corrupted database you can recover what I would argue is 99% of the configuration. 
+
+- upload the `app.conf` file into the mounted `/app/config/` folder as described in the [Setup documentation](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md#docker-paths).
+- rename the `devices_<timestamp>.csv` to `devices.csv` and place it in the `/app/config` folder
+- Restore the `devices.csv` backup via the [Maintenance section](./DEVICES_BULK_EDITING.md)
 
 ## Data and backup storage
 
@@ -43,44 +83,5 @@ Historical data is stored in the `app.db` database (See [Database overview](./DA
 - Plugin historical entries
 - History of Events, Notifications, Workflow Events
 - Presence history
-
-## 🧭 Backup strategies
-
-The safest approach to backups is to backup all of the above, by taking regular file system backups (I use [Kopia](https://github.com/kopia/kopia)). 
-
-Arguably, the most time is spent setting up the device list, so if only one file is kept I'd recommend to have a latest backup of the `devices_<timestamp>.csv` or `devices.csv` file, followed by the `app.conf` file. You can also download `app.conf` and `devices.csv` file in the Maintenance section:
-
-![Backup and Restore Section in Maintenance](./img/BACKUPS/Maintenance_Backup_Restore.png)
-
-### Scenario 1: Full backup
-
-End-result: Full restore
-
-#### Source artifacts:
-
-- `/app/db/app.db` (uncorrupted)
-- `/app/config/app.conf`
-
-#### Recovery:
-
-To restore the application map the above files as described in the [Setup documentation](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md#docker-paths). 
-
-
-### Scenario 2: Corrupted database
-
-End-result: Partial restore (historical data & configurations from the Maintenance section will be missing)
-
-#### Source artifacts:
-
-- `/app/config/app.conf`
-- `/app/config/devices_<timestamp>.csv` or `/app/config/devices.csv`
-
-#### Recovery:
-
-Even with a corrupted database you can recover what I would argue is 99% of the configuration. 
-
-- upload the `app.conf` file into the mounted `/app/config/` folder as described in the [Setup documentation](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md#docker-paths).
-- rename the `devices_<timestamp>.csv` to `devices.csv` and place it in the `/app/config` folder
-- Restore the `devices.csv` backup via the [Maintenance section](./DEVICES_BULK_EDITING.md)
 
 
