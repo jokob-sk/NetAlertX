@@ -94,23 +94,29 @@ def send(html, text):
     response_text = ''
     response_status_code = ''
 
+    # settings
+    token = get_setting_value('NTFY_TOKEN')
+    user = get_setting_value('NTFY_USER')
+    pwd = get_setting_value('NTFY_PASSWORD')
 
+    # prepare request headers
     headers = {
         "Title": "NetAlertX Notification",
         "Actions": "view, Open Dashboard, "+ get_setting_value('REPORT_DASHBOARD_URL'),
         "Priority": get_setting_value('NTFY_PRIORITY'),
         "Tags": "warning"
     }
-    
-    # if username and password are set generate hash and update header
-    if get_setting_value('NTFY_USER') != "" and get_setting_value('NTFY_PASSWORD') != "":
-	# Generate hash for basic auth
-        # usernamepassword = "{}:{}".format(get_setting_value('NTFY_USER'),get_setting_value('NTFY_PASSWORD'))
-        basichash = b64encode(bytes(get_setting_value('NTFY_USER') + ':' + get_setting_value('NTFY_PASSWORD'), "utf-8")).decode("ascii")
 
-	# add authorization header with hash
+    # if token or username and password are set generate hash and update header
+    if token != '':
+        headers["Authorization"] = "Bearer {}".format(token)
+    elif user != "" and pwd != "":
+	    # Generate hash for basic auth
+        basichash = b64encode(bytes(user + ':' + pwd, "utf-8")).decode("ascii")
+	    # add authorization header with hash
         headers["Authorization"] = "Basic {}".format(basichash)
 
+    # call NTFY service
     try:
         response = requests.post("{}/{}".format(   get_setting_value('NTFY_HOST'), 
                                         get_setting_value('NTFY_TOPIC')),
@@ -118,8 +124,6 @@ def send(html, text):
                                         headers = headers)
 
         response_status_code = response.status_code
-
-        
 
         # Check if the request was successful (status code 200)
         if response_status_code == 200:

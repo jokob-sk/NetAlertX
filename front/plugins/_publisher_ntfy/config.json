@@ -409,6 +409,34 @@
       ]
     },
     {
+      "function": "TOKEN",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": "",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "NTFY token"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Enter a token if authentication is enabled for hosting an instance. If a token is provided, the username and password will be ignored."
+        }
+      ]
+    },
+    {
       "function": "USER",
       "type": {
         "dataType": "string",
