@@ -33,6 +33,7 @@ To run the container execute: `sudo docker-compose up -d`
 Example by [SeimuS](https://github.com/SeimusS).
 
 ```yaml
+services:
   netalertx:
     container_name: NetAlertX
     hostname: NetAlertX
