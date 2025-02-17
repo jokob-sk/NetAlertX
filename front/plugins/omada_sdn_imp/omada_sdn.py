@@ -193,24 +193,46 @@ def add_uplink(
     sadevices_linksbymac,
     port_byswitchmac_byclientmac,
 ):
-    # mylog(OMDLOGLEVEL, [f'[{pluginName}] trying to add uplink="{uplink_mac}" to switch="{switch_mac}"'])
-    # mylog(OMDLOGLEVEL, [f'[{pluginName}] before adding:"{device_data_bymac[switch_mac]}"'])
-    if device_data_bymac[switch_mac][SWITCH_AP] == "null":
+    # Ensure switch_mac exists in device_data_bymac
+    if switch_mac not in device_data_bymac:
+        mylog("none", [f"[{pluginName}] switch_mac '{switch_mac}' not found in device_data_bymac"])
+        return
+    
+    # Ensure SWITCH_AP key exists in the dictionary
+    if SWITCH_AP not in device_data_bymac[switch_mac]:
+        mylog("none", [f"[{pluginName}] Missing key '{SWITCH_AP}' in device_data_bymac[{switch_mac}]"])
+        return
+    
+    # Check if uplink should be added
+    if device_data_bymac[switch_mac][SWITCH_AP] in [None, "null"]:
         device_data_bymac[switch_mac][SWITCH_AP] = uplink_mac
+
+        # Ensure uplink_mac exists in device_data_bymac
+        if uplink_mac not in device_data_bymac:
+            mylog("none", [f"[{pluginName}] uplink_mac '{uplink_mac}' not found in device_data_bymac"])
+            return
+        
+        # Determine port to uplink
         if (
-            device_data_bymac[switch_mac][TYPE] == "Switch"
-            and device_data_bymac[uplink_mac][TYPE] == "Switch"
+            device_data_bymac[switch_mac].get(TYPE) == "Switch"
+            and device_data_bymac[uplink_mac].get(TYPE) == "Switch"
         ):
-            port_to_uplink = port_byswitchmac_byclientmac[switch_mac][uplink_mac]
-            # find_port_of_uplink_switch(switch_mac, uplink_mac)
+            port_to_uplink = port_byswitchmac_byclientmac.get(switch_mac, {}).get(uplink_mac)
+            if port_to_uplink is None:
+                mylog("none", [f"[{pluginName}] Missing port info for switch_mac '{switch_mac}' and uplink_mac '{uplink_mac}'"])
+                return
         else:
-            port_to_uplink = device_data_bymac[uplink_mac][PORT_SSID]
+            port_to_uplink = device_data_bymac[uplink_mac].get(PORT_SSID)
+        
+        # Assign port to switch_mac
         device_data_bymac[switch_mac][PORT_SSID] = port_to_uplink
-    #    mylog(OMDLOGLEVEL, [f'[{pluginName}] after adding:"{device_data_bymac[switch_mac]}"'])
-    for link in sadevices_linksbymac[switch_mac]:
+    
+    # Recursively add uplinks for linked devices
+    for link in sadevices_linksbymac.get(switch_mac, []):
         if (
-            device_data_bymac[link][SWITCH_AP] == "null"
-            and device_data_bymac[switch_mac][TYPE] == "Switch"
+            link in device_data_bymac
+            and device_data_bymac[link].get(SWITCH_AP) in [None, "null"]
+            and device_data_bymac[switch_mac].get(TYPE) == "Switch"
         ):
             add_uplink(
                 switch_mac,
@@ -219,6 +241,7 @@ def add_uplink(
                 sadevices_linksbymac,
                 port_byswitchmac_byclientmac,
             )
+
 
 
 # ----------------------------------------------
