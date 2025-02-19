@@ -473,7 +473,10 @@ def mqtt_start(db):
                         "model": devDisplayName,
                         "last_connection": prepTimeStamp(str(device["devLastConnection"])),
                         "first_connection": prepTimeStamp(str(device["devFirstConnection"])),
-                        "sync_node": device["devSyncHubNode"]
+                        "sync_node": device["devSyncHubNode"],
+                        "group": device["devGroup"],
+                        "location": device["devLocation"],
+                        "parent_mac": device["devParentMAC"]
                         }
         
             # bulk update device sensors in home assistant      
