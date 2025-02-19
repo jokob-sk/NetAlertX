@@ -14,6 +14,7 @@
 
 ## Solution: Getting the `dnsmasq.leases` from the Asus router and configuriong the `DHCPLSS` plugin:
 
+
 1. Enable SSH login on your Asus router
 2. Generate a pair of SSH keys and place them inside `/root/.ssh/`
 3. In your router's admin-settings, paste the public key and disable "password login" for SSH
@@ -42,6 +43,19 @@ Host ASUS-GT-AXE16000
     Port 22
 ```
 6. Try a dry run with the command in step 4. If everything is fine, you should have a `dnsmasq.leases` file at your target location
+
+> [!NOTE]
+> You can also use ed25519 keys with passphrases. That makes the rsync command a little bit more complex.
+> First, one have to install sshpass: apt-get install sshpass
+> 1. create a file with your password that is required for the SSH key: `nano .password`
+> 2. Then change the `grabdnsmasq.sh` to: `#!/bin/bash sshpass -P passphrase -f '/root/.password' rsync -avzh -e 'ssh -i /root/.ssh/<yourprivatekey>' <asususer>@192.168.1.1:/var/lib/misc/dnsmasq.leases /mnt/service-data/netalertx_dhcp.leases/`
+> 3. replace:
+>  -  `/root/.password` to the path of the `.password` file
+>  -  `/root/.ssh/yourprivatekey` to the path of your private SSH key that is required for the ASUS router
+>  -  `asususer` to the login name of your ASUS router (standard is `admin`, not recommended)
+>  -  IP address of the ASUS router
+>  -  Path where rsync should copy the dhcp file (it should be a mounted path to NetAlertX) - here I use `/mnt/service-data/netalertx_dhcp.leases/`
+
 7. Edit crontab for root:
 
 `crontab -e`
