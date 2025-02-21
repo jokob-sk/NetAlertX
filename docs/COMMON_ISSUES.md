@@ -1,6 +1,6 @@
 ### Loading...
 
-Often if the application is misconfigured the `Loading...` dialog is continuously displayed. This is most likely caused by the backed failing to start. The **Maintenance -> Logs** section should give you more details on what's happenning. If there is no exception, check the Portainer log, or start the container in the foreground (without the `-d` parameter) to observe any exceptions. It's advisable to enable `trace` or `debug`. Check the [Debug tips](./DEBUG_TIPS.md) on detailed instructions. 
+Often if the application is misconfigured the `Loading...` dialog is continuously displayed. This is most likely caused by the backed failing to start. The **Maintenance -> Logs** section should give you more details on what's happening. If there is no exception, check the Portainer log, or start the container in the foreground (without the `-d` parameter) to observe any exceptions. It's advisable to enable `trace` or `debug`. Check the [Debug tips](./DEBUG_TIPS.md) on detailed instructions. 
 
 ### Incorrect SCAN_SUBNETS
 
@@ -8,7 +8,7 @@ One of the most common issues is not configuring `SCAN_SUBNETS` correctly. If th
 
 ### Duplicate devices and notifications
 
-The app uses the MAC address as an unique identifier for devices. If a new MAC is detected a new device is added to the application and corresponding notifications are triggered. This means that if the MAC of an existing device changes, the device will be logged as a new device. You can usually prevent this from happenning by changing the device configuration (in Android, iOS, or Windows) for your network. See the [Random Macs](./RANDOM_MAC.md) guide for details. 
+The app uses the MAC address as an unique identifier for devices. If a new MAC is detected a new device is added to the application and corresponding notifications are triggered. This means that if the MAC of an existing device changes, the device will be logged as a new device. You can usually prevent this from happening by changing the device configuration (in Android, iOS, or Windows) for your network. See the [Random Macs](./RANDOM_MAC.md) guide for details. 
 
 ### Permissions
 
@@ -46,3 +46,12 @@ The link above will probably break in time too. Go to https://packages.debian.or
 ### Only Router and own device show up
 
 Make sure that the subnet and interface in `SCAN_SUBNETS` are correct. If your device/NAS has multiple ethernet ports, you probably need to change `eth0` to something else.
+
+### Losing my settings and devices after an update
+
+If you lose your devices and/or settings after an update that means you don't have the `/app/db` and `/app/config` folders mapped to a permanent storage. That means every time you update these folders are re-created. Make sure you have the [volumes specified correctly](./DOCKER_COMPOSE.md) in your `docker-compose.yml` or run command.
+
+
+### The application is slow
+
+Slowness is usually caused by incorrect settings (the app might restart, so check the `app.log`), too many background processes (disable unnecessary scanners), too long scans (limit the number of scanned devices), too many disk operations, or some maintenance plugins might have failed. See the [Performance tips](./PERFORMANCE.md) docs for details.

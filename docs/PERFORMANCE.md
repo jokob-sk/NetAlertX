@@ -1,59 +1,96 @@
-# Performance tips
+# Performance Optimization Guide
 
-The application runs regular maintenance and DB cleanup tasks. If these tasks fail, you might encounter performance issues. 
+There are several ways to improve the application's performance. The application has been tested on a range of devices, from a Raspberry Pi 4 to NAS and NUC systems. If you are running the application on a lower-end device, carefully fine-tune the performance settings to ensure an optimal user experience.
 
-Most performance issues are caused by a big database or large log files. Enabling unnecessary plugins will also lead to performance degradation. 
+## Common Causes of Slowness
 
-You can always check the size of your database and database tables under the Maintenance page. 
+Performance issues are usually caused by:
 
-![Db size check](./img/PERFORMANCE/db_size_check.png)
+- **Incorrect settings** – The app may restart unexpectedly. Check `app.log` under **Maintenance → Logs** for details.
+- **Too many background processes** – Disable unnecessary scanners.
+- **Long scan durations** – Limit the number of scanned devices.
+- **Excessive disk operations** – Optimize scanning and logging settings.
+- **Failed maintenance plugins** – Ensure maintenance tasks are running properly.
+
+The application performs regular maintenance and database cleanup. If these tasks fail, performance may degrade.
+
+### Database and Log File Size
+
+A large database or oversized log files can slow down performance. You can check database and table sizes on the **Maintenance** page.
+
+![DB size check](./img/PERFORMANCE/db_size_check.png)
 
 > [!NOTE]
-> For around 100 devices the database should be approximately `50MB` and none of the entries (rows) should exceed the value of `10 000` on a healthy system. These numbers will depend on your network activity and settings. 
+> - For **~100 devices**, the database should be around **50MB**.
+> - No table should exceed **10,000 rows** in a healthy system.
+> - These numbers vary based on network activity and settings.
 
-## Maintenance plugins
+---
 
-There are 2 plugins responsible for maintaining the overal health of the application. One is responsible for the database cleanup and one for other tasks, such as log cleanup. 
+## Maintenance Plugins
 
-### DB Cleanup (DBCLNP)
+Two plugins help maintain the application’s performance:
 
-The database cleanup plugin. Check details and related setting in the [DB Cleanup plugin docs](/front/plugins/db_cleanup/README.md). Make sure the plugin is not failing by checking the logs. Try changing the schedule `DBCLNP_RUN_SCHD` and the timeout `DBCLNP_RUN_TIMEOUT` (increase) if the plugin is failing to execute.
+### **1. Database Cleanup (DBCLNP)**
+- Responsible for database maintenance.
+- Check settings in the [DB Cleanup Plugin Docs](/front/plugins/db_cleanup/README.md).
+- Ensure it’s not failing by checking logs.
+- Adjust the schedule (`DBCLNP_RUN_SCHD`) and timeout (`DBCLNP_RUN_TIMEOUT`) if needed.
 
-### Maintenance (MAINT)
+### **2. Maintenance (MAINT)**
+- Handles log cleanup and other maintenance tasks.
+- Check settings in the [Maintenance Plugin Docs](/front/plugins/maintenance/README.md).
+- Ensure it’s running correctly by checking logs.
+- Adjust the schedule (`MAINT_RUN_SCHD`) and timeout (`MAINT_RUN_TIMEOUT`) if needed.
 
-The maintenance plugin. Check details and related setting in the [Maintenance plugin docs](/front/plugins/maintenance/README.md). Make sure the plugin is not failing by checking the logs. Try changing the schedule `MAINT_RUN_SCHD` and the timeout `MAINT_RUN_TIMEOUT` (increase) if the plugin is failing to execute.
+---
 
-## Scan frequency and coverage
+## Scan Frequency and Coverage
 
-The more often you scan the networks the more resources, traffic and DB read/write cycles are executed. Especially on busy networks and lower end hardware, consider increasing scan intervals (`<PLUGIN>_RUN_SCHD`)  and timeouts (`<PLUGIN>_RUN_TIMEOUT`).
+Frequent scans increase resource usage, network traffic, and database read/write cycles.
 
-Also consider decreasing the scanned subnet, e.g. from `/16` to `/24` if need be.   
+### **Optimizations**
+- **Increase scan intervals** (`<PLUGIN>_RUN_SCHD`) on busy networks or low-end hardware.
+- **Extend scan timeouts** (`<PLUGIN>_RUN_TIMEOUT`) to prevent failures.
+- **Reduce the subnet size** – e.g., from `/16` to `/24` to lower scan loads.
 
-# Store temporary files in memory
+Some plugins have additional options to limit the number of scanned devices. If certain plugins take too long to complete, check if you can optimize scan times by selecting a scan range. 
 
-You can also store temporary files in application memory (`/app/api` and `/app/log` folders). See highlighted lines `◀` below.
+For example, the **ICMP plugin** allows you to specify a regular expression to scan only IPs that match a specific pattern.
+
+---
+
+## Storing Temporary Files in Memory
+
+On systems with slower I/O speeds, you can optimize performance by storing temporary files in memory. This primarily applies to the `/app/api` and `/app/log` folders.
+
+Using `tmpfs` reduces disk writes and improves performance. However, it should be **disabled** if persistent logs or API data storage are required.
+
+Below is an optimized `docker-compose.yml` snippet:
+
 
 ```yaml
 version: "3"
 services:
   netalertx:
     container_name: netalertx
-    # use the below line if you want to test the latest dev image
-    # image: "jokobsk/netalertx-dev:latest" 
+    # Uncomment the line below to test the latest dev image
+    # image: "jokobsk/netalertx-dev:latest"
     image: "jokobsk/netalertx:latest"      
     network_mode: "host"        
     restart: unless-stopped
     volumes:
       - local/path/config:/app/config
       - local/path/db:/app/db      
-      # (optional) useful for debugging if you have issues setting up the container
+      # (Optional) Useful for debugging setup issues
       - local/path/logs:/app/log
-      # (API: OPTION 1) use for performance
-      - type: tmpfs              # ◀
-        target: /app/api         # ◀
-      # (API: OPTION 2) use when debugging issues 
-      # -  local/path/api:/app/api
+      # (API: OPTION 1) Store temporary files in memory (recommended for performance)
+      - type: tmpfs              # ◀ 
+        target: /app/api         # ◀ 
+      # (API: OPTION 2) Store API data on disk (useful for debugging)
+      # - local/path/api:/app/api
     environment:
       - TZ=Europe/Berlin      
       - PORT=20211
+
 ```

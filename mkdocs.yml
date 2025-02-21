@@ -79,7 +79,7 @@ theme:
   favicon: img/NetAlertX_logo.png
   metadata:
     description: "NetAlertX Documentation - The go-to resource for all things related to NetAlertX."
-    image: "https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/front/img/NetAlertX_logo.png"
+    image: "https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/front/img/NetAlertX_logo_b_w_info.png"
   extra:
     home_hide_sidebar: true
     social:
