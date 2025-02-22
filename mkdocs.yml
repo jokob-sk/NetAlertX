@@ -82,7 +82,9 @@ theme:
     image: "https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/front/img/NetAlertX_logo_b_w_info.png"
   extra:
     home_hide_sidebar: true
-    google_tag_manager: "G-KCRSGLP8J2"
+    analytics:
+      provider: google
+      property: G-KCRSGLP8J2
     social:
     - icon: fontawesome/brands/github
       link: https://github.com/jokob-sk
