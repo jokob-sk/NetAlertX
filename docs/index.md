@@ -7,7 +7,7 @@ Welcome to the official NetAlertX documentation! NetAlertX is a powerful tool de
 NetAlertX provides contextual help within the application:
 
 - **Hover over settings, fields, or labels** to see additional tooltips and guidance.
-- **Click the blue ❔ (question-mark) icons** next to various elements to view detailed information.
+- **Click ❔ (question-mark) icons** next to various elements to view detailed information.
 - Access the in-app **Help / FAQ** section for frequently asked questions and quick answers.
 
 ---
