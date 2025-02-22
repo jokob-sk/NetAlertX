@@ -77,6 +77,7 @@ theme:
   name: material
   logo: img/NetAlertX_logo.png  # Reference the favicon here
   favicon: img/NetAlertX_logo.png
+  custom_dir: docs/overrides
   metadata:
     description: "NetAlertX Documentation - The go-to resource for all things related to NetAlertX."
     image: "https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/front/img/NetAlertX_logo_b_w_info.png"
