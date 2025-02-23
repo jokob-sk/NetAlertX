@@ -652,7 +652,7 @@
         {
           "name": "value",
           "type": "sql",
-          "value": "SELECT DISTINCT '' as id, '❌None' as name UNION SELECT devOwner as id, devOwner as name FROM (SELECT devOwner FROM Devices UNION SELECT 'House' ) AS all_devices ORDER BY id;"
+          "value": "SELECT DISTINCT '' as id, '❌None' as name UNION SELECT devOwner as id, devOwner as name FROM (SELECT devOwner FROM Devices) AS all_devices ORDER BY id;"
         }
       ],
       "localized": [
@@ -812,7 +812,7 @@
         {
           "name": "value",
           "type": "sql",
-          "value": "SELECT DISTINCT '' as id, '❌None' as name UNION SELECT devGroup as id, devGroup as name FROM (SELECT devGroup FROM Devices WHERE devGroup <> '' UNION SELECT 'Personal' UNION SELECT 'Always on' UNION SELECT 'Friends' UNION SELECT 'Others' ) AS all_devices ORDER BY id;"
+          "value": "SELECT DISTINCT '' as id, '❌None' as name UNION SELECT devGroup as id, devGroup as name FROM (SELECT devGroup FROM Devices WHERE devGroup <> '' ) AS all_devices ORDER BY id;"
         }
       ],
       "localized": [
@@ -856,7 +856,7 @@
         {
           "name": "value",
           "type": "sql",
-          "value": "SELECT DISTINCT '' AS id, '❌None' AS name UNION SELECT devLocation AS id, devLocation AS name FROM Devices WHERE devLocation NOT IN ('', 'null') AND devLocation IS NOT NULL UNION SELECT 'Kitchen' AS id, 'Kitchen' AS name UNION SELECT 'Living room' AS id, 'Living room' AS name ORDER BY id;"
+          "value": "SELECT DISTINCT '' AS id, '❌None' AS name UNION SELECT devLocation AS id, devLocation AS name FROM Devices WHERE devLocation NOT IN ('', 'null') AND devLocation IS NOT NULL ORDER BY id;"
         }
       ],
       "localized": [
