@@ -43,7 +43,7 @@ nav:
         - Webhooks (n8n): WEBHOOK_N8N.md
       - Help:
         - Common issues: COMMON_ISSUES.md
-        - Random MAC: RANDOM_MAC.md
+        - Random MAC: RANDOM_MAC.md       
       
   - Device guides:
       - Editing Devices:
@@ -71,6 +71,7 @@ nav:
       - Integrations:
         - Webhook Secret: WEBHOOK_SECRET.md
         - API: API.md     
+        - Helper scripts: HELPER_SCRIPTS.md
 
 
 theme:
