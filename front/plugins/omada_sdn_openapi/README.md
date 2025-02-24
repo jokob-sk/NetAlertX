@@ -65,7 +65,7 @@
 
 - Settings:
 
-- ![settings_example](/front/plugins/omada_sdn_openapi_import/omada_sdn_openapi_import_settings.png)
+- ![settings_example](/front/plugins/omada_sdn_openapi/omada_sdn_openapi_settings.png)
 
 ### ℹ️ Other info
 
