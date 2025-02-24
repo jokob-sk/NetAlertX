@@ -1,5 +1,5 @@
 {
-  "code_name": "omada_sdn_openapi_import",
+  "code_name": "omada_sdn_openapi",
   "unique_prefix": "OMDSDNOPENAPI",
   "plugin_type": "device_scanner",
   "execution_order" : "Layer_0",
