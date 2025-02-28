@@ -8,7 +8,6 @@ If you are running a DNS server, such as **AdGuard**, set up **Private reverse D
 > ```
 > jokob@Synology-NAS:/$ nslookup 192.168.1.58
 > ** server can't find 58.1.168.192.in-addr.arpa: NXDOMAIN
-> 
 > ```
 
 > Example 2: Reverse DNS `enabled`

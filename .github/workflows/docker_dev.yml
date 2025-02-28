@@ -1,4 +1,3 @@
----
 name: docker
 
 on:
@@ -37,7 +36,7 @@ jobs:
 
       - name: Get release version
         id: get_version
-        run: echo "::set-output name=version::${{ 'Dev' }}"
+        run: echo "version=Dev" >> $GITHUB_OUTPUT
 
       - name: Create .VERSION file
         run: echo "${{ steps.get_version.outputs.version }}" >> .VERSION
@@ -46,13 +45,13 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          # list of Docker images to use as base name for tags
           images: |
+            ghcr.io/jokob-sk/netalertx-dev
+            ghcr.io/jokob-sk/pi.alert-dev
             jokobsk/netalertx-dev
-          # generate Docker tags based on the following events/attributes
+            jokobsk/pi.alert-dev     
           tags: |
             type=raw,value=latest
-            type=schedule
             type=ref,event=branch
             type=ref,event=pr
             type=semver,pattern={{version}}
@@ -60,23 +59,19 @@ jobs:
             type=semver,pattern={{major}}
             type=sha
 
-      - name: Log in to Github Container registry
+      - name: Log in to Github Container Registry (GHCR)
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: jokob-sk
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Login to DockerHub
+      - name: Log in to DockerHub
         if: github.event_name != 'pull_request'
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      # # Disable this after use
-      # - name: Prune Docker Builder
-      #   run: docker builder prune --force
 
       - name: Build and push
         uses: docker/build-push-action@v3
@@ -86,6 +81,3 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          # # ⚠ disable cache if build is failing to download debian packages
-          # cache-from: type=registry,ref=ghcr.io/jokob-sk/netalertx:buildcache
-          # cache-to: type=registry,ref=ghcr.io/jokob-sk/netalertx:buildcache,mode=max

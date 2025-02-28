@@ -40,7 +40,7 @@ Copying the HTML code from [Font Awesome](https://fontawesome.com/search?o=r&m=f
 
 - The dropdown contains all icons already used in the app for device icons. You might need to navigate away or refresh the page once you add a new icon. 
 
-## 🌟 Pro Font Awesome icons
+## Font Awesome Pro icons
 
 If you own the premium package of Font Awesome icons you can mount it in your Docker container the following way:
 

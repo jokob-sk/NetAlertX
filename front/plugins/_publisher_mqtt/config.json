@@ -332,7 +332,7 @@
           }
         ]
       },
-      "default_value": "python3 /app/front/plugins/_publisher_mqtt/mqtt.py devices={devices}",
+      "default_value": "python3 /app/front/plugins/_publisher_mqtt/mqtt.py",
       "options": [],
       "localized": ["name", "description"],
       "name": [

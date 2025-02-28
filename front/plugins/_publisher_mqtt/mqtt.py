@@ -464,6 +464,7 @@ def mqtt_start(db):
             sensorConfig = create_sensor(mqtt_client, deviceId, devDisplayName, 'sensor', 'first_connection', 'calendar-start', device["devMac"])
             sensorConfig = create_sensor(mqtt_client, deviceId, devDisplayName, 'sensor', 'last_connection', 'calendar-end', device["devMac"])
         
+            # handle device_tracker
             # device_tracker attributes
             devJson = { 
                         "last_ip": device["devLastIP"], 
@@ -480,9 +481,6 @@ def mqtt_start(db):
                         "network_parent_name": next((dev["devName"] for dev in devices if dev["devMAC"] == device["devParentMAC"]), "")
                         }
         
-            # bulk update device sensors in home assistant      
-            publish_mqtt(mqtt_client, sensorConfig.state_topic, devJson) 
-
             #  create and update is_present sensor
             sensorConfig = create_sensor(mqtt_client, deviceId, devDisplayName, 'binary_sensor', 'is_present', 'wifi', device["devMac"])
             publish_mqtt(mqtt_client, sensorConfig.state_topic, 
