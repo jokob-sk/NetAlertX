@@ -55,7 +55,7 @@ services:
   pialert:
     container_name: pialert
     # use the below line if you want to test the latest dev image
-    # image: "jokobsk/netalertx-dev:latest" 
+    # image: "ghcr.io/jokob-sk/netalertx-dev:latest" 
     image: "jokobsk/pialert:latest"      
     network_mode: "host"        
     restart: unless-stopped
@@ -77,7 +77,7 @@ services:
   netalertx:                                  # ⚠  This has changed (🟡optional) 
     container_name: netalertx                 # ⚠  This has changed (🟡optional) 
     # use the below line if you want to test the latest dev image
-    # image: "jokobsk/netalertx-dev:latest" 
+    # image: "ghcr.io/jokob-sk/netalertx-dev:latest" 
     image: "jokobsk/netalertx:latest"         # ⚠  This has changed (🟡optional/🔺required in future) 
     network_mode: "host"        
     restart: unless-stopped
@@ -105,7 +105,7 @@ services:
   pialert:
     container_name: pialert
     # use the below line if you want to test the latest dev image
-    # image: "jokobsk/netalertx-dev:latest" 
+    # image: "ghcr.io/jokob-sk/netalertx-dev:latest" 
     image: "jokobsk/pialert:latest"      
     network_mode: "host"        
     restart: unless-stopped
@@ -127,7 +127,7 @@ services:
   netalertx:                                  # ⚠  This has changed (🟡optional) 
     container_name: netalertx                 # ⚠  This has changed (🟡optional) 
     # use the below line if you want to test the latest dev image
-    # image: "jokobsk/netalertx-dev:latest" 
+    # image: "ghcr.io/jokob-sk/netalertx-dev:latest" 
     image: "jokobsk/netalertx:latest"         # ⚠  This has changed (🟡optional/🔺required in future) 
     network_mode: "host"        
     restart: unless-stopped

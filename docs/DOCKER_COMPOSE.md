@@ -7,7 +7,7 @@ services:
   netalertx:
     container_name: netalertx
     # use the below line if you want to test the latest dev image
-    # image: "jokobsk/netalertx-dev:latest" 
+    # image: "ghcr.io/jokob-sk/netalertx-dev:latest" 
     image: "jokobsk/netalertx:latest"      
     network_mode: "host"        
     restart: unless-stopped
@@ -39,7 +39,7 @@ services:
     hostname: NetAlertX
     privileged: true
     # use the below line if you want to test the latest dev image
-    # image: "jokobsk/netalertx-dev:latest" 
+    # image: "ghcr.io/jokob-sk/netalertx-dev:latest" 
     image: jokobsk/netalertx:latest
     environment:
       - TZ=Europe/Bratislava
@@ -61,7 +61,7 @@ services:
   netalertx:
     container_name: netalertx
     # use the below line if you want to test the latest dev image
-    # image: "jokobsk/netalertx-dev:latest" 
+    # image: "ghcr.io/jokob-sk/netalertx-dev:latest" 
     image: "jokobsk/netalertx:latest"      
     network_mode: "host"        
     restart: unless-stopped

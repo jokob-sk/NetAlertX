@@ -28,7 +28,7 @@ docker run --rm --network=host \
 
 If possible, check if your issue got fixed in the `_dev` image before opening a new issue. The container is:
 
-`jokobsk/netalertx-dev:latest`
+`ghcr.io/jokob-sk/netalertx-dev:latest`
 
 > ⚠ Please backup your DB and config beforehand!
 

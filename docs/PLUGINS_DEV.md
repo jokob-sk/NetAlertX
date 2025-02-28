@@ -1,4 +1,4 @@
-## 🌟 Create a custom plugin: Overview
+# Creating a custom plugin
 
 NetAlertX comes with a plugin system to feed events from third-party scripts into the UI and then send notifications, if desired. The highlighted core functionality this plugin system supports, is:
 

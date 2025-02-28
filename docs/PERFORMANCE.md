@@ -75,7 +75,7 @@ services:
   netalertx:
     container_name: netalertx
     # Uncomment the line below to test the latest dev image
-    # image: "jokobsk/netalertx-dev:latest"
+    # image: "ghcr.io/jokob-sk/netalertx-dev:latest"
     image: "jokobsk/netalertx:latest"      
     network_mode: "host"        
     restart: unless-stopped

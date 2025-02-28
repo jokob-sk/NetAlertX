@@ -47,9 +47,7 @@ jobs:
         with:
           images: |
             ghcr.io/jokob-sk/netalertx-dev
-            ghcr.io/jokob-sk/pi.alert-dev
             jokobsk/netalertx-dev
-            jokobsk/pi.alert-dev     
           tags: |
             type=raw,value=latest
             type=ref,event=branch
