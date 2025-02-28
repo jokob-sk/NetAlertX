@@ -331,7 +331,7 @@
           }
         ]
       },
-      "default_value": "python3 /app/front/plugins/omada_sdn_openapi_import/script.py",
+      "default_value": "python3 /app/front/plugins/omada_sdn_openapi/script.py",
       "options": [],
       "localized": ["name", "description"],
       "name": [
