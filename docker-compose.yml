@@ -52,7 +52,6 @@ services:
       - ${DEV_LOCATION}/front/events.php:/app/front/events.php
       - ${DEV_LOCATION}/front/plugins.php:/app/front/plugins.php
       - ${DEV_LOCATION}/front/pluginsCore.php:/app/front/pluginsCore.php
-      - ${DEV_LOCATION}/front/help_faq.php:/app/front/help_faq.php
       - ${DEV_LOCATION}/front/index.php:/app/front/index.php
       - ${DEV_LOCATION}/front/maintenance.php:/app/front/maintenance.php
       - ${DEV_LOCATION}/front/network.php:/app/front/network.php

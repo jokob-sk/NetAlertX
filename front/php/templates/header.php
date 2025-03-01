@@ -432,23 +432,9 @@
           </ul>
         </li>
 
-        <!-- About menu item -->
-        <li class=" treeview <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('help_faq.php', 'systeminfo.php' ) ) ){ echo 'active menu-open'; } ?>">
-          <a href="#">
-          <i class="fa fa-fw fa-info"></i> <span><?= lang('Navigation_About');?></span>
-            <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
-            </span>
-          </a>
-          <ul class="treeview-menu " style="display: <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('help_faq.php', 'systeminfo.php' ) ) ){ echo 'block'; } else {echo 'none';} ?>;">
-            <li>
-              <a href="help_faq.php">  <?= lang("Navigation_HelpFAQ");?> </a>
-            </li>
-            <li>
-              <a href="systeminfo.php"> <?= lang("Navigation_SystemInfo");?> </a>
-            </li>            
-            
-          </ul>
+        <!-- system info menu item -->
+        <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('systeminfo.php') ) ){ echo 'active'; } ?>">
+          <a href="systeminfo.php"><i class="fa fa-fw fa-info-circle"></i> <span><?= lang('Navigation_SystemInfo');?></span></a>
         </li>
 
       </ul>

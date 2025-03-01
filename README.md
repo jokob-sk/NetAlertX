@@ -119,7 +119,6 @@ Proudly using [Weblate](https://hosted.weblate.org/projects/pialert/). Help out 
 [network]:                  ./docs/img/network.png                        "Screen 5"
 [settings]:                 ./docs/img/settings.png                       "Screen 6"
 [showcase]:                 ./docs/img/showcase.gif                       "Screen 6"
-[help_faq]:                 ./docs/img/help_faq.png                       "Screen 7"
 [sync_hub]:                 ./docs/img/sync_hub.png                       "Screen 8"
 [notification_center]:      ./docs/img/notification_center.png            "Screen 8"
 [sent_reports_text]:        ./docs/img/sent_reports_text.png              "Screen 8"

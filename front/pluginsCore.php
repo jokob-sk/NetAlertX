@@ -12,7 +12,7 @@
 
 <!-- Main content ---------------------------------------------------------- -->
 <section class="content">
-  <div class="plugin-filters">
+  <div class="plugin-filters hidden" >
     <div class="input-group col-sm-12">
       <label class="col-sm-3"><?= lang('Plugins_Filters_Mac');?></label>
       <input class="col-sm-3" id="txtMacFilter" type="text" value="--" readonly>
