@@ -78,7 +78,7 @@ services:
     container_name: netalertx                 # ⚠  This has changed (🟡optional) 
     # use the below line if you want to test the latest dev image
     # image: "ghcr.io/jokob-sk/netalertx-dev:latest" 
-    image: "jokobsk/netalertx:latest"         # ⚠  This has changed (🟡optional/🔺required in future) 
+    image: "ghcr.io/jokob-sk/netalertx:latest"         # ⚠  This has changed (🟡optional/🔺required in future) 
     network_mode: "host"        
     restart: unless-stopped
     volumes:
@@ -128,7 +128,7 @@ services:
     container_name: netalertx                 # ⚠  This has changed (🟡optional) 
     # use the below line if you want to test the latest dev image
     # image: "ghcr.io/jokob-sk/netalertx-dev:latest" 
-    image: "jokobsk/netalertx:latest"         # ⚠  This has changed (🟡optional/🔺required in future) 
+    image: "ghcr.io/jokob-sk/netalertx:latest"         # ⚠  This has changed (🟡optional/🔺required in future) 
     network_mode: "host"        
     restart: unless-stopped
     volumes:

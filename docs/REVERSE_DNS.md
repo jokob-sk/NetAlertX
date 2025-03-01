@@ -34,7 +34,7 @@ You can specify the DNS server in the docker-compose to improve name resolution 
 services:
   netalertx:
     container_name: netalertx
-    image: "jokobsk/netalertx:latest"
+    image: "ghcr.io/jokob-sk/netalertx:latest"
     restart: unless-stopped
     volumes:
       -  /home/netalertx/config:/app/config
@@ -60,7 +60,7 @@ version: "3"
 services:
   netalertx:
     container_name: netalertx
-    image: "jokobsk/netalertx:latest"
+    image: "ghcr.io/jokob-sk/netalertx:latest"
     restart: unless-stopped
     volumes:
       - ./config/app.conf:/app/config/app.conf

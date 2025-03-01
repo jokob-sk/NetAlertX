@@ -477,7 +477,7 @@ docker run -d --rm --network=host \
   -v /appl/docker/netalertx/default:/etc/nginx/sites-available/default \
   -e TZ=Europe/Amsterdam \
   -e PORT=20211 \
-  jokobsk/netalertx:latest
+  ghcr.io/jokob-sk/netalertx:latest
 
 ```
 

@@ -18,7 +18,7 @@ docker run --rm --network=host \
   -v local/path/netalertx/db:/app/db \
   -e TZ=Europe/Berlin \
   -e PORT=20211 \
-  jokobsk/netalertx:latest
+  ghcr.io/jokob-sk/netalertx:latest
 
 ```
 

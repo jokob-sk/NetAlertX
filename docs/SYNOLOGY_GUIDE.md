@@ -36,7 +36,7 @@ services:
     container_name: netalertx
     # use the below line if you want to test the latest dev image
     # image: "ghcr.io/jokob-sk/netalertx-dev:latest" 
-    image: "jokobsk/netalertx:latest"      
+    image: "ghcr.io/jokob-sk/netalertx:latest"      
     network_mode: "host"        
     restart: unless-stopped
     volumes:

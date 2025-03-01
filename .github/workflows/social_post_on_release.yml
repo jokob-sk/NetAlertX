@@ -25,13 +25,23 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Set Git config
+        run: |
+          git config --global user.email "github-actions@github.com"
+          git config --global user.name "GitHub Actions"
+
       - name: Create tweet file
         run: |
           echo "🎉 New release: **${{ github.event.release.name }}** is live! 🚀" > .github/tweet.md
           echo "Check it out here: ${{ github.event.release.html_url }}" >> .github/tweet.md
           git add .github/tweet.md
           git commit -m "Add release tweet for ${{ github.event.release.name }}"
-          git push
+
+      - name: Push changes
+        run: |
+          git push https://github.com/${{ github.repository }}.git HEAD:main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Tweet
         uses: twitter-together/action@v3

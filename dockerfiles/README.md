@@ -31,7 +31,7 @@ docker run -d --rm --network=host \
   -e PUID=200 -e PGID=300 \
   -e TZ=Europe/Berlin \
   -e PORT=20211 \
-  jokobsk/netalertx:latest
+  ghcr.io/jokob-sk/netalertx:latest
 ```
 
 See alternative [docked-compose examples](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DOCKER_COMPOSE.md).

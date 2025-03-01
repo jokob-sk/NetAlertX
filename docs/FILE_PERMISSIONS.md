@@ -7,7 +7,7 @@
 >  -e TZ=Europe/Berlin \
 >  -e PUID=200 -e PGID=200 \
 >  -e PORT=20211 \
->  jokobsk/netalertx:latest
+>  ghcr.io/jokob-sk/netalertx:latest
 > ```
 NetAlertX runs on an Nginx web server. On Alpine Linux, Nginx operates as the `nginx` user (if PUID and GID environment variables are not specified, nginx user UID will be set to 102, and its supplementary group `www-data` ID to 82). Consequently, files accessed or written by the NetAlertX application are owned by `nginx:www-data`.
 
