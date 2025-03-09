@@ -150,7 +150,8 @@
     let formattedDateTime = `${day}-${month}-${year} ${hour}:${minute}:${second}`;
 
     if (document.getElementById) {
-      document.getElementById("PIA_Servertime_place").innerHTML = '(' + formattedDateTime + ')';
+      document.getElementById("NAX_Servertime_plc").innerHTML = '(' + formattedDateTime + ')';
+      document.getElementById("NAX_TZ").innerHTML = timeZone;
     }
 
     setTimeout(update_servertime, 1000); // Call recursively every second
@@ -234,7 +235,13 @@
           <!-- Server Name -->
           <li>
             <div class="header-server-time small">
-              <div><?php echo gethostname();?></div> <div><span id="PIA_Servertime_place"></span></div>
+              <div>
+                <?php echo gethostname();?>
+              </div> 
+              <div>
+                <span id="NAX_Servertime_plc"></span>
+                <span id="NAX_TZ" class="hidden"></span>
+              </div>
             </div>
           </li>
 
@@ -414,17 +421,21 @@
         </li>
 
         <!-- Integrations menu item -->
-        <li class=" treeview <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('plugins.php', 'workflows.php' ) ) ){ echo 'active menu-open'; } ?>">
+        <li class=" treeview <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('plugins.php', 'workflows.php', 'appEvents.php' ) ) ){ echo 'active menu-open'; } ?>">
           <a href="#">
           <i class="fa fa-fw fa-plug"></i> <span><?= lang('Navigation_Integrations');?></span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>
           </a>
-          <ul class="treeview-menu " style="display: <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('plugins.php', 'workflows.php' ) ) ){ echo 'block'; } else {echo 'none';} ?>;">                    
+          <ul class="treeview-menu " style="display: <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('plugins.php', 'workflows.php', 'appEvents.php' ) ) ){ echo 'block'; } else {echo 'none';} ?>;">                    
             <li>
               <div class="info-icon-nav">  </div>
               <a href="workflows.php"><?= lang('Navigation_Workflows');?></a>
+            </li>
+            <li>
+              <div class="info-icon-nav">  </div>
+              <a href="appEvents.php"><?= lang('Navigation_AppEvents');?></a>
             </li>
             <li>
               <a href="plugins.php"><?= lang("Navigation_Plugins");?> </a>

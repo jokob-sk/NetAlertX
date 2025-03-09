@@ -71,7 +71,7 @@ sql_devices_all = """
                     FROM Devices
                     """
 
-sql_appevents = """select * from AppEvents"""
+sql_appevents = """select * from AppEvents order by DateTimeCreated desc"""
 # The below query calculates counts of devices in various categories: 
 #  (connected/online, offline, down, new, archived), 
 #  as well as a combined count for devices that match any status listed in the UI_MY_DEVICES setting

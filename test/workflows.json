@@ -1,0 +1,74 @@
+[
+  {
+    "name": "Sample Device Update Workflow",
+    "trigger": {
+      "object_type": "Devices",
+      "event_type": "update"
+    },
+    "conditions": [
+      {
+        "logic": "AND",
+        "conditions": [
+          {
+            "field": "devVendor",
+            "operator": "contains",
+            "value": "Google"
+          },
+          {
+            "field": "devIsNew",
+            "operator": "equals",
+            "value": "1"
+          },
+          {
+            "logic": "OR",
+            "conditions": [
+              {
+                "field": "devIsNew",
+                "operator": "equals",
+                "value": "1"
+              },
+              {
+                "field": "devName",
+                "operator": "contains",
+                "value": "Google"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "type": "update_field",
+        "field": "devIsNew",
+        "value": "0"
+      }
+    ]
+  },
+  {
+    "name": "Sample Plugin Object Workflow",
+    "trigger": {
+      "object_type": "Plugins_Objects",
+      "event_type": "create"
+    },
+    "conditions": [
+      {
+        "logic": "AND",
+        "conditions": [
+          {
+            "field": "Plugin",
+            "operator": "equals",
+            "value": "ARPSCAN"
+          },
+          {
+            "field": "Status",
+            "operator": "equals",
+            "value": "missing-in-last-scan"
+          }
+        ]
+      }
+    ],
+    "actions": [     
+    ]
+  }
+]

@@ -28,13 +28,14 @@ from logger import  mylog
 from helper import  filePermissions, timeNowTZ, get_setting_value
 from app_state import updateState
 from api import update_api
-from networkscan import process_scan
+from scan.session_events import process_scan
 from initialise import importConfigs
 from database import DB
 from reporting import get_notifications
 from notification import Notification_obj
 from plugin import run_plugin_scripts, check_and_run_user_event 
-from device import update_devices_names
+from scan.device_handling import update_devices_names
+from workflows.manager import WorkflowManager 
 
 #===============================================================================
 #===============================================================================
@@ -78,6 +79,9 @@ def main ():
 
     # Upgrade DB if needed
     db.upgradeDB()
+
+    # Initialize the WorkflowManager
+    workflow_manager = WorkflowManager(db)
 
     #===============================================================================
     # This is the main loop of NetAlertX 
@@ -180,15 +184,37 @@ def main ():
 
             # Commit SQL
             db.commitDB()        
-            
-            # Footer
-            
+                        
             mylog('verbose', ['[MAIN] Process: Idle'])            
         else:
             # do something  
             # mylog('verbose', ['[MAIN] Waiting to start next loop'])
-            updateState("Process: Idle")  
-            
+            updateState("Process: Idle")
+
+        # WORKFLOWS handling 
+        # ----------------------------------------
+        # Fetch new unprocessed events
+        new_events = workflow_manager.get_new_app_events()
+
+        # Process each new event and check triggers
+        if new_events:
+            updateState("Workflows: Start")
+            update_api_flag = False
+            for event in new_events:
+                mylog('debug', [f'[MAIN] Processing WORKFLOW app event with GUID {event["GUID"]}'])
+
+                # proceed to process events
+                workflow_manager.process_event(event)  
+
+                if workflow_manager.update_api:
+                    # Update API endpoints if needed  
+                    update_api_flag = True   
+
+            if update_api_flag:     
+                update_api(db, all_plugins, True)
+
+            updateState("Workflows: End")
+           
 
         #loop     
         time.sleep(5) # wait for N seconds      

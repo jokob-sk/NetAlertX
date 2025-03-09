@@ -10,7 +10,7 @@
 <div class="content-wrapper">
 
 <?php
-   require 'workflowsCore.php';
+   require 'appEventsCore.php';
 ?>
 
         

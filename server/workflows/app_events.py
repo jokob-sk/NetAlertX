@@ -1,12 +1,27 @@
 import datetime
 import json
 import uuid
+import sys
+import pytz
+
+# Register NetAlertX directories
+INSTALL_PATH="/app"
+sys.path.extend([f"{INSTALL_PATH}/server"])
 
 # Register NetAlertX modules 
 import conf
+from helper import get_setting_value, timeNowTZ
+# Make sure the TIMEZONE for logging is correct
+# conf.tz = pytz.timezone(get_setting_value('TIMEZONE'))
+
+from logger import mylog, Logger, print_log, logResult
+
+# Make sure log level is initialized correctly
+Logger(get_setting_value('LOG_LEVEL'))
+
 from const import applicationPath, logPath, apiPath, confFileName, sql_generateGuid
-from logger import logResult, mylog, print_log
 from helper import  timeNowTZ
+
 
 #-------------------------------------------------------------------------------
 # Execution object handling
@@ -32,6 +47,7 @@ class AppEvent_obj:
         self.db.sql.execute("""CREATE TABLE IF NOT EXISTS "AppEvents" (
             "Index"                 INTEGER,
             "GUID"                  TEXT UNIQUE,
+            "AppEventProcessed"     BOOLEAN,
             "DateTimeCreated"       TEXT,
             "ObjectType"            TEXT, -- ObjectType (Plugins, Notifications, Events)
             "ObjectGUID"            TEXT,
@@ -59,7 +75,9 @@ class AppEvent_obj:
         sql_devices_mappedColumns = '''
                     "GUID",
                     "DateTimeCreated",
+                    "AppEventProcessed",
                     "ObjectType",
+                    "ObjectGUID",
                     "ObjectPrimaryID",
                     "ObjectSecondaryID",
                     "ObjectStatus",
@@ -81,7 +99,9 @@ class AppEvent_obj:
                 VALUES (                    
                     {sql_generateGuid},
                     DATETIME('now'),
+                    FALSE,
                     'Devices',
+                    NEW.devGUID,
                     NEW.devMac,
                     NEW.devLastIP,
                     CASE WHEN NEW.devPresentLastScan = 1 THEN 'online' ELSE 'offline' END,
@@ -111,7 +131,9 @@ class AppEvent_obj:
                 VALUES (                    
                     {sql_generateGuid},
                     DATETIME('now'),
+                    FALSE,
                     'Devices',
+                    NEW.devGUID,
                     NEW.devMac,
                     NEW.devLastIP,
                     CASE WHEN NEW.devPresentLastScan = 1 THEN 'online' ELSE 'offline' END,
@@ -135,7 +157,9 @@ class AppEvent_obj:
                 VALUES (                    
                     {sql_generateGuid},
                     DATETIME('now'),
+                    FALSE,
                     'Devices',
+                    OLD.devGUID,
                     OLD.devMac,
                     OLD.devLastIP,
                     CASE WHEN OLD.devPresentLastScan = 1 THEN 'online' ELSE 'offline' END,
@@ -155,7 +179,9 @@ class AppEvent_obj:
         sql_plugins_objects_mappedColumns = '''
                     "GUID",
                     "DateTimeCreated",
+                    "AppEventProcessed",
                     "ObjectType",                    
+                    "ObjectGUID",                    
                     "ObjectPlugin",
                     "ObjectPrimaryID",
                     "ObjectSecondaryID",
@@ -176,8 +202,10 @@ class AppEvent_obj:
                 VALUES (
                     {sql_generateGuid},
                     DATETIME('now'),
-                    'Plugins_Objects',                    
-                    NEW.Plugin,
+                    FALSE,
+                    'Plugins_Objects',   
+                    NEW.ObjectGUID,                 
+                    NEW.Plugin,                    
                     NEW.Object_PrimaryID,
                     NEW.Object_SecondaryID,
                     NEW.ForeignKey,
@@ -199,7 +227,9 @@ class AppEvent_obj:
                 VALUES (
                     {sql_generateGuid},
                     DATETIME('now'),
+                    FALSE,
                     'Plugins_Objects',
+                    NEW.ObjectGUID, 
                     NEW.Plugin,
                     NEW.Object_PrimaryID,
                     NEW.Object_SecondaryID,
@@ -222,7 +252,9 @@ class AppEvent_obj:
                 VALUES (
                     {sql_generateGuid},
                     DATETIME('now'),
+                    FALSE,
                     'Plugins_Objects',
+                    OLD.ObjectGUID, 
                     OLD.Plugin,
                     OLD.Object_PrimaryID,
                     OLD.Object_SecondaryID,

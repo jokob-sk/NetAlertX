@@ -1,62 +1,17 @@
+import sys
+
+# Register NetAlertX directories
+INSTALL_PATH="/app"
+sys.path.extend([f"{INSTALL_PATH}/server"])
 
 import subprocess
-
 import conf
 import os
 import re
 from helper import timeNowTZ, get_setting, get_setting_value, list_to_where, resolve_device_name_dig, get_device_name_nbtlookup, get_device_name_nslookup, get_device_name_mdns, check_IP_format, sanitize_SQL_input
 from logger import mylog, print_log
 from const import vendorsPath, vendorsPathNewest, sql_generateGuid
-
-#-------------------------------------------------------------------------------
-# Device object handling (WIP)
-#-------------------------------------------------------------------------------
-class Device_obj:
-    def __init__(self, db):
-        self.db = db
-
-    # Get all
-    def getAll(self):
-        self.db.sql.execute("""
-            SELECT * FROM Devices
-        """)
-        return self.db.sql.fetchall()
-    
-    # Get all with unknown names
-    def getUnknown(self):
-        self.db.sql.execute("""
-            SELECT * FROM Devices WHERE devName in ("(unknown)", "(name not found)", "" )
-        """)
-        return self.db.sql.fetchall()
-
-    # Get specific column value based on devMac
-    def getValueWithMac(self, column_name, devMac):
-
-        query = f"SELECT {column_name} FROM Devices WHERE devMac = ?"
-
-        self.db.sql.execute(query, (devMac,))
-
-        result = self.db.sql.fetchone()
-
-        return result[column_name] if result else None
-
-    # Get all down
-    def getDown(self):
-        self.db.sql.execute("""
-            SELECT * FROM Devices WHERE devAlertDown = 1 and devPresentLastScan = 0
-        """)
-        return self.db.sql.fetchall()
-    
-    # Get all down
-    def getOffline(self):
-        self.db.sql.execute("""
-            SELECT * FROM Devices WHERE devPresentLastScan = 0
-        """)
-        return self.db.sql.fetchall()
-
-
-    
-
+from models.device_instance import DeviceInstance
 
 #-------------------------------------------------------------------------------
 # Removing devices from the CurrentScan DB table which the user chose to ignore by MAC or IP
@@ -535,7 +490,7 @@ def update_devices_names (db):
     foundNbtLookup = 0
 
     # Gen unknown devices    
-    device_handler = Device_obj(db)
+    device_handler = DeviceInstance(db)
     # Retrieve devices
     unknownDevices = device_handler.getUnknown()
 

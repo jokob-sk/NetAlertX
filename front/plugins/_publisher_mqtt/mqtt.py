@@ -293,9 +293,6 @@ def create_sensor(mqtt_client, deviceId, deviceName, sensorType, sensorName, ico
     #  check previous configs
     sensorConfig = sensor_config(deviceId, deviceName, sensorType, sensorName, icon, mac) 
 
-    mylog('verbose', [f"[{pluginName}] Publishing sensor number {len(mqtt_sensors)}"])
-    
-
     # send if new 
     if sensorConfig.isNew: 
 

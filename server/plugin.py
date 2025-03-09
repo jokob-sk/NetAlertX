@@ -18,6 +18,7 @@ from api import update_api
 from plugin_utils import logEventStatusCounts, get_plugin_string, get_plugin_setting_obj, print_plugin_info, list_to_csv, combine_plugin_objects, resolve_wildcards_arr, handle_empty, custom_plugin_decoder, decode_and_rename_files
 from notification import Notification_obj, write_notification
 from user_events_queue import UserEventsQueue
+from crypto_utils import generate_deterministic_guid
 
 # Make sure log level is initialized correctly
 Logger(get_setting_value('LOG_LEVEL'))
@@ -582,13 +583,14 @@ def process_plugin_events(db, plugin, plugEventsArr):
             for plugObj in pluginObjects:
                 #  keep old createdTime time if the plugObj already was created before
                 createdTime = plugObj.changed if plugObj.status == 'new' else plugObj.created
-                #  18 values without Index
+                #  19 values without Index
                 values = (
                     plugObj.pluginPref, plugObj.primaryId, plugObj.secondaryId, createdTime,
                     plugObj.changed, plugObj.watched1, plugObj.watched2, plugObj.watched3,
                     plugObj.watched4, plugObj.status, plugObj.extra, plugObj.userData,
                     plugObj.foreignKey, plugObj.syncHubNodeName,
-                    plugObj.helpVal1, plugObj.helpVal2, plugObj.helpVal3, plugObj.helpVal4
+                    plugObj.helpVal1, plugObj.helpVal2, plugObj.helpVal3, plugObj.helpVal4,
+                    plugObj.objectGUID
                 )
 
                 if plugObj.status == 'new':
@@ -625,8 +627,8 @@ def process_plugin_events(db, plugin, plugEventsArr):
                     ("Plugin", "Object_PrimaryID", "Object_SecondaryID", "DateTimeCreated", 
                     "DateTimeChanged", "Watched_Value1", "Watched_Value2", "Watched_Value3", 
                     "Watched_Value4", "Status", "Extra", "UserData", "ForeignKey", "SyncHubNodeName",
-                    "HelpVal1", "HelpVal2", "HelpVal3", "HelpVal4") 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    "HelpVal1", "HelpVal2", "HelpVal3", "HelpVal4", "ObjectGUID") 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """, objects_to_insert
                 )
 
@@ -637,7 +639,8 @@ def process_plugin_events(db, plugin, plugEventsArr):
                     UPDATE Plugins_Objects
                     SET "Plugin" = ?, "Object_PrimaryID" = ?, "Object_SecondaryID" = ?, "DateTimeCreated" = ?, 
                         "DateTimeChanged" = ?, "Watched_Value1" = ?, "Watched_Value2" = ?, "Watched_Value3" = ?, 
-                        "Watched_Value4" = ?, "Status" = ?, "Extra" = ?, "UserData" = ?, "ForeignKey" = ?, "SyncHubNodeName" = ?, "HelpVal1" = ?, "HelpVal2" = ?, "HelpVal3" = ?, "HelpVal4" = ?
+                        "Watched_Value4" = ?, "Status" = ?, "Extra" = ?, "UserData" = ?, "ForeignKey" = ?, "SyncHubNodeName" = ?, "HelpVal1" = ?, "HelpVal2" = ?, "HelpVal3" = ?, "HelpVal4" = ?,
+                        "ObjectGUID" = ?
                     WHERE "Index" = ?
                     """, objects_to_update
                 )
@@ -651,8 +654,9 @@ def process_plugin_events(db, plugin, plugEventsArr):
                     ("Plugin", "Object_PrimaryID", "Object_SecondaryID", "DateTimeCreated", 
                     "DateTimeChanged", "Watched_Value1", "Watched_Value2", "Watched_Value3", 
                     "Watched_Value4", "Status", "Extra", "UserData", "ForeignKey", "SyncHubNodeName",
-                    "HelpVal1", "HelpVal2", "HelpVal3", "HelpVal4")  
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    "HelpVal1", "HelpVal2", "HelpVal3", "HelpVal4",
+                    "ObjectGUID")  
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """, events_to_insert
                 )
 
@@ -665,8 +669,9 @@ def process_plugin_events(db, plugin, plugEventsArr):
                     ("Plugin", "Object_PrimaryID", "Object_SecondaryID", "DateTimeCreated", 
                     "DateTimeChanged", "Watched_Value1", "Watched_Value2", "Watched_Value3", 
                     "Watched_Value4", "Status", "Extra", "UserData", "ForeignKey", "SyncHubNodeName",
-                    "HelpVal1", "HelpVal2", "HelpVal3", "HelpVal4")  
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    "HelpVal1", "HelpVal2", "HelpVal3", "HelpVal4",
+                    "ObjectGUID")    
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """, history_to_insert
                 )
 
@@ -807,6 +812,7 @@ class plugin_object_class:
         self.helpVal2          = objDbRow[16]
         self.helpVal3          = objDbRow[17]
         self.helpVal4          = objDbRow[18]
+        self.objectGUID        = generate_deterministic_guid(self.pluginPref, self.primaryId, self.secondaryId)
 
 
         # Check if self.status is valid

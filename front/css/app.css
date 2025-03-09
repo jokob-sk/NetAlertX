@@ -1841,6 +1841,47 @@ input[readonly] {
 }
 
 /* -----------------------------------------------------------------------------
+   Workflows
+----------------------------------------------------------------------------- */
+
+#workflowContainerWrap .panel-collapse 
+{
+    padding: 5px;
+}
+
+.workflows .btn-secondary{
+    color: #000;
+}
+
+.workflows .condition-list button
+{
+    margin: 2px;
+}
+
+.workflows button
+{
+    /* width:100%; */
+}
+
+#workflowContainerWrap
+{
+    display: contents;
+}
+
+.workflow-card, .condition-list, .actions-list 
+{
+    display: grid;
+    padding: 5px;
+    padding-left: 10px;
+}
+
+.condition 
+{
+    padding: 5px;
+    padding-left: 10px;
+}
+
+/* -----------------------------------------------------------------------------
    Floating edit button
 ----------------------------------------------------------------------------- */
 #multiEditPlc
