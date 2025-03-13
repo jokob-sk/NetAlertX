@@ -1,5 +1,18 @@
 [
   {
+    "name": "Empty Workflow",
+    "trigger": {
+      "object_type": "",
+      "event_type": ""
+    },
+    "conditions": [
+     
+    ],
+    "actions": [
+      
+    ]
+  },
+  {
     "name": "Sample Device Update Workflow",
     "trigger": {
       "object_type": "Devices",
@@ -23,14 +36,14 @@
             "logic": "OR",
             "conditions": [
               {
-                "field": "devIsNew",
+                "field": "devSite",
                 "operator": "equals",
-                "value": "1"
+                "value": "Home"
               },
               {
                 "field": "devName",
                 "operator": "contains",
-                "value": "Google"
+                "value": "Motorola"
               }
             ]
           }

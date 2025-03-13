@@ -1868,6 +1868,11 @@ input[readonly] {
     display: contents;
 }
 
+.workflow-card .panel-title
+{
+    padding: 10px;
+}
+
 .workflow-card, .condition-list, .actions-list 
 {
     display: grid;
