@@ -355,6 +355,34 @@
             "string": "Если необходимо отключить проверку SSL/TLS для ресурсов HTTPS (для самоподписанных сертификатов и т. д.)"
           }
         ]
+      },
+      {
+        "function": "only_reachable",
+        "type": {
+          "dataType": "boolean",
+          "elements": [
+            {
+              "elementType": "input",
+              "elementOptions": [{ "type": "checkbox" }],
+              "transformers": []
+            }
+          ]
+        },
+        "default_value": true,
+        "options": [],
+        "localized": ["name", "description"],
+        "name": [
+          {
+            "language_code": "en_us",
+            "string": "Only reachable"
+          }
+        ],
+        "description": [
+          {
+            "language_code": "en_us",
+            "string": "Retrieve only devices that are reachable."
+          }
+        ]
       }
     ],
     "database_column_definitions": [

@@ -67,7 +67,7 @@ def get_device_data():
     else:
         mylog('error', [f'[{pluginName}] login fail.']) 
     
-    device_data = router.get_all_connected_devices(only_reachable=True)
+    device_data = router.get_all_connected_devices(only_reachable=get_setting_value("LUCIRPC_only_reachable"))
     return device_data
 
 if __name__ == '__main__':
