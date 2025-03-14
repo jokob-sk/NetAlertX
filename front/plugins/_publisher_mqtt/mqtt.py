@@ -447,10 +447,10 @@ def mqtt_start(db):
         
         for device in devices:      
 
-            # # debug statement START 🔻
-            # if 'Moto' not in device["devName"]:
-            #     continue
-            # # debug statement END   🔺
+            # debug statement START 🔻
+            if 'Moto' not in device["devName"]:
+                continue
+            # debug statement END   🔺
             
             # Create devices in Home Assistant - send config messages
             deviceId        = 'mac_' + device["devMac"].replace(" ", "").replace(":", "_").lower()
@@ -465,7 +465,7 @@ def mqtt_start(db):
             sensorConfig = create_sensor(mqtt_client, deviceId, devDisplayName, 'sensor', 'last_connection', 'calendar-end', device["devMac"])
         
             # handle device_tracker
-            # device_tracker attributes
+            # IMPORTANT: shared payload - device_tracker attributes and individual sensors
             devJson = { 
                         "last_ip": device["devLastIP"], 
                         "is_new": str(device["devIsNew"]), 
@@ -480,6 +480,9 @@ def mqtt_start(db):
                         "network_parent_mac": device["devParentMAC"],
                         "network_parent_name": next((dev["devName"] for dev in devices if dev["devMAC"] == device["devParentMAC"]), "")
                         }
+
+            # bulk update device sensors in home assistant 
+            publish_mqtt(mqtt_client, sensorConfig.state_topic, devJson)  # REQUIRED, DON'T DELETE
         
             #  create and update is_present sensor
             sensorConfig = create_sensor(mqtt_client, deviceId, devDisplayName, 'binary_sensor', 'is_present', 'wifi', device["devMac"])
