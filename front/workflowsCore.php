@@ -220,6 +220,15 @@ function generateWorkflowUI(wf, wfIndex) {
     $actionEl.append($fieldDropdown);
     $actionEl.append($actionValueInput);
 
+    // add actions group button
+    let $actionRemoveButton = $("<button>", {
+      class : "btn btn-secondary remove-action",
+      actionIndex : actionIndex,
+      wfIndex: wfIndex
+    }).text("Remove Action")
+
+    $actionEl.append($actionRemoveButton);
+
     $actionsContainer.append($actionEl);
 
     lastActionIndex = actionIndex
@@ -317,6 +326,7 @@ function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, condit
       $conditionItem.append($operatorDropdown); // Append operator dropdown
       $conditionItem.append($editableInput); // Append editable input for condition value
 
+      let $conditionRemoveButtonWrap = $("<div>", { class: "button-container col-sm-12 col-sx-12" });
       let $conditionRemoveButton = $("<button>", {
         class : "btn btn-secondary remove-condition",
         lastConditionIndex : lastConditionIndex,
@@ -324,7 +334,8 @@ function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, condit
         parentIndexPath: parentIndexPath
       }).text("Remove Condition")
 
-      $conditionItem.append($conditionRemoveButton);
+      $conditionRemoveButtonWrap .append($conditionRemoveButton);
+      $conditionItem.append($conditionRemoveButtonWrap);
 
       $conditionList.append($conditionItem);      
     }
@@ -332,38 +343,47 @@ function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, condit
     lastConditionIndex = conditionIndex
   });
 
-  
-  if(conditionGroupsIndex != 0){
-    // add conditions group button
+  let $buttonWrap = $("<div>", {
+    class: "button-wrap col-sm-12 col-sx-12"
+  });
+
+  if (conditionGroupsIndex != 0) {
+    // Add Condition button
+    let $conditionAddWrap = $("<div>", { class: "button-container col-sm-6 col-sx-12" });
     let $conditionAddButton = $("<button>", {
-      class : "btn btn-secondary add-condition",
-      lastConditionIndex : lastConditionIndex,
+      class: "btn btn-secondary add-condition col-sx-12",
+      lastConditionIndex: lastConditionIndex,
       wfIndex: wfIndex,
       parentIndexPath: parentIndexPath
-    }).text("Add Condition")
+    }).text("Add Condition");
+    $conditionAddWrap.append($conditionAddButton);
 
-    // add conditions group button
+    // Remove Condition Group button
+    let $conditionGroupRemoveWrap = $("<div>", { class: "button-container col-sm-6 col-sx-12" });
     let $conditionGroupRemoveButton = $("<button>", {
-      class : "btn btn-secondary remove-condition-group",
-      lastConditionIndex : lastConditionIndex,
+      class: "btn btn-secondary remove-condition-group col-sx-12",
+      lastConditionIndex: lastConditionIndex,
       wfIndex: wfIndex,
       parentIndexPath: parentIndexPath
-    }).text("Remove Condition Group")
+    }).text("Remove Condition Group");
+    $conditionGroupRemoveWrap.append($conditionGroupRemoveButton);
 
-    $conditionList.append($conditionAddButton);
-    $conditionList.append($conditionGroupRemoveButton);
+    $buttonWrap.append($conditionAddWrap);
+    $buttonWrap.append($conditionGroupRemoveWrap);
   }
 
-
-  // add conditions group button
+  // Add Condition Group button
+  let $conditionsGroupAddWrap = $("<div>", { class: "button-container col-sm-12 col-sx-12" });
   let $conditionsGroupAddButton = $("<button>", {
-    class : "btn btn-secondary add-condition-group",
+    class: "btn btn-secondary add-condition-group col-sx-12",
     wfIndex: wfIndex,
     parentIndexPath: parentIndexPath
-  }).text("Add Condition Group")
-  
-  
-  $conditionList.append($conditionsGroupAddButton);
+  }).text("Add Condition Group");
+  $conditionsGroupAddWrap.append($conditionsGroupAddButton);
+
+  $buttonWrap.append($conditionsGroupAddWrap);
+  $conditionList.append($buttonWrap);
+
   
   return $conditionList;
 }
@@ -652,6 +672,32 @@ function removeCondition(wfIndex, parentIndexPath, lastConditionIndex) {
     renderWorkflows();
 }
 
+function removeAction(wfIndex, actionIndex) {
+    if (!actionIndex || actionIndex === undefined) return;
+
+    // // Navigate to the target nested object
+    // let target = getNestedObject(workflows, parentIndexPath);
+
+    // console.log("Target before removal:", target);
+
+    // if (!target || !Array.isArray(target.conditions)) {
+    //     console.error("❌ Invalid path or conditions array missing:", parentIndexPath);
+    //     return;
+    // }
+
+    // // Remove the specified condition
+    // target.conditions.splice(lastConditionIndex, 1);
+
+    // // 🔥 Ensure the workflows object is updated in memory
+    // workflows[wfIndex] = { ...workflows[wfIndex] };
+
+    // // 🔥 Update the cache with the modified workflows object
+    // setCache("workflows", JSON.stringify(workflows));
+
+    // // Re-render the UI
+    // renderWorkflows();
+}
+
 function removeConditionGroup(wfIndex, parentIndexPath) {
     if (!parentIndexPath) return;
 
@@ -737,6 +783,14 @@ $(document).on("click", ".remove-condition", function () {
     let lastConditionIndex = parseInt($(this).attr("lastConditionIndex"), 10);
     
     removeCondition(wfIndex, parentIndexPath, lastConditionIndex);
+});
+
+// Event Listeners for Removing Actions
+$(document).on("click", ".remove-action", function () {
+    let wfIndex = $(this).attr("wfindex");
+    let actionIndex = $(this).attr("actionIndex");
+    
+    removeAction(wfIndex, actionIndex);
 });
 
 // Event Listeners for Removing Condition Groups
