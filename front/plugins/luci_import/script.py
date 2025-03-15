@@ -37,11 +37,17 @@ def main():
 
     for entry in device_data:
         mylog('verbose', [f'[{pluginName}] found: ', str(entry.mac).lower()])  
+
+        name = str(entry.hostname)
+
+        if name.lower() == 'none':
+            name = '(unknown)'
+
         plugin_objects.add_object(
             primaryId   = str(entry.mac).lower(),
             secondaryId = entry.ip, 
             watched1    = entry.host,
-            watched2    = str(entry.hostname),
+            watched2    = name,
             watched3    = "",          
             watched4    = "",
             extra       = pluginName, 
