@@ -1849,8 +1849,26 @@ input[readonly] {
     padding: 5px;
 }
 
+.workflows .section-title
+{
+    padding: 10px;
+    font-weight: bolder;
+    font-size: large;
+}
+
+.workflows .panel, .workflows .box   {
+    padding-top: 10px;
+    padding-bottom: 10px;
+
+}
+
 .workflows .btn-secondary{
     color: #000;
+}
+
+.workflows .bottom-buttons button
+{
+    margin: 5px;
 }
 
 .workflows .condition-list button

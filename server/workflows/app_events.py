@@ -22,57 +22,120 @@ Logger(get_setting_value('LOG_LEVEL'))
 from const import applicationPath, logPath, apiPath, confFileName, sql_generateGuid
 from helper import  timeNowTZ
 
-
-#-------------------------------------------------------------------------------
-# Execution object handling
-#-------------------------------------------------------------------------------
 class AppEvent_obj:
     def __init__(self, db):
         self.db = db
 
-        # drop table 
+        # Drop existing table 
         self.db.sql.execute("""DROP TABLE IF EXISTS "AppEvents" """)
 
         # Drop all triggers
-        self.db.sql.execute('DROP TRIGGER IF EXISTS trg_create_device;')
-        self.db.sql.execute('DROP TRIGGER IF EXISTS trg_read_device;')
-        self.db.sql.execute('DROP TRIGGER IF EXISTS trg_update_device;')
-        self.db.sql.execute('DROP TRIGGER IF EXISTS trg_delete_device;')
+        self.drop_all_triggers()
+ 
+        # Create the AppEvents table if missing
+        self.create_app_events_table()
 
-        self.db.sql.execute('DROP TRIGGER IF EXISTS trg_delete_plugin_object;')
-        self.db.sql.execute('DROP TRIGGER IF EXISTS trg_create_plugin_object;')
-        self.db.sql.execute('DROP TRIGGER IF EXISTS trg_update_plugin_object;')
+        # Define object mapping for different table structures, including fields, expressions, and constants
+        self.object_mapping = {
+            "Devices": {
+                "fields": {
+                    "ObjectGUID": "NEW.devGUID",
+                    "ObjectPrimaryID": "NEW.devMac",
+                    "ObjectSecondaryID": "NEW.devLastIP",
+                    "ObjectForeignKey": "NEW.devGUID",
+                    "ObjectStatus": "CASE WHEN NEW.devPresentLastScan = 1 THEN 'online' ELSE 'offline' END",
+                    "ObjectStatusColumn": "'devPresentLastScan'",
+                    "ObjectIsNew": "NEW.devIsNew",
+                    "ObjectIsArchived": "NEW.devIsArchived",
+                    "ObjectPlugin": "'DEVICES'"                   
+                }
+            },
+            "Plugins_Objects": {
+                "fields": {
+                    "ObjectGUID": "NEW.ObjectGUID",
+                    "ObjectPrimaryID": "NEW.Plugin",
+                    "ObjectSecondaryID": "NEW.Object_PrimaryID",
+                    "ObjectForeignKey": "NEW.ForeignKey",
+                    "ObjectStatus": "NEW.Status",
+                    "ObjectStatusColumn": "'Status'",
+                    "ObjectIsNew": "CASE WHEN NEW.Status = 'new' THEN 1 ELSE 0 END",
+                    "ObjectIsArchived": "0",  # Default value
+                    "ObjectPlugin": "NEW.Plugin"
+                }
+            }
+        }
 
-        # Create AppEvent table if missing
-        self.db.sql.execute("""CREATE TABLE IF NOT EXISTS "AppEvents" (
-            "Index"                 INTEGER,
-            "GUID"                  TEXT UNIQUE,
-            "AppEventProcessed"     BOOLEAN,
-            "DateTimeCreated"       TEXT,
-            "ObjectType"            TEXT, -- ObjectType (Plugins, Notifications, Events)
-            "ObjectGUID"            TEXT,
-            "ObjectPlugin"          TEXT,
-            "ObjectPrimaryID"       TEXT,
-            "ObjectSecondaryID"     TEXT,
-            "ObjectForeignKey"      TEXT,
-            "ObjectIndex"           TEXT,            
-            "ObjectIsNew"           BOOLEAN, 
-            "ObjectIsArchived"      BOOLEAN, 
-            "ObjectStatusColumn"    TEXT, -- Status (Notifications, Plugins), eve_EventType (Events)
-            "ObjectStatus"          TEXT, -- new_devices, down_devices, events, new, watched-changed, watched-not-changed, missing-in-last-scan, Device down, New Device, IP Changed, Connected, Disconnected, VOIDED - Disconnected, VOIDED - Connected, <missing event>            
-            "AppEventType"          TEXT, -- "create", "update", "delete" (+TBD)
-            "Helper1"               TEXT,
-            "Helper2"               TEXT,
-            "Helper3"               TEXT,
-            "Extra"                 TEXT,            
-            PRIMARY KEY("Index" AUTOINCREMENT)
-        );
+                
+        # Re-Create triggers dynamically
+        for table, config in self.object_mapping.items():
+            self.create_trigger(table, "insert", config)
+            self.create_trigger(table, "update", config)
+            self.create_trigger(table, "delete", config)
+
+        self.save()
+
+    def drop_all_triggers(self):
+        """Drops all relevant triggers to ensure a clean start."""
+        self.db.sql.execute("""
+            SELECT 'DROP TRIGGER IF EXISTS ' || name || ';'
+            FROM sqlite_master
+            WHERE type = 'trigger';
         """)
 
-        # -------------
-        # Device events
+        # Fetch all drop statements
+        drop_statements = self.db.sql.fetchall()
 
-        sql_devices_mappedColumns = '''
+        # Execute each drop statement
+        for statement in drop_statements:
+            self.db.sql.execute(statement[0])
+
+        self.save()
+
+    def create_app_events_table(self):
+        """Creates the AppEvents table if it doesn't exist."""
+        self.db.sql.execute("""
+            CREATE TABLE IF NOT EXISTS "AppEvents" (
+                "Index" INTEGER PRIMARY KEY AUTOINCREMENT,
+                "GUID" TEXT UNIQUE,
+                "AppEventProcessed" BOOLEAN,
+                "DateTimeCreated" TEXT,
+                "ObjectType" TEXT,
+                "ObjectGUID" TEXT,
+                "ObjectPlugin" TEXT,
+                "ObjectPrimaryID" TEXT,
+                "ObjectSecondaryID" TEXT,
+                "ObjectForeignKey" TEXT,
+                "ObjectIndex" TEXT,            
+                "ObjectIsNew" BOOLEAN, 
+                "ObjectIsArchived" BOOLEAN, 
+                "ObjectStatusColumn" TEXT,
+                "ObjectStatus" TEXT,            
+                "AppEventType" TEXT,
+                "Helper1" TEXT,
+                "Helper2" TEXT,
+                "Helper3" TEXT,
+                "Extra" TEXT
+            );
+        """)
+
+    def create_trigger(self, table_name, event, config):
+        """Generic function to create triggers dynamically."""
+        trigger_name = f"trg_{event}_{table_name.lower()}"
+
+
+        query = f"""
+         CREATE TRIGGER IF NOT EXISTS "{trigger_name}"
+            AFTER {event.upper()} ON "{table_name}"
+            WHEN NOT EXISTS (
+                SELECT 1 FROM AppEvents 
+                WHERE AppEventProcessed = 0 
+                AND ObjectType = '{table_name}'
+                AND ObjectGUID = {config['fields']['ObjectGUID']}
+                AND ObjectStatus = {config['fields']['ObjectStatus']} 
+                AND AppEventType = '{event.lower()}'
+            )
+            BEGIN
+                INSERT INTO "AppEvents" (
                     "GUID",
                     "DateTimeCreated",
                     "AppEventProcessed",
@@ -85,328 +148,32 @@ class AppEvent_obj:
                     "ObjectIsNew",
                     "ObjectIsArchived",
                     "ObjectForeignKey",
-                    "AppEventType"
-        '''
-
-        # Trigger for create event
-        self.db.sql.execute(f'''
-            CREATE TRIGGER IF NOT EXISTS "trg_create_device"
-            AFTER INSERT ON "Devices"
-            BEGIN
-                INSERT INTO "AppEvents" (
-                    {sql_devices_mappedColumns}
-                )
-                VALUES (                    
-                    {sql_generateGuid},
-                    DATETIME('now'),
-                    FALSE,
-                    'Devices',
-                    NEW.devGUID,
-                    NEW.devMac,
-                    NEW.devLastIP,
-                    CASE WHEN NEW.devPresentLastScan = 1 THEN 'online' ELSE 'offline' END,
-                    'devPresentLastScan',
-                    NEW.devIsNew,
-                    NEW.devIsArchived,
-                    NEW.devMac,
-                    'create'
-                );
-            END;
-        ''')
-
-        # 🔴 This would generate too many events, disabled for now
-        # # Trigger for read event
-        # self.db.sql.execute('''
-        #     TODO
-        # ''')
-
-        # Trigger for update event
-        self.db.sql.execute(f'''
-            CREATE TRIGGER IF NOT EXISTS "trg_update_device"
-            AFTER UPDATE ON "Devices"
-            BEGIN
-                INSERT INTO "AppEvents" (
-                    {sql_devices_mappedColumns}
-                )
-                VALUES (                    
-                    {sql_generateGuid},
-                    DATETIME('now'),
-                    FALSE,
-                    'Devices',
-                    NEW.devGUID,
-                    NEW.devMac,
-                    NEW.devLastIP,
-                    CASE WHEN NEW.devPresentLastScan = 1 THEN 'online' ELSE 'offline' END,
-                    'devPresentLastScan',
-                    NEW.devIsNew,
-                    NEW.devIsArchived,
-                    NEW.devMac,
-                    'update'
-                );
-            END;
-        ''')
-
-        # Trigger for delete event
-        self.db.sql.execute(f'''
-            CREATE TRIGGER IF NOT EXISTS "trg_delete_device"
-            AFTER DELETE ON "Devices"
-            BEGIN
-                INSERT INTO "AppEvents" (
-                    {sql_devices_mappedColumns}
-                )
-                VALUES (                    
-                    {sql_generateGuid},
-                    DATETIME('now'),
-                    FALSE,
-                    'Devices',
-                    OLD.devGUID,
-                    OLD.devMac,
-                    OLD.devLastIP,
-                    CASE WHEN OLD.devPresentLastScan = 1 THEN 'online' ELSE 'offline' END,
-                    'devPresentLastScan',
-                    OLD.devIsNew,
-                    OLD.devIsArchived,
-                    OLD.devMac,
-                    'delete'
-                );
-            END;
-        ''')
-
-
-        # -------------
-        # Plugins_Objects events
-
-        sql_plugins_objects_mappedColumns = '''
-                    "GUID",
-                    "DateTimeCreated",
-                    "AppEventProcessed",
-                    "ObjectType",                    
-                    "ObjectGUID",                    
                     "ObjectPlugin",
-                    "ObjectPrimaryID",
-                    "ObjectSecondaryID",
-                    "ObjectForeignKey",
-                    "ObjectStatusColumn",
-                    "ObjectStatus",
                     "AppEventType"
-        '''
-
-        # Create trigger for update event on Plugins_Objects
-        self.db.sql.execute(f'''
-            CREATE TRIGGER IF NOT EXISTS trg_update_plugin_object
-            AFTER UPDATE ON Plugins_Objects
-            BEGIN
-                INSERT INTO AppEvents (
-                   {sql_plugins_objects_mappedColumns}
                 )
                 VALUES (
-                    {sql_generateGuid},
-                    DATETIME('now'),
-                    FALSE,
-                    'Plugins_Objects',   
-                    NEW.ObjectGUID,                 
-                    NEW.Plugin,                    
-                    NEW.Object_PrimaryID,
-                    NEW.Object_SecondaryID,
-                    NEW.ForeignKey,
-                    'Status',
-                    NEW.Status,
-                    'update'
+                    {sql_generateGuid}, 
+                    DATETIME('now'), 
+                    FALSE, 
+                    '{table_name}', 
+                    {config['fields']['ObjectGUID']},  -- ObjectGUID
+                    {config['fields']['ObjectPrimaryID']},  -- ObjectPrimaryID
+                    {config['fields']['ObjectSecondaryID']},  -- ObjectSecondaryID
+                    {config['fields']['ObjectStatus']},  -- ObjectStatus
+                    {config['fields']['ObjectStatusColumn']},  -- ObjectStatusColumn
+                    {config['fields']['ObjectIsNew']},  -- ObjectIsNew
+                    {config['fields']['ObjectIsArchived']},  -- ObjectIsArchived
+                    {config['fields']['ObjectForeignKey']},  -- ObjectForeignKey
+                    {config['fields']['ObjectPlugin']},  -- ObjectForeignKey
+                    '{event.lower()}'
                 );
             END;
-        ''')
+        """
 
-        # Create trigger for CREATE event on Plugins_Objects
-        self.db.sql.execute(f'''
-            CREATE TRIGGER IF NOT EXISTS trg_create_plugin_object
-            AFTER INSERT ON Plugins_Objects
-            BEGIN
-                INSERT INTO AppEvents (
-                {sql_plugins_objects_mappedColumns}
-                )
-                VALUES (
-                    {sql_generateGuid},
-                    DATETIME('now'),
-                    FALSE,
-                    'Plugins_Objects',
-                    NEW.ObjectGUID, 
-                    NEW.Plugin,
-                    NEW.Object_PrimaryID,
-                    NEW.Object_SecondaryID,
-                    NEW.ForeignKey,
-                    'Status',
-                    NEW.Status,
-                    'create'
-                );
-            END;
-        ''')
+        mylog("verbose", [query])
 
-        # Create trigger for DELETE event on Plugins_Objects
-        self.db.sql.execute(f'''
-            CREATE TRIGGER IF NOT EXISTS trg_delete_plugin_object
-            AFTER DELETE ON Plugins_Objects
-            BEGIN
-                INSERT INTO AppEvents (
-                {sql_plugins_objects_mappedColumns}
-                )
-                VALUES (
-                    {sql_generateGuid},
-                    DATETIME('now'),
-                    FALSE,
-                    'Plugins_Objects',
-                    OLD.ObjectGUID, 
-                    OLD.Plugin,
-                    OLD.Object_PrimaryID,
-                    OLD.Object_SecondaryID,
-                    OLD.ForeignKey,
-                    'Status',
-                    OLD.Status,
-                    'delete'
-                );
-            END;
-        ''')
-
-        self.save()
-
-    # -------------------------------------------------------------------------------
-    # -------------------------------------------------------------------------------
-    # below code is unused
-    # -------------------------------------------------------------------------------
-
-    # Create a new DB entry if new notifications are available, otherwise skip
-    def create(self, Extra="", **kwargs):
-        # Check if nothing to report, end
-        if not any(kwargs.values()):
-            return False
-
-        # Continue and save into DB if notifications are available
-        self.GUID = str(uuid.uuid4())
-        self.DateTimeCreated = timeNowTZ()
-        self.ObjectType = "Plugins"  # Modify ObjectType as needed
-
-        # Optional parameters
-        self.ObjectGUID         = kwargs.get("ObjectGUID", "")
-        self.ObjectPlugin       = kwargs.get("ObjectPlugin", "")
-        self.ObjectMAC          = kwargs.get("ObjectMAC", "")
-        self.ObjectIP           = kwargs.get("ObjectIP", "")
-        self.ObjectPrimaryID    = kwargs.get("ObjectPrimaryID", "")
-        self.ObjectSecondaryID  = kwargs.get("ObjectSecondaryID", "")
-        self.ObjectForeignKey   = kwargs.get("ObjectForeignKey", "")
-        self.ObjectIndex        = kwargs.get("ObjectIndex", "")
-        self.ObjectRowID        = kwargs.get("ObjectRowID", "")
-        self.ObjectStatusColumn = kwargs.get("ObjectStatusColumn", "")
-        self.ObjectStatus       = kwargs.get("ObjectStatus", "")
-
-        self.AppEventStatus = "new"  # Modify AppEventStatus as needed
-        self.Extra = Extra
-
-        self.upsert()
-
-        return True
-
-    def upsert(self):
-        self.db.sql.execute("""
-            INSERT OR REPLACE INTO AppEvents (
-                "GUID", 
-                "DateTimeCreated", 
-                "ObjectType", 
-                "ObjectGUID", 
-                "ObjectPlugin", 
-                "ObjectMAC", 
-                "ObjectIP", 
-                "ObjectPrimaryID", 
-                "ObjectSecondaryID", 
-                "ObjectForeignKey", 
-                "ObjectIndex", 
-                "ObjectRowID", 
-                "ObjectStatusColumn", 
-                "ObjectStatus", 
-                "AppEventStatus", 
-                "Extra"
-            )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """, (
-            self.GUID, 
-            self.DateTimeCreated, 
-            self.ObjectType, 
-            self.ObjectGUID, 
-            self.ObjectPlugin, 
-            self.ObjectMAC, 
-            self.ObjectIP, 
-            self.ObjectPrimaryID, 
-            self.ObjectSecondaryID, 
-            self.ObjectForeignKey, 
-            self.ObjectIndex, 
-            self.ObjectRowID, 
-            self.ObjectStatusColumn, 
-            self.ObjectStatus, 
-            self.AppEventStatus, 
-            self.Extra
-        ))
-
-        self.save()
+        self.db.sql.execute(query)
 
     def save(self):
         # Commit changes
         self.db.commitDB()
-
-
-def getPluginObject(**kwargs):
-
-    # Check if nothing, end
-    if not any(kwargs.values()):
-            return None
-
-    # Optional parameters
-    GUID          = kwargs.get("GUID", "")
-    Plugin        = kwargs.get("Plugin", "")
-    MAC           = kwargs.get("MAC", "")
-    IP            = kwargs.get("IP", "")
-    PrimaryID     = kwargs.get("PrimaryID", "")
-    SecondaryID   = kwargs.get("SecondaryID", "")
-    ForeignKey    = kwargs.get("ForeignKey", "")
-    Index         = kwargs.get("Index", "")
-    RowID         = kwargs.get("RowID", "")
-
-    # we need the plugin
-    if Plugin == "":
-        return None
-
-    plugins_objects = apiPath + 'table_plugins_objects.json'
-
-    try:
-        with open(plugins_objects, 'r') as json_file:
-
-            data = json.load(json_file)
-
-            for item in data.get("data",[]):
-                if item.get("Index") == Index:
-                    return item
-
-            for item in data.get("data",[]):
-                if item.get("ObjectPrimaryID") == PrimaryID and item.get("ObjectSecondaryID") == SecondaryID:                    
-                    return item
-            
-            for item in data.get("data",[]):
-                if item.get("ObjectPrimaryID") == MAC and item.get("ObjectSecondaryID") == IP:
-                    return item
-
-            for item in data.get("data",[]):
-                if item.get("ObjectPrimaryID") == PrimaryID and item.get("ObjectSecondaryID") == IP:
-                    return item
-
-            for item in data.get("data",[]):
-                if item.get("ObjectPrimaryID") == MAC and item.get("ObjectSecondaryID") == IP:
-                    return item
-                
-
-            mylog('debug', [f'[{module_name}] ⚠ ERROR - Object not found - GUID:{GUID} | Plugin:{Plugin} | MAC:{MAC} | IP:{IP} | PrimaryID:{PrimaryID} | SecondaryID:{SecondaryID} | ForeignKey:{ForeignKey} | Index:{Index} | RowID:{RowID} '])  
-
-            return None
-
-    except (FileNotFoundError, json.JSONDecodeError, ValueError) as e:
-        # Handle the case when the file is not found, JSON decoding fails, or data is not in the expected format
-        mylog('none', [f'[{module_name}] ⚠ ERROR - JSONDecodeError or FileNotFoundError for file {plugins_objects}'])                
-
-        return None
-

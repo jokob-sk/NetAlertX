@@ -627,7 +627,8 @@ def process_plugin_events(db, plugin, plugEventsArr):
                     ("Plugin", "Object_PrimaryID", "Object_SecondaryID", "DateTimeCreated", 
                     "DateTimeChanged", "Watched_Value1", "Watched_Value2", "Watched_Value3", 
                     "Watched_Value4", "Status", "Extra", "UserData", "ForeignKey", "SyncHubNodeName",
-                    "HelpVal1", "HelpVal2", "HelpVal3", "HelpVal4", "ObjectGUID") 
+                    "HelpVal1", "HelpVal2", "HelpVal3", "HelpVal4", 
+                    "ObjectGUID") 
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """, objects_to_insert
                 )
@@ -639,7 +640,8 @@ def process_plugin_events(db, plugin, plugEventsArr):
                     UPDATE Plugins_Objects
                     SET "Plugin" = ?, "Object_PrimaryID" = ?, "Object_SecondaryID" = ?, "DateTimeCreated" = ?, 
                         "DateTimeChanged" = ?, "Watched_Value1" = ?, "Watched_Value2" = ?, "Watched_Value3" = ?, 
-                        "Watched_Value4" = ?, "Status" = ?, "Extra" = ?, "UserData" = ?, "ForeignKey" = ?, "SyncHubNodeName" = ?, "HelpVal1" = ?, "HelpVal2" = ?, "HelpVal3" = ?, "HelpVal4" = ?,
+                        "Watched_Value4" = ?, "Status" = ?, "Extra" = ?, "UserData" = ?, "ForeignKey" = ?, "SyncHubNodeName" = ?, 
+                        "HelpVal1" = ?, "HelpVal2" = ?, "HelpVal3" = ?, "HelpVal4" = ?, 
                         "ObjectGUID" = ?
                     WHERE "Index" = ?
                     """, objects_to_update

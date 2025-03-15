@@ -67,7 +67,8 @@ function processData(data) {
       { data: 'ObjectSecondaryID', title: getString('AppEvents_ObjectSecondaryID') },
       { data: 'ObjectStatus', title: getString('AppEvents_ObjectStatus') },            
       { data: 'ObjectPlugin', title: getString('AppEvents_Plugin') },  
-      { data: 'ObjectGUID', title: "GUID" },  
+      { data: 'ObjectGUID', title: "Object GUID" },  
+      { data: 'GUID', title: "Event GUID" },  
       // Add other columns as needed
     ],
     // Add column-specific configurations if needed

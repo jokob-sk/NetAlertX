@@ -10,20 +10,19 @@
     <div id="workflowContainer"></div>
     
   </div>
-  <div id="buttons" class="buttons col-sm-12">
-    <div class="add-workflow col-sm-6">
-      <button type="button" class="btn btn-primary btn-default pa-btn bg-green" id="save" onclick="addWorkflow()">
+  <div id="buttons" class="bottom-buttons col-sm-12">
+    <div class="add-workflow col-sm-12">
+      <button type="button" class="btn btn-primary add-workflow-btn col-sm-12" id="save">
         <?= lang('Gen_Add');?>
       </button>
     </div>
-    <div class="save-workflows col-sm-6">
-      <button type="button" class="btn btn-primary btn-default pa-btn bg-green" id="save" onclick="saveWorkflows()">
+    <div class="save-workflows col-sm-12">
+      <button type="button" class="btn btn-primary col-sm-12" id="save" onclick="saveWorkflows()">
         <?= lang('DevDetail_button_Save');?>
       </button>
     </div>
   </div>
 </section>
-
 
 <script>
 
@@ -142,12 +141,18 @@ function generateWorkflowUI(wf, wfIndex) {
 
   $wfCollapsiblePanel.append($wfNameInput)
 
+  let $triggerTitle = $("<div>",
+    {
+      class:"section-title"
+    }
+  ).text("Trigger:")
+
   // Trigger Section with dropdowns
   let $triggerSection = $("<div>",
     {
       class: "condition-list box  box-secondary"
     }
-  ).append("<strong>Trigger:</strong> ");
+  ).append($triggerTitle);
 
   let $triggerTypeDropdown = createEditableDropdown(
     `[${wfIndex}].trigger.object_type`, 
@@ -170,22 +175,36 @@ function generateWorkflowUI(wf, wfIndex) {
   $wfCollapsiblePanel.append($triggerSection);
 
   // Conditions
-  let $conditionsContainer = $("<div>").append("<strong>Conditions:</strong>");
+  let $conditionsTitle = $("<div>",
+    {
+      class:"section-title"
+    }
+  ).text("Conditions:")
+
+  let $conditionsContainer = $("<div>").append($conditionsTitle);
+
   $conditionsContainer.append(renderConditions(wfIndex, `[${wfIndex}]`, 0, wf.conditions));
   
   $wfCollapsiblePanel.append($conditionsContainer);
 
+  let $actionsTitle = $("<div>",
+    {
+      class:"section-title"
+    }
+  ).text("Actions:")
 
   // Actions with action.field as dropdown
   let $actionsContainer = $("<div>",
     {
       class: "actions-list box  box-secondary"
     }
-  ).append("<strong>Actions:</strong>");
+  ).append($actionsTitle);
 
   lastActionIndex = 0
   $.each(wf.actions, function (actionIndex, action) {
-    let $actionEl = $("<div>");
+    let $actionEl = $("<div>", {
+      class: "panel"
+    });
 
     // Dropdown for action.field
     let $fieldDropdown = createEditableDropdown(
@@ -220,29 +239,59 @@ function generateWorkflowUI(wf, wfIndex) {
     $actionEl.append($fieldDropdown);
     $actionEl.append($actionValueInput);
 
-    // add actions group button
-    let $actionRemoveButton = $("<button>", {
-      class : "btn btn-secondary remove-action",
-      actionIndex : actionIndex,
-      wfIndex: wfIndex
-    }).text("Remove Action")
+    // Actions
 
-    $actionEl.append($actionRemoveButton);
+    let $actionRemoveButtonWrap = $("<div>", { class: "button-container col-sm-12 col-sx-12" });
+
+    let $actionRemoveIcon = $("<i>", { 
+      class: "fa-solid fa-minus"
+    });
+
+    let $actionRemoveButton = $("<button>", {
+      class: "btn btn-secondary remove-action btn-orange",
+      actionIndex: actionIndex,
+      wfIndex: wfIndex
+    })
+    .append($actionRemoveIcon) // Add icon
+    .append("Remove Action"); // Add text
+
+    $actionRemoveButtonWrap.append($actionRemoveButton);
+    $actionEl.append($actionRemoveButtonWrap);
 
     $actionsContainer.append($actionEl);
 
     lastActionIndex = actionIndex
   });
 
-  // add actions group button
+  // add action button
+  let $actionAddIcon = $("<i>", { 
+      class: "fa-solid fa-plus"
+    });
   let $actionAddButton = $("<button>", {
       class : "btn btn-secondary add-action",
       lastActionIndex : lastActionIndex,
       wfIndex: wfIndex
-    }).text("Add Action")
+    }).append($actionAddIcon).append("Add Action")
 
   $actionsContainer.append($actionAddButton)
+
+  
+  let $wfRemoveButtonWrap = $("<div>", { class: "button-container col-sm-12 col-sx-12" });
+
+  let $wfRemoveIcon = $("<i>", { 
+    class: "fa-solid fa-trash"
+  });
+
+  let $wfRemoveButton = $("<button>", {
+    class: "btn btn-secondary remove-wf",
+    wfIndex: wfIndex
+  })
+  .append($wfRemoveIcon) // Add icon
+  .append("Remove Workflow"); // Add text
+ 
   $wfCollapsiblePanel.append($actionsContainer);
+
+  $wfCollapsiblePanel.append($wfRemoveButtonWrap.append($wfRemoveButton))
 
   $wfContainer.append($wfCollapsiblePanel)
 
@@ -327,12 +376,15 @@ function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, condit
       $conditionItem.append($editableInput); // Append editable input for condition value
 
       let $conditionRemoveButtonWrap = $("<div>", { class: "button-container col-sm-12 col-sx-12" });
+      let $conditionRemoveButtonIcon = $("<i>", { 
+        class: "fa-solid fa-minus"
+      });
       let $conditionRemoveButton = $("<button>", {
         class : "btn btn-secondary remove-condition",
         lastConditionIndex : lastConditionIndex,
         wfIndex: wfIndex,
         parentIndexPath: parentIndexPath
-      }).text("Remove Condition")
+      }).append($conditionRemoveButtonIcon).append("Remove Condition")
 
       $conditionRemoveButtonWrap .append($conditionRemoveButton);
       $conditionItem.append($conditionRemoveButtonWrap);
@@ -350,22 +402,28 @@ function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, condit
   if (conditionGroupsIndex != 0) {
     // Add Condition button
     let $conditionAddWrap = $("<div>", { class: "button-container col-sm-6 col-sx-12" });
+    let $conditionAddIcon = $("<i>", { 
+      class: "fa-solid fa-plus"
+    });
     let $conditionAddButton = $("<button>", {
       class: "btn btn-secondary add-condition col-sx-12",
       lastConditionIndex: lastConditionIndex,
       wfIndex: wfIndex,
       parentIndexPath: parentIndexPath
-    }).text("Add Condition");
+    }).append($conditionAddIcon).append("Add Condition");
     $conditionAddWrap.append($conditionAddButton);
 
     // Remove Condition Group button
     let $conditionGroupRemoveWrap = $("<div>", { class: "button-container col-sm-6 col-sx-12" });
+    let $conditionGroupRemoveIcon = $("<i>", { 
+      class: "fa-solid fa-trash"
+    });
     let $conditionGroupRemoveButton = $("<button>", {
       class: "btn btn-secondary remove-condition-group col-sx-12",
       lastConditionIndex: lastConditionIndex,
       wfIndex: wfIndex,
       parentIndexPath: parentIndexPath
-    }).text("Remove Condition Group");
+    }).append($conditionGroupRemoveIcon).append("Remove Condition Group");
     $conditionGroupRemoveWrap.append($conditionGroupRemoveButton);
 
     $buttonWrap.append($conditionAddWrap);
@@ -374,11 +432,14 @@ function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, condit
 
   // Add Condition Group button
   let $conditionsGroupAddWrap = $("<div>", { class: "button-container col-sm-12 col-sx-12" });
+  let $conditionsGroupAddIcon = $("<i>", { 
+      class: "fa-solid fa-plus"
+    });
   let $conditionsGroupAddButton = $("<button>", {
     class: "btn btn-secondary add-condition-group col-sx-12",
     wfIndex: wfIndex,
     parentIndexPath: parentIndexPath
-  }).text("Add Condition Group");
+  }).append($conditionsGroupAddIcon).append("Add Condition Group");
   $conditionsGroupAddWrap.append($conditionsGroupAddButton);
 
   $buttonWrap.append($conditionsGroupAddWrap);
@@ -572,6 +633,48 @@ function parsePath(path) {
 // ---------------------------------------------------
 
 // ---------------------------------------------------
+// Function to add a new Workflow
+function addWorkflow() {
+  workflows.push({
+      "name": "New Workflow",
+      "trigger": {
+        "object_type": "Devices",
+        "event_type": "create"
+      },
+      "conditions": [
+      ],
+      "actions": [     
+      ]
+    }
+  );
+
+  // // Ensure the workflows object is updated in memory
+  // workflows =  workflows;
+
+  // Update the cache with the modified workflows object
+  setCache("workflows", JSON.stringify(workflows));
+
+  // Re-render the UI
+  renderWorkflows();
+}
+
+// ---------------------------------------------------
+// Function to remove a Workflow
+function removeWorkflow(wfIndex) {
+  
+  workflows.splice(wfIndex, 1);
+
+  // // Ensure the workflows object is updated in memory
+  // workflows =  workflows;
+
+  // Update the cache with the modified workflows object
+  setCache("workflows", JSON.stringify(workflows));
+
+  // Re-render the UI
+  renderWorkflows();
+}
+
+// ---------------------------------------------------
 // Function to add a new condition
 function addCondition(wfIndex, parentIndexPath) {
     if (!parentIndexPath) return;
@@ -593,10 +696,10 @@ function addCondition(wfIndex, parentIndexPath) {
         value: "" // Default empty value
     });
 
-    // 🔥 Ensure the workflows object is updated in memory
+    // Ensure the workflows object is updated in memory
     workflows[wfIndex] = { ...workflows[wfIndex] };
 
-    // 🔥 Update the cache with the modified workflows object
+    // Update the cache with the modified workflows object
     setCache("workflows", JSON.stringify(workflows));
 
     // Re-render the UI
@@ -624,10 +727,10 @@ function addConditionGroup(wfIndex, parentIndexPath) {
         conditions: []
     });
 
-    // 🔥 Ensure the workflows object is updated in memory
+    // Ensure the workflows object is updated in memory
     workflows[wfIndex] = { ...workflows[wfIndex] };
 
-    // 🔥 Update the cache with the modified workflows object
+    // Update the cache with the modified workflows object
     setCache("workflows", JSON.stringify(workflows));
 
     // Re-render the UI
@@ -662,10 +765,10 @@ function removeCondition(wfIndex, parentIndexPath, lastConditionIndex) {
     // Remove the specified condition
     target.conditions.splice(lastConditionIndex, 1);
 
-    // 🔥 Ensure the workflows object is updated in memory
+    // Ensure the workflows object is updated in memory
     workflows[wfIndex] = { ...workflows[wfIndex] };
 
-    // 🔥 Update the cache with the modified workflows object
+    // Update the cache with the modified workflows object
     setCache("workflows", JSON.stringify(workflows));
 
     // Re-render the UI
@@ -675,27 +778,27 @@ function removeCondition(wfIndex, parentIndexPath, lastConditionIndex) {
 function removeAction(wfIndex, actionIndex) {
     if (!actionIndex || actionIndex === undefined) return;
 
-    // // Navigate to the target nested object
-    // let target = getNestedObject(workflows, parentIndexPath);
+    // Navigate to the target nested object
+    let target = getNestedObject(workflows, wfIndex);
 
-    // console.log("Target before removal:", target);
+    console.log("Target before removal:", target);
 
-    // if (!target || !Array.isArray(target.conditions)) {
-    //     console.error("❌ Invalid path or conditions array missing:", parentIndexPath);
-    //     return;
-    // }
+    if (!target || !Array.isArray(target.actions)) {
+        console.error("❌ Invalid path or conditions array missing:", actionIndex);
+        return;
+    }
 
-    // // Remove the specified condition
-    // target.conditions.splice(lastConditionIndex, 1);
+    // Remove the specified condition
+    target.actions.splice(actionIndex, 1);
 
-    // // 🔥 Ensure the workflows object is updated in memory
-    // workflows[wfIndex] = { ...workflows[wfIndex] };
+    // Ensure the workflows object is updated in memory
+    workflows[wfIndex] = { ...workflows[wfIndex] };
 
-    // // 🔥 Update the cache with the modified workflows object
-    // setCache("workflows", JSON.stringify(workflows));
+    // Update the cache with the modified workflows object
+    setCache("workflows", JSON.stringify(workflows));
 
-    // // Re-render the UI
-    // renderWorkflows();
+    // Re-render the UI
+    renderWorkflows();
 }
 
 function removeConditionGroup(wfIndex, parentIndexPath) {
@@ -726,10 +829,10 @@ function removeConditionGroup(wfIndex, parentIndexPath) {
     // Remove the specified condition group
     delete target.conditions.splice(lastIndex, 1);
 
-    // 🔥 Ensure the workflows object is updated in memory
+    // Ensure the workflows object is updated in memory
     workflows[wfIndex] = { ...workflows[wfIndex] };
 
-    // 🔥 Update the cache with the modified workflows object
+    // Update the cache with the modified workflows object
     setCache("workflows", JSON.stringify(workflows));
 
     // Re-render the UI
@@ -759,6 +862,15 @@ function getNestedObject(obj, path) {
 
 // ---------------------------------------------------
 // Event listeners
+$(document).on("click", ".add-workflow-btn", function () {
+  addWorkflow();
+});
+
+$(document).on("click", ".remove-wf", function () {
+  let wfIndex = $(this).attr("wfindex");
+  removeWorkflow(wfIndex);
+});
+
 $(document).on("click", ".add-condition", function () {
     let wfIndex = $(this).attr("wfindex");
     let parentIndexPath = $(this).attr("parentIndexPath");
