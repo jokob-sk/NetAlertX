@@ -447,10 +447,11 @@ def mqtt_start(db):
         
         for device in devices:      
 
-            # debug statement START 🔻
-            if 'Moto' not in device["devName"]:
-                continue
-            # debug statement END   🔺
+            # # debug statement START 🔻
+            # if 'Moto' not in device["devName"]:
+            #     mylog('none', [f"[{pluginName}]  ALERT - ⚠⚠⚠⚠ DEBUGGING ⚠⚠⚠⚠ - this should not be in uncommented in production"]) 
+            #     continue
+            # # debug statement END   🔺
             
             # Create devices in Home Assistant - send config messages
             deviceId        = 'mac_' + device["devMac"].replace(" ", "").replace(":", "_").lower()
