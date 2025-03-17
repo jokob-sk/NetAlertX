@@ -122,7 +122,6 @@ class AppEvent_obj:
         """Generic function to create triggers dynamically."""
         trigger_name = f"trg_{event}_{table_name.lower()}"
 
-
         query = f"""
          CREATE TRIGGER IF NOT EXISTS "{trigger_name}"
             AFTER {event.upper()} ON "{table_name}"
@@ -130,8 +129,8 @@ class AppEvent_obj:
                 SELECT 1 FROM AppEvents 
                 WHERE AppEventProcessed = 0 
                 AND ObjectType = '{table_name}'
-                AND ObjectGUID = {config['fields']['ObjectGUID']}
-                AND ObjectStatus = {config['fields']['ObjectStatus']} 
+                AND ObjectGUID = {manage_prefix(config['fields']['ObjectGUID'], event)}
+                AND ObjectStatus = {manage_prefix(config['fields']['ObjectStatus'], event)} 
                 AND AppEventType = '{event.lower()}'
             )
             BEGIN
@@ -156,15 +155,15 @@ class AppEvent_obj:
                     DATETIME('now'), 
                     FALSE, 
                     '{table_name}', 
-                    {config['fields']['ObjectGUID']},  -- ObjectGUID
-                    {config['fields']['ObjectPrimaryID']},  -- ObjectPrimaryID
-                    {config['fields']['ObjectSecondaryID']},  -- ObjectSecondaryID
-                    {config['fields']['ObjectStatus']},  -- ObjectStatus
-                    {config['fields']['ObjectStatusColumn']},  -- ObjectStatusColumn
-                    {config['fields']['ObjectIsNew']},  -- ObjectIsNew
-                    {config['fields']['ObjectIsArchived']},  -- ObjectIsArchived
-                    {config['fields']['ObjectForeignKey']},  -- ObjectForeignKey
-                    {config['fields']['ObjectPlugin']},  -- ObjectForeignKey
+                    {manage_prefix(config['fields']['ObjectGUID'], event)},  -- ObjectGUID
+                    {manage_prefix(config['fields']['ObjectPrimaryID'], event)},  -- ObjectPrimaryID
+                    {manage_prefix(config['fields']['ObjectSecondaryID'], event)},  -- ObjectSecondaryID
+                    {manage_prefix(config['fields']['ObjectStatus'], event)},  -- ObjectStatus
+                    {manage_prefix(config['fields']['ObjectStatusColumn'], event)},  -- ObjectStatusColumn
+                    {manage_prefix(config['fields']['ObjectIsNew'], event)},  -- ObjectIsNew
+                    {manage_prefix(config['fields']['ObjectIsArchived'], event)},  -- ObjectIsArchived
+                    {manage_prefix(config['fields']['ObjectForeignKey'], event)},  -- ObjectForeignKey
+                    {manage_prefix(config['fields']['ObjectPlugin'], event)},  -- ObjectForeignKey
                     '{event.lower()}'
                 );
             END;
@@ -177,3 +176,10 @@ class AppEvent_obj:
     def save(self):
         # Commit changes
         self.db.commitDB()
+
+# Manage prefixes of column names
+def manage_prefix(field, event):
+    if event == "delete":
+        return field.replace("NEW.", "OLD.")
+    return field 
+

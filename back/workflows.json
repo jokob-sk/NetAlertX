@@ -51,31 +51,5 @@
         }
       }
     ]
-  },
-  {
-    "name": "Sample Plugin Object Workflow",
-    "trigger": {
-      "object_type": "Plugins_Objects",
-      "event_type": "create"
-    },
-    "conditions": [
-      {
-        "logic": "AND",
-        "conditions": [
-          {
-            "field": "Plugin",
-            "operator": "equals",
-            "value": "ARPSCAN"
-          },
-          {
-            "field": "Status",
-            "operator": "equals",
-            "value": "missing-in-last-scan"
-          }
-        ]
-      }
-    ],
-    "actions": [     
-    ]
   }
 ]

@@ -1,18 +1,5 @@
 [
   {
-    "name": "Empty Workflow",
-    "trigger": {
-      "object_type": "",
-      "event_type": ""
-    },
-    "conditions": [
-     
-    ],
-    "actions": [
-      
-    ]
-  },
-  {
     "name": "Sample Device Update Workflow",
     "trigger": {
       "object_type": "Devices",
@@ -36,14 +23,14 @@
             "logic": "OR",
             "conditions": [
               {
-                "field": "devSite",
+                "field": "devIsNew",
                 "operator": "equals",
-                "value": "Home"
+                "value": "1"
               },
               {
                 "field": "devName",
                 "operator": "contains",
-                "value": "Motorola"
+                "value": "Google"
               }
             ]
           }
@@ -55,33 +42,14 @@
         "type": "update_field",
         "field": "devIsNew",
         "value": "0"
-      }
-    ]
-  },
-  {
-    "name": "Sample Plugin Object Workflow",
-    "trigger": {
-      "object_type": "Plugins_Objects",
-      "event_type": "create"
-    },
-    "conditions": [
+      },
       {
-        "logic": "AND",
-        "conditions": [
-          {
-            "field": "Plugin",
-            "operator": "equals",
-            "value": "ARPSCAN"
-          },
-          {
-            "field": "Status",
-            "operator": "equals",
-            "value": "missing-in-last-scan"
-          }
-        ]
+        "type": "run_plugin",
+        "plugin": "SMTP",
+        "params": {
+          "message": "New device from Google detected."
+        }
       }
-    ],
-    "actions": [     
     ]
   }
 ]

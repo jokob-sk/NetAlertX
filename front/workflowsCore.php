@@ -38,7 +38,7 @@ let fieldOptions = [
       ];
       
 let triggerTypes = [
-  "Devices", "Plugins_Objects"
+  "Devices"
 ];
 
 let operatorTypes = [
@@ -474,6 +474,7 @@ function createEditableDropdown(jsonPath, labelText, options, selectedValue, id)
     jsonPath: jsonPath,
     class: "form-control col-sm-8 col-xs-12"
   });
+ 
 
   // Add options to the select dropdown
   $.each(options, function (_, option) {
@@ -788,6 +789,8 @@ function removeAction(wfIndex, actionIndex) {
         return;
     }
 
+    console.log(actionIndex);
+    
     // Remove the specified condition
     target.actions.splice(actionIndex, 1);
 
