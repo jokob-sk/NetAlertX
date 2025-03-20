@@ -1891,11 +1891,16 @@ input[readonly] {
     padding: 10px;
 }
 
-.workflow-card, .condition-list, .actions-list 
+.workflow-card, .actions-list 
 {
-    display: grid;
+    display: contents;
     padding: 5px;
     padding-left: 10px;
+}
+
+.condition-list
+{
+    z-index:1;
 }
 
 .condition 
