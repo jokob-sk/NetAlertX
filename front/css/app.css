@@ -1524,7 +1524,7 @@ input[readonly] {
     margin:0px;
     align-items:center;
     border-radius:20px;
-    width:180px;
+    width:190px; /* Don't change, smaller causes line break in network view */
     display:flex;
     flex-direction:column;
     justify-content:center;

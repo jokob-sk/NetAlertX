@@ -1,5 +1,8 @@
 # `docker-compose.yaml` Examples
 
+> [!NOTE] 
+> The container needs to run in `network_mode:"host"`. 
+
 ### Example 1
 
 ```yaml

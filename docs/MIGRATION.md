@@ -43,14 +43,13 @@ The application installation folder in the docker container has changed from `/h
 
 # Examples
 
-Exmaples of docker files with the new mount points.
+Examples of docker files with the new mount points.
 
 ## Example 1: Mapping folders
 
 ### Old docker-compose.yml
 
 ```yaml
-version: "3"
 services:
   pialert:
     container_name: pialert
@@ -72,7 +71,6 @@ services:
 ### New docker-compose.yml
 
 ```yaml
-version: "3"
 services:
   netalertx:                                  # ⚠  This has changed (🟡optional) 
     container_name: netalertx                 # ⚠  This has changed (🟡optional) 
@@ -100,7 +98,6 @@ services:
 ### Old docker-compose.yml
 
 ```yaml
-version: "3"
 services:
   pialert:
     container_name: pialert
@@ -122,7 +119,6 @@ services:
 ### New docker-compose.yml
 
 ```yaml
-version: "3"
 services:
   netalertx:                                  # ⚠  This has changed (🟡optional) 
     container_name: netalertx                 # ⚠  This has changed (🟡optional) 
