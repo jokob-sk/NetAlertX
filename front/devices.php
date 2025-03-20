@@ -218,7 +218,7 @@ function getDevicesTotals() {
 
         // Attempt to fetch data
         $.ajax({
-            url: '/php/server/query_json.php',
+            url: 'php/server/query_json.php',
             type: "GET",
             dataType: "json",
             data: {
@@ -336,7 +336,7 @@ let columnFilters = [];
 function initFilters() {
     // Attempt to fetch data
     $.ajax({
-        url: '/php/server/query_json.php',
+        url: 'php/server/query_json.php',
         type: "GET",
         dataType: "json",
         data: {
@@ -987,7 +987,7 @@ function handleLoadingDialog(needsReload = false)
 {
   // console.log(`needsReload: ${needsReload}`); 
 
-  $.get('/php/server/query_logs.php?file=execution_queue.log&nocache=' + Date.now(), function(data) {     
+  $.get('php/server/query_logs.php?file=execution_queue.log&nocache=' + Date.now(), function(data) {     
 
     if(data.includes("update_api|devices"))
     {       
