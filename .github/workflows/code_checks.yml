@@ -1,0 +1,28 @@
+name: URL Path Check
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - '*.*.*'
+  pull_request:
+    branches:
+      - main
+
+  jobs:
+  check-url-paths:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check for absolute path URLs
+        run: |
+          if grep -r -E "\burl:\s*['\"]\/php" --include=\*.{js,php} .; then
+            echo "❌ Found absolute path URLs starting with '/php/'. Please use relative paths."
+            exit 1
+          else
+            echo "✅ No absolute path URLs found."
+          fi
+

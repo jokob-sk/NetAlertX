@@ -422,7 +422,7 @@ function updateModalState() {
   setTimeout(function() {
       // Fetch the content from the log file using an AJAX request
       $.ajax({
-          url: '/php/server/query_logs.php?file=execution_queue.log',
+          url: 'php/server/query_logs.php?file=execution_queue.log',
           type: 'GET',
           success: function(data) {
               // Update the content of the HTML element (e.g., a div with id 'logContent')

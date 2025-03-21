@@ -166,7 +166,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
 
     // get settings from the secured graphql endpoint
     $.ajax({
-      url: "/php/server/query_graphql.php", // Replace with your GraphQL endpoint
+      url: "php/server/query_graphql.php", // Replace with your GraphQL endpoint
       method: "POST",
       contentType: "application/json",
       data: JSON.stringify({
