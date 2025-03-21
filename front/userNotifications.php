@@ -48,7 +48,7 @@ require 'php/templates/header.php';
 
 <script>
   function fetchData(callback) {
-    $.get('/php/server/query_json.php', { file: 'user_notifications.json', nocache: Date.now() })
+    $.get('php/server/query_json.php', { file: 'user_notifications.json', nocache: Date.now() })
     .done(function(response) {
         if (response == "[]" || response == "") {
             callback([]);
