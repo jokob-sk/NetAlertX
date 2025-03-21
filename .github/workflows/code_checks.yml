@@ -9,7 +9,7 @@ on:
     branches:
       - main
 
-  jobs:
+jobs:
   check-url-paths:
     runs-on: ubuntu-latest
 
