@@ -5,7 +5,7 @@
 ?>
 
 
-<section class="content workflows">
+<section class="content workflows col-sm-12">
   <div id="workflowContainerWrap" class="bg-grey-dark color-palette  col-sm-12  box-default box-info ">
     <div id="workflowContainer"></div>
     
@@ -131,7 +131,7 @@ function generateWorkflowUI(wf, wfIndex) {
   
 
   let $wfCollapsiblePanel = $("<div>", { 
-    class: `panel-collapse collapse  ${isOpen ? 'in' : ''}`, 
+    class: `box panel-collapse collapse  ${isOpen ? 'in' : ''}`, 
     id: `wf-${wfIndex}-collapsible-panel` 
   });
 
@@ -154,7 +154,7 @@ function generateWorkflowUI(wf, wfIndex) {
   // Trigger Section with dropdowns
   let $triggerSection = $("<div>",
     {
-      class: "box  box-secondary col-sm-12 col-sx-12"
+      class: " col-sm-12 col-sx-12"
     }
   ).append($triggerTitle);
 
@@ -200,7 +200,7 @@ function generateWorkflowUI(wf, wfIndex) {
   // Actions with action.field as dropdown
   let $actionsContainer = $("<div>",
     {
-      class: "actions-list box  box-secondary"
+      class: "actions-list col-sm-12 col-sx-12 box "
     }
   ).append($actionsTitle);
 
@@ -273,6 +273,7 @@ function generateWorkflowUI(wf, wfIndex) {
   });
 
   // add action button
+  let $actionAddButtonWrap = $("<div>", { class: "button-container col-sm-12 col-sx-12" });
   let $actionAddIcon = $("<i>", { 
       class: "fa-solid fa-plus"
     });
@@ -282,7 +283,8 @@ function generateWorkflowUI(wf, wfIndex) {
       wfIndex: wfIndex
     }).append($actionAddIcon).append("Add Action")
 
-  $actionsContainer.append($actionAddButton)
+  $actionAddButtonWrap.append($actionAddButton)
+  $actionsContainer.append($actionAddButtonWrap)
 
   
   let $wfRemoveButtonWrap = $("<div>", { class: "button-container col-sm-12 col-sx-12" });
@@ -317,6 +319,15 @@ function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, condit
   });
 
   lastConditionIndex = 0
+
+  let $conditionListWrap = $("<div>", { 
+    class: `condition-list-wrap ${conditionGroupsIndex==0?"col-sm-12":"col-sm-11"} col-sx-12`,
+    conditionGroupsIndex: conditionGroupsIndex
+  });
+
+  let $deleteConditionGroupWrap = $("<div>", { 
+    class: "condition-group-wrap-del col-sm-1 col-sx-12"
+  });
 
   $.each(conditions, function (conditionIndex, condition) {
     
@@ -394,7 +405,7 @@ function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, condit
         class: "fa-solid fa-trash"
       });
       let $conditionRemoveButton = $("<button>", {
-        class : "btn btn-secondary remove-condition col-sm-12 col-sx-12",
+        class : "btn btn-secondary remove-condition ",
         conditionIndex : conditionIndex,
         wfIndex: wfIndex,
         parentIndexPath: parentIndexPath
@@ -410,13 +421,13 @@ function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, condit
     lastConditionIndex = conditionIndex
   });
 
-  let $buttonWrap = $("<div>", {
-    class: "button-wrap col-sm-12 col-sx-12"
+  let $addButtonWrap = $("<div>", {
+    class: "add-button-wrap col-sm-12 col-sx-12"
   });
 
   if (conditionGroupsIndex != 0) {
     // Add Condition button
-    let $conditionAddWrap = $("<div>", { class: "button-container col-sx-12" });
+    let $conditionAddWrap = $("<div>", { class: "button-container col-sm-6 col-sx-12" });
     let $conditionAddIcon = $("<i>", { 
       class: "fa-solid fa-plus"
     });
@@ -437,15 +448,16 @@ function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, condit
       lastConditionIndex: lastConditionIndex,
       wfIndex: wfIndex,
       parentIndexPath: parentIndexPath
-    }).append($conditionGroupRemoveIcon).append("Remove Condition Group");
+    }).append($conditionGroupRemoveIcon);
     $conditionGroupRemoveWrap.append($conditionGroupRemoveButton);
 
-    $buttonWrap.append($conditionAddWrap);
-    $buttonWrap.append($conditionGroupRemoveWrap);
+    $addButtonWrap.append($conditionAddWrap);
+    $deleteConditionGroupWrap.append($conditionGroupRemoveWrap);
+
   }
 
   // Add Condition Group button
-  let $conditionsGroupAddWrap = $("<div>", { class: "button-container col-sm-12 col-sx-12" });
+  let $conditionsGroupAddWrap = $("<div>", { class: "button-container col-sm-6 col-sx-12" });
   let $conditionsGroupAddIcon = $("<i>", { 
       class: "fa-solid fa-plus"
     });
@@ -456,11 +468,20 @@ function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, condit
   }).append($conditionsGroupAddIcon).append("Add Condition Group");
   $conditionsGroupAddWrap.append($conditionsGroupAddButton);
 
-  $buttonWrap.append($conditionsGroupAddWrap);
-  $conditionList.append($buttonWrap);
+  $addButtonWrap.append($conditionsGroupAddWrap);
+  $conditionList.append($addButtonWrap);
 
+  $conditionListWrap.append($conditionList)
   
-  return $conditionList;
+  
+  let $res = $("<div>", { 
+    class: "condition-list-res col-sm-12 col-sx-12"
+  });
+
+  $res.append($conditionListWrap)
+  $res.append($deleteConditionGroupWrap)
+
+  return $res;
 }
 
 

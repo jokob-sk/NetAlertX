@@ -7,7 +7,7 @@
  
 
 <!-- Page ------------------------------------------------------------------ -->
-<div class="content-wrapper">
+<div class="content-wrapper" id="wf-content-wrapper">
 
 <?php
    require 'workflowsCore.php';

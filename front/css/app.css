@@ -1843,10 +1843,45 @@ input[readonly] {
 /* -----------------------------------------------------------------------------
    Workflows
 ----------------------------------------------------------------------------- */
+#wf-content-wrapper
+{
+    display: grid;
+}
+
+#workflowContainer
+{
+    display: grid;
+}
+
+#workflowContainerWrap {
+    display: grid;
+}
 
 #workflowContainerWrap .panel-collapse 
 {
     padding: 5px;
+}
+
+.workflows .col-sm-12, .workflows .col-sx-12
+{
+    padding-right: 5px;
+    padding-left: 5px;
+}
+
+.workflows .add-button-wrap .button-container
+{
+    padding-bottom: 5px;
+}
+
+.workflows .actions-list {
+
+    display: block;
+}
+
+.workflows .form-group {
+    margin-bottom: 7px;
+    z-index: 1;
+    display: flex;
 }
 
 .workflows .section-title
@@ -1857,8 +1892,8 @@ input[readonly] {
 }
 
 .workflows .panel, .workflows .box   {
-    padding-top: 10px;
-    padding-bottom: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
 
 }
 
@@ -1866,25 +1901,32 @@ input[readonly] {
     color: #000;
 }
 
+.workflows .button-container button
+{
+    display: inline-table;
+    width: 100%;
+}
+
 .workflows .bottom-buttons button
 {
     margin: 5px;
 }
 
-.workflows .condition-list button
+.workflows .button-container 
+{
+    padding-right: 5px !important;
+    padding-left: 5px !important;
+}
+
+/* .workflows .condition-list button
 {
     margin: 2px;
-}
+} */
 
-.button-container button
+/* .button-container button
 {
     width:100%; 
-}
-
-#workflowContainerWrap
-{
-    display: contents;
-}
+} */
 
 .workflow-card .panel-title
 {
