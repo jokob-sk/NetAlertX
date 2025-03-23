@@ -316,14 +316,16 @@ def update_devices_data_from_scan (db):
                     FROM CurrentScan        
                     WHERE Devices.devMac = CurrentScan.cur_MAC          
                 )
-                WHERE EXISTS (
+                WHERE 
+                (devParentPort IS NULL OR devParentPort = "" OR devParentPort = "null")
+                AND
+                EXISTS (
                     SELECT 1
                     FROM CurrentScan
                     WHERE Devices.devMac = CurrentScan.cur_MAC
                     AND CurrentScan.cur_Port IS NOT NULL 
                     AND CurrentScan.cur_Port NOT IN ("", "null")
                 )
-                AND (devParentPort IS NULL OR devParentPort = "" OR devParentPort = "null")
                 """)
 
     # Update only devices with empty or NULL devParentMAC 
@@ -334,13 +336,15 @@ def update_devices_data_from_scan (db):
                     FROM CurrentScan
                     WHERE Devices.devMac = CurrentScan.cur_MAC
                 )
-                WHERE EXISTS (
-                    SELECT 1
-                    FROM CurrentScan
-                    WHERE Devices.devMac = CurrentScan.cur_MAC
-                        AND CurrentScan.cur_NetworkNodeMAC IS NOT NULL AND CurrentScan.cur_NetworkNodeMAC NOT IN ("", "null")
-                )
-                AND (devParentMAC IS NULL OR devParentMAC = "" OR devParentMAC = "null")
+                WHERE 
+                    (devParentMAC IS NULL OR devParentMAC IN ("", "null", "(unknown)", "(Unknown)"))
+                    AND                
+                    EXISTS (
+                        SELECT 1
+                        FROM CurrentScan
+                        WHERE Devices.devMac = CurrentScan.cur_MAC
+                            AND CurrentScan.cur_NetworkNodeMAC IS NOT NULL AND CurrentScan.cur_NetworkNodeMAC NOT IN ("", "null")
+                    )
                 """)
 
     # Update only devices with empty or NULL devSite 
