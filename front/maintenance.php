@@ -440,17 +440,15 @@ function askImportPastedConfig() {
 // Upload Settings Config
 function UploadConfig()
 { 
-  // alert("aaa")
-
   appConf = $('#modal-input-textarea').val()
   // encode for import
   appConfBase64 = btoa(appConf)
 
   // import
-  $.post('php/server/query_replace_config.php', { config: appConfBase64 }, function(msg) {
+  $.post('php/server/query_replace_config.php', { base64data: appConfBase64, fileName: "app.conf" }, function(msg) {
     console.log(msg);            
     // showMessage(msg);            
-    write_notification(`[Maintenance] Settings imported from backup: ${msg}`, 'interrupt');
+    write_notification(`[Maintenance]: ${msg}`, 'interrupt');
   });
 
 }

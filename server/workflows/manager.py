@@ -87,7 +87,7 @@ class WorkflowManager:
 
             if evaluator.evaluate(trigger):  # If any group evaluates to True
                 
-                mylog('none', [f"[WF] Workflow {workflow["name"]} will be executed - conditions were evalueted as TRUE"])
+                mylog('none', [f"[WF] Workflow {workflow["name"]} will be executed - conditions were evaluated as TRUE"])
                 mylog('debug', [f"[WF] Workflow condition_group: {condition_group}"])
 
                 self.execute_actions(workflow["actions"], trigger)

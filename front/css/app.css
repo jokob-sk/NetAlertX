@@ -1524,10 +1524,11 @@ input[readonly] {
     margin:0px;
     align-items:center;
     border-radius:20px;
-    width:190px; /* Don't change, smaller causes line break in network view */
-    display:flex;
+    /* width:190px; Don't change, smaller causes line break in network view */
+    /* display:flex; */
     flex-direction:column;
     justify-content:center;
+    display: inline-grid;
 }
 .networkHelpIcon
 {
@@ -1597,7 +1598,7 @@ input[readonly] {
 
 .spanNetworkTree {
     display: inline-block;
-    width: 135px;
+    /* width: 135px; */
     white-space: nowrap;
     overflow: hidden !important;
     text-overflow: ellipsis;
@@ -1871,6 +1872,7 @@ input[readonly] {
 .workflows .add-button-wrap .button-container
 {
     padding-bottom: 5px;
+    text-align: center;
 }
 
 .workflows .actions-list {
@@ -1901,10 +1903,19 @@ input[readonly] {
     color: #000;
 }
 
-.workflows .button-container button
+.workflows .button-container 
 {
-    display: inline-table;
+    display: contents;
+    text-align: center;
     width: 100%;
+}
+
+.workflows .panel:hover{
+    opacity: 1;
+}
+
+.workflows .panel{
+    opacity: 0.8;
 }
 
 .workflows .bottom-buttons button
@@ -1914,8 +1925,8 @@ input[readonly] {
 
 .workflows .button-container 
 {
-    padding-right: 5px !important;
-    padding-left: 5px !important;
+    padding-right: 0px !important;
+    padding-left: 0px !important;
 }
 
 /* .workflows .condition-list button
@@ -1927,6 +1938,11 @@ input[readonly] {
 {
     width:100%; 
 } */
+
+.workflows .workflow-card 
+{
+    display: block;
+}
 
 .workflow-card .panel-title
 {

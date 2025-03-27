@@ -5,19 +5,19 @@
 ?>
 
 
-<section class="content workflows col-sm-12">
-  <div id="workflowContainerWrap" class="bg-grey-dark color-palette  col-sm-12  box-default box-info ">
+<section class="content workflows col-sm-12 col-xs-12">
+  <div id="workflowContainerWrap" class="bg-grey-dark color-palette  col-sm-12 col-xs-12 box-default box-info ">
     <div id="workflowContainer"></div>
     
   </div>
-  <div id="buttons" class="bottom-buttons col-sm-12">
-    <div class="add-workflow col-sm-12">
-      <button type="button" class="btn btn-primary add-workflow-btn col-sm-12" id="save">
+  <div id="buttons" class="bottom-buttons col-sm-12 col-xs-12">
+    <div class="add-workflow col-sm-12 col-xs-12">
+      <button type="button" class="btn btn-primary add-workflow-btn col-sm-12 col-xs-12" id="save">
         <?= lang('Gen_Add');?>
       </button>
     </div>
-    <div class="save-workflows col-sm-12">
-      <button type="button" class="btn btn-primary col-sm-12" id="save" onclick="saveWorkflows()">
+    <div class="save-workflows col-sm-12 col-xs-12">
+      <button type="button" class="btn btn-primary col-sm-12 col-xs-12" id="save" onclick="saveWorkflows()">
         <?= lang('DevDetail_button_Save');?>
       </button>
     </div>
@@ -46,7 +46,7 @@ let operatorTypes = [
 ];
 
 let actionTypes = [
-  "update_field", "run_plugin", "delete_device"
+  "update_field", "delete_device"
 ];
 
 // --------------------------------------
@@ -57,13 +57,23 @@ function getData() {
 
   getSetting()
 
-  $.get('php/server/query_json.php?file=workflows.json', function (res) {
+  $.get('php/server/query_json.php?file=workflows.json')
+  .done(function (res) {
     workflows = res;
+    console.log("here workflows");
     console.log(workflows);
 
     updateWorkflowsJson(workflows);
     renderWorkflows();
-    hideSpinner();
+  })
+  .fail(function (jqXHR, textStatus, errorThrown) {
+    console.warn("Failed to load workflows.json:", textStatus, errorThrown);
+    workflows = []; // Set a default empty array to prevent crashes
+    updateWorkflowsJson(workflows);
+    renderWorkflows();
+  })
+  .always(function () {
+    hideSpinner(); // Ensure the spinner is hidden in all cases
   });
 }
 
@@ -91,21 +101,21 @@ function renderWorkflows() {
 function generateWorkflowUI(wf, wfIndex) {
 
   let $wfContainer = $("<div>", { 
-    class: "workflow-card col-sm-12 col-sx-12", 
+    class: "workflow-card panel col-sm-12 col-sx-12", 
     id: `wf-${wfIndex}-container` 
   });
 
   // Workflow Name
   let $wfLinkWrap = $("<div>",
     {
-      class: "box box-solid box-primary  ",
+      class: " ",
       id: `wf-${wfIndex}-header` 
     }
   )
 
   let $wfHeaderLink = $("<a>",
     {
-      "class": "",
+      "class": "pointer  ",
       "data-toggle": "collapse",
       "data-parent": "#workflowContainer",
       "aria-expanded": false,
@@ -131,7 +141,7 @@ function generateWorkflowUI(wf, wfIndex) {
   
 
   let $wfCollapsiblePanel = $("<div>", { 
-    class: `box panel-collapse collapse  ${isOpen ? 'in' : ''}`, 
+    class: ` panel-collapse collapse  ${isOpen ? 'in' : ''}`, 
     id: `wf-${wfIndex}-collapsible-panel` 
   });
 
@@ -185,7 +195,11 @@ function generateWorkflowUI(wf, wfIndex) {
     }
   ).text("Conditions:")
 
-  let $conditionsContainer = $("<div>").append($conditionsTitle);
+  let $conditionsContainer = $("<div>",
+    {
+      class: "col-sm-12 col-sx-12"
+    }
+  ).append($conditionsTitle);
 
   $conditionsContainer.append(renderConditions(wfIndex, `[${wfIndex}]`, 0, wf.conditions));
   
@@ -229,7 +243,7 @@ function generateWorkflowUI(wf, wfIndex) {
       `[${wfIndex}].actions[${actionIndex}].type`, 
       "Type", 
       actionTypes, 
-      action.field, 
+      action.type, 
       `wf-${wfIndex}-actionIndex-${actionIndex}-type`
     );
 
@@ -255,8 +269,8 @@ function generateWorkflowUI(wf, wfIndex) {
       class: "fa-solid fa-trash"
     });
 
-    let $actionRemoveButton = $("<button>", {
-      class: "btn btn-secondary remove-action btn-orange",
+    let $actionRemoveButton = $("<div>", {
+      class: "pointer remove-action ",
       actionIndex: actionIndex,
       wfIndex: wfIndex
     })
@@ -277,8 +291,8 @@ function generateWorkflowUI(wf, wfIndex) {
   let $actionAddIcon = $("<i>", { 
       class: "fa-solid fa-plus"
     });
-  let $actionAddButton = $("<button>", {
-      class : "btn btn-secondary add-action",
+  let $actionAddButton = $("<div>", {
+      class : "pointer add-action",
       lastActionIndex : lastActionIndex,
       wfIndex: wfIndex
     }).append($actionAddIcon).append("Add Action")
@@ -293,8 +307,8 @@ function generateWorkflowUI(wf, wfIndex) {
     class: "fa-solid fa-trash"
   });
 
-  let $wfRemoveButton = $("<button>", {
-    class: "btn btn-secondary remove-wf",
+  let $wfRemoveButton = $("<div>", {
+    class: "pointer remove-wf",
     wfIndex: wfIndex
   })
   .append($wfRemoveIcon) // Add icon
@@ -404,8 +418,8 @@ function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, condit
       let $conditionRemoveButtonIcon = $("<i>", { 
         class: "fa-solid fa-trash"
       });
-      let $conditionRemoveButton = $("<button>", {
-        class : "btn btn-secondary remove-condition ",
+      let $conditionRemoveButton = $("<div>", {
+        class : "pointer remove-condition ",
         conditionIndex : conditionIndex,
         wfIndex: wfIndex,
         parentIndexPath: parentIndexPath
@@ -431,8 +445,8 @@ function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, condit
     let $conditionAddIcon = $("<i>", { 
       class: "fa-solid fa-plus"
     });
-    let $conditionAddButton = $("<button>", {
-      class: "btn btn-secondary add-condition col-sx-12",
+    let $conditionAddButton = $("<div>", {
+      class: "pointer add-condition col-sx-12",
       wfIndex: wfIndex,
       parentIndexPath: parentIndexPath
     }).append($conditionAddIcon).append("Add Condition");
@@ -443,8 +457,8 @@ function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, condit
     let $conditionGroupRemoveIcon = $("<i>", { 
       class: "fa-solid fa-trash"
     });
-    let $conditionGroupRemoveButton = $("<button>", {
-      class: "btn btn-secondary remove-condition-group col-sx-12",
+    let $conditionGroupRemoveButton = $("<div>", {
+      class: "pointer remove-condition-group col-sx-12",
       lastConditionIndex: lastConditionIndex,
       wfIndex: wfIndex,
       parentIndexPath: parentIndexPath
@@ -461,11 +475,11 @@ function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, condit
   let $conditionsGroupAddIcon = $("<i>", { 
       class: "fa-solid fa-plus"
     });
-  let $conditionsGroupAddButton = $("<button>", {
-    class: "btn btn-secondary add-condition-group col-sx-12",
+  let $conditionsGroupAddButton = $("<div>", {
+    class: "pointer add-condition-group col-sx-12",
     wfIndex: wfIndex,
     parentIndexPath: parentIndexPath
-  }).append($conditionsGroupAddIcon).append("Add Condition Group");
+  }).append($conditionsGroupAddIcon).append("Add Group");
   $conditionsGroupAddWrap.append($conditionsGroupAddButton);
 
   $addButtonWrap.append($conditionsGroupAddWrap);
@@ -908,6 +922,21 @@ function getEmptyWorkflowJson()
       "actions": [     
       ]
     }
+} 
+
+// ---------------------------------------------------
+// Save workflows JSON
+function saveWorkflows()
+{
+  // encode for import
+  appConfBase64 = btoa(JSON.stringify(getWorkflowsJson()))
+
+  // import
+  $.post('php/server/query_replace_config.php', { base64data: appConfBase64, fileName: "workflows.json" }, function(msg) {
+    console.log(msg);            
+    // showMessage(msg);            
+    write_notification(`[WF]: ${msg}`, 'interrupt');
+  });
 } 
 
 // ---------------------------------------------------

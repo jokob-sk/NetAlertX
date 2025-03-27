@@ -465,7 +465,7 @@
 ?>
 
 <script src="lib/treeviz/bundle.js"></script> 
-<script src="lib/treeviz/bundle.js.map"></script> 
+
 
 
 <script defer>

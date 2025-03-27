@@ -37,7 +37,6 @@ export INSTALL_DIR=/app  # Specify the installation directory here
 # DO NOT CHANGE ANYTHING BELOW THIS LINE!
 
 CONF_FILE="app.conf"
-WF_FILE="workflows.json"
 NGINX_CONF_FILE=netalertx.conf
 DB_FILE="app.db"
 FULL_FILEDB_PATH="${INSTALL_DIR}/db/${DB_FILE}"
@@ -97,9 +96,8 @@ fi
 
 echo "[INSTALL] Copy starter ${DB_FILE} and ${CONF_FILE} if they don't exist"
 
-# Copy starter app.db, app.conf, workflows.json if they don't exist
+# Copy starter app.db, app.conf if they don't exist
 cp -na "${INSTALL_DIR}/back/${CONF_FILE}" "${INSTALL_DIR}/config/${CONF_FILE}"
-cp -na "${INSTALL_DIR}/back/${WF_FILE}" "${INSTALL_DIR}/config/${WF_FILE}"
 cp -na "${INSTALL_DIR}/back/${DB_FILE}" "${FULL_FILEDB_PATH}"
 
 # if custom variables not set we do not need to do anything

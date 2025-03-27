@@ -8,7 +8,7 @@
 #  Puche 2021 / 2022+ jokob             jokob@duck.com                GNU GPLv3
 //------------------------------------------------------------------------------
 
-require dirname(__FILE__).'/../templates/timezone.php';
+require dirname(__FILE__).'/../templates/globals.php';
 require dirname(__FILE__).'/../templates/skinUI.php';
 
 //------------------------------------------------------------------------------

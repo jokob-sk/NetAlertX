@@ -743,6 +743,7 @@ function initializeDatatable (status) {
     'ordering'     : true,
     'info'         : true,
     'autoWidth'    : false,
+    'dom': '<"top"f>rtl<"bottom"ip><"clear">',
 
     // Parameters
     'pageLength'   : tableRows,
