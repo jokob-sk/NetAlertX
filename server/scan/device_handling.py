@@ -330,38 +330,21 @@ def update_devices_data_from_scan (db):
     mylog('debug', '[Update Devices] - (if not empty) cur_NetworkNodeMAC -> devParentMAC')
     sql.execute("""UPDATE Devices
                     SET devParentMAC = (
-                    SELECT cur_NetworkNodeMAC
-                    FROM CurrentScan
-                    WHERE Devices.devMac = CurrentScan.cur_MAC
-                )
-<<<<<<< HEAD
-<<<<<<<< HEAD:server/scan/device_handling.py
-                  WHERE 
-========
-                WHERE 
->>>>>>>> main:server/device.py
-=======
-                WHERE 
->>>>>>> main
-                    (devParentMAC IS NULL OR devParentMAC IN ("", "null", "(unknown)", "(Unknown)"))
-                    AND                
-                    EXISTS (
-                        SELECT 1
+                        SELECT cur_NetworkNodeMAC
                         FROM CurrentScan
                         WHERE Devices.devMac = CurrentScan.cur_MAC
-<<<<<<< HEAD
-<<<<<<<< HEAD:server/scan/device_handling.py
-                        AND CurrentScan.cur_NetworkNodeMAC IS NOT NULL AND CurrentScan.cur_NetworkNodeMAC NOT IN ("", "null")
-========
-                            AND CurrentScan.cur_NetworkNodeMAC IS NOT NULL AND CurrentScan.cur_NetworkNodeMAC NOT IN ("", "null")
-                    
->>>>>>>> main:server/device.py
-                )""")
-=======
-                            AND CurrentScan.cur_NetworkNodeMAC IS NOT NULL AND CurrentScan.cur_NetworkNodeMAC NOT IN ("", "null")
                     )
+                    WHERE 
+                        (devParentMAC IS NULL OR devParentMAC IN ("", "null", "(unknown)", "(Unknown)"))
+                        AND                
+                        EXISTS (
+                            SELECT 1
+                            FROM CurrentScan
+                            WHERE Devices.devMac = CurrentScan.cur_MAC
+                                AND CurrentScan.cur_NetworkNodeMAC IS NOT NULL AND CurrentScan.cur_NetworkNodeMAC NOT IN ("", "null")
+                        )
                 """)
->>>>>>> main
+
 
     # Update only devices with empty or NULL devSite 
     mylog('debug', '[Update Devices] - (if not empty) cur_NetworkSite -> (if empty) devSite')
