@@ -446,6 +446,7 @@ def mqtt_start(db):
 
             # # debug statement START 🔻
             # if 'Moto' not in device["devName"]:
+            #     mylog('none', [f"[{pluginName}]  ALERT - ⚠⚠⚠⚠ DEBUGGING ⚠⚠⚠⚠ - this should not be in uncommented in production"]) 
             #     continue
             # # debug statement END   🔺
             
@@ -462,7 +463,7 @@ def mqtt_start(db):
             sensorConfig = create_sensor(mqtt_client, deviceId, devDisplayName, 'sensor', 'last_connection', 'calendar-end', device["devMac"])
         
             # handle device_tracker
-            # device_tracker attributes
+            # IMPORTANT: shared payload - device_tracker attributes and individual sensors
             devJson = { 
                         "last_ip": device["devLastIP"], 
                         "is_new": str(device["devIsNew"]), 
@@ -477,6 +478,9 @@ def mqtt_start(db):
                         "network_parent_mac": device["devParentMAC"],
                         "network_parent_name": next((dev["devName"] for dev in devices if dev["devMAC"] == device["devParentMAC"]), "")
                         }
+
+            # bulk update device sensors in home assistant 
+            publish_mqtt(mqtt_client, sensorConfig.state_topic, devJson)  # REQUIRED, DON'T DELETE
         
             #  create and update is_present sensor
             sensorConfig = create_sensor(mqtt_client, deviceId, devDisplayName, 'binary_sensor', 'is_present', 'wifi', device["devMac"])

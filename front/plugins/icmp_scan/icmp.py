@@ -78,7 +78,8 @@ def main():
     for device in filtered_devices:
         is_online, output = execute_scan(device['devLastIP'], timeout, args)
 
-        mylog('verbose', [f'[{pluginName}] ip: "{device['devLastIP']}" is_online: "{is_online}"'])
+        mylog('verbose', [f"[{pluginName}] ip: {device['devLastIP']} is_online: {is_online}"])
+
 
         if is_online:
             plugin_objects.add_object(

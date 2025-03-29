@@ -2,11 +2,14 @@
 
 By design, local network scanners such as `arp-scan` use ARP (Address Resolution Protocol) to map IP addresses to MAC addresses on the local network. Since ARP operates at Layer 2 (Data Link Layer), it typically works only within a single broadcast domain, usually limited to a single router or network segment.
 
-To scan multiple locally accessible network segments, add them as subnets according to the [subnets](./SUBNETS.md) documentation.
+> [!NOTE]
+> Ping and `ARPSCAN` use different protocols so even if you can ping devices it doesn't mean `ARPSCAN` can detect them.
+
+To scan multiple locally accessible network segments, add them as subnets according to the [subnets](./SUBNETS.md) documentation. If `ARPSCAN` is not suitable for your setup, read on.
 
 ## Complex Use Cases
 
-The following network setups might make some devices undetectable. Check the specific setup to understand the cause and find potential workarounds to still report on these devices.
+The following network setups might make some devices undetectable with `ARPSCAN`. Check the specific setup to understand the cause and find potential workarounds to report on these devices.
 
 ### Wi-Fi Extenders
 

@@ -37,11 +37,17 @@ def main():
 
     for entry in device_data:
         mylog('verbose', [f'[{pluginName}] found: ', str(entry.mac).lower()])  
+
+        name = str(entry.hostname)
+
+        if name.lower() == 'none':
+            name = '(unknown)'
+
         plugin_objects.add_object(
             primaryId   = str(entry.mac).lower(),
             secondaryId = entry.ip, 
             watched1    = entry.host,
-            watched2    = str(entry.hostname),
+            watched2    = name,
             watched3    = "",          
             watched4    = "",
             extra       = pluginName, 
@@ -67,7 +73,7 @@ def get_device_data():
     else:
         mylog('error', [f'[{pluginName}] login fail.']) 
     
-    device_data = router.get_all_connected_devices(only_reachable=True)
+    device_data = router.get_all_connected_devices(only_reachable=get_setting_value("LUCIRPC_only_reachable"))
     return device_data
 
 if __name__ == '__main__':
