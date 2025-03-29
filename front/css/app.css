@@ -1141,14 +1141,14 @@ input[readonly] {
 .settings-sticky-bottom-section {
     position: fixed;
     z-index: 999;
-    background-color: #5B5B66;
+    /* background-color: #5B5B66; */
     /* opacity: 0.8; */
     bottom: 30px;
     border-radius: 5px;
     /* margin:1px; */
-    border-width: 1px;
+    /* border-width: 1px;
     border-style: solid;
-    border-color: inherit;
+    border-color: inherit; */
     /* width: 87%; */
     padding: 10px;
   }
@@ -1530,13 +1530,13 @@ input[readonly] {
     justify-content:center;
     display: inline-grid;
 }
-.networkHelpIcon
+.helpIcon
 {
-  padding: 5px;
-  margin-left: 5px;
-  top: 55px;
-  position: absolute;
-  z-index:5;
+    padding: 5px;
+    margin-left: 0px;
+    top: 47px;
+    position: absolute;
+    z-index: 5;
 }
 #networkTree .netNodeText
 { 
@@ -1974,8 +1974,6 @@ input[readonly] {
     opacity: 0.1;
     right: 0.1em;
 }
-
-
 
 .workflows .remove-condition
 {

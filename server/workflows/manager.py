@@ -55,14 +55,17 @@ class WorkflowManager:
         # Check if the trigger conditions match
         for workflow in self.workflows:
 
-            # construct trigger object which also evaluates if the current event triggers it
-            trigger = Trigger(workflow["trigger"], event, self.db)
+            # Ensure workflow is enabled before proceeding
+            if workflow.get("enabled", "No").lower() == "yes":
+               
+                # construct trigger object which also evaluates if the current event triggers it
+                trigger = Trigger(workflow["trigger"], event, self.db)
 
-            if trigger.triggered:
+                if trigger.triggered:
 
-                mylog('verbose', [f"[WF] Event with GUID '{event["GUID"]}' triggered the workflow '{workflow["name"]}'"])
+                    mylog('verbose', [f"[WF] Event with GUID '{event["GUID"]}' triggered the workflow '{workflow["name"]}'"])
 
-                self.execute_workflow(workflow, trigger)
+                    self.execute_workflow(workflow, trigger)
 
         # After processing the event, mark the event as processed (set AppEventProcessed to 1)
         self.db.sql.execute("""

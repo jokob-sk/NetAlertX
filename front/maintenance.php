@@ -209,7 +209,13 @@ $db->close();
                     <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnImportPastedConfig" onclick="askImportPastedConfig()"><?= lang('Maintenance_Tool_ImportPastedConfig');?></button>
                 </div>
                 <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_ImportPastedConfig_text');?></div>
-            </div>                 
+            </div>
+            <div class="db_info_table_row">
+              <div class="db_tools_table_cell_a" >
+                  <button type="button" class="btn btn-default pa-btn bg-green dbtools-button" id="btnDownloadWorkflows" onclick="DownloadWorkflows()"><?= lang('Maintenance_Tool_DownloadWorkflows');?></button>
+              </div>
+              <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_DownloadWorkflows_text');?></div>
+            </div>                    
           </div>
         </div>
         <!-- ---------------------------Logging-------------------------------------------- -->
@@ -427,6 +433,15 @@ function DownloadConfig()
 { 
   // Execute
   openInNewTab("php/server/query_config.php?file=app.conf&download=true")
+}
+
+// -----------------------------------------------------------
+// Download Workflows
+
+function DownloadWorkflows()
+{ 
+  // Execute
+  openInNewTab("php/server/query_config.php?file=workflows.json&download=true")
 }
 
 

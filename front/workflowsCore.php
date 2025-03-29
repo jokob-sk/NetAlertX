@@ -12,13 +12,13 @@
   </div>
   <div id="buttons" class="bottom-buttons col-sm-12 col-xs-12">
     <div class="add-workflow col-sm-12 col-xs-12">
-      <button type="button" class="btn btn-primary add-workflow-btn col-sm-12 col-xs-12" id="save">
-        <?= lang('Gen_Add');?>
+      <button type="button" class="btn btn-primary add-workflow-btn col-sm-12 col-xs-12" id="add">
+        <?= lang('WF_Add');?>
       </button>
     </div>
     <div class="save-workflows col-sm-12 col-xs-12">
       <button type="button" class="btn btn-primary col-sm-12 col-xs-12" id="save" onclick="saveWorkflows()">
-        <?= lang('DevDetail_button_Save');?>
+        <?= lang('WF_Save');?>
       </button>
     </div>
     <div class="restart-app col-sm-12 col-xs-12">
@@ -46,6 +46,10 @@ let triggerTypes = [
   "Devices"
 ];
 
+let wfEnabledOptions = [
+  "Yes", "No"
+];
+
 let operatorTypes = [
   "equals", "contains" , "regex"
 ];
@@ -65,7 +69,6 @@ function getData() {
   $.get('php/server/query_json.php?file=workflows.json')
   .done(function (res) {
     workflows = res;
-    console.log("here workflows");
     console.log(workflows);
 
     updateWorkflowsJson(workflows);
@@ -150,9 +153,19 @@ function generateWorkflowUI(wf, wfIndex) {
     id: `wf-${wfIndex}-collapsible-panel` 
   });
 
+  let $wfEnabled = createEditableDropdown(
+    `[${wfIndex}].enabled`, 
+    getString("WF_Enabled"),
+    wfEnabledOptions, 
+    wf?.enabled ?? "No", 
+    `wf-${wfIndex}-enabled`
+  );
+
+  $wfCollapsiblePanel.append($wfEnabled)
+
   let $wfNameInput = createEditableInput(
     `[${wfIndex}].name`, 
-    "Workflow name", 
+    getString("WF_Name"), 
     wf.name, 
     `wf-${wfIndex}-name`, 
     "workflow-name-input"
@@ -168,7 +181,7 @@ function generateWorkflowUI(wf, wfIndex) {
     {
       class:"section-title"
     }
-  ).append($triggersIcon).append(" Trigger:")
+  ).append($triggersIcon).append(` ${getString("WF_Trigger")}:`)
 
   // Trigger Section with dropdowns
   let $triggerSection = $("<div>",
@@ -179,7 +192,7 @@ function generateWorkflowUI(wf, wfIndex) {
 
   let $triggerTypeDropdown = createEditableDropdown(
     `[${wfIndex}].trigger.object_type`, 
-    "Trigger Type", 
+    getString("WF_Trigger_type"),
     triggerTypes, 
     wf.trigger.object_type, 
     `wf-${wfIndex}-trigger-object-type`
@@ -187,7 +200,7 @@ function generateWorkflowUI(wf, wfIndex) {
 
   let $eventTypeDropdown = createEditableDropdown(
     `[${wfIndex}].trigger.event_type`, 
-    "Event Type", 
+    getString("WF_Trigger_event_type"), 
     ["update", "create", "delete"], 
     wf.trigger.event_type, 
     `wf-${wfIndex}-trigger-event-type`
@@ -210,7 +223,7 @@ function generateWorkflowUI(wf, wfIndex) {
 
   let $conditionsTitle = $("<div>", {
     class: "section-title"
-  }).append($conditionsIcon).append(" Conditions:");
+  }).append($conditionsIcon).append(` ${getString("WF_Conditions")}:`);
 
   let $conditionsContainer = $("<div>", {
     class: "col-sm-12 col-sx-12"
@@ -229,7 +242,7 @@ function generateWorkflowUI(wf, wfIndex) {
     {
       class:"section-title"
     }
-  ).append($actionsIcon).append(" Actions:")
+  ).append($actionsIcon).append(` ${getString("WF_Actions")}:`)
 
   // Actions with action.field as dropdown
   let $actionsContainer = $("<div>",
@@ -252,7 +265,7 @@ function generateWorkflowUI(wf, wfIndex) {
     // Dropdown for action.type
     let $actionDropdown= createEditableDropdown(
       `[${wfIndex}].actions[${actionIndex}].type`, 
-      "Type", 
+      getString("WF_Action_type"),  
       actionTypes, 
       action.type, 
       `wf-${wfIndex}-actionIndex-${actionIndex}-type`
@@ -271,7 +284,7 @@ function generateWorkflowUI(wf, wfIndex) {
       // Dropdown for action.field
       let $fieldDropdown = createEditableDropdown(
         `[${wfIndex}].actions[${actionIndex}].field`, 
-        "Field", 
+        getString("WF_Action_field"),  
         fieldOptions, 
         action.field, 
         `wf-${wfIndex}-actionIndex-${actionIndex}-field`
@@ -280,7 +293,7 @@ function generateWorkflowUI(wf, wfIndex) {
       // Textbox for  action.value
       let $actionValueInput = createEditableInput(
         `[${wfIndex}].actions[${actionIndex}].value`, 
-        "Value", 
+        getString("WF_Action_value"), 
         action.value, 
         `wf-${wfIndex}-actionIndex-${actionIndex}-value`, 
         "action-value-input"
@@ -331,7 +344,7 @@ function generateWorkflowUI(wf, wfIndex) {
       class : "pointer add-action green-hover-text",
       lastActionIndex : lastActionIndex,
       wfIndex: wfIndex
-    }).append($actionAddIcon).append(" Add Action")
+    }).append($actionAddIcon).append(` ${getString("WF_Action_Add")}`)
 
   $actionAddButtonWrap.append($actionAddButton)
   $actionsContainer.append($actionAddButtonWrap)
@@ -348,7 +361,7 @@ function generateWorkflowUI(wf, wfIndex) {
     wfIndex: wfIndex
   })
   .append($wfRemoveIcon) // Add icon
-  .append(" Remove Workflow"); // Add text
+  .append(` ${getString("WF_Remove")}`); // Add text
  
   $wfCollapsiblePanel.append($actionsContainer);
 
@@ -392,7 +405,7 @@ function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, condit
 
       let $logicDropdown = createEditableDropdown(
         `${currentPath}.logic`, 
-        "Logic Rules", 
+        getString("WF_Conditions_logic_rules"), 
         ["AND", "OR"], 
         condition.logic, 
         `wf-${wfIndex}-${currentPath.replace(/\./g, "-")}-logic` // id
@@ -428,7 +441,8 @@ function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, condit
 
       // Create dropdown for condition field
       let $fieldDropdown = createEditableDropdown(
-        `${currentPath}.field`,"Field", 
+        `${currentPath}.field`,
+        getString("WF_Condition_field"), 
         fieldOptions, 
         condition.field, 
         `wf-${wfIndex}-${currentPath.replace(/\./g, "-")}-field`
@@ -437,7 +451,7 @@ function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, condit
       // Create dropdown for operator
       let $operatorDropdown = createEditableDropdown(
         `${currentPath}.operator`, 
-        "Operator", 
+        getString("WF_Condition_operator"), 
         operatorTypes, 
         condition.operator, 
         `wf-${wfIndex}-${currentPath.replace(/\./g, "-")}-operator`
@@ -446,7 +460,7 @@ function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, condit
       // Editable input for condition value
       let $editableInput = createEditableInput(
           `${currentPath}.value`, 
-          "Condition Value", 
+          getString("WF_Condition_value"), 
           condition.value, 
           `wf-${wfIndex}-${currentPath.replace(/\./g, "-")}-value`, 
           "condition-value-input"
@@ -492,7 +506,7 @@ function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, condit
       class: "pointer add-condition green-hover-text col-sx-12",
       wfIndex: wfIndex,
       parentIndexPath: parentIndexPath
-    }).append($conditionAddIcon).append(" Add Condition");
+    }).append($conditionAddIcon).append(` ${getString("WF_Add_Condition")}`);
     $conditionAddWrap.append($conditionAddButton);
 
     // Remove Condition Group button
@@ -522,7 +536,7 @@ function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, condit
     class: "pointer add-condition-group green-hover-text col-sx-12",
     wfIndex: wfIndex,
     parentIndexPath: parentIndexPath
-  }).append($conditionsGroupAddIcon).append(" Add Group");
+  }).append($conditionsGroupAddIcon).append(` ${getString("WF_Add_Group")}`);
   $conditionsGroupAddWrap.append($conditionsGroupAddButton);
 
   $addButtonWrap.append($conditionsGroupAddWrap);

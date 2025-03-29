@@ -45,11 +45,15 @@ def get_notifications (db):
     json_plugins_meta = {}
 
     # Disable reporting on events for devices where reporting is disabled based on the MAC address
+
+    # Disable notifications (except down/down reconnected) on devices where devAlertEvents is disabled
     sql.execute ("""UPDATE Events SET eve_PendingAlertEmail = 0
                     WHERE eve_PendingAlertEmail = 1 AND eve_EventType not in ('Device Down', 'Down Reconnected', 'New Device' ) AND eve_MAC IN
                         (
                             SELECT devMac FROM Devices WHERE devAlertEvents = 0
 						)""")
+
+    # Disable down/down reconnected notifications on devices where devAlertDown is disabled
     sql.execute ("""UPDATE Events SET eve_PendingAlertEmail = 0
                     WHERE eve_PendingAlertEmail = 1 AND eve_EventType in ('Device Down', 'Down Reconnected') AND eve_MAC IN
                         (

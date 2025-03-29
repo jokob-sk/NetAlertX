@@ -56,7 +56,7 @@ Below you can find a couple of configuration examples.
 
 ### Trigger:
 - **Object Type**: `Devices`
-- **Event Type**: `insert`
+- **Event Type**: `create`
 
 ### Conditions:
 - **Logic**: `AND`

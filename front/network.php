@@ -22,7 +22,7 @@
 <div class="content-wrapper">
 
 
-  <span class="networkHelpIcon"> <a target="_blank" href="https://github.com/jokob-sk/NetAlertX/blob/main/docs/NETWORK_TREE.md"><i class="fa fa-circle-question"></i></a></span>
+  <span class="helpIcon"> <a target="_blank" href="https://github.com/jokob-sk/NetAlertX/blob/main/docs/NETWORK_TREE.md"><i class="fa fa-circle-question"></i></a></span>
 
   <div id="networkTree" class="drag"></div>
 
