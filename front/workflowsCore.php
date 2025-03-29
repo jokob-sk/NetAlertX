@@ -331,7 +331,7 @@ function generateWorkflowUI(wf, wfIndex) {
       class : "pointer add-action green-hover-text",
       lastActionIndex : lastActionIndex,
       wfIndex: wfIndex
-    }).append($actionAddIcon).append("Add Action")
+    }).append($actionAddIcon).append(" Add Action")
 
   $actionAddButtonWrap.append($actionAddButton)
   $actionsContainer.append($actionAddButtonWrap)
@@ -348,7 +348,7 @@ function generateWorkflowUI(wf, wfIndex) {
     wfIndex: wfIndex
   })
   .append($wfRemoveIcon) // Add icon
-  .append("Remove Workflow"); // Add text
+  .append(" Remove Workflow"); // Add text
  
   $wfCollapsiblePanel.append($actionsContainer);
 
@@ -492,7 +492,7 @@ function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, condit
       class: "pointer add-condition green-hover-text col-sx-12",
       wfIndex: wfIndex,
       parentIndexPath: parentIndexPath
-    }).append($conditionAddIcon).append("Add Condition");
+    }).append($conditionAddIcon).append(" Add Condition");
     $conditionAddWrap.append($conditionAddButton);
 
     // Remove Condition Group button
@@ -522,7 +522,7 @@ function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, condit
     class: "pointer add-condition-group green-hover-text col-sx-12",
     wfIndex: wfIndex,
     parentIndexPath: parentIndexPath
-  }).append($conditionsGroupAddIcon).append("Add Group");
+  }).append($conditionsGroupAddIcon).append(" Add Group");
   $conditionsGroupAddWrap.append($conditionsGroupAddButton);
 
   $addButtonWrap.append($conditionsGroupAddWrap);
