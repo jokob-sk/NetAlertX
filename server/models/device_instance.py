@@ -71,7 +71,7 @@ class DeviceInstance:
         self.db.sql.execute(f"""
             UPDATE Devices SET {field} = ? WHERE devGUID = ?
         """, (value, devGUID))
-        self.db.sql.commit()
+        self.db.commitDB()
 
     # Delete a device by devGUID
     def delete(self, devGUID):
@@ -81,4 +81,4 @@ class DeviceInstance:
             raise ValueError(m)
 
         self.db.sql.execute("DELETE FROM Devices WHERE devGUID = ?", (devGUID,))
-        self.db.sql.commit()
+        self.db.commitDB()

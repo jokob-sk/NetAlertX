@@ -52,7 +52,7 @@ class PluginObjectInstance:
         self.db.sql.execute(f"""
             UPDATE Plugins_Objects SET {field} = ? WHERE ObjectGUID = ?
         """, (value, ObjectGUID))
-        self.db.sql.commit()
+        self.db.commitDB()
     
     # Delete a plugin object by ObjectGUID
     def delete(self, ObjectGUID):
@@ -62,4 +62,4 @@ class PluginObjectInstance:
             raise ValueError(m)
 
         self.db.sql.execute("DELETE FROM Plugins_Objects WHERE ObjectGUID = ?", (ObjectGUID,))
-        self.db.sql.commit()
+        self.db.commitDB()

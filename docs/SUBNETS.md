@@ -2,17 +2,14 @@
 
 You need to specify the network interface and the network mask. You can also configure multiple subnets and specify VLANs (see VLAN exceptions below).
 
-`ARPSCAN` can scan multiple networks if the network allows it. To scan networks directly, the subnets must be accessible from the network where NetAlertX is running. This means NetAlertX needs to have access to the interface attached to that subnet. You can verify this by running the following command in the container (replace the interface and ip mask):
+`ARPSCAN` can scan multiple networks if the network allows it. To scan networks directly, the subnets must be accessible from the network where NetAlertX is running. This means NetAlertX needs to have access to the interface attached to that subnet. 
 
-`sudo arp-scan --interface=eth0 192.168.1.0/24`
+> [!WARNING] 
+> If you don't see all expected devices run the following command in the NetAlertX container (replace the interface and ip mask):
+> `sudo arp-scan --interface=eth0 192.168.1.0/24`
+> 
+>  If this command returns no results, the network is not accessible due to your network or firewall restrictions (Wi-Fi Extenders, VPNs and inaccessible networks). If direct scans are not possible, check the [remote networks documentation](./REMOTE_NETWORKS.md) for workarounds. 
 
-In this example, `--interface=eth0 192.168.1.0/24` represents a neighboring subnet. If this command returns no results, the network is not accessible due to your network or firewall restrictions.
-
-If direct scans are not possible (Wi-Fi Extenders, VPNs and inaccessible networks), check the [remote networks documentation](./REMOTE_NETWORKS.md). 
-
-> [!TIP] 
-> You may need to increase the time between scans `ARPSCAN_RUN_SCHD` and the timeout `ARPSCAN_RUN_TIMEOUT` (and similar settings for related plugins) when adding more subnets. If the timeout setting is exceeded, the scan is canceled to prevent the application from hanging due to rogue plugins.  
-> Check [debugging plugins](./DEBUG_PLUGINS.md) for more tips.
 
 ## Example Values
 
@@ -24,7 +21,17 @@ If direct scans are not possible (Wi-Fi Extenders, VPNs and inaccessible network
   * One subnet: `SCAN_SUBNETS = ['192.168.1.0/24 --interface=eth0']`
   * Two subnets: `SCAN_SUBNETS = ['192.168.1.0/24 --interface=eth0','192.168.1.0/24 --interface=eth1 --vlan=107']`
 
-If you get timeout messages, decrease the network mask (e.g.: from `/16` to `/24`) or increase the `TIMEOUT` setting (e.g.: `ARPSCAN_RUN_TIMEOUT` to `300` (5-minute timeout)) for the plugin and the interval between scans (e.g.: `ARPSCAN_RUN_SCHD` to `*/10 * * * *` (scans every 10 minutes)).
+> [!TIP]  
+> When adding more subnets, you may need to increase both the scan interval (`ARPSCAN_RUN_SCHD`) and the timeout (`ARPSCAN_RUN_TIMEOUT`)—as well as similar settings for related plugins.  
+>  
+> If the timeout is too short, you may see timeout errors in the log. To prevent the application from hanging due to unresponsive plugins, scans are canceled when they exceed the timeout limit.  
+>  
+> To fix this:  
+> - Reduce the subnet size (e.g., change `/16` to `/24`).  
+> - Increase the timeout (e.g., set `ARPSCAN_RUN_TIMEOUT` to `300` for a 5-minute timeout).  
+> - Extend the scan interval (e.g., set `ARPSCAN_RUN_SCHD` to `*/10 * * * *` to scan every 10 minutes).  
+>  
+> For more troubleshooting tips, see [Debugging Plugins](./DEBUG_PLUGINS.md).
 
 ---
 

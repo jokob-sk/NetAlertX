@@ -1303,6 +1303,38 @@ $(document).ready(function() {
   }
 });
 
+// -----------------------------------------------------------
+// Restart Backend Python Server
+
+function askRestartBackend() {
+  // Ask 
+  showModalWarning(getString('Maint_RestartServer'), getString('Maint_Restart_Server_noti_text'),
+  getString('Gen_Cancel'), getString('Maint_RestartServer'), 'restartBackend');
+}
+
+// -----------------------------------------------------------
+function restartBackend() {
+
+  modalEventStatusId = 'modal-message-front-event'
+  
+  // Execute
+  $.ajax({
+      method: "POST",
+      url: "php/server/util.php",
+      data: { function: "addToExecutionQueue", action: `${getGuid()}|cron_restart_backend`  },
+      success: function(data, textStatus) {
+          // showModalOk ('Result', data );
+
+          // show message
+          showModalOk(getString("general_event_title"), `${getString("general_event_description")}  <br/> <br/> <code id='${modalEventStatusId}'></code>`);
+
+          updateModalState()
+
+          write_notification('[Maintenance] App manually restarted', 'info')
+      }
+    })
+}
+
 // -----------------------------------------------------------------------------
 // initialize
 // -----------------------------------------------------------------------------

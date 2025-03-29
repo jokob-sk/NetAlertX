@@ -1,6 +1,6 @@
 name: Feature Request
 description: 'Suggest an idea for NetAlertX'
-labels: ['Feature request➕']
+labels: ['Feature request ➕']
 body:
 - type: checkboxes
   attributes:

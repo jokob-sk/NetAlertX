@@ -196,8 +196,10 @@ def main ():
         # Fetch new unprocessed events
         new_events = workflow_manager.get_new_app_events()
 
+        mylog('debug', [f'[MAIN] Processing WORKFLOW new_events from get_new_app_events: {len(new_events)}'])
+
         # Process each new event and check triggers
-        if new_events:
+        if len(new_events) > 0:
             updateState("Workflows: Start")
             update_api_flag = False
             for event in new_events:

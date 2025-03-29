@@ -225,7 +225,7 @@
     "Device_TableHead_Name": "Name",
     "Device_TableHead_NetworkSite": "Network Site",
     "Device_TableHead_Owner": "Owner",
-    "Device_TableHead_Parent_MAC": "Parent node MAC",
+    "Device_TableHead_Parent_MAC": "Parent network node",
     "Device_TableHead_Port": "Port",
     "Device_TableHead_PresentLastScan": "Presence",
     "Device_TableHead_RowID": "Row ID",

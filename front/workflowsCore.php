@@ -21,6 +21,11 @@
         <?= lang('DevDetail_button_Save');?>
       </button>
     </div>
+    <div class="restart-app col-sm-12 col-xs-12">
+      <button type="button" class="btn btn-primary col-sm-12 col-xs-12" id="save" onclick="askRestartBackend()">
+        <?= lang('Maint_RestartServer');?>
+      </button>
+    </div>
   </div>
 </section>
 
@@ -228,16 +233,6 @@ function generateWorkflowUI(wf, wfIndex) {
       class: "panel col-sm-12 col-sx-12"
     });
 
-    // Dropdown for action.field
-    let $fieldDropdown = createEditableDropdown(
-      `[${wfIndex}].actions[${actionIndex}].field`, 
-      "Field", 
-      fieldOptions, 
-      action.field, 
-      `wf-${wfIndex}-actionIndex-${actionIndex}-field`
-    );
-
-
     // Dropdown for action.type
     let $actionDropdown= createEditableDropdown(
       `[${wfIndex}].actions[${actionIndex}].type`, 
@@ -247,19 +242,33 @@ function generateWorkflowUI(wf, wfIndex) {
       `wf-${wfIndex}-actionIndex-${actionIndex}-type`
     );
 
-
-    // Action Value Input (Editable)
-    let $actionValueInput = createEditableInput(
-      `[${wfIndex}].actions[${actionIndex}].value`, 
-      "Value", 
-      action.value, 
-      `wf-${wfIndex}-actionIndex-${actionIndex}-value`, 
-      "action-value-input"
-    );
-
     $actionEl.append($actionDropdown);
-    $actionEl.append($fieldDropdown);
-    $actionEl.append($actionValueInput);
+
+    if(action.type == "update_field")
+    {
+      // Dropdown for action.field
+      let $fieldDropdown = createEditableDropdown(
+        `[${wfIndex}].actions[${actionIndex}].field`, 
+        "Field", 
+        fieldOptions, 
+        action.field, 
+        `wf-${wfIndex}-actionIndex-${actionIndex}-field`
+      );
+
+      // Textbox for  action.value
+      let $actionValueInput = createEditableInput(
+        `[${wfIndex}].actions[${actionIndex}].value`, 
+        "Value", 
+        action.value, 
+        `wf-${wfIndex}-actionIndex-${actionIndex}-value`, 
+        "action-value-input"
+      );
+
+      
+      $actionEl.append($fieldDropdown);
+      $actionEl.append($actionValueInput);
+
+    }
 
     // Actions
 
@@ -612,6 +621,8 @@ function updateWorkflowObject(newValue, jsonPath) {
   console.log("Updated workflows:", workflows);
 
   updateWorkflowsJson(workflows)
+
+  renderWorkflows();
 }
 
 

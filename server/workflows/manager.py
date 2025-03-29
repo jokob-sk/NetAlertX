@@ -42,6 +42,9 @@ class WorkflowManager:
             WHERE AppEventProcessed = 0
             ORDER BY DateTimeCreated ASC
         """).fetchall()
+
+        mylog('none', [f'[WF] get_new_app_events - new events count: {len(result)}'])
+
         return result
 
     def process_event(self, event):
@@ -103,14 +106,17 @@ class WorkflowManager:
             if action["type"] == "update_field":
                 field = action["field"]
                 value = action["value"]
-                action_instance = UpdateFieldAction(field, value, trigger)
+                action_instance = UpdateFieldAction(self.db, field, value, trigger)
                 # indicate if the api has to be updated
                 self.update_api = True
 
             elif action["type"] == "run_plugin":
                 plugin_name = action["plugin"]
                 params = action["params"]
-                action_instance = RunPluginAction(plugin_name, params, trigger)
+                action_instance = RunPluginAction(self.db, plugin_name, params, trigger)
+
+            elif action["type"] == "delete_device":
+                action_instance = DeleteObjectAction(self.db, trigger)
 
             # elif action["type"] == "send_notification":
             #     method = action["method"]

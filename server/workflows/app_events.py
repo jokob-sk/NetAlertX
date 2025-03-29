@@ -49,20 +49,21 @@ class AppEvent_obj:
                     "ObjectIsArchived": "NEW.devIsArchived",
                     "ObjectPlugin": "'DEVICES'"                   
                 }
-            },
-            "Plugins_Objects": {
-                "fields": {
-                    "ObjectGUID": "NEW.ObjectGUID",
-                    "ObjectPrimaryID": "NEW.Plugin",
-                    "ObjectSecondaryID": "NEW.Object_PrimaryID",
-                    "ObjectForeignKey": "NEW.ForeignKey",
-                    "ObjectStatus": "NEW.Status",
-                    "ObjectStatusColumn": "'Status'",
-                    "ObjectIsNew": "CASE WHEN NEW.Status = 'new' THEN 1 ELSE 0 END",
-                    "ObjectIsArchived": "0",  # Default value
-                    "ObjectPlugin": "NEW.Plugin"
-                }
             }
+            # ,
+            # "Plugins_Objects": {
+            #     "fields": {
+            #         "ObjectGUID": "NEW.ObjectGUID",
+            #         "ObjectPrimaryID": "NEW.Plugin",
+            #         "ObjectSecondaryID": "NEW.Object_PrimaryID",
+            #         "ObjectForeignKey": "NEW.ForeignKey",
+            #         "ObjectStatus": "NEW.Status",
+            #         "ObjectStatusColumn": "'Status'",
+            #         "ObjectIsNew": "CASE WHEN NEW.Status = 'new' THEN 1 ELSE 0 END",
+            #         "ObjectIsArchived": "0",  # Default value
+            #         "ObjectPlugin": "NEW.Plugin"
+            #     }
+            # }
         }
 
                 
