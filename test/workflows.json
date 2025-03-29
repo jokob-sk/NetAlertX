@@ -44,11 +44,7 @@
         "value": "0"
       },
       {
-        "type": "run_plugin",
-        "plugin": "SMTP",
-        "params": {
-          "message": "New device from Google detected."
-        }
+        "type": "delete_device"
       }
     ]
   }

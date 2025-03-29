@@ -1884,6 +1884,7 @@ input[readonly] {
     margin-bottom: 7px;
     z-index: 1;
     display: flex;
+    opacity: 0.7;
 }
 
 .workflows .section-title
@@ -1905,18 +1906,18 @@ input[readonly] {
 
 .workflows .button-container 
 {
-    display: contents;
+    /* display: contents; */
     text-align: center;
-    width: 100%;
+    /* width: 100%; */
 }
 
-.workflows .panel:hover{
+/* .workflows .panel:hover{
     opacity: 1;
 }
 
 .workflows .panel{
     opacity: 0.8;
-}
+} */
 
 .workflows .bottom-buttons button
 {
@@ -1938,6 +1939,48 @@ input[readonly] {
 {
     width:100%; 
 } */
+
+.red-hover-text:hover
+{
+    color: var(--color-red) !important;    
+}
+
+.green-hover-text:hover
+{
+    color: var(--color-green) !important;
+}
+ 
+.workflows .bckg-icon-1-line
+{
+    font-size: 3em;
+    display: block;
+    position: absolute;
+    opacity: 0.1;
+    right: 0.1em;
+}
+.workflows .bckg-icon-2-line
+{
+    font-size: 6em;
+    display: block;
+    position: absolute;
+    opacity: 0.1;
+    right: 0.1em;
+}
+.workflows .bckg-icon-3-line
+{
+    font-size: 9em;
+    display: block;
+    position: absolute;
+    opacity: 0.1;
+    right: 0.1em;
+}
+
+
+
+.workflows .remove-condition
+{
+    z-index: 1;
+}
 
 .workflows .workflow-card 
 {

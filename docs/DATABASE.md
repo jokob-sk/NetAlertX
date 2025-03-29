@@ -5,7 +5,50 @@
 
   The MAC address is used as a foreign key in most cases. 
 
-## 🔍Tables overview
+## Devices database table
+
+| Field Name              | Description |
+|-------------------------|-------------|
+| `devMac`               | MAC address of the device. |
+| `devName`              | Name of the device. |
+| `devOwner`             | Owner of the device. |
+| `devType`              | Type of the device (e.g., phone, laptop, etc.). If set to a network type (e.g.: switch), it will become selectable as a Network Parent Node  |
+| `devVendor`            | Vendor/manufacturer of the device. |
+| `devFavorite`          | Whether the device is marked as a favorite. |
+| `devGroup`             | Group the device belongs to. |
+| `devComments`          | User comments or notes about the device. |
+| `devFirstConnection`   | Timestamp of the device's first connection. |
+| `devLastConnection`    | Timestamp of the device's last connection. |
+| `devLastIP`            | Last known IP address of the device. |
+| `devStaticIP`          | Whether the device has a static IP address. |
+| `devScan`              | Whether the device should be scanned. |
+| `devLogEvents`         | Whether events related to the device should be logged. |
+| `devAlertEvents`       | Whether alerts should be generated for events. |
+| `devAlertDown`         | Whether an alert should be sent when the device goes down. |
+| `devSkipRepeated`      | Whether to skip repeated alerts for this device. |
+| `devLastNotification`  | Timestamp of the last notification sent for this device. |
+| `devPresentLastScan`   | Whether the device was present during the last scan. |
+| `devIsNew`             | Whether the device is marked as new. |
+| `devLocation`          | Physical or logical location of the device. |
+| `devIsArchived`        | Whether the device is archived. |
+| `devParentMAC`         | MAC address of the parent device (if applicable). |
+| `devParentPort`        | Port of the parent device to which this device is connected. |
+| `devIcon`              | Icon representing the device. |
+| `devGUID`              | Unique identifier for the device. |
+| `devSite`              | Site or location where the device is registered. |
+| `devSSID`              | SSID of the Wi-Fi network the device is connected to. |
+| `devSyncHubNode`       | The NetAlertX node ID used for synchronization between NetAlertX instances. |
+| `devSourcePlugin`      | Source plugin that discovered the device. |
+
+
+To understand how values of these fields influuence application behavior, such as Notifications or Network topology, see also: 
+
+- [Device Management](./DEVICE_MANAGEMENT.md)
+- [Network Tree Topology Setup](./NETWORK_TREE.md)
+- [Notifications](./NOTIFICATIONS.md)
+
+
+## Other Tables overview
   
   | Table name | Description  | Sample data |
   |----------------------|----------------------| ----------------------| 

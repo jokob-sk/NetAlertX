@@ -41,6 +41,7 @@ nav:
         - Reverse DNS: REVERSE_DNS.md  
         - Reverse Proxy: REVERSE_PROXY.md
         - Webhooks (n8n): WEBHOOK_N8N.md
+        - Workflows: WORKFLOWS.md
       - Help:
         - Common issues: COMMON_ISSUES.md
         - Random MAC: RANDOM_MAC.md       

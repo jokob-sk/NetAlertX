@@ -34,12 +34,12 @@
 let workflows = [];
 
 let fieldOptions = [
-        "devMac", "devName", "devOwner", "devType", "devVendor", "devFavorite",
+        "devName", "devOwner", "devType", "devVendor", "devFavorite",
         "devGroup", "devComments", "devFirstConnection", "devLastConnection",
         "devLastIP", "devStaticIP", "devScan", "devLogEvents", "devAlertEvents",
         "devAlertDown", "devSkipRepeated", "devLastNotification", "devPresentLastScan",
         "devIsNew", "devLocation", "devIsArchived", "devParentMAC", "devParentPort",
-        "devIcon", "devGUID", "devSite", "devSSID", "devSyncHubNode", "devSourcePlugin"
+        "devIcon", "devSite", "devSSID", "devSyncHubNode", "devSourcePlugin"
       ];
       
 let triggerTypes = [
@@ -160,11 +160,15 @@ function generateWorkflowUI(wf, wfIndex) {
 
   $wfCollapsiblePanel.append($wfNameInput)
 
+  let $triggersIcon = $("<i>", { 
+      class: "fa-solid fa-bolt"
+    });
+
   let $triggerTitle = $("<div>",
     {
       class:"section-title"
     }
-  ).text("Trigger:")
+  ).append($triggersIcon).append(" Trigger:")
 
   // Trigger Section with dropdowns
   let $triggerSection = $("<div>",
@@ -189,32 +193,43 @@ function generateWorkflowUI(wf, wfIndex) {
     `wf-${wfIndex}-trigger-event-type`
   );
 
+  let $triggerIcon = $("<i>", { 
+      class: "fa-solid fa-bolt bckg-icon-2-line"
+    });
+
   $triggerSection.append($triggerTypeDropdown);
   $triggerSection.append($eventTypeDropdown);
+  $triggerSection.append($triggerIcon);
   $wfCollapsiblePanel.append($triggerSection);
 
   // Conditions
-  let $conditionsTitle = $("<div>",
-    {
-      class:"section-title"
-    }
-  ).text("Conditions:")
 
-  let $conditionsContainer = $("<div>",
-    {
-      class: "col-sm-12 col-sx-12"
-    }
-  ).append($conditionsTitle);
+  let $conditionsIcon = $("<i>", { 
+    class: "fa-solid  fa-arrows-split-up-and-left fa-rotate-270"
+  });
+
+  let $conditionsTitle = $("<div>", {
+    class: "section-title"
+  }).append($conditionsIcon).append(" Conditions:");
+
+  let $conditionsContainer = $("<div>", {
+    class: "col-sm-12 col-sx-12"
+  }).append($conditionsTitle);
+
 
   $conditionsContainer.append(renderConditions(wfIndex, `[${wfIndex}]`, 0, wf.conditions));
   
   $wfCollapsiblePanel.append($conditionsContainer);
 
+  let $actionsIcon = $("<i>", { 
+      class: "fa-solid fa-person-running fa-flip-horizontal"
+    });
+
   let $actionsTitle = $("<div>",
     {
       class:"section-title"
     }
-  ).text("Actions:")
+  ).append($actionsIcon).append(" Actions:")
 
   // Actions with action.field as dropdown
   let $actionsContainer = $("<div>",
@@ -233,6 +248,7 @@ function generateWorkflowUI(wf, wfIndex) {
       class: "panel col-sm-12 col-sx-12"
     });
 
+
     // Dropdown for action.type
     let $actionDropdown= createEditableDropdown(
       `[${wfIndex}].actions[${actionIndex}].type`, 
@@ -242,10 +258,16 @@ function generateWorkflowUI(wf, wfIndex) {
       `wf-${wfIndex}-actionIndex-${actionIndex}-type`
     );
 
+
     $actionEl.append($actionDropdown);
+
+    // how big should the background icon be
+    let numberOfLines = 1
 
     if(action.type == "update_field")
     {
+      numberOfLines = 3
+
       // Dropdown for action.field
       let $fieldDropdown = createEditableDropdown(
         `[${wfIndex}].actions[${actionIndex}].field`, 
@@ -279,7 +301,7 @@ function generateWorkflowUI(wf, wfIndex) {
     });
 
     let $actionRemoveButton = $("<div>", {
-      class: "pointer remove-action ",
+      class: "pointer remove-action red-hover-text",
       actionIndex: actionIndex,
       wfIndex: wfIndex
     })
@@ -287,7 +309,12 @@ function generateWorkflowUI(wf, wfIndex) {
 
     $actionRemoveButtonWrap.append($actionRemoveButton);
 
+    let $actionIcon = $("<i>", { 
+        class: `fa-solid  fa-person-running fa-flip-horizontal bckg-icon-${numberOfLines}-line `
+      });
+
     $actionElWrap.append($actionEl)
+    $actionElWrap.append($actionIcon)
     $actionElWrap.append($actionRemoveButtonWrap)
 
     $actionsContainer.append($actionElWrap);
@@ -301,7 +328,7 @@ function generateWorkflowUI(wf, wfIndex) {
       class: "fa-solid fa-plus"
     });
   let $actionAddButton = $("<div>", {
-      class : "pointer add-action",
+      class : "pointer add-action green-hover-text",
       lastActionIndex : lastActionIndex,
       wfIndex: wfIndex
     }).append($actionAddIcon).append("Add Action")
@@ -317,7 +344,7 @@ function generateWorkflowUI(wf, wfIndex) {
   });
 
   let $wfRemoveButton = $("<div>", {
-    class: "pointer remove-wf",
+    class: "pointer remove-wf red-hover-text",
     wfIndex: wfIndex
   })
   .append($wfRemoveIcon) // Add icon
@@ -381,12 +408,18 @@ function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, condit
 
     } else {
       // INDIVIDUAL CONDITIONS
+      let $conditionIcon = $("<i>", { 
+        class: "fa-solid  fa-arrows-split-up-and-left fa-rotate-270 bckg-icon-3-line "
+      });
+
       let $conditionItem = $("<div>",
       {
         class: "panel col-sm-12 col-sx-12",
         conditionIndex: conditionIndex,
         wfIndex: wfIndex
       });
+
+      $conditionItem.append($conditionIcon); // Append background icon
 
       let $conditionItemsWrap = $("<div>",
       {
@@ -419,6 +452,7 @@ function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, condit
           "condition-value-input"
        );
 
+
       $conditionItemsWrap.append($fieldDropdown); // Append field dropdown
       $conditionItemsWrap.append($operatorDropdown); // Append operator dropdown
       $conditionItemsWrap.append($editableInput); // Append editable input for condition value
@@ -428,7 +462,7 @@ function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, condit
         class: "fa-solid fa-trash"
       });
       let $conditionRemoveButton = $("<div>", {
-        class : "pointer remove-condition ",
+        class : "pointer remove-condition red-hover-text",
         conditionIndex : conditionIndex,
         wfIndex: wfIndex,
         parentIndexPath: parentIndexPath
@@ -455,7 +489,7 @@ function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, condit
       class: "fa-solid fa-plus"
     });
     let $conditionAddButton = $("<div>", {
-      class: "pointer add-condition col-sx-12",
+      class: "pointer add-condition green-hover-text col-sx-12",
       wfIndex: wfIndex,
       parentIndexPath: parentIndexPath
     }).append($conditionAddIcon).append("Add Condition");
@@ -467,7 +501,7 @@ function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, condit
       class: "fa-solid fa-trash"
     });
     let $conditionGroupRemoveButton = $("<div>", {
-      class: "pointer remove-condition-group col-sx-12",
+      class: "pointer remove-condition-group red-hover-text col-sx-12",
       lastConditionIndex: lastConditionIndex,
       wfIndex: wfIndex,
       parentIndexPath: parentIndexPath
@@ -485,7 +519,7 @@ function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, condit
       class: "fa-solid fa-plus"
     });
   let $conditionsGroupAddButton = $("<div>", {
-    class: "pointer add-condition-group col-sx-12",
+    class: "pointer add-condition-group green-hover-text col-sx-12",
     wfIndex: wfIndex,
     parentIndexPath: parentIndexPath
   }).append($conditionsGroupAddIcon).append("Add Group");
