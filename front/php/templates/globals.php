@@ -1,17 +1,21 @@
 <?php
 
-// ###################################
-// ## TimeZone processing start
-// ###################################
+// ######################################################################
+// ## Global constants and TimeZone processing
+// ######################################################################
 
-$configFolderPath = dirname(__FILE__)."/../../../config/";
-$config_file = "app.conf";
+$configFolderPath = "/app/config/";
 $logFolderPath = "/app/log/";
+
+$config_file = "app.conf";
+$workflows_file = "workflows.json";
+
 $log_file = "app_front.log";
 $default_tz = "Europe/Berlin";
 
 
 $fullConfPath = $configFolderPath.$config_file;
+$fullWorkflowsPath = $configFolderPath.$workflows_file;
 
 $config_file_lines = file($fullConfPath);
 $config_file_lines_timezone = array_values(preg_grep('/^TIMEZONE\s.*/', $config_file_lines));
@@ -44,7 +48,7 @@ date_default_timezone_set($timeZone);
 $date = new DateTime("now", new DateTimeZone($timeZone) );
 $timestamp = $date->format('Y-m-d_H-i-s');
 
-// ###################################
-// ## TimeZone processing end
-// ###################################
+// ######################################################################
+// ## Global constants and TimeZone processing
+// ######################################################################
 

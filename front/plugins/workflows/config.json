@@ -40,7 +40,7 @@
           }
         ]
       },
-      "default_value": 5000,
+      "default_value": 100,
       "options": [],
       "localized": ["name", "description"],
       "name": [

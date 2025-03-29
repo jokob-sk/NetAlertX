@@ -1,6 +1,6 @@
 <?php
 
-require dirname(__FILE__).'/../templates/timezone.php';
+require dirname(__FILE__).'/../templates/globals.php';
 
 //------------------------------------------------------------------------------
 // check if authenticated

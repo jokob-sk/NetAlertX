@@ -1,35 +1,38 @@
-## Development environment set up
+# Development environment set up
 
 >[!NOTE]
 > Replace `/development` with the path where your code files will be stored. The default container name is `netalertx` so there might be a conflict with your running containers.
 
-### Development Guidelines
+## Development Guidelines
 
-**Priority Order (Highest to Lowest):**
+Before starting development, please scan the below development guidelines.
+
+### Priority Order (Highest to Lowest)
 
 1. 🔼 Fixing core bugs that lack workarounds.
 2. 🔵 Adding core functionality that unlocks other features (e.g., plugins).
 3. 🔵 Refactoring to enable faster development.
 4. 🔽 UI improvements (PRs welcome).
 
-💡 **Design Philosophy:**  
+### Design Philosophy
+
 Focus on core functionality and integrate with existing tools rather than reinventing the wheel.  
 Examples:
 
 - Using **Apprise** for notifications instead of implementing multiple separate gateways.
 - Implementing **regex-based validation** instead of one-off validation for each setting.
 
-📌 **Note on UI requests:**  
+> [!NOTE]
+> UI changes have lower priority, however, PRs are welcome, but **keep them small & focused**.
 
-- UI changes have lower priority due to framework limitations and mobile support constraints.  
-- PRs are welcome, but **keep them small & focused**.
+## Development Environment Set Up
 
-## 1. Download the code:
+### 1. Download the code:
 
 - `mkdir /development`
 - `cd /development && git clone https://github.com/jokob-sk/NetAlertX.git`
 
-## 2. Create a DEV .env_dev file
+### 2. Create a DEV .env_dev file
 
 `touch /development/.env_dev && sudo nano /development/.env_dev`
 
@@ -43,10 +46,12 @@ TZ=Europe/Berlin
 PORT=22222    # make sure this port is unique on your whole network
 DEV_LOCATION=/development/NetAlertX
 APP_DATA_LOCATION=/volume/docker_appdata
+# Make sure your GRAPHQL_PORT setting has a port that is unique on your whole host network
+APP_CONF_OVERRIDE={"GRAPHQL_PORT":"22223"} 
 # ALWAYS_FRESH_INSTALL=true # uncommenting this will always delete the content of /config and /db dirs on boot to simulate a fresh install
 ```
 
-## 3. Create /db and /config dirs 
+### 3. Create /db and /config dirs 
 
 Create a folder `netalertx` in the `APP_DATA_LOCATION` (in this example in `/volume/docker_appdata`) with 2 subfolders `db` and `config`. 
 
@@ -54,7 +59,7 @@ Create a folder `netalertx` in the `APP_DATA_LOCATION` (in this example in `/vol
 - `mkdir /volume/docker_appdata/netalertx/db`
 - `mkdir /volume/docker_appdata/netalertx/config`
 
-## 4. Run the container
+### 4. Run the container
 
 - `cd /development/NetAlertX &&  sudo docker-compose --env-file ../.env_dev `
 
@@ -63,7 +68,7 @@ You can then modify the python script without restarting/rebuilding the containe
 ![image](https://github.com/jokob-sk/NetAlertX/assets/96159884/3cbf2748-03c8-49e7-b801-f38c7755246b)
 
 
-## 💡 Tips
+## Tips
 
 A quick cheat sheet of useful commands. 
 
@@ -75,9 +80,9 @@ A command to stop, remove the container and the image (replace `netalertx` and `
 
 ### Restart the server backend
 
-Most code changes can be tetsed without rebuilding the container. When working on the python server backend, you only need to restart the server.
+Most code changes can be tested without rebuilding the container. When working on the python server backend, you only need to restart the server.
 
-1. You can usually restart the backend via Maintenance > Logs > Restart server
+1. You can usually restart the backend via _Maintenance > Logs > Restart_ server
 
 ![image](./img/DEV_ENV_SETUP/Maintenance_Logs_Restart_server.png)
 
@@ -86,11 +91,13 @@ Most code changes can be tetsed without rebuilding the container. When working o
 - `sudo docker exec -it netalertx /bin/bash`
 - `pkill -f "python /app/server" && python /app/server & `
 
-3. If none of the above work, restart the docker image. This is usually the last resort as sometimes the Docker engine becomes unresponsive and the whole engine needs to be restarted. 
+3. If none of the above work, restart the docker caontainer. 
 
-## ➕ Contributing & Pull Requests
+- This is usually the last resort as sometimes the Docker engine becomes unresponsive and the whole engine needs to be restarted. 
 
-**Before submitting a PR, please ensure:**
+## Contributing & Pull Requests
+
+### Before submitting a PR, please ensure:
 
 ✔ Changes are **backward-compatible** with existing installs.  
 ✔ No unnecessary changes are made.  

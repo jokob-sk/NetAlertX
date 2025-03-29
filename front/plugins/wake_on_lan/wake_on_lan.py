@@ -19,7 +19,7 @@ from const import pluginsPath, fullDbPath, logPath
 from helper import timeNowTZ, get_setting_value 
 from notification import write_notification
 from database import DB
-from device import Device_obj
+from models.device_instance import DeviceInstance
 import conf
 
 # Make sure the TIMEZONE for logging is correct
@@ -54,8 +54,8 @@ def main():
     db = DB()  # instance of class DB
     db.open()
 
-    # Create a Device_obj instance
-    device_handler = Device_obj(db)
+    # Create a DeviceInstance instance
+    device_handler = DeviceInstance(db)
 
     # Retrieve devices
     if 'offline' in devices_to_wake:

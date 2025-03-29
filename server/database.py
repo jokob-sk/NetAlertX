@@ -9,7 +9,7 @@ from const import fullDbPath, sql_devices_stats, sql_devices_all, sql_generateGu
 
 from logger import mylog
 from helper import json_obj, initOrSetParam, row_to_json, timeNowTZ
-from appevent import AppEvent_obj
+from workflows.app_events import AppEvent_obj
 
 class DB():
     """
@@ -543,6 +543,7 @@ class DB():
         sql_Plugins_Objects = """ CREATE TABLE IF NOT EXISTS Plugins_Objects(
                                     "Index"	          INTEGER,
                                     Plugin TEXT NOT NULL,
+                                    ObjectGUID TEXT,
                                     Object_PrimaryID TEXT NOT NULL,
                                     Object_SecondaryID TEXT NOT NULL,
                                     DateTimeCreated TEXT NOT NULL,
@@ -589,6 +590,18 @@ class DB():
           self.sql.execute('ALTER TABLE "Plugins_Objects" ADD COLUMN "HelpVal2" TEXT')
           self.sql.execute('ALTER TABLE "Plugins_Objects" ADD COLUMN "HelpVal3" TEXT')
           self.sql.execute('ALTER TABLE "Plugins_Objects" ADD COLUMN "HelpVal4" TEXT')
+
+        # plug_ObjectGUID_missing column
+        plug_ObjectGUID_missing = self.sql.execute ("""
+            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Plugins_Objects') WHERE name='ObjectGUID'
+          """).fetchone()[0] == 0
+
+        if plug_ObjectGUID_missing :
+          mylog('verbose', ["[upgradeDB] Adding ObjectGUID to the Plugins_Objects table"])
+          self.sql.execute("""
+            ALTER TABLE "Plugins_Objects" ADD "ObjectGUID" TEXT
+          """)
+          
           
         # -----------------------------------------
         # REMOVE after 6/6/2025 - END
@@ -645,6 +658,17 @@ class DB():
           self.sql.execute('ALTER TABLE "Plugins_Events" ADD COLUMN "HelpVal2" TEXT')
           self.sql.execute('ALTER TABLE "Plugins_Events" ADD COLUMN "HelpVal3" TEXT')
           self.sql.execute('ALTER TABLE "Plugins_Events" ADD COLUMN "HelpVal4" TEXT')
+
+        # plug_ObjectGUID_missing column
+        plug_ObjectGUID_missing = self.sql.execute ("""
+            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Plugins_Events') WHERE name='ObjectGUID'
+          """).fetchone()[0] == 0
+
+        if plug_ObjectGUID_missing :
+          mylog('verbose', ["[upgradeDB] Adding ObjectGUID to the Plugins_Events table"])
+          self.sql.execute("""
+            ALTER TABLE "Plugins_Events" ADD "ObjectGUID" TEXT
+          """)
           
         # -----------------------------------------
         # REMOVE after 6/6/2025 - END
@@ -702,6 +726,18 @@ class DB():
           self.sql.execute('ALTER TABLE "Plugins_History" ADD COLUMN "HelpVal2" TEXT')
           self.sql.execute('ALTER TABLE "Plugins_History" ADD COLUMN "HelpVal3" TEXT')
           self.sql.execute('ALTER TABLE "Plugins_History" ADD COLUMN "HelpVal4" TEXT')
+
+
+        # plug_ObjectGUID_missing column
+        plug_ObjectGUID_missing = self.sql.execute ("""
+            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Plugins_History') WHERE name='ObjectGUID'
+          """).fetchone()[0] == 0
+
+        if plug_ObjectGUID_missing :
+          mylog('verbose', ["[upgradeDB] Adding ObjectGUID to the Plugins_History table"])
+          self.sql.execute("""
+            ALTER TABLE "Plugins_History" ADD "ObjectGUID" TEXT
+          """)
 
         # -----------------------------------------
         # REMOVE after 6/6/2025 - END

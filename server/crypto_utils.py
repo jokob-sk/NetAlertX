@@ -3,6 +3,7 @@ from Crypto.Util.Padding import pad, unpad
 import base64
 import os
 import hashlib
+import uuid
 
 
 # SIMPLE CRYPT - requeres C compiler -------------------------------------------------------------------------
@@ -57,3 +58,9 @@ def get_random_bytes(length):
     formatted_hex = '-'.join(hex_string[i:i+2] for i in range(0, len(hex_string), 2))
     
     return formatted_hex
+
+#-------------------------------------------------------------------------------
+def generate_deterministic_guid(plugin, primary_id, secondary_id):
+    """Generates a deterministic GUID based on plugin, primary ID, and secondary ID."""
+    data = f"{plugin}-{primary_id}-{secondary_id}".encode("utf-8")
+    return str(uuid.UUID(hashlib.md5(data).hexdigest()))

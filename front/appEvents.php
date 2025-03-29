@@ -7,10 +7,10 @@
  
 
 <!-- Page ------------------------------------------------------------------ -->
-<div class="content-wrapper" id="wf-content-wrapper">
+<div class="content-wrapper">
 
 <?php
-   require 'workflowsCore.php';
+   require 'appEventsCore.php';
 ?>
 
         

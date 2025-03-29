@@ -251,12 +251,12 @@ def main():
 
     mylog("verbose", [f"[{pluginName}] starting execution"])
     from database import DB
-    from device import Device_obj
+    from models.device_instance import DeviceInstance
 
     db = DB()  # instance of class DB
     db.open()
-    # Create a Device_obj instance
-    device_handler = Device_obj(db)
+    # Create a DeviceInstance instance
+    device_handler = DeviceInstance(db)
     # Retrieve configuration settings
     # these should be self-explanatory
     omada_sites = []

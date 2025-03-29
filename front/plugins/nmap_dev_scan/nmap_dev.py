@@ -24,7 +24,7 @@ from logger import mylog, Logger, append_line_to_file
 from helper import timeNowTZ, get_setting_value, extract_between_strings, extract_ip_addresses, extract_mac_addresses
 from const import logPath, applicationPath, fullDbPath
 from database import DB
-from device import Device_obj
+from models.device_instance import DeviceInstance
 import conf
 from pytz import timezone
 

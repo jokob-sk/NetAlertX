@@ -8,16 +8,24 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/php/templates/security.php';
 require dirname(__FILE__).'/../server/init.php';
 // ---- IMPORTS ----
 
-global $fullConfPath;
+global $configFolderPath;
 
 //------------------------------------------------------------------------------
 // Handle incoming requests
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Access the 'config' parameter from the POST request
-    $base64Data = $_POST['config'] ?? null;
+    $base64Data = $_POST['base64data'] ?? null;
 
     if (!$base64Data) {
-        $msg = "Missing 'config' parameter.";
+        $msg = "Missing 'base64data' parameter.";
+        echo $msg;
+        http_response_code(400); // Bad request
+        die($msg);
+    }
+    $fileName = $_POST['fileName'] ?? null;
+
+    if (!$fileName) {
+        $msg = "Missing 'fileName' parameter.";
         echo $msg;
         http_response_code(400); // Bad request
         die($msg);
@@ -33,15 +41,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         die($msg);
     }
 
+    $fullPath = $configFolderPath.$fileName;
+
     // Backup the original file
-    if (file_exists($fullConfPath)) {
-        copy($fullConfPath, $fullConfPath . ".bak");
+    if (file_exists($fullPath)) {
+        copy($fullPath, $fullPath . ".bak");
     }
 
     // Write the new configuration
-    $file = fopen($fullConfPath, "w");
+    $file = fopen($fullPath, "w");
     if (!$file) {
-        $msg = "Unable to open file!";
+        $msg = "Unable to open file: ". $fullPath;
         echo $msg;
         http_response_code(500); // Server error
         die($msg);
@@ -50,6 +60,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     fwrite($file, $input);
     fclose($file);
 
-    echo "Configuration saved successfully.";
+    echo "Configuration file saved successfully: " .$fileName ;
 }
 ?>

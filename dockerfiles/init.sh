@@ -54,8 +54,6 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
-echo "[INSTALL] Copy starter ${DB_FILE} and ${CONF_FILE} if they don't exist"
-
 # DANGER ZONE: ALWAYS_FRESH_INSTALL
 if [ "$ALWAYS_FRESH_INSTALL" = true ]; then
   echo "[INSTALL] ❗ ALERT /db and /config folders are cleared because the ALWAYS_FRESH_INSTALL is set to: $ALWAYS_FRESH_INSTALL❗"
@@ -96,7 +94,9 @@ if [ -f "${INSTALL_DIR_OLD}/config/${OLD_APP_NAME}.conf" ]; then
 fi
 # 🔺 FOR BACKWARD COMPATIBILITY - REMOVE AFTER 12/12/2025
 
-# Copy starter .db and .conf if they don't exist
+echo "[INSTALL] Copy starter ${DB_FILE} and ${CONF_FILE} if they don't exist"
+
+# Copy starter app.db, app.conf if they don't exist
 cp -na "${INSTALL_DIR}/back/${CONF_FILE}" "${INSTALL_DIR}/config/${CONF_FILE}"
 cp -na "${INSTALL_DIR}/back/${DB_FILE}" "${FULL_FILEDB_PATH}"
 
@@ -143,6 +143,7 @@ fi
 # Create the execution_queue.log and app_front.log files if they don't exist
 touch "${INSTALL_DIR}"/log/{app.log,execution_queue.log,app_front.log,app.php_errors.log,stderr.log,stdout.log,db_is_locked.log}
 touch "${INSTALL_DIR}"/api/user_notifications.json
+
 # Create plugins sub-directory if it doesn't exist in case a custom log folder is used
 mkdir -p "${INSTALL_DIR}"/log/plugins
 

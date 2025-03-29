@@ -396,38 +396,6 @@ function deleteActHistory()
 }
 
 // -----------------------------------------------------------
-// Restart Backend Python Server
-
-function askRestartBackend() {
-  // Ask 
-  showModalWarning('<?= lang('Maint_RestartServer');?>', '<?= lang('Maint_Restart_Server_noti_text');?>',
-    '<?= lang('Gen_Cancel');?>', '<?= lang('Maint_RestartServer');?>', 'restartBackend');
-}
-
-// -----------------------------------------------------------
-function restartBackend() {
-
-  modalEventStatusId = 'modal-message-front-event'
-  
-  // Execute
-  $.ajax({
-      method: "POST",
-      url: "php/server/util.php",
-      data: { function: "addToExecutionQueue", action: `${getGuid()}|cron_restart_backend`  },
-      success: function(data, textStatus) {
-          // showModalOk ('Result', data );
-
-          // show message
-          showModalOk(getString("general_event_title"), `${getString("general_event_description")}  <br/> <br/> <code id='${modalEventStatusId}'></code>`);
-
-          updateModalState()
-
-          write_notification('[Maintenance] App manually restarted', 'info')
-      }
-    })
-}
-
-// -----------------------------------------------------------
 // Import pasted Config ASK
 function askImportPastedConfig() {
 
@@ -440,17 +408,15 @@ function askImportPastedConfig() {
 // Upload Settings Config
 function UploadConfig()
 { 
-  // alert("aaa")
-
   appConf = $('#modal-input-textarea').val()
   // encode for import
   appConfBase64 = btoa(appConf)
 
   // import
-  $.post('php/server/query_replace_config.php', { config: appConfBase64 }, function(msg) {
+  $.post('php/server/query_replace_config.php', { base64data: appConfBase64, fileName: "app.conf" }, function(msg) {
     console.log(msg);            
     // showMessage(msg);            
-    write_notification(`[Maintenance] Settings imported from backup: ${msg}`, 'interrupt');
+    write_notification(`[Maintenance]: ${msg}`, 'interrupt');
   });
 
 }

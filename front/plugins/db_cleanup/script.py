@@ -139,6 +139,7 @@ def cleanup_database (dbPath, DAYS_TO_KEEP_EVENTS, HRS_TO_KEEP_NEWDEV, HRS_TO_KE
                             );"""
 
     cursor.execute(delete_query)
+    conn.commit()
 
 
     # -----------------------------------------------------

@@ -8,7 +8,6 @@ NetAlertX provides contextual help within the application:
 
 - **Hover over settings, fields, or labels** to see additional tooltips and guidance.
 - **Click ❔ (question-mark) icons** next to various elements to view detailed information.
-- Access the in-app **Help / FAQ** section for frequently asked questions and quick answers.
 
 ---
 

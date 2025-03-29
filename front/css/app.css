@@ -1524,10 +1524,11 @@ input[readonly] {
     margin:0px;
     align-items:center;
     border-radius:20px;
-    width:180px;
-    display:flex;
+    /* width:190px; Don't change, smaller causes line break in network view */
+    /* display:flex; */
     flex-direction:column;
     justify-content:center;
+    display: inline-grid;
 }
 .networkHelpIcon
 {
@@ -1597,7 +1598,7 @@ input[readonly] {
 
 .spanNetworkTree {
     display: inline-block;
-    width: 135px;
+    /* width: 135px; */
     white-space: nowrap;
     overflow: hidden !important;
     text-overflow: ellipsis;
@@ -1838,6 +1839,132 @@ input[readonly] {
 .pia-top-left-logo
 {
     height:50px;
+}
+
+/* -----------------------------------------------------------------------------
+   Workflows
+----------------------------------------------------------------------------- */
+#wf-content-wrapper
+{
+    display: grid;
+}
+
+#workflowContainer
+{
+    display: grid;
+}
+
+#workflowContainerWrap {
+    display: grid;
+}
+
+#workflowContainerWrap .panel-collapse 
+{
+    padding: 5px;
+}
+
+.workflows .col-sm-12, .workflows .col-sx-12
+{
+    padding-right: 5px;
+    padding-left: 5px;
+}
+
+.workflows .add-button-wrap .button-container
+{
+    padding-bottom: 5px;
+    text-align: center;
+}
+
+.workflows .actions-list {
+
+    display: block;
+}
+
+.workflows .form-group {
+    margin-bottom: 7px;
+    z-index: 1;
+    display: flex;
+}
+
+.workflows .section-title
+{
+    padding: 10px;
+    font-weight: bolder;
+    font-size: large;
+}
+
+.workflows .panel, .workflows .box   {
+    padding-top: 5px;
+    padding-bottom: 5px;
+
+}
+
+.workflows .btn-secondary{
+    color: #000;
+}
+
+.workflows .button-container 
+{
+    display: contents;
+    text-align: center;
+    width: 100%;
+}
+
+.workflows .panel:hover{
+    opacity: 1;
+}
+
+.workflows .panel{
+    opacity: 0.8;
+}
+
+.workflows .bottom-buttons button
+{
+    margin: 5px;
+}
+
+.workflows .button-container 
+{
+    padding-right: 0px !important;
+    padding-left: 0px !important;
+}
+
+/* .workflows .condition-list button
+{
+    margin: 2px;
+} */
+
+/* .button-container button
+{
+    width:100%; 
+} */
+
+.workflows .workflow-card 
+{
+    display: block;
+}
+
+.workflow-card .panel-title
+{
+    padding: 10px;
+}
+
+.workflow-card, .actions-list 
+{
+    display: contents;
+    padding: 5px;
+    padding-left: 10px;
+}
+
+.condition-list
+{
+    z-index:1;
+}
+
+.condition 
+{
+    padding: 5px;
+    padding-left: 10px;
 }
 
 /* -----------------------------------------------------------------------------

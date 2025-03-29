@@ -317,16 +317,14 @@ def update_devices_data_from_scan (db):
                     WHERE Devices.devMac = CurrentScan.cur_MAC          
                 )
                 WHERE 
-                (devParentPort IS NULL OR devParentPort = "" OR devParentPort = "null")
-                AND
+                    (devParentPort IS NULL OR devParentPort IN ("", "null", "(unknown)", "(Unknown)"))
+                    AND    
                 EXISTS (
                     SELECT 1
                     FROM CurrentScan
                     WHERE Devices.devMac = CurrentScan.cur_MAC
-                    AND CurrentScan.cur_Port IS NOT NULL 
-                    AND CurrentScan.cur_Port NOT IN ("", "null")
-                )
-                """)
+                      AND CurrentScan.cur_Port IS NOT NULL AND CurrentScan.cur_Port NOT IN ("", "null")
+                )""")
 
     # Update only devices with empty or NULL devParentMAC 
     mylog('debug', '[Update Devices] - (if not empty) cur_NetworkNodeMAC -> devParentMAC')
@@ -336,16 +334,34 @@ def update_devices_data_from_scan (db):
                     FROM CurrentScan
                     WHERE Devices.devMac = CurrentScan.cur_MAC
                 )
+<<<<<<< HEAD
+<<<<<<<< HEAD:server/scan/device_handling.py
+                  WHERE 
+========
                 WHERE 
+>>>>>>>> main:server/device.py
+=======
+                WHERE 
+>>>>>>> main
                     (devParentMAC IS NULL OR devParentMAC IN ("", "null", "(unknown)", "(Unknown)"))
                     AND                
                     EXISTS (
                         SELECT 1
                         FROM CurrentScan
                         WHERE Devices.devMac = CurrentScan.cur_MAC
+<<<<<<< HEAD
+<<<<<<<< HEAD:server/scan/device_handling.py
+                        AND CurrentScan.cur_NetworkNodeMAC IS NOT NULL AND CurrentScan.cur_NetworkNodeMAC NOT IN ("", "null")
+========
+                            AND CurrentScan.cur_NetworkNodeMAC IS NOT NULL AND CurrentScan.cur_NetworkNodeMAC NOT IN ("", "null")
+                    
+>>>>>>>> main:server/device.py
+                )""")
+=======
                             AND CurrentScan.cur_NetworkNodeMAC IS NOT NULL AND CurrentScan.cur_NetworkNodeMAC NOT IN ("", "null")
                     )
                 """)
+>>>>>>> main
 
     # Update only devices with empty or NULL devSite 
     mylog('debug', '[Update Devices] - (if not empty) cur_NetworkSite -> (if empty) devSite')

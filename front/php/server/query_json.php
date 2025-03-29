@@ -17,7 +17,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     // Check if file parameter is provided
     if ($file) {
         // Define the folder where files are located
-        $filePath = "/app/api/" . basename($file);
+        if ($file == "workflows.json") 
+        {
+            $filePath = "/app/config/" . basename($file);
+        } else
+        {       
+            $filePath = "/app/api/" . basename($file);
+        }
 
         // Check if the file exists
         if (file_exists($filePath)) {
@@ -34,5 +40,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         http_response_code(400);
         echo json_encode(["error" => "Missing 'file' parameter"]);
     }
+} elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Read the input JSON data
+    $inputData = file_get_contents("php://input");
+    $decodedData = json_decode($inputData, true);
+
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        http_response_code(400);
+        echo json_encode(["error" => "Invalid JSON data"]);
+        exit;
+    }
+
+    // Check if file parameter is provided and is workflows.json
+    if (!isset($_GET['file']) || $_GET['file'] !== "workflows.json") {
+        http_response_code(400);
+        echo json_encode(["error" => "Invalid or missing file parameter"]);
+        exit;
+    }
+    
+    $file = $_GET['file'];
+    $filePath = "/app/config/" . basename($file);
+
+    // Save new workflows.json (replace existing content)
+    if (file_put_contents($filePath, json_encode($decodedData, JSON_PRETTY_PRINT))) {
+        http_response_code(200);
+        echo json_encode(["success" => "Workflows replaced successfully"]);
+    } else {
+        http_response_code(500);
+        echo json_encode(["error" => "Failed to update workflows.json"]);
+    }
+}
+else {
+    http_response_code(405);
+    echo json_encode(["error" => "Method Not Allowed"]);
 }
 ?>

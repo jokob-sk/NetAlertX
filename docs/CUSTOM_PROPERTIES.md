@@ -4,7 +4,7 @@
 
 ## Overview
 
-This functionality allows you to define **custom properties** for devices, which can store and display additional information on the device listing page. By marking properties as visible, you can enhance the user interface with quick actions, notes, or external links.
+This functionality allows you to define **custom properties** for devices, which can store and display additional information on the device listing page. By marking properties as "Show", you can enhance the user interface with quick actions, notes, or external links.
 
 ### Key Features:
 - **Customizable Properties**: Define specific properties for each device.
@@ -63,10 +63,10 @@ Visible properties (`CUSTPROP_show: true`) are displayed as interactive icons in
 
 ---
 
-## Example Scenarios
+## Example Use Cases
 
 1. **Device Documentation Link**:
-   - Add a custom property with `CUSTPROP_type` set to `link` or `link_new_tab` to allow quick navigation to the documentation.
+   - Add a custom property with `CUSTPROP_type` set to `link` or `link_new_tab` to allow quick navigation to the external documentation of the device.
 
 2. **Firmware Details**:
    - Use `CUSTPROP_type: show_notes` to display firmware versions or upgrade instructions in a modal.

@@ -18,7 +18,7 @@ from const import pluginsPath, fullDbPath, logPath
 from helper import timeNowTZ, get_setting_value 
 from notification import write_notification
 from database import DB
-from device import Device_obj
+from models.device_instance import DeviceInstance
 import conf
 from pytz import timezone
 
@@ -53,8 +53,8 @@ def main():
     # Initialize the Plugin obj output file
     plugin_objects = Plugin_Objects(RESULT_FILE)
 
-    # Create a Device_obj instance
-    device_handler = Device_obj(db)
+    # Create a DeviceInstance instance
+    device_handler = DeviceInstance(db)
 
     # Retrieve devices
     unknown_devices = device_handler.getUnknown()
