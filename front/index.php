@@ -92,10 +92,8 @@ if (isset ($_SESSION["login"]) == FALSE || $_SESSION["login"] != 1)
   <!-- iCheck -->
   <link rel="stylesheet" href="lib/iCheck/square/blue.css">
   <!-- Font Awesome -->
-  <link rel="stylesheet" href="lib/font-awesome/fontawesome.min.css">
-  <link rel="stylesheet" href="lib/font-awesome/solid.css">
-  <link rel="stylesheet" href="lib/font-awesome/brands.css">
-  <link rel="stylesheet" href="lib/font-awesome/v5-font-face.css">
+  <link rel="stylesheet" href="lib/font-awesome/all.min.css">
+
   <!-- Favicon -->
   <link id="favicon" rel="icon" type="image/x-icon" href="img/NetAlertX_logo.png">
 
@@ -112,7 +110,7 @@ switch ($UI_THEME) {
 ?>
   <link rel="stylesheet" href="/css/offline-font.css">
 </head>
-<body class="hold-transition login-page">
+<body class="hold-transition login-page col-sm-12 col-sx-12">
 <div class="login-box login-custom">
   <div class="login-logo">
     <a href="/index2.php">Net<b>Alert</b><sup>x</sup></a>

@@ -11,19 +11,19 @@
     
   </div>
   <div id="buttons" class="bottom-buttons col-sm-12 col-xs-12">
-    <div class="add-workflow col-sm-12 col-xs-12">
+    <div class="add-workflow col-sm-4 col-xs-12">
       <button type="button" class="btn btn-primary add-workflow-btn col-sm-12 col-xs-12" id="add">
-        <?= lang('WF_Add');?>
+      <i class="fa fa-fw  fa-plus"></i> <?= lang('WF_Add');?>
       </button>
     </div>
-    <div class="save-workflows col-sm-12 col-xs-12">
+    <div class="save-workflows col-sm-4 col-xs-12">
       <button type="button" class="btn btn-primary col-sm-12 col-xs-12" id="save" onclick="saveWorkflows()">
-        <?= lang('WF_Save');?>
+      <i class="fa fa-fw  fa-floppy-disk"></i> <?= lang('WF_Save');?>
       </button>
     </div>
-    <div class="restart-app col-sm-12 col-xs-12">
+    <div class="restart-app col-sm-4 col-xs-12">
       <button type="button" class="btn btn-primary col-sm-12 col-xs-12" id="save" onclick="askRestartBackend()">
-        <?= lang('Maint_RestartServer');?>
+      <i class="fa fa-fw  fa-arrow-rotate-right"></i> <?= lang('Maint_RestartServer');?>
       </button>
     </div>
   </div>
@@ -108,6 +108,8 @@ function renderWorkflows() {
 // Generate UI for a single workflow
 function generateWorkflowUI(wf, wfIndex) {
 
+  let wfEnabled = (wf?.enabled ?? "No") == "Yes"; 
+
   let $wfContainer = $("<div>", { 
     class: "workflow-card panel col-sm-12 col-sx-12", 
     id: `wf-${wfIndex}-container` 
@@ -120,6 +122,11 @@ function generateWorkflowUI(wf, wfIndex) {
       id: `wf-${wfIndex}-header` 
     }
   )
+
+  let $wfEnabledIcon = $("<i>", { 
+      class: `alignRight fa-regular ${wfEnabled ? "fa-dot-circle" : "fa-circle" }`
+    });
+  
 
   let $wfHeaderLink = $("<a>",
     {
@@ -137,7 +144,7 @@ function generateWorkflowUI(wf, wfIndex) {
     }
   ).text(wf.name)
 
-  $wfContainer.append($wfHeaderLink.append($wfLinkWrap.append($wfHeaderHeading)));
+  $wfContainer.append($wfHeaderLink.append($wfLinkWrap.append($wfHeaderHeading.append($wfEnabledIcon))));
 
   // Collapsible panel start
 
@@ -157,7 +164,7 @@ function generateWorkflowUI(wf, wfIndex) {
     `[${wfIndex}].enabled`, 
     getString("WF_Enabled"),
     wfEnabledOptions, 
-    wf?.enabled ?? "No", 
+    wfEnabled ? "Yes" :"No", 
     `wf-${wfIndex}-enabled`
   );
 
@@ -210,9 +217,10 @@ function generateWorkflowUI(wf, wfIndex) {
       class: "fa-solid fa-bolt bckg-icon-2-line"
     });
 
+  $triggerSection.append($triggerIcon);
   $triggerSection.append($triggerTypeDropdown);
   $triggerSection.append($eventTypeDropdown);
-  $triggerSection.append($triggerIcon);
+  
   $wfCollapsiblePanel.append($triggerSection);
 
   // Conditions
@@ -323,11 +331,13 @@ function generateWorkflowUI(wf, wfIndex) {
     $actionRemoveButtonWrap.append($actionRemoveButton);
 
     let $actionIcon = $("<i>", { 
-        class: `fa-solid  fa-person-running fa-flip-horizontal bckg-icon-${numberOfLines}-line `
-      });
+      class: `fa-solid  fa-person-running fa-flip-horizontal bckg-icon-${numberOfLines}-line `
+    });
+
+    $actionEl.prepend($actionIcon)
 
     $actionElWrap.append($actionEl)
-    $actionElWrap.append($actionIcon)
+    
     $actionElWrap.append($actionRemoveButtonWrap)
 
     $actionsContainer.append($actionElWrap);

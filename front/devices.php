@@ -74,10 +74,10 @@
 
             <!-- box-header -->
             <div class="box-header">
-              <div class=" col-md-9 ">
+              <div class=" col-sm-8 ">
                 <h3 id="tableDevicesTitle" class="box-title text-gray "></h3>  
               </div>    
-              <div  class="dummyDevice col-md-3 ">
+              <div  class="dummyDevice col-sm-4 ">
                 <span id="multiEditPlc">
                   <!-- multi edit button placeholder -->
                 </span>

@@ -1517,10 +1517,9 @@ input[readonly] {
 /* AdminLTE overrides */
 #networkTree .box
 {
-    border-top:1px;
+    /* border-top:1px; */
     border-top-color:grey;
     padding:0px;
-    padding-top:6px;
     margin:0px;
     align-items:center;
     border-radius:20px;
@@ -1528,7 +1527,7 @@ input[readonly] {
     /* display:flex; */
     flex-direction:column;
     justify-content:center;
-    display: inline-grid;
+    /* display: inline-grid; */
 }
 .helpIcon
 {
@@ -1577,17 +1576,16 @@ input[readonly] {
     width: auto;
 }
 
+
 #networkTree .netCollapse
 {
-    display: block;
     position: absolute;
-    margin-left: 170px;    
-    font-size: large;
-    left: -15px;
+    right: 0;
+    margin-right: -3px;
 }
 #networkTree .highlightedNode
 {
-    border: solid;
+    /* border: solid; */
     border-color:cyan;
 }
 #networkTree .netStatus-Off-line i,
@@ -1598,7 +1596,6 @@ input[readonly] {
 
 .spanNetworkTree {
     display: inline-block;
-    /* width: 135px; */
     white-space: nowrap;
     overflow: hidden !important;
     text-overflow: ellipsis;
@@ -1612,6 +1609,11 @@ input[readonly] {
     /* z-index: 10; */
     top: 0.3em;
     /* margin-left: 0.2em; */
+}
+
+.networkTable .networkNodeTabHeaders a {
+    display: block;
+    height: 3em;
 }
 
 .networkTable .icon {
@@ -1632,7 +1634,6 @@ input[readonly] {
 
 .networkNodeTabHeaders
 {
-    max-width: 200px;
     text-overflow: ellipsis;
     overflow: hidden;
     text-wrap: nowrap;
@@ -1708,13 +1709,6 @@ input[readonly] {
 .plugins-description
 {
     padding-top: 20px;
-}
-
-  
-.login-page .login-custom
-{
-    width:480px;
-    
 }
 
 /*Hidden special button*/
@@ -1974,6 +1968,7 @@ input[readonly] {
     opacity: 0.1;
     right: 0.1em;
 }
+
 
 .workflows .remove-condition
 {

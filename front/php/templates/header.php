@@ -59,10 +59,7 @@
 
 
   <!-- Font Awesome -->
-  <link rel="stylesheet" href="lib/font-awesome/fontawesome.min.css">
-  <link rel="stylesheet" href="lib/font-awesome/solid.css">
-  <link rel="stylesheet" href="lib/font-awesome/brands.css">
-  <link rel="stylesheet" href="lib/font-awesome/v5-font-face.css">
+  <link rel="stylesheet" href="lib/font-awesome/all.min.css">
 
   <!-- Ionicons -->
   <link rel="stylesheet" href="lib/Ionicons/ionicons.min.css">
@@ -421,26 +418,26 @@
         </li>
 
         <!-- Integrations menu item -->
-        <li class=" treeview <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('plugins.php', 'workflows.php', 'appEvents.php' ) ) ){ echo 'active menu-open'; } ?>">
+        <li class=" treeview <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('plugins.php', 'appEvents.php' ) ) ){ echo 'active menu-open'; } ?>">
           <a href="#">
           <i class="fa fa-fw fa-plug"></i> <span><?= lang('Navigation_Integrations');?></span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>
           </a>
-          <ul class="treeview-menu " style="display: <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('plugins.php', 'workflows.php', 'appEvents.php' ) ) ){ echo 'block'; } else {echo 'none';} ?>;">                    
+          <ul class="treeview-menu " style="display: <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('plugins.php', 'appEvents.php' ) ) ){ echo 'block'; } else {echo 'none';} ?>;">                    
             <li>
-              <div class="info-icon-nav">  </div>
-              <a href="workflows.php"><?= lang('Navigation_Workflows');?></a>
-            </li>
-            <li>
-              <div class="info-icon-nav">  </div>
               <a href="appEvents.php"><?= lang('Navigation_AppEvents');?></a>
             </li>
             <li>
               <a href="plugins.php"><?= lang("Navigation_Plugins");?> </a>
             </li>            
           </ul>
+        </li>
+
+         <!-- workflows menu item -->
+         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('workflows.php') ) ){ echo 'active'; } ?>">
+          <a href="workflows.php"><i class="fa fa-fw  fa-shuffle"></i> <span><?= lang('Navigation_Workflows');?></span></a>
         </li>
 
         <!-- system info menu item -->

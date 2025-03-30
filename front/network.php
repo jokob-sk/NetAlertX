@@ -6,8 +6,6 @@
   // online / offline badges HTML snippets 
   define('badge_online', '<div class="badge bg-green text-white" style="width: 60px;">Online</div>');
   define('badge_offline', '<div class="badge bg-red text-white" style="width: 60px;">Offline</div>');
-  define('circle_online', '<div class="badge bg-green text-white" style="width: 10px; height: 10px; padding:2px; margin-top: -25px;">&nbsp;</div>');
-  define('circle_offline', '<div class="badge bg-red text-white" style="width: 10px;  height: 10px; padding:2px; margin-top: -25px;">&nbsp;</div>'); 
   define('sortable_column', ' <span class="sort-btn" onclick="sortColumn(this)"><i class="fa-solid fa-arrow-up-short-wide"></i></span>'); 
   
 ?>
@@ -39,21 +37,18 @@
         }
 
         // online/offline status circle (red/green)
-        $node_badge = "";
-        if($node_status == 1) // 1 means online, 0 offline
+        $icon_style = "";
+        if($node_status == 0) // 1 means online, 0 offline
         {
-          $node_badge = circle_online; 
-        } else
-        {
-          $node_badge = circle_offline;
-        }
+          $icon_style = "style=\"color:var(--color-red);\""; 
+        } 
 
         $decoded_icon = base64_decode($icon);
         $idFromMac = str_replace(":", "_", $node_mac);
         $str_tab_header = '<li class="networkNodeTabHeaders '.$activetab.' " >
                               
                               <a href="#'.$idFromMac.'" data-mytabmac="'.$node_mac.'" id="'.$idFromMac.'_id" data-toggle="tab" title="'.$node_name.' ">' // _id is added so it doesn't conflict with AdminLTE tab behavior
-                                .'<div class="icon">'.$decoded_icon.' </div> <span class="node-name">'.$node_name.'</span>' .$str_port.$node_badge.
+                                .'<div class="icon" '.$icon_style.'>'.$decoded_icon.' </div> <span class="node-name">'.$node_name.'</span>' .$str_port.
                               '</a>
                           </li>';
 
@@ -697,34 +692,56 @@ function attachTreeEvents()
 
 // --------------------------------------------------------------------------- 
 // Handle network node click - select correct tab in the bottom table
-function handleNodeClick(nodeData)
+function handleNodeClick(el)
 {    
-  const targetTabMAC = nodeData.data.mac;    
+  const targetTabMAC = $(el).attr("data-mytreemacmain");    
 
   var targetTab = $(`a[data-mytabmac="${targetTabMAC}"]`);
 
-  // Simulate a click event on the target tab
-  targetTab.click();
+  if (targetTab.length) {
+    // Simulate a click event on the target tab
+    targetTab.click();
+
+    // Smooth scroll to the tab content
+    $('html, body').animate({
+      scrollTop: targetTab.offset().top - 50
+    }, 500); // Adjust the duration as needed
+  }
 }
 
 // --------------------------------------------------------------------------- 
 var myTree;
-var visibleTreeArea = $(window).height()-155;
-var nodeWidth = 120;
+
+
 var emSize;
 var nodeHeight;
-var sizeCoefficient = 1.4
+// var sizeCoefficient = 1.4
+
+function pxToEm(px, element) {
+    var baseFontSize = parseFloat($(element || "body").css("font-size"));
+    return px / baseFontSize;
+}
+
+function emToPx(em, element) {
+    var baseFontSize = parseFloat($(element || "body").css("font-size"));
+    return Math.round(em * baseFontSize);
+}
 
 function initTree(myHierarchy)
 {
   // calculate the drawing area based on teh tree width and available screen size
-  var treeAreaHeight = visibleTreeArea > 800 ? 800 : visibleTreeArea;
-  let screenWidth = $('.content-header').width();
-  let treeWidth = (nodeWidth + 20) *  parentNodesCount;
-  let treeAreaWidth  =  screenWidth < treeWidth ? treeWidth : screenWidth;
+  
+  let baseFontSize = parseFloat($('html').css('font-size')); 
+  let treeAreaHeight = ($(window).height() - 155); ;
+  // calculate the font size of the leaf nodes to fit everything into the tree area
+  leafNodesCount == 0 ? 1 : leafNodesCount;
+
+  emSize = pxToEm((treeAreaHeight/(leafNodesCount)).toFixed(2));
+  
+  let screenWidthEm = pxToEm($('.networkTable').width());
 
   // init the drawing area size
-  $("#networkTree").attr('style', `height:${treeAreaHeight}px; width:${treeAreaWidth}px`)
+  $("#networkTree").attr('style', `height:${treeAreaHeight}px; width:${emToPx(screenWidthEm)}px`)
 
   if(myHierarchy.type == "")
   {
@@ -733,13 +750,14 @@ function initTree(myHierarchy)
     return;
   }
 
-  // calculate the font size of the leaf nodes to fit everything into the tree area
-  leafNodesCount == 0 ? 1 : leafNodesCount;
-  emSize = ((treeAreaHeight/(25*leafNodesCount)).toFixed(2));
-  emSize = emSize > 1 ? 1 : emSize;
+  // handle if only a few nodes
+  emSize > 1 ? emSize = 1 : emSize = emSize;
 
-  // nodeHeight = ((emSize*100*0.30).toFixed(0))
-  nodeHeight = ((emSize*100*0.30).toFixed(0))
+  let nodeHeightPx = emToPx(emSize*1);
+  let nodeWidthPx = emToPx(screenWidthEm / (parentNodesCount));
+
+  // handle if only a few nodes
+  nodeWidthPx > 160 ? nodeWidthPx = 160 : nodeWidthPx = nodeWidthPx;
 
   console.log(Treeviz);
 
@@ -747,8 +765,7 @@ function initTree(myHierarchy)
     htmlId: "networkTree",
     renderNode:  nodeData =>  {
 
-      var fontSize = "font-size:"+emSize+"em;";
-
+      
       (!emptyArr.includes(nodeData.data.port )) ? port =  nodeData.data.port : port = "";
 
       (port == "" || port == 0 || port == 'None' ) ? portBckgIcon = `<i class="fa fa-wifi"></i>` : portBckgIcon = `<i class="fa fa-ethernet"></i>`;
@@ -761,10 +778,10 @@ function initTree(myHierarchy)
                       ${atob(nodeData.data.icon)}
                 </div>` : "";
       devicePort = `<div  class="netPort" 
-                          style="width:${emSize*sizeCoefficient}em;height:${emSize*sizeCoefficient}em">
+                          style="width:${emSize}em;height:${emSize}em">
                       ${portHtml}</div> 
                     <div  class="portBckgIcon" 
-                          style="margin-left:-${emSize*sizeCoefficient}em;">
+                          style="margin-left:-${emSize}em;">
                           ${portBckgIcon}
                     </div>`;
       collapseExpandIcon = nodeData.data.hiddenChildren ? 
@@ -773,7 +790,7 @@ function initTree(myHierarchy)
       // generate +/- icon if node has children nodes
       collapseExpandHtml = nodeData.data.hasChildren ? 
                     `<div class="netCollapse" 
-                          style="font-size:${emSize*sizeCoefficient}em;top:${emSize/6}em" 
+                          style="font-size:${nodeHeightPx/2}px;top:${nodeHeightPx/4}px" 
                           data-mytreepath="${nodeData.data.path}" 
                           data-mytreemac="${nodeData.data.mac}">
                       <i class="fa fa-${collapseExpandIcon} pointer"></i>
@@ -787,21 +804,24 @@ function initTree(myHierarchy)
       // css indicating online/offline status
       statusCss = ` netStatus-${nodeData.data.status}`;
 
-      return result = `<div class="box ${nodeData.data.hasChildren ? "pointer":""} ${statusCss} ${highlightedCss}"
+      return result = `<div 
+                            class="node-inner box ${nodeData.data.hasChildren ? "pointer":""} ${statusCss} ${highlightedCss}"
                             data-mytreemacmain="${nodeData.data.mac}"
-                            style="height:${nodeData.settings.nodeHeight}px;${fontSize}"
+                            style="height:${nodeHeightPx}px;font-size:${nodeHeightPx-5}px;"
+                            onclick="handleNodeClick(this)"
                         >
                           <div class="netNodeText">
                             <strong>${devicePort}  ${deviceIcon}
-                              <span class="spanNetworkTree anonymizeDev" >${nodeData.data.name}</span>
-                            </strong>
-                            ${collapseExpandHtml}
-                          </div>
-                        </div>`;
+                              <span class="spanNetworkTree anonymizeDev" style="width:${nodeWidthPx-50}px">${nodeData.data.name}</span>
+                            </strong>                            
+                          </div>                          
+                        </div>
+                        ${collapseExpandHtml}`;
     },
     mainAxisNodeSpacing: 'auto',
-    secondaryAxisNodeSpacing: 0.3,
-    nodeHeight: nodeHeight.toString(),
+    // secondaryAxisNodeSpacing: 0.3,
+    nodeHeight: nodeHeightPx,
+    nodeWidth: nodeWidthPx,
     marginTop: '5',
     isHorizontal : true,
     hasZoom: true,
@@ -811,8 +831,8 @@ function initTree(myHierarchy)
     hasFlatData: false,
     relationnalField: "children",
     linkWidth: (nodeData) => 3,
-    linkColor: (nodeData) => "#ffcc80",
-    onNodeClick: (nodeData) => handleNodeClick(nodeData),
+    linkColor: (nodeData) => "#ffcc80"
+    // onNodeClick: (nodeData) => handleNodeClick(nodeData),
   });      
 
   console.log(deviceListGlobal);
