@@ -797,7 +797,7 @@ class plugin_object_class:
     def __init__(self, plugin, objDbRow):
         self.index             = objDbRow[0]
         self.pluginPref        = objDbRow[1]
-        self.primaryId         = objDbRow[2]
+        self.primaryId         = objDbRow[2] 
         self.secondaryId       = objDbRow[3]
         self.created           = objDbRow[4] # can be null
         self.changed           = objDbRow[5] # never null (data coming from plugin)
@@ -819,7 +819,8 @@ class plugin_object_class:
 
         # Check if self.status is valid
         if self.status not in ["exists", "watched-changed", "watched-not-changed", "new", "not-processed", "missing-in-last-scan"]:
-            raise ValueError("Invalid status value for plugin object:", self.status)
+            mylog('none', [f'[plugin_object_class] ERROR on objDbRow: {objDbRow}'])
+            raise ValueError(f"Invalid status value for plugin object ({self.pluginPref}|{self.primaryId}|{self.watched1}) invalid status: {self.status} on objDbRow:", objDbRow)
 
         self.idsHash      = str(hash(str(self.primaryId) + str(self.secondaryId)))    
         # self.idsHash      = str(self.primaryId) + str(self.secondaryId)

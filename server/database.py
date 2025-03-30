@@ -542,8 +542,7 @@ class DB():
         # Plugin state
         sql_Plugins_Objects = """ CREATE TABLE IF NOT EXISTS Plugins_Objects(
                                     "Index"	          INTEGER,
-                                    Plugin TEXT NOT NULL,
-                                    ObjectGUID TEXT,
+                                    Plugin TEXT NOT NULL,                                    
                                     Object_PrimaryID TEXT NOT NULL,
                                     Object_SecondaryID TEXT NOT NULL,
                                     DateTimeCreated TEXT NOT NULL,
@@ -561,6 +560,7 @@ class DB():
                                     "HelpVal2" TEXT,
                                     "HelpVal3" TEXT,
                                     "HelpVal4" TEXT,
+                                    ObjectGUID TEXT,
                                     PRIMARY KEY("Index" AUTOINCREMENT)
                         ); """
         self.sql.execute(sql_Plugins_Objects)
