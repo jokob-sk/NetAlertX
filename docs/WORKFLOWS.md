@@ -1,25 +1,29 @@
 # Workflows Overview
 
-The workflows module in NetAlertX allows you to automate repetitive tasks, making network management more efficient. Whether you need to assign newly discovered devices to a specific Network Node, auto-group devices from a given vendor, unarchive a device if detected online, or automatically delete or archive devices, this module provides the flexibility to tailor the automations to your needs.
+The workflows module in NetAlertX allows to automate repetitive tasks, making network management more efficient. Whether you need to assign newly discovered devices to a specific Network Node, auto-group devices from a given vendor, unarchive a device if detected online, or automatically delete devices, this module provides the flexibility to tailor the automations to your needs.
 
-![Workflow example](./img/WORKFLOWS/workflows.png)
+![Workflows diagram](./img/WORKFLOWS/workflows_diagram.png)
 
 Below are a few examples that demonstrate how this module can be used to simplify network management tasks.
+
+## Updating Workflows
 
 > [!NOTE] 
 > In order to apply a workflow change, you must first **Save** the changes and then reload the application by clicking **Restart server**.
 
-## Triggers
+## Workflow components
+
+### Triggers
 
 Triggers define the event that activates a workflow. They monitor changes to objects within the system, such as updates to devices or the insertion of new entries. When the specified event occurs, the workflow is executed.
 
-### Example Trigger:
+#### Example Trigger:
 - **Object Type**: `Devices`
 - **Event Type**: `update`
   
 This trigger will activate when a `Device` object is updated.
 
-## Conditions
+### Conditions
 
 ![Conditions example](./img/WORKFLOWS/conditions.png)
 
@@ -31,12 +35,12 @@ Conditions determine whether a workflow should proceed based on certain criteria
 ### Example Condition:
 - **Logic**: `AND`
   - **Field**: `devVendor`
-  - **Operator**: `contains`
+  - **Operator**: `contains` (case in-sensitive)
   - **Value**: `Google`
   
   This condition checks if the device's vendor is `Google`. The workflow will only proceed if the condition is true.
 
-## Actions
+### Actions
 
 ![Actions example](./img/WORKFLOWS/actions.jpg)
 
@@ -55,6 +59,8 @@ You can include multiple actions that should execute once the conditions are met
 # Examples
 
 Below you can find a couple of configuration examples.
+
+![Workflow example](./img/WORKFLOWS/workflows.png)
 
 ---
 
@@ -115,10 +121,5 @@ This workflow automates the process of marking Google devices as not new and del
    
    This action deletes the device after it is marked as not new.
 
-
-
----
-
-### Conclusion
-
-With workflows, NetAlertX can automatically adjust to network changes, saving time and reducing the manual overhead involved in maintaining your devices. You can create highly tailored automation rules to handle everything from basic updates to more complex device management.
+> [!TIP]
+> Share your workflows in [Discord](https://discord.com/invite/NczTUTWyRr) or [GitHub Discussions](https://github.com/jokob-sk/NetAlertX/discussions).  
