@@ -105,7 +105,7 @@ DEV_LOCATION=/path/to/local/source/code
 To run the container execute: `sudo docker-compose --env-file /path/to/.env up`
 
 
-## #Example 4: Docker swarm
+### Example 4: Docker swarm
 
 Notice how the host network is defined in a swarm setup:
 

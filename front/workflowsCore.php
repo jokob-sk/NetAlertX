@@ -425,7 +425,7 @@ function generateWorkflowUI(wf, wfIndex) {
 // Render conditions recursively
 function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, conditions) {
   let $conditionList = $("<div>", { 
-    class: "condition-list panel panel-secondary col-sm-12 col-sx-12",
+    class: "condition-list panel  col-sm-12 col-sx-12",
     parentIndexPath: parentIndexPath 
   });
 
@@ -838,7 +838,7 @@ function duplicateWorkflow(workflows, wfIndex) {
 function exportWorkflow(workflows, wfIndex) {
 
 // Add new icon as base64 string 
-showModalInput ('<i class="fa fa-copy pointer"></i> <?= lang('WF_Export');?>', '<?= lang('WF_Export_Copy');?>',
+showModalInput ('<i class="fa  fa-file-export pointer"></i> <?= lang('WF_Export');?>', '<?= lang('WF_Export_Copy');?>',
     '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Okay');?>', null, null,  JSON.stringify(workflows[wfIndex], null, 2));
 }
 
@@ -847,7 +847,7 @@ showModalInput ('<i class="fa fa-copy pointer"></i> <?= lang('WF_Export');?>', '
 function importWorkflow(workflows, wfIndex) {
 
 // Add new icon as base64 string 
-showModalInput ('<i class="fa fa-arrow-up pointer"></i> <?= lang('WF_Import');?>', '<?= lang('WF_Import_Copy');?>',
+showModalInput ('<i class="fa  fa-file-import pointer"></i> <?= lang('WF_Import');?>', '<?= lang('WF_Import_Copy');?>',
     '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Okay');?>', 'importWorkflowExecute', null, "" );
 
 }

@@ -21,6 +21,8 @@ This trigger will activate when a `Device` object is updated.
 
 ## Conditions
 
+![Conditions example](./img/WORKFLOWS/conditions.png)
+
 Conditions determine whether a workflow should proceed based on certain criteria. These criteria can be set for specific fields, such as whether a device is from a certain vendor, or whether it is new or archived. You can combine conditions using logical operators (`AND`, `OR`).
 
 > [!TIP]
@@ -36,7 +38,11 @@ Conditions determine whether a workflow should proceed based on certain criteria
 
 ## Actions
 
+![Actions example](./img/WORKFLOWS/actions.jpg)
+
 Actions define the tasks that the workflow will perform once the conditions are met. Actions can include updating fields or deleting devices.
+
+You can include multiple actions that should execute once the conditions are met.
 
 ### Example Action:
 - **Action Type**: `update_field`
