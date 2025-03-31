@@ -16,14 +16,19 @@
       <i class="fa fa-fw  fa-plus"></i> <?= lang('WF_Add');?>
       </button>
     </div>
-    <div class="save-workflows col-sm-4 col-xs-12">
-      <button type="button" class="btn btn-primary col-sm-12 col-xs-12" id="save" onclick="saveWorkflows()">
-      <i class="fa fa-fw  fa-floppy-disk"></i> <?= lang('WF_Save');?>
+    <div class="import-wf  col-sm-4 col-xs-12">
+      <button type="button" class="btn btn-primary  col-sm-12 col-xs-12" id="import">
+      <i class="fa fa-fw  fa-file-import"></i> <?= lang('WF_Import');?>
       </button>
     </div>
     <div class="restart-app col-sm-4 col-xs-12">
       <button type="button" class="btn btn-primary col-sm-12 col-xs-12" id="save" onclick="askRestartBackend()">
       <i class="fa fa-fw  fa-arrow-rotate-right"></i> <?= lang('Maint_RestartServer');?>
+      </button>
+    </div>
+    <div class="save-workflows  col-xs-12">
+      <button type="button" class="btn btn-primary bg-green col-sm-12 col-xs-12" id="save" onclick="saveWorkflows()">
+      <i class="fa fa-fw  fa-floppy-disk"></i> <?= lang('WF_Save');?>
       </button>
     </div>
   </div>
@@ -44,6 +49,9 @@ let fieldOptions = [
       
 let triggerTypes = [
   "Devices"
+];
+let triggerEvents = [
+  "update", "insert", "delete"
 ];
 
 let wfEnabledOptions = [
@@ -208,7 +216,7 @@ function generateWorkflowUI(wf, wfIndex) {
   let $eventTypeDropdown = createEditableDropdown(
     `[${wfIndex}].trigger.event_type`, 
     getString("WF_Trigger_event_type"), 
-    ["update", "create", "delete"], 
+    triggerEvents, 
     wf.trigger.event_type, 
     `wf-${wfIndex}-trigger-event-type`
   );
@@ -360,7 +368,7 @@ function generateWorkflowUI(wf, wfIndex) {
   $actionsContainer.append($actionAddButtonWrap)
 
   
-  let $wfRemoveButtonWrap = $("<div>", { class: "button-container col-sm-12 col-sx-12" });
+  let $wfRemoveButtonWrap = $("<div>", { class: "button-container col-sm-4 col-sx-12" });
 
   let $wfRemoveIcon = $("<i>", { 
     class: "fa-solid fa-trash"
@@ -372,10 +380,40 @@ function generateWorkflowUI(wf, wfIndex) {
   })
   .append($wfRemoveIcon) // Add icon
   .append(` ${getString("WF_Remove")}`); // Add text
+
+
+  let $wfDuplicateButtonWrap = $("<div>", { class: "button-container col-sm-4 col-sx-12" });
+
+  let $wfDuplicateIcon = $("<i>", { 
+    class: "fa-solid fa-copy"
+  });
+
+  let $wfDuplicateButton = $("<div>", {
+    class: "pointer duplicate-wf green-hover-text",
+    wfIndex: wfIndex
+  })
+  .append($wfDuplicateIcon) // Add icon
+  .append(` ${getString("WF_Duplicate")}`); // Add text
+
+  let $wfExportButtonWrap = $("<div>", { class: "button-container col-sm-4 col-sx-12" });
+
+  let $wfExportIcon = $("<i>", { 
+    class: "fa-solid fa-file-export"
+  });
+
+  let $wfExportButton = $("<div>", {
+    class: "pointer export-wf green-hover-text",
+    wfIndex: wfIndex
+  })
+  .append($wfExportIcon) // Add icon
+  .append(` ${getString("WF_Export")}`); // Add text
  
   $wfCollapsiblePanel.append($actionsContainer);
 
+  $wfCollapsiblePanel.append($wfDuplicateButtonWrap.append($wfDuplicateButton))
+  $wfCollapsiblePanel.append($wfExportButtonWrap.append($wfExportButton))
   $wfCollapsiblePanel.append($wfRemoveButtonWrap.append($wfRemoveButton))
+  
 
   $wfContainer.append($wfCollapsiblePanel)
 
@@ -765,7 +803,62 @@ function addWorkflow(workflows) {
 // Function to remove a Workflow
 function removeWorkflow(workflows, wfIndex) {
   
-  workflows.splice(wfIndex, 1);
+  showModalWarning ('<?= lang('WF_Remove');?>', '<?= lang('WF_Remove_Copy');?>',
+            '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Delete');?>', `executeRemoveWorkflow`, wfIndex);
+}
+
+// ---------------------------------------------------
+// Function to execute the remove of a Workflow
+function executeRemoveWorkflow() {
+  
+  workflows = getWorkflowsJson()
+
+  workflows.splice($('#modal-warning').attr("data-myparam-triggered-by"), 1);
+
+  updateWorkflowsJson(workflows)
+
+  // Re-render the UI
+  renderWorkflows();
+}
+
+// ---------------------------------------------------
+// Function to duplicate a Workflow
+function duplicateWorkflow(workflows, wfIndex) {
+  
+  workflows.push(workflows[wfIndex])
+
+  updateWorkflowsJson(workflows)
+
+  // Re-render the UI
+  renderWorkflows();
+}
+
+// ---------------------------------------------------
+// Function to export a Workflow
+function exportWorkflow(workflows, wfIndex) {
+
+// Add new icon as base64 string 
+showModalInput ('<i class="fa fa-copy pointer"></i> <?= lang('WF_Export');?>', '<?= lang('WF_Export_Copy');?>',
+    '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Okay');?>', null, null,  JSON.stringify(workflows[wfIndex], null, 2));
+}
+
+// ---------------------------------------------------
+// Function to import a Workflow
+function importWorkflow(workflows, wfIndex) {
+
+// Add new icon as base64 string 
+showModalInput ('<i class="fa fa-arrow-up pointer"></i> <?= lang('WF_Import');?>', '<?= lang('WF_Import_Copy');?>',
+    '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Okay');?>', 'importWorkflowExecute', null, "" );
+
+}
+
+function importWorkflowExecute()
+{   
+  var json = JSON.parse($('#modal-input-textarea').val());
+  
+  workflows = getWorkflowsJson()
+  
+  workflows.push(json);
 
   updateWorkflowsJson(workflows)
 
@@ -1017,6 +1110,21 @@ $(document).on("click", ".add-workflow-btn", function () {
 $(document).on("click", ".remove-wf", function () {
   let wfIndex = $(this).attr("wfindex");
   removeWorkflow(getWorkflowsJson(), wfIndex);
+});
+
+$(document).on("click", ".duplicate-wf", function () {
+  let wfIndex = $(this).attr("wfindex");
+  duplicateWorkflow(getWorkflowsJson(), wfIndex);
+});
+
+$(document).on("click", ".export-wf", function () {
+  let wfIndex = $(this).attr("wfindex");
+  exportWorkflow(getWorkflowsJson(), wfIndex);
+});
+
+$(document).on("click", ".import-wf", function () {
+  let wfIndex = $(this).attr("wfindex");
+  importWorkflow(getWorkflowsJson(), wfIndex);
 });
 
 $(document).on("click", ".add-condition", function () {

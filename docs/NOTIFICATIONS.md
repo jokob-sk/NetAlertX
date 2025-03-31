@@ -21,6 +21,9 @@ There are 4 settings on the device for influencing notifications. You can:
 2. **Alert Down** - Alerts when a device goes down. This setting overrides a disabled **Alert Events** setting, so you will get a notification of a device going down even if you don't have **Alert Events** ticked. Disabling this will disable down and down reconnected notifications on the device.
 3. **Skip repeated notifications**, if for example you know there is a temporary issue and want to pause the same notification for this device for a given time.
 
+> [!NOTE]
+> Please read through the [NTFPRCS plugin](https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/notification_processing/README.md) documentation to understand how device and global settings influence the notification processing. 
+
 ## Plugin settings 🔌
 
 ![Plugin notification settings](./img/NOTIFICATIONS/Plugin-notification-settings.png)
@@ -38,7 +41,7 @@ Click the **Read more in the docs.** Link at the top of each plugin to get more 
 
 In Notification Processing settings, you can specify blanket rules. These allow you to specify exceptions to the Plugin and Device settings and will override those.
 
-1. Notify on (`NTFPRCS_INCLUDED_SECTIONS`) allows you to specify which events trigger notifications. Usual setups will have `new_devices`, `down_devices`, and possibly `down_reconnected` set. Including `plugin` (dependenton the Plugin `<plugin>_WATCH` and `<plugin>_REPORT_ON` settings) and `events` (dependent on the on-device **Alert Events** setting) might be too noisy for most setups. More info in the [NTFPRCS plugin](/front/plugins/notification_processing/README.md) on what events these selections include. 
+1. Notify on (`NTFPRCS_INCLUDED_SECTIONS`) allows you to specify which events trigger notifications. Usual setups will have `new_devices`, `down_devices`, and possibly `down_reconnected` set. Including `plugin` (dependenton the Plugin `<plugin>_WATCH` and `<plugin>_REPORT_ON` settings) and `events` (dependent on the on-device **Alert Events** setting) might be too noisy for most setups. More info in the [NTFPRCS plugin](https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/notification_processing/README.md) on what events these selections include. 
 2. Alert down after (`NTFPRCS_alert_down_time`) is useful if you want to wait for some time before the system sends out a down notification for a device. This is related to the on-device **Alert down** setting and only devices with this checked will trigger a down notification.
 3. A filter to allow you to set device-specific exceptions to New devices being added to the app.
 4. A filter to allow you to set device-specific exceptions to generated Events.

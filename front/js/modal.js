@@ -68,11 +68,13 @@ function showModalWarning(
   callbackFunction = null,
   triggeredBy = null
 ) {
+  prefix = "modal-warning";
+
   // set captions
-  $("#modal-warning-title").html(title);
-  $("#modal-warning-message").html(message);
-  $("#modal-warning-cancel").html(btnCancel);
-  $("#modal-warning-OK").html(btnOK);
+  $(`#${prefix}-title`).html(title);
+  $(`#${prefix}-message`).html(message);
+  $(`#${prefix}-cancel`).html(btnCancel);
+  $(`#${prefix}-OK`).html(btnOK);
 
   if (callbackFunction != null) {
     modalCallbackFunction = callbackFunction;
@@ -83,7 +85,7 @@ function showModalWarning(
   }
 
   // Show modal
-  $("#modal-warning").modal("show");
+  $(`#${prefix}`).modal("show");
 }
 
 // -----------------------------------------------------------------------------
@@ -93,7 +95,8 @@ function showModalInput(
   btnCancel = getString("Gen_Cancel"),
   btnOK = getString("Gen_Okay"),
   callbackFunction = null,
-  triggeredBy = null  
+  triggeredBy = null,
+  defaultValue = ""  
 ) {
   prefix = "modal-input";
 
@@ -102,6 +105,7 @@ function showModalInput(
   $(`#${prefix}-message`).html(message);
   $(`#${prefix}-cancel`).html(btnCancel);
   $(`#${prefix}-OK`).html(btnOK);
+  $(`#${prefix}-textarea`).val(defaultValue);
 
   if (callbackFunction != null) {
     modalCallbackFunction = callbackFunction;

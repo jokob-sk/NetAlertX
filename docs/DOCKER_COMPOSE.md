@@ -103,3 +103,42 @@ DEV_LOCATION=/path/to/local/source/code
 ```
 
 To run the container execute: `sudo docker-compose --env-file /path/to/.env up`
+
+
+## #Example 4: Docker swarm
+
+Notice how the host network is defined in a swarm setup:
+
+```yaml
+services:
+  netalertx:
+    # Use the below line if you want to test the latest dev image
+    # image: "jokobsk/netalertx-dev:latest"
+    image: "ghcr.io/jokob-sk/netalertx:latest"
+    volumes:
+      - /mnt/MYSERVER/netalertx/config:/config:rw
+      - /mnt/MYSERVER/netalertx/db:/netalertx/db:rw
+      - /mnt/MYSERVER/netalertx/logs:/netalertx/front/log:rw
+    environment:
+      - TZ=Europe/London
+      - PORT=20211
+    # network_mode: host
+    networks:
+      - outside
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      # placement: # ✅ Placement is now correctly inside deploy
+      # constraints:
+      #   - node.role == manager
+      #   - node.labels.device == NUC2
+
+networks:
+  outside:
+    external:
+      name: "host"
+
+
+```

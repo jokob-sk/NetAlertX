@@ -819,7 +819,6 @@ class plugin_object_class:
 
         # Check if self.status is valid
         if self.status not in ["exists", "watched-changed", "watched-not-changed", "new", "not-processed", "missing-in-last-scan"]:
-            mylog('none', [f'[plugin_object_class] ERROR on objDbRow: {objDbRow}'])
             raise ValueError(f"Invalid status value for plugin object ({self.pluginPref}|{self.primaryId}|{self.watched1}) invalid status: {self.status} on objDbRow:", objDbRow)
 
         self.idsHash      = str(hash(str(self.primaryId) + str(self.secondaryId)))    

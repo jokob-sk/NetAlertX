@@ -54,9 +54,11 @@ Below you can find a couple of configuration examples.
 
 ## Example 1: Assign Device to Network Node Based on IP
 
+This workflow assigns newly added devices with IP addresses in the `192.168.1.*` range to the device with the MAC address `6c:6d:6d:6c:6c:6c`.
+
 ### Trigger:
 - **Object Type**: `Devices`
-- **Event Type**: `create`
+- **Event Type**: `insert`
 
 ### Conditions:
 - **Logic**: `AND`
@@ -71,11 +73,11 @@ Below you can find a couple of configuration examples.
   - **Field**: `devNetworkNode`
   - **Value**: `6c:6d:6d:6c:6c:6c`
 
-This workflow assigns newly added devices with IP addresses in the `192.168.1.*` range to the device with the MAC address `6c:6d:6d:6c:6c:6c`.
-
 ---
 
 ## Example 2: Mark Device as Not New and Delete If from Google Vendor
+
+This workflow automates the process of marking Google devices as not new and deleting them if they meet the criteria.
 
 ### Trigger:
 - **Object Type**: `Devices`
@@ -107,7 +109,7 @@ This workflow assigns newly added devices with IP addresses in the `192.168.1.*`
    
    This action deletes the device after it is marked as not new.
 
-This workflow automates the process of marking Google devices as not new and deleting them if they meet the criteria.
+
 
 ---
 

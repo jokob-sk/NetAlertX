@@ -41,7 +41,7 @@ class Condition:
         if self.operator == "equals":
             result = str(obj_value) == str(self.value)
         elif self.operator == "contains":
-            result = str(self.value) in str(obj_value)
+            result = str(self.value).lower() in str(obj_value).lower()
         elif self.operator == "regex":
             result = bool(re.match(self.value, str(obj_value)))
         else:
