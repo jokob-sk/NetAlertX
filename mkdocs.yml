@@ -61,6 +61,7 @@ nav:
       - Debugging Invalid JSON: DEBUG_INVALID_JSON.md
       - Debugging Plugins: DEBUG_PLUGINS.md
       - Debugging Web UI Port: WEB_UI_PORT_DEBUG.md
+      - Debugging Workflows: WORKFLOWS_DEBUGGING.md
   - Development:
       - Plugin and app development:
         - Environment Setup: DEV_ENV_SETUP.md

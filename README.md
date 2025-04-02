@@ -41,6 +41,10 @@ Send notifications to more than 80+ services, including Telegram via [Apprise](h
 Feed your data and device changes into [Home Assistant](https://github.com/jokob-sk/NetAlertX/blob/main/docs/HOME_ASSISTANT.md), read [API endpoints](https://github.com/jokob-sk/NetAlertX/blob/main/docs/API.md), or use [Webhooks](https://github.com/jokob-sk/NetAlertX/blob/main/docs/WEBHOOK_N8N.md) to setup custom automation flows. You can also 
 build your own scanners with the [Plugin system](https://github.com/jokob-sk/NetAlertX/tree/main/docs/PLUGINS.md#readme) in as little as [15 minutes](https://www.youtube.com/watch?v=cdbxlwiWhv8).
 
+### Workflows
+
+The [workflows module](https://github.com/jokob-sk/NetAlertX/blob/main/docs/WORKFLOWS.md) in NetAlertX allows to automate repetitive tasks, making network management more efficient. Whether you need to assign newly discovered devices to a specific Network Node, auto-group devices from a given vendor, unarchive a device if detected online, or automatically delete devices, this module provides the flexibility to tailor the automations to your needs.
+
 
 ## 📚 Documentation
 <!--- --------------------------------------------------------------------- --->

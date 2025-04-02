@@ -57,6 +57,8 @@ class WorkflowManager:
 
             # Ensure workflow is enabled before proceeding
             if workflow.get("enabled", "No").lower() == "yes":
+
+                mylog('debug', [f"[WF] Checking if '{event["GUID"]}' triggers the workflow '{workflow["name"]}'"])
                
                 # construct trigger object which also evaluates if the current event triggers it
                 trigger = Trigger(workflow["trigger"], event, self.db)

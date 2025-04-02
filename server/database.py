@@ -75,7 +75,6 @@ class DB():
 
         return arr
 
-
     #-------------------------------------------------------------------------------
     def upgradeDB(self):
         """
@@ -927,6 +926,21 @@ def get_device_stats(db):
 #-------------------------------------------------------------------------------
 def get_all_devices(db):
     return db.read(sql_devices_all)
+
+#-------------------------------------------------------------------------------
+   
+def get_array_from_sql_rows(rows):
+    # Convert result into list of lists
+    arr = []
+    for row in rows:
+        if isinstance(row, sqlite3.Row):
+            arr.append(list(row))  # Convert row to list
+        elif isinstance(row, (tuple, list)):  
+            arr.append(list(row))  # Already iterable, just convert to list
+        else:
+            arr.append([row])  # Handle single values safely
+
+    return arr
 
 #-------------------------------------------------------------------------------
 

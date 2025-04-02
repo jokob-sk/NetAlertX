@@ -2,7 +2,7 @@
 
 ## Installation options
 
-NetAlertX can be installed several ways. The best supported option is Docker, followed by a supervised the Home Assistant instance, as an Unraid app and lastly on bare metal. 
+NetAlertX can be installed several ways. The best supported option is Docker, followed by a supervised Home Assistant instance, as an Unraid app, and lastly, on bare metal. 
 
 - [[Installation] Docker (recommended)](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md) 
 - [[Installation] Home Assistant](https://github.com/alexbelgium/hassio-addons/tree/master/netalertx) 

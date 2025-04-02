@@ -66,6 +66,18 @@ let actionTypes = [
   "update_field", "delete_device"
 ];
 
+let emptyWorkflow = {
+      "name": "New Workflow",
+      "trigger": {
+        "object_type": "Devices",
+        "event_type": "insert"
+      },
+      "conditions": [
+      ],
+      "actions": [     
+      ]
+    };
+
 // --------------------------------------
 // Retrieve and process the data
 function getData() {
@@ -1073,17 +1085,7 @@ function updateWorkflowsJson(workflows)
 // Get empty workflow JSON
 function getEmptyWorkflowJson()
 {
-  return {
-      "name": "New Workflow",
-      "trigger": {
-        "object_type": "Devices",
-        "event_type": "create"
-      },
-      "conditions": [
-      ],
-      "actions": [     
-      ]
-    }
+  return emptyWorkflow;
 } 
 
 // ---------------------------------------------------

@@ -1,7 +1,7 @@
 # `docker-compose.yaml` Examples
 
 > [!NOTE] 
-> The container needs to run in `network_mode:"host"`. 
+> The container needs to run in `network_mode:"host"`. This also means that not all functionality is supported on a Widndows host as Docker for Windows doesn't support this networking option. 
 
 ### Example 1
 
@@ -122,7 +122,6 @@ services:
     environment:
       - TZ=Europe/London
       - PORT=20211
-    # network_mode: host
     networks:
       - outside
     deploy:
@@ -130,10 +129,6 @@ services:
       replicas: 1
       restart_policy:
         condition: on-failure
-      # placement: # ✅ Placement is now correctly inside deploy
-      # constraints:
-      #   - node.role == manager
-      #   - node.labels.device == NUC2
 
 networks:
   outside:

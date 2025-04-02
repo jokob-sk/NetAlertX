@@ -15,6 +15,8 @@ Below are a few examples that demonstrate how this module can be used to simplif
 
 ### Triggers
 
+![Trigger example](./img/WORKFLOWS/trigger.jpg)
+
 Triggers define the event that activates a workflow. They monitor changes to objects within the system, such as updates to devices or the insertion of new entries. When the specified event occurs, the workflow is executed.
 
 #### Example Trigger:
@@ -32,7 +34,7 @@ Conditions determine whether a workflow should proceed based on certain criteria
 > [!TIP]
 > To better understand how to use specific Device fields, please read through the [Database overview](./DATABASE.md) guide.
 
-### Example Condition:
+#### Example Condition:
 - **Logic**: `AND`
   - **Field**: `devVendor`
   - **Operator**: `contains` (case in-sensitive)
@@ -48,7 +50,7 @@ Actions define the tasks that the workflow will perform once the conditions are 
 
 You can include multiple actions that should execute once the conditions are met.
 
-### Example Action:
+#### Example Action:
 - **Action Type**: `update_field`
   - **Field**: `devIsNew`
   - **Value**: `0`

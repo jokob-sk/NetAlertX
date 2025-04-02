@@ -1857,6 +1857,11 @@ input[readonly] {
     padding: 5px;
 }
 
+.workflows 
+{
+    max-width: 800px;
+}
+
 .workflows .col-sm-12, .workflows .col-sx-12
 {
     padding-right: 5px;
