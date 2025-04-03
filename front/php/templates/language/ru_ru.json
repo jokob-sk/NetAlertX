@@ -70,7 +70,7 @@
     "DevDetail_Copy_Device_Tooltip": "Скопируйте данные с устройства из раскрывающегося списка. Все на этой странице будет перезаписано",
     "DevDetail_CustomProperties_Title": "Пользовательские свойства",
     "DevDetail_CustomProps_reset_info": "Это удалит ваши пользовательские свойства на этом устройстве и вернет их к значению по умолчанию.",
-    "DevDetail_DisplayFields_Title": "Дисплей",
+    "DevDetail_DisplayFields_Title": "Отображение",
     "DevDetail_EveandAl_AlertAllEvents": "Оповещения о событиях",
     "DevDetail_EveandAl_AlertDown": "Оповещение о доступности",
     "DevDetail_EveandAl_Archived": "Архив",
