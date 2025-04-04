@@ -50,7 +50,8 @@ class WorkflowManager:
     def process_event(self, event):
         """Process the events. Check if events match a workflow trigger"""
         
-        mylog('verbose', [f"[WF] Processing event with GUID {event["GUID"]}"])
+        guid = event["GUID"]
+        mylog('verbose', [f"[WF] Processing event with GUID {guid}"])
 
         # Check if the trigger conditions match
         for workflow in self.workflows:
