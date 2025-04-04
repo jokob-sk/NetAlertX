@@ -35,7 +35,8 @@ nav:
         - Security: SECURITY.md
       - Advanced guides:
         - Remote Networks: REMOTE_NETWORKS.md      
-        - Notifications Guide: NOTIFICATIONS.md        
+        - Notifications Guide: NOTIFICATIONS.md      
+        - Name Resolution: NAME_RESOLUTION.md  
         - Authelia: AUTHELIA.md   
         - Performance: PERFORMANCE.md      
         - Reverse DNS: REVERSE_DNS.md  
@@ -57,6 +58,7 @@ nav:
         - Icons: ICONS.md
         - Network Topology: NETWORK_TREE.md
   - Troubleshooting:
+      - Inspecting Logs: LOGGING.md
       - Debugging Tips: DEBUG_TIPS.md
       - Debugging Invalid JSON: DEBUG_INVALID_JSON.md
       - Debugging Plugins: DEBUG_PLUGINS.md

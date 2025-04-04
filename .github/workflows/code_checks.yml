@@ -25,4 +25,9 @@ jobs:
           else
             echo "✅ No absolute path URLs found."
           fi
+      - name: Check Python syntax
+        run: |
+          set -e
+          echo "🔍 Checking Python syntax..."
+          find . -name "*.py" -print0 | xargs -0 -n1 python3 -m py_compile
 
