@@ -1,4 +1,4 @@
-name: URL Path Check
+name: Code checks
 on:
   push:
     branches:

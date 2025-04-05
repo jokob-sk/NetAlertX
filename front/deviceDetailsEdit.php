@@ -266,7 +266,7 @@
       
       })
     
-      }, 1);
+      }, 100);
     });
   
   }
@@ -338,6 +338,7 @@
 
 
   // -----------------------------------------------------------------------------
+  // Save device data to DB
   function setDeviceData(direction = '', refreshCallback = '') {
     // Check MAC
     if (mac === '') {

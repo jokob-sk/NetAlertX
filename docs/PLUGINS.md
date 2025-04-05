@@ -22,6 +22,9 @@ NetAlertX supports additional plugins to extend its functionality, each with its
  
 Device-detecting plugins insert values into the `CurrentScan` database table.  The plugins that are not required are safe to ignore, however, it makes sense to have at least some device-detecting plugins enabled, such as `ARPSCAN` or `NMAPDEV`. 
 
+> [!NOTE]
+> See tables below for a description of what the icons in the below Plugins table mean. 
+
 
 | ID            | Type    | Description                                | Features | Required | Data source  | Detailed docs                                                       |
 |---------------|---------|--------------------------------------------|----------|----------|--------------|---------------------------------------------------------------------|
@@ -36,7 +39,7 @@ Device-detecting plugins insert values into the `CurrentScan` database table.  T
 | `DHCPLSS`     | 🔍/📥/🆎| Import devices from DHCP leases          |           |          | Script       | [dhcp_leases](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/dhcp_leases/)                        |
 | `DHCPSRVS`    | ♻       | DHCP servers                              |           |          | Script       | [dhcp_servers](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/dhcp_servers/)                      |
 | `FREEBOX`     | 🔍/♻/🆎| Pull data and names from Freebox/Iliadbox |          |          | Script       | [freebox](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/freebox/)                                 |
-| `ICMP`        | 🔍      | ICMP (ping) status checker                |           |          | Script       | [icmp_scan](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/icmp_scan/)                            |
+| `ICMP`        | ♻      | ICMP (ping) status checker                |           |          | Script       | [icmp_scan](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/icmp_scan/)                            |
 | `INTRNT`      | 🔍      | Internet IP scanner                       |           |          | Script       | [internet_ip](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/internet_ip/)                        |
 | `INTRSPD`     | ♻       | Internet speed test                       |           |          | Script       | [internet_speedtest](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/internet_speedtest/)          |
 | `IPNEIGH`     | 🔍       | Scan ARP (IPv4) and NDP (IPv6) tables    |           |          | Script       | [ipneigh](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/ipneigh/)                                |
