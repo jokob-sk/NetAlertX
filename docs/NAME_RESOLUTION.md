@@ -1,4 +1,4 @@
-# NAME RESOLUTION
+# Device Name Resolution
 
 Name resolution in NetAlertX relies on multiple plugins to resolve device names from IP addresses. If you are seeing `(name not found)` as device names, follow these steps to diagnose and fix the issue.
 

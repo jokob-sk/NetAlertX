@@ -12,9 +12,13 @@ Workflows are triggered by various events. These events are captured and listed 
 
 If an event doesn't trigger a workflow as expected, check the _App Events_ section for the event. You can filter these by the ID of the device (`devMAC` or `devGUID`). 
 
+![App events search](./img/WORKFLOWS/workflows_app_events_search.png)
+
 Once you find the _Event Guid_ and _Object GUID_, use them to find relevant debug entries. 
 
 Navigate to _Mainetenace -> Logs_ where you can filter the logs based on the _Event or Object GUID_. 
+
+![Log events search](./img/WORKFLOWS/workflows_logs_search.png)
 
 Below you can find some example `app.log` entries that will help you understand why a Workflow was or was not triggered.
 

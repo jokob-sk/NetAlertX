@@ -8,22 +8,40 @@ NetAlertX supports additional plugins to extend its functionality, each with its
 ## ⚡ Quick start
 
 > [!TIP]
-> You can load additional Plugins via the General -> `LOADED_PLUGINS` setting. 
+> You can load additional Plugins via the General -> `LOADED_PLUGINS` setting. You need to save the settings for the new plugins to load (cahce/page relaod may be necessary). 
+> ![Loaded plugins settings](./img/PLUGINS/loaded_plugins_setting.png)
 
-1. Pick your `🔍 dev scanner` plugin (e.g. `ARPSCAN` or `NMAPDEV`), or import devices into the application with an `📥 importer` plugin. (See **✅Enabling plugins** below)
+1. Pick your `🔍 dev scanner` plugin (e.g. `ARPSCAN` or `NMAPDEV`), or import devices into the application with an `📥 importer` plugin. (See **Enabling plugins** below)
 2. Pick a `▶️ publisher` plugin, if you want to send notifications. If you don't see a publisher you'd like to use, look at the  [📚_publisher_apprise](/front/plugins/_publisher_apprise/) plugin which is a proxy for over 80 notification services. 
 3. Setup your [Network topology diagram](./NETWORK_TREE.md)
 4. Fine-tune [Notifications](./NOTIFICATIONS.md)
-5. [Backup your setup](./BACKUPS.md)
-6. Contribute and [Create custom plugins](./PLUGINS_DEV.md)
+5. Setup [Workflows](./WORKFLOWS.md)
+6. [Backup your setup](./BACKUPS.md)
+7. Contribute and [Create custom plugins](./PLUGINS_DEV.md)
 
 
-## 📑 Available Plugins
+## Plugin types
+
+| Plugin type    | Icon | Description                                                      | When to run                         | Required | Data source [?](./PLUGINS_DEV.md) |
+| -------------- | ---- | ---------------------------------------------------------------- | ----------------------------------- | -------- | ------------------------------------- |
+| publisher      | ▶️    | Sending notifications to services.                               | `on_notification`                   | ✖        | Script                                |
+| dev scanner    | 🔍    | Create devices in the app, manages online/offline device status. | `schedule`                          | ✖        | Script / SQLite DB                    |
+| name discovery | 🆎    | Discovers names of devices via various protocols.                | `before_name_updates`, `schedule`   | ✖        | Script                                |
+| importer       | 📥    | Importing devices from another service.                          | `schedule`                          | ✖        | Script / SQLite DB                    |
+| system         | ⚙    | Providing core system functionality.                             | `schedule` / always on              | ✖/✔      | Script / Template                     |
+| other          | ♻    | Other plugins                                                    | misc                                | ✖        | Script / Template                     |
+
+## Features
+
+| Icon | Description                                                  |
+| ---- | ------------------------------------------------------------ |
+| 🖧    | Auto-imports the network topology diagram                    |
+| 🔄    | Has the option to sync some data back into the plugin source |
+
+
+## Available Plugins
  
 Device-detecting plugins insert values into the `CurrentScan` database table.  The plugins that are not required are safe to ignore, however, it makes sense to have at least some device-detecting plugins enabled, such as `ARPSCAN` or `NMAPDEV`. 
-
-> [!NOTE]
-> See tables below for a description of what the icons in the below Plugins table mean. 
 
 
 | ID            | Type    | Description                                | Features | Required | Data source  | Detailed docs                                                       |
@@ -75,27 +93,9 @@ Device-detecting plugins insert values into the `CurrentScan` database table.  T
 > ❌ marked for removal
 > ⌚It's recommended to use the same schedule interval for all plugins responsible for discovering new devices.
 
-## Plugin types
 
 
-| Plugin type    | Icon | Description                                                      | When to run                         | Required | Data source [?](./PLUGINS_DEV.md) |
-| -------------- | ---- | ---------------------------------------------------------------- | ----------------------------------- | -------- | ------------------------------------- |
-| publisher      | ▶️    | Sending notifications to services.                               | `on_notification`                   | ✖        | Script                                |
-| dev scanner    | 🔍    | Create devices in the app, manages online/offline device status. | `schedule`                          | ✖        | Script / SQLite DB                    |
-| name discovery | 🆎    | Discovers names of devices via various protocols.                | `before_name_updates`, `schedule`   | ✖        | Script                                |
-| importer       | 📥    | Importing devices from another service.                          | `schedule`                          | ✖        | Script / SQLite DB                    |
-| system         | ⚙    | Providing core system functionality.                             | `schedule` / always on              | ✖/✔      | Script / Template                     |
-| other          | ♻    | Other plugins                                                    | misc                                | ✖        | Script / Template                     |
-
-## Features
-
-| Icon | Description                                                  |
-| ---- | ------------------------------------------------------------ |
-| 🖧    | Auto-imports the network topology diagram                    |
-| 🔄    | Has the option to sync some data back into the plugin source |
-
-
-## ✅Enabling plugins
+## Enabling plugins
 
 Plugins can be enabled via Settings, and can be disabled as needed. 
 
