@@ -19,6 +19,9 @@ Below are a few examples that demonstrate how this module can be used to simplif
 
 Triggers define the event that activates a workflow. They monitor changes to objects within the system, such as updates to devices or the insertion of new entries. When the specified event occurs, the workflow is executed.
 
+> [!TIP]
+> Workflows not running? Check the [Workflows debugging](./WORKFLOWS_DEBUGGING.md) guide how to troubleshoot triggers and conditions.
+
 #### Example Trigger:
 - **Object Type**: `Devices`
 - **Event Type**: `update`

@@ -8,7 +8,7 @@ NetAlertX supports additional plugins to extend its functionality, each with its
 ## ⚡ Quick start
 
 > [!TIP]
-> You can load additional Plugins via the General -> `LOADED_PLUGINS` setting. You need to save the settings for the new plugins to load (cahce/page relaod may be necessary). 
+> You can load additional Plugins via the General -> `LOADED_PLUGINS` setting. You need to save the settings for the new plugins to load (cache/page reload may be necessary). 
 > ![Loaded plugins settings](./img/PLUGINS/loaded_plugins_setting.png)
 
 1. Pick your `🔍 dev scanner` plugin (e.g. `ARPSCAN` or `NMAPDEV`), or import devices into the application with an `📥 importer` plugin. (See **Enabling plugins** below)

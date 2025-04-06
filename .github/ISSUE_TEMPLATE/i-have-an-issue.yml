@@ -59,6 +59,7 @@ body:
   validations:
     required: false
 - type: dropdown
+  id: installation_type
   attributes:
     label: What installation are you running?
     options:

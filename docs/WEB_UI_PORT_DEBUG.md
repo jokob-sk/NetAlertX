@@ -1,6 +1,27 @@
 # Debugging inaccessible UI
 
-## 1. Port conflicts
+The application uses the following default ports:
+
+- **Web UI**: `20211`  
+- **GraphQL API**: `20212`
+
+The **Web UI** is served by an **nginx** server, while the **API backend** runs on a **Flask (Python)** server.
+
+## Changing Ports
+
+- To change the **Web UI** port, update the `PORT` environment variable in the `docker-compose.yml` file.
+- To change the **GraphQL API** port, use the `GRAPHQL_PORT` setting, either directly or via Docker:
+  ```yaml
+  APP_CONF_OVERRIDE={"GRAPHQL_PORT":"20212"}
+  ```
+
+For more information, check the [Docker installation guide](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md).
+
+## Possible issues and troubleshooting
+
+Follow all of the below in order to disqualify potential causes of issues and to troubleshoot these problems faster.
+
+### 1. Port conflicts
 
 When opening an issue or debugging:
 
@@ -15,27 +36,27 @@ When opening an issue or debugging:
 
 ![lsof ports](./img/WEB_UI_PORT_DEBUG/container_port.png)
 
-## 2. JavaScript issues 
+### 2. JavaScript issues 
 
 Check for browser console (F12 browser dev console) errors + check different browsers.
 
-## 3. Clear the app cache and cached JavaScript files
+### 3. Clear the app cache and cached JavaScript files
 
 Refresh the browser cache (usually shoft + refresh), try a private window, or different browsers. Please also refresh the app cache by clicking the 🔃 (reload) button in the header of the application. 
 
-## 4. Disable proxies
+### 4. Disable proxies
 
 If you have any reverse proxy or similar, try disabling it. 
 
-## 5. Disable your firewall
+### 5. Disable your firewall
 
 If you are using a firewall, try to temporarily disabling it. 
 
-## 6. Post your docker start details
+### 6. Post your docker start details
 
 If you haven't, post your docker compose/run command.
 
-## 7. Check for errors in your PHP/NGINX error logs
+### 7. Check for errors in your PHP/NGINX error logs
 
 In the container execute and investigate:
 
@@ -43,7 +64,7 @@ In the container execute and investigate:
 
 `cat /app/log/app.php_errors.log`
 
-## 8. Make sure permissions are correct
+### 8. Make sure permissions are correct
 
 > [!TIP]
 > You can try to start the container without mapping the `/app/config` and `/app/db` dirs and if the UI shows up then the issue is most likely related to your file system permissions or file ownership. 
