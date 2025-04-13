@@ -1,7 +1,7 @@
 # `docker-compose.yaml` Examples
 
 > [!NOTE] 
-> The container needs to run in `network_mode:"host"`. This also means that not all functionality is supported on a Widndows host as Docker for Windows doesn't support this networking option. 
+> The container needs to run in `network_mode:"host"`. This also means that not all functionality is supported on a Windows host as Docker for Windows doesn't support this networking option. 
 
 ### Example 1
 
