@@ -2,10 +2,13 @@
 <link rel="stylesheet" href="css/app.css">
 
 <?php
-require dirname(__FILE__).'/php/server/init.php';
+
 //------------------------------------------------------------------------------
 // check if authenticated
-require_once  $_SERVER['DOCUMENT_ROOT'] . '/php/templates/security.php';
+// Be CAREFUL WHEN INCLUDING NEW PHP FILES
+require_once $_SERVER['DOCUMENT_ROOT'] . '/php/server/db.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/php/templates/language/lang.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/php/templates/security.php';
 
 $CookieSaveLoginName = 'NetAlertX_SaveLogin';
 
