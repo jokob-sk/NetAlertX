@@ -1,7 +1,7 @@
 {
     "API_CUSTOM_SQL_description": "您可以指定一个自定义 SQL 查询，它将生成一个 JSON 文件，然后通过 <a href=\"/php/server/query_json.php?file=table_custom_endpoint.json\" target=\"_blank\"><code>table_custom_endpoint.json</code> 文件端点</a> 公开它。",
     "API_CUSTOM_SQL_name": "自定义终点",
-    "API_TOKEN_description": "",
+    "API_TOKEN_description": "用于安全通信的API令牌。生成一个或输入任何值。它在请求标头中发送，并用于 <code>SYNC</code> 插件、GraphQL服务器和其他API端点中。 您可以使用API端点创建自定义集成，详情请参考此 <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/API.md\" target=\"_blank\">API 文档</a>。",
     "API_TOKEN_name": "",
     "API_display_name": "API",
     "API_icon": "<i class=\"fa fa-arrow-down-up-across-line\"></i>",
