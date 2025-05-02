@@ -6,6 +6,7 @@ import uuid
 import socket
 import subprocess
 import requests
+from yattag import indent
 from json2table import convert
 
 # Register NetAlertX modules 
@@ -172,9 +173,16 @@ class Notification_obj:
             final_text = removeDuplicateNewLines(mail_text)
 
             # Create clickable MAC links            
-            final_html = generate_mac_links (mail_html, conf.REPORT_DASHBOARD_URL + '/deviceDetails.php?mac=')    
+            mail_html = generate_mac_links (mail_html, conf.REPORT_DASHBOARD_URL + '/deviceDetails.php?mac=')
 
-            send_api(self.JSON, mail_text, mail_html)
+            final_html = indent(
+                mail_html,
+                indentation = '    ',
+                newline = '\r\n',
+                indent_text = True
+            )
+
+            send_api(self.JSON, final_text, final_html)
 
             #  Write output data for debug            
             write_file (logPath + '/report_output.txt', final_text)
