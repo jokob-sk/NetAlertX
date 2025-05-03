@@ -24,7 +24,7 @@ sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 import conf
 from const import confFileName, logPath
 from plugin_helper import Plugin_Objects
-from logger import mylog, Logger, append_line_to_file, print_log
+from logger import mylog, Logger, append_line_to_file
 from helper import timeNowTZ, get_setting_value, hide_email
 from notification import Notification_obj
 from database import DB

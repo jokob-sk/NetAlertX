@@ -45,10 +45,11 @@ reqLvl = 0
 
 #-------------------------------------------------------------------------------
 class Logger:
-    def __init__(self, LOG_LEVEL='verbose'):        
+    def __init__(self, LOG_LEVEL):        
         global currentLevel
 
         currentLevel = LOG_LEVEL
+        conf.LOG_LEVEL = currentLevel
 
         # Automatically set up custom logging handler
         self.setup_logging()
@@ -89,7 +90,7 @@ def mylog(requestedDebugLevel, n):
             reqLvl = lvl[1]
 
     if reqLvl <= setLvl:
-        file_print (*n)        
+        file_print (*n)             
 
 #-------------------------------------------------------------------------------
 # Queue for log messages
@@ -138,18 +139,6 @@ def file_print(*args):
     # Ensure the log writer thread is running
     start_log_writer_thread()
 
-#-------------------------------------------------------------------------------
-def print_log(pText):
-    # Check if logging is active
-    if not conf.LOG_LEVEL == 'debug':
-        return
-
-    # Current Time    
-    log_timestamp2 = datetime.datetime.now(conf.tz).replace(microsecond=0)
-
-    # Print line + time + text
-    file_print('[LOG_LEVEL=debug]', log_timestamp2.strftime('%H:%M:%S'), pText)
-    return pText
 
 #-------------------------------------------------------------------------------
 def append_file_binary(file_path, input_data):

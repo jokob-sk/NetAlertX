@@ -17,7 +17,7 @@ from app_state import updateState
 from logger import mylog
 from api import update_api
 from scheduler import schedule_class
-from plugin import print_plugin_info, run_plugin_scripts
+from plugin import plugin_manager, print_plugin_info
 from plugin_utils import get_plugins_configs, get_set_value_for_init
 from notification import write_notification
 from crypto_utils import get_random_bytes
@@ -402,7 +402,8 @@ def importConfigs (db, all_plugins):
     update_api(db, all_plugins, True, ["settings"])  
     
     # run plugins that are modifying the config   
-    run_plugin_scripts(db, all_plugins, 'before_config_save' )
+    pm = plugin_manager(db, all_plugins)
+    pm.run_plugin_scripts('before_config_save')
 
     # Used to determine the next import
     conf.lastImportedConfFile = os.path.getmtime(config_file)   

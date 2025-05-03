@@ -50,9 +50,12 @@ def main():
         return
 
 def check_services_health(site):
+
+    mylog('verbose', [f'[{pluginName}] Checking {site}'])
+
     requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
     try:
-        resp = requests.get(site, verify=False, timeout=10)
+        resp = requests.get(site, verify=False, timeout=get_setting_value('WEBMON_RUN_TIMEOUT'))
         latency = resp.elapsed.total_seconds()
         status = resp.status_code
     except requests.exceptions.SSLError:
@@ -61,6 +64,9 @@ def check_services_health(site):
     except:
         status = 503
         latency = 99999
+
+    mylog('verbose', [f'[{pluginName}] Result for {site} (status|latency) : {status}|{latency}'])
+
     return status, latency
 
 def service_monitoring(urls, plugin_objects):

@@ -12,7 +12,7 @@ from json2table import convert
 # Register NetAlertX modules 
 import conf
 from const import applicationPath, logPath, apiPath, confFileName, reportTemplatesPath
-from logger import logResult, mylog, print_log
+from logger import logResult, mylog
 from helper import generate_mac_links, removeDuplicateNewLines, timeNowTZ, get_file_content, write_file, get_setting_value, get_timezone_offset
 
 #-------------------------------------------------------------------------------
