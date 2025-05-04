@@ -713,9 +713,9 @@ def process_plugin_events(db, plugin, plugEventsArr):
             mylog('debug', ['[Plugins] objects_to_insert count: ', len(objects_to_insert)])
             mylog('debug', ['[Plugins] objects_to_update count: ', len(objects_to_update)])
             
-            # mylog('debug', ['[Plugins] objects_to_update: ', objects_to_update])
-            # mylog('debug', ['[Plugins] events_to_insert: ', events_to_insert])
-            # mylog('debug', ['[Plugins] history_to_insert: ', history_to_insert])
+            mylog('trace', ['[Plugins] objects_to_update: ', objects_to_update])
+            mylog('trace', ['[Plugins] events_to_insert: ', events_to_insert])
+            mylog('trace', ['[Plugins] history_to_insert: ', history_to_insert])
 
             logEventStatusCounts('pluginEvents', pluginEvents)
             logEventStatusCounts('pluginObjects', pluginObjects)

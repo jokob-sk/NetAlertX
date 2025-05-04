@@ -467,6 +467,7 @@ def mqtt_start(db):
             devJson = { 
                         "last_ip": device["devLastIP"], 
                         "is_new": str(device["devIsNew"]), 
+                        "alert_down": str(device["devAlertDown"]), 
                         "vendor": sanitize_string(device["devVendor"]), 
                         "mac_address": str(device["devMac"]),
                         "model": devDisplayName,

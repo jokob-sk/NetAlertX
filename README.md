@@ -43,7 +43,7 @@ build your own scanners with the [Plugin system](https://github.com/jokob-sk/Net
 
 ### Workflows
 
-The [workflows module](https://github.com/jokob-sk/NetAlertX/blob/main/docs/WORKFLOWS.md) in NetAlertX allows to automate repetitive tasks, making network management more efficient. Whether you need to assign newly discovered devices to a specific Network Node, auto-group devices from a given vendor, unarchive a device if detected online, or automatically delete devices, this module provides the flexibility to tailor the automations to your needs.
+The [workflows module](https://github.com/jokob-sk/NetAlertX/blob/main/docs/WORKFLOWS.md) allows to automate repetitive tasks, making network management more efficient. Whether you need to assign newly discovered devices to a specific Network Node, auto-group devices from a given vendor, unarchive a device if detected online, or automatically delete devices, this module provides the flexibility to tailor the automations to your needs.
 
 
 ## 📚 Documentation
