@@ -123,11 +123,15 @@ def send(pHTML, pText):
 
     # handle multiple emails
     if ',' in to_email:
-        emails = [e.strip() for e in to_email.split(',')]
+        emails = to_email.split(',')
     else:
-        emails.append(to_email.strip())
+        emails.append(to_email)
+
+    mylog('debug', [f'[{pluginName}] Sending emails to {emails}'])
 
     for mail_addr in emails:
+
+        mail_addr = mail_addr.strip()
 
         # Compose email
         msg             = MIMEMultipart('alternative')
