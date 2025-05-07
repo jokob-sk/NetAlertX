@@ -658,7 +658,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Email address to which the notification will be send to."
+          "string": "Email address to which the notification will be send to. You can enter multiple emails separated by a comma (<code>,</code>)."
         },
         {
           "language_code": "es_es",

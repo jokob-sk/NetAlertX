@@ -120,10 +120,8 @@ class Query(ObjectType):
             device["devIsRandomMac"] = 1 if is_random_mac(device["devMac"]) else 0
             device["devParentChildrenCount"] = get_number_of_children(device["devMac"], devices_data)
             device["devIpLong"] = format_ip_long(device.get("devLastIP", ""))
-
         
         mylog('verbose', f'[graphql_schema] devices_data: {devices_data}')
-
 
 
         # Apply sorting if options are provided

@@ -119,44 +119,54 @@ def send(pHTML, pText):
 
     subject, from_email, to_email, message_html, message_text = sanitize_email_content('NetAlertX Report', get_setting_value("SMTP_REPORT_FROM"), get_setting_value("SMTP_REPORT_TO"), pHTML, pText)
 
-    # Compose email
-    msg             = MIMEMultipart('alternative')
-    msg['Subject']  = subject
-    msg['From']     = from_email
-    msg['To']       = to_email
-    msg['Date']     = formatdate(localtime=True) 
+    emails = []
 
-    msg.attach (MIMEText (message_text, 'plain'))
-    msg.attach (MIMEText (message_html, 'html'))
-
-    # Set a timeout for the SMTP connection (in seconds)
-    smtp_timeout = 30
-
-    mylog('debug', ['Trying to open connection to ' + str(get_setting_value('SMTP_SERVER')) + ':' + str(get_setting_value('SMTP_PORT'))])
-
-    if get_setting_value("LOG_LEVEL") == 'debug':
-
-        send_email(msg,smtp_timeout)
-
+    # handle multiple emails
+    if ',' in to_email:
+        emails = [e.strip() for e in to_email.split(',')]
     else:
+        emails.append(to_email.strip())
 
-        try:
+    for mail_addr in emails:
+
+        # Compose email
+        msg             = MIMEMultipart('alternative')
+        msg['Subject']  = subject
+        msg['From']     = from_email
+        msg['To']       = mail_addr
+        msg['Date']     = formatdate(localtime=True) 
+
+        msg.attach (MIMEText (message_text, 'plain'))
+        msg.attach (MIMEText (message_html, 'html'))
+
+        # Set a timeout for the SMTP connection (in seconds)
+        smtp_timeout = 30
+
+        mylog('debug', ['Trying to open connection to ' + str(get_setting_value('SMTP_SERVER')) + ':' + str(get_setting_value('SMTP_PORT'))])
+
+        if get_setting_value("LOG_LEVEL") == 'debug':
+
             send_email(msg,smtp_timeout)
-            
-        except smtplib.SMTPAuthenticationError as e:            
-            mylog('none', ['      ERROR: Couldn\'t connect to the SMTP server (SMTPAuthenticationError)'])
-            mylog('none', ['      ERROR: Double-check your SMTP_USER and SMTP_PASS settings.)'])
-            mylog('none', ['      ERROR: ', str(e)])
-        except smtplib.SMTPServerDisconnected as e:            
-            mylog('none', ['      ERROR: Couldn\'t connect to the SMTP server (SMTPServerDisconnected)'])
-            mylog('none', ['      ERROR: ', str(e)])
-        except socket.gaierror as e:            
-            mylog('none', ['      ERROR: Could not resolve hostname (socket.gaierror)'])
-            mylog('none', ['      ERROR: ', str(e)])      
-        except ssl.SSLError as e:                        
-            mylog('none', ['      ERROR: Could not establish SSL connection (ssl.SSLError)'])
-            mylog('none', ['      ERROR: Are you sure you need SMTP_FORCE_SSL enabled? Check your SMTP provider docs.'])
-            mylog('none', ['      ERROR: ', str(e)])      
+
+        else:
+
+            try:
+                send_email(msg,smtp_timeout)
+                
+            except smtplib.SMTPAuthenticationError as e:            
+                mylog('none', ['      ERROR: Couldn\'t connect to the SMTP server (SMTPAuthenticationError)'])
+                mylog('none', ['      ERROR: Double-check your SMTP_USER and SMTP_PASS settings.)'])
+                mylog('none', ['      ERROR: ', str(e)])
+            except smtplib.SMTPServerDisconnected as e:            
+                mylog('none', ['      ERROR: Couldn\'t connect to the SMTP server (SMTPServerDisconnected)'])
+                mylog('none', ['      ERROR: ', str(e)])
+            except socket.gaierror as e:            
+                mylog('none', ['      ERROR: Could not resolve hostname (socket.gaierror)'])
+                mylog('none', ['      ERROR: ', str(e)])      
+            except ssl.SSLError as e:                        
+                mylog('none', ['      ERROR: Could not establish SSL connection (ssl.SSLError)'])
+                mylog('none', ['      ERROR: Are you sure you need SMTP_FORCE_SSL enabled? Check your SMTP provider docs.'])
+                mylog('none', ['      ERROR: ', str(e)])      
 
 # ----------------------------------------------------------------------------------
 def send_email(msg,smtp_timeout):

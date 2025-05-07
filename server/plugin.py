@@ -102,11 +102,11 @@ class plugin_manager:
             
             # Process each event type
             if event == 'test':
-                handle_test(param)
+                self.handle_test(param)
                 executed_events.append(f"test with param {param}")
                 execution_log.finalize_event("test")
             elif event == 'run':
-                handle_run(param)
+                self.handle_run(param)
                 executed_events.append(f"run with param {param}")
                 execution_log.finalize_event("run")               
             elif event == 'update_api':
@@ -151,11 +151,11 @@ class plugin_manager:
         sample_json = json.loads(get_file_content(reportTemplatesPath + 'webhook_json_sample.json'))[0]["body"]["attachments"][0]["text"]
         
         # Create fake notification
-        notification    = Notification_obj(db)
+        notification    = Notification_obj(self.db)
         notificationObj = notification.create(sample_json, "")
 
         # Run test
-        handle_run(runType)
+        self.handle_run(runType)
 
         # Remove sample notification
         notificationObj.remove(notificationObj.GUID)    
