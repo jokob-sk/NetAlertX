@@ -47,9 +47,28 @@
           {visible:   false,  targets: [0]},
 
           // Replace HTML codes
-          {targets: [1,2,3,5],
+          {targets: [3,5],
             'createdCell': function (td, cellData, rowData, row, col) {
               $(td).html (translateHTMLcodes (cellData));
+          } },
+           // Date
+          {targets: [1,2],
+            "createdCell": function (td, cellData, rowData, row, col) {
+              console.log(cellData);
+              
+              if (!cellData.includes("missing event") && !cellData.includes("..."))
+              {               
+                if (cellData.includes("+")) { // Check if timezone offset is present
+                  cellData = cellData.split('+')[0]; // Remove timezone offset
+                } 
+                console.log(cellData);
+                result = localizeTimestamp(cellData);
+              } else
+              {
+                result = translateHTMLcodes(cellData)
+              }
+              
+              $(td).html (result);              
           } }
       ],
 

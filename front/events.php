@@ -216,7 +216,7 @@ function initializeDatatable () {
       } },
 
       // Replace HTML codes
-      {targets: [3,4,5,6,7],
+      {targets: [4,5,6,7],
         "createdCell": function (td, cellData, rowData, row, col) {
           $(td).html (translateHTMLcodes (cellData));
       } },
@@ -226,6 +226,12 @@ function initializeDatatable () {
         "createdCell": function (td, cellData, rowData, row, col) {
           // console.log(cellData);
           $(td).html (cellData);
+      } },
+      // Date
+      {targets: [3],
+        "createdCell": function (td, cellData, rowData, row, col) {
+          // console.log(cellData);
+          $(td).html (localizeTimestamp(cellData));
       } }
     ],
 

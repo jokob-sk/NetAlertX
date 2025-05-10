@@ -78,6 +78,9 @@ require 'php/templates/header.php';
             if (result.includes("+")) { // Check if timezone offset is present
                 result = result.split('+')[0]; // Remove timezone offset
             }
+
+            result = localizeTimestamp(result);
+
             return result;
           }
         },        

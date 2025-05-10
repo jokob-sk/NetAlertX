@@ -173,7 +173,7 @@
 
                     // Additional form elements like the random MAC address button for devMac
                     let inlineControl = "";
-                    // handle rendom mac
+                    // handle random mac
                     if (setting.setKey == "NEWDEV_devMac" && deviceData["devIsRandomMAC"] == true) {
                       inlineControl += `<span class="input-group-addon pointer"
                                               title="${getString("RandomMAC_hover")}">

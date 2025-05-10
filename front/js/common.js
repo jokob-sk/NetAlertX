@@ -353,6 +353,28 @@ function getLangCode() {
 // String utilities
 // -----------------------------------------------------------------------------
 
+
+function localizeTimestamp(result)
+{
+
+  // contains TZ in format Europe/Berlin
+  tz = getSetting("TIMEZONE")
+  
+  const date = new Date(result); // Assumes result is a timestamp or ISO string
+  const formatter = new Intl.DateTimeFormat('default', {
+    timeZone: tz,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false // change to true if you want AM/PM format
+  });
+
+  return formatter.format(date);
+}
+
 // ----------------------------------------------------
 /**
  * Replaces double quotes within single-quoted strings, then converts all single quotes to double quotes,
