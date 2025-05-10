@@ -2,6 +2,7 @@ import datetime
 import os
 import _io
 import json
+import sys
 import uuid
 import socket
 import subprocess
@@ -9,16 +10,22 @@ import requests
 from yattag import indent
 from json2table import convert
 
+# Register NetAlertX directories
+INSTALL_PATH="/app"
+sys.path.extend([f"{INSTALL_PATH}/server"])
+
 # Register NetAlertX modules 
 import conf
 from const import applicationPath, logPath, apiPath, confFileName, reportTemplatesPath
 from logger import logResult, mylog
 from helper import generate_mac_links, removeDuplicateNewLines, timeNowTZ, get_file_content, write_file, get_setting_value, get_timezone_offset
+from messaging.in_app import write_notification
+
 
 #-------------------------------------------------------------------------------
 # Notification object handling
 #-------------------------------------------------------------------------------
-class Notification_obj:
+class NotificationInstance:
     def __init__(self, db):
         self.db = db
 
@@ -290,45 +297,7 @@ class Notification_obj:
 # Reporting
 #-------------------------------------------------------------------------------
 
-# Handle Frontend User Notifications
-def write_notification(content, level, timestamp):
-        NOTIFICATION_API_FILE = apiPath + 'user_notifications.json'
 
-        # Generate GUID
-        guid = str(uuid.uuid4())
-
-        # Prepare notification dictionary
-        notification = {
-            'timestamp': str(timestamp),
-            'guid': guid,
-            'read': 0,
-            'level': level,
-            'content': content
-        }
-
-        # If file exists, load existing data, otherwise initialize as empty list
-        if os.path.exists(NOTIFICATION_API_FILE):
-            with open(NOTIFICATION_API_FILE, 'r') as file:
-                # Check if the file object is of type _io.TextIOWrapper
-                if isinstance(file, _io.TextIOWrapper):
-                    file_contents = file.read()  # Read file contents
-                    if file_contents == '':
-                        file_contents = '[]'  # If file is empty, initialize as empty list
-
-                    # mylog('debug', ['[Notification] User Notifications file: ', file_contents])
-                    notifications = json.loads(file_contents)  # Parse JSON data
-                else:
-                    mylog('error', 'File is not of type _io.TextIOWrapper')
-                    notifications = []
-        else:
-            notifications = []
-
-        # Append new notification
-        notifications.append(notification)
-
-        # Write updated data back to file
-        with open(NOTIFICATION_API_FILE, 'w') as file:
-            json.dump(notifications, file, indent=4)
 
 #-------------------------------------------------------------------------------
 def construct_notifications(JSON, section):

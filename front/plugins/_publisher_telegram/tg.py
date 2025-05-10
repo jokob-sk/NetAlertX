@@ -17,7 +17,7 @@ from const import confFileName, logPath
 from plugin_helper import Plugin_Objects
 from logger import mylog, Logger, append_line_to_file
 from helper import timeNowTZ, get_setting_value
-from notification import Notification_obj
+from models.notification_instance import NotificationInstance
 from database import DB
 from pytz import timezone
 
@@ -51,8 +51,8 @@ def main():
     # Initialize the Plugin obj output file
     plugin_objects = Plugin_Objects(RESULT_FILE)
 
-    # Create a Notification_obj instance
-    notifications = Notification_obj(db)
+    # Create a NotificationInstance instance
+    notifications = NotificationInstance(db)
 
     # Retrieve new notifications
     new_notifications = notifications.getNew()

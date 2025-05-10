@@ -1,10 +1,15 @@
 import os
+import sys
+
+# Register NetAlertX directories
+INSTALL_PATH="/app"
+sys.path.extend([f"{INSTALL_PATH}/server"])
 
 # Register NetAlertX modules
 from const import pluginsPath, logPath, applicationPath, reportTemplatesPath
 from logger import mylog
 
-class UserEventsQueue:
+class UserEventsQueueInstance:
     """
     Handles the execution queue log file, allowing reading, writing,
     and removing processed events.
@@ -30,7 +35,7 @@ class UserEventsQueue:
         Returns an empty list if the file doesn't exist.
         """
         if not os.path.exists(self.log_file):
-            mylog('none', ['[UserEventsQueue] Log file not found: ', self.log_file])
+            mylog('none', ['[UserEventsQueueInstance] Log file not found: ', self.log_file])
             return []  # No log file, return empty list
         with open(self.log_file, "r") as file:
             return file.readlines()
@@ -72,7 +77,7 @@ class UserEventsQueue:
         self.write_log(updated_lines)
 
 
-        mylog('minimal', ['[UserEventsQueue] Processed event: ', event])
+        mylog('minimal', ['[UserEventsQueueInstance] Processed event: ', event])
 
         return removed
 

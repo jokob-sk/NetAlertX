@@ -8,7 +8,7 @@ import conf
 from scan.device_handling import create_new_devices, print_scan_stats, save_scanned_devices, update_devices_data_from_scan, exclude_ignored_devices
 from helper import timeNowTZ
 from logger import mylog
-from reporting import skip_repeated_notifications
+from messaging.reporting import skip_repeated_notifications
 
 
 #===============================================================================

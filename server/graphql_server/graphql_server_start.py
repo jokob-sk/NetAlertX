@@ -11,7 +11,7 @@ sys.path.extend([f"{INSTALL_PATH}/server"])
 from logger import mylog
 from helper import get_setting_value, timeNowTZ
 from app_state import updateState
-from notification import write_notification
+from messaging.in_app import write_notification
 
 # Flask application
 app = Flask(__name__)

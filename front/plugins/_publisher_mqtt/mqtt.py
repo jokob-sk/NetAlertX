@@ -28,7 +28,7 @@ from plugin_utils import getPluginObject
 from plugin_helper import Plugin_Objects
 from logger import mylog, Logger, append_line_to_file
 from helper import timeNowTZ, get_setting_value, bytes_to_string, sanitize_string, normalize_string
-from notification import Notification_obj
+from models.notification_instance import NotificationInstance
 from database import DB, get_device_stats
 from pytz import timezone
 

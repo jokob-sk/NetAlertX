@@ -20,7 +20,7 @@ from logger import mylog, Logger
 from const import pluginsPath, fullDbPath, logPath
 from helper import timeNowTZ, get_setting_value 
 from crypto_utils import encrypt_data
-from notification import write_notification
+from messaging.in_app import write_notification
 import conf
 from pytz import timezone
 

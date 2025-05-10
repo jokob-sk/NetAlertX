@@ -16,10 +16,10 @@ from helper import timeNowTZ, get_file_content, write_file, get_setting, get_set
 from app_state import updateState
 from api import update_api
 from plugin_utils import logEventStatusCounts, get_plugin_string, get_plugin_setting_obj, print_plugin_info, list_to_csv, combine_plugin_objects, resolve_wildcards_arr, handle_empty, custom_plugin_decoder, decode_and_rename_files
-from notification import Notification_obj, write_notification
-from user_events_queue import UserEventsQueue
+from models.notification_instance import NotificationInstance
+from messaging.in_app import write_notification
+from models.user_events_queue_instance import UserEventsQueueInstance
 from crypto_utils import generate_deterministic_guid
-
 
 #-------------------------------------------------------------------------------
 class plugin_manager:
@@ -79,7 +79,7 @@ class plugin_manager:
         """
         Process user events from the execution queue log file and notify the user about executed events.
         """
-        execution_log = UserEventsQueue()
+        execution_log = UserEventsQueueInstance()
 
         # Track whether to show notification for executed events
         executed_events = []
@@ -151,7 +151,7 @@ class plugin_manager:
         sample_json = json.loads(get_file_content(reportTemplatesPath + 'webhook_json_sample.json'))[0]["body"]["attachments"][0]["text"]
         
         # Create fake notification
-        notification    = Notification_obj(self.db)
+        notification    = NotificationInstance(self.db)
         notificationObj = notification.create(sample_json, "")
 
         # Run test
@@ -562,7 +562,7 @@ def execute_plugin(db, all_plugins, plugin ):
         endpoints = ["plugins_events","plugins_objects", "plugins_history", "appevents"]
 
         # check if we need to update devices api endpoint as well to prevent long user waits on Loading...
-        userUpdatedDevices = UserEventsQueue().has_update_devices
+        userUpdatedDevices = UserEventsQueueInstance().has_update_devices
         if userUpdatedDevices:
             endpoints += ["devices"]
 

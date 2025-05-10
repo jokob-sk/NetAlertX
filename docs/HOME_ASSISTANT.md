@@ -1,4 +1,4 @@
-# Overview
+# Home Assistant integration overview
 
 NetAlertX comes with MQTT support, allowing you to show all detected devices as devices in Home Assistant. It also supplies a collection of stats, such as number of online devices.
 

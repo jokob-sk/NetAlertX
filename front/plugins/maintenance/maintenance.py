@@ -19,6 +19,7 @@ from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64
 from logger import mylog, Logger, append_line_to_file
 from helper import timeNowTZ, get_setting_value
 from const import logPath, applicationPath
+from messaging.in_app import remove_old
 import conf
 from pytz import timezone
 
@@ -41,6 +42,7 @@ def main():
     mylog('verbose', [f'[{pluginName}] In script'])    
 
     MAINT_LOG_LENGTH = int(get_setting_value('MAINT_LOG_LENGTH'))
+    MAINT_NOTI_LENGTH = int(get_setting_value('MAINT_NOTI_LENGTH'))
 
     # Check if set
     if MAINT_LOG_LENGTH != 0:
@@ -63,7 +65,10 @@ def main():
             
         mylog('verbose', [f'[{pluginName}] Cleanup finished'])      
 
-      
+    # Check if set
+    if MAINT_NOTI_LENGTH != 0:
+        mylog('verbose', [f'[{pluginName}] Cleaning in-app notification history'])  
+        remove_old(MAINT_NOTI_LENGTH)
 
     return 0
 

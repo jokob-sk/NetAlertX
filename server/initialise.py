@@ -19,7 +19,7 @@ from api import update_api
 from scheduler import schedule_class
 from plugin import plugin_manager, print_plugin_info
 from plugin_utils import get_plugins_configs, get_set_value_for_init
-from notification import write_notification
+from messaging.in_app import write_notification
 from crypto_utils import get_random_bytes
 
 #===============================================================================

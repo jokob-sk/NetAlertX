@@ -31,8 +31,8 @@ from api import update_api
 from scan.session_events import process_scan
 from initialise import importConfigs
 from database import DB
-from reporting import get_notifications
-from notification import Notification_obj
+from messaging.reporting import get_notifications
+from models.notification_instance import NotificationInstance
 from plugin import plugin_manager 
 from scan.device_handling import update_devices_names
 from workflows.manager import WorkflowManager 
@@ -172,7 +172,7 @@ def main ():
             final_json = get_notifications(db)
 
             # Write the notifications into the DB
-            notification    = Notification_obj(db)
+            notification    = NotificationInstance(db)
             notificationObj = notification.create(final_json, "")
 
             # run all enabled publisher gateways 

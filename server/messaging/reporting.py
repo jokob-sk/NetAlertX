@@ -12,6 +12,11 @@
 
 import datetime
 import json
+import sys
+
+# Register NetAlertX directories
+INSTALL_PATH="/app"
+sys.path.extend([f"{INSTALL_PATH}/server"])
 
 import conf
 from const import applicationPath, logPath, apiPath, confFileName
