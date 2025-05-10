@@ -120,34 +120,8 @@
     let timeZone = "<?php echo $timeZone ?>";
     let now = new Date();
 
-    // Convert to the specified time zone
-    let formatter = new Intl.DateTimeFormat("en-UK", {
-      timeZone: timeZone,
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: false, // Use 24-hour format
-    });
-    let parts = formatter.formatToParts(now);
-
-    // Extract date components
-    let day = parts.find(p => p.type === "day").value;
-    let month = parts.find(p => p.type === "month").value;
-    let year = parts.find(p => p.type === "year").value;
-
-    // Extract time components
-    let hour = parts.find(p => p.type === "hour").value;
-    let minute = parts.find(p => p.type === "minute").value;
-    let second = parts.find(p => p.type === "second").value;
-
-    // Construct the date and time in DD-MMM-YYYY HH:MM:SS format
-    let formattedDateTime = `${day}-${month}-${year} ${hour}:${minute}:${second}`;
-
     if (document.getElementById) {
-      document.getElementById("NAX_Servertime_plc").innerHTML = '(' + formattedDateTime + ')';
+      document.getElementById("NAX_Servertime_plc").innerHTML = '(' + localizeTimestamp(now) + ')';
       document.getElementById("NAX_TZ").innerHTML = timeZone;
     }
 
