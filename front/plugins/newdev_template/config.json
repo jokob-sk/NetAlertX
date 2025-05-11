@@ -969,13 +969,13 @@
       "name": [
         {
           "language_code": "en_us",
-          "string": "Last Connection"
+          "string": "Last Seen"
         }
       ],
       "description": [
         {
           "language_code": "en_us",
-          "string": "The date and time of the last connection with the device. Uneditable - Autodetected."
+          "string": "The date and time of the last seen connection with the device. Uneditable - Autodetected."
         }
       ]
     },
