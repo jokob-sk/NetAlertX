@@ -65,7 +65,7 @@ function initializeSessionsDatatable () {
         // Replace HTML codes
         {targets: [0],
           'createdCell': function (td, cellData, rowData, row, col) {
-            $(td).html (translateHTMLcodes (cellData));
+            $(td).html (translateHTMLcodes (localizeTimestamp(cellData)));
         } }
     ],
 
