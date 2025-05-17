@@ -383,7 +383,7 @@
     "MQTT_icon": "<i class=\"fa fa-square-rss\"></i>",
     "Maint_PurgeLog": "Protokoll bereinigen",
     "Maint_RestartServer": "Server neu starten",
-    "Maint_Restart_Server_noti_text": "",
+    "Maint_Restart_Server_noti_text": "Soll der Backend-Server wirklich neu gestartet werden? Das könnte Instabilitäten verursachen. Vorher ein Backup erstellen. <br/><br/>Hinweis: Das kann einige Minuten dauern.",
     "Maintenance_Running_Version": "Installierte Version",
     "Maintenance_Status": "Status",
     "Maintenance_Title": "Wartungswerkzeuge",
