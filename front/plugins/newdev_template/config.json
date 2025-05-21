@@ -1150,7 +1150,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Indicates whether an alert should be triggered when the device goes down. The device has to be down for longet than the time set in the <b>Alert Down After</b> <code>NTFPRCS_alert_down_time</code> setting."
+          "string": "Indicates whether an alert should be triggered when the device goes down. The device has to be down for longer than the time set in the <b>Alert Down After</b> <code>NTFPRCS_alert_down_time</code> setting."
         }
       ]
     },
