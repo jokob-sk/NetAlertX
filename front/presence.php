@@ -324,8 +324,15 @@ function initializeCalendar () {
     },
  
     eventRender: function (event, element, view) {
-      $(element).tooltip({container: 'body', placement: 'bottom', title: event.tooltip});
-      // element.attr ('title', event.tooltip);  // Alternative tooltip
+      // $(element).tooltip({container: 'body', placement: 'bottom', title: event.tooltip});
+      tltp = event.tooltip.replace('\n',' | ')
+
+      element.attr ('title', tltp);  // Alternative tooltip
+
+    },
+
+    eventClick: function(info) {
+      console.log(info);
     },
 
     loading: function( isLoading, view ) {

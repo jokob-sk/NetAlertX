@@ -219,9 +219,8 @@ function initializeCalendar() {
     },
 
     eventRender: function (event, element) {
-      $(element).tooltip({container: 'body', placement: 'bottom',
-                          title: event.tooltip});
-      // element.attr ('title', event.tooltip);  // Alternative tooltip
+      // $(element).tooltip({container: 'body', placement: 'bottom',  title: event.tooltip});
+      element.attr ('title', event.tooltip);  // Alternative tooltip
     },
       
     loading: function( isLoading, view ) {

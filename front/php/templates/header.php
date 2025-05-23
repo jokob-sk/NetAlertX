@@ -42,6 +42,7 @@
   <script src="lib/datatables.net/js/jquery.dataTables.min.js"></script>
   <script src="lib/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
   <script src="lib/datatables.net/js/dataTables.select.min.js"></script>
+  <script src="lib/popper_tooltip/popper.min.js"></script>
 
   <script src="js/common.js?v=<?php include 'php/templates/version.php'; ?>"></script>
   <script src="js/modal.js?v=<?php include 'php/templates/version.php'; ?>"></script>
