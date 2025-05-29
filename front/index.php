@@ -29,7 +29,7 @@ if (isset ($_GET["action"]) && $_GET["action"] == 'logout')
 }
 
 // Password without Cookie check -> pass and set initial cookie
-if (isset ($_POST["loginpassword"]) && $nax_Password == hash('sha256',$_POST["loginpassword"]))
+if (isset ($_POST["loginpassword"]) && $nax_Password === hash('sha256',$_POST["loginpassword"]))
 {
     header('Location: devices.php');
     $_SESSION["login"] = 1;
@@ -37,7 +37,7 @@ if (isset ($_POST["loginpassword"]) && $nax_Password == hash('sha256',$_POST["lo
 }
 
 // active Session or valid cookie (cookie not extends)
-if (( isset ($_SESSION["login"]) && ($_SESSION["login"] == 1)) || (isset ($_COOKIE[$CookieSaveLoginName]) && $nax_Password == $_COOKIE[$CookieSaveLoginName]))
+if (( isset ($_SESSION["login"]) && ($_SESSION["login"] == 1)) || (isset ($_COOKIE[$CookieSaveLoginName]) && $nax_Password === $_COOKIE[$CookieSaveLoginName]))
 {
     header('Location: devices.php');
     $_SESSION["login"] = 1;
@@ -53,7 +53,7 @@ $login_icon = 'fa-info';
 // no active session, cookie not checked
 if (isset ($_SESSION["login"]) == FALSE || $_SESSION["login"] != 1)
 {
-  if ($nax_Password == '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92') 
+  if ($nax_Password === '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92') 
   {
     $login_info = lang('Login_Default_PWD');
     $login_mode = 'danger';

@@ -71,8 +71,8 @@ Device-detecting plugins insert values into the `CurrentScan` database table.  T
 | `NSLOOKUP`    | 🆎       | NSLookup (DNS-based) name resolution     |           |          | Script       | [nslookup_scan](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/nslookup_scan/)                    |
 | `NTFPRCS`     | ⚙       | Notification processing                   |           |  Yes     | Template     | [notification_processing](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/notification_processing/)|
 | `NTFY`        | ▶️      | NTFY notifications                        |           |          | Script       | [_publisher_ntfy](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/_publisher_ntfy/)                |
-| `OMDSDN`      | 📥/🆎   | OMADA TP-Link import                      |   🖧 🔄  |          | Script       | [omada_sdn_imp](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/omada_sdn_imp/)                    |
-| `OMDSDNOPENAPI`| 📥/🆎   | OMADA TP-Link import via OpenAPI        |   🖧      |          | Script       | [omada_sdn_openapi](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/omada_sdn_openapi/)                    |
+| `OMDSDN`      | 📥/🆎 ❌  |  UNMAINTAINED use `OMDSDNOPENAPI`        |   🖧 🔄  |          | Script       | [omada_sdn_imp](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/omada_sdn_imp/)                    |
+| `OMDSDNOPENAPI`| 📥/🆎   | OMADA TP-Link import via OpenAPI       |   🖧      |          | Script       | [omada_sdn_openapi](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/omada_sdn_openapi/)                    |
 | `PIHOLE`      | 🔍/🆎/📥| Pi-hole device import & sync             |           |          | SQLite DB    | [pihole_scan](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/pihole_scan/)                        |
 | `PUSHSAFER`   | ▶️      | Pushsafer notifications                   |           |          | Script       | [_publisher_pushsafer](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/_publisher_pushsafer/)      |
 | `PUSHOVER`    | ▶️      | Pushover notifications                    |           |          | Script       | [_publisher_pushover](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/_publisher_pushover/)        |
@@ -90,7 +90,7 @@ Device-detecting plugins insert values into the `CurrentScan` database table.  T
 
 
 > \* The database cleanup plugin (`DBCLNP`) is not _required_ but the app will become unusable after a while if not executed.
-> ❌ marked for removal
+> ❌ marked for removal/unmaintained - looking for help
 > ⌚It's recommended to use the same schedule interval for all plugins responsible for discovering new devices.
 
 

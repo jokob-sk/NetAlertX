@@ -1,5 +1,8 @@
 ## Overview
 
+> [!WARNING]
+> UNMAINTAINED - Looking for maintainers. If possible, use the `OMDSDNOPENAPI` instead.
+
 The OMADA SDN plugin aims at synchronizing data between NetAlertX and a TPLINK OMADA SND controler by leveraging a tplink omada python library.
 
 #### Features

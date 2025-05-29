@@ -21,7 +21,7 @@ $config_file_lines = array_values(preg_grep('/^SETPWD_password.*=/', $config_fil
 $password_line = explode("'", $config_file_lines[0]);
 $nax_Password = $password_line[1];
 
-if (isset($_COOKIE[$CookieSaveLoginName]) && $nax_Password == $_COOKIE[$CookieSaveLoginName]) {
+if (isset($_COOKIE[$CookieSaveLoginName]) && $nax_Password === $_COOKIE[$CookieSaveLoginName]) {
     $isAuthenticated = true;
 }
 
