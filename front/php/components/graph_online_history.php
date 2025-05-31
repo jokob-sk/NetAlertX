@@ -18,7 +18,7 @@
 
 
 function initOnlineHistoryGraph() {
-    $.get('/php/server/query_json.php', { file: 'table_online_history.json', nocache: Date.now() }, function(res) {
+    $.get('php/server/query_json.php', { file: 'table_online_history.json', nocache: Date.now() }, function(res) {
         // Extracting data from the JSON response
         var timeStamps = [];
         var onlineCounts = [];
