@@ -1098,7 +1098,7 @@ height: 50px;
 input[readonly] {
     /* Apply styles to the readonly input */
     background-color: #646566 !important;
-    color: #000;    
+    color: #e6e6e6;    
     cursor: not-allowed;
   }
 

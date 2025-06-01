@@ -17,19 +17,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Check for invalid relative 'php/' URLs in frontend code
+      - name: Check for incorrect absolute '/php/' URLs in frontend code
         run: |
-          echo "🔍 Checking for relative 'php/' URLs that should be './php/' or '/php/'..."
+          echo "🔍 Checking for incorrect absolute '/php/' URLs (should be 'php/' or './php/')..."
 
-          MATCHES=$(grep -rE "['\"]php\/" --include=\*.{js,php,html} . | grep -E "\.get|\.post|\.ajax|fetch|url\s*:") || true
+          MATCHES=$(grep -rE "['\"]\/php\/" --include=\*.{js,php,html} ./front | grep -E "\.get|\.post|\.ajax|fetch|url\s*:") || true
 
           if [ -n "$MATCHES" ]; then
             echo "$MATCHES"
-            echo "❌ Found improperly relative 'php/' URLs. Use './php/' or '/php/' or a base path."
+            echo "❌ Found incorrectly absolute '/php/' URLs. Use 'php/' or './php/' for relative paths."
             exit 1
           else
-            echo "✅ No bad relative 'php/' URLs found."
+            echo "✅ No bad '/php/' URLs found."
           fi
+
 
 
       - name: Check Python syntax
