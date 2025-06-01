@@ -69,8 +69,8 @@
 
         // columns to hide
         hiddenFields = ["NEWDEV_devScan", "NEWDEV_devPresentLastScan" ]
-        // columns to disable - conditional depending if a new dummy device is created
-        disabledFields =  mac == "new" ? ["NEWDEV_devLastNotification", "NEWDEV_devFirstConnection", "NEWDEV_devLastConnection"] : ["NEWDEV_devLastNotification", "NEWDEV_devFirstConnection", "NEWDEV_devLastConnection", "NEWDEV_devMac", "NEWDEV_devLastIP", "NEWDEV_devSyncHubNode" ];
+        // columns to disable/readonly - conditional depending if a new dummy device is created
+        disabledFields =  mac == "new" ? ["NEWDEV_devLastNotification", "NEWDEV_devFirstConnection", "NEWDEV_devLastConnection"] : ["NEWDEV_devLastNotification", "NEWDEV_devFirstConnection", "NEWDEV_devLastConnection", "NEWDEV_devMac", "NEWDEV_devLastIP", "NEWDEV_devSyncHubNode", "NEWDEV_devFQDN" ];
         
         // Grouping of fields into categories with associated documentation links
         const fieldGroups = {
@@ -82,16 +82,7 @@
                 inputGroupClasses: "field-group main-group col-lg-4 col-sm-6 col-xs-12",
                 labelClasses: "col-sm-4 col-xs-12 control-label",
                 inputClasses: "col-sm-8 col-xs-12 input-group"
-            },
-            // Group for session information
-            DevDetail_SessionInfo_Title: {
-                data: ["devStatus", "devLastConnection", "devFirstConnection"],
-                docs: "https://github.com/jokob-sk/NetAlertX/blob/main/docs/SESSION_INFO.md",
-                iconClass: "fa fa-calendar",
-                inputGroupClasses: "field-group session-group col-lg-4 col-sm-6 col-xs-12",
-                labelClasses: "col-sm-4 col-xs-12 control-label",
-                inputClasses: "col-sm-8 col-xs-12 input-group"
-            },
+            },            
              // Group for event and alert settings
              DevDetail_EveandAl_Title: {
                 data: ["devAlertEvents", "devAlertDown", "devSkipRepeated"],
@@ -116,6 +107,15 @@
                 docs: "https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEVICE_DISPLAY_SETTINGS.md",
                 iconClass: "fa fa-list-check",
                 inputGroupClasses: "field-group display-group col-lg-4 col-sm-6 col-xs-12",
+                labelClasses: "col-sm-4 col-xs-12 control-label",
+                inputClasses: "col-sm-8 col-xs-12 input-group"
+            },
+            // Group for session information
+            DevDetail_SessionInfo_Title: {
+                data: ["devStatus", "devLastConnection", "devFirstConnection", "devFQDN"],
+                docs: "https://github.com/jokob-sk/NetAlertX/blob/main/docs/SESSION_INFO.md",
+                iconClass: "fa fa-calendar",
+                inputGroupClasses: "field-group session-group col-lg-4 col-sm-6 col-xs-12",
                 labelClasses: "col-sm-4 col-xs-12 control-label",
                 inputClasses: "col-sm-8 col-xs-12 input-group"
             },

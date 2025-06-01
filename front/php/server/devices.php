@@ -112,7 +112,8 @@ function getServerDeviceData() {
       "devSessions" => 0,
       "devEvents" => 0,
       "devDownAlerts" => 0,
-      "devPresenceHours" => 0
+      "devPresenceHours" => 0,
+      "devFQDN"  => ""
     ];
     echo json_encode($deviceData);
     return;

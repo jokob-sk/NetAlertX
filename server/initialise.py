@@ -168,6 +168,7 @@ def importConfigs (db, all_plugins):
     conf.HRS_TO_KEEP_NEWDEV = ccd('HRS_TO_KEEP_NEWDEV', 0 , c_d, 'Keep new devices for', '{"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type": "number"}] ,"transformers": []}]}', "[]", 'General')        
     conf.HRS_TO_KEEP_OFFDEV = ccd('HRS_TO_KEEP_OFFDEV', 0 , c_d, 'Keep offline devices for', '{"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type": "number"}] ,"transformers": []}]}', "[]", 'General')        
     conf.CLEAR_NEW_FLAG = ccd('CLEAR_NEW_FLAG', 0 , c_d, 'Clear new flag', '{"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type": "number"}] ,"transformers": []}]}', "[]", 'General')        
+    conf.REFRESH_FQDN = ccd('REFRESH_FQDN', False , c_d, 'Refresh FQDN', """{"dataType": "boolean","elements": [{"elementType": "input","elementOptions": [{ "type": "checkbox" }],"transformers": []}]}""", '[]', 'General')
     conf.API_CUSTOM_SQL = ccd('API_CUSTOM_SQL', 'SELECT * FROM Devices WHERE devPresentLastScan = 0' , c_d, 'Custom endpoint', '{"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]}', '[]', 'General')
     conf.VERSION = ccd('VERSION', '' , c_d, 'Version', '{"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{ "readonly": "true" }] ,"transformers": []}]}', '', 'General')
     conf.NETWORK_DEVICE_TYPES = ccd('NETWORK_DEVICE_TYPES', ['AP', 'Gateway', 'Firewall', 'Hypervisor', 'Powerline', 'Switch', 'WLAN', 'PLC', 'Router','USB LAN Adapter', 'USB WIFI Adapter', 'Internet'] , c_d, 'Network device types', '{"dataType":"array","elements":[{"elementType":"input","elementOptions":[{"placeholder":"Enter value"},{"suffix":"_in"},{"cssClasses":"col-sm-10"},{"prefillValue":"null"}],"transformers":[]},{"elementType":"button","elementOptions":[{"sourceSuffixes":["_in"]},{"separator":""},{"cssClasses":"col-xs-12"},{"onClick":"addList(this,false)"},{"getStringKey":"Gen_Add"}],"transformers":[]},{"elementType":"select",	"elementHasInputValue":1,"elementOptions":[{"multiple":"true"},{"readonly":"true"},{"editable":"true"}],"transformers":[]},{"elementType":"button","elementOptions":[{"sourceSuffixes":[]},{"separator":""},{"cssClasses":"col-xs-6"},{"onClick":"removeAllOptions(this)"},{"getStringKey":"Gen_Remove_All"}],"transformers":[]},{"elementType":"button","elementOptions":[{"sourceSuffixes":[]},{"separator":""},{"cssClasses":"col-xs-6"},{"onClick":"removeFromList(this)"},{"getStringKey":"Gen_Remove_Last"}],"transformers":[]}]}', '[]', 'General')
@@ -445,46 +446,6 @@ replacements = {
     r'\bREPORT_TO\b': 'SMTP_REPORT_TO',
     r'\bSYNC_api_token\b': 'API_TOKEN',
     r'\bAPI_TOKEN=\'\'': f'API_TOKEN=\'t_{generate_random_string(20)}\'',
-    r'\bREPORT_FROM\b': 'SMTP_REPORT_FROM',
-    r'\bPIALERT_WEB_PROTECTION\b': 'SETPWD_enable_password',
-    r'\bPIALERT_WEB_PASSWORD\b': 'SETPWD_password',
-    r'REPORT_MAIL=True': "SMTP_RUN='on_notification'",
-    r'REPORT_APPRISE=True': "APPRISE_RUN='on_notification'",
-    r'REPORT_NTFY=True': "NTFY_RUN='on_notification'",
-    r'REPORT_WEBHOOK=True': "WEBHOOK_RUN='on_notification'",
-    r'REPORT_PUSHSAFER=True': "PUSHSAFER_RUN='on_notification'",
-    r'REPORT_MQTT=True': "MQTT_RUN='on_notification'",
-    # r'PIHOLE_CMD=': 'PIHOLE_CMD_OLD=',
-    r'\bINCLUDED_SECTIONS\b': 'NTFPRCS_INCLUDED_SECTIONS',
-    r'\bDIG_GET_IP_ARG\b': 'INTRNT_DIG_GET_IP_ARG',
-    r'dev_MAC': 'devMac',
-    r'dev_Name': 'devName',
-    r'dev_Favorite': 'devFavorite',
-    r'dev_Group': 'devGroup',
-    r'dev_Comments': 'devComments',
-    r'dev_FirstConnection': 'devFirstConnection',
-    r'dev_LastConnection': 'devLastConnection',
-    r'dev_LastIP': 'devLastIP',
-    r'dev_StaticIP': 'devStaticIP',
-    r'dev_ScanCycle': 'devScan',
-    r'dev_LogEvents': 'devLogEvents',
-    r'dev_AlertEvents': 'devAlertEvents',
-    r'dev_AlertDeviceDown': 'devAlertDown',
-    r'dev_SkipRepeated': 'devSkipRepeated',
-    r'dev_LastNotification': 'devLastNotification',
-    r'dev_PresentLastScan': 'devPresentLastScan',
-    r'dev_NewDevice': 'devIsNew',
-    r'dev_Location': 'devLocation',
-    r'dev_Archived': 'devIsArchived',
-    r'dev_Network_Node_MAC_ADDR': 'devParentMAC',
-    r'dev_Network_Node_port': 'devParentPort',
-    r'dev_Icon': 'devIcon',
-    r'dev_GUID': 'devGUID',
-    r'dev_NetworkSite': 'devSite',
-    r'dev_SSID': 'devSSID',
-    r'dev_SyncHubNodeName': 'devSyncHubNode',
-    r'dev_SourcePlugin': 'devSourcePlugin',
-    r'/home/pi/pialert\b': '/app'
 }
 
 

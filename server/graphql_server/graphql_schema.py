@@ -73,6 +73,7 @@ class Device(ObjectType):
     devParentChildrenCount = Int() 
     devIpLong = Int() 
     devFilterStatus = String() 
+    devFQDN = String() 
 
 
 class DeviceResult(ObjectType):
@@ -180,7 +181,7 @@ class Query(ObjectType):
                 searchable_fields = [
                     "devName", "devMac", "devOwner", "devType", "devVendor", "devLastIP",
                     "devGroup", "devComments", "devLocation", "devStatus",
-                    "devSSID", "devSite", "devSourcePlugin", "devSyncHubNode"
+                    "devSSID", "devSite", "devSourcePlugin", "devSyncHubNode", "devFQDN"
                 ]
 
                 search_term = options.search.lower()

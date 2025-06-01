@@ -377,7 +377,8 @@
         "Device_TableHead_SourcePlugin",
         "Device_TableHead_PresentLastScan",
         "Device_TableHead_AlertDown",
-        "Device_TableHead_CustomProps"
+        "Device_TableHead_CustomProps",
+        "Device_TableHead_FQDN"
       ],
       "localized": ["name", "description"],
       "name": [

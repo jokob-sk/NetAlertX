@@ -28,7 +28,7 @@ conf.tz = timezone(get_setting_value('TIMEZONE'))
 # Make sure log level is initialized correctly
 Logger(get_setting_value('LOG_LEVEL'))
 
-pluginName = 'NBTSCAN'
+pluginName = 'DIGSCAN'
 
 # Define the current path and log file paths
 LOG_PATH = logPath + '/plugins'
@@ -39,12 +39,10 @@ RESULT_FILE = os.path.join(LOG_PATH, f'last_result.{pluginName}.log')
 plugin_objects = Plugin_Objects(RESULT_FILE)
 
 
-
 def main():
     mylog('verbose', [f'[{pluginName}] In script']) 
 
-    # timeout = get_setting_value('NBLOOKUP_RUN_TIMEOUT')
-    timeout = 20
+    timeout = get_setting_value('DIGSCAN_RUN_TIMEOUT')
 
     # Create a database connection
     db = DB()  # instance of class DB
@@ -94,10 +92,10 @@ def main():
 #===============================================================================
 def execute_name_lookup (ip, timeout):
     """
-    Execute the NBTSCAN command on IP.
+    Execute the DIG command on IP.
     """
-    
-    args = ['nbtscan', ip]
+
+    args = ['dig', '+short', '-x', ip]
 
     # Execute command
     output = ""
@@ -106,37 +104,18 @@ def execute_name_lookup (ip, timeout):
         mylog('verbose', [f'[{pluginName}] DEBUG CMD :', args])
         
         # try runnning a subprocess with a forced (timeout)  in case the subprocess hangs
-        output = subprocess.check_output (args, universal_newlines=True,  stderr=subprocess.STDOUT, timeout=(timeout), text=True)
+        output = subprocess.check_output (args, universal_newlines=True,  stderr=subprocess.STDOUT, timeout=(timeout), text=True).strip()
 
         mylog('verbose', [f'[{pluginName}] DEBUG OUTPUT : {output}'])
-        
-        domain_name = ''
-        dns_server = ''
-        
-        # Split the output into lines
-        lines = output.splitlines()
 
-        # Look for the first line containing a valid NetBIOS name entry
-        index = 0
-        for line in lines:
-            if 'Doing NBT name scan' not in line and ip in line:
-                # Split the line and extract the primary NetBIOS name
-                parts = line.split()
-                if len(parts) > 1:
-                    domain_name = parts[1]
-                else:
-                    mylog('verbose', [f'[{pluginName}] ⚠ ERROR - Unexpected output format: {line}'])
-      
+        domain_name = output
+        dns_server = ''      
 
         mylog('verbose', [f'[{pluginName}] Domain Name: {domain_name}'])
 
         return domain_name, dns_server
 
     except subprocess.CalledProcessError as e:
-        # An error occurred, handle it
-        # if "NXDOMAIN" in e.output:
-        #     mylog('verbose', [f'[{pluginName}]', f"No PTR record found for IP: {ip}"])
-        # else:
         mylog('verbose', [f'[{pluginName}] ⚠ ERROR - {e.output}'])                    
         
     except subprocess.TimeoutExpired as timeErr:

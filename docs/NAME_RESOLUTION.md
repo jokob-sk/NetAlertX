@@ -9,6 +9,7 @@ For best results, ensure the following name resolution plugins are enabled:
 - **AVAHISCAN** – Uses mDNS/Avahi to resolve local network names.
 - **NBTSCAN** – Queries NetBIOS to find device names.
 - **NSLOOKUP** – Performs standard DNS lookups.
+- **DIGSCAN** – Performs Name Resolution with the Dig utility (DNS).
 
 You can check which plugins are active in your _Settings_ section and enable any that are missing.
 

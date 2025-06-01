@@ -8,10 +8,11 @@ import subprocess
 import conf
 import os
 import re
-from helper import timeNowTZ, get_setting, get_setting_value, list_to_where, resolve_device_name_dig, get_device_name_nbtlookup, get_device_name_nslookup, get_device_name_mdns, check_IP_format, sanitize_SQL_input
+from helper import timeNowTZ, get_setting, get_setting_value, list_to_where, check_IP_format, sanitize_SQL_input
 from logger import mylog
 from const import vendorsPath, vendorsPathNewest, sql_generateGuid
 from models.device_instance import DeviceInstance
+from scan.name_resolution import NameResolver
 
 #-------------------------------------------------------------------------------
 # Removing devices from the CurrentScan DB table which the user chose to ignore by MAC or IP
@@ -481,87 +482,108 @@ def update_devices_data_from_scan (db):
     mylog('debug','[Update Devices] Update devices end')
 
 #-------------------------------------------------------------------------------
-def update_devices_names (db):
-    sql = db.sql #TO-DO
-    # Initialize variables
-    recordsToUpdate = []
-    recordsNotFound = []
+def update_devices_names(db):
+    sql = db.sql
+    resolver = NameResolver(db)
+    device_handler = DeviceInstance(db)
 
     nameNotFound = "(name not found)"
 
-    ignored = 0
-    notFound = 0
+    # Define resolution strategies in priority order
+    strategies = [
+        (resolver.resolve_dig, 'dig'),
+        (resolver.resolve_mdns, 'mdns'),
+        (resolver.resolve_nslookup, 'nslookup'),
+        (resolver.resolve_nbtlookup, 'nbtlookup')
+    ]
 
-    foundDig = 0
-    foundmDNSLookup = 0
-    foundNsLookup = 0
-    foundNbtLookup = 0
+    def resolve_devices(devices, resolve_both_name_and_fqdn=True):
+        """
+        Attempts to resolve device names and/or FQDNs using available strategies.
+        
+        Parameters:
+            devices (list): List of devices to resolve.
+            resolve_both_name_and_fqdn (bool): If True, resolves both name and FQDN.
+                                               If False, resolves only FQDN.
+        
+        Returns:
+            recordsToUpdate (list): List of [newName, newFQDN, devMac] or [newFQDN, devMac] for DB update.
+            recordsNotFound (list): List of [nameNotFound, devMac] for DB update.
+            foundStats (dict): Number of successes per strategy.
+            notFound (int): Number of devices not resolved.
+        """
+        recordsToUpdate = []
+        recordsNotFound = []
+        foundStats = {label: 0 for _, label in strategies}
+        notFound = 0
 
-    # Gen unknown devices    
-    device_handler = DeviceInstance(db)
-    # Retrieve devices
+        for device in devices:
+            newName = nameNotFound
+            newFQDN = ''
+
+            # Attempt each resolution strategy in order
+            for resolve_fn, label in strategies:
+                resolved = resolve_fn(device['devMac'], device['devLastIP'])
+
+                # Only use name if resolving both name and FQDN
+                newName = resolved.cleaned if resolve_both_name_and_fqdn else None
+                newFQDN = resolved.raw
+
+                # If a valid result is found, record it and stop further attempts
+                if newFQDN not in [nameNotFound, '', 'localhost.'] and ' communications error to ' not in newFQDN:
+                    foundStats[label] += 1
+
+                    if resolve_both_name_and_fqdn:
+                        recordsToUpdate.append([newName, newFQDN, device['devMac']])
+                    else:
+                        recordsToUpdate.append([newFQDN, device['devMac']])
+                    break
+
+            # If no name was resolved, queue device for "(name not found)" update
+            if resolve_both_name_and_fqdn and newName == nameNotFound:
+                notFound += 1
+                if device['devName'] != nameNotFound:
+                    recordsNotFound.append([nameNotFound, device['devMac']])
+
+        return recordsToUpdate, recordsNotFound, foundStats, notFound
+
+    # --- Step 1: Update device names for unknown devices ---
     unknownDevices = device_handler.getUnknown()
+    if unknownDevices:
+        mylog('verbose', f'[Update Device Name] Trying to resolve devices without name. Unknown devices count: {len(unknownDevices)}')
 
-    # skip checks if no unknown devices
-    if len(unknownDevices) == 0:
-        return
+        # Try resolving both name and FQDN
+        recordsToUpdate, recordsNotFound, foundStats, notFound = resolve_devices(unknownDevices)
 
-    # Devices without name
-    mylog('verbose', f'[Update Device Name] Trying to resolve devices without name. Unknown devices count: {len(unknownDevices)}')
+        # Log summary
+        mylog('verbose', f"[Update Device Name] Names Found (DiG/mDNS/NSLOOKUP/NBTSCAN): {len(recordsToUpdate)} ({foundStats['dig']}/{foundStats['mdns']}/{foundStats['nslookup']}/{foundStats['nbtlookup']})")
+        mylog('verbose', f'[Update Device Name] Names Not Found         : {notFound}')
 
-    for device in unknownDevices:
-        newName = nameNotFound
-        
-        # Resolve device name with DiG
-        newName = resolve_device_name_dig (device['devMac'], device['devLastIP'])
-        
-        # count
-        if newName != nameNotFound:
-            foundDig += 1
-            
-        # Resolve device name with AVAHISCAN plugin data
-        if newName == nameNotFound:
-            newName = get_device_name_mdns(db, device['devMac'], device['devLastIP'])
+        # Apply updates to database
+        sql.executemany("UPDATE Devices SET devName = ? WHERE devMac = ?", recordsNotFound)
+        sql.executemany("UPDATE Devices SET devName = ?, devFQDN = ? WHERE devMac = ?", recordsToUpdate)
 
-            if newName != nameNotFound:
-               foundmDNSLookup += 1
+    # --- Step 2: Optionally refresh FQDN for all devices ---
+    if get_setting_value("REFRESH_FQDN"):
+        allDevices = device_handler.getAll()
+        if allDevices:
+            mylog('verbose', f'[Update FQDN] Trying to resolve FQDN. Devices count: {len(allDevices)}')
 
-        # Resolve device name with NSLOOKUP plugin data
-        if newName == nameNotFound:
-            newName = get_device_name_nslookup(db, device['devMac'], device['devLastIP'])
+            # Try resolving only FQDN
+            recordsToUpdate, _, foundStats, notFound = resolve_devices(allDevices, resolve_both_name_and_fqdn=False)
 
-            if newName != nameNotFound:
-               foundNsLookup += 1
-               
-        # Resolve device name with NBTLOOKUP plugin data
-        if newName == nameNotFound:
-            newName = get_device_name_nbtlookup(db, device['devMac'], device['devLastIP'])
+            # Log summary
+            mylog('verbose', f"[Update FQDN] Names Found (DiG/mDNS/NSLOOKUP/NBTSCAN): {len(recordsToUpdate)} ({foundStats['dig']}/{foundStats['mdns']}/{foundStats['nslookup']}/{foundStats['nbtlookup']})")
+            mylog('verbose', f'[Update FQDN] Names Not Found         : {notFound}')
 
-            if newName != nameNotFound:
-               foundNbtLookup += 1
-        
-        # if still not found update name so we can distinguish the devices where we tried already
-        if newName == nameNotFound :
+            # Apply FQDN-only updates
+            sql.executemany("UPDATE Devices SET devFQDN = ? WHERE devMac = ?", recordsToUpdate)
 
-            notFound += 1
-
-            # if devName is the same as what we will change it to, take no action
-            # this mitigates a race condition which would overwrite a users edits that occured since the select earlier
-            if device['devName'] != nameNotFound:
-                recordsNotFound.append (["(name not found)", device['devMac']])          
-        else:
-            # name was found 
-            recordsToUpdate.append ([newName, device['devMac']])
-
-    # Print log            
-    mylog('verbose', [f'[Update Device Name] Names Found (DiG/mDNS/NSLOOKUP/NBTSCAN): {len(recordsToUpdate)} ({foundDig}/{foundmDNSLookup}/{foundNsLookup}/{foundNbtLookup})'] )                 
-    mylog('verbose', [f'[Update Device Name] Names Not Found         : {notFound}'] )    
-     
-    # update not found devices with (name not found) 
-    sql.executemany ("UPDATE Devices SET devName = ? WHERE devMac = ? ", recordsNotFound )
-    # update names of devices which we were bale to resolve
-    sql.executemany ("UPDATE Devices SET devName = ? WHERE devMac = ? ", recordsToUpdate )
+    # Commit all database changes
     db.commitDB()
+
+
+
 
 #-------------------------------------------------------------------------------
 # Check if the variable contains a valid MAC address or "Internet"

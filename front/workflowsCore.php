@@ -44,7 +44,7 @@ let fieldOptions = [
         "devLastIP", "devStaticIP", "devScan", "devLogEvents", "devAlertEvents",
         "devAlertDown", "devSkipRepeated", "devLastNotification", "devPresentLastScan",
         "devIsNew", "devLocation", "devIsArchived", "devParentMAC", "devParentPort",
-        "devIcon", "devSite", "devSSID", "devSyncHubNode", "devSourcePlugin"
+        "devIcon", "devSite", "devSSID", "devSyncHubNode", "devSourcePlugin", "devFQDN"
       ];
       
 let triggerTypes = [

@@ -1629,6 +1629,42 @@
           "string": "Custom device properties to store additional data or to perform an action on the device. Check the <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/CUSTOM_PROPERTIES.md\" target=\"_blank\">documentation on Custom Properties</a> for additional details."
         }
       ]
+    },
+    {
+      "function": "devFQDN",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "readonly": "true"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 50,
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "FQDN"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Fully Qualified Domain Name - Autodetected and Uneditable. Can be auto-refreshed by enabling the <code>REFRESH_FQDN</code> setting."
+        }
+      ]
     }
   ],
   "required": [],

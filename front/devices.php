@@ -538,7 +538,8 @@ function mapColumnIndexToFieldName(index, tableColumnVisible) {
     "devSourcePlugin",
     "devPresentLastScan",
     "devAlertDown",
-    "devCustomProps"
+    "devCustomProps",
+    "devFQDN"
   ];
 
   // console.log("OrderBy: " + columnNames[tableColumnOrder[index]]);  
@@ -648,6 +649,7 @@ function initializeDatatable (status) {
                 devParentChildrenCount
                 devIpLong
                 devCustomProps
+                devFQDN
               }
               count
             }
@@ -722,7 +724,8 @@ function initializeDatatable (status) {
                 device.devSourcePlugin || "",
                 device.devPresentLastScan || "",
                 device.devAlertDown || "",
-                device.devCustomProps || ""
+                device.devCustomProps || "",
+                device.devFQDN || ""
             ];
 
             const newRow = [];
@@ -760,7 +763,7 @@ function initializeDatatable (status) {
       {visible:   false,         targets: tableColumnHide },      
       {className: 'text-center', targets: [mapIndx(4), mapIndx(9), mapIndx(10), mapIndx(15), mapIndx(18)] },      
       {className: 'iconColumn text-center',  targets: [mapIndx(3)]},      
-      {width:     '80px',        targets: [mapIndx(6), mapIndx(7), mapIndx(15)] },      
+      {width:     '80px',        targets: [mapIndx(6), mapIndx(7), mapIndx(15), mapIndx(27)] },      
       {width:     '85px',        targets: [mapIndx(9)] },      
       {width:     '30px',        targets: [mapIndx(3), mapIndx(10), mapIndx(13), mapIndx(18)] },      
       {orderData: [mapIndx(12)],          targets: mapIndx(8) },

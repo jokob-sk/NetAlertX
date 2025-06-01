@@ -86,9 +86,10 @@ def insert_devices(db_path, num_entries=1):
         devSSID, 
         devSyncHubNode, 
         devSourcePlugin,
-        devCustomProps
+        devCustomProps,
+        devFQDN
     )
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
     """
 
     # List of device types, vendors, groups, locations
@@ -130,6 +131,7 @@ def insert_devices(db_path, num_entries=1):
         dev_sync_hub_node = ""  # Left as NULL
         dev_source_plugin = ""  # Left as NULL
         dev_devCustomProps = ""  # Left as NULL
+        dev_devFQDN = ""  # Left as NULL
 
         # Execute the insert query
         cursor.execute(insert_query, (
@@ -163,7 +165,8 @@ def insert_devices(db_path, num_entries=1):
             dev_ssid, 
             dev_sync_hub_node, 
             dev_source_plugin,
-            dev_devCustomProps
+            dev_devCustomProps,
+            dev_devFQDN
         ))
 
         # Commit after every 1000 rows to improve performance

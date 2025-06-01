@@ -38,6 +38,7 @@
 | `devSyncHubNode`       | The NetAlertX node ID used for synchronization between NetAlertX instances. | `node_1` |
 | `devSourcePlugin`      | Source plugin that discovered the device. | `ARPSCAN` |
 | `devCustomProps`       | [Custom properties](./CUSTOM_PROPERTIES.md) related to the device. The value is a base64-encoded JSON object. | `PHN2ZyB...` |
+| `devFQDN`              | Fully qualified domain name. | `raspberrypi.local` |
 
 
 To understand how values of these fields influuence application behavior, such as Notifications or Network topology, see also: 

@@ -170,7 +170,7 @@ class AppEvent_obj:
             END;
         """
 
-        mylog("verbose", [query])
+        # mylog("verbose", [query])
 
         self.db.sql.execute(query)
 

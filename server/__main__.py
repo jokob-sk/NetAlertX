@@ -153,7 +153,7 @@ def main ():
 
             # Resolve devices names
             mylog('debug','[Main] Resolve devices names')
-            update_devices_names(db)             
+            update_devices_names(db)     
             
             # Check if new devices found
             sql.execute (sql_new_devices)

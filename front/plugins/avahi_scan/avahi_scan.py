@@ -57,22 +57,25 @@ def main():
     device_handler = DeviceInstance(db)
 
     # Retrieve devices
-    unknown_devices = device_handler.getUnknown()
+    if get_setting_value("REFRESH_FQDN"): 
+        devices = device_handler.getUnknown()
+    else:
+        devices = device_handler.getAll()
+
+    mylog('verbose', [f'[{pluginName}] Devices count: {len(devices)}'])   
     
     # Mock list of devices (replace with actual device_handler.getUnknown() in production)
-    # unknown_devices = [
+    # devices = [
     #     {'devMac': '00:11:22:33:44:55', 'devLastIP': '192.168.1.121'},
     #     {'devMac': '00:11:22:33:44:56', 'devLastIP': '192.168.1.9'},
     #     {'devMac': '00:11:22:33:44:57', 'devLastIP': '192.168.1.82'},
     # ]
 
-    mylog('verbose', [f'[{pluginName}] Unknown devices count: {len(unknown_devices)}'])   
-    
-    if len(unknown_devices) > 0:
+    if len(devices) > 0:
         # ensure service is running
         ensure_avahi_running()
 
-    for device in unknown_devices:
+    for device in devices:
         domain_name = execute_name_lookup(device['devLastIP'], timeout)
 
         #  check if found and not a timeout ('to')
