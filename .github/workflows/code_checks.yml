@@ -17,14 +17,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Check for absolute path URLs
+      - name: Check for invalid relative 'php/' URLs in frontend code
         run: |
-          if grep -rE "['\"]\/php\/" --include=\*.{js,php} .; then
-            echo "❌ Found absolute path URLs starting with '/php/'. Please use relative paths."
+          echo "🔍 Checking for relative 'php/' URLs that should be './php/' or '/php/'..."
+
+          MATCHES=$(grep -rE "['\"]php\/" --include=\*.{js,php,html} . | grep -E "\.get|\.post|\.ajax|fetch|url\s*:") || true
+
+          if [ -n "$MATCHES" ]; then
+            echo "$MATCHES"
+            echo "❌ Found improperly relative 'php/' URLs. Use './php/' or '/php/' or a base path."
             exit 1
           else
-            echo "✅ No absolute path URLs found."
+            echo "✅ No bad relative 'php/' URLs found."
           fi
+
 
       - name: Check Python syntax
         run: |
