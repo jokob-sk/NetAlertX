@@ -19,7 +19,7 @@ showSpinner()
 $(document).ready(function() {
 
   // Load JSON data from the provided URL
-  $.getJSON('/php/server/query_json.php?file=table_appevents.json', function(data) {
+  $.getJSON('php/server/query_json.php?file=table_appevents.json', function(data) {
     // Process the JSON data and generate UI dynamically    
     processData(data)
 
