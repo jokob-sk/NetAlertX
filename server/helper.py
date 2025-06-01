@@ -635,6 +635,27 @@ def collect_lang_strings(json, pref, stringSqlParams):
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
+def print_table_schema(db, table):
+    sql = db.sql
+    sql.execute(f"PRAGMA table_info({table})")
+    result = sql.fetchall()
+
+    if not result:
+        mylog('none', f'[Schema] Table "{table}" not found or has no columns.')
+        return
+
+    mylog('debug', f'[Schema] Structure for table: {table}')
+    header = f"{'cid':<4} {'name':<20} {'type':<10} {'notnull':<8} {'default':<10} {'pk':<2}"
+    mylog('debug', header)
+    mylog('debug', '-' * len(header))
+
+    for row in result:
+        # row = (cid, name, type, notnull, dflt_value, pk)
+        line = f"{row[0]:<4} {row[1]:<20} {row[2]:<10} {row[3]:<8} {str(row[4]):<10} {row[5]:<2}"
+        mylog('debug', line)
+
+
+#-------------------------------------------------------------------------------
 def checkNewVersion():
     mylog('debug', [f"[Version check] Checking if new version available"])
 

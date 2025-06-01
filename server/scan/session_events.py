@@ -6,10 +6,13 @@ sys.path.extend([f"{INSTALL_PATH}/server"])
 
 import conf
 from scan.device_handling import create_new_devices, print_scan_stats, save_scanned_devices, update_devices_data_from_scan, exclude_ignored_devices
-from helper import timeNowTZ
-from logger import mylog
+from helper import timeNowTZ, print_table_schema, get_setting_value
+from logger import mylog, Logger
 from messaging.reporting import skip_repeated_notifications
 
+
+# Make sure log level is initialized correctly
+Logger(get_setting_value('LOG_LEVEL'))
 
 #===============================================================================
 # SCAN NETWORK
@@ -248,7 +251,7 @@ def insertOnlineHistory(db):
     # Query to fetch all relevant device counts in one go
     query = """
     SELECT
-        COUNT(*) AS allDevics,
+        COUNT(*) AS allDevices,
         SUM(CASE WHEN devIsArchived = 1 THEN 1 ELSE 0 END) AS archivedDevices,
         SUM(CASE WHEN devPresentLastScan = 1 THEN 1 ELSE 0 END) AS onlineDevices,
         SUM(CASE WHEN devPresentLastScan = 0 AND devAlertDown = 1 THEN 1 ELSE 0 END) AS downDevices
@@ -257,12 +260,12 @@ def insertOnlineHistory(db):
     
     deviceCounts = db.read(query)[0]  # Assuming db.read returns a list of rows, take the first (and only) row
 
-    allDevics = deviceCounts['allDevics']
+    allDevices = deviceCounts['allDevices']
     archivedDevices = deviceCounts['archivedDevices']
     onlineDevices = deviceCounts['onlineDevices']
     downDevices = deviceCounts['downDevices']
     
-    offlineDevices = allDevics - archivedDevices - onlineDevices
+    offlineDevices = allDevices - archivedDevices - onlineDevices
 
     # Prepare the insert query using parameterized inputs
     insert_query = """
@@ -270,10 +273,13 @@ def insertOnlineHistory(db):
         VALUES (?, ?, ?, ?, ?, ?)
     """
     
-    mylog('debug', f'[Presence graph] Sql query: {insert_query} with values: {scanTimestamp}, {onlineDevices}, {downDevices}, {allDevics}, {archivedDevices}, {offlineDevices}')
+    mylog('debug', f'[Presence graph] Sql query: {insert_query} with values: {scanTimestamp}, {onlineDevices}, {downDevices}, {allDevices}, {archivedDevices}, {offlineDevices}')
+
+    # Debug output 
+    print_table_schema(db, "Online_History")
 
     # Insert the gathered data into the history table
-    sql.execute(insert_query, (scanTimestamp, onlineDevices, downDevices, allDevics, archivedDevices, offlineDevices))
+    sql.execute(insert_query, (scanTimestamp, onlineDevices, downDevices, allDevices, archivedDevices, offlineDevices))
 
     db.commitDB()
 
