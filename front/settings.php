@@ -206,7 +206,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
                       }, 3000);
               } else
               {
-                $.get('/php/server/query_json.php', { file: 'plugins.json', nocache: Date.now() }, function(res) {
+                $.get('php/server/query_json.php', { file: 'plugins.json', nocache: Date.now() }, function(res) {
 
                   pluginsData = res["data"];  
 
@@ -550,7 +550,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
 
       // collect values for each of the different input form controls
       // get settings to determine setting type to store values appropriately
-      $.get('/php/server/query_json.php', { file: 'table_settings.json', nocache: Date.now() }, function(res) { 
+      $.get('php/server/query_json.php', { file: 'table_settings.json', nocache: Date.now() }, function(res) { 
         // loop through the settings definitions from the json
         res["data"].forEach(set => {
 
@@ -740,7 +740,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
     } else
     {
       // check if config file has been updated
-      $.get('/php/server/query_json.php', { file: 'app_state.json', nocache: Date.now() }, function(appState) {   
+      $.get('php/server/query_json.php', { file: 'app_state.json', nocache: Date.now() }, function(appState) {   
 
         console.log("Settings: Got app_state.json");       
         
