@@ -768,8 +768,8 @@ function initializeDatatable (status) {
       {width:     '30px',        targets: [mapIndx(3), mapIndx(10), mapIndx(13), mapIndx(18)] },      
       {orderData: [mapIndx(12)],          targets: mapIndx(8) },
 
-      // Device Name
-      {targets: [mapIndx(0)],
+      // Device Name and FQDN
+      {targets: [mapIndx(0), mapIndx(27)],
         'createdCell': function (td, cellData, rowData, row, col) {      
             
             // console.log(cellData)      

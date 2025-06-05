@@ -357,6 +357,9 @@
             <li>
               <a href="maintenance.php#tab_multiEdit" onclick="initializeTabs()">  <?= lang("Device_MultiEdit");?> </a>
             </li>
+            <li>
+              <a href="maintenance.php#tab_initCheck" onclick="initializeTabs()">  <?= lang("Maintenance_InitCheck");?> </a>
+            </li>
             
           </ul>
         </li>

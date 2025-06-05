@@ -195,7 +195,7 @@
           }
         ]
       },
-      "default_value": "0 2 * * 3",
+      "default_value": "0 2 * * *",
       "options": [],
       "localized": [
         "name",
@@ -297,7 +297,7 @@
           }
         ]
       },
-      "default_value": false,
+      "default_value": true,
       "options": [],
       "localized": [
         "name",

@@ -113,7 +113,7 @@ function deleteAllCookies() {
 function cacheSettings()
 {
   return new Promise((resolve, reject) => {
-    if(!getCache('completedCalls').includes('cacheSettings'))
+    if(!getCache('cacheSettings_completed') === true)
     {  
       $.get('php/server/query_json.php', { file: 'table_settings.json', nocache: Date.now() }, function(resSet) { 
 
@@ -211,8 +211,18 @@ function getSetting (key) {
 function cacheStrings() {
   return new Promise((resolve, reject) => {
     
-      // Create a promise for each language
-      languagesToLoad = ['en_us', getLangCode()]
+      // Create a promise for each language (include en_us by default as fallback)
+      languagesToLoad = ['en_us']
+
+      additionalLanguage = getLangCode()
+
+      if(additionalLanguage != 'en_us')
+      {
+        languagesToLoad.push(additionalLanguage)
+      }
+
+      console.log(languagesToLoad);
+      
       const languagePromises = languagesToLoad.map((language_code) => {
         return new Promise((resolveLang, rejectLang) => {
           // Fetch core strings and translations
@@ -235,7 +245,7 @@ function cacheStrings() {
                   });
 
                   // Handle successful completion of language processing
-                  handleSuccess(`cacheStrings[${language_code}]`, resolveLang);
+                  handleSuccess(`cacheStrings`, resolveLang);
                 })
                 .fail((pluginError) => {
                   // Handle failure in plugin strings fetching
@@ -356,9 +366,11 @@ function getLangCode() {
 
 function localizeTimestamp(result)
 {
-
   // contains TZ in format Europe/Berlin
   tz = getSetting("TIMEZONE")
+
+  // set default if not available or app still loading
+  tz == ""  ? tz = 'Europe/Berlin' : tz = tz;
   
   const date = new Date(result); // Assumes result is a timestamp or ISO string
   const formatter = new Intl.DateTimeFormat('default', {
@@ -1366,8 +1378,8 @@ function restartBackend() {
 const sessionStorageKey = "myScriptExecuted_common_js";
 var completedCalls = []
 var completedCalls_final = ['cacheSettings', 'cacheStrings', 'cacheDevices'];
-var completedCallsCount  = 0; 
-var completedCallsCount_final;
+var lang_completedCalls = 0;
+
 
 // -----------------------------------------------------------------------------
 // Clearing all the caches
@@ -1453,12 +1465,27 @@ async function isGraphQLServerRunning() {
 // Check if the code has been executed before by checking sessionStorage
 function isAppInitialized() {
 
-  completedCalls = parseInt(getCache("completedCallsCount"));
-  shouldBeCompletedCalls = getLangCode() == 'en_us' ? 3 : 4;
+  lang_shouldBeCompletedCalls = getLangCode() == 'en_us' ? 1 : 2;
 
-  return (
-    completedCalls >= shouldBeCompletedCalls
-  );
+  // check if each ajax call completed succesfully 
+  $.each(completedCalls_final, function(index, call_name){
+
+    if(getCache(call_name + "_completed") != "true")
+    {
+      console.log(`[isAppInitialized] AJAX call ${call_name} unsuccesful: ${getCache(call_name + "_completed")}`)
+      return false;
+    }
+
+  });
+
+  // check if all required languages chached
+  if(parseInt(getCache("cacheStringsCountCompleted")) != lang_shouldBeCompletedCalls)
+  {
+    console.log(`[isAppInitialized] AJAX call cacheStrings unsuccesful: ${getCache("cacheStringsCountCompleted")} out of ${lang_shouldBeCompletedCalls}`)
+    return false;
+  }
+
+  return true;
 }
 
 // -----------------------------------------------------------------------------
@@ -1489,27 +1516,25 @@ async function executeOnce() {
 // Function to handle successful completion of an AJAX call
 const handleSuccess = (callName) => {
   console.log(`AJAX call successful: ${callName}`);
-  // completedCalls.push(callName);
-  // setCache('completedCalls', mergeUniqueArrays(getCache('completedCalls').split(','), [callName]));
 
-  val = getCache('completedCallsCount');
-
-  if(val == "")
+  if(callName.includes("cacheStrings"))
   {
-    val = 0;
-  } else
-  {
-    val = parseInt(val)
+    completed_tmp = getCache("cacheStringsCountCompleted");
+    completed_tmp == "" ? completed_tmp = 0 : completed_tmp = completed_tmp;
+    completed_tmp++;
+    setCache("cacheStringsCountCompleted", completed_tmp);
   }
 
-  setCache('completedCallsCount', val + 1)
+  setCache(callName + "_completed", true)
 };
 
 // -----------------------------------------------------------------------------
 // Function to handle failure of an AJAX call
 const handleFailure = (callName, callback) => {
-  console.error(`AJAX call ${callName} failed`);
+  msg = `AJAX call ${callName} failed`
+  console.error(msg);
   // Implement retry logic here if needed
+  write_notification(msg, 'interrupt')
 };
 
 // -----------------------------------------------------------------------------

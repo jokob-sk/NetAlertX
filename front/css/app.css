@@ -695,6 +695,39 @@ body
 
 /* maintenance buttons */
 
+#file-check-list{
+    display: block;
+}
+
+.file-checking .icon-wrap{
+    width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis; 
+    display: block;
+}
+
+.file-checking .icon-wrap i{
+    position: absolute;
+    font-size: xx-large;
+    right: 0;
+    top: 0;
+    opacity: 0.2;
+}
+
+.file-checking .file-name-wrap{
+    overflow: hidden;
+    text-overflow: ellipsis; 
+    display: flex;
+    padding: 5px;
+}
+
+.file-checking{
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis; 
+}
+
+
 .dbtools-button {
     display: inline-block;
     width: 160px;
@@ -1416,6 +1449,11 @@ input[readonly] {
     display: none;
     padding-top: 2em;
     cursor: default;
+}
+
+.small-box:hover
+{
+    color: inherit;
 }
 
 /* ----------------------------------------------------------------- */

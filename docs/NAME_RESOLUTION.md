@@ -2,6 +2,12 @@
 
 Name resolution in NetAlertX relies on multiple plugins to resolve device names from IP addresses. If you are seeing `(name not found)` as device names, follow these steps to diagnose and fix the issue.
 
+> [!TIP]  
+> Before proceeding, make sure [Reverse DNS](./REVERSE_DNS.md) is enabled on your network.  
+> You can control how names are handled and cleaned using the `NEWDEV_NAME_CLEANUP_REGEX` setting.  
+> To auto-update Fully Qualified Domain Names (FQDN), enable the `REFRESH_FQDN` setting.
+
+
 ## Required Plugins
 
 For best results, ensure the following name resolution plugins are enabled:

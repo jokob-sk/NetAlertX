@@ -2,6 +2,11 @@
 
 If you are running a DNS server, such as **AdGuard**, set up **Private reverse DNS servers** for a better name resolution on your network. Enabling this setting will enable NetAlertX to execute dig and nslookup commands to automatically resolve device names based on their IP addresses.
 
+> [!TIP]  
+> Before proceeding, ensure that [name resolution plugins](./NAME_RESOLUTION.md) are enabled.  
+> You can customize how names are cleaned using the `NEWDEV_NAME_CLEANUP_REGEX` setting.  
+> To auto-update Fully Qualified Domain Names (FQDN), enable the `REFRESH_FQDN` setting.
+
 
 > Example 1: Reverse DNS `disabled`
 > 
