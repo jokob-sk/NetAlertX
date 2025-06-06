@@ -433,7 +433,7 @@ function initListInteractionOptions(element) {
       if (clickCounter === 1) {
         // Single-click action
         showModalFieldInput(
-          `<i class="fa-regular fa-pen-to-square"></i> ${getString(
+          `<i class="fa fa-pen-to-square"></i> ${getString(
             "Gen_Update_Value"
           )}`,
           getString("settings_update_item_warning"),

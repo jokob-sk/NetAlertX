@@ -200,9 +200,9 @@ function validateRegex(elem) {
 
       // Validate against regex
       if (regex.test(value)) {
-          iconSpan.html("<i class='fa-regular fa-check'></i>");
+          iconSpan.html("<i class='fa fa-check'></i>");
       } else {
-          iconSpan.html("<i class='fa-regular fa-xmark'></i>");
+          iconSpan.html("<i class='fa fa-xmark'></i>");
       }
   }
 

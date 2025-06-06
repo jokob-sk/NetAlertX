@@ -144,7 +144,7 @@ function generateWorkflowUI(wf, wfIndex) {
   )
 
   let $wfEnabledIcon = $("<i>", { 
-      class: `alignRight fa-regular ${wfEnabled ? "fa-dot-circle" : "fa-circle" }`
+      class: `alignRight fa ${wfEnabled ? "fa-dot-circle" : "fa-circle" }`
     });
   
 

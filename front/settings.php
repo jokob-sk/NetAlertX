@@ -354,7 +354,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
 
         enabledHtml = `
                       <div class="enabled-disabled-icon">
-                        <i class="fa-regular fa-${onOff}"></i>
+                        <i class="fa fa-${onOff}"></i>
                       </div>
                       `
       }      

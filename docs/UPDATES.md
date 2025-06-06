@@ -1,5 +1,8 @@
 # Docker Update Strategies to upgrade NetAlertX
 
+> [!WARNING] 
+> For versions prior to `v25.6.7` upgrade to version `v25.5.24` first (`docker pull ghcr.io/jokob-sk/netalertx:25.5.24`) as later versions don't support a full upgrade. Alternatovelly, devices and settings can be migrated manually, e.g. via [CSV import](./DEVICES_BULK_EDITING.md).
+
 This guide outlines approaches for updating Docker containers, usually when upgrading to a newer version of NetAlertX. Each method offers different benefits depending on the situation. Here are the methods:
 
 - Manual: Direct commands to stop, remove, and rebuild containers.
