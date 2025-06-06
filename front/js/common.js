@@ -1534,7 +1534,7 @@ const handleFailure = (callName, callback) => {
   msg = `AJAX call ${callName} failed`
   console.error(msg);
   // Implement retry logic here if needed
-  write_notification(msg, 'interrupt')
+  // write_notification(msg, 'interrupt')
 };
 
 // -----------------------------------------------------------------------------

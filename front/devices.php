@@ -848,7 +848,7 @@ function initializeDatatable (status) {
       {targets: [mapIndx(26)],
         'createdCell': function (td, cellData, rowData, row, col) {
             if (!emptyArr.includes(cellData)){
-              $(td).html (`<span>${renderCustomProps(cellData, rowData[mapIndx(11)])}<span>`);
+              $(td).html (`<span>${renderCustomProps(cellData, rowData[mapIndx(11)])}</span>`);
             } else {
               $(td).html ('');
             }

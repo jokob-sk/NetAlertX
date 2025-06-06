@@ -12,7 +12,7 @@ require 'php/templates/header.php';
 
 <div id="notifications" class="content-wrapper">
   <section class="content">
-    <div class="box box-gray col-xs-12" >
+    <div class="notification-box box box-gray col-xs-12" >
       <div class="box-header">
        <h3 class="box-title text-aqua"><?= lang('Notifications_All');?></h3>
       </div>
@@ -33,9 +33,10 @@ require 'php/templates/header.php';
           </tbody>
         </table> 
 
-        
-        <button id="clearNotificationsBtn" class="btn btn-danger"><?= lang("Gen_DeleteAll");?></button>
-        <button id="notificationsMarkAllRead" class="btn btn-default"><?= lang("Notifications_Mark_All_Read");?></button>
+        <div class="notification-buttons">
+          <button id="clearNotificationsBtn" class="btn btn-danger"><?= lang("Gen_DeleteAll");?></button>
+          <button id="notificationsMarkAllRead" class="btn btn-default"><?= lang("Notifications_Mark_All_Read");?></button>
+        </div>
       </div>
       
     </div>
