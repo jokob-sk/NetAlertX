@@ -125,8 +125,7 @@
                                   </td>
                               </tr>
                               </tbody>
-                            </table>
-                            <br>
+                            </table>                            
                              <div id="assignedDevices"  class="box-body no-padding">
                               <div class="page-header">
                                 <h3>

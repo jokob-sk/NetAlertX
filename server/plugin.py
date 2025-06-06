@@ -562,7 +562,10 @@ def execute_plugin(db, all_plugins, plugin ):
         endpoints = ["plugins_events","plugins_objects", "plugins_history", "appevents"]
 
         # check if we need to update devices api endpoint as well to prevent long user waits on Loading...
-        userUpdatedDevices = UserEventsQueueInstance().has_update_devices
+        userUpdatedDevices = UserEventsQueueInstance().has_update_devices()
+
+        mylog('verbose', [f'[Plugins] Should I update API (userUpdatedDevices): {userUpdatedDevices}']) 
+
         if userUpdatedDevices:
             endpoints += ["devices"]
 

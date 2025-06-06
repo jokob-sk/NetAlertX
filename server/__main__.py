@@ -33,6 +33,7 @@ from initialise import importConfigs
 from database import DB
 from messaging.reporting import get_notifications
 from models.notification_instance import NotificationInstance
+from models.user_events_queue_instance import UserEventsQueueInstance
 from plugin import plugin_manager 
 from scan.device_handling import update_devices_names
 from workflows.manager import WorkflowManager 
@@ -220,6 +221,15 @@ def main ():
 
             updateState("Workflows: End")
            
+
+        # check if devices list needs updating
+        userUpdatedDevices = UserEventsQueueInstance().has_update_devices()
+
+        mylog('debug', [f'[Plugins] Should I update API (userUpdatedDevices): {userUpdatedDevices}']) 
+
+        if userUpdatedDevices:          
+
+            update_api(db, all_plugins, True, ["devices"], userUpdatedDevices) 
 
         #loop     
         time.sleep(5) # wait for N seconds      

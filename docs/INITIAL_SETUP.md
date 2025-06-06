@@ -2,14 +2,14 @@
 
 Get **NetAlertX** up and running in a few simple steps.
 
+---
+
+### 1. Configure Scanner Plugin(s)
+
 > [!TIP]
 > Enable additional plugins under **Settings → `LOADED_PLUGINS`**.
 > Make sure to **save** your changes and **reload the page** to activate them.
 > ![Loaded plugins settings](./img/PLUGINS/loaded_plugins_setting.png)
-
----
-
-### 1. Configure Scanner Plugin(s)
 
 **Initial configuration**: `ARPSCAN`, `INTRNT`
 
@@ -31,6 +31,8 @@ Get **NetAlertX** up and running in a few simple steps.
 
 ### 3. Set Up a Network Topology Diagram
 
+![Network tree](./img/NETWORK_TREE/Network_tree_details.png)
+
 **Initial configuration**: The app auto-selects a root node (MAC `internet`) and attempts to identify other network devices by vendor or name.
 
 > [!NOTE]
@@ -40,6 +42,8 @@ Get **NetAlertX** up and running in a few simple steps.
 ---
 
 ### 4. Configure Notifications
+
+![Notification settings](./img/NOTIFICATIONS/Global-notification-settings.png)
 
 **Initial configuration**: Notifies on `new_devices`, `down_devices`, and `events` as defined in `NTFPRCS_INCLUDED_SECTIONS`.
 
@@ -51,6 +55,8 @@ Get **NetAlertX** up and running in a few simple steps.
 
 ### 5. Set Up Workflows
 
+![Workflows](./img/WORKFLOWS/workflows.png)
+
 **Initial configuration**: N/A
 
 > [!NOTE]
@@ -61,6 +67,8 @@ Get **NetAlertX** up and running in a few simple steps.
 
 ### 6. Backup Your Configuration
 
+![Backups](./img/BACKUPS/Maintenance_Backup_Restore.png)
+
 **Initial configuration**: The `CSVBCKP` plugin creates a daily backup to `/config/devices.csv`.
 
 > [!NOTE]
@@ -69,6 +77,8 @@ Get **NetAlertX** up and running in a few simple steps.
 ---
 
 ### 7. (Optional) Create Custom Plugins
+
+[![Custom Plugin Video](./img/YouTube_thumbnail.png)](https://youtu.be/cdbxlwiWhv8)
 
 **Initial configuration**: N/A
 
