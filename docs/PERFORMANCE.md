@@ -85,8 +85,8 @@ services:
       # (Optional) Useful for debugging setup issues
       - local/path/logs:/app/log
       # (API: OPTION 1) Store temporary files in memory (recommended for performance)
-      - type: tmpfs              # ◀ 
-        target: /app/api         # ◀ 
+      - type: tmpfs              # ◀ 🔺
+        target: /app/api         # ◀ 🔺
       # (API: OPTION 2) Store API data on disk (useful for debugging)
       # - local/path/api:/app/api
     environment:
