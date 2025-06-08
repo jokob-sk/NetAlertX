@@ -1,4 +1,4 @@
-FROM alpine:3.21 AS builder
+FROM alpine:3.22 AS builder
 
 ARG INSTALL_DIR=/app
 
@@ -22,7 +22,7 @@ RUN pip install openwrt-luci-rpc asusrouter asyncio aiohttp graphene flask tplin
 RUN cat ${INSTALL_DIR}/install/freebox_certificate.pem >> /opt/venv/lib/python3.12/site-packages/aiofreepybox/freebox_certificates.pem
 
 # second stage
-FROM alpine:3.21 AS runner
+FROM alpine:3.22 AS runner
 
 ARG INSTALL_DIR=/app
 
