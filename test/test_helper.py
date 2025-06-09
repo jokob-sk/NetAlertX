@@ -8,11 +8,11 @@ from datetime import datetime, timedelta
 
 sys.path.append(str(pathlib.Path(__file__).parent.parent.resolve()) + "/server/")
 
-from helper import timeNowTZ, updateSubnets
+from helper import timeNow, timeNowTZ, updateSubnets
 
 # -------------------------------------------------------------------------------
 def test_helper():
-    assert timeNow() == datetime.datetime.now().replace(microsecond=0)
+    assert timeNow() == datetime.now().replace(microsecond=0)
 
 # -------------------------------------------------------------------------------
 def test_updateSubnets():

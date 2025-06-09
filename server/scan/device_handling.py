@@ -475,10 +475,12 @@ def update_devices_data_from_scan (db):
 
         recordsToUpdate.append ([devType, device['devMac']])
     
-    if len(recordsToUpdate) > 0:        
+    if len(recordsToUpdate) > 0:
         sql.executemany ("UPDATE Devices SET devType = ? WHERE devMac = ? ", recordsToUpdate )
-    
-    
+
+    # Housekeeping - remove duplicate devices with the same IP
+    cleanup_duplicate_devices_by_ip(db)
+
     mylog('debug','[Update Devices] Update devices end')
 
 #-------------------------------------------------------------------------------
@@ -581,6 +583,48 @@ def update_devices_names(db):
 
     # Commit all database changes
     db.commitDB()
+
+
+#-------------------------------------------------------------------------------
+def cleanup_duplicate_devices_by_ip(db):
+    """Remove offline duplicate devices that share the same IP."""
+    sql = db.sql
+    mylog('debug', '[Cleanup] Checking for duplicate device IPs')
+
+    dup_query = """
+        SELECT devLastIP
+        FROM Devices
+        WHERE devLastIP NOT IN ('', 'null') AND devLastIP IS NOT NULL
+        GROUP BY devLastIP
+        HAVING COUNT(*) > 1
+    """
+
+    duplicate_ips = [row['devLastIP'] for row in sql.execute(dup_query)]
+    total_removed = 0
+
+    for ip in duplicate_ips:
+        sql.execute(
+            """SELECT rowid, devPresentLastScan FROM Devices
+                WHERE devLastIP = ?
+                ORDER BY devPresentLastScan DESC, rowid ASC""",
+            (ip,)
+        )
+        rows = sql.fetchall()
+        if not rows:
+            continue
+
+        removed = 0
+        for row in rows[1:]:
+            if row['devPresentLastScan'] == 0:
+                sql.execute("DELETE FROM Devices WHERE rowid = ?", (row['rowid'],))
+                removed += 1
+
+        if removed:
+            total_removed += removed
+            mylog('debug', f'[Cleanup] Removed {removed} duplicates for IP {ip}')
+
+    if total_removed:
+        db.commitDB()
 
 
 
