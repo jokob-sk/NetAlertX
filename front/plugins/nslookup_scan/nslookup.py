@@ -60,9 +60,9 @@ def main():
 
     # Retrieve devices
     if get_setting_value("REFRESH_FQDN"): 
-        devices = device_handler.getUnknown()
-    else:
         devices = device_handler.getAll()
+    else:        
+        devices = device_handler.getUnknown()
 
     mylog('verbose', [f'[{pluginName}] Devices count: {len(devices)}'])   
     

@@ -49,6 +49,8 @@ query GetDevices($options: PageQueryOptionsInput) {
 }
 ```
 
+See also: [Debugging GraphQL issues](./DEBUG_GRAPHQL.md)
+
 ### `curl` Command
 
 You can use the following `curl` command to execute the query. 
