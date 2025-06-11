@@ -66,6 +66,12 @@ device_type_map = {
     "networking_device": "Router",
     "multimedia_device": "TV Decoder",
     "car": "House Appliance",
+    "watch": "Clock",
+    "light": "Domotic",
+    "outlet": "Domotic",
+    "appliances": "House Appliance",
+    "thermostat": "Domotic",
+    "shutter": "Domotic",
     "other": "(Unknown)",
 }
 
