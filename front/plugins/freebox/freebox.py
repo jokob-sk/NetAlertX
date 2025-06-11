@@ -77,8 +77,12 @@ device_type_map = {
 
 
 def map_device_type(type: str):
-    return device_type_map[type]
-
+    try:
+        return device_type_map[type]
+    except KeyError:
+        # This device type has not been mapped yet
+        mylog("minimal", [f"[{pluginName}] Unknown device type: {type}"])
+        return device_type_map["other"]
 
 async def get_device_data(api_version: int, api_address: str, api_port: int):
     # ensure existence of db path
