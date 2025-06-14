@@ -12,7 +12,7 @@ import sys
 import requests
 from requests import Request, Session, packages
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
-from pyunifi.controller import Controller
+from nax_pyunifi.controller import Controller
 
 
 # Register NetAlertX directories
@@ -52,7 +52,7 @@ def main():
 
     
     # init global variables
-    global UNIFI_USERNAME, UNIFI_PASSWORD, UNIFI_HOST, UNIFI_SITES, PORT, VERIFYSSL, VERSION, FULL_IMPORT, API_KEY
+    global UNIFI_USERNAME, UNIFI_PASSWORD, UNIFI_HOST, UNIFI_SITES, PORT, VERIFYSSL, VERSION, FULL_IMPORT
 
     # parse output
     plugin_objects = Plugin_Objects(RESULT_FILE)    
@@ -65,10 +65,6 @@ def main():
     VERIFYSSL       = get_setting_value("UNFIMP_verifyssl")
     VERSION         = get_setting_value("UNFIMP_version")
     FULL_IMPORT     = get_setting_value("UNFIMP_fullimport")
-    API_KEY         = get_setting_value("UNFIMP_api_key")
-
-    if API_KEY == '':
-        API_KEY = None
 
     plugin_objects = get_entries(plugin_objects)
 
@@ -100,19 +96,6 @@ def get_entries(plugin_objects: Plugin_Objects) -> Plugin_Objects:
     
         mylog('verbose', [f'[{pluginName}] site: {site}'])
 
-
-        # def __init__(  
-        #         self,
-        #         host,
-        #         username=None,
-        #         password=None,
-        #         port=8443,
-        #         version="v5",
-        #         site_id="default",
-        #         ssl_verify=True,
-        #         api_key=None
-        # ):
-
         c = Controller(
             UNIFI_HOST, 
             UNIFI_USERNAME, 
@@ -120,8 +103,7 @@ def get_entries(plugin_objects: Plugin_Objects) -> Plugin_Objects:
             port=PORT, 
             version=VERSION, 
             ssl_verify=VERIFYSSL, 
-            site_id=site,
-            api_key=API_KEY)
+            site_id=site)
         
         online_macs = set()
         processed_macs = []

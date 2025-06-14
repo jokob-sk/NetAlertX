@@ -3,6 +3,7 @@
 
 import argparse
 import requests
+from requests.exceptions import SSLError, Timeout, RequestException
 import pathlib
 import sys
 import os
