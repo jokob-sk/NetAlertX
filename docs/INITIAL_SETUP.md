@@ -9,7 +9,7 @@ Get **NetAlertX** up and running in a few simple steps.
 > [!TIP]
 > Enable additional plugins under **Settings → `LOADED_PLUGINS`**.
 > Make sure to **save** your changes and **reload the page** to activate them.
-> ![Loaded plugins settings](./img/PLUGINS/loaded_plugins_setting.png)
+> ![Loaded plugins settings](./img/PLUGINS/enable_plugin.gif)
 
 **Initial configuration**: `ARPSCAN`, `INTRNT`
 
