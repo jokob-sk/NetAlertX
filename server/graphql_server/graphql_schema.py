@@ -199,7 +199,9 @@ class Query(ObjectType):
                 for sort_option in options.sort:
                     devices_data = sorted(
                         devices_data,
-                        key=lambda x: mixed_type_sort_key(x.get(sort_option.field)),
+                        key=lambda x: mixed_type_sort_key(
+                            x.get(sort_option.field).lower() if isinstance(x.get(sort_option.field), str) else x.get(sort_option.field)
+                        ),
                         reverse=(sort_option.order.lower() == "desc")
                     )
 
