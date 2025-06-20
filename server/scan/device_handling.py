@@ -732,8 +732,8 @@ def guess_icon(vendor, mac, ip, name,  default):
 # Guess device type
 def guess_type(vendor, mac, ip, name,  default):
     result = default
-    mac    = mac.upper()
-    vendor = vendor.lower() if vendor else "unknown"
+    mac    = str(mac).upper() if mac else "00:00:00:00:00:00"
+    vendor = str(vendor).lower() if vendor else "unknown"
     name   = str(name).lower() if name else "(unknown)"
 
     # Guess icon based on vendor
