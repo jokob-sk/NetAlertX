@@ -35,6 +35,78 @@ from const import vendorsPath, vendorsPathNewest, sql_generateGuid
 from models.device_instance import DeviceInstance
 from scan.name_resolution import NameResolver
 
+#===============================================================================
+# Icons
+#===============================================================================
+#-------------------------------------------------------------------------------
+# Base64 encoded HTML string for FontAwesome icons, now with an extended icons dictionary for broader device coverage
+ICONS = {
+    "globe": "PGkgY2xhc3M9ImZhcyBmYS1nbG9iZSI+PC9pPg==",  # Internet or global network
+    "phone": "PGkgY2xhc3M9ImZhcyBmYS1tb2JpbGUtYWx0Ij48L2k+",  # Smartphone
+    "laptop": "PGkgY2xhc3M9ImZhIGZhLWxhcHRvcCI+PC9pPg==",  # Laptop
+    "printer": "PGkgY2xhc3M9ImZhIGZhLXByaW50ZXIiPjwvaT4=",  # Printer
+    "router": "PGkgY2xhc3M9ImZhcyBmYS1yYW5kb20iPjwvaT4=",  # Router or network switch
+    "tv": "PGkgY2xhc3M9ImZhIGZhLXR2Ij48L2k+",  # Television
+    "desktop": "PGkgY2xhc3M9ImZhIGZhLWRlc2t0b3AiPjwvaT4=",  # Desktop PC
+    "tablet": "PGkgY2xhc3M9ImZhIGZhLXRhYmxldCI+PC9pPg==",  # Tablet
+    "watch": "PGkgY2xhc3M9ImZhcyBmYS1jbG9jayI+PC9pPg==",  # Fallback to clock since smartwatch is nonfree in FontAwesome
+    "camera": "PGkgY2xhc3M9ImZhIGZhLWNhbWVyYSI+PC9pPg==",  # Camera or webcam
+    "home": "PGkgY2xhc3M9ImZhIGZhLWhvbWUiPjwvaT4=",  # Smart home device
+    "apple": "PGkgY2xhc3M9ImZhYiBmYS1hcHBsZSI+PC9pPg==",  # Apple device
+    "ethernet": "PGkgY2xhc3M9ImZhcyBmYS1uZXR3b3JrLXdpcmVkIj48L2k+",  # Free alternative for ethernet icon in FontAwesome
+    "google": "PGkgY2xhc3M9ImZhYiBmYS1nb29nbGUiPjwvaT4=",  # Google device
+    "raspberry": "PGkgY2xhc3M9ImZhYiBmYS1yYXNwYmVycnktcGkiPjwvaT4=",  # Raspberry Pi
+    "microchip": "PGkgY2xhc3M9ImZhcyBmYS1taWNyb2NoaXAiPjwvaT4=",  # IoT or embedded device
+    "server": "PGkgY2xhc3M9ImZhcyBmYS1zZXJ2ZXIiPjwvaT4=",  # Server
+    "gamepad": "PGkgY2xhc3M9ImZhcyBmYS1nYW1lcGFkIj48L2k+",  # Gaming console
+    "lightbulb": "PGkgY2xhc3M9ImZhcyBmYS1saWdodGJ1bGIiPjwvaT4=",  # Smart light
+    "speaker": "PGkgY2xhc3M9ImZhcyBmYS12b2x1bWUtdXAiPjwvaT4=",  # Free speaker alt icon for smart speakers in FontAwesome
+    "lock": "PGkgY2xhc3M9ImZhcyBmYS1sb2NrIj48L2k+",  # Security device
+}
+
+# Extended device types for comprehensive classification
+DEVICE_TYPES = {
+    "Internet": "Internet Gateway",
+    "Phone": "Smartphone",
+    "Laptop": "Laptop",
+    "Printer": "Printer",
+    "Router": "Router",
+    "TV": "Television",
+    "Desktop": "Desktop PC",
+    "Tablet": "Tablet",
+    "Smartwatch": "Smartwatch",
+    "Camera": "Camera",
+    "SmartHome": "Smart Home Device",
+    "Server": "Server",
+    "GamingConsole": "Gaming Console",
+    "IoT": "IoT Device",
+    "NetworkSwitch": "Network Switch",
+    "AccessPoint": "Access Point",
+    "SmartLight": "Smart Light",
+    "SmartSpeaker": "Smart Speaker",
+    "SecurityDevice": "Security Device",
+    "Unknown": "Unknown Device",
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #-------------------------------------------------------------------------------
 # Removing devices from the CurrentScan DB table which the user chose to ignore by MAC or IP
 def exclude_ignored_devices(db):
@@ -664,29 +736,6 @@ def query_MAC_vendor (pMAC):
         return -1
 
 
-#===============================================================================
-# Icons
-#===============================================================================
-#-------------------------------------------------------------------------------
-# Base64 encoded HTML string for FontAwesome icons
-icons = {
-    "globe": "PGkgY2xhc3M9ImZhcyBmYS1nbG9iZSI+PC9pPg==",  # globe icon
-    "phone": "PGkgY2xhc3M9ImZhcyBmYS1tb2JpbGUtYWx0Ij48L2k+",
-    "laptop": "PGkgY2xhc3M9ImZhIGZhLWxhcHRvcCI+PC9pPg==",
-    "printer": "PGkgY2xhc3M9ImZhIGZhLXByaW50ZXIiPjwvaT4=",
-    "router": "PGkgY2xhc3M9ImZhcyBmYS1yYW5kb20iPjwvaT4=",
-    "tv": "PGkgY2xhc3M9ImZhIGZhLXR2Ij48L2k+",
-    "desktop": "PGkgY2xhc3M9ImZhIGZhLWRlc2t0b3AiPjwvaT4=",
-    "tablet": "PGkgY2xhc3M9ImZhIGZhLXRhYmxldCI+PC9pPg==",
-    "watch": "PGkgY2xhc3M9ImZhIGZhLXdhbmNoIj48L2k+",
-    "camera": "PGkgY2xhc3M9ImZhIGZhLWNhbWVyYSI+PC9pPg==",
-    "home": "PGkgY2xhc3M9ImZhIGZhLWhvbWUiPjwvaT4=",
-    "apple": "PGkgY2xhc3M9ImZhYiBmYS1hcHBsZSI+PC9pPg==",
-    "ethernet": "PGkgY2xhc3M9ImZhcyBmYS1ldGhlcm5ldCI+PC9pPg==",
-    "google": "PGkgY2xhc3M9ImZhYiBmYS1nb29nbGUiPjwvaT4=",
-    "raspberry": "PGkgY2xhc3M9ImZhYiBmYS1yYXNwYmVycnktcGkiPjwvaT4=",
-    "microchip": "PGkgY2xhc3M9ImZhcyBmYS1taWNyb2NoaXAiPjwvaT4="
-}
 
 #-------------------------------------------------------------------------------
 # Guess device icon
