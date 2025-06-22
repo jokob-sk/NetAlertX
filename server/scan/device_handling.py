@@ -1,3 +1,22 @@
+#!/usr/bin/env python3
+"""
+Network device scanning and management module for NetAlertX.
+
+This module handles device scanning, database operations, and device classification
+for the NetAlertX system. It includes functions for excluding ignored devices,
+saving scanned devices, generating scan statistics, creating and updating devices,
+resolving device names, and guessing device icons and types based on various
+attributes.
+
+All database operations are (GOING TO BE) parameterized to prevent SQL injection, and input
+validation is (GOING TO BE) enforced to enhance security. Logging is (GOING TO BE) used extensively for
+debugging and monitoring.
+
+Dependencies:
+- Python standard libraries: sys, subprocess, os, re
+- External modules: conf, helper, logger, const, models.device_instance, scan.name_resolution
+"""
+
 import sys
 
 # Register NetAlertX directories
