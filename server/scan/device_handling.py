@@ -680,37 +680,37 @@ def guess_icon(vendor, mac, ip, name,  default):
 
     # Guess icon based on vendor
     if any(brand in vendor for brand in {"samsung", "motorola"}):
-        result = icons.get("phone")
+        result = icons.get("phone", default)
     elif "dell" in vendor:
-        result = icons.get("laptop")
+        result = icons.get("laptop", default)
     elif "hp" in vendor:
-        result = icons.get("printer")
+        result = icons.get("printer", default)
     elif "cisco" in vendor:
-        result = icons.get("router")
+        result = icons.get("router", default)
     elif "lg" in vendor:
-        result = icons.get("tv")
+        result = icons.get("tv", default)
     elif "raspberry" in vendor:
-        result = icons.get("raspberry")
+        result = icons.get("raspberry", default)
     elif "apple" in vendor:
-        result = icons.get("apple")
+        result = icons.get("apple", default)
     elif "google" in vendor:
-        result = icons.get("google")
+        result = icons.get("google", default)
     elif "ubiquiti" in vendor:
-        result = icons.get("router")
+        result = icons.get("router", default)
     elif any(brand in vendor for brand in {"espressif"}):
-        result = icons.get("microchip")
+        result = icons.get("microchip", default)
 
     # Guess icon based on MAC address patterns
     elif mac == "INTERNET":  
-        result = icons.get("globe")
+        result = icons.get("globe", default)
     elif mac.startswith("00:1A:79"):  # Apple
-        result = icons.get("apple")
+        result = icons.get("apple", default)
     elif mac.startswith("B0:BE:83"):  # Apple
-        result = icons.get("apple")
+        result = icons.get("apple", default)
     elif mac.startswith("00:1B:63"):  # Sony
-        result = icons.get("tablet")
+        result = icons.get("tablet", default)
     elif mac.startswith("74:AC:B9"):  # Unifi
-        result = icons.get("ethernet")
+        result = icons.get("ethernet", default)
         
         
     # Guess icon based on name
@@ -726,7 +726,7 @@ def guess_icon(vendor, mac, ip, name,  default):
         result = icons.get("laptop")       
 
     
-    return result
+    return result if result else default
 
 #-------------------------------------------------------------------------------
 # Guess device type
@@ -760,5 +760,5 @@ def guess_type(vendor, mac, ip, name,  default):
     elif ip == ("192.168.1.1"):
         result = "Router"      
     
-    return result
+    return result if result else default
     
