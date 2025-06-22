@@ -747,64 +747,105 @@ def query_MAC_vendor(pMAC: Optional[str] = None) -> str:
 
 #-------------------------------------------------------------------------------
 # Guess device icon
-def guess_icon(vendor, mac, ip, name,  default):    
-            
-    mylog('debug', [f"[guess_icon] Guessing icon for (vendor|mac|ip|name): ('{vendor}'|'{mac}'|{ip}|{name})"])
-    
-    result = default
-    mac    = str(mac).upper() if mac else "00:00:00:00:00:00"
-    vendor = str(vendor).lower() if vendor else "unknown"
-    name   = str(name).lower() if name else "(unknown)"
+def guess_icon(vendor: Optional[str], mac: Optional[str], ip: Optional[str], name: Optional[str], default: str) -> str:
+    """
+    Guess the appropriate FontAwesome icon for a device based on its attributes.
 
-    # Guess icon based on vendor
-    if any(brand in vendor for brand in {"samsung", "motorola"}):
-        result = icons.get("phone", default)
-    elif "dell" in vendor:
-        result = icons.get("laptop", default)
-    elif "hp" in vendor:
-        result = icons.get("printer", default)
-    elif "cisco" in vendor:
-        result = icons.get("router", default)
-    elif "lg" in vendor:
-        result = icons.get("tv", default)
-    elif "raspberry" in vendor:
-        result = icons.get("raspberry", default)
-    elif "apple" in vendor:
-        result = icons.get("apple", default)
-    elif "google" in vendor:
-        result = icons.get("google", default)
-    elif "ubiquiti" in vendor:
-        result = icons.get("router", default)
-    elif any(brand in vendor for brand in {"espressif"}):
-        result = icons.get("microchip", default)
+    Args:
+        vendor: Device vendor name.
+        mac: Device MAC address.
+        ip: Device IP address.
+        name: Device name.
+        default: Default icon to return if no match is found.
 
-    # Guess icon based on MAC address patterns
-    elif mac == "INTERNET":  
-        result = icons.get("globe", default)
-    elif mac.startswith("00:1A:79"):  # Apple
-        result = icons.get("apple", default)
-    elif mac.startswith("B0:BE:83"):  # Apple
-        result = icons.get("apple", default)
-    elif mac.startswith("00:1B:63"):  # Sony
-        result = icons.get("tablet", default)
-    elif mac.startswith("74:AC:B9"):  # Unifi
-        result = icons.get("ethernet", default)
-        
-        
-    # Guess icon based on name
-    elif 'google' in name:
-        result = icons.get("google")
-    elif 'desktop' in name:
-        result = icons.get("desktop")
-    elif 'raspberry' in name:
-        result = icons.get("raspberry")
+    Returns:
+        str: Base64-encoded FontAwesome icon HTML string.
+    """
+    mylog('debug', f"[guess_icon] Guessing icon for (vendor|mac|ip|name): ('{vendor}'|'{mac}'|'{ip}'|'{name}')")
     
-    # Guess icon based on IP address ranges
-    elif ip.startswith("192.168.1."):
-        result = icons.get("laptop")       
-
+    vendor = str(vendor).lower().strip() if vendor else "unknown"
+    mac = str(mac).upper().strip() if mac else "00:00:00:00:00:00"
+    ip = str(ip).strip() if ip else ""
+    name = str(name).lower().strip() if name else "(unknown)"
     
-    return result if result else default
+    # Vendor-based icon guessing
+    vendor_patterns = {
+        "apple": "apple",
+        "samsung|motorola|xiaomi|huawei": "phone",
+        "dell|lenovo|asus|acer": "laptop",
+        "hp|epson|canon|brother": "printer",
+        "cisco|ubiquiti|netgear|tp-link|d-link|mikrotik": "router",
+        "lg|samsung electronics|sony|vizio": "tv",
+        "raspberry pi": "raspberry",
+        "google": "google",
+        "espressif|particle": "microchip",
+        "intel|amd": "desktop",
+        "amazon": "speaker",  # e.g., Echo devices
+        "philips hue|lifx": "lightbulb",
+        "aruba|meraki": "ethernet",
+        "qnap|synology": "server",
+        "nintendo|sony interactive|microsoft": "gamepad",
+        "ring|blink|arlo": "camera",
+        "nest": "home",
+    }
+    
+    for pattern, icon_key in vendor_patterns.items():
+        if re.search(pattern, vendor):
+            return ICONS.get(icon_key, default)
+    
+    # MAC address-based icon guessing (OUI lookup)
+    mac_patterns = {
+        "00:1A:79|B0:BE:83|BC:92:6B": "apple",  # Apple devices
+        "00:1B:63|BC:4C:4C": "tablet",  # Sony tablets
+        "74:AC:B9|00:24:68": "ethernet",  # Ubiquiti/Unifi
+        "B8:27:EB": "raspberry",  # Raspberry Pi
+        "00:14:22|00:18:74": "desktop",  # Intel NICs
+        "00:1C:BF|00:21:86": "server",  # QNAP/Synology
+        "INTERNET": "globe",
+    }
+    
+    for pattern, icon_key in mac_patterns.items():
+        if re.search(pattern, mac.replace(':', '')):
+            return ICONS.get(icon_key, default)
+    
+    # Name-based icon guessing
+    name_patterns = {
+        "iphone|ipad|macbook|imac": "apple",
+        "pixel|galaxy|redmi": "phone",
+        "laptop|notebook": "laptop",
+        "printer|print": "printer",
+        "router|gateway|ap|access point": "router",
+        "tv|television|smarttv": "tv",
+        "desktop|pc|computer": "desktop",
+        "tablet|pad": "tablet",
+        "watch|wear": "watch",
+        "camera|cam|webcam": "camera",
+        "echo|alexa|dot": "speaker",
+        "hue|lifx|bulb": "lightbulb",
+        "server|nas": "server",
+        "playstation|xbox|switch": "gamepad",
+        "raspberry|pi": "raspberry",
+        "google|chromecast|nest": "google",
+        "doorbell|lock|security": "lock",
+    }
+    
+    for pattern, icon_key in name_patterns.items():
+        if re.search(pattern, name):
+            return ICONS.get(icon_key, default)
+    
+    # IP-based icon guessing
+    ip_patterns = {
+        r"^192\.168\.[0-1]\.1$": "router",  # Common gateway IPs
+        r"^10\.0\.0\.1$": "router",
+        r"^192\.168\.[0-1]\.[2-9]$": "desktop",  # Common LAN IPs for PCs
+        r"^192\.168\.[0-1]\.1\d{2}$": "phone",  # Higher IPs for mobile devices
+    }
+    
+    for pattern, icon_key in ip_patterns.items():
+        if re.match(pattern, ip):
+            return ICONS.get(icon_key, default)
+    
+    return default
 
 #-------------------------------------------------------------------------------
 # Guess device type
