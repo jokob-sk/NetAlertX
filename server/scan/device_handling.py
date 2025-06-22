@@ -708,43 +708,40 @@ def check_mac_or_internet(input_str: Optional[str]) -> bool:
 #===============================================================================
 
 #-------------------------------------------------------------------------------
-def query_MAC_vendor (pMAC):
+def query_MAC_vendor(pMAC: Optional[str] = None) -> str:
+    """
+    Look up the vendor for a given MAC address in the vendors database.
 
-    pMACstr = str(pMAC)
+    Args:
+        pMAC: The MAC address to query.
 
-    filePath = vendorsPath
-    
-    if os.path.isfile(vendorsPathNewest):
-        filePath = vendorsPathNewest
-    
-    # Check MAC parameter
-    mac = pMACstr.replace (':','').lower()
-    if len(pMACstr) != 17 or len(mac) != 12 :
-        return -2 # return -2 if ignored MAC
+    Returns:
+        str: Vendor name if found, -1 if not found, -2 if invalid MAC.
+    """
+    if not pMAC or len(pMAC.replace(':', '').strip()) != 12:
+        mylog('debug', f"[Vendor Check] Invalid MAC address: '{pMAC}'")
+        return "-2"
 
-    # Search vendor in HW Vendors DB
-    mac_start_string6 = mac[0:6]    
-    mac_start_string9 = mac[0:9]    
+    file_path = vendorsPathNewest if os.path.isfile(vendorsPathNewest) else vendorsPath
+    mac = pMAC.replace(':', '').lower()[:9]  # Check first 9 characters (OUI or extended OUI)
 
     try:
-        with open(filePath, 'r') as f:
+        with open(file_path, 'r', encoding='utf-8') as f:
             for line in f:
-                line_lower = line.lower()  # Convert line to lowercase for case-insensitive matching
-                if line_lower.startswith(mac_start_string6):                 
+                if line.lower().startswith(mac[:6]) or line.lower().startswith(mac):
                     parts = line.split('\t', 1)
                     if len(parts) > 1:
                         vendor = parts[1].strip()
-                        mylog('debug', [f"[Vendor Check] Found '{vendor}' for '{pMAC}' in {vendorsPath}"])
+                        mylog('debug', f"[Vendor Check] Found '{vendor}' for '{pMAC}' in {file_path}")
                         return vendor
-                    else:
-                        mylog('debug', [f'[Vendor Check] ⚠ ERROR: Match found, but line could not be processed: "{line_lower}"'])
-                        return -1
-
-
-        return -1  # MAC address not found in the database
+        mylog('debug', f"[Vendor Check] No vendor found for '{pMAC}'")
+        return "-1"
     except FileNotFoundError:
-        mylog('none', [f"[Vendor Check] ⚠ ERROR: Vendors file {vendorsPath} not found."])
-        return -1
+        mylog('error', f"[Vendor Check] Vendors file {file_path} not found.")
+        return "-1"
+    except Exception as e:
+        mylog('error', f"[Vendor Check] Error reading vendors file: {str(e)}")
+        return "-1"
 
 
 
