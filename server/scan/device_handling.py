@@ -755,9 +755,9 @@ def guess_icon(vendor, mac, ip, name,  default):
     mylog('debug', [f"[guess_icon] Guessing icon for (vendor|mac|ip|name): ('{vendor}'|'{mac}'|{ip}|{name})"])
     
     result = default
-    mac    = str(mac).upper() if mac else "00:00:00:00:00:00"
-    vendor = str(vendor).lower() if vendor else "unknown"
-    name   = str(name).lower() if name else "(unknown)"
+    mac    = mac.upper()
+    vendor = vendor.lower() if vendor else "unknown"
+    name   = name.lower() if name else "(unknown)"
 
     # Guess icon based on vendor
     if any(brand in vendor for brand in {"samsung", "motorola"}):
@@ -813,8 +813,8 @@ def guess_icon(vendor, mac, ip, name,  default):
 # Guess device type
 def guess_type(vendor, mac, ip, name,  default):
     result = default
-    mac    = str(mac).upper() if mac else "00:00:00:00:00:00"
-    vendor = str(vendor).lower() if vendor else "unknown"
+    mac    = mac.upper()
+    vendor = vendor.lower() if vendor else "unknown"
     name   = str(name).lower() if name else "(unknown)"
 
     # Guess icon based on vendor
