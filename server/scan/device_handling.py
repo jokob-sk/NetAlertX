@@ -748,6 +748,7 @@ def query_MAC_vendor(pMAC: Optional[str] = None) -> str:
 #-------------------------------------------------------------------------------
 # Guess device icon
 def guess_icon(vendor: Optional[str], mac: Optional[str], ip: Optional[str], name: Optional[str], default: str) -> str:
+
     """
     Guess the appropriate FontAwesome icon for a device based on its attributes.
 
@@ -761,13 +762,19 @@ def guess_icon(vendor: Optional[str], mac: Optional[str], ip: Optional[str], nam
     Returns:
         str: Base64-encoded FontAwesome icon HTML string.
     """
+
     mylog('debug', f"[guess_icon] Guessing icon for (vendor|mac|ip|name): ('{vendor}'|'{mac}'|'{ip}'|'{name}')")
-    
-    vendor = str(vendor).lower().strip() if vendor else "unknown"
-    mac = str(mac).upper().strip() if mac else "00:00:00:00:00:00"
-    ip = str(ip).strip() if ip else ""
-    name = str(name).lower().strip() if name else "(unknown)"
-    
+
+    # Handle None inputs by converting to empty strings
+    vendor = vendor or ""
+    mac = mac or ""
+    ip = ip or ""
+    name = name or ""
+
+    # Special case for "INTERNET"
+    if mac.upper() == "INTERNET":
+        return ICONS.get("globe", default)
+
     # Vendor-based icon guessing
     vendor_patterns = {
         "apple": "apple",
@@ -788,33 +795,34 @@ def guess_icon(vendor: Optional[str], mac: Optional[str], ip: Optional[str], nam
         "ring|blink|arlo": "camera",
         "nest": "home",
     }
-    
+
     for pattern, icon_key in vendor_patterns.items():
-        if re.search(pattern, vendor):
+        if re.search(pattern, vendor, re.IGNORECASE):
             return ICONS.get(icon_key, default)
-    
+
     # MAC address-based icon guessing (OUI lookup)
     mac_patterns = {
-        "00:1A:79|B0:BE:83|BC:92:6B": "apple",  # Apple devices
-        "00:1B:63|BC:4C:4C": "tablet",  # Sony tablets
-        "74:AC:B9|00:24:68": "ethernet",  # Ubiquiti/Unifi
-        "B8:27:EB": "raspberry",  # Raspberry Pi
-        "00:14:22|00:18:74": "desktop",  # Intel NICs
-        "00:1C:BF|00:21:86": "server",  # QNAP/Synology
-        "INTERNET": "globe",
+        "001A79|B0BE83|BC926B": "apple",  # Apple devices
+        "001B63|BC4C4C": "tablet",  # Sony tablets
+        "74ACB9|002468": "ethernet",  # Ubiquiti/Unifi
+        "B827EB": "raspberry",  # Raspberry Pi
+        "001422|001874": "desktop",  # Intel NICs
+        "001CBF|002186": "server",  # QNAP/Synology
     }
-    
+
+    mac_clean = mac.replace(':', '').replace('-', '').upper()
     for pattern, icon_key in mac_patterns.items():
-        if re.search(pattern, mac.replace(':', '')):
+        pattern_clean = pattern.replace(':', '').replace('-', '')
+        if re.search(pattern_clean, mac_clean):
             return ICONS.get(icon_key, default)
-    
+
     # Name-based icon guessing
     name_patterns = {
         "iphone|ipad|macbook|imac": "apple",
         "pixel|galaxy|redmi": "phone",
         "laptop|notebook": "laptop",
         "printer|print": "printer",
-        "router|gateway|ap|access point": "router",
+        "router|gateway|ap|access[ -]?point": "router",
         "tv|television|smarttv": "tv",
         "desktop|pc|computer": "desktop",
         "tablet|pad": "tablet",
@@ -828,11 +836,11 @@ def guess_icon(vendor: Optional[str], mac: Optional[str], ip: Optional[str], nam
         "google|chromecast|nest": "google",
         "doorbell|lock|security": "lock",
     }
-    
+
     for pattern, icon_key in name_patterns.items():
-        if re.search(pattern, name):
+        if re.search(pattern, name, re.IGNORECASE):
             return ICONS.get(icon_key, default)
-    
+
     # IP-based icon guessing
     ip_patterns = {
         r"^192\.168\.[0-1]\.1$": "router",  # Common gateway IPs
@@ -840,11 +848,11 @@ def guess_icon(vendor: Optional[str], mac: Optional[str], ip: Optional[str], nam
         r"^192\.168\.[0-1]\.[2-9]$": "desktop",  # Common LAN IPs for PCs
         r"^192\.168\.[0-1]\.1\d{2}$": "phone",  # Higher IPs for mobile devices
     }
-    
+
     for pattern, icon_key in ip_patterns.items():
         if re.match(pattern, ip):
             return ICONS.get(icon_key, default)
-    
+
     return default
 
 #-------------------------------------------------------------------------------
