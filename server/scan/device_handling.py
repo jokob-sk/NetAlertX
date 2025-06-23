@@ -21,6 +21,7 @@ import sys
 import subprocess
 import os
 import re
+import warnings
 from typing import Optional, List, Tuple, Dict
 from datetime import datetime
 
@@ -745,12 +746,213 @@ def query_MAC_vendor(pMAC: Optional[str] = None) -> str:
 
 
 
-#-------------------------------------------------------------------------------
-# Guess device icon
-def guess_icon(vendor: Optional[str], mac: Optional[str], ip: Optional[str], name: Optional[str], default: str) -> str:
 
+
+# Guess device attributes such as type of device and associated device icon
+
+def guess_device_attributes(
+    vendor: Optional[str],
+    mac: Optional[str],
+    ip: Optional[str],
+    name: Optional[str],
+    default_icon: str,
+    default_type: str
+    ) -> Tuple[str, str]:
     """
-    Guess the appropriate FontAwesome icon for a device based on its attributes.
+    Guess the appropriate FontAwesome icon and device type based on device attributes.
+
+    Args:
+        vendor: Device vendor name.
+        mac: Device MAC address.
+        ip: Device IP address.
+        name: Device name.
+        default_icon: Default icon to return if no match is found.
+        default_type: Default type to return if no match is found.
+
+    Returns:
+        Tuple[str, str]: A tuple containing the guessed icon (Base64-encoded HTML string)
+                         and the guessed device type (string).
+    """
+    mylog('debug', f"[guess_device_attributes] Guessing attributes for (vendor|mac|ip|name): ('{vendor}'|'{mac}'|'{ip}'|'{name}')")
+    # Normalize inputs
+    vendor = str(vendor).lower().strip() if vendor else "unknown"
+    mac = str(mac).upper().strip() if mac else "00:00:00:00:00:00"
+    ip = str(ip).strip() if ip else "169.254.0.0"  # APIPA address for unknown IPs per RFC 3927
+    name = str(name).lower().strip() if name else "(unknown)"
+
+    # --- Icon Guessing Logic ---
+    if mac == "INTERNET":
+        icon = ICONS.get("globe", default_icon)
+    else:
+        # Vendor-based icon guessing
+        icon_vendor_patterns = {
+            "apple": "apple",
+            "samsung|motorola|xiaomi|huawei": "phone",
+            "dell|lenovo|asus|acer": "laptop",
+            "hp|epson|canon|brother": "printer",
+            "cisco|ubiquiti|netgear|tp-link|d-link|mikrotik": "router",
+            "lg|samsung electronics|sony|vizio": "tv",
+            "raspberry pi": "raspberry",
+            "google": "google",
+            "espressif|particle": "microchip",
+            "intel|amd": "desktop",
+            "amazon": "speaker",
+            "philips hue|lifx": "lightbulb",
+            "aruba|meraki": "ethernet",
+            "qnap|synology": "server",
+            "nintendo|sony interactive|microsoft": "gamepad",
+            "ring|blink|arlo": "camera",
+            "nest": "home",
+        }
+        for pattern, icon_key in icon_vendor_patterns.items():
+            if re.search(pattern, vendor, re.IGNORECASE):
+                icon = ICONS.get(icon_key, default_icon)
+                break
+        else:
+            # MAC-based icon guessing
+            mac_clean = mac.replace(':', '').replace('-', '').upper()
+            icon_mac_patterns = {
+                "001A79|B0BE83|BC926B": "apple",
+                "001B63|BC4C4C": "tablet",
+                "74ACB9|002468": "ethernet",
+                "B827EB": "raspberry",
+                "001422|001874": "desktop",
+                "001CBF|002186": "server",
+            }
+            for pattern_str, icon_key in icon_mac_patterns.items():
+                patterns = [p.replace(':', '').replace('-', '').upper() for p in pattern_str.split('|')]
+                if any(mac_clean.startswith(p) for p in patterns):
+                    icon = ICONS.get(icon_key, default_icon)
+                    break
+            else:
+                # Name-based icon guessing
+                icon_name_patterns = {
+                    "iphone|ipad|macbook|imac": "apple",
+                    "pixel|galaxy|redmi": "phone",
+                    "laptop|notebook": "laptop",
+                    "printer|print": "printer",
+                    "router|gateway|ap|access[ -]?point": "router",
+                    "tv|television|smarttv": "tv",
+                    "desktop|pc|computer": "desktop",
+                    "tablet|pad": "tablet",
+                    "watch|wear": "watch",
+                    "camera|cam|webcam": "camera",
+                    "echo|alexa|dot": "speaker",
+                    "hue|lifx|bulb": "lightbulb",
+                    "server|nas": "server",
+                    "playstation|xbox|switch": "gamepad",
+                    "raspberry|pi": "raspberry",
+                    "google|chromecast|nest": "google",
+                    "doorbell|lock|security": "lock",
+                }
+                for pattern, icon_key in icon_name_patterns.items():
+                    if re.search(pattern, name, re.IGNORECASE):
+                        icon = ICONS.get(icon_key, default_icon)
+                        break
+                else:
+                    # IP-based icon guessing
+                    icon_ip_patterns = {
+                        r"^192\.168\.[0-1]\.1$": "router",
+                        r"^10\.0\.0\.1$": "router",
+                        r"^192\.168\.[0-1]\.[2-9]$": "desktop",
+                        r"^192\.168\.[0-1]\.1\d{2}$": "phone",
+                    }
+                    for pattern, icon_key in icon_ip_patterns.items():
+                        if re.match(pattern, ip):
+                            icon = ICONS.get(icon_key, default_icon)
+                            break
+                    else:
+                        icon = default_icon
+
+    # --- Type Guessing Logic ---
+    if mac == "INTERNET":
+        type_ = DEVICE_TYPES.get("Internet", default_type)
+    else:
+        # Vendor-based type guessing
+        type_vendor_patterns = {
+            "apple|samsung|motorola|xiaomi|huawei": "Phone",
+            "dell|lenovo|asus|acer|hp": "Laptop",
+            "epson|canon|brother": "Printer",
+            "cisco|ubiquiti|netgear|tp-link|d-link|mikrotik|aruba|meraki": "Router",
+            "lg|samsung electronics|sony|vizio": "TV",
+            "raspberry pi": "IoT",
+            "google|nest": "SmartHome",
+            "espressif|particle": "IoT",
+            "intel|amd": "Desktop",
+            "amazon": "SmartSpeaker",
+            "philips hue|lifx": "SmartLight",
+            "qnap|synology": "Server",
+            "nintendo|sony interactive|microsoft": "GamingConsole",
+            "ring|blink|arlo": "Camera",
+        }
+        for pattern, type_key in type_vendor_patterns.items():
+            if re.search(pattern, vendor, re.IGNORECASE):
+                type_ = DEVICE_TYPES.get(type_key, default_type)
+                break
+        else:
+            # MAC-based type guessing
+            mac_clean = mac.replace(':', '').replace('-', '').upper()
+            type_mac_patterns = {
+                "00:1A:79|B0:BE:83|BC:92:6B": "Phone",
+                "00:1B:63|BC:4C:4C": "Tablet",
+                "74:AC:B9|00:24:68": "AccessPoint",
+                "B8:27:EB": "IoT",
+                "00:14:22|00:18:74": "Desktop",
+                "00:1C:BF|00:21:86": "Server",
+            }
+            for pattern_str, type_key in type_mac_patterns.items():
+                patterns = [p.replace(':', '').replace('-', '').upper() for p in pattern_str.split('|')]
+                if any(mac_clean.startswith(p) for p in patterns):
+                    type_ = DEVICE_TYPES.get(type_key, default_type)
+                    break
+            else:
+                # Name-based type guessing
+                type_name_patterns = {
+                    "iphone|ipad": "Phone",
+                    "macbook|imac": "Laptop",
+                    "pixel|galaxy|redmi": "Phone",
+                    "laptop|notebook": "Laptop",
+                    "printer|print": "Printer",
+                    "router|gateway|ap|access[ -]?point": "Router",
+                    "tv|television|smarttv": "TV",
+                    "desktop|pc|computer": "Desktop",
+                    "tablet|pad": "Tablet",
+                    "watch|wear": "Smartwatch",
+                    "camera|cam|webcam": "Camera",
+                    "echo|alexa|dot": "SmartSpeaker",
+                    "hue|lifx|bulb": "SmartLight",
+                    "server|nas": "Server",
+                    "playstation|xbox|switch": "GamingConsole",
+                    "raspberry|pi": "IoT",
+                    "google|chromecast|nest": "SmartHome",
+                    "doorbell|lock|security": "SecurityDevice",
+                }
+                for pattern, type_key in type_name_patterns.items():
+                    if re.search(pattern, name, re.IGNORECASE):
+                        type_ = DEVICE_TYPES.get(type_key, default_type)
+                        break
+                else:
+                    # IP-based type guessing
+                    type_ip_patterns = {
+                        r"^192\.168\.[0-1]\.1$": "Router",
+                        r"^10\.0\.0\.1$": "Router",
+                        r"^192\.168\.[0-1]\.[2-9]$": "Desktop",
+                        r"^192\.168\.[0-1]\.1\d{2}$": "Phone",
+                    }
+                    for pattern, type_key in type_ip_patterns.items():
+                        if re.match(pattern, ip):
+                            type_ = DEVICE_TYPES.get(type_key, default_type)
+                            break
+                    else:
+                        type_ = default_type
+
+    return icon, type_
+
+# Deprecated functions with redirects (To be removed once all calls for these have been adjusted to use the updated function)
+def guess_icon(vendor: Optional[str], mac: Optional[str], ip: Optional[str], name: Optional[str], default: str) -> str:
+    """
+    [DEPRECATED] Guess the appropriate FontAwesome icon for a device based on its attributes.
+    Use guess_device_attributes instead.
 
     Args:
         vendor: Device vendor name.
@@ -762,104 +964,14 @@ def guess_icon(vendor: Optional[str], mac: Optional[str], ip: Optional[str], nam
     Returns:
         str: Base64-encoded FontAwesome icon HTML string.
     """
+    warnings.warn("guess_icon is deprecated; use guess_device_attributes instead", DeprecationWarning)
+    icon, _ = guess_device_attributes(vendor, mac, ip, name, default, "unknown_type")
+    return icon
 
-    mylog('debug', f"[guess_icon] Guessing icon for (vendor|mac|ip|name): ('{vendor}'|'{mac}'|'{ip}'|'{name}')")
-
-    # Handle None values with appropriate defaults
-    vendor = str(vendor).lower().strip() if vendor else "unknown"
-    mac = str(mac).upper().strip() if mac else "00:00:00:00:00:00"
-    ip = str(ip).strip() if ip else "169.254.0.0"  # Updated to follow RFC 3927 APIPA for clarity.
-    name = str(name).lower().strip() if name else "(unknown)"
-
-    # Special case for "INTERNET"
-    if mac.upper() == "INTERNET":
-        return ICONS.get("globe", default)
-
-    # Vendor-based icon guessing
-    vendor_patterns = {
-        "apple": "apple",
-        "samsung|motorola|xiaomi|huawei": "phone",
-        "dell|lenovo|asus|acer": "laptop",
-        "hp|epson|canon|brother": "printer",
-        "cisco|ubiquiti|netgear|tp-link|d-link|mikrotik": "router",
-        "lg|samsung electronics|sony|vizio": "tv",
-        "raspberry pi": "raspberry",
-        "google": "google",
-        "espressif|particle": "microchip",
-        "intel|amd": "desktop",
-        "amazon": "speaker",  # e.g., Echo devices
-        "philips hue|lifx": "lightbulb",
-        "aruba|meraki": "ethernet",
-        "qnap|synology": "server",
-        "nintendo|sony interactive|microsoft": "gamepad",
-        "ring|blink|arlo": "camera",
-        "nest": "home",
-    }
-
-    for pattern, icon_key in vendor_patterns.items():
-        if re.search(pattern, vendor, re.IGNORECASE):
-            return ICONS.get(icon_key, default)
-
-    # MAC address-based icon guessing (OUI lookup)
-    mac_patterns = {
-        "001A79|B0BE83|BC926B": "apple",  # Apple devices
-        "001B63|BC4C4C": "tablet",  # Sony tablets
-        "74ACB9|002468": "ethernet",  # Ubiquiti/Unifi
-        "B827EB": "raspberry",  # Raspberry Pi
-        "001422|001874": "desktop",  # Intel NICs
-        "001CBF|002186": "server",  # QNAP/Synology
-    }
-
-    mac_clean = mac.replace(':', '').replace('-', '').upper()
-    for pattern, icon_key in mac_patterns.items():
-        pattern_clean = pattern.replace(':', '').replace('-', '')
-        if re.search(pattern_clean, mac_clean):
-            return ICONS.get(icon_key, default)
-
-    # Name-based icon guessing
-    name_patterns = {
-        "iphone|ipad|macbook|imac": "apple",
-        "pixel|galaxy|redmi": "phone",
-        "laptop|notebook": "laptop",
-        "printer|print": "printer",
-        "router|gateway|ap|access[ -]?point": "router",
-        "tv|television|smarttv": "tv",
-        "desktop|pc|computer": "desktop",
-        "tablet|pad": "tablet",
-        "watch|wear": "watch",
-        "camera|cam|webcam": "camera",
-        "echo|alexa|dot": "speaker",
-        "hue|lifx|bulb": "lightbulb",
-        "server|nas": "server",
-        "playstation|xbox|switch": "gamepad",
-        "raspberry|pi": "raspberry",
-        "google|chromecast|nest": "google",
-        "doorbell|lock|security": "lock",
-    }
-
-    for pattern, icon_key in name_patterns.items():
-        if re.search(pattern, name, re.IGNORECASE):
-            return ICONS.get(icon_key, default)
-
-    # IP-based icon guessing
-    ip_patterns = {
-        r"^192\.168\.[0-1]\.1$": "router",  # Common gateway IPs
-        r"^10\.0\.0\.1$": "router",
-        r"^192\.168\.[0-1]\.[2-9]$": "desktop",  # Common LAN IPs for PCs
-        r"^192\.168\.[0-1]\.1\d{2}$": "phone",  # Higher IPs for mobile devices
-    }
-
-    for pattern, icon_key in ip_patterns.items():
-        if re.match(pattern, ip):
-            return ICONS.get(icon_key, default)
-
-    return default
-
-#-------------------------------------------------------------------------------
-# Guess device type
 def guess_type(vendor: Optional[str], mac: Optional[str], ip: Optional[str], name: Optional[str], default: str) -> str:
     """
-    Guess the device type based on its attributes.
+    [DEPRECATED] Guess the device type based on its attributes.
+    Use guess_device_attributes instead.
 
     Args:
         vendor: Device vendor name.
@@ -871,88 +983,6 @@ def guess_type(vendor: Optional[str], mac: Optional[str], ip: Optional[str], nam
     Returns:
         str: Device type from DEVICE_TYPES dictionary.
     """
-    # Handle None values with appropriate defaults
-    vendor = str(vendor).lower().strip() if vendor else "unknown"
-    mac = str(mac).upper().strip() if mac else "00:00:00:00:00:00"
-    ip = str(ip).strip() if ip else "169.254.0.0"  # Updated to follow RFC 3927 APIPA for clarity.
-    name = str(name).lower().strip() if name else "(unknown)"
-
-    # Special case for "INTERNET" MAC address
-    if mac == "INTERNET":
-        return DEVICE_TYPES.get("Internet", default)
-
-    # Vendor-based type guessing
-    vendor_patterns = {
-        "apple|samsung|motorola|xiaomi|huawei": "Phone",
-        "dell|lenovo|asus|acer|hp": "Laptop",
-        "epson|canon|brother": "Printer",
-        "cisco|ubiquiti|netgear|tp-link|d-link|mikrotik|aruba|meraki": "Router",
-        "lg|samsung electronics|sony|vizio": "TV",
-        "raspberry pi": "IoT",
-        "google|nest": "SmartHome",
-        "espressif|particle": "IoT",
-        "intel|amd": "Desktop",
-        "amazon": "SmartSpeaker",
-        "philips hue|lifx": "SmartLight",
-        "qnap|synology": "Server",
-        "nintendo|sony interactive|microsoft": "GamingConsole",
-        "ring|blink|arlo": "Camera",
-    }
-    for pattern, type_key in vendor_patterns.items():
-        if re.search(pattern, vendor, re.IGNORECASE):  # Case-insensitive matching
-            return DEVICE_TYPES.get(type_key, default)
-
-    # MAC address-based type guessing
-    mac_clean = mac.replace(':', '').replace('-', '').upper()  # Normalize MAC address
-    mac_patterns = {
-        "00:1A:79|B0:BE:83|BC:92:6B": "Phone",      # Apple devices
-        "00:1B:63|BC:4C:4C": "Tablet",              # Sony tablets
-        "74:AC:B9|00:24:68": "AccessPoint",         # Ubiquiti/Unifi
-        "B8:27:EB": "IoT",                          # Raspberry Pi
-        "00:14:22|00:18:74": "Desktop",             # Intel NICs
-        "00:1C:BF|00:21:86": "Server",              # QNAP/Synology
-        # "INTERNET" removed as it's handled above
-    }
-    for pattern_str, type_key in mac_patterns.items():
-        patterns = [p.replace(':', '').replace('-', '').upper() for p in pattern_str.split('|')]
-        if any(mac_clean.startswith(p) for p in patterns):  # Check if MAC starts with any pattern
-            return DEVICE_TYPES.get(type_key, default)
-
-    # Name-based type guessing
-    name_patterns = {
-        "iphone|ipad": "Phone",
-        "macbook|imac": "Laptop",
-        "pixel|galaxy|redmi": "Phone",
-        "laptop|notebook": "Laptop",
-        "printer|print": "Printer",
-        "router|gateway|ap|access[ -]?point": "Router",  # Updated to match variations
-        "tv|television|smarttv": "TV",
-        "desktop|pc|computer": "Desktop",
-        "tablet|pad": "Tablet",
-        "watch|wear": "Smartwatch",
-        "camera|cam|webcam": "Camera",
-        "echo|alexa|dot": "SmartSpeaker",
-        "hue|lifx|bulb": "SmartLight",
-        "server|nas": "Server",
-        "playstation|xbox|switch": "GamingConsole",
-        "raspberry|pi": "IoT",
-        "google|chromecast|nest": "SmartHome",
-        "doorbell|lock|security": "SecurityDevice",
-    }
-    for pattern, type_key in name_patterns.items():
-        if re.search(pattern, name, re.IGNORECASE):  # Case-insensitive matching
-            return DEVICE_TYPES.get(type_key, default)
-
-    # IP-based type guessing
-    ip_patterns = {
-        r"^192\.168\.[0-1]\.1$": "Router",
-        r"^10\.0\.0\.1$": "Router",
-        r"^192\.168\.[0-1]\.[2-9]$": "Desktop",
-        r"^192\.168\.[0-1]\.1\d{2}$": "Phone",
-    }
-    for pattern, type_key in ip_patterns.items():
-        if re.match(pattern, ip):
-            return DEVICE_TYPES.get(type_key, default)
-
-    # Return default if no match is found
-    return default
+    warnings.warn("guess_type is deprecated; use guess_device_attributes instead", DeprecationWarning)
+    _, type_ = guess_device_attributes(vendor, mac, ip, name, "unknown_icon", default)
+    return type_
