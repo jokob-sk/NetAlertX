@@ -810,7 +810,7 @@ def guess_type(
     warnings.warn("guess_type is deprecated; use guess_device_attributes instead", DeprecationWarning)
     _, type_ = guess_device_attributes(vendor, mac, ip, name, "unknown_icon", default)
     return type_
-    
-    # Handler for when this is run as a program instead of called as a module.
-    if __name__ == "__main__":
+
+# Handler for when this is run as a program instead of called as a module.
+if __name__ == "__main__":
     mylog('error', "This module is not intended to be run directly.")
