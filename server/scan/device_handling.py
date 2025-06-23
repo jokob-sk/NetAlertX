@@ -765,11 +765,11 @@ def guess_icon(vendor: Optional[str], mac: Optional[str], ip: Optional[str], nam
 
     mylog('debug', f"[guess_icon] Guessing icon for (vendor|mac|ip|name): ('{vendor}'|'{mac}'|'{ip}'|'{name}')")
 
-    # Handle None inputs by converting to empty strings
-    vendor = vendor or ""
-    mac = mac or ""
-    ip = ip or ""
-    name = name or ""
+    # Handle None values with appropriate defaults
+    vendor = str(vendor).lower().strip() if vendor else "unknown"
+    mac = str(mac).upper().strip() if mac else "00:00:00:00:00:00"
+    ip = str(ip).strip() if ip else "169.254.0.0"  # Updated to follow RFC 3927 APIPA for clarity.
+    name = str(name).lower().strip() if name else "(unknown)"
 
     # Special case for "INTERNET"
     if mac.upper() == "INTERNET":
@@ -871,11 +871,16 @@ def guess_type(vendor: Optional[str], mac: Optional[str], ip: Optional[str], nam
     Returns:
         str: Device type from DEVICE_TYPES dictionary.
     """
+    # Handle None values with appropriate defaults
     vendor = str(vendor).lower().strip() if vendor else "unknown"
     mac = str(mac).upper().strip() if mac else "00:00:00:00:00:00"
-    ip = str(ip).strip() if ip else ""
+    ip = str(ip).strip() if ip else "169.254.0.0"  # Updated to follow RFC 3927 APIPA for clarity.
     name = str(name).lower().strip() if name else "(unknown)"
-    
+
+    # Special case for "INTERNET" MAC address
+    if mac == "INTERNET":
+        return DEVICE_TYPES.get("Internet", default)
+
     # Vendor-based type guessing
     vendor_patterns = {
         "apple|samsung|motorola|xiaomi|huawei": "Phone",
@@ -893,26 +898,26 @@ def guess_type(vendor: Optional[str], mac: Optional[str], ip: Optional[str], nam
         "nintendo|sony interactive|microsoft": "GamingConsole",
         "ring|blink|arlo": "Camera",
     }
-    
     for pattern, type_key in vendor_patterns.items():
-        if re.search(pattern, vendor):
+        if re.search(pattern, vendor, re.IGNORECASE):  # Case-insensitive matching
             return DEVICE_TYPES.get(type_key, default)
-    
+
     # MAC address-based type guessing
+    mac_clean = mac.replace(':', '').replace('-', '').upper()  # Normalize MAC address
     mac_patterns = {
-        "00:1A:79|B0:BE:83|BC:92:6B": "Phone",  # Apple devices
-        "00:1B:63|BC:4C:4C": "Tablet",  # Sony tablets
-        "74:AC:B9|00:24:68": "AccessPoint",  # Ubiquiti/Unifi
-        "B8:27:EB": "IoT",  # Raspberry Pi
-        "00:14:22|00:18:74": "Desktop",  # Intel NICs
-        "00:1C:BF|00:21:86": "Server",  # QNAP/Synology
-        "INTERNET": "Internet",
+        "00:1A:79|B0:BE:83|BC:92:6B": "Phone",      # Apple devices
+        "00:1B:63|BC:4C:4C": "Tablet",              # Sony tablets
+        "74:AC:B9|00:24:68": "AccessPoint",         # Ubiquiti/Unifi
+        "B8:27:EB": "IoT",                          # Raspberry Pi
+        "00:14:22|00:18:74": "Desktop",             # Intel NICs
+        "00:1C:BF|00:21:86": "Server",              # QNAP/Synology
+        # "INTERNET" removed as it's handled above
     }
-    
-    for pattern, type_key in mac_patterns.items():
-        if re.search(pattern, mac.replace(':', '')):
+    for pattern_str, type_key in mac_patterns.items():
+        patterns = [p.replace(':', '').replace('-', '').upper() for p in pattern_str.split('|')]
+        if any(mac_clean.startswith(p) for p in patterns):  # Check if MAC starts with any pattern
             return DEVICE_TYPES.get(type_key, default)
-    
+
     # Name-based type guessing
     name_patterns = {
         "iphone|ipad": "Phone",
@@ -920,7 +925,7 @@ def guess_type(vendor: Optional[str], mac: Optional[str], ip: Optional[str], nam
         "pixel|galaxy|redmi": "Phone",
         "laptop|notebook": "Laptop",
         "printer|print": "Printer",
-        "router|gateway|ap|access point": "Router",
+        "router|gateway|ap|access[ -]?point": "Router",  # Updated to match variations
         "tv|television|smarttv": "TV",
         "desktop|pc|computer": "Desktop",
         "tablet|pad": "Tablet",
@@ -934,11 +939,10 @@ def guess_type(vendor: Optional[str], mac: Optional[str], ip: Optional[str], nam
         "google|chromecast|nest": "SmartHome",
         "doorbell|lock|security": "SecurityDevice",
     }
-    
     for pattern, type_key in name_patterns.items():
-        if re.search(pattern, name):
+        if re.search(pattern, name, re.IGNORECASE):  # Case-insensitive matching
             return DEVICE_TYPES.get(type_key, default)
-    
+
     # IP-based type guessing
     ip_patterns = {
         r"^192\.168\.[0-1]\.1$": "Router",
@@ -946,9 +950,9 @@ def guess_type(vendor: Optional[str], mac: Optional[str], ip: Optional[str], nam
         r"^192\.168\.[0-1]\.[2-9]$": "Desktop",
         r"^192\.168\.[0-1]\.1\d{2}$": "Phone",
     }
-    
     for pattern, type_key in ip_patterns.items():
         if re.match(pattern, ip):
             return DEVICE_TYPES.get(type_key, default)
-    
+
+    # Return default if no match is found
     return default
