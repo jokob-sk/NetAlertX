@@ -49,7 +49,7 @@ By default, NetAlertX does **not** require login. Before exposing the UI in any 
    ```ini
    SETPWD_enable_password=true
    SETPWD_password=your_secure_password
-```
+   ```
 
 2. Passwords are stored as SHA256 hashes
 
