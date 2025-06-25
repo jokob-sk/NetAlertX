@@ -133,6 +133,8 @@ A: In the `/config` volume, mapped in Docker. Backup this folder regularly.
 
 Check the [GitHub Issues](https://github.com/jokob-sk/NetAlertX/issues) for the latest bug reports and solutions.
 
+## More Screenshots
+Want to contribute some screenshots? Do so right here!
 
 ## 📃 Everything else
 <!--- --------------------------------------------------------------------- --->
@@ -185,9 +187,7 @@ Proudly using [Weblate](https://hosted.weblate.org/projects/pialert/). Help out 
 
 ### License
 >  GPL 3.0 | [Read more here](LICENSE.txt) | Source of the [animated GIF (Loading Animation)](https://commons.wikimedia.org/wiki/File:Loading_Animation.gif) | Source of the [selfhosted Fonts](https://github.com/adobe-fonts/source-sans)
-  
-### More Screenshots
-Want to contribute some screenshots? Do so right here!
+
 
 <!--- --------------------------------------------------------------------- --->
 [main]:                     ./docs/img/devices_split.png                  "Main screen"
