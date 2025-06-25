@@ -1,0 +1,56 @@
+name: Documentation Feedback 📝
+description: Suggest improvements, clarify inconsistencies, or report issues related to the documentation.
+labels: ['documentation 📚']
+body:
+- type: checkboxes
+  attributes:
+    label: Is there an existing issue for this?
+    description: Please search to see if an open or closed issue already exists for the documentation change you're suggesting.
+    options:
+      - label: I have searched the existing open and closed issues
+        required: true
+- type: textarea
+  attributes:
+    label: What document or section does this relate to?
+    description: |
+      Please include a link to the file and section, if applicable. Be specific about what part of the documentation you are referencing.
+    placeholder: e.g. https://github.com/jokob-sk/NetAlertX/blob/main/docs/FRONTEND_DEVELOPMENT.md
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Describe the issue
+    description: A clear and concise explanation of the issue or inconsistency you found in the documentation.
+    placeholder: e.g. The linked file is referred to as "Contributor Guidelines" but only covers frontend topics.
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Your suggestion or proposed solution
+    description: Suggest how the documentation could be improved, clarified, or reorganized.
+    placeholder: e.g. Combine frontend and backend development into a single CONTRIBUTING.md file with common sections to reduce fragmentation.
+  validations:
+    required: true
+- type: checkboxes
+  attributes:
+    label: What type of issue is this?
+    options:
+      - label: Missing information
+      - label: Inaccurate or outdated information
+      - label: Unclear or confusing content
+      - label: Structure or organization improvements
+      - label: Other (explain in issue)
+- type: textarea
+  attributes:
+    label: Anything else?
+    description: |
+      Additional context, references, screenshots, or related issues. You can also mention if you’re willing to help implement the suggestion.
+  validations:
+    required: false
+- type: checkboxes
+  attributes:
+    label: Can I help implement this? 👩‍💻👨‍💻 
+    description: The maintainer can provide guidance and review your changes.
+    options:
+      - label: "Yes, I’d like to help implement the improvement"
+      - label: "No, I’m just suggesting the idea"
