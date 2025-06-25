@@ -1,5 +1,8 @@
 # Webhook Secrets
 
+> [!NOTE]
+> You need to enable the `WEBHOOK` plugin first in order to follow this guide. See the [Plugins guide](./PLUGINS.md) for details.  
+
 ## How does the signing work?
 
 NetAlertX will use the configured secret to create a hash signature of the request body. This SHA256-HMAC signature will appear in the `X-Webhook-Signature` header of each request to the webhook target URL. You can use the value of this header to validate the request was sent by NetAlertX.
