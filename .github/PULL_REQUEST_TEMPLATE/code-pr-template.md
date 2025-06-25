@@ -40,7 +40,7 @@ Please check the relevant option(s):
 
 ## ✅ Checklist
 
-- [ ] I have read the [Contribution Guidelines](https://github.com/jokob-sk/NetAlertX/blob/main/docs/CONTRIBUTING.md)
+- [ ] I have read the [Contribution Guidelines](../../CONTRIBUTING)
 - [ ] I have tested my changes locally
 - [ ] I have updated relevant documentation (if applicable)
 - [ ] I have verified my changes do not break existing behavior

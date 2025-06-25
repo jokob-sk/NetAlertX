@@ -102,7 +102,7 @@ To further secure your installation:
 - Use firewalls to restrict access to the web UI
 - Regularly update to the latest version for security patches
 
-See [Security Best Practices](https://github.com/jokob-sk/NetAlertX/wiki/Security) for more details.
+See [Security Best Practices](https://github.com/jokob-sk/NetAlertX/security) for more details.
 
 
 ## ❓ FAQ
@@ -114,13 +114,13 @@ A: Ensure the container has proper network access (e.g., use `--network host` on
 A: Yes, but some scanners (e.g. ARP) work best on Ethernet. For Wi-Fi, try SNMP, DHCP, or Pi-hole import.
 
 **Q: Will this send any data to the internet?**  
-A: No. All scans and data remain local unless you set up cloud-based notifications.
+A: No. All scans and data remain local, unless you set up cloud-based notifications.
 
 **Q: Can I use this without Docker?**  
-A: Yes! You can install it bare-metal. See the [bare metal install guide](https://github.com/jokob-sk/NetAlertX/blob/main/docs/HW_INSTALL.md).
+A: Yes! You can install it bare-metal. See the [bare metal installation guide](https://github.com/jokob-sk/NetAlertX/blob/main/docs/HW_INSTALL.md).
 
 **Q: Where is the data stored?**  
-A: In the `/config` volume, mapped in Docker. Backup this folder regularly.
+A: In the `/config` volume, mapped in Docker. Back up this folder regularly.
 
 
 ## 🐞 Known Issues

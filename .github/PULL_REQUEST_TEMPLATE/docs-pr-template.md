@@ -24,6 +24,7 @@
 ## ✅ Checklist
 
 - [ ] I followed the formatting/style of existing documentation
+- [ ] I have read the [Contribution Guidelines](../../CONTRIBUTING)
 - [ ] I updated `mkdocs.yml` if necessary
 - [ ] I verified links and references still work
 - [ ] I checked that my changes improve clarity, structure, or accuracy
