@@ -11,7 +11,6 @@ Get visibility of what's going on on your WIFI/LAN network and enable presence d
 ## 📋 Table of Contents
 
 - [Features](#-features)
-- [Screenshots](#-more-screenshots)
 - [Documentation](#-documentation)
 - [Quick Start](#-quick-start)
 - [Alternative Apps](#-other-alternative-apps)
@@ -132,9 +131,6 @@ A: In the `/config` volume, mapped in Docker. Backup this folder regularly.
 - On some systems, elevated permissions (like `CAP_NET_RAW`) may be needed for low-level scanning.
 
 Check the [GitHub Issues](https://github.com/jokob-sk/NetAlertX/issues) for the latest bug reports and solutions.
-
-## More Screenshots
-Want to contribute some screenshots? Do so right here!
 
 ## 📃 Everything else
 <!--- --------------------------------------------------------------------- --->
