@@ -8,6 +8,39 @@
 
 Get visibility of what's going on on your WIFI/LAN network and enable presence detection of important devices. Schedule scans for devices, port changes and get alerts if unknown devices or changes are found. Write your own [Plugin](https://github.com/jokob-sk/NetAlertX/tree/main/docs/PLUGINS.md#readme) with auto-generated UI and in-build notification system. Build out and easily maintain your network source of truth (NSoT).
 
+## 📋 Table of Contents
+
+- [Features](#-features)
+- [Documentation](#-documentation)
+- [Quick Start](#-quick-start)
+- [Alternative Apps](#-other-alternative-apps)
+- [Security & Privacy](#-security--privacy)
+- [FAQ](#-faq)
+- [Known Issues](#-known-issues)
+- [Donations](#-donations)
+- [Contributors](#-contributors)
+- [Translations](#-translations)
+- [License](#license)
+
+
+## 🚀 Quick Start
+
+Start NetAlertX in seconds with Docker:
+
+```bash
+docker run -d \
+  --name=netalertx \
+  -p 20211:20211 \
+  -v /your/config/path:/config \
+  jokobsk/netalertx
+```
+
+Need help configuring it? Check the [usage guide](https://github.com/jokob-sk/NetAlertX/blob/main/docs/README.md) or [full documentation](https://jokob-sk.github.io/NetAlertX/).
+
+For Home Assistant users: [Click here to add NetAlertX](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Falexbelgium%2Fhassio-addons)
+
+For other install methods, check the [installation docs](#-documentation)
+
 
 | [📑 Docker guide](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md) | [🚀 Releases](https://github.com/jokob-sk/NetAlertX/releases) | [📚 Docs](https://jokob-sk.github.io/NetAlertX/) | [🔌 Plugins](https://github.com/jokob-sk/NetAlertX/blob/main/docs/PLUGINS.md) | [🤖 Ask AI](https://gurubase.io/g/netalertx)
 |----------------------| ----------------------|  ----------------------| ----------------------| ----------------------| 
@@ -30,7 +63,7 @@ Get visibility of what's going on on your WIFI/LAN network and enable presence d
 
 ### Scanners
 
-The app scans your network for **New devices**, **New connections** (re-connections), **Disconnections**, **"Always Connected" devices down**, Devices **IP changes** and **Internet IP address changes**. Discovery & scan methods include: **arp-scan**,  **Pi-hole - DB import**,  **Pi-hole - DHCP leases import**, **Generic DHCP leases import**, **UNIFI controller import**, **SNMP-enabled router import**. Check the [Plugins](https://github.com/jokob-sk/NetAlertX/tree/main/docs/PLUGINS.md#readme) docs for a full lits of avaliable plugins. 
+The app scans your network for **New devices**, **New connections** (re-connections), **Disconnections**, **"Always Connected" devices down**, Devices **IP changes** and **Internet IP address changes**. Discovery & scan methods include: **arp-scan**,  **Pi-hole - DB import**,  **Pi-hole - DHCP leases import**, **Generic DHCP leases import**, **UNIFI controller import**, **SNMP-enabled router import**. Check the [Plugins](https://github.com/jokob-sk/NetAlertX/tree/main/docs/PLUGINS.md#readme) docs for a full list of avaliable plugins. 
 
 ### Notification gateways
 
@@ -59,6 +92,45 @@ Supported browsers: Chrome, Firefox
 - [[Development] API docs](https://github.com/jokob-sk/NetAlertX/blob/main/docs/API.md)
 - [[Development] Custom Plugins](https://github.com/jokob-sk/NetAlertX/blob/main/docs/PLUGINS_DEV.md)
 
+
+## 🔐 Security & Privacy
+
+NetAlertX scans your local network and can store metadata about connected devices. By default, all data is stored **locally**. No information is sent to external services unless you explicitly configure notifications or integrations.
+
+To further secure your installation:
+- Run it behind a reverse proxy with authentication
+- Use firewalls to restrict access to the web UI
+- Regularly update to the latest version for security patches
+
+See [Security Best Practices](https://github.com/jokob-sk/NetAlertX/wiki/Security) for more details.
+
+
+## ❓ FAQ
+
+**Q: Why don’t I see any devices?**  
+A: Ensure the container has proper network access (e.g., use `--network host` on Linux). Also check that your scan method is properly configured in the UI.
+
+**Q: Does this work on Wi-Fi-only devices like Raspberry Pi?**  
+A: Yes, but some scanners (e.g. ARP) work best on Ethernet. For Wi-Fi, try SNMP, DHCP, or Pi-hole import.
+
+**Q: Will this send any data to the internet?**  
+A: No. All scans and data remain local unless you set up cloud-based notifications.
+
+**Q: Can I use this without Docker?**  
+A: Yes! You can install it bare-metal. See the [bare metal install guide](https://github.com/jokob-sk/NetAlertX/blob/main/docs/HW_INSTALL.md).
+
+**Q: Where is the data stored?**  
+A: In the `/config` volume, mapped in Docker. Backup this folder regularly.
+
+
+## 🐞 Known Issues
+
+- Some scanners (e.g. ARP) may not detect devices on different subnets.
+- Wi-Fi-only networks may require alternate scanners for accurate detection.
+- Notification throttling may be needed for large networks to prevent spam.
+- On some systems, elevated permissions (like `CAP_NET_RAW`) may be needed for low-level scanning.
+
+Check the [GitHub Issues](https://github.com/jokob-sk/NetAlertX/issues) for the latest bug reports and solutions.
 
 ## 📃 Everything else
 <!--- --------------------------------------------------------------------- --->
@@ -111,7 +183,6 @@ Proudly using [Weblate](https://hosted.weblate.org/projects/pialert/). Help out 
 
 ### License
 >  GPL 3.0 | [Read more here](LICENSE.txt) | Source of the [animated GIF (Loading Animation)](https://commons.wikimedia.org/wiki/File:Loading_Animation.gif) | Source of the [selfhosted Fonts](https://github.com/adobe-fonts/source-sans)
-  
 
 
 <!--- --------------------------------------------------------------------- --->
@@ -131,4 +202,3 @@ Proudly using [Weblate](https://hosted.weblate.org/projects/pialert/). Help out 
 [main_dark]:                /docs/img/1_devices_dark.jpg                  "Main screen dark"
 [maintain_dark]:            /docs/img/5_maintain.jpg                      "Maintain screen dark"
 [follow_star]:              /docs/img/Follow_Releases_and_Star.gif        "Follow and Star"
-
