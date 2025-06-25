@@ -11,7 +11,7 @@ Get visibility of what's going on on your WIFI/LAN network and enable presence d
 ## 📋 Table of Contents
 
 - [Features](#-features)
-- [Screenshots](#-click-for-more-screenshots)
+- [Screenshots](#-more-screenshots)
 - [Documentation](#-documentation)
 - [Quick Start](#-quick-start)
 - [Alternative Apps](#-other-alternative-apps)
@@ -186,7 +186,8 @@ Proudly using [Weblate](https://hosted.weblate.org/projects/pialert/). Help out 
 ### License
 >  GPL 3.0 | [Read more here](LICENSE.txt) | Source of the [animated GIF (Loading Animation)](https://commons.wikimedia.org/wiki/File:Loading_Animation.gif) | Source of the [selfhosted Fonts](https://github.com/adobe-fonts/source-sans)
   
-
+### More Screenshots
+Want to contribute some screenshots? Do so right here!
 
 <!--- --------------------------------------------------------------------- --->
 [main]:                     ./docs/img/devices_split.png                  "Main screen"
