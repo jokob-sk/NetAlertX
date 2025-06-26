@@ -46,8 +46,8 @@ nav:
         - Docker Swarm: DOCKER_SWARM.md
       - Help:
         - Common issues: COMMON_ISSUES.md
-        - Random MAC: RANDOM_MAC.md       
-      
+        - Random MAC: RANDOM_MAC.md
+        - Incorrect Offline Detection: FIX_OFFLINE_DETECTION.md
   - Device guides:
       - Editing Devices:
         - Management: DEVICE_MANAGEMENT.md
