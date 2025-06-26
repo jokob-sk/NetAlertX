@@ -28,11 +28,14 @@ Get visibility of what's going on on your WIFI/LAN network and enable presence d
 Start NetAlertX in seconds with Docker:
 
 ```bash
-docker run -d \
-  --name=netalertx \
-  -p 20211:20211 \
-  -v /your/config/path:/config \
-  jokobsk/netalertx
+docker run -d --rm --network=host \
+  -v local_path/config:/app/config \
+  -v local_path/db:/app/db \
+  --mount type=tmpfs,target=/app/api \
+  -e PUID=200 -e PGID=300 \
+  -e TZ=Europe/Berlin \
+  -e PORT=20211 \
+  ghcr.io/jokob-sk/netalertx:latest
 ```
 
 Need help configuring it? Check the [usage guide](https://github.com/jokob-sk/NetAlertX/blob/main/docs/README.md) or [full documentation](https://jokob-sk.github.io/NetAlertX/).
@@ -92,6 +95,7 @@ Supported browsers: Chrome, Firefox
 - [[Development] API docs](https://github.com/jokob-sk/NetAlertX/blob/main/docs/API.md)
 - [[Development] Custom Plugins](https://github.com/jokob-sk/NetAlertX/blob/main/docs/PLUGINS_DEV.md)
 
+...or explore all the [documentation here](https://jokob-sk.github.io/NetAlertX/).
 
 ## 🔐 Security & Privacy
 
@@ -120,17 +124,17 @@ A: No. All scans and data remain local, unless you set up cloud-based notificati
 A: Yes! You can install it bare-metal. See the [bare metal installation guide](https://github.com/jokob-sk/NetAlertX/blob/main/docs/HW_INSTALL.md).
 
 **Q: Where is the data stored?**  
-A: In the `/config` volume, mapped in Docker. Back up this folder regularly.
+A: In the `/config` and `/db` folders, mapped in Docker. Back up these folders regularly.
 
 
 ## 🐞 Known Issues
 
-- Some scanners (e.g. ARP) may not detect devices on different subnets.
+- Some scanners (e.g. ARP) may not detect devices on different subnets. See the [Remote networks guide](https://github.com/jokob-sk/NetAlertX/blob/main/docs/REMOTE_NETWORKS.md) for workarounds.
 - Wi-Fi-only networks may require alternate scanners for accurate detection.
 - Notification throttling may be needed for large networks to prevent spam.
 - On some systems, elevated permissions (like `CAP_NET_RAW`) may be needed for low-level scanning.
 
-Check the [GitHub Issues](https://github.com/jokob-sk/NetAlertX/issues) for the latest bug reports and solutions.
+Check the [GitHub Issues](https://github.com/jokob-sk/NetAlertX/issues) for the latest bug reports and solutions and consult [the official documentation](https://jokob-sk.github.io/NetAlertX/).
 
 ## 📃 Everything else
 <!--- --------------------------------------------------------------------- --->
