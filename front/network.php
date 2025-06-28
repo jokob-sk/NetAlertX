@@ -279,7 +279,8 @@
                         a.devParentMAC as parent_mac,
                         a.devIcon as node_icon
                   FROM Devices a 
-                  WHERE a.devType in (".$networkDeviceTypes.") and devIsArchived = 0				
+                  WHERE a.devType in (".$networkDeviceTypes.") 
+                        AND devIsArchived = 0				
             ) t1
             LEFT JOIN
             (
@@ -363,6 +364,7 @@
                 WHERE devParentMAC IS NULL 
                   OR devParentMAC IN ("", " ", "undefined", "null")
                   AND devMac NOT LIKE "%internet%"
+                  AND devIsArchived = 0
                 ORDER BY name ASC;'; 
 
     global $db;
