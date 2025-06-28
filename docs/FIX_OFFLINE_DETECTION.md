@@ -49,7 +49,7 @@ A combined approach greatly improves detection robustness:
 
 * `ARPSCAN` (default)
 * `ICMP` (ping)
-* `NMAPDEV` (nmamp)
+* `NMAPDEV` (nmap)
 
 This hybrid strategy increases reliability, especially for down detection and alerting. See [other plugins](./PLUGINS.md) that might be compatible with your setup. See benefits and drawbacks of individual scan methods in their respective docs. 
 

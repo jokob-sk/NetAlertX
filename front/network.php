@@ -163,7 +163,7 @@
                             devType as type, 
                             devLastIP as last_ip,
                             (select devType from Devices a where devMac = "'.$node_mac.'") as node_type
-                        FROM Devices WHERE devParentMAC = "'.$node_mac.'" order by port, name asc';
+                        FROM Devices WHERE devParentMAC = "'.$node_mac.'" and devIsArchived = 0	order by port, name asc';
         
         global $db;
         $func_result = $db->query($func_sql);  
@@ -279,7 +279,7 @@
                         a.devParentMAC as parent_mac,
                         a.devIcon as node_icon
                   FROM Devices a 
-                  WHERE a.devType in (".$networkDeviceTypes.")					
+                  WHERE a.devType in (".$networkDeviceTypes.") and devIsArchived = 0				
             ) t1
             LEFT JOIN
             (
