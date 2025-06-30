@@ -10,6 +10,7 @@ from const import fullDbPath, sql_devices_stats, sql_devices_all, sql_generateGu
 from logger import mylog
 from helper import json_obj, initOrSetParam, row_to_json, timeNowTZ
 from workflows.app_events import AppEvent_obj
+from db.db_upgrade import ensure_column, ensure_views, ensure_CurrentScan, ensure_plugins_tables, ensure_Parameters, ensure_Settings
 
 class DB():
     """
@@ -76,287 +77,35 @@ class DB():
         return arr
 
     #-------------------------------------------------------------------------------
-    def upgradeDB(self):
+    def initDB(self):
         """
         Check the current tables in the DB and upgrade them if neccessary
         """
 
-        # -------------------------------------------------------------------------
-        # Alter Devices table       
-        # -------------------------------------------------------------------------
-        
-        # VIEWS
-        
-        self.sql.execute(""" DROP VIEW IF EXISTS Events_Devices;""")
-        self.sql.execute(""" CREATE VIEW Events_Devices AS 
-                            SELECT * 
-                            FROM Events 
-                            LEFT JOIN Devices ON eve_MAC = devMac;
-                          """)
-        
-        
-        self.sql.execute(""" DROP VIEW IF EXISTS LatestEventsPerMAC;""")
-        self.sql.execute("""CREATE VIEW LatestEventsPerMAC AS
-                                WITH RankedEvents AS (
-                                    SELECT 
-                                        e.*,
-                                        ROW_NUMBER() OVER (PARTITION BY e.eve_MAC ORDER BY e.eve_DateTime DESC) AS row_num
-                                    FROM Events AS e
-                                )
-                                SELECT 
-                                    e.*, 
-                                    d.*, 
-                                    c.*
-                                FROM RankedEvents AS e
-                                LEFT JOIN Devices AS d ON e.eve_MAC = d.devMac
-                                INNER JOIN CurrentScan AS c ON e.eve_MAC = c.cur_MAC
-                                WHERE e.row_num = 1;""")
-        
-        self.sql.execute(""" DROP VIEW IF EXISTS Sessions_Devices;""")
-        self.sql.execute("""CREATE VIEW Sessions_Devices AS SELECT * FROM Sessions LEFT JOIN "Devices" ON ses_MAC = devMac;""")
-
-
-        # add fields if missing
+        # Add Devices fields if missing
             
-        # devFQDN missing?
-        devFQDN_missing = self.sql.execute ("""
-            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='devFQDN'
-          """).fetchone()[0] == 0
+        # devFQDN 
+        if ensure_column(self.sql, "Devices", "devFQDN", "TEXT") is False:
+            return # addition failed
         
-        if devFQDN_missing:
-
-          mylog('verbose', ["[upgradeDB] Adding devFQDN to the Devices table"])
-          self.sql.execute("""
-            ALTER TABLE "Devices" ADD "devFQDN" TEXT
-          """)
-
-        
-        # -------------------------------------------------------------------------
         # Settings table setup
-        # -------------------------------------------------------------------------
+        ensure_Settings(self.sql)
 
+        # Parameters tables setup
+        ensure_Parameters(self.sql)
         
-        # Re-creating Settings table
-        mylog('verbose', ["[upgradeDB] Re-creating Settings table"])
-
-        self.sql.execute(""" DROP TABLE IF EXISTS Settings;""")
-        self.sql.execute("""
-            CREATE TABLE "Settings" (
-            "setKey"	        TEXT,
-            "setName"	        TEXT,
-            "setDescription"	TEXT,
-            "setType"         TEXT,
-            "setOptions"      TEXT,
-            "setGroup"	          TEXT,
-            "setValue"	      TEXT,
-            "setEvents"	        TEXT,
-            "setOverriddenByEnv" INTEGER
-            );
-            """)
-
-
-        # Create Pholus_Scan table if missing
-        mylog('verbose', ["[upgradeDB] Removing Pholus_Scan table"])
-        self.sql.execute("""DROP TABLE IF EXISTS Pholus_Scan""")
-
-
-        # -------------------------------------------------------------------------
-        # Parameters table setup
-        # -------------------------------------------------------------------------
-
-        # Re-creating Parameters table
-        mylog('verbose', ["[upgradeDB] Re-creating Parameters table"])
-        self.sql.execute("DROP TABLE Parameters;")
-
-        self.sql.execute("""
-          CREATE TABLE "Parameters" (
-            "par_ID" TEXT PRIMARY KEY,
-            "par_Value"	TEXT
-          );
-          """)        
-       
-
-        # -------------------------------------------------------------------------
         # Plugins tables setup
-        # -------------------------------------------------------------------------
-
-        # Plugin state
-        sql_Plugins_Objects = """ CREATE TABLE IF NOT EXISTS Plugins_Objects(
-                                    "Index"	          INTEGER,
-                                    Plugin TEXT NOT NULL,                                    
-                                    Object_PrimaryID TEXT NOT NULL,
-                                    Object_SecondaryID TEXT NOT NULL,
-                                    DateTimeCreated TEXT NOT NULL,
-                                    DateTimeChanged TEXT NOT NULL,
-                                    Watched_Value1 TEXT NOT NULL,
-                                    Watched_Value2 TEXT NOT NULL,
-                                    Watched_Value3 TEXT NOT NULL,
-                                    Watched_Value4 TEXT NOT NULL,
-                                    Status TEXT NOT NULL,
-                                    Extra TEXT NOT NULL,
-                                    UserData TEXT NOT NULL,
-                                    ForeignKey TEXT NOT NULL,
-                                    SyncHubNodeName TEXT,
-                                    "HelpVal1" TEXT,
-                                    "HelpVal2" TEXT,
-                                    "HelpVal3" TEXT,
-                                    "HelpVal4" TEXT,
-                                    ObjectGUID TEXT,
-                                    PRIMARY KEY("Index" AUTOINCREMENT)
-                        ); """
-        self.sql.execute(sql_Plugins_Objects)
-
-        # Plugin execution results
-        sql_Plugins_Events = """ CREATE TABLE IF NOT EXISTS Plugins_Events(
-                                    "Index"	          INTEGER,
-                                    Plugin TEXT NOT NULL,
-                                    Object_PrimaryID TEXT NOT NULL,
-                                    Object_SecondaryID TEXT NOT NULL,
-                                    DateTimeCreated TEXT NOT NULL,
-                                    DateTimeChanged TEXT NOT NULL,
-                                    Watched_Value1 TEXT NOT NULL,
-                                    Watched_Value2 TEXT NOT NULL,
-                                    Watched_Value3 TEXT NOT NULL,
-                                    Watched_Value4 TEXT NOT NULL,
-                                    Status TEXT NOT NULL,
-                                    Extra TEXT NOT NULL,
-                                    UserData TEXT NOT NULL,
-                                    ForeignKey TEXT NOT NULL,
-                                    SyncHubNodeName TEXT,
-                                    "HelpVal1" TEXT,
-                                    "HelpVal2" TEXT,
-                                    "HelpVal3" TEXT,
-                                    "HelpVal4" TEXT,
-                                    PRIMARY KEY("Index" AUTOINCREMENT)
-                        ); """
-        self.sql.execute(sql_Plugins_Events)
-
-        # Plugin execution history
-        sql_Plugins_History = """ CREATE TABLE IF NOT EXISTS Plugins_History(
-                                    "Index"	          INTEGER,
-                                    Plugin TEXT NOT NULL,
-                                    Object_PrimaryID TEXT NOT NULL,
-                                    Object_SecondaryID TEXT NOT NULL,
-                                    DateTimeCreated TEXT NOT NULL,
-                                    DateTimeChanged TEXT NOT NULL,
-                                    Watched_Value1 TEXT NOT NULL,
-                                    Watched_Value2 TEXT NOT NULL,
-                                    Watched_Value3 TEXT NOT NULL,
-                                    Watched_Value4 TEXT NOT NULL,
-                                    Status TEXT NOT NULL,
-                                    Extra TEXT NOT NULL,
-                                    UserData TEXT NOT NULL,
-                                    ForeignKey TEXT NOT NULL,
-                                    SyncHubNodeName TEXT,
-                                    "HelpVal1" TEXT,
-                                    "HelpVal2" TEXT,
-                                    "HelpVal3" TEXT,
-                                    "HelpVal4" TEXT,
-                                    PRIMARY KEY("Index" AUTOINCREMENT)
-                        ); """
-        self.sql.execute(sql_Plugins_History)
-        
-
-        # -------------------------------------------------------------------------
-        # Plugins_Language_Strings table setup
-        # -------------------------------------------------------------------------
-
-        # Dynamically generated language strings
-        self.sql.execute("DROP TABLE IF EXISTS Plugins_Language_Strings;")
-        self.sql.execute(""" CREATE TABLE IF NOT EXISTS Plugins_Language_Strings(
-                                "Index"	          INTEGER,
-                                Language_Code TEXT NOT NULL,
-                                String_Key TEXT NOT NULL,
-                                String_Value TEXT NOT NULL,
-                                Extra TEXT NOT NULL,
-                                PRIMARY KEY("Index" AUTOINCREMENT)
-                        ); """)
-
-        self.commitDB()        
-
- 
-
-        # -------------------------------------------------------------------------
+        ensure_plugins_tables(self.sql)
+       
         # CurrentScan table setup
-        # -------------------------------------------------------------------------
-
-        # indicates, if CurrentScan table is available
-        # 🐛 CurrentScan DEBUG: comment out below when debugging to keep the CurrentScan table after restarts/scan finishes
-        self.sql.execute("DROP TABLE IF EXISTS CurrentScan;")
-        self.sql.execute(""" CREATE TABLE IF NOT EXISTS CurrentScan (                                
-                                cur_MAC STRING(50) NOT NULL COLLATE NOCASE,
-                                cur_IP STRING(50) NOT NULL COLLATE NOCASE,
-                                cur_Vendor STRING(250),
-                                cur_ScanMethod STRING(10),
-                                cur_Name STRING(250),
-                                cur_LastQuery STRING(250),
-                                cur_DateTime STRING(250),
-                                cur_SyncHubNodeName STRING(50),
-                                cur_NetworkSite STRING(250),
-                                cur_SSID STRING(250),
-                                cur_NetworkNodeMAC STRING(250),
-                                cur_PORT STRING(250),
-                                cur_Type STRING(250),
-                                UNIQUE(cur_MAC)
-                            );
-                        """)
-
-        self.commitDB()        
-
-        # -------------------------------------------------------------------------
-        # Create the LatestEventsPerMAC view
-        # -------------------------------------------------------------------------
-
-        # Dynamically generated language strings
-        self.sql.execute(""" CREATE VIEW IF NOT EXISTS LatestEventsPerMAC AS
-                                WITH RankedEvents AS (
-                                    SELECT 
-                                        e.*,
-                                        ROW_NUMBER() OVER (PARTITION BY e.eve_MAC ORDER BY e.eve_DateTime DESC) AS row_num
-                                    FROM Events AS e
-                                )
-                                SELECT 
-                                    e.*, 
-                                    d.*, 
-                                    c.*
-                                FROM RankedEvents AS e
-                                LEFT JOIN Devices AS d ON e.eve_MAC = d.devMac
-                                INNER JOIN CurrentScan AS c ON e.eve_MAC = c.cur_MAC
-                                WHERE e.row_num = 1;
-                            """)
-
-        # handling the Convert_Events_to_Sessions / Sessions screens         
-        self.sql.execute("""DROP VIEW IF EXISTS Convert_Events_to_Sessions;""")
-        self.sql.execute("""CREATE VIEW Convert_Events_to_Sessions AS  SELECT EVE1.eve_MAC,
-                                      EVE1.eve_IP,
-                                      EVE1.eve_EventType AS eve_EventTypeConnection,
-                                      EVE1.eve_DateTime AS eve_DateTimeConnection,
-                                      CASE WHEN EVE2.eve_EventType IN ('Disconnected', 'Device Down') OR
-                                                EVE2.eve_EventType IS NULL THEN EVE2.eve_EventType ELSE '<missing event>' END AS eve_EventTypeDisconnection,
-                                      CASE WHEN EVE2.eve_EventType IN ('Disconnected', 'Device Down') THEN EVE2.eve_DateTime ELSE NULL END AS eve_DateTimeDisconnection,
-                                      CASE WHEN EVE2.eve_EventType IS NULL THEN 1 ELSE 0 END AS eve_StillConnected,
-                                      EVE1.eve_AdditionalInfo
-                                  FROM Events AS EVE1
-                                      LEFT JOIN
-                                      Events AS EVE2 ON EVE1.eve_PairEventRowID = EVE2.RowID
-                                WHERE EVE1.eve_EventType IN ('New Device', 'Connected','Down Reconnected')
-                            UNION
-                                SELECT eve_MAC,
-                                      eve_IP,
-                                      '<missing event>' AS eve_EventTypeConnection,
-                                      NULL AS eve_DateTimeConnection,
-                                      eve_EventType AS eve_EventTypeDisconnection,
-                                      eve_DateTime AS eve_DateTimeDisconnection,
-                                      0 AS eve_StillConnected,
-                                      eve_AdditionalInfo
-                                  FROM Events AS EVE1
-                                WHERE (eve_EventType = 'Device Down' OR
-                                        eve_EventType = 'Disconnected') AND
-                                      EVE1.eve_PairEventRowID IS NULL;
-                          """)
-
-        self.commitDB()     
+        ensure_CurrentScan(self.sql)
         
+        # Views        
+        ensure_views(self.sql)
+
+        # commit changes
+        self.commitDB()   
+
         # Init the AppEvent database table
         AppEvent_obj(self)
 

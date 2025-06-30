@@ -22,4 +22,4 @@ For a comparison, this is how the UI looks like if you are on the latest stable 
 
 ## Implementation details
 
-During build a [/app/front/buildtimestamp.txt](https://github.com/jokob-sk/NetAlertX/blob/092797e75ccfa8359444ad149e727358ac4da05f/Dockerfile#L44) file is created. The app then periodically checks if a new release is available with a newer timestamp in GitHub's rest-based JSON endpoint (check the `def isNewVersion():` method for details).   
+During build a [/app/front/buildtimestamp.txt](https://github.com/jokob-sk/NetAlertX/blob/092797e75ccfa8359444ad149e727358ac4da05f/Dockerfile#L44) file is created. The app then periodically checks if a new release is available with a newer timestamp in GitHub's rest-based JSON endpoint (check the `def isNewVersion:` method for details).   

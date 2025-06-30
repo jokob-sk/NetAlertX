@@ -78,8 +78,8 @@ def main ():
     db.open()
     sql = db.sql  # To-Do replace with the db class
 
-    # Upgrade DB if needed
-    db.upgradeDB()
+    # Init DB 
+    db.initDB()
 
     # Initialize the WorkflowManager
     workflow_manager = WorkflowManager(db)
