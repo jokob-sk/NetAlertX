@@ -38,6 +38,14 @@ Run the script with the required parameters:
 
 ### Example Commands
 
+#### Install Requirements
+
+You will need to install dependencies in the container:
+
+```bash
+pip install paramiko
+```
+
 #### Using Password Authentication
 ```sh
 ./script.py --host 192.168.1.1 --username admin --password mypassword --output /tmp/dnsmasq.leases
