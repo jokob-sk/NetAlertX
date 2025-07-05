@@ -15,23 +15,20 @@ debugging and monitoring.
 Dependencies:
 - Python standard libraries: sys, subprocess, os, re
 - External modules: conf, helper, logger, const, models.device_instance, scan.name_resolution
-- Temporary libraries: warnings(removable when all deprecations are able to be fully removed)
 """
 
 import sys
 import subprocess
 import os
 import re
-import warnings
 from typing import Optional, List, Tuple, Dict
-from datetime import datetime
 
 # Register NetAlertX directories
 INSTALL_PATH = "/app"
 sys.path.extend([f"{INSTALL_PATH}/server"])
 
 import conf
-from helper import timeNowTZ, get_setting, get_setting_value, list_to_where, check_IP_format, sanitize_SQL_input
+from helper import timeNowTZ, get_setting_value, list_to_where, check_IP_format, sanitize_SQL_input
 from logger import mylog
 from const import vendorsPath, vendorsPathNewest, sql_generateGuid
 from models.device_instance import DeviceInstance
@@ -39,7 +36,7 @@ from scan.name_resolution import NameResolver
 
 # Base64 encoded HTML strings for FontAwesome icons, now with an extended icons dictionary for broader device coverage
 ICONS = {
-    "globe": "PGkgY2xhc3M9ImZhcyBmYS1nbG9iZSI+PC9pPg==",  # Internet or global network
+    "globe": "PGkgY2xhc3M9ImZhcyBmYS1nbG9iZSI+PC9pPg==",  # Internet or global network (<i class="fas fa-globe"></i>)
     "phone": "PGkgY2xhc3M9ImZhcyBmYS1tb2JpbGUtYWx0Ij48L2k+",  # Smartphone
     "laptop": "PGkgY2xhc3M9ImZhIGZhLWxhcHRvcCI+PC9pPg==",  # Laptop
     "printer": "PGkgY2xhc3M9ImZhIGZhLXByaW50ZXIiPjwvaT4=",  # Printer
@@ -274,8 +271,7 @@ def create_new_devices(db) -> None:
         current_scan_data = db.sql.fetchall()
         
         for row in current_scan_data:
-            cur_MAC, cur_Name, cur_Vendor, cur_ScanMethod, cur_IP, cur_SyncHubNodeName, \
-            cur_NetworkNodeMAC, cur_PORT, cur_NetworkSite, cur_SSID, cur_Type = row
+            (cur_MAC, cur_Name, cur_Vendor, cur_ScanMethod, cur_IP, cur_SyncHubNodeName, cur_NetworkNodeMAC, cur_PORT, cur_NetworkSite, cur_SSID, cur_Type) = row
             
             # Sanitize and handle None values
             cur_Name = cur_Name.strip() if cur_Name else '(unknown)'
@@ -759,58 +755,3 @@ def guess_device_attributes(
                         type_ = default_type
 
     return icon, type_
-
-# Deprecated functions with redirects (To be removed once all calls for these have been adjusted to use the updated function)
-def guess_icon(
-    vendor: Optional[str],
-    mac: Optional[str],
-    ip: Optional[str],
-    name: Optional[str],
-    default: str
-    ) -> str:
-    """
-    [DEPRECATED] Guess the appropriate FontAwesome icon for a device based on its attributes.
-    Use guess_device_attributes instead.
-
-    Args:
-        vendor: Device vendor name.
-        mac: Device MAC address.
-        ip: Device IP address.
-        name: Device name.
-        default: Default icon to return if no match is found.
-
-    Returns:
-        str: Base64-encoded FontAwesome icon HTML string.
-    """
-    warnings.warn("guess_icon is deprecated; use guess_device_attributes instead", DeprecationWarning)
-    icon, _ = guess_device_attributes(vendor, mac, ip, name, default, "unknown_type")
-    return icon
-
-def guess_type(
-    vendor: Optional[str],
-    mac: Optional[str],
-    ip: Optional[str],
-    name: Optional[str],
-    default: str
-    ) -> str:
-    """
-    [DEPRECATED] Guess the device type based on its attributes.
-    Use guess_device_attributes instead.
-
-    Args:
-        vendor: Device vendor name.
-        mac: Device MAC address.
-        ip: Device IP address.
-        name: Device name.
-        default: Default type to return if no match is found.
-
-    Returns:
-        str: Device type from DEVICE_TYPES dictionary.
-    """
-    warnings.warn("guess_type is deprecated; use guess_device_attributes instead", DeprecationWarning)
-    _, type_ = guess_device_attributes(vendor, mac, ip, name, "unknown_icon", default)
-    return type_
-
-# Handler for when this is run as a program instead of called as a module.
-if __name__ == "__main__":
-    mylog('error', "This module is not intended to be run directly.")
