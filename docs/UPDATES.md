@@ -8,6 +8,7 @@ This guide outlines approaches for updating Docker containers, usually when upgr
 - Manual: Direct commands to stop, remove, and rebuild containers.
 - Dockcheck: Semi-automated with more control, suited for bulk updates.
 - Watchtower: Fully automated, runs continuously to check and update containers.
+- Portainer: Setup depending, mostly manual with UI.
 
 You can choose any approach that fits your workflow.
 
@@ -106,6 +107,39 @@ docker run -d \
   containrrr/watchtower netalertx
 
 ```
+
+## 4. Portainer controlled image
+
+This assumes you're using Portainer to manage Docker (or Docker Swarm) and want to pull the latest version of an image and redeploy the container.
+
+> [!NOTE]
+> * Portainer does **not auto-update** containers. For automation, use **Watchtower** or similar tools.
+> * Make sure you have the [persistent volumes mounted or backups ready](BACKUPS.md) before recreating.
+
+### 4.1 Steps to Update an Image in Portainer (Standalone Docker)
+
+1. **Login to Portainer.**
+2. Go to **"Containers"** in the left sidebar.
+3. Find the container you want to update, click its name.
+4. Click **"Recreate"** (top right).
+5. ✅ **Tick**:
+   * **Pull latest image** (this ensures Portainer fetches the newest version from Docker Hub or your registry).
+6. Click **"Recreate"** again.
+7. Wait for the container to be stopped, removed, and recreated with the updated image.
+
+---
+
+### 4.2 For Docker Swarm Services
+
+If you're using Docker Swarm (under **"Stacks"** or **"Services"**):
+
+1. Go to **"Stacks"**.
+2. Select the stack managing the container.
+3. Click **"Editor"** (or "Update the Stack").
+4. Add a version tag or use `:latest` if your image tag is `latest` (not recommended for production).
+5. Click **"Update the Stack"**.
+   > ⚠ Portainer will not pull the new image unless the tag changes OR the stack is forced to recreate.
+6. If image tag hasn't changed, go to **"Services"**, find the service, and click **"Force Update"**.
 
 ## Summary
 
