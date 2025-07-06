@@ -43,11 +43,12 @@ nav:
         - Reverse Proxy: REVERSE_PROXY.md
         - Webhooks (n8n): WEBHOOK_N8N.md
         - Workflows: WORKFLOWS.md
+        - Workflow Examples: WORKFLOW_EXAMPLES.md
         - Docker Swarm: DOCKER_SWARM.md
       - Help:
         - Common issues: COMMON_ISSUES.md
-        - Random MAC: RANDOM_MAC.md       
-      
+        - Random MAC: RANDOM_MAC.md
+        - Incorrect Offline Detection: FIX_OFFLINE_DETECTION.md
   - Device guides:
       - Editing Devices:
         - Management: DEVICE_MANAGEMENT.md

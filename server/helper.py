@@ -495,6 +495,8 @@ def sanitize_SQL_input(val):
 # Function to normalize the string and remove diacritics
 def normalize_string(text):
     # Normalize the text to 'NFD' to separate base characters and diacritics
+    if not isinstance(text, str):
+        text = str(text)
     normalized_text = unicodedata.normalize('NFD', text)
     # Filter out diacritics and unwanted characters
     return ''.join(c for c in normalized_text if unicodedata.category(c) != 'Mn')

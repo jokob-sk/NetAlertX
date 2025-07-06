@@ -1,29 +1,102 @@
-# Securing your NetAlertX instance
+## 🧭 Responsibility Disclaimer
 
-NetAlertX is an execution framework. In order to run scanners and plugins, the application has to have access to privileged system resources. It is not recommended to expose NetAlertX to the internet without taking basic security precautions. It is highly recommended to use a VPN to access the application and to set up a password for the web interface before exposing the UI online.
+NetAlertX provides powerful tools for network scanning, presence detection, and automation. However, **it is up to you—the deployer—to ensure that your instance is properly secured**.
 
-## VPN
+This includes (but is not limited to):
+- Controlling who has access to the UI and API
+- Following network and container security best practices
+- Running NetAlertX only on networks where you have legal authorization
+- Keeping your deployment up to date with the latest patches
 
-VPNs allow you to securely access your NetAlertX instance from remote locations without exposing it to the internet. A VPN encrypts your connection and prevents unauthorized access.
+> NetAlertX is not responsible for misuse, misconfiguration, or unsecure deployments. Always test and secure your setup before exposing it to the outside world.
 
-### Tailscale as an Alternative
+# 🔐 Securing Your NetAlertX Instance
 
-If setting up a traditional VPN is not ideal, you can use [Tailscale](https://tailscale.com/) as an easy alternative. Tailscale creates a secure, encrypted connection between your devices without complex configuration. Since NetAlertX is designed to be run on private networks, Tailscale can provide a simple way to securely connect to your instance from anywhere.
+NetAlertX is a powerful network scanning and automation framework. With that power comes responsibility. **It is your responsibility to secure your deployment**, especially if you're running it outside a trusted local environment.
 
-## Setting a Password
+---
 
-By default, NetAlertX does not enforce authentication, but it is highly recommended to set a password before exposing the web interface.
+## ⚠️ TL;DR – Key Security Recommendations
 
-Configure `SETPWD_enable_password` to `true` and enter your password in `SETPWD_password`. When enabled, a login dialog is displayed. If facing issues, you can always disable the login by setting `SETPWD_enable_password=false` in your `app.conf` file.
+- ✅ **NEVER expose NetAlertX directly to the internet without protection**
+- ✅ Use a **VPN or Tailscale** to access remotely
+- ✅ Enable **password protection** for the web UI
+- ✅ Harden your container environment (e.g., no unnecessary privileges)
+- ✅ Use **firewalls and IP whitelisting**
+- ✅ Keep the software **updated**
+- ✅ Limit the scope of **plugins and API keys**
 
-- The default password is `123456`.  
-- Passwords are stored as SHA256 hashes for security.  
+---
 
-## Additional Security Measures
+## 🔗 Access Control with VPN (or Tailscale)
 
-- **Firewall Rules**: Ensure that only trusted IPs can access the NetAlertX instance.  
-- **Limit Plugin Permissions**: Only enable the plugins necessary for your setup.  
-- **Keep Software Updated**: Regularly update NetAlertX to receive the latest security patches.  
-- **Use Read-Only API Keys**: If exposing APIs, limit privileges with read-only keys where applicable.  
+NetAlertX is designed to be run on **private LANs**, not the open internet.
 
-By following these security recommendations, you can help protect your NetAlertX instance from unauthorized access and potential misuse.
+**Recommended**: Use a VPN to access NetAlertX from remote locations.
+
+### ✅ Tailscale (Easy VPN Alternative)
+
+Tailscale sets up a private mesh network between your devices. It's fast to configure and ideal for NetAlertX.  
+👉 [Get started with Tailscale](https://tailscale.com/)
+
+---
+
+## 🔑 Web UI Password Protection
+
+By default, NetAlertX does **not** require login. Before exposing the UI in any way:
+
+1. Enable password protection:
+   ```ini
+   SETPWD_enable_password=true
+   SETPWD_password=your_secure_password
+   ```
+
+2. Passwords are stored as SHA256 hashes
+
+3. Default password (if not changed): 123456 — change it ASAP!
+
+
+> To disable authenticated login, set `SETPWD_enable_password=false` in `app.conf`
+
+
+---
+
+## 🔥 Additional Security Measures
+
+- **Firewall / Network Rules**  
+  Restrict UI/API access to trusted IPs only.
+
+- **Limit Docker Capabilities**  
+  Avoid `--privileged`. Use `--cap-add=NET_RAW` and others **only if required** by your scan method.
+
+- **Keep NetAlertX Updated**  
+  Regular updates contain bug fixes and security patches.
+
+- **Plugin Permissions**  
+  Disable unused plugins. Only install from trusted sources.
+
+- **Use Read-Only API Keys**  
+  When integrating NetAlertX with other tools, scope keys tightly.
+
+---
+
+## 🧱 Docker Hardening Tips
+
+- Use `read-only` mount options where possible (`:ro`)
+- Avoid running as `root` unless absolutely necessary
+- Consider using `docker scan` or other container image vulnerability scanners
+- Run with `--network host` **only on trusted networks** and only if needed for ARP-based scans
+
+---
+
+## 📣 Responsible Disclosure
+
+If you discover a vulnerability or security concern, please report it **privately** to:
+
+📧 [jokob@duck.com](mailto:jokob@duck.com?subject=NetAlertX%20Security%20Disclosure)
+
+We take security seriously and will work to patch confirmed issues promptly. Your help in responsible disclosure is appreciated!
+
+---
+
+By following these recommendations, you can ensure your NetAlertX deployment is both powerful **and** secure.

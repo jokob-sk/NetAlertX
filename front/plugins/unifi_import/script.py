@@ -12,7 +12,7 @@ import sys
 import requests
 from requests import Request, Session, packages
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
-from nax_pyunifi.controller import Controller
+from pyunifi.controller import Controller
 
 
 # Register NetAlertX directories

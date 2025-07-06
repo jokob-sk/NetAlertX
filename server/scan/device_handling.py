@@ -92,22 +92,21 @@ def exclude_ignored_devices(db) -> None:
     Args:
         db: Database connection object with SQL interface.
     """
-    try:
-        mac_conditions = list_to_where('OR', 'cur_MAC', 'LIKE', get_setting_value('NEWDEV_ignored_MACs'))
-        ip_conditions = list_to_where('OR', 'cur_IP', 'LIKE', get_setting_value('NEWDEV_ignored_IPs'))
-        
-        conditions = [cond for cond in [mac_conditions, ip_conditions] if cond]
-        if not conditions:
-            mylog('debug', '[New Devices] No ignored MACs or IPs to exclude.')
-            return
-        
-        query = "DELETE FROM CurrentScan WHERE " + " OR ".join(f"({cond})" for cond in conditions)
-        mylog('debug', f'[New Devices] Excluding Ignored Devices Query: {query}')
-        
-        db.sql.execute(query)
-        db.commitDB()
-    except Exception as e:
-        mylog('error', f'[New Devices] Error excluding ignored devices: {str(e)}')
+
+    mac_conditions = list_to_where('OR', 'cur_MAC', 'LIKE', get_setting_value('NEWDEV_ignored_MACs'))
+    ip_conditions = list_to_where('OR', 'cur_IP', 'LIKE', get_setting_value('NEWDEV_ignored_IPs'))
+    
+    conditions = [cond for cond in [mac_conditions, ip_conditions] if cond]
+    if not conditions:
+        mylog('debug', '[New Devices] No ignored MACs or IPs to exclude.')
+        return
+    
+    query = "DELETE FROM CurrentScan WHERE " + " OR ".join(f"({cond})" for cond in conditions)
+    mylog('debug', f'[New Devices] Excluding Ignored Devices Query: {query}')
+    
+    db.sql.execute(query)
+    db.commitDB()
+    
 
 # Save scanned devices to the CurrentScan table, including local device info.
 def save_scanned_devices(db) -> None:
@@ -117,35 +116,34 @@ def save_scanned_devices(db) -> None:
     Args:
         db: Database connection object with SQL interface.
     """
+    
+    # Get local MAC and IP using safer subprocess calls
+    local_mac_cmd = ["bash", "-c", "ip link show $(ip -o route get 1 | awk '{print $5}') | grep ether | awk '{print $2}'"]
+    local_ip_cmd = ["bash", "-c", "ip -o route get 1 | awk '{print $7}'"]
+    
     try:
-        # Get local MAC and IP using safer subprocess calls
-        local_mac_cmd = ["bash", "-c", "ip link show $(ip -o route get 1 | awk '{print $5}') | grep ether | awk '{print $2}'"]
-        local_ip_cmd = ["bash", "-c", "ip -o route get 1 | awk '{print $7}'"]
-        
-        try:
-            local_mac = subprocess.check_output(local_mac_cmd, text=True, stderr=subprocess.STDOUT).strip()
-            local_ip = subprocess.check_output(local_ip_cmd, text=True, stderr=subprocess.STDOUT).strip()
-        except subprocess.CalledProcessError as e:
-            mylog('error', f'[Save Devices] Error getting local MAC/IP: {str(e)}')
-            local_mac = ""
-            local_ip = "0.0.0.0"
-        
-        mylog('debug', f'[Save Devices] Saving IP: {local_ip}, MAC: {local_mac}')
-        
-        if not check_IP_format(local_ip):
-            local_ip = '0.0.0.0'
-        
-        if check_mac_or_internet(local_mac):
-            query = """
-                INSERT OR IGNORE INTO CurrentScan (cur_MAC, cur_IP, cur_Vendor, cur_ScanMethod)
-                VALUES (?, ?, NULL, 'local_MAC')
-            """
-            db.sql.execute(query, (local_mac, local_ip))
-            db.commitDB()
-        else:
-            mylog('warning', f'[Save Devices] Invalid MAC address: {local_mac}')
-    except Exception as e:
-        mylog('error', f'[Save Devices] Error saving scanned devices: {str(e)}')
+        local_mac = subprocess.check_output(local_mac_cmd, text=True, stderr=subprocess.STDOUT).strip()
+        local_ip = subprocess.check_output(local_ip_cmd, text=True, stderr=subprocess.STDOUT).strip()
+    except subprocess.CalledProcessError as e:
+        mylog('error', f'[Save Devices] Error getting local MAC/IP: {str(e)}')
+        local_mac = ""
+        local_ip = "0.0.0.0"
+    
+    mylog('debug', f'[Save Devices] Saving IP: {local_ip}, MAC: {local_mac}')
+    
+    if not check_IP_format(local_ip):
+        local_ip = '0.0.0.0'
+    
+    if check_mac_or_internet(local_mac):
+        query = """
+            INSERT OR IGNORE INTO CurrentScan (cur_MAC, cur_IP, cur_Vendor, cur_ScanMethod)
+            VALUES (?, ?, NULL, 'local_MAC')
+        """
+        db.sql.execute(query, (local_mac, local_ip))
+        db.commitDB()
+    else:
+        mylog('warning', f'[Save Devices] Invalid MAC address: {local_mac}')
+
 
 # Generate and log statistics about the current network scan.
 def print_scan_stats(db) -> None:
@@ -155,55 +153,54 @@ def print_scan_stats(db) -> None:
     Args:
         db: Database connection object with SQL interface.
     """
-    try:
-        query = """
-            SELECT
-                (SELECT COUNT(*) FROM CurrentScan) AS devices_detected,
-                (SELECT COUNT(*) FROM CurrentScan WHERE NOT EXISTS (SELECT 1 FROM Devices WHERE devMac = cur_MAC)) AS new_devices,
-                (SELECT COUNT(*) FROM Devices WHERE devAlertDown != 0 AND NOT EXISTS (SELECT 1 FROM CurrentScan WHERE devMac = cur_MAC)) AS down_alerts,
-                (SELECT COUNT(*) FROM Devices WHERE devAlertDown != 0 AND devPresentLastScan = 1 AND NOT EXISTS (SELECT 1 FROM CurrentScan WHERE devMac = cur_MAC)) AS new_down_alerts,
-                (SELECT COUNT(*) FROM Devices WHERE devPresentLastScan = 0) AS new_connections,
-                (SELECT COUNT(*) FROM Devices WHERE devPresentLastScan = 1 AND NOT EXISTS (SELECT 1 FROM CurrentScan WHERE devMac = cur_MAC)) AS disconnections,
-                (SELECT COUNT(*) FROM Devices, CurrentScan WHERE devMac = cur_MAC AND devLastIP <> cur_IP) AS ip_changes,
-                cur_ScanMethod,
-                COUNT(*) AS scan_method_count
-            FROM CurrentScan
-            GROUP BY cur_ScanMethod
-        """
-        
+
+    query = """
+        SELECT
+            (SELECT COUNT(*) FROM CurrentScan) AS devices_detected,
+            (SELECT COUNT(*) FROM CurrentScan WHERE NOT EXISTS (SELECT 1 FROM Devices WHERE devMac = cur_MAC)) AS new_devices,
+            (SELECT COUNT(*) FROM Devices WHERE devAlertDown != 0 AND NOT EXISTS (SELECT 1 FROM CurrentScan WHERE devMac = cur_MAC)) AS down_alerts,
+            (SELECT COUNT(*) FROM Devices WHERE devAlertDown != 0 AND devPresentLastScan = 1 AND NOT EXISTS (SELECT 1 FROM CurrentScan WHERE devMac = cur_MAC)) AS new_down_alerts,
+            (SELECT COUNT(*) FROM Devices WHERE devPresentLastScan = 0) AS new_connections,
+            (SELECT COUNT(*) FROM Devices WHERE devPresentLastScan = 1 AND NOT EXISTS (SELECT 1 FROM CurrentScan WHERE devMac = cur_MAC)) AS disconnections,
+            (SELECT COUNT(*) FROM Devices, CurrentScan WHERE devMac = cur_MAC AND devLastIP <> cur_IP) AS ip_changes,
+            cur_ScanMethod,
+            COUNT(*) AS scan_method_count
+        FROM CurrentScan
+        GROUP BY cur_ScanMethod
+    """
+    
+    db.sql.execute(query)
+    stats = db.sql.fetchall()
+    
+    if not stats:
+        mylog('verbose', '[Scan Stats] No scan statistics available.')
+        return
+    
+    mylog('verbose', f'[Scan Stats] Devices Detected.......: {stats[0]["devices_detected"]}')
+    mylog('verbose', f'[Scan Stats] New Devices............: {stats[0]["new_devices"]}')
+    mylog('verbose', f'[Scan Stats] Down Alerts............: {stats[0]["down_alerts"]}')
+    mylog('verbose', f'[Scan Stats] New Down Alerts........: {stats[0]["new_down_alerts"]}')
+    mylog('verbose', f'[Scan Stats] New Connections........: {stats[0]["new_connections"]}')
+    mylog('verbose', f'[Scan Stats] Disconnections.........: {stats[0]["disconnections"]}')
+    mylog('verbose', f'[Scan Stats] IP Changes.............: {stats[0]["ip_changes"]}')
+    
+    # Detailed table dumps for debugging
+    for table, query in [
+        ("Devices", "SELECT * FROM Devices"),
+        ("CurrentScan", "SELECT * FROM CurrentScan"),
+        ("Events (Pending Alerts)", "SELECT * FROM Events WHERE eve_PendingAlertEmail = 1"),
+        ("Events (Count)", "SELECT COUNT(*) AS event_count FROM Events")
+    ]:
+        mylog('trace', f'   ================ {table} content ================')
         db.sql.execute(query)
-        stats = db.sql.fetchall()
-        
-        if not stats:
-            mylog('verbose', '[Scan Stats] No scan statistics available.')
-            return
-        
-        mylog('verbose', f'[Scan Stats] Devices Detected.......: {stats[0]["devices_detected"]}')
-        mylog('verbose', f'[Scan Stats] New Devices............: {stats[0]["new_devices"]}')
-        mylog('verbose', f'[Scan Stats] Down Alerts............: {stats[0]["down_alerts"]}')
-        mylog('verbose', f'[Scan Stats] New Down Alerts........: {stats[0]["new_down_alerts"]}')
-        mylog('verbose', f'[Scan Stats] New Connections........: {stats[0]["new_connections"]}')
-        mylog('verbose', f'[Scan Stats] Disconnections.........: {stats[0]["disconnections"]}')
-        mylog('verbose', f'[Scan Stats] IP Changes.............: {stats[0]["ip_changes"]}')
-        
-        # Detailed table dumps for debugging
-        for table, query in [
-            ("Devices", "SELECT * FROM Devices"),
-            ("CurrentScan", "SELECT * FROM CurrentScan"),
-            ("Events (Pending Alerts)", "SELECT * FROM Events WHERE eve_PendingAlertEmail = 1"),
-            ("Events (Count)", "SELECT COUNT(*) AS event_count FROM Events")
-        ]:
-            mylog('trace', f'   ================ {table} content ================')
-            db.sql.execute(query)
-            for row in db.sql.fetchall():
-                mylog('trace', f'    {dict(row)}')
-        
-        mylog('verbose', '[Scan Stats] Scan Method Statistics:')
-        for row in stats:
-            if row["cur_ScanMethod"]:
-                mylog('verbose', f'    {row["cur_ScanMethod"]}: {row["scan_method_count"]}')
-    except Exception as e:
-        mylog('error', f'[Scan Stats] Error generating scan statistics: {str(e)}')
+        for row in db.sql.fetchall():
+            mylog('trace', f'    {dict(row)}')
+    
+    mylog('verbose', '[Scan Stats] Scan Method Statistics:')
+    for row in stats:
+        if row["cur_ScanMethod"]:
+            mylog('verbose', f'    {row["cur_ScanMethod"]}: {row["scan_method_count"]}')
+    
 
 
 # Create new device records in the Devices table from CurrentScan data.
@@ -214,102 +211,100 @@ def create_new_devices(db) -> None:
     Args:
         db: Database connection object with SQL interface.
     """
-    try:
-        start_time = timeNowTZ()
-        mylog('debug', '[New Devices] Creating new devices')
+    
+    start_time = timeNowTZ()
+    mylog('debug', '[New Devices] Creating new devices')
+    
+    # Insert events for new devices using parameterized query
+    event_query = """
+        INSERT INTO Events (eve_MAC, eve_IP, eve_DateTime, eve_EventType, eve_AdditionalInfo, eve_PendingAlertEmail)
+        SELECT cur_MAC, cur_IP, ?, 'New Device', cur_Vendor, 1
+        FROM CurrentScan
+        WHERE NOT EXISTS (SELECT 1 FROM Devices WHERE devMac = cur_MAC)
+    """
+    db.sql.execute(event_query, (start_time,))
+    mylog('debug', '[New Devices] Logged new device events')
+    
+    # Insert new sessions using parameterized query
+    session_query = """
+        INSERT INTO Sessions (ses_MAC, ses_IP, ses_EventTypeConnection, ses_DateTimeConnection,
+                                ses_EventTypeDisconnection, ses_DateTimeDisconnection, ses_StillConnected, ses_AdditionalInfo)
+        SELECT cur_MAC, cur_IP, 'Connected', ?, NULL, NULL, 1, cur_Vendor
+        FROM CurrentScan
+        WHERE NOT EXISTS (SELECT 1 FROM Sessions WHERE ses_MAC = cur_MAC)
+    """
+    db.sql.execute(session_query, (start_time,))
+    mylog('debug', '[New Devices] Inserted new sessions')
+    
+    # Prepare default device attributes
+    new_dev_columns = [
+        "devAlertEvents", "devAlertDown", "devPresentLastScan", "devIsArchived", "devIsNew",
+        "devSkipRepeated", "devScan", "devOwner", "devFavorite", "devGroup",
+        "devComments", "devLogEvents", "devLocation", "devCustomProps"
+    ]
+    new_dev_values = [
+        get_setting_value('NEWDEV_devAlertEvents'),
+        get_setting_value('NEWDEV_devAlertDown'),
+        get_setting_value('NEWDEV_devPresentLastScan'),
+        get_setting_value('NEWDEV_devIsArchived'),
+        get_setting_value('NEWDEV_devIsNew'),
+        get_setting_value('NEWDEV_devSkipRepeated'),
+        get_setting_value('NEWDEV_devScan'),
+        sanitize_SQL_input(get_setting_value('NEWDEV_devOwner')),
+        get_setting_value('NEWDEV_devFavorite'),
+        sanitize_SQL_input(get_setting_value('NEWDEV_devGroup')),
+        sanitize_SQL_input(get_setting_value('NEWDEV_devComments')),
+        get_setting_value('NEWDEV_devLogEvents'),
+        sanitize_SQL_input(get_setting_value('NEWDEV_devLocation')),
+        sanitize_SQL_input(get_setting_value('NEWDEV_devCustomProps')),
+    ]
+    
+    # Fetch CurrentScan data
+    query = """
+        SELECT cur_MAC, cur_Name, cur_Vendor, cur_ScanMethod, cur_IP, cur_SyncHubNodeName,
+                cur_NetworkNodeMAC, cur_PORT, cur_NetworkSite, cur_SSID, cur_Type
+        FROM CurrentScan
+    """
+    db.sql.execute(query)
+    current_scan_data = db.sql.fetchall()
+    
+    for row in current_scan_data:
+        (cur_MAC, cur_Name, cur_Vendor, cur_ScanMethod, cur_IP, cur_SyncHubNodeName, cur_NetworkNodeMAC, cur_PORT, cur_NetworkSite, cur_SSID, cur_Type) = row
         
-        # Insert events for new devices using parameterized query
-        event_query = """
-            INSERT INTO Events (eve_MAC, eve_IP, eve_DateTime, eve_EventType, eve_AdditionalInfo, eve_PendingAlertEmail)
-            SELECT cur_MAC, cur_IP, ?, 'New Device', cur_Vendor, 1
-            FROM CurrentScan
-            WHERE NOT EXISTS (SELECT 1 FROM Devices WHERE devMac = cur_MAC)
+        # Sanitize and handle None values
+        cur_Name = cur_Name.strip() if cur_Name else '(unknown)'
+        cur_Type = cur_Type.strip() if cur_Type else get_setting_value("NEWDEV_devType")
+        cur_NetworkNodeMAC = cur_NetworkNodeMAC.strip() if cur_NetworkNodeMAC else ''
+        cur_NetworkNodeMAC = cur_NetworkNodeMAC if cur_NetworkNodeMAC and cur_MAC != "Internet" else \
+                                (get_setting_value("NEWDEV_devParentMAC") if cur_MAC != "Internet" else "null")
+        cur_SyncHubNodeName = cur_SyncHubNodeName if cur_SyncHubNodeName and cur_SyncHubNodeName != "null" else \
+                                get_setting_value("SYNC_node_name")
+        
+        # Parameterized insert query
+        insert_query = f"""
+            INSERT OR IGNORE INTO Devices (
+                devMac, devName, devVendor, devLastIP, devFirstConnection, devLastConnection,
+                devSyncHubNode, devGUID, devParentMAC, devParentPort, devSite, devSSID,
+                devType, devSourcePlugin, {', '.join(new_dev_columns)}
+            )
+            VALUES (
+                ?, ?, ?, ?, ?, ?, ?, {sql_generateGuid}, ?, ?, ?, ?, ?, ?, {', '.join('?' for _ in new_dev_columns)}
+            )
         """
-        db.sql.execute(event_query, (start_time,))
-        mylog('debug', '[New Devices] Logged new device events')
+        params = [
+            sanitize_SQL_input(cur_MAC), sanitize_SQL_input(cur_Name), sanitize_SQL_input(cur_Vendor),
+            sanitize_SQL_input(cur_IP), start_time, start_time, sanitize_SQL_input(cur_SyncHubNodeName),
+            sanitize_SQL_input(cur_NetworkNodeMAC), sanitize_SQL_input(cur_PORT),
+            sanitize_SQL_input(cur_NetworkSite), sanitize_SQL_input(cur_SSID), sanitize_SQL_input(cur_Type),
+            sanitize_SQL_input(cur_ScanMethod)
+        ] + new_dev_values
         
-        # Insert new sessions using parameterized query
-        session_query = """
-            INSERT INTO Sessions (ses_MAC, ses_IP, ses_EventTypeConnection, ses_DateTimeConnection,
-                                 ses_EventTypeDisconnection, ses_DateTimeDisconnection, ses_StillConnected, ses_AdditionalInfo)
-            SELECT cur_MAC, cur_IP, 'Connected', ?, NULL, NULL, 1, cur_Vendor
-            FROM CurrentScan
-            WHERE NOT EXISTS (SELECT 1 FROM Sessions WHERE ses_MAC = cur_MAC)
-        """
-        db.sql.execute(session_query, (start_time,))
-        mylog('debug', '[New Devices] Inserted new sessions')
-        
-        # Prepare default device attributes
-        new_dev_columns = [
-            "devAlertEvents", "devAlertDown", "devPresentLastScan", "devIsArchived", "devIsNew",
-            "devSkipRepeated", "devScan", "devOwner", "devFavorite", "devGroup",
-            "devComments", "devLogEvents", "devLocation", "devCustomProps"
-        ]
-        new_dev_values = [
-            get_setting_value('NEWDEV_devAlertEvents'),
-            get_setting_value('NEWDEV_devAlertDown'),
-            get_setting_value('NEWDEV_devPresentLastScan'),
-            get_setting_value('NEWDEV_devIsArchived'),
-            get_setting_value('NEWDEV_devIsNew'),
-            get_setting_value('NEWDEV_devSkipRepeated'),
-            get_setting_value('NEWDEV_devScan'),
-            sanitize_SQL_input(get_setting_value('NEWDEV_devOwner')),
-            get_setting_value('NEWDEV_devFavorite'),
-            sanitize_SQL_input(get_setting_value('NEWDEV_devGroup')),
-            sanitize_SQL_input(get_setting_value('NEWDEV_devComments')),
-            get_setting_value('NEWDEV_devLogEvents'),
-            sanitize_SQL_input(get_setting_value('NEWDEV_devLocation')),
-            sanitize_SQL_input(get_setting_value('NEWDEV_devCustomProps')),
-        ]
-        
-        # Fetch CurrentScan data
-        query = """
-            SELECT cur_MAC, cur_Name, cur_Vendor, cur_ScanMethod, cur_IP, cur_SyncHubNodeName,
-                   cur_NetworkNodeMAC, cur_PORT, cur_NetworkSite, cur_SSID, cur_Type
-            FROM CurrentScan
-        """
-        db.sql.execute(query)
-        current_scan_data = db.sql.fetchall()
-        
-        for row in current_scan_data:
-            (cur_MAC, cur_Name, cur_Vendor, cur_ScanMethod, cur_IP, cur_SyncHubNodeName, cur_NetworkNodeMAC, cur_PORT, cur_NetworkSite, cur_SSID, cur_Type) = row
-            
-            # Sanitize and handle None values
-            cur_Name = cur_Name.strip() if cur_Name else '(unknown)'
-            cur_Type = cur_Type.strip() if cur_Type else get_setting_value("NEWDEV_devType")
-            cur_NetworkNodeMAC = cur_NetworkNodeMAC.strip() if cur_NetworkNodeMAC else ''
-            cur_NetworkNodeMAC = cur_NetworkNodeMAC if cur_NetworkNodeMAC and cur_MAC != "Internet" else \
-                                 (get_setting_value("NEWDEV_devParentMAC") if cur_MAC != "Internet" else "null")
-            cur_SyncHubNodeName = cur_SyncHubNodeName if cur_SyncHubNodeName and cur_SyncHubNodeName != "null" else \
-                                  get_setting_value("SYNC_node_name")
-            
-            # Parameterized insert query
-            insert_query = f"""
-                INSERT OR IGNORE INTO Devices (
-                    devMac, devName, devVendor, devLastIP, devFirstConnection, devLastConnection,
-                    devSyncHubNode, devGUID, devParentMAC, devParentPort, devSite, devSSID,
-                    devType, devSourcePlugin, {', '.join(new_dev_columns)}
-                )
-                VALUES (
-                    ?, ?, ?, ?, ?, ?, ?, {sql_generateGuid}, ?, ?, ?, ?, ?, ?, {', '.join('?' for _ in new_dev_columns)}
-                )
-            """
-            params = [
-                sanitize_SQL_input(cur_MAC), sanitize_SQL_input(cur_Name), sanitize_SQL_input(cur_Vendor),
-                sanitize_SQL_input(cur_IP), start_time, start_time, sanitize_SQL_input(cur_SyncHubNodeName),
-                sanitize_SQL_input(cur_NetworkNodeMAC), sanitize_SQL_input(cur_PORT),
-                sanitize_SQL_input(cur_NetworkSite), sanitize_SQL_input(cur_SSID), sanitize_SQL_input(cur_Type),
-                sanitize_SQL_input(cur_ScanMethod)
-            ] + new_dev_values
-            
-            mylog('trace', f'[New Devices] Create device SQL: {insert_query % tuple("?" for _ in params)}')
-            db.sql.execute(insert_query, params)
-        
-        db.commitDB()
-        mylog('debug', '[New Devices] New devices created successfully')
-    except Exception as e:
-        mylog('error', f'[New Devices] Error creating new devices: {str(e)}')
-        db.rollbackDB()
+        mylog('trace', f'[New Devices] Create device SQL: {insert_query % tuple("?" for _ in params)}')
+        db.sql.execute(insert_query, params)
+    
+    db.commitDB()
+    mylog('debug', '[New Devices] New devices created successfully')
+
 
 
 # Update device data in the Devices table based on CurrentScan data.
@@ -412,91 +407,88 @@ def update_devices_names(db) -> None:
     Args:
         db: Database connection object with SQL interface.
     """
-    try:
-        resolver = NameResolver(db)
-        device_handler = DeviceInstance(db)
-        name_not_found = "(name not found)"
-        
-        strategies = [
-            (resolver.resolve_dig, 'dig'),
-            (resolver.resolve_mdns, 'mdns'),
-            (resolver.resolve_nslookup, 'nslookup'),
-            (resolver.resolve_nbtlookup, 'nbtlookup')
-        ]
-        
-        def resolve_devices(devices: List[Dict], resolve_both_name_and_fqdn: bool = True) -> Tuple[List, List, Dict, int]:
-            """
-            Resolve device names and/or FQDNs using available strategies.
+    
+    resolver = NameResolver(db)
+    device_handler = DeviceInstance(db)
+    name_not_found = "(name not found)"
+    
+    strategies = [
+        (resolver.resolve_dig, 'dig'),
+        (resolver.resolve_mdns, 'mdns'),
+        (resolver.resolve_nslookup, 'nslookup'),
+        (resolver.resolve_nbtlookup, 'nbtlookup')
+    ]
+    
+    def resolve_devices(devices: List[Dict], resolve_both_name_and_fqdn: bool = True) -> Tuple[List, List, Dict, int]:
+        """
+        Resolve device names and/or FQDNs using available strategies.
 
-            Args:
-                devices: List of devices to resolve.
-                resolve_both_name_and_fqdn: If True, resolve both name and FQDN; else, resolve only FQDN.
+        Args:
+            devices: List of devices to resolve.
+            resolve_both_name_and_fqdn: If True, resolve both name and FQDN; else, resolve only FQDN.
 
-            Returns:
-                Tuple of (records_to_update, records_not_found, found_stats, not_found_count).
-            """
-            records_to_update = []
-            records_not_found = []
-            found_stats = {label: 0 for _, label in strategies}
-            not_found = 0
-            
-            for device in devices:
-                new_name = name_not_found if resolve_both_name_and_fqdn else None
-                new_fqdn = ''
-                
-                for resolve_fn, label in strategies:
-                    try:
-                        resolved = resolve_fn(device['devMac'], device['devLastIP'])
-                        new_name = resolved.cleaned if resolve_both_name_and_fqdn else None
-                        new_fqdn = resolved.raw
-                        
-                        if new_fqdn and new_fqdn not in [name_not_found, '', 'localhost.'] and ' communications error to ' not in new_fqdn:
-                            found_stats[label] += 1
-                            records_to_update.append([new_name, new_fqdn, device['devMac']] if resolve_both_name_and_fqdn else [new_fqdn, device['devMac']])
-                            break
-                    except Exception as e:
-                        mylog('debug', f'[Update Device Name] Error in {label} resolution for {device["devMac"]}: {str(e)}')
-                
-                if resolve_both_name_and_fqdn and new_name == name_not_found and device['devName'] != name_not_found:
-                    not_found += 1
-                    records_not_found.append([name_not_found, device['devMac']])
-            
-            return records_to_update, records_not_found, found_stats, not_found
+        Returns:
+            Tuple of (records_to_update, records_not_found, found_stats, not_found_count).
+        """
+        records_to_update = []
+        records_not_found = []
+        found_stats = {label: 0 for _, label in strategies}
+        not_found = 0
         
-        # Update unknown device names
-        unknown_devices = device_handler.getUnknown()
-        if unknown_devices:
-            mylog('verbose', f'[Update Device Name] Resolving {len(unknown_devices)} unknown devices')
-            records_to_update, records_not_found, found_stats, not_found = resolve_devices(unknown_devices)
+        for device in devices:
+            new_name = name_not_found if resolve_both_name_and_fqdn else None
+            new_fqdn = ''
             
-            mylog('verbose', f"[Update Device Name] Names Found (DiG/mDNS/NSLOOKUP/NBTSCAN): {len(records_to_update)} "
-                             f"({found_stats['dig']}/{found_stats['mdns']}/{found_stats['nslookup']}/{found_stats['nbtlookup']})")
-            mylog('verbose', f'[Update Device Name] Names Not Found: {not_found}')
+            for resolve_fn, label in strategies:
+                try:
+                    resolved = resolve_fn(device['devMac'], device['devLastIP'])
+                    new_name = resolved.cleaned if resolve_both_name_and_fqdn else None
+                    new_fqdn = resolved.raw
+                    
+                    if new_fqdn and new_fqdn not in [name_not_found, '', 'localhost.'] and ' communications error to ' not in new_fqdn:
+                        found_stats[label] += 1
+                        records_to_update.append([new_name, new_fqdn, device['devMac']] if resolve_both_name_and_fqdn else [new_fqdn, device['devMac']])
+                        break
+                except Exception as e:
+                    mylog('debug', f'[Update Device Name] Error in {label} resolution for {device["devMac"]}: {str(e)}')
             
-            if records_not_found:
-                db.sql.executemany("UPDATE Devices SET devName = ? WHERE devMac = ?", records_not_found)
+            if resolve_both_name_and_fqdn and new_name == name_not_found and device['devName'] != name_not_found:
+                not_found += 1
+                records_not_found.append([name_not_found, device['devMac']])
+        
+        return records_to_update, records_not_found, found_stats, not_found
+    
+    # Update unknown device names
+    unknown_devices = device_handler.getUnknown()
+    if unknown_devices:
+        mylog('verbose', f'[Update Device Name] Resolving {len(unknown_devices)} unknown devices')
+        records_to_update, records_not_found, found_stats, not_found = resolve_devices(unknown_devices)
+        
+        mylog('verbose', f"[Update Device Name] Names Found (DiG/mDNS/NSLOOKUP/NBTSCAN): {len(records_to_update)} "
+                            f"({found_stats['dig']}/{found_stats['mdns']}/{found_stats['nslookup']}/{found_stats['nbtlookup']})")
+        mylog('verbose', f'[Update Device Name] Names Not Found: {not_found}')
+        
+        if records_not_found:
+            db.sql.executemany("UPDATE Devices SET devName = ? WHERE devMac = ?", records_not_found)
+        if records_to_update:
+            db.sql.executemany("UPDATE Devices SET devName = ?, devFQDN = ? WHERE devMac = ?", records_to_update)
+    
+    # Optionally refresh FQDNs
+    if get_setting_value("REFRESH_FQDN"):
+        all_devices = device_handler.getAll()
+        if all_devices:
+            mylog('verbose', f'[Update FQDN] Resolving FQDN for {len(all_devices)} devices')
+            records_to_update, _, found_stats, not_found = resolve_devices(all_devices, resolve_both_name_and_fqdn=False)
+            
+            mylog('verbose', f"[Update FQDN] Names Found (DiG/mDNS/NSLOOKUP/NBTSCAN): {len(records_to_update)} "
+                                f"({found_stats['dig']}/{found_stats['mdns']}/{found_stats['nslookup']}/{found_stats['nbtlookup']})")
+            mylog('verbose', f'[Update FQDN] Names Not Found: {not_found}')
+            
             if records_to_update:
-                db.sql.executemany("UPDATE Devices SET devName = ?, devFQDN = ? WHERE devMac = ?", records_to_update)
-        
-        # Optionally refresh FQDNs
-        if get_setting_value("REFRESH_FQDN"):
-            all_devices = device_handler.getAll()
-            if all_devices:
-                mylog('verbose', f'[Update FQDN] Resolving FQDN for {len(all_devices)} devices')
-                records_to_update, _, found_stats, not_found = resolve_devices(all_devices, resolve_both_name_and_fqdn=False)
-                
-                mylog('verbose', f"[Update FQDN] Names Found (DiG/mDNS/NSLOOKUP/NBTSCAN): {len(records_to_update)} "
-                                 f"({found_stats['dig']}/{found_stats['mdns']}/{found_stats['nslookup']}/{found_stats['nbtlookup']})")
-                mylog('verbose', f'[Update FQDN] Names Not Found: {not_found}')
-                
-                if records_to_update:
-                    db.sql.executemany("UPDATE Devices SET devFQDN = ? WHERE devMac = ?", records_to_update)
-        
-        db.commitDB()
-        mylog('debug', '[Update Device Names] Device names updated successfully')
-    except Exception as e:
-        mylog('error', f'[Update Device Names] Error updating device names: {str(e)}')
-        db.rollbackDB()
+                db.sql.executemany("UPDATE Devices SET devFQDN = ? WHERE devMac = ?", records_to_update)
+    
+    db.commitDB()
+    mylog('debug', '[Update Device Names] Device names updated successfully')
 
 # Check if the argument contains a valid MAC address or "Internet", otherwise return False
 def check_mac_or_internet(input_str: Optional[str]) -> bool:
@@ -754,6 +746,7 @@ def guess_device_attributes(
                         type_ = default_type
 
     return icon, type_
+
 
 # Deprecated functions with redirects (To be removed once all calls for these have been adjusted to use the updated function)
 def guess_icon(

@@ -252,9 +252,9 @@ def insertOnlineHistory(db):
     query = """
     SELECT
         COUNT(*) AS allDevices,
-        SUM(CASE WHEN devIsArchived = 1 THEN 1 ELSE 0 END) AS archivedDevices,
-        SUM(CASE WHEN devPresentLastScan = 1 THEN 1 ELSE 0 END) AS onlineDevices,
-        SUM(CASE WHEN devPresentLastScan = 0 AND devAlertDown = 1 THEN 1 ELSE 0 END) AS downDevices
+        COALESCE(SUM(CASE WHEN devIsArchived = 1 THEN 1 ELSE 0 END), 0) AS archivedDevices,
+        COALESCE(SUM(CASE WHEN devPresentLastScan = 1 THEN 1 ELSE 0 END), 0) AS onlineDevices,
+        COALESCE(SUM(CASE WHEN devPresentLastScan = 0 AND devAlertDown = 1 THEN 1 ELSE 0 END), 0) AS downDevices
     FROM Devices
     """
     
