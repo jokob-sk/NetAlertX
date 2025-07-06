@@ -520,7 +520,7 @@
     "Network_Node_Name": "Nazwa węzła",
     "Network_Parent": "Nadrzędne urządzenie sieciowe",
     "Network_Root": "Węzeł główny",
-    "Network_Root_Not_Configured": "ybierz typ urządzenia sieciowego, na przykład <b>Brama (Gateway)</b>, w polu <b>Typ</b> dla <a href=\"deviceDetails.php?mac=Internet\">urządzenia głównego Internetu</a>, aby rozpocząć konfigurację tego widoku. Więcej informacji znajdziesz w przewodniku <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/NETWORK_TREE.md\" target=\"_blank\">Jak skonfigurować stronę Sieć</a>",
+    "Network_Root_Not_Configured": "Wybierz typ urządzenia sieciowego, na przykład <b>Brama</b>, w polu <b>Typ</b> field of the <a href=\"deviceDetails.php?mac=Internet\">the Internet root device</a> to start configuring this screen. <br/><br/> More documentation can be found in the <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/NETWORK_TREE.md\" target=\"_blank\">How to setup your Network page</a> guide",
     "Network_Root_Unconfigurable": "Niekonfigurowalny główny węzeł",
     "Network_Table_Hostname": "Nazwa hosta",
     "Network_Table_IP": "IP",
