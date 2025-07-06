@@ -56,7 +56,7 @@ def ensure_column(sql, table: str, column_name: str, column_type: str) -> bool:
             return False
 
         if extra:
-            msg = f'[db_upgrade] Extra DB columns detected in {table}: {', '.join(extra)}'
+            msg = f"[db_upgrade] Extra DB columns detected in {table}: {', '.join(extra)}"
             mylog('none', [msg])
 
         # Add missing column
