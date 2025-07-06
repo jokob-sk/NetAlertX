@@ -320,91 +320,89 @@ def update_devices_data_from_scan(db) -> None:
     Args:
         db: Database connection object with SQL interface.
     """
-    try:
-        start_time = timeNowTZ().strftime('%Y-%m-%d %H:%M:%S')
-        mylog('debug', '[Update Devices] Updating device data')
-        
-        # Update last connection and presence
-        db.sql.execute("""
+    
+    start_time = timeNowTZ().strftime('%Y-%m-%d %H:%M:%S')
+    mylog('debug', '[Update Devices] Updating device data')
+    
+    # Update last connection and presence
+    db.sql.execute("""
+        UPDATE Devices
+        SET devLastConnection = ?, devPresentLastScan = 1
+        WHERE devPresentLastScan = 0
+            AND EXISTS (SELECT 1 FROM CurrentScan WHERE devMac = cur_MAC)
+    """, (start_time,))
+    
+    # Clear presence for inactive devices
+    db.sql.execute("""
+        UPDATE Devices
+        SET devPresentLastScan = 0
+        WHERE NOT EXISTS (SELECT 1 FROM CurrentScan WHERE devMac = cur_MAC)
+    """)
+    
+    # Update fields conditionally using parameterized subqueries
+    update_queries = [
+        ("devLastIP", "cur_IP", None),
+        ("devVendor", "cur_Vendor", "devVendor IS NULL OR devVendor IN ('', 'null', '(unknown)', '(Unknown)')"),
+        ("devParentPort", "cur_PORT", "devParentPort IS NULL OR devParentPort IN ('', 'null', '(unknown)', '(Unknown)') AND (SELECT cur_PORT FROM CurrentScan WHERE devMac = cur_MAC) NOT IN ('', 'null')"),
+        ("devParentMAC", "cur_NetworkNodeMAC", "devParentMAC IS NULL OR devParentMAC IN ('', 'null', '(unknown)', '(Unknown)') AND (SELECT cur_NetworkNodeMAC FROM CurrentScan WHERE devMac = cur_MAC) NOT IN ('', 'null')"),
+        ("devSite", "cur_NetworkSite", "devSite IS NULL OR devSite IN ('', 'null') AND (SELECT cur_NetworkSite FROM CurrentScan WHERE devMac = cur_MAC) NOT IN ('', 'null')"),
+        ("devSSID", "cur_SSID", "devSSID IS NULL OR devSSID IN ('', 'null') AND (SELECT cur_SSID FROM CurrentScan WHERE devMac = cur_MAC) NOT IN ('', 'null')"),
+        ("devType", "cur_Type", "devType IS NULL OR devType IN ('', 'null') AND (SELECT cur_Type FROM CurrentScan WHERE devMac = cur_MAC) NOT IN ('', 'null')"),
+        ("devName", "cur_Name", "devName IN ('(unknown)', '(name not found)', '') OR devName IS NULL AND (SELECT cur_Name FROM CurrentScan WHERE devMac = cur_MAC) NOT IN ('', 'null')"),
+    ]
+    
+    for field, source, condition in update_queries:
+        query = f"""
             UPDATE Devices
-            SET devLastConnection = ?, devPresentLastScan = 1
-            WHERE devPresentLastScan = 0
-              AND EXISTS (SELECT 1 FROM CurrentScan WHERE devMac = cur_MAC)
-        """, (start_time,))
-        
-        # Clear presence for inactive devices
-        db.sql.execute("""
-            UPDATE Devices
-            SET devPresentLastScan = 0
-            WHERE NOT EXISTS (SELECT 1 FROM CurrentScan WHERE devMac = cur_MAC)
-        """)
-        
-        # Update fields conditionally using parameterized subqueries
-        update_queries = [
-            ("devLastIP", "cur_IP", None),
-            ("devVendor", "cur_Vendor", "devVendor IS NULL OR devVendor IN ('', 'null', '(unknown)', '(Unknown)')"),
-            ("devParentPort", "cur_PORT", "devParentPort IS NULL OR devParentPort IN ('', 'null', '(unknown)', '(Unknown)') AND (SELECT cur_PORT FROM CurrentScan WHERE devMac = cur_MAC) NOT IN ('', 'null')"),
-            ("devParentMAC", "cur_NetworkNodeMAC", "devParentMAC IS NULL OR devParentMAC IN ('', 'null', '(unknown)', '(Unknown)') AND (SELECT cur_NetworkNodeMAC FROM CurrentScan WHERE devMac = cur_MAC) NOT IN ('', 'null')"),
-            ("devSite", "cur_NetworkSite", "devSite IS NULL OR devSite IN ('', 'null') AND (SELECT cur_NetworkSite FROM CurrentScan WHERE devMac = cur_MAC) NOT IN ('', 'null')"),
-            ("devSSID", "cur_SSID", "devSSID IS NULL OR devSSID IN ('', 'null') AND (SELECT cur_SSID FROM CurrentScan WHERE devMac = cur_MAC) NOT IN ('', 'null')"),
-            ("devType", "cur_Type", "devType IS NULL OR devType IN ('', 'null') AND (SELECT cur_Type FROM CurrentScan WHERE devMac = cur_MAC) NOT IN ('', 'null')"),
-            ("devName", "cur_Name", "devName IN ('(unknown)', '(name not found)', '') OR devName IS NULL AND (SELECT cur_Name FROM CurrentScan WHERE devMac = cur_MAC) NOT IN ('', 'null')"),
-        ]
-        
-        for field, source, condition in update_queries:
-            query = f"""
-                UPDATE Devices
-                SET {field} = (SELECT {source} FROM CurrentScan WHERE devMac = cur_MAC)
-                WHERE EXISTS (SELECT 1 FROM CurrentScan WHERE devMac = cur_MAC)
-                {f'AND {condition}' if condition else ''}
-            """
-            db.sql.execute(query)
-            mylog('debug', f'[Update Devices] Updated {field}')
-        
-        # Update vendors for unknown devices
-        vendor_records = []
-        for device in db.sql.execute("SELECT devMac FROM Devices WHERE devVendor IS NULL OR devVendor IN ('', 'null', '(unknown)', '(Unknown)')"):
-            vendor = query_MAC_vendor(device['devMac'])
-            if vendor not in ("-1", "-2"):
-                vendor_records.append((vendor, device['devMac']))
-        
-        if vendor_records:
-            db.sql.executemany("UPDATE Devices SET devVendor = ? WHERE devMac = ?", vendor_records)
-            mylog('debug', f'[Update Devices] Updated {len(vendor_records)} vendor records')
-        
-        # Update icons
-        default_icon = get_setting_value('NEWDEV_devIcon')
-        icon_query = """
-            SELECT devMac, devVendor, devLastIP, devName
-            FROM Devices
-            WHERE devIcon IN ('', 'null'{extra}) OR devIcon IS NULL
-        """.format(extra=f", '{default_icon}'" if get_setting_value('NEWDEV_replace_preset_icon') else '')
-        
-        icon_records = [
-            (guess_icon(row['devVendor'], row['devMac'], row['devLastIP'], row['devName'], default_icon), row['devMac'])
-            for row in db.sql.execute(icon_query)
-        ]
-        
-        if icon_records:
-            db.sql.executemany("UPDATE Devices SET devIcon = ? WHERE devMac = ?", icon_records)
-            mylog('debug', f'[Update Devices] Updated {len(icon_records)} icon records')
-        
-        # Update types
-        default_type = get_setting_value('NEWDEV_devType')
-        type_records = [
-            (guess_type(row['devVendor'], row['devMac'], row['devLastIP'], row['devName'], default_type), row['devMac'])
-            for row in db.sql.execute("SELECT devMac, devVendor, devLastIP, devName FROM Devices WHERE devType IN ('', 'null') OR devType IS NULL")
-        ]
-        
-        if type_records:
-            db.sql.executemany("UPDATE Devices SET devType = ? WHERE devMac = ?", type_records)
-            mylog('debug', f'[Update Devices] Updated {len(type_records)} type records')
-        
-        db.commitDB()
-        mylog('debug', '[Update Devices] Device data updated successfully')
-    except Exception as e:
-        mylog('error', f'[Update Devices] Error updating device data: {str(e)}')
-        db.rollbackDB()
+            SET {field} = (SELECT {source} FROM CurrentScan WHERE devMac = cur_MAC)
+            WHERE EXISTS (SELECT 1 FROM CurrentScan WHERE devMac = cur_MAC)
+            {f'AND {condition}' if condition else ''}
+        """
+        db.sql.execute(query)
+        mylog('debug', f'[Update Devices] Updated {field}')
+    
+    # Update vendors for unknown devices
+    vendor_records = []
+    for device in db.sql.execute("SELECT devMac FROM Devices WHERE devVendor IS NULL OR devVendor IN ('', 'null', '(unknown)', '(Unknown)')"):
+        vendor = query_MAC_vendor(device['devMac'])
+        if vendor not in ("-1", "-2"):
+            vendor_records.append((vendor, device['devMac']))
+    
+    if vendor_records:
+        db.sql.executemany("UPDATE Devices SET devVendor = ? WHERE devMac = ?", vendor_records)
+        mylog('debug', f'[Update Devices] Updated {len(vendor_records)} vendor records')
+    
+    # Update icons
+    default_icon = get_setting_value('NEWDEV_devIcon')
+    icon_query = """
+        SELECT devMac, devVendor, devLastIP, devName
+        FROM Devices
+        WHERE devIcon IN ('', 'null'{extra}) OR devIcon IS NULL
+    """.format(extra=f", '{default_icon}'" if get_setting_value('NEWDEV_replace_preset_icon') else '')
+    
+    icon_records = [
+        (guess_icon(row['devVendor'], row['devMac'], row['devLastIP'], row['devName'], default_icon), row['devMac'])
+        for row in db.sql.execute(icon_query)
+    ]
+    
+    if icon_records:
+        db.sql.executemany("UPDATE Devices SET devIcon = ? WHERE devMac = ?", icon_records)
+        mylog('debug', f'[Update Devices] Updated {len(icon_records)} icon records')
+    
+    # Update types
+    default_type = get_setting_value('NEWDEV_devType')
+    type_records = [
+        (guess_type(row['devVendor'], row['devMac'], row['devLastIP'], row['devName'], default_type), row['devMac'])
+        for row in db.sql.execute("SELECT devMac, devVendor, devLastIP, devName FROM Devices WHERE devType IN ('', 'null') OR devType IS NULL")
+    ]
+    
+    if type_records:
+        db.sql.executemany("UPDATE Devices SET devType = ? WHERE devMac = ?", type_records)
+        mylog('debug', f'[Update Devices] Updated {len(type_records)} type records')
+    
+    db.commitDB()
+    mylog('debug', '[Update Devices] Device data updated successfully')
+    
 
 # Update the names for devices in the database
 def update_devices_names(db) -> None:
