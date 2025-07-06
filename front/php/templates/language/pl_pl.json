@@ -570,7 +570,7 @@
     "REPORT_DASHBOARD_URL_description": "Ten URL jest używany jako baza do generowania linków w raportach HTML (np. w e-mailach). Wprowadź pełny URL zaczynający się od <code>http://</code>, w tym numer portu (bez końcowego ukośnika <code>/</code>).",
     "REPORT_DASHBOARD_URL_name": "URL NetAlertX",
     "REPORT_ERROR": "Strona, której szukasz, jest tymczasowo niedostępna. Spróbuj ponownie za kilka sekund",
-    "REPORT_MAIL_description": "Jeśli włączone, wysyłany jest e-mail z listą zmian, do których się subskrybujesz. Proszę także wypełnić wszystkie pozostałe ustawienia związane z konfiguracją SMTP poniżej. W przypadku problemów, ustaw <code>LOG\\_LEVEL</code> na <code>debug</code> i sprawdź <a href=\"/maintenance.php#tab_Logging\">log błędów</a>.",
+    "REPORT_MAIL_description": "Jeśli włączone, wysyłany jest e-mail z listą zmian, do których się subskrybujesz. Proszę także wypełnić wszystkie pozostałe ustawienia związane z konfiguracją SMTP poniżej. W przypadku problemów, ustaw <code>LOG_LEVEL</code> na <code>debug</code> i sprawdź <a href=\"/maintenance.php#tab_Logging\">log błędów</a>.",
     "REPORT_MAIL_name": "Włącz e-mail",
     "REPORT_TITLE": "Zgłoszenie",
     "RandomMAC_hover": "Auto wykrywanie - oznacza czy urządzenie randomizuje swój adres MAC.",
