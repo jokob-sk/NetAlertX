@@ -21,6 +21,7 @@ import sys
 import subprocess
 import os
 import re
+import warnings
 from typing import Optional, List, Tuple, Dict
 
 # Register NetAlertX directories
@@ -755,3 +756,50 @@ def guess_device_attributes(
                         type_ = default_type
 
     return icon, type_
+
+# Deprecated functions with redirects (To be removed once all calls for these have been adjusted to use the updated function)
+def guess_icon(
+    vendor: Optional[str],
+    mac: Optional[str],
+    ip: Optional[str],
+    name: Optional[str],
+    default: str
+    ) -> str:
+    """
+    [DEPRECATED] Guess the appropriate FontAwesome icon for a device based on its attributes.
+    Use guess_device_attributes instead.
+    Args:
+        vendor: Device vendor name.
+        mac: Device MAC address.
+        ip: Device IP address.
+        name: Device name.
+        default: Default icon to return if no match is found.
+    Returns:
+        str: Base64-encoded FontAwesome icon HTML string.
+    """
+    warnings.warn("guess_icon is deprecated; use guess_device_attributes instead", DeprecationWarning, stacklevel=2)
+    icon, _ = guess_device_attributes(vendor, mac, ip, name, default, "unknown_type")
+    return icon
+
+def guess_type(
+    vendor: Optional[str],
+    mac: Optional[str],
+    ip: Optional[str],
+    name: Optional[str],
+    default: str
+    ) -> str:
+    """
+    [DEPRECATED] Guess the device type based on its attributes.
+    Use guess_device_attributes instead.
+    Args:
+        vendor: Device vendor name.
+        mac: Device MAC address.
+        ip: Device IP address.
+        name: Device name.
+        default: Default type to return if no match is found.
+    Returns:
+        str: Device type from DEVICE_TYPES dictionary.
+    """
+    warnings.warn("guess_type is deprecated; use guess_device_attributes instead", DeprecationWarning, stacklevel=2)
+    _, type_ = guess_device_attributes(vendor, mac, ip, name, "unknown_icon", default)
+    return type_
