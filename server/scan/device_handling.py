@@ -30,10 +30,11 @@ sys.path.extend([f"{INSTALL_PATH}/server"])
 
 import conf
 from helper import timeNowTZ, get_setting_value, list_to_where, check_IP_format, sanitize_SQL_input
-from logger import mylog
+from logger import mylog, Logger
 from const import vendorsPath, vendorsPathNewest, sql_generateGuid
 from models.device_instance import DeviceInstance
 from scan.name_resolution import NameResolver
+
 
 # Base64 encoded HTML strings for FontAwesome icons, now with an extended icons dictionary for broader device coverage
 ICONS = {
@@ -269,7 +270,7 @@ def create_new_devices(db) -> None:
     current_scan_data = db.sql.fetchall()
     
     for row in current_scan_data:
-        (cur_MAC, cur_Name, cur_Vendor, cur_ScanMethod, cur_IP, cur_SyncHubNodeName, cur_NetworkNodeMAC, cur_PORT, cur_NetworkSite, cur_SSID, cur_Type) = row
+        cur_MAC, cur_Name, cur_Vendor, cur_ScanMethod, cur_IP, cur_SyncHubNodeName, cur_NetworkNodeMAC, cur_PORT, cur_NetworkSite, cur_SSID, cur_Type = row
         
         # Sanitize and handle None values
         cur_Name = cur_Name.strip() if cur_Name else '(unknown)'
@@ -299,7 +300,7 @@ def create_new_devices(db) -> None:
             sanitize_SQL_input(cur_ScanMethod)
         ] + new_dev_values
         
-        mylog('trace', f'[New Devices] Create device SQL: {insert_query % tuple("?" for _ in params)}')
+        mylog('trace', f'[New Devices] Create device SQL: {insert_query} | Params: {params}')
         db.sql.execute(insert_query, params)
     
     db.commitDB()
@@ -316,6 +317,9 @@ def update_devices_data_from_scan(db) -> None:
         db: Database connection object with SQL interface.
     """
     
+    # Make sure log level is initialized correctly
+    Logger(get_setting_value('LOG_LEVEL'))
+
     start_time = timeNowTZ().strftime('%Y-%m-%d %H:%M:%S')
     mylog('debug', '[Update Devices] Updating device data')
     
@@ -353,6 +357,9 @@ def update_devices_data_from_scan(db) -> None:
             WHERE EXISTS (SELECT 1 FROM CurrentScan WHERE devMac = cur_MAC)
             {f'AND {condition}' if condition else ''}
         """
+
+        mylog('debug', f'[Update Devices] query: {query}')
+
         db.sql.execute(query)
         mylog('debug', f'[Update Devices] Updated {field}')
     
