@@ -899,14 +899,14 @@ function initializeDatatable (status) {
           tmp_devPresentLastScan = rowData[mapIndx(24)]
           tmp_devAlertDown = rowData[mapIndx(25)]
 
-          const badgeHtml = getStatusBadgeHtml(
+          const badge = getStatusBadgeParts(
             rowData[mapIndx(24)],   // tmp_devPresentLastScan
             rowData[mapIndx(25)],   // tmp_devAlertDown
             rowData[mapIndx(11)],  // MAC
             cellData               // optional text
           );
       
-          $(td).html (badgeHtml);
+          $(td).html (`<a href="${badge.url}" class="badge ${badge.cssClass}">${badge.iconHtml} ${badge.text}</a>`);
       } },
     ],
     

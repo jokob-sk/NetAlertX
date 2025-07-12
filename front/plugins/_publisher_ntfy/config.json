@@ -540,7 +540,7 @@
           }
         ]
       },
-      "default_value": false,
+      "default_value": true,
       "options": [],
       "localized": ["name", "description"],
       "name": [

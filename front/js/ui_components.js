@@ -609,25 +609,36 @@ function getColumnNameFromLangString(headStringKey) {
 }
 
 // Generating the device status chip
-function getStatusBadgeHtml(tmp_devPresentLastScan, tmp_devAlertDown, macAddress, statusText = '') {
-  let css = 'gray text-white statusUnknown';
+function getStatusBadgeParts(tmp_devPresentLastScan, tmp_devAlertDown, macAddress, statusText = '') {
+  let css = 'bg-gray text-white statusUnknown';
   let icon = '<i class="fa-solid fa-question"></i>';
+  let status = 'unknown';
 
   if (tmp_devPresentLastScan == 1) {
-    css = 'green text-white statusOnline';
+    css = 'bg-green text-white statusOnline';
     icon = '<i class="fa-solid fa-plug"></i>';
+    status = 'online';
   } else if (tmp_devAlertDown == 1) {
-    css = 'red text-white statusDown';
+    css = 'bg-red text-white statusDown';
     icon = '<i class="fa-solid fa-triangle-exclamation"></i>';
+    status = 'down';
   } else if (tmp_devPresentLastScan != 1) {
-    css = 'gray text-white statusOffline';
+    css = 'bg-gray text-white statusOffline';
     icon = '<i class="fa-solid fa-xmark"></i>';
+    status = 'offline';
   }
 
-  // Remove dashes from statusText
   const cleanedText = statusText.replace(/-/g, '');
+  const url = `deviceDetails.php?mac=${encodeURIComponent(macAddress)}`;
 
-  return `<a href="deviceDetails.php?mac=${macAddress}" class="badge bg-${css}">${icon} ${cleanedText}</a>`;
+  return {
+    cssClass: css,
+    iconHtml: icon,
+    mac: macAddress,
+    text: cleanedText,
+    status: status,
+    url: url
+  };
 }
 
 
@@ -651,35 +662,38 @@ function initSelect2() {
     
     $(function () {
       // Iterate over each Select2 dropdown
-      $('.select2').each(function() {
-          
-
+      $('.select2').each(function() {          
+          // handle Device chips, if my-transformers="deviceChip"
           if($(this).attr("my-transformers") == "deviceChip")
           {
             var selectEl = $(this).select2({
               templateSelection: function (data, container) {
                 if (!data.id) return data.text; // default for placeholder etc.
+
+                const badge = getStatusBadgeParts(
+                  getDevDataByMac(data.id, "devPresentLastScan"), 
+                  getDevDataByMac(data.id, "devAlertDown"), 
+                  data.id
+                )
+
+                $(container).addClass(badge.cssClass);
+
+                
+                
                 
                 // Custom HTML
                 const html = $(`
-                  <span class="custom-chip">
-                    <span class="iconPreview">${atob(getDevDataByMac(data.id, "devIcon"))}</span>
-                    ${data.text}
-                    <span>
-                    ${getStatusBadgeHtml(
-                      getDevDataByMac(data.id, "devPresentLastScan"), 
-                      getDevDataByMac(data.id, "devAlertDown"), 
-                      data.id
-                    )}
-                    </span
-                  </span>
+                  <a href="${badge.url}" target="_blank">
+                    <span class="custom-chip" >
+                      <span class="iconPreview">${atob(getDevDataByMac(data.id, "devIcon"))}</span>
+                      ${data.text}
+                      <span>
+                      (${badge.iconHtml})
+                      </span
+                    </span>
+                  </a>
                 `);
-          
-                // Attach click listener (you can also use event delegation outside)
-                html.find('.chip-btn').on('click', function (e) {
-                  // e.stopPropagation(); // prevent dropdown toggle
-                  alert('Button clicked for ID: ' + data.id);
-                });
+
           
                 return html;
               },
@@ -688,7 +702,7 @@ function initSelect2() {
               }
             });
             
-          } else
+          } else // default handling - default template
           {
             var selectEl = $(this).select2();
           }

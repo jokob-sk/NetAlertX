@@ -85,7 +85,7 @@
             },            
              // Group for event and alert settings
              DevDetail_EveandAl_Title: {
-                data: ["devAlertEvents", "devAlertDown", "devSkipRepeated", "devReqNicsOnline"],
+                data: ["devAlertEvents", "devAlertDown", "devSkipRepeated", "devReqNicsOnline", "devChildrenNicsDynamic"],
                 docs: "https://github.com/jokob-sk/NetAlertX/blob/main/docs/NOTIFICATIONS.md",
                 iconClass: "fa fa-bell",
                 inputGroupClasses: "field-group alert-group col-lg-4 col-sm-6 col-xs-12",
@@ -218,8 +218,13 @@
                                           </span>`;
                     }
                     
-                    // handle devChildrenDynamic - selected values and options are the same
-                    if (setting.setKey == "NEWDEV_devChildrenDynamic" && Array.isArray(fieldData)) {  
+                    // handle devChildrenDynamic or NEWDEV_devChildrenNicsDynamic - selected values and options are the same
+                    if ( 
+                        Array.isArray(fieldData) && 
+                        (setting.setKey == "NEWDEV_devChildrenDynamic" || 
+                        setting.setKey == "NEWDEV_devChildrenNicsDynamic" )                  
+                        ) 
+                      {  
                       fieldDataNew = []                    
                       fieldData.forEach(child => {
                         fieldDataNew.push(child.devMac)
@@ -383,7 +388,7 @@
         mac: $('#NEWDEV_devMac').val(),
         name: encodeURIComponent($('#NEWDEV_devName').val().replace(/'/g, "’")),
         owner: encodeURIComponent($('#NEWDEV_devOwner').val().replace(/'/g, "’")),
-        type: $('#NEWDEV_devType').val().replace(/'/g, ""),
+        type: $('#NEWDEV_devType').val().replace(/'/g, ""),        
         vendor: encodeURIComponent($('#NEWDEV_devVendor').val().replace(/'/g, "’")),
         icon: encodeURIComponent($('#NEWDEV_devIcon').val()),
         favorite: ($('#NEWDEV_devFavorite')[0].checked * 1),
@@ -399,6 +404,8 @@
         alertevents: ($('#NEWDEV_devAlertEvents')[0].checked * 1),
         alertdown: ($('#NEWDEV_devAlertDown')[0].checked * 1),
         skiprepeated: $('#NEWDEV_devSkipRepeated').val().split(' ')[0],
+        relType: $('#NEWDEV_devParentRelType').val().replace(/'/g, ""),
+        reqNics: ($('#NEWDEV_devReqNicsOnline')[0].checked * 1),
         newdevice: ($('#NEWDEV_devIsNew')[0].checked * 1),
         archived: ($('#NEWDEV_devIsArchived')[0].checked * 1),
         devFirstConnection: ($('#NEWDEV_devFirstConnection').val()),

@@ -92,6 +92,8 @@ function getServerDeviceData() {
       "devLogEvents" => 0,
       "devAlertEvents" => 0,
       "devAlertDown" => 0,
+      "devParentRelType" => "default",
+      "devReqNicsOnline" => 0,
       "devSkipRepeated" => 0,
       "devLastNotification" => "",
       "devPresentLastScan" => 0,
@@ -113,9 +115,7 @@ function getServerDeviceData() {
       "devEvents" => 0,
       "devDownAlerts" => 0,
       "devPresenceHours" => 0,
-      "devFQDN"  => "",
-      "devParentRelType"  => "default",
-      "devReqNicsOnline"  => 0
+      "devFQDN"  => ""
     ];
     echo json_encode($deviceData);
     return;
@@ -142,7 +142,7 @@ function getServerDeviceData() {
   $deviceData['devIsRandomMAC'] = isRandomMAC($mac);
 
   // devChildrenDynamic
-  $sql = 'SELECT rowid, * FROM Devices WHERE devParentMAC = "' . $mac . '"';
+  $sql = 'SELECT rowid, * FROM Devices WHERE devParentMAC = "' . $mac . '" order by devPresentLastScan DESC';
   $result = $db->query($sql);
 
   $children = [];
@@ -153,6 +153,17 @@ function getServerDeviceData() {
   }
   $deviceData['devChildrenDynamic'] = $children;
 
+  // devChildrenNicsDynamic
+  $sql = 'SELECT rowid, * FROM Devices WHERE devParentMAC = "' . $mac . '" and devParentRelType = "nic"  order by devPresentLastScan DESC';
+  $result = $db->query($sql);
+
+  $childrenNics = [];
+  if ($result) {
+      while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+          $childrenNics[] = $row;
+      }
+  }
+  $deviceData['devChildrenNicsDynamic'] = $childrenNics;
 
   // Count Totals
   $condition = ' WHERE eve_MAC="'. $mac .'" AND eve_DateTime >= '. $periodDate;
@@ -226,6 +237,8 @@ function setDeviceData() {
   $scancycle = quotes($_POST['scancycle']);
   $alertevents = quotes($_POST['alertevents']);
   $alertdown = quotes($_POST['alertdown']);
+  $relType = quotes($_POST['relType']);
+  $reqNics = quotes($_POST['reqNics']);
   $skiprepeated = quotes($_POST['skiprepeated']);
   $newdevice = quotes($_POST['newdevice']);
   $archived = quotes($_POST['archived']);
@@ -257,6 +270,8 @@ function setDeviceData() {
                         devScan = '$scancycle',
                         devAlertEvents = '$alertevents',
                         devAlertDown = '$alertdown',
+                        devParentRelType = '$relType',
+                        devReqNicsOnline = '$reqNics',
                         devSkipRepeated = '$skiprepeated',
                         devIsNew = '$newdevice',
                         devIsArchived = '$archived',
@@ -282,6 +297,8 @@ function setDeviceData() {
                             devScan, 
                             devAlertEvents, 
                             devAlertDown, 
+                            devParentRelType,
+                            devReqNicsOnline,
                             devSkipRepeated, 
                             devIsNew, 
                             devIsArchived, 
@@ -310,6 +327,8 @@ function setDeviceData() {
                           '$scancycle',
                           '$alertevents',
                           '$alertdown',
+                          '$relType',
+                          '$reqNics',
                           '$skiprepeated',
                           '$newdevice',
                           '$archived',

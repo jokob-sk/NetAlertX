@@ -1547,15 +1547,25 @@ input[readonly] {
 }
 
 
+#deviceDetailsEdit .select2-container--default .select2-selection--multiple .select2-selection__choice a
+{
+    color: #FFF0E0;
+}
+
+#deviceDetailsEdit .iconPreview svg
+{
+    height: 14px;
+}
+
 #deviceDetailsEdit .select2-container--default .select2-selection--multiple .select2-selection__choice 
 {
-    height: 30px;
-    background-color: #606060;
+    height: 20px;
+    background-color: #606060;    
 }
 
 #deviceDetailsEdit .select2-container--default .select2-selection--multiple .select2-selection__choice span 
 {
-    font-size: 15px;
+    font-size: 14px;
 }
 
 #deviceDetailsEdit .select2-selection 

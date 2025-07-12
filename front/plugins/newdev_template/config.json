@@ -1758,6 +1758,34 @@
           "string": "Indicates whether this device should be considered online only if all associated NICs (devices with the <code>nic</code> relationship type) are online. If disabled, the device is considered online if any NIC is online."
         }
       ]
+    },
+    {
+      "function": "devChildrenNicsDynamic",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [{ "multiple": "true", "ordeable": "true", "readonly": "true" }],
+            "transformers": ["deviceChip"]
+          }
+        ]
+      },
+      "default_value": [],
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "NICs"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Children nodes with the <code>nic</code> Relationship Type. Navigate to the child device directly to edit the relationship and details."
+        }
+      ]
     }
   ],
   "required": [],
