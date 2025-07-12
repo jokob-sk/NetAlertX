@@ -5,7 +5,7 @@
 ?>
 
 
-<div class="row">
+<div class="row" id="deviceDetailsEdit">
   <div class="box-body form-horizontal">
     <form id="edit-form">
     <!-- Form fields will be appended here -->
@@ -85,7 +85,7 @@
             },            
              // Group for event and alert settings
              DevDetail_EveandAl_Title: {
-                data: ["devAlertEvents", "devAlertDown", "devSkipRepeated"],
+                data: ["devAlertEvents", "devAlertDown", "devSkipRepeated", "devReqNicsOnline"],
                 docs: "https://github.com/jokob-sk/NetAlertX/blob/main/docs/NOTIFICATIONS.md",
                 iconClass: "fa fa-bell",
                 inputGroupClasses: "field-group alert-group col-lg-4 col-sm-6 col-xs-12",
@@ -94,7 +94,7 @@
             },
             // Group for network details
             DevDetail_MainInfo_Network_Title: {
-                data: ["devParentMAC", "devParentPort", "devSSID", "devSite", "devSyncHubNode"],
+                data: ["devParentMAC", "devParentRelType", "devParentPort", "devSSID", "devSite", "devSyncHubNode"],
                 docs: "https://github.com/jokob-sk/NetAlertX/blob/main/docs/NETWORK_TREE.md",
                 iconClass: "fa fa-network-wired",
                 inputGroupClasses: "field-group network-group col-lg-4 col-sm-6 col-xs-12",
@@ -118,6 +118,15 @@
                 inputGroupClasses: "field-group session-group col-lg-4 col-sm-6 col-xs-12",
                 labelClasses: "col-sm-4 col-xs-12 control-label",
                 inputClasses: "col-sm-8 col-xs-12 input-group"
+            },
+            // Group for Children.
+            DevDetail_Children_Title: {
+                data: ["devChildrenDynamic"],
+                docs: "https://github.com/jokob-sk/NetAlertX/blob/main/docs/CUSTOM_PROPERTIES.md",
+                iconClass: "fa fa-list",
+                inputGroupClasses: "field-group cutprop-group col-lg-12 col-sm-12 col-xs-12",
+                labelClasses: "col-sm-12 col-xs-12 control-label",
+                inputClasses: "col-sm-12 col-xs-12 input-group"
             },
             // Group for Custom properties.
             DevDetail_CustomProperties_Title: {
@@ -167,6 +176,7 @@
                     // Get the field data (replace 'NEWDEV_' prefix from the key)
                     fieldData = deviceData[setting.setKey.replace('NEWDEV_', '')]
                     fieldData = fieldData == null ? "" : fieldData;
+                    fieldOptionsOverride = null;
 
                     // console.log(setting.setKey);                    
                     // console.log(fieldData);                    
@@ -208,6 +218,15 @@
                                           </span>`;
                     }
                     
+                    // handle devChildrenDynamic - selected values and options are the same
+                    if (setting.setKey == "NEWDEV_devChildrenDynamic" && Array.isArray(fieldData)) {  
+                      fieldDataNew = []                    
+                      fieldData.forEach(child => {
+                        fieldDataNew.push(child.devMac)
+                      })
+                      fieldData = fieldDataNew;
+                      fieldOptionsOverride = fieldDataNew;
+                    }
 
                     // Generate the input field HTML
                     const inputFormHtml = `<div class="form-group col-xs-12">
@@ -219,7 +238,7 @@
                                                   </i>
                                               </label>
                                               <div class="${obj.inputClasses}">
-                                                  ${generateFormHtml(settingsData, setting, fieldData.toString(), null, null)}
+                                                  ${generateFormHtml(settingsData, setting, fieldData.toString(), fieldOptionsOverride, null)}
                                                   ${inlineControl}
                                               </div>
                                           </div>`;

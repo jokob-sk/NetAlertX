@@ -1399,7 +1399,8 @@ input[readonly] {
     cursor: -webkit-grab;
 }
 
-.select2-container--default .select2-selection--multiple .select2-selection__choice
+#settingsPage .select2-container--default .select2-selection--multiple .select2-selection__choice,
+#maintenancePage .select2-container--default .select2-selection--multiple .select2-selection__choice
 {
     background-color:#258744 !important;
 }
@@ -1411,6 +1412,12 @@ input[readonly] {
 .select2-container .select2-dropdown
 {
     background-color:#606060 !important;
+}
+
+.select2-container--default .select2-selection--multiple
+{
+    border-radius: 0px !important;
+    border-color: #3d444b !important;
 }
 
 .helpIconSmallTopRight{
@@ -1537,6 +1544,44 @@ input[readonly] {
 #panDetails #NEWDEV_devCustomProps_label
 {
     display: none;
+}
+
+
+#deviceDetailsEdit .select2-container--default .select2-selection--multiple .select2-selection__choice 
+{
+    height: 30px;
+    background-color: #606060;
+}
+
+#deviceDetailsEdit .select2-container--default .select2-selection--multiple .select2-selection__choice span 
+{
+    font-size: 15px;
+}
+
+#deviceDetailsEdit .select2-selection 
+{
+    width: initial;
+    display: inline-block;
+}
+
+#deviceDetailsEdit  .form-control
+{
+    min-height: 42px;
+}
+
+#deviceDetailsEdit  .select2-selection
+{
+    background-color: rgb(96, 96, 96);
+} 
+#deviceDetailsEdit  .select2-container 
+{
+    width: 100% !important;
+}
+
+#deviceDetailsEdit  .select2-container  .selection
+{
+    width: 100% !important;
+    display: inline-grid;
 }
 
 /* ----------------------------------------------------------------- */

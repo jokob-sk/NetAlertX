@@ -587,7 +587,9 @@ function getDevicesColumns(){
               "devSSID",
               "devSourcePlugin",
               "devCustomProps",
-              "devFQDN"
+              "devFQDN",
+              "devParentRelType",
+              "devReqNicsOnline"
             ]; 
               
   return $columns;

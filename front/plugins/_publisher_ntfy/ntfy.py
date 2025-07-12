@@ -98,6 +98,7 @@ def send(html, text):
     token = get_setting_value('NTFY_TOKEN')
     user = get_setting_value('NTFY_USER')
     pwd = get_setting_value('NTFY_PASSWORD')
+    verify_ssl = get_setting_value('NTFY_VERIFY_SSL')
 
     # prepare request headers
     headers = {
@@ -121,7 +122,8 @@ def send(html, text):
         response = requests.post("{}/{}".format(   get_setting_value('NTFY_HOST'), 
                                         get_setting_value('NTFY_TOPIC')),
                                         data    = text,
-                                        headers = headers)
+                                        headers = headers,
+                                        verify  = verify_ssl)
 
         response_status_code = response.status_code
 

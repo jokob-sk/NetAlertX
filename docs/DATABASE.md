@@ -39,6 +39,8 @@
 | `devSourcePlugin`      | Source plugin that discovered the device. | `ARPSCAN` |
 | `devCustomProps`       | [Custom properties](./CUSTOM_PROPERTIES.md) related to the device. The value is a base64-encoded JSON object. | `PHN2ZyB...` |
 | `devFQDN`              | Fully qualified domain name. | `raspberrypi.local` |
+| `devParentRelType`     | The type of relationship between the current device and it's parent node. By default, selecting `nic` will hide it from lists. | `nic` |
+| `devReqNicsOnline`     | If all NICs are required to be online to mark teh current device online. | `0` |
 
 
 To understand how values of these fields influuence application behavior, such as Notifications or Network topology, see also: 

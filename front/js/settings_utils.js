@@ -363,8 +363,6 @@ function removeAllOptions(element) {
 function selectAll(element) {
   settingsChanged();
 
-  // Get the <select> element with the class 'deviceSelector'
-  // var selectElement = $('.deviceSelector select');
   var selectElement = $(`#${$(element).attr("my-input-to")}`);
   
   // Iterate over each option within the select element
@@ -381,8 +379,6 @@ function selectAll(element) {
 // UN-Select All
 function unselectAll(element) {
   settingsChanged();
-  // Get the <select> element with the class 'deviceSelector'
-  // var selectElement = $('.deviceSelector select');
   var selectElement = $(`#${$(element).attr("my-input-to")}`);
   
   // Iterate over each option within the select element
@@ -399,8 +395,7 @@ function unselectAll(element) {
 // Trigger change to open up the dropdown filed
 function selectChange(element) {
   settingsChanged();
-  // Get the <select> element with the class 'deviceSelector'
-  // var selectElement = $('.deviceSelector select');
+
   var selectElement = $(`#${$(element).attr("my-input-to")}`);
   
   selectElement.parent().find("input").focus().click();
@@ -624,6 +619,7 @@ function generateOptionsOrSetOptions(
   // console.log( setKey);
 
   // NOTE {value} options to replace with a setting or SQL value are handled in the cacheSettings() function
+  // obj.push({ id: item, name: item })
   options = arrayToObject(createArray(overrideOptions ? overrideOptions : getSettingOptions(setKey)))
 
   
@@ -688,6 +684,10 @@ function reverseTransformers(val, transformers) {
       case "getString":
         // retrieve string
         val = getString(val);        
+        break;
+      case "deviceChip":
+        mac = val  // value is mac   
+        val =  `${getDevDataByMac(mac, "devName")}`
         break;
       default:
         console.warn(`Unknown transformer: ${transformer}`);
@@ -822,6 +822,8 @@ function arrayToObject(array) {
 
 // -----------------------------------------------------------------------------
 // Processor to generate options
+//          options     - available options
+//          valuesArray - values = selected options
 function generateOptions(options, valuesArray, targetField, transformers, placeholder) {
   var optionsHtml = "";
 
@@ -1007,10 +1009,12 @@ function generateFormHtml(settingsData, set, overrideValue, overrideOptions, ori
                               class="form-control ${addCss} ${cssClasses}" 
                               name="${setKey}" 
                               id="${setKey}" 
+                              my-transformers=${transformers}
                               my-customparams="${customParams}" 
                               my-customid="${customId}" 
                               my-originalSetKey="${originalSetKey}" 
-                              ${multi}>
+                              ${multi}
+                              ${readOnly ? "disabled" : ""}>
                           <option value="" id="${setKey + "_temp_"}"></option>
                         </select>`;
 

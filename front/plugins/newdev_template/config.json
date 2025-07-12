@@ -1373,13 +1373,43 @@
       "name": [
         {
           "language_code": "en_us",
-          "string": "Network Node"
+          "string": "Parent Node"
         }
       ],
       "description": [
         {
           "language_code": "en_us",
-          "string": "The MAC address of the network node."
+          "string": "The MAC address of the Parent network node."
+        }
+      ]
+    },
+    {
+      "function": "devParentRelType",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "select", "elementOptions": [], "transformers": [] }
+        ]
+      },
+      "default_value": "default",
+      "options": [
+        "default",
+        "child",
+        "logical",
+        "nic",
+        "virtual"
+      ],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Relationship Type"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Defines the relationship between this device and its parent. Selecting <code>nic</code> links it as a network interface, allowing the parent’s online status to be evaluated using its <code>devReqNicsOnline</code> (“Require NICs Online”) setting. Some relationship types may hide the device from lists; see the <code>UI_hide_rel_types</code> setting for details."
         }
       ]
     },
@@ -1404,13 +1434,41 @@
       "name": [
         {
           "language_code": "en_us",
-          "string": "Network Node Port"
+          "string": "Parent Node Port"
         }
       ],
       "description": [
         {
           "language_code": "en_us",
           "string": "The port number of the network node."
+        }
+      ]
+    },
+    {
+      "function": "devChildrenDynamic",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [{ "multiple": "true", "ordeable": "true", "readonly": "true" }],
+            "transformers": ["deviceChip"]
+          }
+        ]
+      },
+      "default_value": [],
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Children Nodes"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Children nodes assigned to this device. Navigate to the child device directly to edit the relationship and details."
         }
       ]
     },
@@ -1663,6 +1721,41 @@
         {
           "language_code": "en_us",
           "string": "Fully Qualified Domain Name - Autodetected and Uneditable. Can be auto-refreshed by enabling the <code>REFRESH_FQDN</code> setting."
+        }
+      ]
+    },
+    {
+      "function": "devReqNicsOnline",
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "type": "checkbox"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": 0,
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Require NICs Online"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Indicates whether this device should be considered online only if all associated NICs (devices with the <code>nic</code> relationship type) are online. If disabled, the device is considered online if any NIC is online."
         }
       ]
     }

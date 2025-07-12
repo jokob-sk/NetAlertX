@@ -297,6 +297,9 @@
             <li>
               <a href="devices.php#archived" onclick="forceLoadUrl('devices.php#archived')" >  <?= lang("Device_Shortcut_Archived");?> </a>
             </li>
+            <li>
+              <a href="devices.php#all" onclick="forceLoadUrl('devices.php#all_nodes')" >  <?= lang("Device_Shortcut_AllNodes");?> </a>
+            </li>
           </ul>
 
         </li>

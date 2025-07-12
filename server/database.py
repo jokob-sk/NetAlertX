@@ -87,6 +87,14 @@ class DB():
         # devFQDN 
         if ensure_column(self.sql, "Devices", "devFQDN", "TEXT") is False:
             return # addition failed
+
+        # devParentRelType 
+        if ensure_column(self.sql, "Devices", "devParentRelType", "TEXT") is False:
+            return # addition failed
+
+        # devRequireNicsOnline 
+        if ensure_column(self.sql, "Devices", "devReqNicsOnline", "INTEGER") is False:
+            return # addition failed
         
         # Settings table setup
         ensure_Settings(self.sql)

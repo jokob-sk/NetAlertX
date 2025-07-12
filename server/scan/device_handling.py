@@ -214,6 +214,9 @@ def update_devices_data_from_scan (db):
 
     if len(recordsToUpdate) > 0: 
         sql.executemany ("UPDATE Devices SET devVendor = ? WHERE devMac = ? ", recordsToUpdate )
+
+    # Update devPresentLastScan based on NICs presence
+    update_devPresentLastScan_based_on_nics(db)
     
     # Guess ICONS
     recordsToUpdate = []
@@ -396,7 +399,10 @@ def create_new_devices (db):
                         devComments, 
                         devLogEvents, 
                         devLocation,
-                        devCustomProps"""
+                        devCustomProps,
+                        devParentRelType,
+                        devReqNicsOnline
+                        """
 
     newDevDefaults = f"""{get_setting_value('NEWDEV_devAlertEvents')}, 
                         {get_setting_value('NEWDEV_devAlertDown')}, 
@@ -411,7 +417,9 @@ def create_new_devices (db):
                         '{sanitize_SQL_input(get_setting_value('NEWDEV_devComments'))}', 
                         {get_setting_value('NEWDEV_devLogEvents')}, 
                         '{sanitize_SQL_input(get_setting_value('NEWDEV_devLocation'))}',
-                        '{sanitize_SQL_input(get_setting_value('NEWDEV_devCustomProps'))}'
+                        '{sanitize_SQL_input(get_setting_value('NEWDEV_devCustomProps'))}',
+                        '{sanitize_SQL_input(get_setting_value('NEWDEV_devParentRelType'))}',
+                        {sanitize_SQL_input(get_setting_value('NEWDEV_devReqNicsOnline'))}
                         """
 
     # Fetch data from CurrentScan skipping ignored devices by IP and MAC
@@ -581,8 +589,69 @@ def update_devices_names(db):
     # Commit all database changes
     db.commitDB()
 
+#-------------------------------------------------------------------------------
+# Updates devPresentLastScan for parent devices based on the presence of their NICs
+def update_devPresentLastScan_based_on_nics(db):
+    """
+    Updates devPresentLastScan in the Devices table for parent devices
+    based on the presence of their NICs and the devReqNicsOnline setting.
 
+    Args:
+        db: A database object with `.execute()` and `.fetchall()` methods.
+    """
 
+    sql = db.sql
+
+    # Step 1: Load all devices from the DB
+    devices = sql.execute("SELECT * FROM Devices").fetchall()
+
+    # Convert rows to dicts (assumes sql.row_factory = sqlite3.Row or similar)
+    devices = [dict(row) for row in devices]
+
+    # Build MAC -> NICs map
+    mac_to_nics = {}
+    for device in devices:
+        if device.get("devParentRelType") == "nic":
+            parent_mac = device.get("devParentMAC")
+            if parent_mac:
+                mac_to_nics.setdefault(parent_mac, []).append(device)
+
+    # Step 2: For each non-NIC device, determine new devPresentLastScan
+    updates = []
+    for device in devices:
+        if device.get("devParentRelType") == "nic":
+            continue  # skip NICs
+
+        mac = device.get("devMac")
+        if not mac:
+            continue
+
+        req_all = str(device.get("devReqNicsOnline")) == "1"
+        nics = mac_to_nics.get(mac, [])
+
+        original = device.get("devPresentLastScan", 0)
+        new_present = original
+
+        if nics:
+            nic_statuses = [nic.get("devPresentLastScan") == 1 for nic in nics]
+            if req_all:
+                new_present = int(all(nic_statuses))
+            else:
+                new_present = int(any(nic_statuses))
+
+        # Only add update if changed
+        if original != new_present:
+            updates.append((new_present, mac))
+
+    # Step 3: Execute batch update
+    for present, mac in updates:
+        sql.execute(
+            "UPDATE Devices SET devPresentLastScan = ? WHERE devMac = ?",
+            (present, mac)
+        )
+
+    db.commitDB()
+    return len(updates)
 
 #-------------------------------------------------------------------------------
 # Check if the variable contains a valid MAC address or "Internet"

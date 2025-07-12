@@ -74,6 +74,8 @@ class Device(ObjectType):
     devIpLong = Int() 
     devFilterStatus = String() 
     devFQDN = String() 
+    devParentRelType = String() 
+    devReqNicsOnline = Int() 
 
 
 class DeviceResult(ObjectType):
@@ -133,12 +135,19 @@ class Query(ObjectType):
                 status = options.status
                 mylog('verbose', f'[graphql_schema] Applying status filter: {status}')
 
-                # Example filtering based on the "status"
+                # Filtering based on the "status"
                 if status == "my_devices":
                     # Include devices matching criteria in UI_MY_DEVICES
                     allowed_statuses = get_setting_value("UI_MY_DEVICES")  
+                    hidden_relationships = get_setting_value("UI_hide_rel_types")  # 🆕
 
                     mylog('verbose', f'[graphql_schema] allowed_statuses: {allowed_statuses}')
+                    mylog('verbose', f'[graphql_schema] hidden_relationships: {hidden_relationships}')
+
+                    devices_data = [
+                        device for device in devices_data
+                        if ( device.get("devParentRelType") not in hidden_relationships)
+                    ]
 
                     devices_data = [
                         device for device in devices_data
@@ -165,6 +174,8 @@ class Query(ObjectType):
                     devices_data = [device for device in devices_data if device["devIsArchived"] == 1]
                 elif status == "offline":
                     devices_data = [device for device in devices_data if device["devPresentLastScan"] == 0]
+                elif status == "all_nodes":
+                    devices_data = devices_data # keep all
 
             # additional filters
             if options.filters:
@@ -175,13 +186,13 @@ class Query(ObjectType):
                             if str(device.get(filter.filterColumn, "")).lower() == str(filter.filterValue).lower()
                         ]
 
-            # Filter data if a search term is provided
+            # Search data if a search term is provided
             if options.search:
                 # Define static list of searchable fields
                 searchable_fields = [
                     "devName", "devMac", "devOwner", "devType", "devVendor", "devLastIP",
-                    "devGroup", "devComments", "devLocation", "devStatus",
-                    "devSSID", "devSite", "devSourcePlugin", "devSyncHubNode", "devFQDN"
+                    "devGroup", "devComments", "devLocation", "devStatus", "devSSID", 
+                    "devSite", "devSourcePlugin", "devSyncHubNode", "devFQDN", "devParentRelType"
                 ]
 
                 search_term = options.search.lower()

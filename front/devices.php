@@ -539,7 +539,9 @@ function mapColumnIndexToFieldName(index, tableColumnVisible) {
     "devPresentLastScan",
     "devAlertDown",
     "devCustomProps",
-    "devFQDN"
+    "devFQDN",
+    "devParentRelType",
+    "devReqNicsOnline"
   ];
 
   // console.log("OrderBy: " + columnNames[tableColumnOrder[index]]);  
@@ -650,6 +652,8 @@ function initializeDatatable (status) {
                 devIpLong
                 devCustomProps
                 devFQDN
+                devParentRelType
+                devReqNicsOnline
               }
               count
             }
@@ -725,7 +729,9 @@ function initializeDatatable (status) {
                 device.devPresentLastScan || "",
                 device.devAlertDown || "",
                 device.devCustomProps || "",
-                device.devFQDN || ""
+                device.devFQDN || "",
+                device.devParentRelType || "",
+                device.devReqNicsOnline || 0
             ];
 
             const newRow = [];
@@ -893,25 +899,14 @@ function initializeDatatable (status) {
           tmp_devPresentLastScan = rowData[mapIndx(24)]
           tmp_devAlertDown = rowData[mapIndx(25)]
 
-          if (tmp_devPresentLastScan == 1)
-          {
-            css = "green text-white statusOnline"
-            icon = '<i class="fa-solid fa-plug"></i>'
-          } else if (tmp_devPresentLastScan != 1 && tmp_devAlertDown == 1)
-          {
-            css = "red text-white statusDown"
-            icon = '<i class="fa-solid fa-triangle-exclamation"></i>'
-          } else if(tmp_devPresentLastScan != 1)
-          {
-            css = "gray text-white statusOffline"
-            icon = '<i class="fa-solid fa-xmark"></i>'
-          } else
-          {
-            css = "gray text-white statusUnknown"
-            icon = '<i class="fa-solid fa-question"></i>'
-          }
+          const badgeHtml = getStatusBadgeHtml(
+            rowData[mapIndx(24)],   // tmp_devPresentLastScan
+            rowData[mapIndx(25)],   // tmp_devAlertDown
+            rowData[mapIndx(11)],  // MAC
+            cellData               // optional text
+          );
       
-          $(td).html (`<a href="deviceDetails.php?mac=${rowData[mapIndx(11)]}" class="badge bg-${css}">${icon} ${cellData.replace('-', '')}</a>`);
+          $(td).html (badgeHtml);
       } },
     ],
     

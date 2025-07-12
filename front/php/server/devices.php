@@ -113,7 +113,9 @@ function getServerDeviceData() {
       "devEvents" => 0,
       "devDownAlerts" => 0,
       "devPresenceHours" => 0,
-      "devFQDN"  => ""
+      "devFQDN"  => "",
+      "devParentRelType"  => "default",
+      "devReqNicsOnline"  => 0
     ];
     echo json_encode($deviceData);
     return;
@@ -138,6 +140,19 @@ function getServerDeviceData() {
   $deviceData['devLastConnection'] =  formatDate ($row['devLastConnection']);  // Date formated
 
   $deviceData['devIsRandomMAC'] = isRandomMAC($mac);
+
+  // devChildrenDynamic
+  $sql = 'SELECT rowid, * FROM Devices WHERE devParentMAC = "' . $mac . '"';
+  $result = $db->query($sql);
+
+  $children = [];
+  if ($result) {
+      while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+          $children[] = $row;
+      }
+  }
+  $deviceData['devChildrenDynamic'] = $children;
+
 
   // Count Totals
   $condition = ' WHERE eve_MAC="'. $mac .'" AND eve_DateTime >= '. $periodDate;

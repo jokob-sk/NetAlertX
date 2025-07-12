@@ -128,9 +128,6 @@ function getRandomBytes(elem, length) {
   targetElement.val(formattedHex);
 }
 
-
-
-
 // ----------------------------------------------
 // Updates the icon preview  
 function updateAllIconPreviews() {
@@ -574,19 +571,9 @@ function showIconSelection() {
   
 }
 
-// "Device_TableHead_Owner",
-// "Device_TableHead_Type",
-// "Device_TableHead_Group",
-// "Device_TableHead_Status",
-// "Device_TableHead_Location",
-// "Device_TableHead_Vendor",
-// "Device_TableHead_SyncHubNodeName",
-// "Device_TableHead_NetworkSite",
-// "Device_TableHead_SSID",
-// "Device_TableHead_SourcePlugin"
 
 // -----------------------------------------------------------------------------
-// Get teh correct db column code name based on table header title string
+// Get the correct db column code name based on table header title string
 function getColumnNameFromLangString(headStringKey) {
   columnNameMap = {
     "Device_TableHead_Name": "devName",
@@ -621,6 +608,28 @@ function getColumnNameFromLangString(headStringKey) {
   return columnNameMap[headStringKey] || "";
 }
 
+// Generating the device status chip
+function getStatusBadgeHtml(tmp_devPresentLastScan, tmp_devAlertDown, macAddress, statusText = '') {
+  let css = 'gray text-white statusUnknown';
+  let icon = '<i class="fa-solid fa-question"></i>';
+
+  if (tmp_devPresentLastScan == 1) {
+    css = 'green text-white statusOnline';
+    icon = '<i class="fa-solid fa-plug"></i>';
+  } else if (tmp_devAlertDown == 1) {
+    css = 'red text-white statusDown';
+    icon = '<i class="fa-solid fa-triangle-exclamation"></i>';
+  } else if (tmp_devPresentLastScan != 1) {
+    css = 'gray text-white statusOffline';
+    icon = '<i class="fa-solid fa-xmark"></i>';
+  }
+
+  // Remove dashes from statusText
+  const cleanedText = statusText.replace(/-/g, '');
+
+  return `<a href="deviceDetails.php?mac=${macAddress}" class="badge bg-${css}">${icon} ${cleanedText}</a>`;
+}
+
 
 // -----------------------------------------------------------------------------
 // initialize
@@ -636,7 +645,6 @@ function initSelect2() {
   {
     // prepare HTML DOM before initializing the frotend
     initDeviceSelectors(devicesListAll_JSON)
-
     
     // --------------------------------------------------------
     //Initialize Select2 Elements and make them sortable
@@ -644,7 +652,46 @@ function initSelect2() {
     $(function () {
       // Iterate over each Select2 dropdown
       $('.select2').each(function() {
-          var selectEl = $(this).select2();
+          
+
+          if($(this).attr("my-transformers") == "deviceChip")
+          {
+            var selectEl = $(this).select2({
+              templateSelection: function (data, container) {
+                if (!data.id) return data.text; // default for placeholder etc.
+                
+                // Custom HTML
+                const html = $(`
+                  <span class="custom-chip">
+                    <span class="iconPreview">${atob(getDevDataByMac(data.id, "devIcon"))}</span>
+                    ${data.text}
+                    <span>
+                    ${getStatusBadgeHtml(
+                      getDevDataByMac(data.id, "devPresentLastScan"), 
+                      getDevDataByMac(data.id, "devAlertDown"), 
+                      data.id
+                    )}
+                    </span
+                  </span>
+                `);
+          
+                // Attach click listener (you can also use event delegation outside)
+                html.find('.chip-btn').on('click', function (e) {
+                  // e.stopPropagation(); // prevent dropdown toggle
+                  alert('Button clicked for ID: ' + data.id);
+                });
+          
+                return html;
+              },
+              escapeMarkup: function (m) {
+                return m; // Allow HTML
+              }
+            });
+            
+          } else
+          {
+            var selectEl = $(this).select2();
+          }
     
           // Apply sortable functionality to the dropdown's dropdown-container
           selectEl.next().children().children().children().sortable({
@@ -671,7 +718,7 @@ function initSelect2() {
   {
     setTimeout(() => {
       initSelect2()
-    }, 1000);
+    }, 500);
   }  
 }
 
@@ -681,7 +728,7 @@ window.addEventListener("load", function() {
   setTimeout(() => {
     initSelect2()
     // initializeiCheck();
-  }, 1000);
+  }, 500);
 });
 
 

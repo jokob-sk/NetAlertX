@@ -47,7 +47,7 @@ sql_devices_all = """
                         IFNULL(devAlertDown, '') AS devAlertDown,
                         IFNULL(devSkipRepeated, '') AS devSkipRepeated,
                         IFNULL(devLastNotification, '') AS devLastNotification,
-                        IFNULL(devPresentLastScan, '') AS devPresentLastScan,
+                        IFNULL(devPresentLastScan, 0) AS devPresentLastScan,
                         IFNULL(devIsNew, '') AS devIsNew,
                         IFNULL(devLocation, '') AS devLocation,
                         IFNULL(devIsArchived, '') AS devIsArchived,
@@ -61,6 +61,8 @@ sql_devices_all = """
                         IFNULL(devSourcePlugin, '') AS devSourcePlugin,
                         IFNULL(devCustomProps, '') AS devCustomProps,
                         IFNULL(devFQDN, '') AS devFQDN,
+                        IFNULL(devParentRelType, '') AS devParentRelType,
+                        IFNULL(devReqNicsOnline, '') AS devReqNicsOnline,
                         CASE 
                             WHEN devIsNew = 1 THEN 'New'
                             WHEN devPresentLastScan = 1 THEN 'On-line'
