@@ -734,6 +734,31 @@
     background-color: #000 !important;
   }
 
+  .select2-container--default .select2-selection--single {
+    color: initial !important;
+    background-color: #353c42 !important;
+  }
+
+  /* Chevron color */
+  .select2-container .select2-selection__arrow::after {
+    color: #bec5cb;
+  }
+
+  /* Chevron color */
+  .select2-selection .select2-selection--single {
+    color: #bec5cb;
+  }
+
+  .select2-container--default .select2-selection--multiple, .select2-container--default .select2-selection--single {
+    border-color: #3d444b !important;
+  }
+
+  .select2-container--default .select2-selection--single .select2-selection__rendered  .custom-chip
+  {
+    color: #bec5cb;
+  }
+
+
 }
 
 .callout code {

@@ -136,7 +136,7 @@
 <!-- ----------------------------------------------------------------------- -->
 <!-- Layout Boxed Yellow -->
 
-<body class="hold-transition fixed <?php echo $pia_skin_selected;?> sidebar-mini" onLoad="update_servertime();" >
+<body class="hold-transition fixed <?php echo $pia_skin_selected;?>  theme-<?php echo $UI_THEME;?>  sidebar-mini" onLoad="update_servertime();" >
 <!-- Site wrapper -->
 <div class="wrapper">
 

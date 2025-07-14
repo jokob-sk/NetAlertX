@@ -659,7 +659,6 @@ function getRelationshipConf(relType) {
   let cssClass = '';
   let color = '';
 
-
   // --color-aqua: #00c0ef;
   // --color-blue: #0060df;
   // --color-green: #00a65a;
@@ -686,7 +685,7 @@ function getRelationshipConf(relType) {
       break;      
     default:
       color = "#5B5B66"; // grey
-      cssClass = "text-grey";
+      cssClass = "text-light-grey";
       break;
   }
 
@@ -753,19 +752,18 @@ function initSelect2() {
               }
             });
             
-          } else if($(this).attr("my-transformers") == "deviceRelType")
+          } else if($(this).attr("my-transformers") == "deviceRelType") // handling dropdown for relationships
           {
             var selectEl = $(this).select2({
+              minimumResultsForSearch: Infinity,
               templateSelection: function (data, container) {
                 if (!data.id) return data.text; // default for placeholder etc.
 
                 const relConf = getRelationshipConf(data.text);
-                // remove all bg- classes and add latest one
-                $(container).removeClass(function(i, c) { return (c.match(/\btext-[^\s]+/g) || []).join(' '); }).addClass(relConf.cssClass);
-                
+                                
                 // Custom HTML
                 const html = $(`                  
-                    <span class="custom-chip" >                      
+                    <span class="custom-chip ${relConf.cssClass}" >                      
                       ${data.text}                      
                     </span>                  
                 `);

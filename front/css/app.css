@@ -1418,9 +1418,10 @@ input[readonly] {
 .select2-container--default .select2-selection--single
 {
     border-radius: 0px !important;
-    border-color: #3d444b !important;
+    border-color: #d2d6de !important;
     min-height: 42px;
 }
+
 
 .helpIconSmallTopRight{
     position: absolute;
@@ -1578,7 +1579,25 @@ input[readonly] {
 {
     width: initial;
     display: inline-block;
+    min-height: 42px;
 }
+
+/* Remove the default Select2 chevron (the down arrow) */
+.select2-container .select2-selection__arrow b {
+    display: none !important;
+  }
+
+/* Add custom icon */
+.select2-container .select2-selection__arrow::after {
+    font-family: 'Font Awesome 6 Free';
+    content: "\f078"; /* fa-chevron-down */
+    font-weight: 700;
+    position: absolute;
+    top: 75%;
+    left: 30%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
 
 #deviceDetailsEdit .form-control
 {
