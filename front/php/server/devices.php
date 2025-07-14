@@ -26,7 +26,7 @@
   if (isset ($_REQUEST['action']) && !empty ($_REQUEST['action'])) {
     $action = $_REQUEST['action'];
     switch ($action) {
-      case 'getServerDeviceData':           getServerDeviceData();                         break;
+      case 'getServerDeviceData':     getServerDeviceData();                   break;
       case 'setDeviceData':           setDeviceData();                         break;
       case 'deleteDevice':            deleteDevice();                          break;
       case 'deleteAllWithEmptyMACs':  deleteAllWithEmptyMACs();                break;      
@@ -45,8 +45,7 @@
       case 'ImportCSV':               ImportCSV();                             break;     
 
       case 'getDevicesTotals':        getDevicesTotals();                      break;
-      case 'getDevicesList':          getDevicesList();                        break;
-      case 'getDevicesListCalendar':  getDevicesListCalendar();                break;
+      case 'getDevicesListCalendar':  getDevicesListCalendar();                break;  //todo: slowly deprecate this
 
       case 'updateNetworkLeaf':       updateNetworkLeaf();                     break;
       case 'overwriteIconType':       overwriteIconType();                     break;
@@ -777,143 +776,6 @@ function getDevicesTotals() {
 
   echo ($resultJSON);
 }
-
-
-//------------------------------------------------------------------------------
-//  Query the List of devices in a determined Status
-//------------------------------------------------------------------------------
-function getDevicesList() {
-  global $db;
-
-  $forceDefaultOrder = FALSE;
-
-  if (isset ($_REQUEST['forceDefaultOrder']) )
-  {
-    $forceDefaultOrder = TRUE;
-  }
-
-  // This object is used to map from the old order ( second parameter, first number) to the new mapping, that is represented by the 3rd parameter (Second number)
-  $columnOrderMapping = array(
-    array("devName", 0, 0),               
-    array("devOwner", 1, 1),              
-    array("devType", 2, 2),         
-    array("devIcon", 3, 3),               
-    array("devFavorite", 4, 4),           
-    array("devGroup", 5, 5),              
-    array("devFirstConnection", 6, 6),    
-    array("devLastConnection", 7, 7),     
-    array("devLastIP", 8, 8),             
-    array("devMac", 9, 9),                
-    array("devStatus", 10, 10),            
-    array("devMac_full", 11, 11),          
-    array("devLastIP_orderable", 12, 12),  
-    array("rowid", 13, 13),            
-    array("devParentMAC", 14, 14),
-    array("connected_devices", 15, 15),
-    array("devLocation", 16, 16),
-    array("devVendor", 17, 17),           
-    array("devParentPort", 18, 18),           
-    array("devGUID", 19, 19),           
-    array("devSyncHubNode", 20, 20),           
-    array("devSite", 21, 21),           
-    array("devSSID", 22, 22),           
-    array("devSourcePlugin", 23, 23)           
-  );
-
-  if($forceDefaultOrder == FALSE) 
-  {
-    // get device columns order
-    $sql = 'SELECT par_Value FROM Parameters  where par_ID = "Front_Devices_Columns_Order"';
-    $result = $db->query($sql);
-    $row = $result -> fetchArray (SQLITE3_NUM);  
-
-    if($row != NULL && count($row) == 1)
-    {
-      // ordered columns setting from the maintenance page
-      $orderedColumns = createArray($row[0]);
-
-      // init ordered columns    
-      for($i = 0; $i < count($orderedColumns); $i++) { 
-
-        $columnOrderMapping[$i][2] = $orderedColumns[$i];        
-      }
-
-    }
-  }
-
-  // SQL
-  $condition = getDeviceCondition ($_REQUEST['status']);
-
-  $sql = 'SELECT * FROM (
-              SELECT rowid, *, CASE
-                      WHEN t1.devAlertDown !=0 AND t1.devPresentLastScan=0 THEN "Down"
-                      WHEN t1.devIsNew=1 THEN "New"
-                      WHEN t1.devPresentLastScan=1 THEN "On-line"
-                      ELSE "Off-line"  END AS devStatus
-                      FROM Devices t1 '.$condition.') t3  
-                    LEFT JOIN
-                              (
-                                    SELECT devParentMAC as devParentMAC_t2, devMac as devMac_t2,
-                                          count() as connected_devices 
-                                    FROM Devices b 
-                                    WHERE b.devParentMAC NOT NULL group by b.devParentMAC
-                              ) t2
-                              ON (t3.devMac = t2.devParentMAC_t2);';
-
-  $result = $db->query($sql);
-  
-  // arrays of rows
-  $tableData = array();
-  while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
-
-    $defaultOrder = array (
-                            $row['devName'],
-                            $row['devOwner'],
-                            handleNull($row['devType']),
-                            handleNull($row['devIcon'], "PGkgY2xhc3M9J2ZhIGZhLWxhcHRvcCc+PC9pPg=="), // laptop icon
-                            $row['devFavorite'],
-                            $row['devGroup'],
-                            // ----
-                            formatDate ($row['devFirstConnection']),
-                            formatDate ($row['devLastConnection']),
-                            $row['devLastIP'],
-                            ( isRandomMAC($row['devMac']) ),
-                            $row['devStatus'],
-                            $row['devMac'], // MAC (hidden)
-                            formatIPlong ($row['devLastIP']), // IP orderable
-                            $row['rowid'], // Rowid (hidden)      
-                            handleNull($row['devParentMAC']),
-                            handleNull($row['connected_devices']),
-                            handleNull($row['devLocation']), 
-                            handleNull($row['devVendor']),                            
-                            handleNull($row['devParentPort']),                            
-                            handleNull($row['devGUID']),                            
-                            handleNull($row['devSyncHubNode']),                            
-                            handleNull($row['devSite']),                            
-                            handleNull($row['devSSID']),                            
-                            handleNull($row['devSourcePlugin'])                            
-                          );
-
-    $newOrder = array();
-
-    // reorder columns based on user settings
-    for($index = 0; $index  < count($columnOrderMapping); $index++)
-    {
-      array_push($newOrder, $defaultOrder[$columnOrderMapping[$index][2]]);      
-    }
-
-    $tableData['data'][] = $newOrder;
-  }
-
-  // Control no rows
-  if (empty($tableData['data'])) {
-    $tableData['data'] = '';
-  }
-
-  // Return json
-  echo (json_encode ($tableData));
-}
-
 
 //------------------------------------------------------------------------------
 //  Determine if Random MAC

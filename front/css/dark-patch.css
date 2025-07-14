@@ -722,7 +722,7 @@ input[type="password"]::-webkit-caps-lock-indicator {
   margin-left: 0px;
 }
 .small-box:hover .icon {
-  font-size: 3.74em;
+  font-size: 3em;
 }
 .small-box .icon { 
   top: 0.01em;

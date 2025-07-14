@@ -339,6 +339,7 @@ function execute_settingEvent(element) {
   feSetKey    = $(element).attr('data-myparam-setkey');
   feParam     = $(element).attr('data-myparam');
   feSourceId  = $(element).attr('id');
+  feValue     = $("#"+feSetKey).val();
 
   if (["test", "run"].includes(feEvent)) {
     // Calls a backend function to add a front-end event (specified by the attributes 'data-myevent' and 'data-myparam-plugin' on the passed  element) to an execution queue
@@ -391,9 +392,12 @@ function execute_settingEvent(element) {
       getString('Gen_Okay'), 
       'overwriteIconType'
     );
-  } else if (["go_to_node"].includes(feEvent)) {
+  } else if (["go_to_device"].includes(feEvent)) {
 
-    goToNetworkNode('NEWDEV_devParentMAC');
+    goToDevice(feValue);
+  } else if (["go_to_node"].includes(feEvent)) {
+    
+    goToNetworkNode(feValue);
 
   } else {
     console.warn(`🔺Not implemented: ${feEvent}`)
@@ -405,11 +409,18 @@ function execute_settingEvent(element) {
 
 // -----------------------------------------------------------------------------
 // Go to the correct network node in the Network section
-function goToNetworkNode(dropdownId)
-{  
-  setCache('activeNetworkTab', $('#'+dropdownId).val().replaceAll(":","_")+'_id');
+function goToNetworkNode(mac)
+{ 
+  setCache('activeNetworkTab', mac.replaceAll(":","_")+'_id');
   window.location.href = './network.php';
   
+}
+
+// -----------------------------------------------------------------------------
+// Go to the device 
+function goToDevice(mac)
+{  
+  window.location.href = './deviceDetails.php?mac=' + mac;  
 }
   
 
@@ -677,9 +688,6 @@ function initSelect2() {
                 )
 
                 $(container).addClass(badge.cssClass);
-
-                
-                
                 
                 // Custom HTML
                 const html = $(`
@@ -693,7 +701,6 @@ function initSelect2() {
                     </span>
                   </a>
                 `);
-
           
                 return html;
               },
@@ -732,7 +739,7 @@ function initSelect2() {
   {
     setTimeout(() => {
       initSelect2()
-    }, 500);
+    }, 700);
   }  
 }
 

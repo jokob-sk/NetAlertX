@@ -23,11 +23,11 @@ services:
       # - ${DEV_LOCATION}/api:/app/api
       # ---------------------------------------------------------------------------
       # DELETE START anyone trying to use this file: comment out / delete BELOW lines, they are only for development purposes
-      - ${APP_DATA_LOCATION}/netalertx/dhcp_samples/dhcp1.leases:/mnt/dhcp1.leases
-      - ${APP_DATA_LOCATION}/netalertx/dhcp_samples/dhcp2.leases:/mnt/dhcp2.leases      
-      - ${APP_DATA_LOCATION}/netalertx/dhcp_samples/pihole_dhcp_full.leases:/etc/pihole/dhcp.leases      
-      - ${APP_DATA_LOCATION}/netalertx/dhcp_samples/pihole_dhcp_2.leases:/etc/pihole/dhcp2.leases      
-      - ${APP_DATA_LOCATION}/pihole/etc-pihole/pihole-FTL.db:/etc/pihole/pihole-FTL.db    
+      - ${APP_DATA_LOCATION}/netalertx/dhcp_samples/dhcp1.leases:/mnt/dhcp1.leases      # test data for DCPLSS plugin
+      - ${APP_DATA_LOCATION}/netalertx/dhcp_samples/dhcp2.leases:/mnt/dhcp2.leases      # test data for DCPLSS plugin
+      - ${APP_DATA_LOCATION}/netalertx/dhcp_samples/pihole_dhcp_full.leases:/etc/pihole/dhcp.leases      # test data for DCPLSS plugin
+      - ${APP_DATA_LOCATION}/netalertx/dhcp_samples/pihole_dhcp_2.leases:/etc/pihole/dhcp2.leases        # test data for DCPLSS plugin
+      - ${APP_DATA_LOCATION}/pihole/etc-pihole/pihole-FTL.db:/etc/pihole/pihole-FTL.db    # test data for PIHOLE plugin
       - ${DEV_LOCATION}/mkdocs.yml:/app/mkdocs.yml
       - ${DEV_LOCATION}/docs:/app/docs
       - ${DEV_LOCATION}/server:/app/server            

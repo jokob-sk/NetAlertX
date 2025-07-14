@@ -1790,7 +1790,7 @@ input[readonly] {
 .plugin-content #tabs-content-location
 {    
     margin: 0px;
-    /* padding-top: 0; */
+    padding-top: 0;
 }
 
 .integrations-plugins .content

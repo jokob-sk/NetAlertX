@@ -463,11 +463,18 @@
 <script src="lib/treeviz/bundle.js"></script> 
 
 
-
 <script defer>
-  $.get('php/server/devices.php?action=getDevicesList&status=all&forceDefaultOrder', function(data) {     
+  const apiUrl = `php/server/dbHelper.php?action=read&rawSql=${btoa(encodeURIComponent(
+                    `select *, CASE WHEN devAlertDown !=0 AND devPresentLastScan=0 THEN "Down"
+                                    WHEN devPresentLastScan=1 THEN "On-line"
+                                    ELSE "Off-line" END as devStatus 
+                      from Devices`))}`;
 
+  $.get(apiUrl, function (data) {
+  
     rawData = JSON.parse (data)      
+
+    console.log(rawData);
 
     if(rawData["data"] == "")
     {
@@ -478,38 +485,26 @@
 
     orderTopologyBy = createArray(getSetting("UI_TOPOLOGY_ORDER"))
 
-    devicesListnew = rawData["data"].map(item =>  { 
-      return {
-          "name": item[0], 
-          "type": item[2], 
-          "icon": item[3], 
-          "mac": item[11], 
-          "parentMac": item[14], 
-          "rowid": item[13], 
-          "status": item[10],
-          "childrenQty": item[15],
-          "port": item[18]
-        };
-    }).sort((a, b) => {
+    devicesListnew = rawData.sort((a, b) => {
       // Helper to safely parse port into an integer; invalid ports become Infinity for sorting
-      const parsePort = (port) => {
-        const parsed = parseInt(port, 10);
+      const parsePort = (devParentPort) => {
+        const parsed = parseInt(devParentPort, 10);
         return isNaN(parsed) ? Infinity : parsed;
       };
 
       switch (orderTopologyBy[0]) {
         case "Name":
           // First sort by name alphabetically
-          const nameCompare = a.name.localeCompare(b.name);
+          const nameCompare = a.devName.localeCompare(b.devName);
           if (nameCompare !== 0) {
             return nameCompare;
           }
           // If names are the same, sort by port numerically
-          return parsePort(a.port) - parsePort(b.port);
+          return parsePort(a.devParentPort) - parsePort(b.devParentPort);
 
         case "Port":
           // Sort by port numerically
-          return parsePort(a.port) - parsePort(b.port);
+          return parsePort(a.devParentPort) - parsePort(b.devParentPort);
 
         default:
           // Default: Sort by rowid (as a fallback)
@@ -544,9 +539,6 @@ var hiddenMacs = []; // hidden children
 var hiddenChildren = [];
 var deviceListGlobal = null; 
 
-
-
-
 // ---------------------------------------------------------------------------
 // Recursively get children nodes and build a tree
 function getChildren(node, list, path, visited = [])
@@ -554,23 +546,23 @@ function getChildren(node, list, path, visited = [])
     var children = [];
 
     // Check for infinite recursion by seeing if the node has been visited before
-    if (visited.includes(node.mac.toLowerCase())) {
-        console.error("Infinite recursion detected at node:", node.mac);
+    if (visited.includes(node.devMac.toLowerCase())) {
+        console.error("Infinite recursion detected at node:", node.devMac);
         write_notification("[ERROR] ⚠ Infinite recursion detected. You probably have assigned the Internet node to another children node or to itself. Please open a new issue on GitHub and describe how you did it.", 'interrupt')
-        return { error: "Infinite recursion detected", node: node.mac };
+        return { error: "Infinite recursion detected", node: node.devMac };
     }
 
     // Add current node to visited list
-    visited.push(node.mac.toLowerCase());
+    visited.push(node.devMac.toLowerCase());
 
     // Loop through all items to find children of the current node
     for (var i in list) {
-        if (list[i].parentMac.toLowerCase() == node.mac.toLowerCase() && !hiddenMacs.includes(list[i].parentMac)) {   
+        if (list[i].devParentMAC.toLowerCase() == node.devMac.toLowerCase() && !hiddenMacs.includes(list[i].devParentMAC)) {   
 
             visibleNodesCount++;
 
             // Process children recursively, passing a copy of the visited list
-            children.push(getChildren(list[i], list, path + ((path == "") ? "" : '|') + list[i].parentMac, visited));
+            children.push(getChildren(list[i], list, path + ((path == "") ? "" : '|') + list[i].devParentMAC, visited));
         }
     }
 
@@ -582,16 +574,17 @@ function getChildren(node, list, path, visited = [])
     }
 
     return { 
-        name: node.name,
+        name: node.devName,
         path: path,
-        mac: node.mac,
-        port: node.port,
-        id: node.mac,
-        parentMac: node.parentMac,
-        icon: node.icon,
-        type: node.type,
-        status: node.status,
+        mac: node.devMac,
+        port: node.devParentPort,
+        id: node.devMac,
+        parentMac: node.devParentMAC,
+        icon: node.devIcon,
+        type: node.devType,
+        status: node.devStatus,
         hasChildren: children.length > 0 || hiddenMacs.includes(node.mac),
+        relType: node.devParentRelType,
         hiddenChildren: hiddenMacs.includes(node.mac),
         qty: children.length,
         children: children
@@ -603,62 +596,12 @@ function getHierarchy()
 { 
   for(i in deviceListGlobal)
   {      
-    if(deviceListGlobal[i].mac == 'Internet')
+    if(deviceListGlobal[i].devMac == 'Internet')
     { 
       return (getChildren(deviceListGlobal[i], deviceListGlobal, ''))
       break;
     }
   }
-}
-
-// ---------------------------------------------------------------------------
-function getFlatData() {
-  var result = [];
-  var leafNodesCount = 0;
-  var parentNodesCount = 0;
-  var visibleNodesCount = 0;
-  
-  for (let node of deviceListGlobal) {
-    let path = "";
-    let childrenCount = 0;
-
-    // count children of this node
-    for (let nodeTmp of deviceListGlobal) {
-        if (nodeTmp.parentMac === node.mac) {
-            childrenCount++;
-        }
-    }
-    
-    // store parent and leaf node count
-    if (childrenCount === 0) {
-        leafNodesCount++;
-    } else {
-        parentNodesCount++;
-    }
-    
-    if (!hiddenMacs.includes(node.parentMac)) {   
-      if (!((node.parentMac == "") && node.mac != "Internet")) {  // skip leaf nodes without father that are not the root
-        visibleNodesCount++;
-        
-        result.push({
-            name: node.name,
-            path: path,
-            mac: node.mac, // Replacing "mac" with "id"
-            parentMac: node.mac == "Internet" ? "" : node.parentMac, // Replacing "parentMac" with "father"
-            port: node.port,
-            icon: node.icon,
-            type: node.type,
-            status: node.status,
-            hasChildren: childrenCount > 0 || hiddenMacs.includes(node.mac),
-            hiddenChildren: hiddenMacs.includes(node.mac),
-            qty: childrenCount,
-        });
-      }
-    }
-      
-  }
-
-  return result;
 }
   
 //---------------------------------------------------------------------------
@@ -832,7 +775,21 @@ function initTree(myHierarchy)
     hasFlatData: false,
     relationnalField: "children",
     linkWidth: (nodeData) => 3,
-    linkColor: (nodeData) => "#ffcc80"
+    linkColor: (nodeData) => {     
+      
+      switch (nodeData.data.relType) {
+        case "default":
+          return "#ffcc80"; // yellow
+          break;
+        case "nic":
+          return "#dd4b39"; // red
+          break;
+      
+        default:
+          return "#ffcc80";
+          break;
+      }
+    }
     // onNodeClick: (nodeData) => handleNodeClick(nodeData),
   });      
 

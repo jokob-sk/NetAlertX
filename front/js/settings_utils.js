@@ -1192,22 +1192,46 @@ function generateFormHtml(settingsData, set, overrideValue, overrideOptions, ori
  
   const eventsList = createArray(set['setEvents']); 
   // inline buttons events
-  
+if (eventsList.length > 0) {
+  eventsList.forEach(event => {
+    let eventIcon = "fa-play";
 
-  if (eventsList.length > 0) {
-    eventsList.forEach(event => {
+    switch (event) {
+      case "add_icon":
+      case "add_option":
+        eventIcon = "fa-square-plus";
+        break;
+      case "copy_icons":
+        eventIcon = "fa-copy";
+        break;
+      case "go_to_device":
+        eventIcon = "fa-square-up-right";
+        break;
+      case "go_to_node":
+        eventIcon = "fa-network-wired";
+        break;
+      case "run":
+        eventIcon = "fa-play";
+        break;
+      case "test":
+        eventIcon = "fa-vial-circle-check";
+        break;
+      default:
+        eventIcon = "fa-play";
+        break;
+    }
 
-        eventsHtml += `<span class="input-group-addon pointer"
-                        id="${`${event}_${setKey}`}"
-                        data-myparam-setkey="${setKey}"
-                        data-myparam="${setKey}"
-                        data-myparam-plugin="${setKey.split('_')[0] || ''}"
-                        data-myevent="${event}"  
-                        onclick="execute_settingEvent(this)">
-                        <i title="${getString(event + "_event_tooltip")}" class="fa ${getString(event + "_event_icon")}"></i>
-                      </span>`;
-    });
-  }
+    eventsHtml += `<span class="input-group-addon pointer"
+                    id="${`${event}_${setKey}`}"
+                    data-myparam-setkey="${setKey}"
+                    data-myparam="${setKey}"
+                    data-myparam-plugin="${setKey.split('_')[0] || ''}"
+                    data-myevent="${event}"  
+                    onclick="execute_settingEvent(this)">
+                    <i title="${getString(event + "_event_tooltip")}" class="fa ${eventIcon}"></i>
+                  </span>`;
+  });
+}
 
   // Combine and return the final HTML
   return inputHtml + eventsHtml;

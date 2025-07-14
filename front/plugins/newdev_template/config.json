@@ -1338,7 +1338,8 @@
     {
       "function": "devParentMAC",
       "events": [
-        "go_to_node"
+        "go_to_node",
+        "go_to_device"
       ],
       "type": {
         "dataType": "string",
