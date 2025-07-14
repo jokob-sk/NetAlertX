@@ -56,8 +56,7 @@ def update_devices_data_from_scan (db):
     mylog('debug', '[Update Devices] 1 Last Connection')
     sql.execute(f"""UPDATE Devices SET devLastConnection = '{startTime}',
                         devPresentLastScan = 1
-                    WHERE devPresentLastScan = 0
-                      AND EXISTS (SELECT 1 FROM CurrentScan 
+                    WHERE EXISTS (SELECT 1 FROM CurrentScan 
                                   WHERE devMac = cur_MAC) """)
 
     # Clean no active devices

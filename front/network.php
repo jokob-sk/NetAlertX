@@ -583,8 +583,11 @@ function getChildren(node, list, path, visited = [])
         icon: node.devIcon,
         type: node.devType,
         vendor: node.devVendor,
+        lastseen: node.devLastConnection,
         ip: node.devLastIP,
         status: node.devStatus,
+        presentLastScan: node.devPresentLastScan,
+        alertDown: node.devAlertDown,
         hasChildren: children.length > 0 || hiddenMacs.includes(node.devMac),
         relType: node.devParentRelType,
         hiddenChildren: hiddenMacs.includes(node.devMac),
@@ -642,6 +645,7 @@ function handleNodeClick(el)
 {    
   const targetTabMAC = $(el).attr("data-mytreemacmain");    
 
+  // handle network node
   var targetTab = $(`a[data-mytabmac="${targetTabMAC}"]`);
 
   if (targetTab.length) {
@@ -652,6 +656,10 @@ function handleNodeClick(el)
     $('html, body').animate({
       scrollTop: targetTab.offset().top - 50
     }, 500); // Adjust the duration as needed
+  } else
+  {
+    // handle regular device - open in new tab
+    goToDevice($(el).data("mac"), true)
   }
 }
 
@@ -684,7 +692,7 @@ function initTree(myHierarchy)
 
   emSize = pxToEm((treeAreaHeight/(leafNodesCount)).toFixed(2));
   
-  let screenWidthEm = pxToEm($('.networkTable').width());
+  let screenWidthEm = pxToEm($('.networkTable').width()-15);
 
   // init the drawing area size
   $("#networkTree").attr('style', `height:${treeAreaHeight}px; width:${emToPx(screenWidthEm)}px`)
@@ -751,7 +759,7 @@ function initTree(myHierarchy)
       statusCss = ` netStatus-${nodeData.data.status}`;
 
       return result = `<div 
-                            class="node-inner hover-node-info box ${nodeData.data.hasChildren ? "pointer":""} ${statusCss} ${highlightedCss}"
+                            class="node-inner hover-node-info box pointer ${statusCss} ${highlightedCss}"
                             data-mytreemacmain="${nodeData.data.mac}"
                             style="height:${nodeHeightPx}px;font-size:${nodeHeightPx-5}px;"
                             onclick="handleNodeClick(this)"
@@ -759,7 +767,12 @@ function initTree(myHierarchy)
                             data-ip="${nodeData.data.ip}"
                             data-mac="${nodeData.data.mac}"
                             data-vendor="${nodeData.data.vendor}"
+                            data-lastseen="${nodeData.data.lastseen}"
                             data-relationship="${nodeData.data.relType}"
+                            data-status="${nodeData.data.status}"
+                            data-present="${nodeData.data.presentLastScan}"
+                            data-alert="${nodeData.data.alertDown}"
+                            data-icon="${nodeData.data.icon}"
                         >
                           <div class="netNodeText">
                             <strong>${devicePort}  ${deviceIcon}
@@ -777,7 +790,8 @@ function initTree(myHierarchy)
     isHorizontal : true,
     hasZoom: true,
     hasPan: true,
-    marginLeft: '15',
+    marginLeft: '10',
+    marginRight: '10',
     idKey: "mac",
     hasFlatData: false,
     relationnalField: "children",

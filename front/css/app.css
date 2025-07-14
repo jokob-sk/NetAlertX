@@ -1716,9 +1716,32 @@ input[readonly] {
     width: auto;
 }
 
+
 #hover-box
 {
   background-color: #ffffff;;
+}
+
+#hover-box .iconPreview
+{
+    padding: 0px;
+    display: flex;
+}
+
+#hover-box .devName
+{    
+    font-size: larger;    
+    display: contents;
+}
+
+#hover-box b
+{
+    float: left;
+}
+
+#hover-box span
+{
+    float: right;
 }
 
 #networkTree .netCollapse

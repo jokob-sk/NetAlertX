@@ -418,9 +418,14 @@ function goToNetworkNode(mac)
 
 // -----------------------------------------------------------------------------
 // Go to the device 
-function goToDevice(mac)
-{  
-  window.location.href = './deviceDetails.php?mac=' + mac;  
+function goToDevice(mac, newtab = false) {
+  const url = './deviceDetails.php?mac=' + encodeURIComponent(mac);
+  
+  if (newtab) {
+    window.open(url, '_blank');
+  } else {
+    window.location.href = url;
+  }
 }
   
 
@@ -828,6 +833,7 @@ function initHoverNodeInfo() {
     });
   }
 
+  // check if handlers already attached to prevent flickering
   if (initHoverNodeInfo._handlersAttached) return;
   initHoverNodeInfo._handlersAttached = true;
 
@@ -838,22 +844,30 @@ function initHoverNodeInfo() {
     const $el = $(this);
     lastTarget = this;
 
+    // use timeout to prevent a quick hover and exit toi flash a card when navigating to a target node with your mouse
     clearTimeout(hoverTimeout);
 
     hoverTimeout = setTimeout(() => {
       if (lastTarget !== this) return;
 
+      const icon = $el.data('icon');
       const name = $el.data('name') || 'Unknown';
       const ip = $el.data('ip') || 'N/A';
       const mac = $el.data('mac') || 'N/A';
       const vendor = $el.data('vendor') || 'Unknown';
+      const lastseen = $el.data('lastseen') || 'Unknown';
       const relationship = $el.data('relationship') || 'Unknown';
+      const badge = getStatusBadgeParts( $el.data('present'),  $el.data('alert'), $el.data('mac'))
+      const status =`<span class="badge ${badge.cssClass}">${badge.iconHtml} ${badge.status}</span>`
 
       const html = `
-        <strong>${name}</strong><br>
-        <b>IP:</b> ${ip}<br>
-        <b>MAC:</b> ${mac}<br>
-        <b>Vendor:</b> ${vendor}<br>
+        <b> <div class="iconPreview">${atob(icon)}</div> </b><b class="devName"> ${name}</b><br>
+        <hr/>
+        <b>Status:</b> <span>${status}</span><br>
+        <b>IP:</b> <span>${ip}</span><br>
+        <b>MAC:</b> <span>${mac}</span><br>
+        <b>Vendor:</b> <span>${vendor}</span><br>
+        <b>Last seen:</b> <span>${lastseen}</span><br>
         <b>Relationship:</b> <span class="${getRelationshipConf(relationship).cssClass}">${relationship}</span>
       `;
 
