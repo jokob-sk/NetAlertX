@@ -619,6 +619,7 @@ function getColumnNameFromLangString(headStringKey) {
   return columnNameMap[headStringKey] || "";
 }
 
+//--------------------------------------------------------------
 // Generating the device status chip
 function getStatusBadgeParts(tmp_devPresentLastScan, tmp_devAlertDown, macAddress, statusText = '') {
   let css = 'bg-gray text-white statusUnknown';
@@ -649,6 +650,49 @@ function getStatusBadgeParts(tmp_devPresentLastScan, tmp_devAlertDown, macAddres
     text: cleanedText,
     status: status,
     url: url
+  };
+}
+
+//--------------------------------------------------------------
+// Getting the color and css class for device relationships
+function getRelationshipConf(relType) {
+  let cssClass = '';
+  let color = '';
+
+
+  // --color-aqua: #00c0ef;
+  // --color-blue: #0060df;
+  // --color-green: #00a65a;
+  // --color-yellow: #f39c12;
+  // --color-red: #dd4b39;
+
+  switch (relType) {
+        
+    case "child":
+      color = "#f39c12"; // yellow
+      cssClass = "text-yellow";
+      break;
+    case "nic":
+      color = "#dd4b39"; // red
+      cssClass = "text-red";
+      break;
+    case "virtual":
+      color = "#0060df"; // blue
+      cssClass = "text-blue";
+      break;      
+    case "logical":
+      color = "#00a65a"; // green
+      cssClass = "text-green";
+      break;      
+    default:
+      color = "#5B5B66"; // grey
+      cssClass = "text-grey";
+      break;
+  }
+
+  return {
+    cssClass: cssClass,
+    color: color
   };
 }
 
@@ -700,6 +744,30 @@ function initSelect2() {
                       </span
                     </span>
                   </a>
+                `);
+          
+                return html;
+              },
+              escapeMarkup: function (m) {
+                return m; // Allow HTML
+              }
+            });
+            
+          } else if($(this).attr("my-transformers") == "deviceRelType")
+          {
+            var selectEl = $(this).select2({
+              templateSelection: function (data, container) {
+                if (!data.id) return data.text; // default for placeholder etc.
+
+                const relConf = getRelationshipConf(data.text);
+                // remove all bg- classes and add latest one
+                $(container).removeClass(function(i, c) { return (c.match(/\btext-[^\s]+/g) || []).join(' '); }).addClass(relConf.cssClass);
+                
+                // Custom HTML
+                const html = $(`                  
+                    <span class="custom-chip" >                      
+                      ${data.text}                      
+                    </span>                  
                 `);
           
                 return html;

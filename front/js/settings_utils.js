@@ -829,8 +829,7 @@ function generateOptions(options, valuesArray, targetField, transformers, placeh
 
   resultArray    = []
   selectedArray  = []
-  cssClass       = ""
-  
+  cssClass       = ""  
 
   // determine if options or values are used in the listing
   if (valuesArray.length > 0 && options.length > 0){
@@ -849,7 +848,6 @@ function generateOptions(options, valuesArray, targetField, transformers, placeh
     // dropdown -> options only (value == 1 STRING not ARRAY)
     resultArray   = options;
   }
-
  
   // Create a map to track the index of each item in valuesArray
   const orderMap = new Map(valuesArray.map((item, index) => [item, index]));

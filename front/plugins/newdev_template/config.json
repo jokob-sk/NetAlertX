@@ -1387,9 +1387,13 @@
     {
       "function": "devParentRelType",
       "type": {
-        "dataType": "string",
+        "dataType": "array",
         "elements": [
-          { "elementType": "select", "elementOptions": [], "transformers": [] }
+          {
+            "elementType": "select",
+            "elementOptions": [{ "ordeable": "true"}],
+            "transformers": ["deviceRelType"]
+          }
         ]
       },
       "default_value": "default",

@@ -583,9 +583,9 @@ function getChildren(node, list, path, visited = [])
         icon: node.devIcon,
         type: node.devType,
         status: node.devStatus,
-        hasChildren: children.length > 0 || hiddenMacs.includes(node.mac),
+        hasChildren: children.length > 0 || hiddenMacs.includes(node.devMac),
         relType: node.devParentRelType,
-        hiddenChildren: hiddenMacs.includes(node.mac),
+        hiddenChildren: hiddenMacs.includes(node.devMac),
         qty: children.length,
         children: children
     };
@@ -775,20 +775,11 @@ function initTree(myHierarchy)
     hasFlatData: false,
     relationnalField: "children",
     linkWidth: (nodeData) => 3,
-    linkColor: (nodeData) => {     
+    linkColor: (nodeData) => {  
       
-      switch (nodeData.data.relType) {
-        case "default":
-          return "#ffcc80"; // yellow
-          break;
-        case "nic":
-          return "#dd4b39"; // red
-          break;
-      
-        default:
-          return "#ffcc80";
-          break;
-      }
+      relConf = getRelationshipConf(nodeData.data.relType)  
+
+      return relConf.color;
     }
     // onNodeClick: (nodeData) => handleNodeClick(nodeData),
   });      
