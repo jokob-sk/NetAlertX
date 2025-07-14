@@ -809,11 +809,99 @@ function initSelect2() {
   }  
 }
 
+// ------------------------------------------
+// Display device info on hover (attach only once)
+function initHoverNodeInfo() {
+  if ($('#hover-box').length === 0) {
+    $('<div id="hover-box"></div>').appendTo('body').hide().css({
+      position: 'absolute',
+      zIndex: 9999,
+      border: '1px solid #ccc',
+      borderRadius: '8px',
+      padding: '10px',
+      boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+      minWidth: '200px',
+      maxWidth: '300px',
+      fontSize: '14px',
+      pointerEvents: 'none',
+      backgroundColor: '#fff'
+    });
+  }
+
+  if (initHoverNodeInfo._handlersAttached) return;
+  initHoverNodeInfo._handlersAttached = true;
+
+  let hoverTimeout = null;
+  let lastTarget = null;
+
+  $(document).on('mouseenter', '.hover-node-info', function (e) {
+    const $el = $(this);
+    lastTarget = this;
+
+    clearTimeout(hoverTimeout);
+
+    hoverTimeout = setTimeout(() => {
+      if (lastTarget !== this) return;
+
+      const name = $el.data('name') || 'Unknown';
+      const ip = $el.data('ip') || 'N/A';
+      const mac = $el.data('mac') || 'N/A';
+      const vendor = $el.data('vendor') || 'Unknown';
+      const relationship = $el.data('relationship') || 'Unknown';
+
+      const html = `
+        <strong>${name}</strong><br>
+        <b>IP:</b> ${ip}<br>
+        <b>MAC:</b> ${mac}<br>
+        <b>Vendor:</b> ${vendor}<br>
+        <b>Relationship:</b> <span class="${getRelationshipConf(relationship).cssClass}">${relationship}</span>
+      `;
+
+      $('#hover-box').html(html).fadeIn(150);
+    }, 300);
+  });
+
+  $(document).on('mousemove', '.hover-node-info', function (e) {
+    const hoverBox = $('#hover-box');
+    const boxWidth = hoverBox.outerWidth();
+    const boxHeight = hoverBox.outerHeight();
+    const padding = 15;
+
+    const winWidth = $(window).width();
+    const winHeight = $(window).height();
+
+    let left = e.pageX + padding;
+    let top = e.pageY + padding;
+
+    // Position leftward if close to right edge
+    if (e.pageX + boxWidth + padding > winWidth) {
+      left = e.pageX - boxWidth - padding;
+    }
+
+    // Position upward if close to bottom edge
+    if (e.pageY + boxHeight + padding > winHeight) {
+      top = e.pageY - boxHeight - padding;
+    }
+
+    hoverBox.css({ top: top + 'px', left: left + 'px' });
+  });
+
+  $(document).on('mouseleave', '.hover-node-info', function () {
+    clearTimeout(hoverTimeout);
+    lastTarget = null;
+    $('#hover-box').fadeOut(100);
+  });
+}
+
+
+
+
 // init functions after dom loaded
 window.addEventListener("load", function() {
   // try to initialize 
   setTimeout(() => {
-    initSelect2()
+    initSelect2();
+    initHoverNodeInfo();
     // initializeiCheck();
   }, 500);
 });

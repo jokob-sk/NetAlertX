@@ -1716,6 +1716,10 @@ input[readonly] {
     width: auto;
 }
 
+#hover-box
+{
+  background-color: #ffffff;;
+}
 
 #networkTree .netCollapse
 {
@@ -1726,7 +1730,7 @@ input[readonly] {
 #networkTree .highlightedNode
 {
     /* border: solid; */
-    border-color:cyan;
+    border-color:#3c8dbc;
 }
 #networkTree .netStatus-Off-line i,
 #networkTree .netStatus-Off-line svg

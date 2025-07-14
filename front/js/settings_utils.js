@@ -689,6 +689,9 @@ function reverseTransformers(val, transformers) {
         mac = val  // value is mac   
         val =  `${getDevDataByMac(mac, "devName")}`
         break;
+      case "deviceRelType":        
+        val =  val; // nothing to do
+        break;
       default:
         console.warn(`Unknown transformer: ${transformer}`);
     }

@@ -582,6 +582,8 @@ function getChildren(node, list, path, visited = [])
         parentMac: node.devParentMAC,
         icon: node.devIcon,
         type: node.devType,
+        vendor: node.devVendor,
+        ip: node.devLastIP,
         status: node.devStatus,
         hasChildren: children.length > 0 || hiddenMacs.includes(node.devMac),
         relType: node.devParentRelType,
@@ -749,10 +751,15 @@ function initTree(myHierarchy)
       statusCss = ` netStatus-${nodeData.data.status}`;
 
       return result = `<div 
-                            class="node-inner box ${nodeData.data.hasChildren ? "pointer":""} ${statusCss} ${highlightedCss}"
+                            class="node-inner hover-node-info box ${nodeData.data.hasChildren ? "pointer":""} ${statusCss} ${highlightedCss}"
                             data-mytreemacmain="${nodeData.data.mac}"
                             style="height:${nodeHeightPx}px;font-size:${nodeHeightPx-5}px;"
                             onclick="handleNodeClick(this)"
+                            data-name="${nodeData.data.name}"
+                            data-ip="${nodeData.data.ip}"
+                            data-mac="${nodeData.data.mac}"
+                            data-vendor="${nodeData.data.vendor}"
+                            data-relationship="${nodeData.data.relType}"
                         >
                           <div class="netNodeText">
                             <strong>${devicePort}  ${deviceIcon}
@@ -776,7 +783,7 @@ function initTree(myHierarchy)
     relationnalField: "children",
     linkWidth: (nodeData) => 3,
     linkColor: (nodeData) => {  
-      
+
       relConf = getRelationshipConf(nodeData.data.relType)  
 
       return relConf.color;

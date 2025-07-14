@@ -758,6 +758,10 @@
     color: #bec5cb;
   }
 
+  #hover-box
+  {
+    background-color: #353c42 !important;
+  }
 
 }
 
