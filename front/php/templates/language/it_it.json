@@ -66,7 +66,7 @@
     "DAYS_TO_KEEP_EVENTS_name": "Elimina eventi più vecchi di",
     "DISCOVER_PLUGINS_description": "Disattiva questa opzione per velocizzare l'inizializzazione e il salvataggio delle impostazioni. Quando è disattivata, i plugin non vengono scoperti e non puoi aggiungere nuovi plugin all'impostazione <code>LOADED_PLUGINS</code>.",
     "DISCOVER_PLUGINS_name": "Scopri i plugin",
-    "DevDetail_Children_Title": "Relazioni tra bambini",
+    "DevDetail_Children_Title": "Relazioni tra figli",
     "DevDetail_Copy_Device_Title": "Copia dettagli dal dispositivo",
     "DevDetail_Copy_Device_Tooltip": "Copia i dettagli dal dispositivo dall'elenco a discesa. Tutto in questa pagina verrà sovrascritto",
     "DevDetail_CustomProperties_Title": "Proprietà personalizzate",
