@@ -63,68 +63,8 @@ You can include multiple actions that should execute once the conditions are met
 
 # Examples
 
-Below you can find a couple of configuration examples.
+You can find a couple of configuration examples in [Workflow Examples](WORKFLOW_EXAMPLES.md).
 
-![Workflow example](./img/WORKFLOWS/workflows.png)
-
----
-
-## Example 1: Assign Device to Network Node Based on IP
-
-This workflow assigns newly added devices with IP addresses in the `192.168.1.*` range to the device with the MAC address `6c:6d:6d:6c:6c:6c`.
-
-### Trigger:
-- **Object Type**: `Devices`
-- **Event Type**: `insert`
-
-### Conditions:
-- **Logic**: `AND`
-  - `Field`: `devLastIP`
-  - `Operator`: `contains`
-  - `Value`: `192.168.1.`
-  
-  This condition ensures that the workflow only applies to devices with an IP address in the `192.168.1.*` range.
-
-### Actions:
-- **Action Type**: `update_field`
-  - **Field**: `devNetworkNode`
-  - **Value**: `6c:6d:6d:6c:6c:6c`
-
----
-
-## Example 2: Mark Device as Not New and Delete If from Google Vendor
-
-This workflow automates the process of marking Google devices as not new and deleting them if they meet the criteria.
-
-### Trigger:
-- **Object Type**: `Devices`
-- **Event Type**: `update`
-
-### Conditions:
-- **Logic**: `AND`
-  - `Field`: `devVendor`
-  - `Operator`: `contains`
-  - `Value`: `Google`
-  
-  This condition checks if the device's vendor is `Google`.
-
-- **Logic**: `AND`
-  - `Field`: `devIsNew`
-  - `Operator`: `equals`
-  - `Value`: `1`
-  
-  This ensures the workflow applies only to new devices.
-
-### Actions:
-1. **Action Type**: `update_field`
-   - **Field**: `devIsNew`
-   - **Value**: `0`
-
-   This action marks the device as no longer new.
-
-2. **Action Type**: `delete_device`
-   
-   This action deletes the device after it is marked as not new.
 
 > [!TIP]
 > Share your workflows in [Discord](https://discord.com/invite/NczTUTWyRr) or [GitHub Discussions](https://github.com/jokob-sk/NetAlertX/discussions).  

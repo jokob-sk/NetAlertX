@@ -810,7 +810,7 @@ function initSelect2() {
   {
     setTimeout(() => {
       initSelect2()
-    }, 700);
+    }, 1000);
   }  
 }
 
@@ -861,14 +861,28 @@ function initHoverNodeInfo() {
       const status =`<span class="badge ${badge.cssClass}">${badge.iconHtml} ${badge.status}</span>`
 
       const html = `
-        <b> <div class="iconPreview">${atob(icon)}</div> </b><b class="devName"> ${name}</b><br>
+        <div>
+          <b> <div class="iconPreview">${atob(icon)}</div> </b><b class="devName"> ${name}</b><br>
+        </div>
         <hr/>
-        <b>Status:</b> <span>${status}</span><br>
-        <b>IP:</b> <span>${ip}</span><br>
-        <b>MAC:</b> <span>${mac}</span><br>
-        <b>Vendor:</b> <span>${vendor}</span><br>
-        <b>Last seen:</b> <span>${lastseen}</span><br>
-        <b>Relationship:</b> <span class="${getRelationshipConf(relationship).cssClass}">${relationship}</span>
+        <div class="line">
+          <b>Status:</b> <span>${status}</span><br>
+        </div>
+        <div class="line">  
+          <b>IP:</b> <span>${ip}</span><br>
+        </div>
+        <div class="line">  
+          <b>MAC:</b> <span>${mac}</span><br>
+        </div>
+        <div class="line">  
+          <b>Vendor:</b> <span>${vendor}</span><br>
+        </div>
+        <div class="line">  
+          <b>Last seen:</b> <span>${lastseen}</span><br>
+        </div>
+        <div class="line">  
+          <b>Relationship:</b> <span class="${getRelationshipConf(relationship).cssClass}">${relationship}</span>
+        </div>
       `;
 
       $('#hover-box').html(html).fadeIn(150);

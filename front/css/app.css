@@ -1739,9 +1739,19 @@ input[readonly] {
     float: left;
 }
 
+#hover-box .line
+{
+    float: left;
+    width: 100%;
+}
+
 #hover-box span
 {
     float: right;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: block;
+    max-width: 200px;
 }
 
 #networkTree .netCollapse
