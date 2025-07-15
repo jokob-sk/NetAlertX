@@ -28,7 +28,7 @@
   <section class="content networkTable">
     <?php
       // Create top-level node (network devices) tabs 
-      function createDeviceTabs($node_mac, $node_name, $node_status, $node_type, $node_ports_count, $icon, $activetab) {        
+      function createDeviceTabs($node_mac, $node_name, $node_status, $node_type, $node_ports_count, $icon, $node_alert, $activetab) {        
 
         // prepare string with port number in brackets if available
         $str_port = "";
@@ -37,18 +37,22 @@
         }
 
         // online/offline status circle (red/green)
-        $icon_style = "";
-        if($node_status == 0) // 1 means online, 0 offline
+        $icon_class = "";
+        if($node_status == 0 && $node_alert == 1) // 1 means online, 0 offline
         {
-          $icon_style = "style=\"color:var(--color-red);\""; 
-        } 
+          $icon_class = " text-red"; 
+        } elseif ($node_status == 1) {
+          $icon_class = " text-green"; 
+        } elseif ($node_status == 0) {
+          $icon_class = " text-gray50";
+        }
 
         $decoded_icon = base64_decode($icon);
         $idFromMac = str_replace(":", "_", $node_mac);
         $str_tab_header = '<li class="networkNodeTabHeaders '.$activetab.' " >
                               
                               <a href="#'.$idFromMac.'" data-mytabmac="'.$node_mac.'" id="'.$idFromMac.'_id" data-toggle="tab" title="'.$node_name.' ">' // _id is added so it doesn't conflict with AdminLTE tab behavior
-                                .'<div class="icon" '.$icon_style.'>'.$decoded_icon.' </div> <span class="node-name">'.$node_name.'</span>' .$str_port.
+                                .'<div class="icon '.$icon_class.'" >'.$decoded_icon.' </div> <span class="node-name">'.$node_name.'</span>' .$str_port.
                               '</a>
                           </li>';
 
@@ -269,7 +273,7 @@
 
     $networkDeviceTypes = str_replace("]", "",(str_replace("[", "", getSettingValue("NETWORK_DEVICE_TYPES"))));
     
-    $sql = "SELECT node_name, node_mac, online, node_type, node_ports_count, parent_mac, node_icon
+    $sql = "SELECT node_name, node_mac, online, node_type, node_ports_count, parent_mac, node_icon, node_alert
             FROM 
             (
                   SELECT  a.devName as  node_name,        
@@ -277,7 +281,8 @@
                         a.devPresentLastScan as online,
                         a.devType as node_type,
                         a.devParentMAC as parent_mac,
-                        a.devIcon as node_icon
+                        a.devIcon as node_icon,
+                        a.devAlertDown as node_alert
                   FROM Devices a 
                   WHERE a.devType in (".$networkDeviceTypes.") 
                         AND devIsArchived = 0				
@@ -304,7 +309,9 @@
                               'node_type'               => $row['node_type'],
                               'parent_mac'              => $row['parent_mac'],
                               'node_icon'               => $row['node_icon'],
-                              'node_ports_count'        => $row['node_ports_count']);
+                              'node_ports_count'        => $row['node_ports_count'],
+                              'node_alert'              => $row['node_alert']
+                            );
     }
 
     // Control no rows
@@ -323,6 +330,7 @@
                           $row['node_type'], 
                           $row['node_ports_count'],
                           $row['node_icon'],
+                          $row['node_alert'],
                           $activetab);
 
                           $activetab = ""; // reset active tab indicator, only the first tab is active
@@ -755,11 +763,10 @@ function initTree(myHierarchy)
       highlightedCss = nodeData.data.mac == selectedNodeMac ? 
                     " highlightedNode" : "";
 
-      // css indicating online/offline status
-      statusCss = ` netStatus-${nodeData.data.status}`;
+      const badgeConf = getStatusBadgeParts(nodeData.data.presentLastScan, nodeData.data.alertDown, nodeData.data.mac, statusText = '')
 
       return result = `<div 
-                            class="node-inner hover-node-info box pointer ${statusCss} ${highlightedCss}"
+                            class="node-inner hover-node-info box pointer ${highlightedCss}"
                             data-mytreemacmain="${nodeData.data.mac}"
                             style="height:${nodeHeightPx}px;font-size:${nodeHeightPx-5}px;"
                             onclick="handleNodeClick(this)"
@@ -775,7 +782,7 @@ function initTree(myHierarchy)
                             data-icon="${nodeData.data.icon}"
                         >
                           <div class="netNodeText">
-                            <strong>${devicePort}  ${deviceIcon}
+                            <strong><span class="${badgeConf.cssText}">${devicePort}  ${deviceIcon}</span>
                               <span class="spanNetworkTree anonymizeDev" style="width:${nodeWidthPx-50}px">${nodeData.data.name}</span>
                             </strong>                            
                           </div>                          

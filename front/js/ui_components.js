@@ -630,17 +630,21 @@ function getStatusBadgeParts(tmp_devPresentLastScan, tmp_devAlertDown, macAddres
   let css = 'bg-gray text-white statusUnknown';
   let icon = '<i class="fa-solid fa-question"></i>';
   let status = 'unknown';
+  let cssText = '';
 
   if (tmp_devPresentLastScan == 1) {
     css = 'bg-green text-white statusOnline';
+    cssText = 'text-green';
     icon = '<i class="fa-solid fa-plug"></i>';
     status = 'online';
   } else if (tmp_devAlertDown == 1) {
     css = 'bg-red text-white statusDown';
+    cssText = 'text-red';
     icon = '<i class="fa-solid fa-triangle-exclamation"></i>';
     status = 'down';
   } else if (tmp_devPresentLastScan != 1) {
     css = 'bg-gray text-white statusOffline';
+    cssText = 'text-gray50';
     icon = '<i class="fa-solid fa-xmark"></i>';
     status = 'offline';
   }
@@ -650,6 +654,7 @@ function getStatusBadgeParts(tmp_devPresentLastScan, tmp_devAlertDown, macAddres
 
   return {
     cssClass: css,
+    cssText: cssText,
     iconHtml: icon,
     mac: macAddress,
     text: cleanedText,
@@ -729,10 +734,12 @@ function initSelect2() {
               templateSelection: function (data, container) {
                 if (!data.id) return data.text; // default for placeholder etc.
 
+                const device = getDevDataByMac(data.id);
+
                 const badge = getStatusBadgeParts(
-                  getDevDataByMac(data.id, "devPresentLastScan"), 
-                  getDevDataByMac(data.id, "devAlertDown"), 
-                  data.id
+                  device.devPresentLastScan, 
+                  device.devAlertDown, 
+                  device.devMac
                 )
 
                 $(container).addClass(badge.cssClass);
@@ -740,8 +747,19 @@ function initSelect2() {
                 // Custom HTML
                 const html = $(`
                   <a href="${badge.url}" target="_blank">
-                    <span class="custom-chip" >
-                      <span class="iconPreview">${atob(getDevDataByMac(data.id, "devIcon"))}</span>
+                    <span class="custom-chip hover-node-info" 
+                          data-name="${device.devName}"
+                          data-ip="${device.devLastIP}"
+                          data-mac="${device.devMac}"
+                          data-vendor="${device.devVendor}"
+                          data-lastseen="${device.devLastConnection}"
+                          data-relationship="${device.devParentRelType}"
+                          data-status="${device.devStatus}"
+                          data-present="${device.devPresentLastScan}"
+                          data-alert="${device.devAlertDown}"
+                          data-icon="${device.devIcon}"
+                    >
+                      <span class="iconPreview">${atob(device.devIcon)}</span>
                       ${data.text}
                       <span>
                       (${badge.iconHtml})
@@ -840,10 +858,17 @@ function initHoverNodeInfo() {
   let hoverTimeout = null;
   let lastTarget = null;
 
+  // remove title as it's replaced by the hover-box
+  $(document).on('mouseover', '.hover-node-info', function () {
+    this.removeAttribute('title');
+
+    $(this).attr("title", ""); // remove title as it's replaced by the hover-box
+  });
+
   $(document).on('mouseenter', '.hover-node-info', function (e) {
     const $el = $(this);
     lastTarget = this;
-
+    
     // use timeout to prevent a quick hover and exit toi flash a card when navigating to a target node with your mouse
     clearTimeout(hoverTimeout);
 
