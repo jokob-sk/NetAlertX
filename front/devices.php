@@ -776,17 +776,33 @@ function initializeDatatable (status) {
 
       // Device Name and FQDN
       {targets: [mapIndx(0), mapIndx(27)],
-        'createdCell': function (td, cellData, rowData, row, col) {      
-            
+        'createdCell': function (td, cellData, rowData, row, col) {    
+                      
             // console.log(cellData)      
-            $(td).html ('<b class="anonymizeDev"><a href="deviceDetails.php?mac='+ rowData[mapIndx(11)] +'" class="">'+ cellData +'</a></b>');
+            $(td).html (
+              `<b class="anonymizeDev hover-node-info"
+                  data-name="${cellData}"
+                  data-ip="${rowData[mapIndx(8)]}"
+                  data-mac="${rowData[mapIndx(11)]}"
+                  data-vendor="${rowData[mapIndx(17)]}"
+                  data-firstseen="${rowData[mapIndx(6)]}"
+                  data-lastseen="${rowData[mapIndx(7)]}"
+                  data-relationship="${rowData[mapIndx(28)]}"
+                  data-status="${rowData[mapIndx(10)]}"
+                  data-present="${rowData[mapIndx(24)]}"
+                  data-alert="${rowData[mapIndx(25)]}"
+                  data-icon="${rowData[mapIndx(3)]}"
+              >
+                <a href="deviceDetails.php?mac=${rowData[mapIndx(11)]}" class="">
+                ${cellData}
+                </a>
+              </b>`
+            );
       } },
 
       // Connected Devices       
       {targets: [mapIndx(15)],
-        'createdCell': function (td, cellData, rowData, row, col) {   
-
-                
+        'createdCell': function (td, cellData, rowData, row, col) {                   
           // check if this is a network device
           if(getSetting("NETWORK_DEVICE_TYPES").includes(`'${rowData[mapIndx(2)]}'`)   )
           {
@@ -965,7 +981,7 @@ function initializeDatatable (status) {
               }, debounceTime);
           });
 
-          
+          initHoverNodeInfo(); 
           hideSpinner();
           
     },

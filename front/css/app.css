@@ -1542,13 +1542,10 @@ input[readonly] {
     display: none;
 }
 
-
-
 #panDetails #NEWDEV_devCustomProps_label
 {
     display: none;
 }
-
 
 #deviceDetailsEdit .select2-container--default .select2-selection--multiple .select2-selection__choice a
 {

@@ -693,6 +693,7 @@ function initSelect2() {
                           data-mac="${device.devMac}"
                           data-vendor="${device.devVendor}"
                           data-lastseen="${device.devLastConnection}"
+                          data-firstseen="${device.devFirstConnection}"
                           data-relationship="${device.devParentRelType}"
                           data-status="${device.devStatus}"
                           data-present="${device.devPresentLastScan}"
@@ -821,6 +822,7 @@ function initHoverNodeInfo() {
       const mac = $el.data('mac') || 'N/A';
       const vendor = $el.data('vendor') || 'Unknown';
       const lastseen = $el.data('lastseen') || 'Unknown';
+      const firstseen = $el.data('firstseen') || 'Unknown';
       const relationship = $el.data('relationship') || 'Unknown';
       const badge = getStatusBadgeParts( $el.data('present'),  $el.data('alert'), $el.data('mac'))
       const status =`<span class="badge ${badge.cssClass}">${badge.iconHtml} ${badge.status}</span>`
@@ -841,6 +843,9 @@ function initHoverNodeInfo() {
         </div>
         <div class="line">  
           <b>Vendor:</b> <span>${vendor}</span><br>
+        </div>
+        <div class="line">  
+          <b>First seen:</b> <span>${firstseen}</span><br>
         </div>
         <div class="line">  
           <b>Last seen:</b> <span>${lastseen}</span><br>

@@ -592,6 +592,7 @@ function getChildren(node, list, path, visited = [])
         type: node.devType,
         vendor: node.devVendor,
         lastseen: node.devLastConnection,
+        firstseen: node.devFirstConnection,
         ip: node.devLastIP,
         status: node.devStatus,
         presentLastScan: node.devPresentLastScan,
@@ -775,6 +776,7 @@ function initTree(myHierarchy)
                             data-mac="${nodeData.data.mac}"
                             data-vendor="${nodeData.data.vendor}"
                             data-lastseen="${nodeData.data.lastseen}"
+                            data-firstseen="${nodeData.data.firstseen}"
                             data-relationship="${nodeData.data.relType}"
                             data-status="${nodeData.data.status}"
                             data-present="${nodeData.data.presentLastScan}"
