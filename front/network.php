@@ -782,7 +782,7 @@ function initTree(myHierarchy)
                             data-icon="${nodeData.data.icon}"
                         >
                           <div class="netNodeText">
-                            <strong><span class="${badgeConf.cssText}">${devicePort}  ${deviceIcon}</span>
+                            <strong><span>${devicePort}  <span class="${badgeConf.cssText}">${deviceIcon}</span></span>
                               <span class="spanNetworkTree anonymizeDev" style="width:${nodeWidthPx-50}px">${nodeData.data.name}</span>
                             </strong>                            
                           </div>                          
@@ -940,6 +940,9 @@ initTab();
 
 // init Assign/Unassign buttons
 initButtons()
+
+// init pop up hover  boxes for device details
+initHoverNodeInfo();
 
 </script>
 

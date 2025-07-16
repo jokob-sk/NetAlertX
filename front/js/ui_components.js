@@ -8,64 +8,6 @@
 ----------------------------------------------------------------------------- */
 
 
-// -----------------------------------------------------------------------------
-// Initialize device selectors / pickers fields
-// -----------------------------------------------------------------------------
-function initDeviceSelectors(devicesListAll_JSON) {
-
-  // Check if both device list exists
-  if (devicesListAll_JSON) {
-      // Parse the JSON string to get the device list array
-      var devicesList = JSON.parse(devicesListAll_JSON);
-
-      var selectorFieldsHTML = ''
-
-      // Loop through the devices list
-      devicesList.forEach(function(device) {         
-
-          selectorFieldsHTML += `<option value="${device.devMac}">${device.devName}</option>`;
-      });
-
-      selector = `<div class="db_info_table_row  col-sm-12" > 
-                    <div class="form-group" > 
-                      <div class="input-group col-sm-12 " > 
-                        <select class="form-control select2 select2-hidden-accessible" multiple=""  style="width: 100%;"  tabindex="-1" aria-hidden="true">
-                        ${selectorFieldsHTML}
-                        </select>
-                      </div>
-                    </div>
-                  </div>`
-
-
-      // Find HTML elements with class "deviceSelector" and append selector field
-      $('.deviceSelector').append(selector);
-  }
-
-  // Initialize selected items after a delay so selected macs are available in the context
-  setTimeout(function(){
-        // Retrieve MAC addresses from query string or cache
-        var macs = getQueryString('macs') || getCache('selectedDevices');
-
-        if(macs)
-        {
-          // Split MAC addresses if they are comma-separated
-          macs = macs.split(',');
-  
-          console.log(macs)
-
-          // Loop through macs to be selected list
-          macs.forEach(function(mac) {
-
-            // Create the option and append to Select2
-            var option = new Option($('.deviceSelector select option[value="' + mac + '"]').html(), mac, true, true);
-
-            $('.deviceSelector select').append(option).trigger('change');
-          });       
-
-        }        
-    
-    }, 10);
-}
 
 // -------------------------------------------------------------------
 // Utility function to generate a random API token in the format t_<random string of specified length>
@@ -718,8 +660,6 @@ function initSelect2() {
   //  check if cache ready
   if(isValidJSON(devicesListAll_JSON))
   {
-    // prepare HTML DOM before initializing the frotend
-    initDeviceSelectors(devicesListAll_JSON)
     
     // --------------------------------------------------------
     //Initialize Select2 Elements and make them sortable
@@ -945,19 +885,6 @@ function initHoverNodeInfo() {
     $('#hover-box').fadeOut(100);
   });
 }
-
-
-
-
-// init functions after dom loaded
-window.addEventListener("load", function() {
-  // try to initialize 
-  setTimeout(() => {
-    initSelect2();
-    initHoverNodeInfo();
-    // initializeiCheck();
-  }, 500);
-});
 
 
 console.log("init ui_components.js")

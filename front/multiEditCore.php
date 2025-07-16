@@ -17,18 +17,21 @@
         <h3 class="box-title"><?= lang('Gen_Selected_Devices');?></h3>
 
       </div>
-    <div class="deviceSelector col-md-11 col-sm-11" style="z-index:5"></div> 
-
-    <div class="col-md-1"> 
-      <button type="button" class="btn btn-default col-md-12" onclick="markAllSelected()" title="<?= lang('Gen_Add_All');?>"> 
-        <i class="fa-solid fa-circle-check"></i>  
-      </button>
-      <button type="button" class="btn btn-default col-md-12"  onclick="markAllNotSelected()" title="<?= lang('Gen_Remove_All');?>"> 
-        <i class="fa-solid fa-circle-xmark"></i>  
-      </button>
+    <div class="deviceSelector col-md-11 col-sm-11" style="z-index:5">
+      <div class="db_info_table_row  col-sm-12" > 
+        <div class="form-group" > 
+          <div class="input-group col-sm-12 " > 
+            <select class="form-control select2 select2-hidden-accessible" multiple=""  style="width: 100%;"  tabindex="-1" aria-hidden="true">
+            
+            </select>
+          </div>
+        </div>
+      </div>
+    </div> 
+    <div class="col-md-1">       
+        <i class="fa-solid fa-circle-check" onclick="markAllSelected()" title="<?= lang('Gen_Add_All');?>"></i>        
+        <i class="fa-solid fa-circle-xmark" onclick="markAllNotSelected()" title="<?= lang('Gen_Remove_All');?>"></i>        
     </div>
-
-
   </div>
 
 
@@ -208,12 +211,63 @@
 
         generateSimpleForm(relevantColumns);
 
+        initSelect2();
+        initDeviceSelectors();
+
         
     })
       
-    }, 500);
+    }, 100);
     
   }
+
+  // -----------------------------------------------------------------------------
+  // Initialize device selectors / pickers fields
+  function initDeviceSelectors() {
+
+    // Parse device list
+    devicesList = JSON.parse(getCache('devicesListAll_JSON'));
+
+    // Check if the device list exists and is an array
+    if (Array.isArray(devicesList)) {
+        const $select = $(".deviceSelector select");
+
+        $select.append(
+            devicesList
+                .filter(d => d.devMac && d.devName)
+                .map(d => `<option value="${d.devMac}">${d.devName}</option>`)
+                .join('')
+        ).trigger('change');
+    }
+
+
+
+    // Initialize selected items after a delay so selected macs are available in the context
+    setTimeout(function(){
+          // Retrieve MAC addresses from query string or cache
+          var macs = getQueryString('macs') || getCache('selectedDevices');
+
+          if(macs)
+          {
+            // Split MAC addresses if they are comma-separated
+            macs = macs.split(',');
+
+            console.log(macs)
+
+            // Loop through macs to be selected list
+            macs.forEach(function(mac) {
+
+              // Create the option and append to Select2
+              var option = new Option($('.deviceSelector select option[value="' + mac + '"]').html(), mac, true, true);
+
+              $('.deviceSelector select').append(option).trigger('change');
+            });       
+
+          }        
+      
+      }, 10);
+  }
+
 
 
   // -----------------------------------------------------------------------------

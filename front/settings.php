@@ -514,10 +514,11 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
       initListInteractionOptions()  // init remove and edit listitem click gestures
     }, 50);
     
-    setupSmoothScrolling()
+    setupSmoothScrolling();
     // try to initialize select2
-    initSelect2()
-    hideSpinner()
+    initSelect2();
+    initHoverNodeInfo();
+    hideSpinner();
 
   }
 

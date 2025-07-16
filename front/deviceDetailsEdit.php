@@ -286,6 +286,9 @@
 
         toggleNetworkConfiguration(mac == 'Internet') 
 
+        initSelect2();
+        initHoverNodeInfo();
+
         hideSpinner();
       
       })

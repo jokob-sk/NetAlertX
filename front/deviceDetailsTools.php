@@ -295,7 +295,7 @@
         function initCopyFromDevice() {
 
             const devices = getVisibleDevicesList()
-            console.log(devices);
+            // console.log(devices);
 
             const $select = $('#txtCopyFromDevice');
             $select.empty(); // Clear existing options
