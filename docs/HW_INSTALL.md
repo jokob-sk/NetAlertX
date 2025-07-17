@@ -5,7 +5,7 @@ To download and install NetAlertX on the hardware/server directly use the `curl`
 > [!NOTE]
 > This is an Experimental feature 🧪 and it relies on community support.
 >
-> 🙏 Looking for maintainers for this installation method 🙂 Curent community volunteers: 
+> 🙏 Looking for maintainers for this installation method 🙂 Current community volunteers: 
 >   - [slammingprogramming](https://github.com/slammingprogramming)
 >
 > There is no guarantee that the install script or any other script will gracefully handle other installed software.

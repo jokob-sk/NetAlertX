@@ -476,7 +476,7 @@
                     `select *, CASE WHEN devAlertDown !=0 AND devPresentLastScan=0 THEN "Down"
                                     WHEN devPresentLastScan=1 THEN "On-line"
                                     ELSE "Off-line" END as devStatus 
-                      from Devices`))}`;
+                      from Devices where devIsArchived = 0	`))}`;
 
   $.get(apiUrl, function (data) {
   
@@ -727,7 +727,6 @@ function initTree(myHierarchy)
   myTree = Treeviz.create({
     htmlId: "networkTree",
     renderNode:  nodeData =>  {
-
       
       (!emptyArr.includes(nodeData.data.port )) ? port =  nodeData.data.port : port = "";
 
@@ -744,7 +743,7 @@ function initTree(myHierarchy)
                           style="width:${emSize}em;height:${emSize}em">
                       ${portHtml}</div> 
                     <div  class="portBckgIcon" 
-                          style="margin-left:-${emSize}em;">
+                          style="margin-left:-${emSize*0.7}em;">
                           ${portBckgIcon}
                     </div>`;
       collapseExpandIcon = nodeData.data.hiddenChildren ? 
@@ -768,13 +767,14 @@ function initTree(myHierarchy)
 
       return result = `<div 
                             class="node-inner hover-node-info box pointer ${highlightedCss}"
-                            data-mytreemacmain="${nodeData.data.mac}"
                             style="height:${nodeHeightPx}px;font-size:${nodeHeightPx-5}px;"
                             onclick="handleNodeClick(this)"
+                            data-mytreemacmain="${nodeData.data.mac}"                            
                             data-name="${nodeData.data.name}"
                             data-ip="${nodeData.data.ip}"
                             data-mac="${nodeData.data.mac}"
                             data-vendor="${nodeData.data.vendor}"
+                            data-type="${nodeData.data.type}"
                             data-lastseen="${nodeData.data.lastseen}"
                             data-firstseen="${nodeData.data.firstseen}"
                             data-relationship="${nodeData.data.relType}"

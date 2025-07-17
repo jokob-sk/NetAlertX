@@ -692,6 +692,7 @@ function initSelect2() {
                           data-ip="${device.devLastIP}"
                           data-mac="${device.devMac}"
                           data-vendor="${device.devVendor}"
+                          data-type="${device.devType}"
                           data-lastseen="${device.devLastConnection}"
                           data-firstseen="${device.devFirstConnection}"
                           data-relationship="${device.devParentRelType}"
@@ -821,6 +822,7 @@ function initHoverNodeInfo() {
       const ip = $el.data('ip') || 'N/A';
       const mac = $el.data('mac') || 'N/A';
       const vendor = $el.data('vendor') || 'Unknown';
+      const type = $el.data('type') || 'Unknown';
       const lastseen = $el.data('lastseen') || 'Unknown';
       const firstseen = $el.data('firstseen') || 'Unknown';
       const relationship = $el.data('relationship') || 'Unknown';
@@ -843,6 +845,9 @@ function initHoverNodeInfo() {
         </div>
         <div class="line">  
           <b>Vendor:</b> <span>${vendor}</span><br>
+        </div>
+        <div class="line">  
+          <b>Type:</b> <span>${type}</span><br>
         </div>
         <div class="line">  
           <b>First seen:</b> <span>${firstseen}</span><br>

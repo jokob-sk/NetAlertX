@@ -15,11 +15,12 @@ There are 4 ways how to influence notifications:
 
 ![Device notification settings](./img/NOTIFICATIONS/Device-notification-settings.png)
 
-There are 4 settings on the device for influencing notifications. You can:
+The following device properties influence notifications. You can:
 
 1. **Alert Events** - Enables alerts of connections, disconnections, IP changes (down and down reconnected notifications are still sent even if this is disabled).
 2. **Alert Down** - Alerts when a device goes down. This setting overrides a disabled **Alert Events** setting, so you will get a notification of a device going down even if you don't have **Alert Events** ticked. Disabling this will disable down and down reconnected notifications on the device.
 3. **Skip repeated notifications**, if for example you know there is a temporary issue and want to pause the same notification for this device for a given time.
+4. **Require NICs Online** - Indicates whether this device should be considered online only if all associated NICs (devices with the `nic` relationship type) are online. If disabled, the device is considered online if any NIC is online. If a NIC is online it sets the parent (this) device's status to online irrespectivelly of the detected device's status. The Relationship type is set on the childern device.
 
 > [!NOTE]
 > Please read through the [NTFPRCS plugin](https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/notification_processing/README.md) documentation to understand how device and global settings influence the notification processing. 

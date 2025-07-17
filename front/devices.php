@@ -785,6 +785,7 @@ function initializeDatatable (status) {
                   data-ip="${rowData[mapIndx(8)]}"
                   data-mac="${rowData[mapIndx(11)]}"
                   data-vendor="${rowData[mapIndx(17)]}"
+                  data-type="${rowData[mapIndx(2)]}"
                   data-firstseen="${rowData[mapIndx(6)]}"
                   data-lastseen="${rowData[mapIndx(7)]}"
                   data-relationship="${rowData[mapIndx(28)]}"
