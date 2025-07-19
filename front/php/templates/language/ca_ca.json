@@ -528,6 +528,8 @@
     "Network_Root": "Node arrel",
     "Network_Root_Not_Configured": "Seleccioneu un tipus de dispositiu de xarxa, per exemple un tipus <b>Gateway</b>, al camp <b>Tipus</b>del <a href=\"deviceDetails.php?mac=Internet\">dispositiu arrel d'Internet</a> per començar a configurar aquesta pantalla. <br/><br/>. Podeu trobar més documentació a la <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/NETWORK_TREE.md\" target=\"_blank\">Guia de com configurar la vostra pàgina de xarxa</a>",
     "Network_Root_Unconfigurable": "Arrel no configurable",
+    "Network_ShowArchived": "",
+    "Network_ShowOffline": "",
     "Network_Table_Hostname": "Hostname",
     "Network_Table_IP": "IP",
     "Network_Table_State": "Estat",

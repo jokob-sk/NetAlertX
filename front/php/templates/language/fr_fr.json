@@ -528,6 +528,8 @@
     "Network_Root": "Noeud racine",
     "Network_Root_Not_Configured": "Pour commencer la configuration de cet écran, sélectionner un type d'appareil réseau, par exemple une <b>Gateway</b>, dans le champ <b>Type</b> de <a href=\"deviceDetails.php?mac=Internet\">l'appareil racine pour Internet</a> <br/><br/> Plus d'informations dans le guide <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/NETWORK_TREE.md\" target=\"_blank\">Comment configurer votre page Réseau</a>",
     "Network_Root_Unconfigurable": "Racine non configurable",
+    "Network_ShowArchived": "",
+    "Network_ShowOffline": "",
     "Network_Table_Hostname": "Nom de hôte",
     "Network_Table_IP": "IP",
     "Network_Table_State": "État",

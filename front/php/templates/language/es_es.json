@@ -563,6 +563,8 @@
     "Network_Root": "Nodo principal",
     "Network_Root_Not_Configured": "Seleccione un tipo de dispositivo de red, por ejemplo un <b>Gateway</b>, en el campo <b>Tipo</b> del <a href=\"deviceDetails.php?mac=Internet\">dispositivo principal de Internet</a> para empezar a configurar esta pantalla. <br/><br/>Puede encontrar más documentación en la guía <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/NETWORK_TREE.md\" target=\"_blank\">¿Cómo configurar su página de Red?</a>",
     "Network_Root_Unconfigurable": "Root no configurable",
+    "Network_ShowArchived": "",
+    "Network_ShowOffline": "",
     "Network_Table_Hostname": "Nombre de host",
     "Network_Table_IP": "Dirección IP",
     "Network_Table_State": "Estado",

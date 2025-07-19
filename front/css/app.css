@@ -1656,6 +1656,17 @@ input[readonly] {
 /* NETWORK page */
 /* ----------------------------------------------------------------- */
 
+#toggleFilters
+{
+    display: block;
+    position: absolute;
+    padding-left: 32px;
+    padding-top: 10px;
+    background-color: inherit;
+    z-index: 3;
+    width: 190px;
+}
+
 /* AdminLTE overrides */
 #networkTree .box
 {

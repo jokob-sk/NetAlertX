@@ -5,15 +5,6 @@
   
 ?>
     
-  <!-- // Create Top level tabs   (List of network devices), explanation of the terminology below:
-  //
-  //             Switch 1 (node) 
-  //              /(p1)    \ (p2)     <----- port numbers
-  //             /          \
-  //   Smart TV (leaf)      Switch 2 (node (for the PC) and leaf (for Switch 1))
-  //                          \
-  //                          PC (leaf) <------- leafs are not included in this SQL query -->
-
 <script>
   // show spinning icon
   showSpinner()
@@ -26,6 +17,25 @@
       <i class="fa fa-circle-question"></i>
     </a>
   </span>
+
+  <div id="toggleFilters" class="">    
+      <div class="checkbox icheck col-xs-12">
+        <label>
+          <input type="checkbox" name="showOffline" checked>
+            <div style="margin-left: 10px; display: inline-block; vertical-align: top;"> 
+              <?= lang('Network_ShowOffline');?>
+            </div>
+        </label>
+      </div>
+      <div class="checkbox icheck col-xs-12">
+        <label>
+          <input type="checkbox" name="showArchived">
+            <div style="margin-left: 10px; display: inline-block; vertical-align: top;"> 
+              <?= lang('Network_ShowArchived');?>
+            </div>
+        </label>      
+      </div>    
+  </div>
 
   <div id="networkTree" class="drag">
     <!-- Tree topology Placeholder -->
@@ -62,15 +72,24 @@
   // -----------------------------------------------------------------------
   function loadNetworkNodes() {
 
-    // console.log(getSetting("NETWORK_DEVICE_TYPES").replace("[","").replace("]",""));
-    
+    // Create Top level tabs   (List of network devices), explanation of the terminology below:
+    //
+    //             Switch 1 (node) 
+    //              /(p1)    \ (p2)     <----- port numbers
+    //             /          \
+    //   Smart TV (leaf)      Switch 2 (node (for the PC) and leaf (for Switch 1))
+    //                          \
+    //                          PC (leaf) <------- leafs are not included in this SQL query 
+
+
+    const networkDeviceTypes = getSetting("NETWORK_DEVICE_TYPES").replace("[", "").replace("]", "");
     const rawSql = `
       SELECT node_name, node_mac, online, node_type, node_ports_count, parent_mac, node_icon, node_alert
       FROM (
         SELECT a.devName as node_name, a.devMac as node_mac, a.devPresentLastScan as online,
               a.devType as node_type, a.devParentMAC as parent_mac, a.devIcon as node_icon, a.devAlertDown as node_alert
         FROM Devices a
-        WHERE a.devType in (${getSetting("NETWORK_DEVICE_TYPES").replace("[","").replace("]","")}) AND devIsArchived = 0
+        WHERE a.devType IN (${networkDeviceTypes}) and a.devIsArchived = 0
       ) t1
       LEFT JOIN (
         SELECT b.devParentMAC as node_mac_2, count() as node_ports_count
@@ -99,9 +118,7 @@
 
       const portLabel = node.node_ports_count ? ` (${node.node_ports_count})` : '';
       const icon = atob(node.node_icon);
-      const id = node.node_mac.replace(/:/g, '_');
-
-      
+      const id = node.node_mac.replace(/:/g, '_');      
 
       html += `
         <li class="networkNodeTabHeaders ${i === 0 ? 'active' : ''}">
@@ -331,13 +348,42 @@
     });
   }
 
-  
   // INIT
-  const apiUrl = `php/server/dbHelper.php?action=read&rawSql=${btoa(encodeURIComponent(
-                    `select *, CASE WHEN devAlertDown !=0 AND devPresentLastScan=0 THEN "Down"
-                                    WHEN devPresentLastScan=1 THEN "On-line"
-                                    ELSE "Off-line" END as devStatus 
-                      from Devices where devIsArchived = 0	`))}`;
+
+  const showArchived = getCache('showArchived') == "true";
+  const showOffline = getCache('showOffline') == "true";
+
+  console.log('showArchived:', showArchived);
+  console.log('showOffline:', showOffline);
+
+  // Build WHERE conditions dynamically
+  let filters = [];
+
+  if (!showArchived) {
+    filters.push(`a.devIsArchived = 0`);
+  }
+
+  if (!showOffline) {
+    filters.push(`a.devPresentLastScan != 0`);
+  }
+
+  // Assemble WHERE clause only if filters exist
+  const whereClause = filters.length > 0 ? `WHERE ${filters.join(' AND ')}` : '';
+
+  console.log(whereClause);
+
+  const rawSql = `
+    SELECT *,
+      CASE
+        WHEN devAlertDown != 0 AND devPresentLastScan = 0 THEN "Down"
+        WHEN devPresentLastScan = 1 THEN "On-line"
+        ELSE "Off-line"
+      END as devStatus
+    FROM Devices a
+    ${whereClause}
+  `;
+
+  const apiUrl = `php/server/dbHelper.php?action=read&rawSql=${btoa(encodeURIComponent(rawSql))}`;
 
   $.get(apiUrl, function (data) {
   
@@ -794,6 +840,32 @@ initDeviceNamesFromMACs();
 
 // init pop up hover  boxes for device details
 initHoverNodeInfo();
+
+// display toggles
+$(document).ready(function () {
+  // Restore cached values on load
+  const cachedOffline = getCache('showOffline');
+  if (cachedOffline !== null) {
+    $('input[name="showOffline"]').prop('checked', cachedOffline === 'true');
+  }
+
+  const cachedArchived = getCache('showArchived');
+  if (cachedArchived !== null) {
+    $('input[name="showArchived"]').prop('checked', cachedArchived === 'true');
+  }
+
+  // Bind change event for both toggles
+  $('input[name="showOffline"], input[name="showArchived"]').on('change', function () {
+    const name = $(this).attr('name');
+    const value = $(this).is(':checked');
+    setCache(name, value);
+
+    // Refresh page after a brief delay to ensure cache is written
+    setTimeout(() => {
+      location.reload();
+    }, 100);
+  });
+});
 
 </script>
 

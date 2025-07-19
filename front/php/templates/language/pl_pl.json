@@ -528,6 +528,8 @@
     "Network_Root": "Węzeł główny",
     "Network_Root_Not_Configured": "Wybierz typ urządzenia sieciowego, na przykład <b>Brama</b>, w polu <b>Typ</b> pole formularza <a href=\"deviceDetails.php?mac=Internet\">urządzenia głównego Internetu</a> aby rozpocząć konfigurację tego widoku. <br/><br/> Więcej informacji znajdziesz w przewodniku <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/NETWORK_TREE.md\" target=\"_blank\">Jak skonfigurować stronę Sieć </a>",
     "Network_Root_Unconfigurable": "Niekonfigurowalny węzeł główny",
+    "Network_ShowArchived": "",
+    "Network_ShowOffline": "",
     "Network_Table_Hostname": "Nazwa hosta",
     "Network_Table_IP": "Adres IP",
     "Network_Table_State": "Stan",

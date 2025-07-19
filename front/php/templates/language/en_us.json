@@ -528,6 +528,8 @@
     "Network_Root": "Root node",
     "Network_Root_Not_Configured": "Select a network device type, for example a <b>Gateway</b>, in the <b>Type</b> field of the <a href=\"deviceDetails.php?mac=Internet\">the Internet root device</a> to start configuring this screen. <br/><br/> More documentation can be found in the <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/NETWORK_TREE.md\" target=\"_blank\">How to setup your Network page</a> guide",
     "Network_Root_Unconfigurable": "Unconfigurable root",
+    "Network_ShowArchived": "Show Archived",
+    "Network_ShowOffline": "Show Offline",
     "Network_Table_Hostname": "Hostname",
     "Network_Table_IP": "IP",
     "Network_Table_State": "State",

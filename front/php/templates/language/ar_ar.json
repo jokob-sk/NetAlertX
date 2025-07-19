@@ -528,6 +528,8 @@
     "Network_Root": "الجذر",
     "Network_Root_Not_Configured": "الجذر غير مكون",
     "Network_Root_Unconfigurable": "الجذر غير قابل للتكوين",
+    "Network_ShowArchived": "",
+    "Network_ShowOffline": "",
     "Network_Table_Hostname": "اسم المضيف",
     "Network_Table_IP": "عنوان IP",
     "Network_Table_State": "الحالة",

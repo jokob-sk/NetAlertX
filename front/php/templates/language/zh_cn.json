@@ -528,6 +528,8 @@
     "Network_Root": "根节点",
     "Network_Root_Not_Configured": "在<a href=\"deviceDetails.php?mac=Internet\">Internet 根设备</a>的<b>类型</b>字段中选择一个网络设备类型，例如<b>网关</b>，以开始配置此屏幕。<br/><br/>更多文档可在<a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/NETWORK_TREE.md\" target=\"_blank\">如何设置您的网络页面</a>指南中找到",
     "Network_Root_Unconfigurable": "无法配置根",
+    "Network_ShowArchived": "",
+    "Network_ShowOffline": "",
     "Network_Table_Hostname": "主机名",
     "Network_Table_IP": "IP",
     "Network_Table_State": "状态",

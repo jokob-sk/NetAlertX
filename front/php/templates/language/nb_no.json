@@ -528,6 +528,8 @@
     "Network_Root": "Rotnode",
     "Network_Root_Not_Configured": "Velg en nettverksenhetstype, for eksempel <b>Gateway</b>, i <b>Type</b> -feltet til <a href=\"deviceDetails.php?mac=Internet\">Internet Root -enheten</a> for å begynne å konfigurere på denne siden. <br/><br/> Mer dokumentasjon finner du i <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/NETWORK_TREE.md\" target=\"_blank\">Hvordan konfigurere nettverkssiden din</a> guide",
     "Network_Root_Unconfigurable": "Ukonfigurerbar rot",
+    "Network_ShowArchived": "",
+    "Network_ShowOffline": "",
     "Network_Table_Hostname": "Vertsnavn",
     "Network_Table_IP": "IP",
     "Network_Table_State": "Tilstand",

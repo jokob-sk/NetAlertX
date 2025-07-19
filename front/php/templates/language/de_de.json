@@ -565,6 +565,8 @@
     "Network_Root": "Wurzelknoten",
     "Network_Root_Not_Configured": "",
     "Network_Root_Unconfigurable": "Nicht konfigurierbare Wurzel",
+    "Network_ShowArchived": "",
+    "Network_ShowOffline": "",
     "Network_Table_Hostname": "Gerätename",
     "Network_Table_IP": "IP",
     "Network_Table_State": "Status",

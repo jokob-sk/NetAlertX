@@ -528,6 +528,8 @@
     "Network_Root": "Кореневий вузол",
     "Network_Root_Not_Configured": "Виберіть тип мережевого пристрою, наприклад <b>Шлюз</b>, у полі <b>Тип</b> <a href=\"deviceDetails.php?mac=Internet\">кореневого Інтернет-пристрою</a>, щоб розпочати налаштування цього екрана. <br/><br/> Додаткову документацію можна знайти в <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/NETWORK_TREE.md\" target=\"_blank\"> Посібник із налаштування сторінки мережі</a>",
     "Network_Root_Unconfigurable": "Ненастроюваний root",
+    "Network_ShowArchived": "",
+    "Network_ShowOffline": "",
     "Network_Table_Hostname": "Ім'я хоста",
     "Network_Table_IP": "IP",
     "Network_Table_State": "Держава",

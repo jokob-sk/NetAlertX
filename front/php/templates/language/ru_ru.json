@@ -528,6 +528,8 @@
     "Network_Root": "Корневой узел",
     "Network_Root_Not_Configured": "Выберите тип сетевого устройства, например <b>Шлюз</b>, в поле <b>Тип</b> <a href=\"deviceDetails.php?mac=Internet\">корневого Интернет-устройства</a>, чтобы начать настройку этого экрана. <br/><br/> Дополнительную документацию можно найти в руководстве <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/NETWORK_TREE.md\" target=\"_blank \">Как настроить свою сетевую страницу</a>",
     "Network_Root_Unconfigurable": "Ненастраиваемый ROOT",
+    "Network_ShowArchived": "",
+    "Network_ShowOffline": "",
     "Network_Table_Hostname": "Имя хоста",
     "Network_Table_IP": "IP",
     "Network_Table_State": "Состояние",

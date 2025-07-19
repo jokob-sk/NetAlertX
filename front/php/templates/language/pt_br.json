@@ -528,6 +528,8 @@
     "Network_Root": "",
     "Network_Root_Not_Configured": "",
     "Network_Root_Unconfigurable": "",
+    "Network_ShowArchived": "",
+    "Network_ShowOffline": "",
     "Network_Table_Hostname": "",
     "Network_Table_IP": "",
     "Network_Table_State": "",
