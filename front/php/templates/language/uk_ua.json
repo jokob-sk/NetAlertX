@@ -491,6 +491,7 @@
     "Navigation_Workflows": "Робочі процеси",
     "Network_Assign": "Підключіться до зазначеного вище <i class=\"fa fa-server\"></i> вузла мережі",
     "Network_Cant_Assign": "Неможливо призначити кореневий вузол Інтернету як дочірній кінцевий вузол.",
+    "Network_Cant_Assign_No_Node_Selected": "",
     "Network_Configuration_Error": "Помилка конфігурації",
     "Network_Connected": "Підключені пристрої",
     "Network_ManageAdd": "Додати пристрій",
@@ -715,6 +716,7 @@
     "devices_old": "Освіжає…",
     "general_event_description": "Подія, яку ви ініціювали, може зайняти деякий час, поки завершаться фонові процеси. Виконання завершилося, коли наведена нижче черга виконання спорожнилася (перевірте <a href='/maintenance.php#tab_Logging'>журнал помилок</a>, якщо виникнуть проблеми). <br/> <br/> Черга виконання:",
     "general_event_title": "Виконання спеціальної події",
+    "go_to_device_event_tooltip": "Перейдіть до пристрою",
     "go_to_node_event_tooltip": "Перейдіть на сторінку Мережа даного вузла",
     "new_version_available": "Доступна нова версія.",
     "report_guid": "Довідник сповіщень:",
@@ -748,6 +750,5 @@
     "settings_system_icon": "фа-твердий фа-передача",
     "settings_system_label": "Система",
     "settings_update_item_warning": "Оновіть значення нижче. Слідкуйте за попереднім форматом. <b>Перевірка не виконана.</b>",
-    "test_event_tooltip": "Перш ніж перевіряти налаштування, збережіть зміни.",
-    "go_to_device_event_tooltip": "Перейдіть до пристрою"
+    "test_event_tooltip": "Перш ніж перевіряти налаштування, збережіть зміни."
 }

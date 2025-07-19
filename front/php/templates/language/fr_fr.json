@@ -491,6 +491,7 @@
     "Navigation_Workflows": "Flux de travail",
     "Network_Assign": "Se connecter à ce <i class=\"fa fa-server\"></i> nœud réseau",
     "Network_Cant_Assign": "Impossible d'assigner le noeud racine Internet comme enfant d'un noeud.",
+    "Network_Cant_Assign_No_Node_Selected": "",
     "Network_Configuration_Error": "Erreur de configuration",
     "Network_Connected": "Appareils connectés",
     "Network_ManageAdd": "Ajouter un appareil",
@@ -715,6 +716,7 @@
     "devices_old": "Rafraichissement…",
     "general_event_description": "L'événement que vous avez lancé peut prendre du temps avant que les tâches de fond ne soit terminées. La durée d'exécution finira une fois que la file d'exécution ci-dessous sera vide (consulter les <a href='/maintenance.php#tab_Logging'>journaux d'erreur</a> si vous rencontrez des erreurs). <br/> <br/> File d'exécution :",
     "general_event_title": "Lancement d'un événement sur mesure",
+    "go_to_device_event_tooltip": "Naviguer vers cet appareil",
     "go_to_node_event_tooltip": "Aller vers la page Réseau du nœud concerné",
     "new_version_available": "Une nouvelle version est disponible.",
     "report_guid": "GUID de la notification :",
@@ -748,6 +750,5 @@
     "settings_system_icon": "fa-solid fa-gear",
     "settings_system_label": "Système",
     "settings_update_item_warning": "Mettre à jour la valeur ci-dessous. Veillez à bien suivre le même format qu'auparavant. <b>Il n'y a pas de pas de contrôle.</b>",
-    "test_event_tooltip": "Enregistrer d'abord vos modifications avant de tester vôtre paramétrage.",
-    "go_to_device_event_tooltip": "Naviguer vers cet appareil"
+    "test_event_tooltip": "Enregistrer d'abord vos modifications avant de tester vôtre paramétrage."
 }

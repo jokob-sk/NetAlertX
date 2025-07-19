@@ -568,23 +568,23 @@ function getColumnNameFromLangString(headStringKey) {
 
 //--------------------------------------------------------------
 // Generating the device status chip
-function getStatusBadgeParts(tmp_devPresentLastScan, tmp_devAlertDown, macAddress, statusText = '') {
+function getStatusBadgeParts(devPresentLastScan, devAlertDown, devMac, statusText = '') {
   let css = 'bg-gray text-white statusUnknown';
   let icon = '<i class="fa-solid fa-question"></i>';
   let status = 'unknown';
   let cssText = '';
 
-  if (tmp_devPresentLastScan == 1) {
+  if (devPresentLastScan == 1) {
     css = 'bg-green text-white statusOnline';
     cssText = 'text-green';
     icon = '<i class="fa-solid fa-plug"></i>';
     status = 'online';
-  } else if (tmp_devAlertDown == 1) {
+  } else if (devAlertDown == 1) {
     css = 'bg-red text-white statusDown';
     cssText = 'text-red';
     icon = '<i class="fa-solid fa-triangle-exclamation"></i>';
     status = 'down';
-  } else if (tmp_devPresentLastScan != 1) {
+  } else if (devPresentLastScan != 1) {
     css = 'bg-gray text-white statusOffline';
     cssText = 'text-gray50';
     icon = '<i class="fa-solid fa-xmark"></i>';
@@ -592,13 +592,13 @@ function getStatusBadgeParts(tmp_devPresentLastScan, tmp_devAlertDown, macAddres
   }
 
   const cleanedText = statusText.replace(/-/g, '');
-  const url = `deviceDetails.php?mac=${encodeURIComponent(macAddress)}`;
+  const url = `deviceDetails.php?mac=${encodeURIComponent(devMac)}`;
 
   return {
     cssClass: css,
     cssText: cssText,
     iconHtml: icon,
-    mac: macAddress,
+    mac: devMac,
     text: cleanedText,
     status: status,
     url: url

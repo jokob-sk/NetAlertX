@@ -491,6 +491,7 @@
     "Navigation_Workflows": "Workflow",
     "Network_Assign": "Connetti al nodo di rete <i class=\"fa fa-server\"></i> sopra",
     "Network_Cant_Assign": "Impossibile assegnare il nodo Internet root come nodo foglia figlio.",
+    "Network_Cant_Assign_No_Node_Selected": "",
     "Network_Configuration_Error": "Errore di configurazione",
     "Network_Connected": "Dispositivi connessi",
     "Network_ManageAdd": "Aggiungi dispositivo",
@@ -715,6 +716,7 @@
     "devices_old": "Aggiornamento…",
     "general_event_description": "L'evento che hai attivato potrebbe richiedere del tempo prima che i processi in background vengano completati. L'esecuzione è terminata una volta che la coda di esecuzione sottostante si è svuotata (controlla il <a href='/maintenance.php#tab_Logging'>log degli errori</a> se riscontri problemi). <br/> <br/> Coda di esecuzione:",
     "general_event_title": "Esecuzione di un evento ad-hoc",
+    "go_to_device_event_tooltip": "Naviga al dispositivo",
     "go_to_node_event_tooltip": "Passa alla pagina Rete del nodo specificato",
     "new_version_available": "È disponibile una nuova versione.",
     "report_guid": "GUID notifica:",
@@ -748,6 +750,5 @@
     "settings_system_icon": "fa-solid fa-gear",
     "settings_system_label": "Sistema",
     "settings_update_item_warning": "Aggiorna il valore qui sotto. Fai attenzione a seguire il formato precedente. <b>La convalida non viene eseguita.</b>",
-    "test_event_tooltip": "Salva le modifiche prima di provare le nuove impostazioni.",
-    "go_to_device_event_tooltip": "Naviga al dispositivo"
+    "test_event_tooltip": "Salva le modifiche prima di provare le nuove impostazioni."
 }

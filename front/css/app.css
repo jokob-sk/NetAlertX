@@ -340,6 +340,11 @@ body
     width: 100%;
 }
 
+.networkTable .nav-tabs-custom
+{
+    margin-bottom: 0px;
+}
+
 .pa-small-box-2 .inner h3 {
     margin-left: 0em;
     margin-bottom: 1.3em;
@@ -1785,6 +1790,16 @@ input[readonly] {
     /* margin-left: 0.2em; */
 }
 
+.networkNodeTabHeaders .icon i
+{
+    padding-top: 8px !important;
+     padding-left: 6px !important;
+}
+
+.networkTable .box-body {
+    padding-top: 5px;
+}
+
 .networkTable .networkNodeTabHeaders a {
     display: block;
     height: 3em;
@@ -1812,6 +1827,8 @@ input[readonly] {
     overflow: hidden;
     text-wrap: nowrap;
 }
+
+
 
 @media (max-width: 767px) {
 
