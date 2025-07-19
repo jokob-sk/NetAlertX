@@ -96,7 +96,7 @@
             DevDetail_MainInfo_Network_Title: {
                 data: ["devParentMAC", "devParentRelType", "devParentPort", "devSSID", "devSite", "devSyncHubNode"],
                 docs: "https://github.com/jokob-sk/NetAlertX/blob/main/docs/NETWORK_TREE.md",
-                iconClass: "fa fa-network-wired",
+                iconClass: "fa fa-sitemap fa-rotate-270",
                 inputGroupClasses: "field-group network-group col-lg-4 col-sm-6 col-xs-12",
                 labelClasses: "col-sm-4 col-xs-12 control-label",
                 inputClasses: "col-sm-8 col-xs-12 input-group"

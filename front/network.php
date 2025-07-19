@@ -80,9 +80,6 @@
     //   Smart TV (leaf)      Switch 2 (node (for the PC) and leaf (for Switch 1))
     //                          \
     //                          PC (leaf) <------- leafs are not included in this SQL query 
-
-
-    const networkDeviceTypes = getSetting("NETWORK_DEVICE_TYPES").replace("[", "").replace("]", "");
     const rawSql = `
       SELECT node_name, node_mac, online, node_type, node_ports_count, parent_mac, node_icon, node_alert
       FROM (
@@ -162,35 +159,55 @@
       const badgeHtml = `<a href="${badge.url}" class="badge ${badge.cssClass}">${badge.iconHtml} ${badge.status}</a>`;
       const parentId = node.parent_mac.replace(/:/g, '_');
 
-      const paneHtml = `
-        <div class="tab-pane box box-aqua box-body ${i === 0 ? 'active' : ''}" id="${id}">
-          <h2 class="page-header"><i class="fa fa-server"></i> ${getString('Network_Node')}</h2>
-          <table class="table table-striped">
-            <tbody>
-              <tr><td><b>${getString('Network_Node')}</b></td><td><a href="./deviceDetails.php?mac=${node.node_mac}" class="anonymize">${node.node_name}</a></td></tr>
-              <tr><td><b>MAC</b></td><td class="anonymize">${node.node_mac}</td></tr>
-              <tr><td><b>${getString('Device_TableHead_Type')}</b></td><td>${node.node_type}</td></tr>
-              <tr><td><b>${getString('Network_Table_State')}</b></td><td>${badgeHtml}</td></tr>
-              <tr><td><b>${getString('Network_Parent')}</b></td>
-                  <td>
-                    <a href="./network.php?mac=${parentId}">
-                      <b class="anonymize"><span class="mac-to-name" my-data-mac="${node.parent_mac}">${node.parent_mac}</span>
-                      <i class="fa fa-square-up-right"></i></b>
-                    </a>
-                  </td></tr>
-            </tbody>
-          </table>
-          <div class=" box box-aqua box-body" id="connected">
-            <h3 class="page-header">
-              <i class="fa fa-sitemap"></i> 
-              ${getString('Network_Connected')}
-            </h3>
-          
-            <div  id="leafs_${id}">
-            </div>
-          </div>
+      isRootNode = node.parent_mac == "";
 
-        </div>`;
+      const paneHtml = `
+                <div class="tab-pane box box-aqua box-body ${i === 0 ? 'active' : ''}" id="${id}">
+                  <h2 class="page-header"><i class="fa fa-server"></i> ${getString('Network_Node')}</h2>
+
+                  <div class="mb-3 row">
+                    <label class="col-sm-3 col-form-label fw-bold">${getString('Network_Node')}</label>
+                    <div class="col-sm-9">
+                      <a href="./deviceDetails.php?mac=${node.node_mac}" class="anonymize">${node.node_name}</a>
+                    </div>
+                  </div>
+
+                  <div class="mb-3 row">
+                    <label class="col-sm-3 col-form-label fw-bold">MAC</label>
+                    <div class="col-sm-9 anonymize">${node.node_mac}</div>
+                  </div>
+
+                  <div class="mb-3 row">
+                    <label class="col-sm-3 col-form-label fw-bold">${getString('Device_TableHead_Type')}</label>
+                    <div class="col-sm-9">${node.node_type}</div>
+                  </div>
+
+                  <div class="mb-3 row">
+                    <label class="col-sm-3 col-form-label fw-bold">${getString('Network_Table_State')}</label>
+                    <div class="col-sm-9">${badgeHtml}</div>
+                  </div>
+
+                  <div class="mb-3 row">
+                    <label class="col-sm-3 col-form-label fw-bold">${getString('Network_Parent')}</label>
+                    <div class="col-sm-9">
+                      ${isRootNode ? '' : `<a class="anonymize" href="#">`}
+                        <span my-data-mac="${node.parent_mac}" data-mytreemacmain="${node.parent_mac}" onclick="handleNodeClick(this)">
+                          ${isRootNode ? getString('Network_Root') : getNameByMacAddress(node.parent_mac)}
+                        </span>
+                      ${isRootNode ? '' : `</a>`}
+                    </div>
+                  </div>
+
+                  <div class="box box-aqua box-body" id="connected">
+                    <h3 class="page-header">
+                      <i class="fa fa-sitemap fa-rotate-270"></i> 
+                      ${getString('Network_Connected')}
+                    </h3>
+                    <div id="leafs_${id}"></div>
+                  </div>
+                </div>
+              `;
+
 
       $('.tab-content').append(paneHtml);
       loadConnectedDevices(node.node_mac);
@@ -305,7 +322,7 @@
       <div class="content">
         <div id="unassignedDevices" class="box box-aqua box-body">
           <section>
-            <h3><i class="fa fa-laptop"></i> ${getString('Network_UnassignedDevices')}</h3>
+            <h3><i class="fa-solid fa-plug-circle-xmark"></i>  ${getString('Network_UnassignedDevices')}</h3>
             <table id="unassignedDevicesTable" class="table table-striped" width="100%"></table>
           </section>
         </div>
@@ -348,8 +365,11 @@
     });
   }
 
+  // -----------------------------------------------------------
   // INIT
+  // -----------------------------------------------------------
 
+  const networkDeviceTypes = getSetting("NETWORK_DEVICE_TYPES").replace("[", "").replace("]", "");
   const showArchived = getCache('showArchived') == "true";
   const showOffline = getCache('showOffline') == "true";
 
@@ -378,7 +398,12 @@
         WHEN devAlertDown != 0 AND devPresentLastScan = 0 THEN "Down"
         WHEN devPresentLastScan = 1 THEN "On-line"
         ELSE "Off-line"
-      END as devStatus
+      END as devStatus,
+      CASE
+        WHEN devType IN (${networkDeviceTypes})
+        THEN 1
+        ELSE 0
+      END as devIsNetworkNodeDynamic
     FROM Devices a
     ${whereClause}
   `;
@@ -500,6 +525,7 @@ function getChildren(node, list, path, visited = [])
         parentMac: node.devParentMAC,
         icon: node.devIcon,
         type: node.devType,
+        devIsNetworkNodeDynamic: node.devIsNetworkNodeDynamic,
         vendor: node.devVendor,
         lastseen: node.devLastConnection,
         firstseen: node.devFirstConnection,
@@ -623,7 +649,7 @@ function initTree(myHierarchy)
     return;
   }
 
-  // handle if only a few nodes
+  // handle canvas and node size if only a few nodes
   emSize > 1 ? emSize = 1 : emSize = emSize;
 
   let nodeHeightPx = emToPx(emSize*1);
@@ -671,12 +697,14 @@ function initTree(myHierarchy)
       selectedNodeMac = $(".nav-tabs-custom .active a").attr('data-mytabmac')
 
       highlightedCss = nodeData.data.mac == selectedNodeMac ? 
-                    " highlightedNode" : "";
+                    " highlightedNode " : "";
+      cssNodeType = nodeData.data.devIsNetworkNodeDynamic  ? 
+                    " node-network-device " : " node-standard-device ";
 
       const badgeConf = getStatusBadgeParts(nodeData.data.presentLastScan, nodeData.data.alertDown, nodeData.data.mac, statusText = '')
 
       return result = `<div 
-                            class="node-inner hover-node-info box pointer ${highlightedCss}"
+                            class="node-inner hover-node-info box pointer ${highlightedCss} ${cssNodeType}"
                             style="height:${nodeHeightPx}px;font-size:${nodeHeightPx-5}px;"
                             onclick="handleNodeClick(this)"
                             data-mytreemacmain="${nodeData.data.mac}"                            
@@ -685,6 +713,7 @@ function initTree(myHierarchy)
                             data-mac="${nodeData.data.mac}"
                             data-vendor="${nodeData.data.vendor}"
                             data-type="${nodeData.data.type}"
+                            data-devIsNetworkNodeDynamic="${nodeData.data.devIsNetworkNodeDynamic}"
                             data-lastseen="${nodeData.data.lastseen}"
                             data-firstseen="${nodeData.data.firstseen}"
                             data-relationship="${nodeData.data.relType}"
@@ -769,22 +798,7 @@ function initTab()
   
 }
 
-// ---------------------------------------------------------------------------
-function initDeviceNamesFromMACs()
-{
-  $('.mac-to-name').each(function() {
-      var dataMacValue = $(this).attr('my-data-mac');
 
-      if(dataMacValue =="" )
-      {
-        $(this).html(getString("Network_Root"))
-      }
-      else{
-        $(this).html(getNameByMacAddress(dataMacValue));
-      }
-  });
-  
-}
 
 // ---------------------------------------------------------------------------
 function initSelectedNodeHighlighting()
@@ -834,9 +848,6 @@ function updateLeaf(leafMac, action) {
     console.warn("Unknown action:", action);
   }
 }
-
-// init device names where macs are used
-initDeviceNamesFromMACs();
 
 // init pop up hover  boxes for device details
 initHoverNodeInfo();

@@ -1209,7 +1209,7 @@ if (eventsList.length > 0) {
         eventIcon = "fa-square-up-right";
         break;
       case "go_to_node":
-        eventIcon = "fa-network-wired";
+        eventIcon = "fa-sitemap fa-rotate-270";
         break;
       case "run":
         eventIcon = "fa-play";

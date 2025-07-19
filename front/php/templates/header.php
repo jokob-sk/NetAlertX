@@ -332,7 +332,7 @@
 
 	      <!-- Network menu item -->
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('network.php') ) ){ echo 'active'; } ?>">
-          <a href="network.php"><i class="fa fa-fw fa-network-wired"></i> <span><?= lang('Navigation_Network');?></span></a>
+          <a href="network.php"><i class="fa fa-fw fa-sitemap fa-rotate-270"></i> <span><?= lang('Navigation_Network');?></span></a>
         </li>
 
         <!-- Maintenance menu item -->

@@ -16,6 +16,7 @@
     --color-green: #00a65a;
     --color-yellow: #f39c12;
     --color-red: #dd4b39;
+    --color-gray: #8c8c8c;
 }
 
 .input-group .checkbox
@@ -1729,7 +1730,6 @@ input[readonly] {
     width: auto;
 }
 
-
 #hover-box
 {
   background-color: #ffffff;;
@@ -1773,11 +1773,31 @@ input[readonly] {
     right: 0;
     margin-right: -3px;
 }
+
+/* var(--color-aqua);
+--color-aqua: #00c0ef;
+--color-blue: #0060df;
+--color-green: #00a65a;
+--color-yellow: #f39c12;
+--color-red: #dd4b39; */
+
+#networkTree .node-inner.node-network-device:hover
+{
+    box-shadow: var(--color-aqua) 0px 0px 20px;
+}
+
+#networkTree .node-inner.node-standard-device:hover
+{
+    box-shadow: var(--color-gray) 0px 0px 10px;
+}
+
 #networkTree .highlightedNode
 {
     /* border: solid; */
     border-color:#3c8dbc;
+    box-shadow: #3c8dbc 0px 0px 20px;
 }
+
 #networkTree .netStatus-Off-line i,
 #networkTree .netStatus-Off-line svg
 {

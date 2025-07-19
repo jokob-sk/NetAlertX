@@ -151,7 +151,7 @@ echo '<div class="box box-solid">
 // Network Hardware ----------------------------------------------------------
 echo '<div class="box box-solid">
         <div class="box-header">
-          <h3 class="box-title sysinfo_headline"><i class="fas fa-network-wired"></i> ' . lang('Systeminfo_Network_Hardware') . '</h3>
+          <h3 class="box-title sysinfo_headline"><i class="fa fa-sitemap fa-rotate-270"></i> ' . lang('Systeminfo_Network_Hardware') . '</h3>
         </div>
         <div class="box-body">
           <table id="networkTable" class="table table-bordered table-hover">
