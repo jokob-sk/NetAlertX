@@ -121,93 +121,87 @@ function getServerDeviceData() {
   }
 
 
-  // Device Data
-  $sql = 'SELECT rowid, *,
-            CASE WHEN devAlertDown !=0 AND devPresentLastScan=0 THEN "Down"
-                 WHEN devPresentLastScan=1 THEN "On-line"
-                 ELSE "Off-line" END as devStatus
-          FROM Devices
-          WHERE devMac="'. $mac .'" or cast(rowid as text)="'. $mac. '"';
-  $result = $db->query($sql);
-  $row = $result -> fetchArray (SQLITE3_ASSOC);
+  // Get current date (used in presence calc)
+  $currentdate = date("Y-m-d H:i:s");
+
+  // Fetch Device Info + Children + Events Stats
+  $sql =<<<SQL
+    SELECT 
+      d.rowid,
+      d.*,
+      CASE 
+        WHEN d.devAlertDown != 0 AND d.devPresentLastScan = 0 THEN "Down"
+        WHEN d.devPresentLastScan = 1 THEN "On-line"
+        ELSE "Off-line"
+      END AS devStatus,
+
+      -- Event counters
+      (SELECT COUNT(*) FROM Sessions 
+      WHERE ses_MAC = d.devMac AND (
+        ses_DateTimeConnection >= $periodDate OR 
+        ses_DateTimeDisconnection >= $periodDate OR 
+        ses_StillConnected = 1
+      )
+      ) AS devSessions,
+
+      (SELECT COUNT(*) FROM Events 
+      WHERE eve_MAC = d.devMac AND 
+            eve_DateTime >= $periodDate AND 
+            eve_EventType NOT IN ("Connected", "Disconnected")
+      ) AS devEvents,
+
+      (SELECT COUNT(*) FROM Events 
+      WHERE eve_MAC = d.devMac AND 
+            eve_DateTime >= $periodDate AND 
+            eve_EventType = "Device Down"
+      ) AS devDownAlerts,
+
+      (SELECT CAST(( MAX (0, SUM (julianday (IFNULL (ses_DateTimeDisconnection,'$currentdate'))
+                      - julianday (CASE WHEN ses_DateTimeConnection < $periodDate 
+                                        THEN $periodDate 
+                                        ELSE ses_DateTimeConnection END)) *24 )) AS INT)
+      FROM Sessions
+      WHERE ses_MAC = d.devMac AND 
+            ses_DateTimeConnection IS NOT NULL AND 
+            (ses_DateTimeDisconnection IS NOT NULL OR ses_StillConnected = 1) AND 
+            (
+              ses_DateTimeConnection >= $periodDate OR 
+              ses_DateTimeDisconnection >= $periodDate OR 
+              ses_StillConnected = 1
+            )
+      ) AS devPresenceHours
+
+    FROM Devices d
+    WHERE d.devMac = "$mac" OR CAST(d.rowid AS TEXT) = "$mac"
+  SQL;
+
+  $row = $db->query($sql)->fetchArray(SQLITE3_ASSOC);
   $deviceData = $row;
   $mac = $deviceData['devMac'];
 
-  $deviceData['devParentMAC'] = $row['devParentMAC'];
-  $deviceData['devParentPort'] = $row['devParentPort'];
-  $deviceData['devFirstConnection'] = formatDate ($row['devFirstConnection']); // Date formated
-  $deviceData['devLastConnection'] =  formatDate ($row['devLastConnection']);  // Date formated
+  $deviceData['devFirstConnection'] = formatDate($deviceData['devFirstConnection']);
+  $deviceData['devLastConnection']  = formatDate($deviceData['devLastConnection']);
+  $deviceData['devIsRandomMAC']     = isRandomMAC($mac);
 
-  $deviceData['devIsRandomMAC'] = isRandomMAC($mac);
-
-  // devChildrenDynamic
-  $sql = 'SELECT rowid, * FROM Devices WHERE devParentMAC = "' . $mac . '" order by devPresentLastScan DESC';
+  // Fetch children once and split in PHP
+  $sql = 'SELECT rowid, * FROM Devices WHERE devParentMAC = "' . $mac . '" ORDER BY devPresentLastScan DESC';
   $result = $db->query($sql);
-
   $children = [];
-  if ($result) {
-      while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
-          $children[] = $row;
-      }
-  }
-  $deviceData['devChildrenDynamic'] = $children;
-
-  // devChildrenNicsDynamic
-  $sql = 'SELECT rowid, * FROM Devices WHERE devParentMAC = "' . $mac . '" and devParentRelType = "nic"  order by devPresentLastScan DESC';
-  $result = $db->query($sql);
-
   $childrenNics = [];
-  if ($result) {
-      while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+
+  while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+      $children[] = $row;
+      if ($row['devParentRelType'] === 'nic') {
           $childrenNics[] = $row;
       }
   }
+
+  $deviceData['devChildrenDynamic']     = $children;
   $deviceData['devChildrenNicsDynamic'] = $childrenNics;
 
-  // Count Totals
-  $condition = ' WHERE eve_MAC="'. $mac .'" AND eve_DateTime >= '. $periodDate;
+  // Return JSON
+  echo json_encode($deviceData);
 
-  // Connections
-  $sql = 'SELECT COUNT(*) FROM Sessions
-          WHERE ses_MAC="'. $mac .'"
-          AND (   ses_DateTimeConnection    >= '. $periodDate .'
-               OR ses_DateTimeDisconnection >= '. $periodDate .'
-               OR ses_StillConnected = 1 )';
-  $result = $db->query($sql);
-  $row = $result -> fetchArray (SQLITE3_NUM);
-  $deviceData['devSessions'] = $row[0];
-  
-  // Events
-  $sql = 'SELECT COUNT(*) FROM Events '. $condition .' AND eve_EventType <> "Connected" AND eve_EventType <> "Disconnected" ';
-  $result = $db->query($sql);
-  $row = $result -> fetchArray (SQLITE3_NUM);
-  $deviceData['devEvents'] = $row[0];
-
-  // Down Alerts
-  $sql = 'SELECT COUNT(*) FROM Events '. $condition .' AND eve_EventType = "Device Down"';
-  $result = $db->query($sql);
-  $row = $result -> fetchArray (SQLITE3_NUM);
-  $deviceData['devDownAlerts'] = $row[0];
-
-  // Get current date using php, sql datetime does not return time respective to timezone.
-  $currentdate = date("Y-m-d H:i:s");
-  // Presence hours
-  $sql = 'SELECT CAST(( MAX (0, SUM (julianday (IFNULL (ses_DateTimeDisconnection,"'. $currentdate .'" ))
-                                     - julianday (CASE WHEN ses_DateTimeConnection < '. $periodDate .' THEN '. $periodDate .'
-                                                       ELSE ses_DateTimeConnection END)) *24 )) AS INT)
-          FROM Sessions
-          WHERE ses_MAC="'. $mac .'"
-            AND ses_DateTimeConnection IS NOT NULL
-            AND (ses_DateTimeDisconnection IS NOT NULL OR ses_StillConnected = 1 )
-            AND (   ses_DateTimeConnection    >= '. $periodDate .'
-                 OR ses_DateTimeDisconnection >= '. $periodDate .'
-                 OR ses_StillConnected = 1 )';
-  $result = $db->query($sql);
-  $row = $result -> fetchArray (SQLITE3_NUM);
-  $deviceData['devPresenceHours'] = round ($row[0]);
-
-  // Return json
-  echo (json_encode ($deviceData));
 }
 
 

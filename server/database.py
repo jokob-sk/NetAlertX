@@ -10,7 +10,7 @@ from const import fullDbPath, sql_devices_stats, sql_devices_all, sql_generateGu
 from logger import mylog
 from helper import json_obj, initOrSetParam, row_to_json, timeNowTZ
 from workflows.app_events import AppEvent_obj
-from db.db_upgrade import ensure_column, ensure_views, ensure_CurrentScan, ensure_plugins_tables, ensure_Parameters, ensure_Settings
+from db.db_upgrade import ensure_column, ensure_views, ensure_CurrentScan, ensure_plugins_tables, ensure_Parameters, ensure_Settings, ensure_Indexes
 
 class DB():
     """
@@ -110,6 +110,9 @@ class DB():
         
         # Views        
         ensure_views(self.sql)
+
+        # Views        
+        ensure_Indexes(self.sql)
 
         # commit changes
         self.commitDB()   

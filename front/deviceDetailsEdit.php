@@ -63,7 +63,11 @@
 
       // some race condition, need to implement delay
       setTimeout(() => {
-        $.get('php/server/query_json.php', { file: 'table_settings.json', nocache: Date.now() }, function(res) {  
+        $.get('php/server/query_json.php', { 
+          file: 'table_settings.json', 
+          // nocache: Date.now() 
+        }, 
+          function(res) {  
         
         settingsData = res["data"];
 

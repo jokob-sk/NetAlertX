@@ -153,6 +153,61 @@ def ensure_views(sql) -> bool:
 
         return True
 
+def ensure_Indexes(sql) -> bool:
+    """
+    Ensures required indexes exist with correct structure.
+
+    Parameters:
+    - sql: database cursor or connection wrapper (must support execute()).
+    """
+    indexes = [
+        # Sessions
+        ("idx_ses_mac_date", 
+         "CREATE INDEX idx_ses_mac_date ON Sessions(ses_MAC, ses_DateTimeConnection, ses_DateTimeDisconnection, ses_StillConnected)"),
+
+        # Events
+        ("idx_eve_mac_date_type", 
+         "CREATE INDEX idx_eve_mac_date_type ON Events(eve_MAC, eve_DateTime, eve_EventType)"),
+        ("idx_eve_alert_pending", 
+         "CREATE INDEX idx_eve_alert_pending ON Events(eve_PendingAlertEmail)"),
+        ("idx_eve_mac_datetime_desc", 
+         "CREATE INDEX idx_eve_mac_datetime_desc ON Events(eve_MAC, eve_DateTime DESC)"),
+        ("idx_eve_pairevent", 
+         "CREATE INDEX idx_eve_pairevent ON Events(eve_PairEventRowID)"),
+        ("idx_eve_type_date", 
+         "CREATE INDEX idx_eve_type_date ON Events(eve_EventType, eve_DateTime)"),
+
+        # Devices
+        ("idx_dev_mac", "CREATE INDEX idx_dev_mac ON Devices(devMac)"),
+        ("idx_dev_present", "CREATE INDEX idx_dev_present ON Devices(devPresentLastScan)"),
+        ("idx_dev_alertdown", "CREATE INDEX idx_dev_alertdown ON Devices(devAlertDown)"),
+        ("idx_dev_isnew", "CREATE INDEX idx_dev_isnew ON Devices(devIsNew)"),
+        ("idx_dev_isarchived", "CREATE INDEX idx_dev_isarchived ON Devices(devIsArchived)"),
+        ("idx_dev_favorite", "CREATE INDEX idx_dev_favorite ON Devices(devFavorite)"),
+        ("idx_dev_parentmac", "CREATE INDEX idx_dev_parentmac ON Devices(devParentMAC)"),
+        
+        # Optional filter indexes
+        ("idx_dev_site", "CREATE INDEX idx_dev_site ON Devices(devSite)"),
+        ("idx_dev_group", "CREATE INDEX idx_dev_group ON Devices(devGroup)"),
+        ("idx_dev_owner", "CREATE INDEX idx_dev_owner ON Devices(devOwner)"),
+        ("idx_dev_type", "CREATE INDEX idx_dev_type ON Devices(devType)"),
+        ("idx_dev_vendor", "CREATE INDEX idx_dev_vendor ON Devices(devVendor)"),
+        ("idx_dev_location", "CREATE INDEX idx_dev_location ON Devices(devLocation)"),
+        
+        # Settings
+        ("idx_set_key", "CREATE INDEX idx_set_key ON Settings(setKey)")
+    ]
+
+    for name, create_sql in indexes:
+        sql.execute(f"DROP INDEX IF EXISTS {name};")
+        sql.execute(create_sql + ";")
+
+    return True
+
+
+
+
+
 def ensure_CurrentScan(sql) -> bool:
         """
             Ensures required CurrentScan table exist.
