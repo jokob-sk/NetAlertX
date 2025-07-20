@@ -1671,7 +1671,7 @@ input[readonly] {
 /* AdminLTE overrides */
 #networkTree .box
 {
-    /* border-top:1px; */
+    border-width:1px;
     border-top-color:grey;
     padding:0px;
     margin:0px;
@@ -1707,6 +1707,7 @@ input[readonly] {
     opacity: 0.3;
     display: initial;    
     float: left;
+    width: 1em;
 }
 
 #networkTree
@@ -1791,6 +1792,14 @@ input[readonly] {
     box-shadow: var(--color-gray) 0px 0px 10px;
 }
 
+#networkTree .network-hw-icon
+{
+    position: absolute;
+    margin-left: -0.4em;
+    opacity: 0.3;
+    margin-top: 0.1em;
+}
+
 #networkTree .highlightedNode
 {
     /* border: solid; */
@@ -1819,6 +1828,11 @@ input[readonly] {
     /* z-index: 10; */
     top: 0.3em;
     /* margin-left: 0.2em; */
+}
+
+.networkTable
+{
+    padding-bottom: 1px;
 }
 
 .networkNodeTabHeaders .icon i

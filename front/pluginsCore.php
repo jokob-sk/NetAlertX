@@ -4,12 +4,6 @@
   require_once  $_SERVER['DOCUMENT_ROOT'] . '/php/templates/security.php';
 ?>
 
-<!-- ----------------------------------------------------------------------- -->
-
-<!-- ----------------------------------------------------------------------- -->
- 
-
-
 <!-- Main content ---------------------------------------------------------- -->
 <section class="content">
   <div class="plugin-filters hidden" >
@@ -29,38 +23,56 @@
   
 </section>
 
-
-
 <script>
 
-// -----------------------------------------------------------------------------
-// Initializes fields based on current MAC
-function initFields() {   
+// Global variable to track the last MAC we initialized with
+let lastMac = null;
+let keepUpdating = true;
 
-  var urlParams = new URLSearchParams(window.location.search);
-  mac = urlParams.get ('mac');  
+function initMacFilter() {
+  // Parse the MAC parameter from the URL (e.g., ?mac=00:11:22:33:44:55)
+  const urlParams = new URLSearchParams(window.location.search);
+  const mac = urlParams.get('mac');
 
-  // if the current mac has changed, reinitialize the data
-  if(mac != undefined && $("#txtMacFilter").val() != mac)
-  {    
-    
-    $("#txtMacFilter").val(mac);    
+  // Set the MAC in the input field
+  $("#txtMacFilter").val(mac);
 
-    getData();
-  } 
-
+  return mac;  
 }
 
 // -----------------------------------------------------------------------------
-// Checking if current MAC has changed and triggering an updated if needed
-function updater() {   
+// Initializes the fields if the MAC in the URL is different or not yet set
+function initFields() {
 
-  initFields()
+  // Get current value from the readonly text field
+  const currentVal = initMacFilter();
 
-  // loop
-  setTimeout(function() {
-    updater();
-  }, 500);   
+  // If a MAC exists in the URL and it's either:
+  //  - the first time running (field shows default "--"), or
+  //  - different from what's already displayed
+  if (currentVal != "--" && currentVal !== lastMac) {
+
+
+    // Update the lastMac so we don't reload unnecessarily
+    lastMac = currentVal;
+
+    // Trigger data loading based on new MAC
+    getData();
+  } else if((currentVal === "--" || currentVal == null  ) && keepUpdating)
+  {
+    $("#txtMacFilter").val("--"); // need to set this as filters are using this later on
+    keepUpdating = false; // stop updates
+    getData();
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Recurring function to monitor the URL and reinitialize if needed
+function updater() {
+  initFields();
+
+  // Run updater again after 500 milliseconds
+  setTimeout(updater, 500);
 }
 
 // -----------------------------------------------------------------------------
@@ -241,7 +253,9 @@ pluginUnprocessedEvents = []
 pluginObjects = []
 pluginHistory = []
 
-function getData(){
+function getData(){ 
+  
+  console.log("Plugins getData called");  
 
   // Show the loading spinner while generating 
   showSpinner();
@@ -539,7 +553,12 @@ function deleteListed(plugPrefix, dbTable) {
 
 // show spinning icon
 showSpinner()
-getData()
-updater()
+// Start updater on page load
+$(document).ready(function () {
+  setTimeout(() => {
+    updater();  
+  }, 100);
+  
+});
 
 </script>

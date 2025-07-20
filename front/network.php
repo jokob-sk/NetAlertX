@@ -668,7 +668,7 @@ function initTree(myHierarchy)
 
       (port == "" || port == 0 || port == 'None' ) ? portBckgIcon = `<i class="fa fa-wifi"></i>` : portBckgIcon = `<i class="fa fa-ethernet"></i>`;
 
-      portHtml = (port == "" || port == 0 || port == 'None' ) ? "" : port;
+      portHtml = (port == "" || port == 0 || port == 'None' ) ? " &nbsp " : port;
       
       // Build HTML for individual nodes in the network diagram        
       deviceIcon = (!emptyArr.includes(nodeData.data.icon )) ?  
@@ -688,7 +688,7 @@ function initTree(myHierarchy)
       // generate +/- icon if node has children nodes
       collapseExpandHtml = nodeData.data.hasChildren ? 
                     `<div class="netCollapse" 
-                          style="font-size:${nodeHeightPx/2}px;top:${nodeHeightPx/4}px" 
+                          style="font-size:${nodeHeightPx/2}px;top:${Math.floor(nodeHeightPx / 4)}px" 
                           data-mytreepath="${nodeData.data.path}" 
                           data-mytreemac="${nodeData.data.mac}">
                       <i class="fa fa-${collapseExpandIcon} pointer"></i>
@@ -700,6 +700,10 @@ function initTree(myHierarchy)
                     " highlightedNode " : "";
       cssNodeType = nodeData.data.devIsNetworkNodeDynamic  ? 
                     " node-network-device " : " node-standard-device ";
+
+      networkHardwareIcon = nodeData.data.devIsNetworkNodeDynamic ? `<span class="network-hw-icon">
+                                <i class="fa-solid fa-hard-drive"></i>
+                            </span>` : "";
 
       const badgeConf = getStatusBadgeParts(nodeData.data.presentLastScan, nodeData.data.alertDown, nodeData.data.mac, statusText = '')
 
@@ -725,6 +729,7 @@ function initTree(myHierarchy)
                           <div class="netNodeText">
                             <strong><span>${devicePort}  <span class="${badgeConf.cssText}">${deviceIcon}</span></span>
                               <span class="spanNetworkTree anonymizeDev" style="width:${nodeWidthPx-50}px">${nodeData.data.name}</span>
+                              ${networkHardwareIcon}
                             </strong>                            
                           </div>                          
                         </div>
@@ -743,11 +748,9 @@ function initTree(myHierarchy)
     idKey: "mac",
     hasFlatData: false,
     relationnalField: "children",
-    linkWidth: (nodeData) => 3,
+    linkWidth: (nodeData) => 2,
     linkColor: (nodeData) => {  
-
       relConf = getRelationshipConf(nodeData.data.relType)  
-
       return relConf.color;
     }
     // onNodeClick: (nodeData) => handleNodeClick(nodeData),
@@ -797,8 +800,6 @@ function initTab()
   });
   
 }
-
-
 
 // ---------------------------------------------------------------------------
 function initSelectedNodeHighlighting()

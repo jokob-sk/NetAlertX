@@ -51,6 +51,8 @@ Let’s walk through setting up a device named `raspberrypi` to act as a network
 - Optionally assign a **Parent Node** (where this device connects to) and the **Relationship type** of the connection.  
   The `nic` relationship type can affect parent notifications — see the setting description and [Notifications documentation](./NOTIFICATIONS.md) for more.
 
+![Device details](./img/NETWORK_TREE/Network_Device_Details_Parent.png)  
+
 > [!NOTE]  
 > Only certain device types can act as network nodes:  
 > `AP`, `Firewall`, `Gateway`, `Hypervisor`, `PLC`, `Powerline`, `Router`, `Switch`, `USB LAN Adapter`, `USB WIFI Adapter`, `WLAN`  
@@ -60,7 +62,7 @@ Let’s walk through setting up a device named `raspberrypi` to act as a network
 
 ---
 
-### 2. Confirm It Appears as a Network Node
+### 2. Confirm The Device Appears as a Network Node
 
 You can confirm that `raspberrypi` now acts as a network device in two places:
 
@@ -83,7 +85,7 @@ You can confirm that `raspberrypi` now acts as a network device in two places:
 
 ![Assigned nodes](./img/NETWORK_TREE/Network_Assigned_Nodes.png)
 
-- Relationship lines may vary in color based on the selected Relationship type. These are editable on the device details page where you assign a parent node.
+- Relationship lines may vary in color based on the selected Relationship type. These are editable on the device details page where you can also assign a parent node.
 
 ![Hover detail](./img/NETWORK_TREE/Network_tree_setup_hover.png)
 
