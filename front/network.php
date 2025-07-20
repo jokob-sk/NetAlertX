@@ -22,6 +22,9 @@
           <input type="checkbox" name="showOffline" checked>
             <div style="margin-left: 10px; display: inline-block; vertical-align: top;"> 
               <?= lang('Network_ShowOffline');?>
+              <span id="showOfflineNumber">
+                <!-- placeholder -->
+              </span>
             </div>
         </label>
       </div>
@@ -29,7 +32,10 @@
         <label>
           <input type="checkbox" name="showArchived">
             <div style="margin-left: 10px; display: inline-block; vertical-align: top;"> 
-              <?= lang('Network_ShowArchived');?>
+              <?= lang('Network_ShowArchived');?> 
+              <span id="showArchivedNumber">
+                <!-- placeholder -->
+              </span>
             </div>
         </label>      
       </div>    
@@ -368,102 +374,98 @@
   // -----------------------------------------------------------
 
   const networkDeviceTypes = getSetting("NETWORK_DEVICE_TYPES").replace("[", "").replace("]", "");
-  const showArchived = getCache('showArchived') == "true";
-  const showOffline = getCache('showOffline') == "true";
+const showArchived = getCache('showArchived') === "true";
+const showOffline = getCache('showOffline') === "true";
 
-  console.log('showArchived:', showArchived);
-  console.log('showOffline:', showOffline);
+console.log('showArchived:', showArchived);
+console.log('showOffline:', showOffline);
 
-  // Build WHERE conditions dynamically
-  let filters = [];
+// Always get all devices
+const rawSql = `
+  SELECT *,
+    CASE
+      WHEN devAlertDown != 0 AND devPresentLastScan = 0 THEN "Down"
+      WHEN devPresentLastScan = 1 THEN "On-line"
+      ELSE "Off-line"
+    END AS devStatus,
+    CASE
+      WHEN devType IN (${networkDeviceTypes}) THEN 1
+      ELSE 0
+    END AS devIsNetworkNodeDynamic
+  FROM Devices a
+`;
 
-  if (!showArchived) {
-    filters.push(`a.devIsArchived = 0`);
-  }
+const apiUrl = `php/server/dbHelper.php?action=read&rawSql=${btoa(encodeURIComponent(rawSql))}`;
 
-  if (!showOffline) {
-    filters.push(`a.devPresentLastScan != 0`);
-  }
+$.get(apiUrl, function (data) {
 
-  // Assemble WHERE clause only if filters exist
-  const whereClause = filters.length > 0 ? `WHERE ${filters.join(' AND ')}` : '';
-
-  console.log(whereClause);
-
-  const rawSql = `
-    SELECT *,
-      CASE
-        WHEN devAlertDown != 0 AND devPresentLastScan = 0 THEN "Down"
-        WHEN devPresentLastScan = 1 THEN "On-line"
-        ELSE "Off-line"
-      END as devStatus,
-      CASE
-        WHEN devType IN (${networkDeviceTypes})
-        THEN 1
-        ELSE 0
-      END as devIsNetworkNodeDynamic
-    FROM Devices a
-    ${whereClause}
-  `;
-
-  const apiUrl = `php/server/dbHelper.php?action=read&rawSql=${btoa(encodeURIComponent(rawSql))}`;
-
-  $.get(apiUrl, function (data) {
+  console.log(data);
   
-    rawData = JSON.parse (data)      
+  const parsed = JSON.parse(data);
+  const allDevices = parsed;
 
-    console.log(rawData);
+  console.log(allDevices);
+  
 
-    if(rawData["data"] == "")
-    {
-      showModalOK (getString('Gen_Warning'), getString('Network_NoDevices'))      
-      
-      return;
-    }
+  if (!allDevices || allDevices.length === 0) {
+    showModalOK(getString('Gen_Warning'), getString('Network_NoDevices'));
+    return;
+  }
 
-    orderTopologyBy = createArray(getSetting("UI_TOPOLOGY_ORDER"))
+  // Count totals for UI
+  let archivedCount = 0;
+  let offlineCount = 0;
 
-    devicesListnew = rawData.sort((a, b) => {
-      // Helper to safely parse port into an integer; invalid ports become Infinity for sorting
-      const parsePort = (devParentPort) => {
-        const parsed = parseInt(devParentPort, 10);
-        return isNaN(parsed) ? Infinity : parsed;
-      };
-
-      switch (orderTopologyBy[0]) {
-        case "Name":
-          // First sort by name alphabetically
-          const nameCompare = a.devName.localeCompare(b.devName);
-          if (nameCompare !== 0) {
-            return nameCompare;
-          }
-          // If names are the same, sort by port numerically
-          return parsePort(a.devParentPort) - parsePort(b.devParentPort);
-
-        case "Port":
-          // Sort by port numerically
-          return parsePort(a.devParentPort) - parsePort(b.devParentPort);
-
-        default:
-          // Default: Sort by rowid (as a fallback)
-          return a.rowid - b.rowid;
-      }
-    });
-
-    setCache('devicesListNew', JSON.stringify(devicesListnew));
-
-    // Init global variable
-    deviceListGlobal = devicesListnew;
-    
-    // create tree
-    initTree(getHierarchy());
-
-    // bottom tables
-    loadNetworkNodes();    
-   
-    // attach on-click events
-    attachTreeEvents();
+  allDevices.forEach(device => {
+    if (parseInt(device.devIsArchived) === 1) archivedCount++;
+    if (parseInt(device.devPresentLastScan) === 0 && parseInt(device.devIsArchived) === 0) offlineCount++;
   });
+
+  if(archivedCount > 0)
+  {
+   $('#showArchivedNumber').text(`(${archivedCount})`);
+  }
+  
+  if(offlineCount > 0)
+  {
+    $('#showOfflineNumber').text(`(${offlineCount})`);
+  }
+
+  // Now apply UI filter based on toggles
+  const filteredDevices = allDevices.filter(device => {
+    if (!showArchived && parseInt(device.devIsArchived) === 1) return false;
+    if (!showOffline && parseInt(device.devPresentLastScan) === 0) return false;
+    return true;
+  });
+
+  // Sort filtered devices
+  const orderTopologyBy = createArray(getSetting("UI_TOPOLOGY_ORDER"));
+  const devicesSorted = filteredDevices.sort((a, b) => {
+    const parsePort = (port) => {
+      const parsed = parseInt(port, 10);
+      return isNaN(parsed) ? Infinity : parsed;
+    };
+
+    switch (orderTopologyBy[0]) {
+      case "Name":
+        const nameCompare = a.devName.localeCompare(b.devName);
+        return nameCompare !== 0 ? nameCompare : parsePort(a.devParentPort) - parsePort(b.devParentPort);
+      case "Port":
+        return parsePort(a.devParentPort) - parsePort(b.devParentPort);
+      default:
+        return a.rowid - b.rowid;
+    }
+  });
+
+  setCache('devicesListNew', JSON.stringify(devicesSorted));
+  deviceListGlobal = devicesSorted;
+
+  // Render filtered result
+  initTree(getHierarchy());
+  loadNetworkNodes();
+  attachTreeEvents();
+});
+
 </script>
 
 
