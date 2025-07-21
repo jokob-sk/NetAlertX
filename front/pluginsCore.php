@@ -17,8 +17,10 @@
     <ul id="tabs-location" class="nav nav-tabs col-sm-2 ">
       <!-- PLACEHOLDER -->
     </ul>  
-    <div id="tabs-content-location" class="tab-content col-sm-10"> 
-      <!-- PLACEHOLDER -->
+    <div id="tabs-content-location-wrap" class="tab-content col-sm-10"> 
+      <div id="tabs-content-location" class="tab-content col-sm-12"> 
+        <!-- PLACEHOLDER -->
+      </div>   
     </div>   
   
 </section>
@@ -35,7 +37,14 @@ function initMacFilter() {
   const mac = urlParams.get('mac');
 
   // Set the MAC in the input field
-  $("#txtMacFilter").val(mac);
+  if(mac)
+  {
+    $("#txtMacFilter").val(mac);
+  }
+  else
+  {
+    $("#txtMacFilter").val("--");
+  }  
 
   return mac;  
 }
@@ -51,7 +60,6 @@ function initFields() {
   //  - the first time running (field shows default "--"), or
   //  - different from what's already displayed
   if (currentVal != "--" && currentVal !== lastMac) {
-
 
     // Update the lastMac so we don't reload unnecessarily
     lastMac = currentVal;
@@ -315,16 +323,19 @@ function createTabHeader(pluginObj, stats) {
   // Determine the active class for the first tab
   const activeClass = pluginDefinitions.indexOf(pluginObj) === 0 ? 'active' : '';
 
-  // Append the tab header to the tabs location
-  $('#tabs-location').append(`
-    <li class="left-nav ${activeClass} ">
-      <a class="col-sm-12 textOverflow" href="#${prefix}" data-plugin-prefix="${prefix}" id="${prefix}_id" data-toggle="tab">
-        ${getString(`${prefix}_icon`)} ${getString(`${prefix}_display_name`)}
-        
-      </a>
-      ${stats.objectDataCount > 0 ? `<div class="pluginBadgeWrap"><span title="" class="badge pluginBadge" >${stats.objectDataCount}</span></div>` : ""}      
-    </li>
-  `);
+  if(stats.objectDataCount > 0)
+  {
+    // Append the tab header to the tabs location
+    $('#tabs-location').append(`
+      <li class="left-nav ${activeClass} ">
+        <a class="col-sm-12 textOverflow" href="#${prefix}" data-plugin-prefix="${prefix}" id="${prefix}_id" data-toggle="tab">
+          ${getString(`${prefix}_icon`)} ${getString(`${prefix}_display_name`)}
+          
+        </a>
+        ${stats.objectDataCount > 0 ? `<div class="pluginBadgeWrap"><span title="" class="badge pluginBadge" >${stats.objectDataCount}</span></div>` : ""}      
+      </li>
+    `);
+  }
 }
 
 function createTabContent(pluginObj) {
@@ -477,9 +488,13 @@ function shouldBeShown(entry, pluginObj)
       compare_operator = dataFilters[i].compare_operator;
       compare_js_template = dataFilters[i].compare_js_template;
       compare_use_quotes = dataFilters[i].compare_use_quotes;
-      compare_field_id_value = $(`#${compare_field_id}`).val();      
+      compare_field_id_value = $(`#${compare_field_id}`).val();
+      
+      // console.log(compare_field_id_value);
+      // console.log(compare_field_id);
+      
 
-      // apply filter i sthe filter field has a valid value
+      // apply filter if the filter field has a valid value
       if(compare_field_id_value != undefined && compare_field_id_value != '--') 
       {
         // valid value        

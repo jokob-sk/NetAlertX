@@ -176,32 +176,31 @@ def main():
             # only process received .log files, skipping the one logging the progress of this plugin
             if file_name != 'last_result.log':
                 mylog('verbose', [f'[{pluginName}] Processing: "{file_name}"'])
-
-                # Store e.g. Node_1 from last_result.encoded.Node_1.1.log
-                tmp_SyncHubNodeName = ''
-                if len(file_name.split('.')) > 2:
-                    tmp_SyncHubNodeName = file_name.split('.')[1]   
-
-
-                file_path = f"{LOG_PATH}/{file_name}"
                 
-                with open(file_path, 'r') as f:
-                    data = json.load(f)
-                    for device in data['data']:
-                        if device['devMac'] not in unique_mac_addresses:
-                            device['devSyncHubNode'] = tmp_SyncHubNodeName
-                            unique_mac_addresses.add(device['devMac'])
-                            device_data.append(device)    
-                            
-                # Rename the file to "processed_" + current name
-                new_file_name = f"processed_{file_name}"
-                new_file_path = os.path.join(LOG_PATH, new_file_name)
+                # make sure the file has teh correct name (e.g last_result.encoded.Node_1.1.log) to skip any otehr plugin files
+                if len(file_name.split('.')) > 2:
+                    # Store e.g. Node_1 from last_result.encoded.Node_1.1.log
+                    syncHubNodeName = file_name.split('.')[1]   
 
-                # Overwrite if the new file already exists
-                if os.path.exists(new_file_path):
-                    os.remove(new_file_path)
+                    file_path = f"{LOG_PATH}/{file_name}"
+                    
+                    with open(file_path, 'r') as f:
+                        data = json.load(f)
+                        for device in data['data']:
+                            if device['devMac'] not in unique_mac_addresses:
+                                device['devSyncHubNode'] = syncHubNodeName
+                                unique_mac_addresses.add(device['devMac'])
+                                device_data.append(device)    
+                                
+                    # Rename the file to "processed_" + current name
+                    new_file_name = f"processed_{file_name}"
+                    new_file_path = os.path.join(LOG_PATH, new_file_name)
 
-                os.rename(file_path, new_file_path)
+                    # Overwrite if the new file already exists
+                    if os.path.exists(new_file_path):
+                        os.remove(new_file_path)
+
+                    os.rename(file_path, new_file_path)
 
         if len(device_data) > 0:
             # Retrieve existing devMac values from the Devices table

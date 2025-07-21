@@ -885,6 +885,10 @@ height: 50px;
     margin: 10px;
     padding: 10px;
 }
+#notifications .notification-box{
+    min-height: 90vh;
+}
+
 
 #notificationData textarea{
     width: 100%;
@@ -1669,6 +1673,10 @@ input[readonly] {
 }
 
 /* AdminLTE overrides */
+.content-wrapper {
+    min-height: calc(100vh - 31px) !important;
+}
+
 #networkTree .box
 {
     border-width:1px;
@@ -1905,7 +1913,10 @@ input[readonly] {
 /* PLUGINS page */
 /* ----------------------------------------------------------------- */
 
-
+#tabs-location
+{
+    padding-right: 0px;
+}
 
 .plugin-filters
 {    
@@ -1920,9 +1931,25 @@ input[readonly] {
     padding-bottom: 0px;
 }
 
-.plugin-content .left-nav{
+.plugin-content .nav-tabs li a
+{
+    border-right-width: 0px;
+}
+
+#tabs-content-location-wrap
+{
+    min-height: 90vh;
+}
+
+#tabs-content-location textarea {
     width: 100%;
+}
+
+.plugin-content .left-nav{
+    width: calc(100%);
     padding-right: 0px;
+    z-index: 2;
+    background-color: inherit !important;
 }
 
 .plugin-content #tabs-content-location
@@ -1996,6 +2023,8 @@ input[readonly] {
 .pluginBadge
 {
     float: right;
+    margin-right: 3px;
+    opacity: 0.6;
 }
 
 .pluginBadgeWrap
