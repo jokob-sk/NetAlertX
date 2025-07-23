@@ -726,6 +726,7 @@
     "report_select_format": "Velg format:",
     "report_time": "Notifikasjonstid:",
     "run_event_tooltip": "Aktiver innstillingen og lagre endringene først før du kjører den.",
+    "select_icon_event_tooltip": "",
     "settings_core_icon": "fa-solid fa-gem",
     "settings_core_label": "Core",
     "settings_device_scanners": "Enhets-skannere som brukes til å oppdage enheter som skrives inn i CurrentScan databasetabellen.",

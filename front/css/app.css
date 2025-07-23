@@ -1042,7 +1042,7 @@ height: 50px;
 
 .myhidden
 {
-    display:none;
+    display:none !important;
 }
 
 .center 
@@ -1364,6 +1364,7 @@ input[readonly] {
 
 .iconPreview {
     min-width: 40px;
+    /* display: inherit; */
 }
 
 .iconPreview svg{
@@ -1469,6 +1470,11 @@ input[readonly] {
     text-align: left;
 }
 
+#panDetails .input-group {
+        
+    min-height: 40px;
+}
+
 #devicePageInfoPlc
 {
     display: none;
@@ -1547,10 +1553,6 @@ input[readonly] {
 }
 /* #panDetails .dataTables_wrapper .bottom .paging_simple_numbers */
 
-#panDetails #NEWDEV_devIcon
-{
-    display: none;
-}
 
 #panDetails #NEWDEV_devCustomProps_label
 {
@@ -2023,8 +2025,9 @@ input[readonly] {
 .pluginBadge
 {
     float: right;
-    margin-right: 3px;
+    margin-right: 10px;
     opacity: 0.6;
+    margin-top: 4px;
 }
 
 .pluginBadgeWrap
@@ -2033,7 +2036,7 @@ input[readonly] {
     display: ruby;
     z-index: 1;
     position: sticky;
-    margin-top: 1px;
+    margin-top: 4px;
 }
 
 /* -----------------------------------------------------------------------------

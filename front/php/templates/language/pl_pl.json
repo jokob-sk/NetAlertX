@@ -726,6 +726,7 @@
     "report_select_format": "Wybierz format:",
     "report_time": "Czas powiadomienia:",
     "run_event_tooltip": "Najpierw włącz to ustawienie i zapisz zmiany, zanim je uruchomisz.",
+    "select_icon_event_tooltip": "",
     "settings_core_icon": "fa-solid fa-gem",
     "settings_core_label": "Główne",
     "settings_device_scanners": "Skanery urządzeń używane do wykrywania urządzeń, które zapisują dane w tabeli bazy danych CurrentScan.",

@@ -323,8 +323,12 @@ function execute_settingEvent(element) {
       () => addIconAsBase64(element), // Wrap in an arrow function
       feSourceId // triggered by id
     );
-  } else if (["copy_icons"].includes(feEvent)) {
+  } else if (["select_icon"].includes(feEvent)) {
 
+    showIconSelection(feSetKey)
+    // myparam-setkey  
+
+  } else if (["copy_icons"].includes(feEvent)) {
 
     // Ask overwrite icon types 
     showModalWarning (
@@ -449,10 +453,11 @@ function addIconAsBase64 (el) {
 
 }
 
+// -----------------------------------------------
+// modal pop up for icon selection
+function showIconSelection(setKey) {
 
-
-function showIconSelection() {
-  const selectElement = document.getElementById('NEWDEV_devIcon');
+  const selectElement = document.getElementById(setKey);
   const modalId = 'dynamicIconModal';
 
   // Create modal HTML dynamically
@@ -560,7 +565,10 @@ function getColumnNameFromLangString(headStringKey) {
     "Device_TableHead_SourcePlugin": "devSourcePlugin",
     "Device_TableHead_PresentLastScan": "devPresentLastScan",
     "Device_TableHead_AlertDown": "devAlertDown",
-    "Device_TableHead_CustomProps": "devCustomProps"
+    "Device_TableHead_CustomProps": "devCustomProps",
+    "Device_TableHead_FQDN": "devFQDN",
+    "Device_TableHead_ParentRelType": "devParentRelType",
+    "Device_TableHead_ReqNicsOnline": "devReqNicsOnline"
   };
 
   return columnNameMap[headStringKey] || "";

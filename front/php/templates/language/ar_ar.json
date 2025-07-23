@@ -726,6 +726,7 @@
     "report_select_format": "اختر تنسيق التقرير",
     "report_time": "وقت التقرير",
     "run_event_tooltip": "تلميح تشغيل الحدث",
+    "select_icon_event_tooltip": "",
     "settings_core_icon": "أيقونة الإعدادات الأساسية",
     "settings_core_label": "تسمية الإعدادات الأساسية",
     "settings_device_scanners": "ماسحات الأجهزة",

@@ -523,12 +523,14 @@ function shouldBeShown(entry, pluginObj)
 plugPrefix = ''
 dbTable  = ''
 
+// --------------------------------------------------------
 function purgeAll(callback) {
   plugPrefix = arguments[0];  // plugin prefix
   dbTable  = arguments[1];  // DB table
-  // Ask 
-  showModalWarning('<?= lang('Gen_Purge');?>' + ' ' + plugPrefix + ' ' + dbTable , '<?= lang('Gen_AreYouSure');?>',
-  '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Okay');?>', "purgeAllExecute");
+
+  // Ask for confirmation
+  showModalWarning(`${getString('Gen_Purge')} ${plugPrefix} ${dbTable}`, `${getString('Gen_AreYouSure')}`,
+    `${getString('Gen_Cancel')}`, `${getString('Gen_Okay')}`, "purgeAllExecute");
 }
 
 // --------------------------------------------------------
@@ -544,22 +546,37 @@ function purgeAllExecute() {
 }
 
 // --------------------------------------------------------
-function deleteListed(plugPrefix, dbTable) {
+function deleteListed(plugPrefixArg, dbTableArg) {
+  plugPrefix = plugPrefixArg;
+  dbTable = dbTableArg;
 
-  idArr = $(`#${plugPrefix} table[data-my-dbtable="${dbTable}"] tr[data-my-index]`).map(function(){return $(this).attr("data-my-index");}).get();
+  // Collect selected IDs
+  idArr = $(`#${plugPrefix} table[data-my-dbtable="${dbTable}"] tr[data-my-index]`)
+    .map(function() {
+      return $(this).attr("data-my-index");
+    }).get();
 
-  console.log(idArr);
+  if (idArr.length === 0) {
+    showModalOk('Nothing to delete', 'No items are selected for deletion.');
+    return;
+  }
 
+  // Ask for confirmation
+  showModalWarning(`${getString('Gen_Purge')} ${plugPrefix} ${dbTable}`, `${getString('Gen_AreYouSure')} (${idArr.length})`,
+    `${getString('Gen_Cancel')}`, `${getString('Gen_Okay')}`, "deleteListedExecute");
+}
+
+// --------------------------------------------------------
+function deleteListedExecute() {
   $.ajax({
     method: "POST",
     url: "php/server/dbHelper.php",
     data: { action: "delete", dbtable: dbTable, columnName: 'Index', id:idArr.toString() },
     success: function(data, textStatus) {
       updateApi("plugins_objects")
-      showModalOk ('Result', data );      
+      showModalOk('Result', data);      
     }
   })
-
 }
 
 

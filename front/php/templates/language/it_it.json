@@ -726,6 +726,7 @@
     "report_select_format": "Seleziona formato:",
     "report_time": "Orario notifica:",
     "run_event_tooltip": "Abilita l'impostazione e salva le modifiche prima di eseguirla.",
+    "select_icon_event_tooltip": "",
     "settings_core_icon": "fa-solid fa-gem",
     "settings_core_label": "Core",
     "settings_device_scanners": "Scanner dei dispositivi utilizzati per rilevare i dispositivi che scrivono nella tabella del database CurrentScan.",

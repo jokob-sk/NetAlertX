@@ -805,6 +805,7 @@
     "report_select_format": "Selecciona el formato:",
     "report_time": "Hora de la notificación:",
     "run_event_tooltip": "Activa el ajuste y guarda tus cambios antes de ejecutarlo.",
+    "select_icon_event_tooltip": "",
     "settings_core_icon": "fa-solid fa-gem",
     "settings_core_label": "Núcleo",
     "settings_device_scanners": "Los escáneres de los dispositivos se utilizan para descubrir dispositivos que escriben en la tabla de base de datos de CurrentScan.",

@@ -126,9 +126,9 @@
             // Group for Children.
             DevDetail_Children_Title: {
                 data: ["devChildrenDynamic"],
-                docs: "https://github.com/jokob-sk/NetAlertX/blob/main/docs/CUSTOM_PROPERTIES.md",
+                docs: "https://github.com/jokob-sk/NetAlertX/blob/main/docs/NETWORK_TREE.md",
                 iconClass: "fa fa-list",
-                inputGroupClasses: "field-group cutprop-group col-lg-12 col-sm-12 col-xs-12",
+                inputGroupClasses: "field-group cutprop-group col-lg-6 col-sm-12 col-xs-12",
                 labelClasses: "col-sm-12 col-xs-12 control-label",
                 inputClasses: "col-sm-12 col-xs-12 input-group"
             },
@@ -137,7 +137,7 @@
                 data: ["devCustomProps"],
                 docs: "https://github.com/jokob-sk/NetAlertX/blob/main/docs/CUSTOM_PROPERTIES.md",
                 iconClass: "fa fa-list",
-                inputGroupClasses: "field-group cutprop-group col-lg-12 col-sm-12 col-xs-12",
+                inputGroupClasses: "field-group cutprop-group col-lg-6 col-sm-12 col-xs-12",
                 labelClasses: "col-sm-12 col-xs-12 control-label",
                 inputClasses: "col-sm-12 col-xs-12 input-group"
             }
@@ -210,15 +210,6 @@
                                               onclick="generate_NEWDEV_devLastIP()"
                                               title="${getString("Gen_Generate")}">
                                               <i class="fa-solid fa-dice" ></i>
-                                          </span>`;
-                    }
-
-                    // handle generate IP for new device
-                    if (setting.setKey == "NEWDEV_devIcon") {
-                      inlineControl += `<span class="input-group-addon pointer"
-                                              onclick="showIconSelection()"
-                                              title="${getString("Gen_Select")}">
-                                              <i class="fa-solid fa-chevron-down" ></i>
                                           </span>`;
                     }
                     

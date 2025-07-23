@@ -726,6 +726,7 @@
     "report_select_format": "选择格式：",
     "report_time": "通知时间：",
     "run_event_tooltip": "在运行之前，请先启用设置并保存更改。",
+    "select_icon_event_tooltip": "",
     "settings_core_icon": "",
     "settings_core_label": "核",
     "settings_device_scanners": "设备扫描器用于发现写入当前扫描数据库表的设备。",

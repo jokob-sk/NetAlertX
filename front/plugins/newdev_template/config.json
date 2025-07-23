@@ -562,7 +562,8 @@
       "function": "devIcon",
       "events": [
         "copy_icons",
-        "add_icon"
+        "add_icon",
+        "select_icon"
       ],
       "type": {
         "dataType": "string",
@@ -587,7 +588,7 @@
             "elementHasInputValue": 1,
             "elementOptions": [
               {
-                "cssClasses": "iconInputVal"
+                "cssClasses": "iconInputVal myhidden"
               },
               {
                 "onChange": "updateIconPreview(this)"
@@ -1624,7 +1625,7 @@
                           "elementHasInputValue": 1,
                           "elementOptions": [
                             {
-                              "cssClasses": "iconInputVal"
+                              "cssClasses": "iconInputVal myhidden"
                             },
                             {
                               "onChange": "updateIconPreview(this)"

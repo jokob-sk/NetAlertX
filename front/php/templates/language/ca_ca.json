@@ -726,6 +726,7 @@
     "report_select_format": "Seleccioneu Format:",
     "report_time": "Data de recepció:",
     "run_event_tooltip": "Habiliteu la configuració i deseu els canvis al principi abans d'executar-lo.",
+    "select_icon_event_tooltip": "",
     "settings_core_icon": "fa-solid fa-gem",
     "settings_core_label": "Nucli",
     "settings_device_scanners": "Escàners de dispositius utilitzats per descobrir dispositius que escriuen a la taula de base de dades CurrentScan.",

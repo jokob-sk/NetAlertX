@@ -167,7 +167,7 @@
 
       const paneHtml = `
                 <div class="tab-pane box box-aqua box-body ${i === 0 ? 'active' : ''}" id="${id}">
-                  <h2 class="page-header"><i class="fa fa-server"></i> ${getString('Network_Node')}</h2>
+                  <h5><i class="fa fa-server"></i> ${getString('Network_Node')}</h5>
 
                   <div class="mb-3 row">
                     <label class="col-sm-3 col-form-label fw-bold">${getString('Network_Node')}</label>
@@ -201,12 +201,13 @@
                       ${isRootNode ? '' : `</a>`}
                     </div>
                   </div>
-
+                  <hr/>
                   <div class="box box-aqua box-body" id="connected">
-                    <h3 class="page-header">
+                    <h5>
                       <i class="fa fa-sitemap fa-rotate-270"></i> 
                       ${getString('Network_Connected')}
-                    </h3>
+                    </h5>
+                    
                     <div id="leafs_${id}"></div>
                   </div>
                 </div>
@@ -326,7 +327,7 @@
       <div class="content">
         <div id="unassignedDevices" class="box box-aqua box-body">
           <section>
-            <h3><i class="fa-solid fa-plug-circle-xmark"></i>  ${getString('Network_UnassignedDevices')}</h3>
+            <h5><i class="fa-solid fa-plug-circle-xmark"></i>  ${getString('Network_UnassignedDevices')}</h5>
             <table id="unassignedDevicesTable" class="table table-striped" width="100%"></table>
           </section>
         </div>

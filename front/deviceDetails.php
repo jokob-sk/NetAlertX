@@ -447,7 +447,7 @@ async function renderSmallBoxes() {
                 "labelLang": "DevDetail_Shortcut_Presence",
                 "iconId": "deviceEventsIcon",
                 "iconClass": "fa fa-calendar",
-                "dataValue": `${deviceData.devPresenceHours}h`
+                "dataValue": `${deviceData.devPresenceHours ?? 0}h`
             },
             {
                 "onclickEvent": "$('#tabEvents').trigger('click');",

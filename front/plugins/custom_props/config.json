@@ -28,6 +28,9 @@
   "settings": [
     {
       "function": "icon",
+      "events": [
+        "select_icon"
+      ],
       "type": {
         "dataType": "array",
         "elements": [

@@ -1198,6 +1198,9 @@ if (eventsList.length > 0) {
     let eventIcon = "fa-play";
 
     switch (event) {
+      case "select_icon":
+        eventIcon = "fa-chevron-down";
+        break;
       case "add_icon":
       case "add_option":
         eventIcon = "fa-square-plus";

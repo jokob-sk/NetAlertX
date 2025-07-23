@@ -726,6 +726,7 @@
     "report_select_format": "",
     "report_time": "",
     "run_event_tooltip": "",
+    "select_icon_event_tooltip": "",
     "settings_core_icon": "",
     "settings_core_label": "",
     "settings_device_scanners": "",

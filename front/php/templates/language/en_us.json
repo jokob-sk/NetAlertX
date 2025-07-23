@@ -726,6 +726,7 @@
     "report_select_format": "Select Format:",
     "report_time": "Notification time:",
     "run_event_tooltip": "Enable the setting and save your changes at first before you run it.",
+    "select_icon_event_tooltip": "Select icon",
     "settings_core_icon": "fa-solid fa-gem",
     "settings_core_label": "Core",
     "settings_device_scanners": "Device scanners used to discover devices that write into the CurrentScan database table.",
