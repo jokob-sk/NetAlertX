@@ -117,7 +117,8 @@ require 'php/templates/header.php';
                   var guid = data.split(":")[1].trim();
                   return `<a href="report.php?guid=${guid}">Go to Report</a>`;
                 } else {
-                  return data;
+                  // clear quotes (") if wrapped in them 
+                  return (data.startsWith('"') && data.endsWith('"')) ? data.slice(1, -1) : data;
                 }
           }
          },
@@ -208,6 +209,7 @@ require 'php/templates/header.php';
 
    
   });
+  
 </script>
 
 <?php
