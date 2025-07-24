@@ -99,18 +99,6 @@ if (isset ($_SESSION["login"]) == FALSE || $_SESSION["login"] != 1)
 
   <!-- Favicon -->
   <link id="favicon" rel="icon" type="image/x-icon" href="img/NetAlertX_logo.png">
-
-  <!-- Dark-Mode Patch -->
-<?php
-switch ($UI_THEME) {
-  case "Dark":
-    echo '<link rel="stylesheet" href="css/dark-patch.css">';
-    break;
-  case "System":
-    echo '<link rel="stylesheet" href="css/system-dark-patch.css">';
-    break;
-}
-?>
   <link rel="stylesheet" href="/css/offline-font.css">
 </head>
 <body class="hold-transition login-page col-sm-12 col-sx-12">

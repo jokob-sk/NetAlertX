@@ -354,32 +354,50 @@ def create_new_devices (db):
     sql = db.sql # TO-DO
     startTime = timeNowTZ()
 
-    # Insert events for new devices from CurrentScan
-    mylog('debug','[New Devices] New devices - 1 Events')
+    # Insert events for new devices from CurrentScan (not yet in Devices)
+    mylog('debug', '[New Devices] Insert "New Device" Events')
 
-    query = f"""INSERT INTO Events (eve_MAC, eve_IP, eve_DateTime,
-                        eve_EventType, eve_AdditionalInfo,
-                        eve_PendingAlertEmail)
-                    SELECT cur_MAC, cur_IP, '{startTime}', 'New Device', cur_Vendor, 1
-                    FROM CurrentScan
-                    WHERE NOT EXISTS (SELECT 1 FROM Devices
-                                      WHERE devMac = cur_MAC)
-                """ 
+    query_new_device_events = f"""
+    INSERT INTO Events (
+        eve_MAC, eve_IP, eve_DateTime,
+        eve_EventType, eve_AdditionalInfo,
+        eve_PendingAlertEmail
+    )
+    SELECT cur_MAC, cur_IP, '{startTime}', 'New Device', cur_Vendor, 1
+    FROM CurrentScan
+    WHERE NOT EXISTS (
+        SELECT 1 FROM Devices
+        WHERE devMac = cur_MAC
+    )
+    """
 
-    
-    mylog('debug',f'[New Devices] Log Events Query: {query}')
-    
-    sql.execute(query)
+    mylog('debug', f'[New Devices] Log Events Query: {query_new_device_events}')
+    sql.execute(query_new_device_events)
 
-    mylog('debug',f'[New Devices] Insert Connection into session table')
+   
+    # Insert session rows for known devices that are now (re)connected
+    mylog('debug', '[New Devices] Insert "Connected" Sessions (only for known devices)')
 
-    sql.execute (f"""INSERT INTO Sessions (ses_MAC, ses_IP, ses_EventTypeConnection, ses_DateTimeConnection,
-                        ses_EventTypeDisconnection, ses_DateTimeDisconnection, ses_StillConnected, ses_AdditionalInfo)
-                    SELECT cur_MAC, cur_IP,'Connected','{startTime}', NULL , NULL ,1, cur_Vendor
-                    FROM CurrentScan 
-                    WHERE NOT EXISTS (SELECT 1 FROM Sessions
-                                      WHERE ses_MAC = cur_MAC) 
-                    """)
+    query_connected_sessions = f"""
+    INSERT INTO Sessions (
+        ses_MAC, ses_IP, ses_EventTypeConnection, ses_DateTimeConnection,
+        ses_EventTypeDisconnection, ses_DateTimeDisconnection,
+        ses_StillConnected, ses_AdditionalInfo
+    )
+    SELECT cur_MAC, cur_IP, 'Connected', '{startTime}', NULL, NULL, 1, cur_Vendor
+    FROM CurrentScan
+    WHERE EXISTS (
+        SELECT 1 FROM Devices
+        WHERE devMac = cur_MAC
+    )
+    AND NOT EXISTS (
+        SELECT 1 FROM Sessions
+        WHERE ses_MAC = cur_MAC
+    )
+    """
+
+    mylog('debug', f'[New Devices] Log Sessions Query: {query_connected_sessions}')
+    sql.execute(query_connected_sessions)
                     
     # Create new devices from CurrentScan
     mylog('debug','[New Devices] 2 Create devices')
