@@ -392,7 +392,7 @@ def create_new_devices (db):
     )
     AND NOT EXISTS (
         SELECT 1 FROM Sessions
-        WHERE ses_MAC = cur_MAC
+        WHERE ses_MAC = cur_MAC AND ses_StillConnected = 1
     )
     """
 
