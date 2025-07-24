@@ -69,7 +69,7 @@ services:
     network_mode: "host"        
     restart: unless-stopped
     volumes:
-      - ${APP_DATA_LOCATION}/netalertx/config:/app/config
+      - ${APP_CONFIG_LOCATION}/netalertx/config:/app/config
       - ${APP_DATA_LOCATION}/netalertx/db/:/app/db/      
       # (optional) useful for debugging if you have issues setting up the container
       - ${LOGS_LOCATION}:/app/log
