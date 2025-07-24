@@ -107,7 +107,7 @@
     "DevDetail_Network_Node_hover": "Select the parent network device the current device is connected to, to populate the Network tree.",
     "DevDetail_Network_Port_hover": "The port this device is connected to on the parent network device. If left empty a wifi icon is displayed in the Network tree.",
     "DevDetail_Nmap_Scans": "Manual Nmap Scans",
-    "DevDetail_Nmap_Scans_desc": "Here you can execute manual NMAP scans. You can also schedule regular automatic NMAP scans via the Services & Ports (NMAP) plugin. Head to <a href=\"/settings.php\" target=\"_blank\">Settings</a> to find out more",
+    "DevDetail_Nmap_Scans_desc": "Here you can execute manual NMAP scans. You can also schedule regular automatic NMAP scans via the Services & Ports (NMAP) plugin. Head to <a href=\"https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/nmap_scan\" target=\"_blank\">Docs</a> to find out more",
     "DevDetail_Nmap_buttonDefault": "Default Scan",
     "DevDetail_Nmap_buttonDefault_text": "Default Scan: Nmap scans the top 1,000 ports for each scan protocol requested. This catches roughly 93% of the TCP ports and 49% of the UDP ports. (about 5 seconds)",
     "DevDetail_Nmap_buttonDetail": "Detailed Scan",

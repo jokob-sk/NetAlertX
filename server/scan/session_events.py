@@ -131,37 +131,50 @@ def void_ghost_disconnections (db):
 
 #-------------------------------------------------------------------------------
 def pair_sessions_events (db):
+    # db.commitDB()
+
     sql = db.sql #TO-DO
-   
+    mylog('debug', '[Pair Session] - START')
 
-    # Pair Connection / New Device events
-    mylog('debug','[Pair Session] - 1 Connections / New Devices')
-    sql.execute ("""UPDATE Events
-                    SET eve_PairEventRowid =
-                       (SELECT ROWID
-                        FROM Events AS EVE2
-                        WHERE EVE2.eve_EventType IN ('New Device', 'Connected', 'Down Reconnected',
-                            'Device Down', 'Disconnected')
-                           AND EVE2.eve_MAC = Events.eve_MAC
-                           AND EVE2.eve_Datetime > Events.eve_DateTime
-                        ORDER BY EVE2.eve_DateTime ASC LIMIT 1)
-                    WHERE eve_EventType IN ('New Device', 'Connected', 'Down Reconnected')
-                    AND eve_PairEventRowid IS NULL
-                 """ )
+    # Step 1: Pair connection-related events with future unpaired disconnections
+    mylog('debug', '[Pair Session] - 1: Pair Connections → Disconnections')
+    sql.execute("""
+        UPDATE Events
+        SET eve_PairEventRowid = (
+            SELECT E2.ROWID
+            FROM Events AS E2
+            WHERE E2.eve_EventType IN ('Disconnected', 'Device Down')
+              AND E2.eve_MAC = Events.eve_MAC
+              AND E2.eve_PairEventRowid IS NULL
+              AND E2.eve_DateTime > Events.eve_DateTime
+            ORDER BY E2.eve_DateTime ASC
+            LIMIT 1
+        )
+        WHERE eve_EventType IN ('New Device', 'Connected', 'Down Reconnected')
+          AND eve_PairEventRowid IS NULL
+    """)
 
-    # Pair Disconnection / Device Down
-    mylog('debug','[Pair Session] - 2 Disconnections')
-    sql.execute ("""UPDATE Events
-                    SET eve_PairEventRowid =
-                        (SELECT ROWID
-                         FROM Events AS EVE2
-                         WHERE EVE2.eve_PairEventRowid = Events.ROWID)
-                    WHERE eve_EventType IN ('Device Down', 'Disconnected')
-                      AND eve_PairEventRowid IS NULL
-                 """ )
-    mylog('debug','[Pair Session] Pair session end')
+    # Step 2: Pair disconnection-related events with previous unpaired connections
+    mylog('debug', '[Pair Session] - 2: Pair Disconnections → Connections')
+    sql.execute("""
+        UPDATE Events
+        SET eve_PairEventRowid = (
+            SELECT E2.ROWID
+            FROM Events AS E2
+            WHERE E2.eve_EventType IN ('New Device', 'Connected', 'Down Reconnected')
+              AND E2.eve_MAC = Events.eve_MAC
+              AND E2.eve_PairEventRowid IS NULL
+              AND E2.eve_DateTime < Events.eve_DateTime
+            ORDER BY E2.eve_DateTime DESC
+            LIMIT 1
+        )
+        WHERE eve_EventType IN ('Disconnected', 'Device Down')
+          AND eve_PairEventRowid IS NULL
+    """)
 
+    mylog('debug', '[Pair Session] - END')
     db.commitDB()
+
 
 #-------------------------------------------------------------------------------
 def create_sessions_snapshot (db):

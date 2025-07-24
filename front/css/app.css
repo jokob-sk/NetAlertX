@@ -1704,6 +1704,10 @@ input[readonly] {
 /* NETWORK page */
 /* ----------------------------------------------------------------- */
 
+.hide-node-names .node-name {
+    display: none;
+  }
+
 #toggleFilters
 {
     display: block;

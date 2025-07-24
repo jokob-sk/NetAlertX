@@ -107,6 +107,7 @@
       const nodes = JSON.parse(data);
       renderNetworkTabs(nodes);
       loadUnassignedDevices();
+      checkTabsOverflow();
     });
   }
 
@@ -187,7 +188,7 @@
                   </div>
 
                   <div class="mb-3 row">
-                    <label class="col-sm-3 col-form-label fw-bold">${getString('Network_Table_State')}</label>
+                    <label class="col-sm-3 col-form-label fw-bold">${getString('Device_TableHead_Status')}</label>
                     <div class="col-sm-9">${badgeHtml}</div>
                   </div>
 
@@ -195,7 +196,7 @@
                     <label class="col-sm-3 col-form-label fw-bold">${getString('Network_Parent')}</label>
                     <div class="col-sm-9">
                       ${isRootNode ? '' : `<a class="anonymize" href="#">`}
-                        <span my-data-mac="${node.parent_mac}" data-mac="${node.parent_mac}" onclick="handleNodeClick(this)">
+                        <span my-data-mac="${node.parent_mac}" data-mac="${node.parent_mac}" data-devIsNetworkNodeDynamic="1" onclick="handleNodeClick(this)">
                           ${isRootNode ? getString('Network_Root') : getNameByMacAddress(node.parent_mac)}
                         </span>
                       ${isRootNode ? '' : `</a>`}
@@ -264,16 +265,17 @@
           }
         },
         {
-          title: getString('Network_Table_State'),
+          title: getString('Device_TableHead_Status'),
           data: 'devStatus',
           width: '15%',
           render: function (_, type, device) {
             const badge = getStatusBadgeParts(
               device.devPresentLastScan,
               device.devAlertDown,
-              device.devMac
+              device.devMac,
+              device.devStatus
             );
-            return `<a href="${badge.url}" class="badge ${badge.cssClass}">${badge.iconHtml} ${badge.status}</a>`;
+            return `<a href="${badge.url}" class="badge ${badge.cssClass}">${badge.iconHtml} ${badge.text}</a>`;
           }
         },
         {
@@ -285,6 +287,11 @@
         {
           title: getString('Network_Table_IP'),
           data: 'devLastIP',
+          width: '5%'
+        },
+        {
+          title: getString('Device_TableHead_Port'),
+          data: 'devParentPort',
           width: '5%'
         },
         {
@@ -319,7 +326,7 @@
   // ----------------------------------------------------
   function loadUnassignedDevices() {
     const sql = `
-      SELECT devMac, devPresentLastScan, devName, devLastIP, devVendor, devAlertDown
+      SELECT devMac, devPresentLastScan, devName, devLastIP, devVendor, devAlertDown, devParentPort
       FROM Devices
       WHERE (devParentMAC IS NULL OR devParentMAC IN ("", " ", "undefined", "null"))
         AND devMac NOT LIKE "%internet%"
@@ -348,14 +355,17 @@
   // ----------------------------------------------------
   function loadConnectedDevices(node_mac) {
     const sql = `
-      SELECT devName, devMac, devLastIP, devVendor, devPresentLastScan, devAlertDown,
-        CASE
-          WHEN devAlertDown != 0 AND devPresentLastScan = 0 THEN "Down"
-          WHEN devPresentLastScan = 1 THEN "On-line"
-          ELSE "Off-line"
-        END as devStatus
+      SELECT devName, devMac, devLastIP, devVendor, devPresentLastScan, devAlertDown, devParentPort,
+        CASE 
+            WHEN devIsNew = 1 THEN 'New'
+            WHEN devPresentLastScan = 1 THEN 'On-line'
+            WHEN devPresentLastScan = 0 AND devAlertDown != 0 THEN 'Down'
+            WHEN devIsArchived = 1 THEN 'Archived'
+            WHEN devPresentLastScan = 0 THEN 'Off-line'
+            ELSE 'Unknown status'
+        END AS devStatus
       FROM Devices
-      WHERE devIsArchived = 0 AND devParentMac = '${node_mac}'`;
+      WHERE devParentMac = '${node_mac}'`;
 
     const id = node_mac.replace(/:/g, '_');
 
@@ -894,6 +904,66 @@ function updateLeaf(leafMac, action) {
     console.warn("Unknown action:", action);
   }
 }
+
+// ---------------------------------------------------------------------------
+// showing icons or device names in tabs depending on available screen size 
+function checkTabsOverflow() {
+  const $ul = $('.nav-tabs');
+  const $lis = $ul.find('li');
+
+  // First measure widths with current state
+  let totalWidth = 0;
+  $lis.each(function () {
+    totalWidth += $(this).outerWidth(true);
+  });
+
+  const ulWidth = $ul.width();
+  const isOverflowing = totalWidth > ulWidth;
+
+  if (isOverflowing) {
+    if (!$ul.hasClass('hide-node-names')) {
+      $ul.addClass('hide-node-names');
+
+      // Re-check: did hiding fix it?
+      requestAnimationFrame(() => {
+        let newTotal = 0;
+        $lis.each(function () {
+          newTotal += $(this).outerWidth(true);
+        });
+
+        if (newTotal > $ul.width()) {
+          // Still overflowing — do nothing, keep class
+        }
+      });
+    }
+  } else {
+    if ($ul.hasClass('hide-node-names')) {
+      $ul.removeClass('hide-node-names');
+
+      // Re-check: did un-hiding break it?
+      requestAnimationFrame(() => {
+        let newTotal = 0;
+        $lis.each(function () {
+          newTotal += $(this).outerWidth(true);
+        });
+
+        if (newTotal > $ul.width()) {
+          // Oops, that broke it — re-hide
+          $ul.addClass('hide-node-names');
+        }
+      });
+    }
+  }
+}
+
+let resizeTimeout;
+$(window).on('resize', function () {
+  clearTimeout(resizeTimeout);
+  resizeTimeout = setTimeout(() => {
+    checkTabsOverflow();
+  }, 100);
+});
+
 
 // init pop up hover  boxes for device details
 initHoverNodeInfo();
