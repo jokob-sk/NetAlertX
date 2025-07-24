@@ -780,7 +780,9 @@ function initializeDatatable (status) {
                       
             // console.log(cellData)      
             $(td).html (
-              `<b class="anonymizeDev hover-node-info"
+              `<b class="anonymizeDev "
+              >
+                <a href="deviceDetails.php?mac=${rowData[mapIndx(11)]}" class="hover-node-info"
                   data-name="${cellData}"
                   data-ip="${rowData[mapIndx(8)]}"
                   data-mac="${rowData[mapIndx(11)]}"
@@ -792,9 +794,7 @@ function initializeDatatable (status) {
                   data-status="${rowData[mapIndx(10)]}"
                   data-present="${rowData[mapIndx(24)]}"
                   data-alert="${rowData[mapIndx(25)]}"
-                  data-icon="${rowData[mapIndx(3)]}"
-              >
-                <a href="deviceDetails.php?mac=${rowData[mapIndx(11)]}" class="">
+                  data-icon="${rowData[mapIndx(3)]}">
                 ${cellData}
                 </a>
               </b>`
@@ -845,7 +845,7 @@ function initializeDatatable (status) {
                             <a href="http://${cellData}" class="pointer" target="_blank">
                                 ${cellData}
                             </a>
-                            <span class="alignRight">
+                            <span class="alignRight lockIcon">
                               <a href="https://${cellData}" class="pointer" target="_blank">
                                 <i class="fa fa-lock "></i>
                               </a>

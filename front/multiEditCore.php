@@ -28,9 +28,9 @@
         </div>
       </div>
     </div> 
-    <div class="col-md-1">       
-        <i class="fa-solid fa-circle-check" onclick="markAllSelected()" title="<?= lang('Gen_Add_All');?>"></i>        
-        <i class="fa-solid fa-circle-xmark" onclick="markAllNotSelected()" title="<?= lang('Gen_Remove_All');?>"></i>        
+    <div class="col-md-1 hoverHighlight">       
+        <i class="fa-solid fa-circle-check hoverHighlight pointer" onclick="markAllSelected()" title="<?= lang('Gen_Add_All');?>"></i>        
+        <i class="fa-solid fa-circle-xmark hoverHighlight pointer" onclick="markAllNotSelected()" title="<?= lang('Gen_Remove_All');?>"></i>        
     </div>
   </div>
 

@@ -12,6 +12,7 @@
 ----------------------------------------------------------------------------- */
 :root {
     --color-aqua: #00c0ef;
+    --color-lightblue: #3c8dbc;
     --color-blue: #0060df;
     --color-green: #00a65a;
     --color-yellow: #f39c12;
@@ -27,6 +28,45 @@
 h5
 {
     font-size: medium;
+}
+
+a[target="_blank"] {
+    position: relative;
+    display: inline-block; /* Needed for positioning */
+    padding-right: 0.6em;    /* Space for the icon */
+  }
+  
+  a[target="_blank"]::after {
+    content: '↗';
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 0.75em;
+    line-height: 1;
+  }
+
+  .select2 .hover-node-info::after {
+    padding-left: 1px ;
+  }
+
+  /* .node-standard-device .netNodeText::after
+  {
+    right: -7px;
+    top: 1px;
+  } */
+  
+/* .select2-container--default .select2-selection--multiple .select2-selection__choice
+{
+    padding-right: 15px !important;
+} */
+
+.hoverHighlight
+{
+    opacity: 0.7;
+}
+.hoverHighlight:hover
+{
+    opacity: 1;
 }
 
 /* -----------------------------------------------------------------------------
@@ -48,6 +88,7 @@ h5
     text-align: end;
     float: inline-end;
 }
+
 
 /* -----------------------------------------------------------------------------
    Text Classes
@@ -480,7 +521,7 @@ body
 }
 
 .bottom-border-primary {
-    border-bottom-color: #3c8dbc;
+    border-bottom-color: var(--color-lightblue);
     border-bottom-style: solid;
     border-bottom-width: 3px
 }
@@ -1666,7 +1707,7 @@ input[readonly] {
 #toggleFilters
 {
     display: block;
-    position: absolute;
+    position: fixed;
     padding-left: 32px;
     padding-top: 10px;
     background-color: inherit;
@@ -1813,8 +1854,8 @@ input[readonly] {
 #networkTree .highlightedNode
 {
     /* border: solid; */
-    border-color:#3c8dbc;
-    box-shadow: #3c8dbc 0px 0px 20px;
+    border-color:var(--color-lightblue); 
+    box-shadow: var(--color-lightblue) 0px 0px 20px;
 }
 
 #networkTree .netStatus-Off-line i,
@@ -1843,6 +1884,8 @@ input[readonly] {
 .networkTable
 {
     padding-bottom: 1px;
+    z-index: 3;
+    position: relative;
 }
 
 .networkNodeTabHeaders .icon i
