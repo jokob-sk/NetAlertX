@@ -344,7 +344,7 @@ function createTabContent(pluginObj) {
   
   // Get data for events, objects, and history related to the plugin
   const objectData = getObjectData(prefix, colDefinitions, pluginObj);
-  const eventData = getEventData(prefix, colDefinitions);
+  const eventData = getEventData(prefix, colDefinitions, pluginObj);
   const historyData = getHistoryData(prefix, colDefinitions, pluginObj);
 
   // Append the content structure for the plugin's tab to the content location
@@ -378,10 +378,10 @@ function getColumnDefinitions(pluginObj) {
   return pluginObj["database_column_definitions"].filter(colDef => colDef.show);
 }
 
-function getEventData(prefix, colDefinitions) {
+function getEventData(prefix, colDefinitions, pluginObj) {
   // Extract event data specific to the plugin and format it for DataTables
   return pluginUnprocessedEvents
-    .filter(event => event.Plugin === prefix) // Filter events for the specific plugin
+    .filter(event => event.Plugin === prefix && shouldBeShown(event, pluginObj)) // Filter events for the specific plugin
     .map(event => colDefinitions.map(colDef => event[colDef.column] || '')); // Map to the defined columns
 }
 
@@ -395,7 +395,7 @@ function getObjectData(prefix, colDefinitions, pluginObj) {
 function getHistoryData(prefix, colDefinitions, pluginObj) {
   
   return pluginHistory
-  .filter(history => history.Plugin === prefix) // First, filter based on the plugin prefix
+  .filter(history => history.Plugin === prefix && shouldBeShown(history, pluginObj)) // First, filter based on the plugin prefix
     .sort((a, b) => b.Index - a.Index) // Then, sort by the Index field in descending order
     .slice(0, 50) // Limit the result to the first 50 entries
     .map(object => 

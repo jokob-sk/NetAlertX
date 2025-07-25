@@ -286,21 +286,21 @@ function main () {
 
   
 
-  // Events tab toggle conenction events
-  $('input').on('ifToggled', function(event){
-    // Hide / Show Events
-    if (event.currentTarget.id == 'chkHideConnectionEvents') {
-      getDeviceEvents();
-    } else {
-      // Activate save & restore
-      // activateSaveRestoreData();
+  // // Events tab toggle conenction events
+  // $('input').on('ifToggled', function(event){
+  //   // Hide / Show Events
+  //   if (event.currentTarget.id == 'chkHideConnectionEvents') {
+  //     getDeviceEvents();
+  //   } else {
+  //     // Activate save & restore
+  //     // activateSaveRestoreData();
 
-      // Ask skip notifications
-      // if (event.currentTarget.id == 'chkArchived' ) {
-      //   askSkipNotifications();
-      // }
-    }
-  });
+  //     // Ask skip notifications
+  //     // if (event.currentTarget.id == 'chkArchived' ) {
+  //     //   askSkipNotifications();
+  //     // }
+  //   }
+  // });
        
 }
 

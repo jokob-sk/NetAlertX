@@ -7,11 +7,11 @@
  
 
 <!-- Hide Connections -->
-<div class="text-center">
-    <label>
-    <input class="checkbox blue hidden" id="chkHideConnectionEvents" type="checkbox" checked>
-    <?= lang('DevDetail_Events_CheckBox');?>
+<div class="col-sm-12 col-xs-12">
+    <label class="col-sm-3 col-xs-10">      
+      <?= lang('DevDetail_Events_CheckBox');?>
     </label>
+    <input class="checkbox blue col-sm-1 col-xs-2" id="chkHideConnectionEvents" type="checkbox" onChange="loadEventsData()">
 </div>
 
 <!-- Datatable Events -->
@@ -29,21 +29,58 @@
 
 <script>
 
-  var eventsRows          = 10;
-  var eventsHide          = true;
-  var parEventsRows       = 'Front_Details_Events_Rows';
-  var parEventsHide       = 'Front_Details_Events_Hide';
+var eventsRows          = 10;
+var eventsHide          = true;
+var parEventsRows       = 'Front_Details_Events_Rows';
+var parEventsHide       = 'Front_Details_Events_Hide';
 
 
 
-  // -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+function loadEventsData() {
+  const hideConnections = $('#chkHideConnectionEvents')[0].checked;
+  const hideConnectionsStr = hideConnections ? 'true' : 'false';
+
+  const rawSql = `
+    SELECT eve_DateTime, eve_EventType, eve_IP, eve_AdditionalInfo
+    FROM Events 
+    WHERE eve_MAC = "${mac}" 
+      AND (
+        (eve_EventType NOT IN ("Connected", "Disconnected", "VOIDED - Connected", "VOIDED - Disconnected"))
+        OR "${hideConnectionsStr}" = "false"
+      )
+  `;
+
+  const apiUrl = `php/server/dbHelper.php?action=read&rawSql=${btoa(encodeURIComponent(rawSql))}`;
+
+  // Manually load the data first
+  $.get(apiUrl, function (data) {
+    const parsed = JSON.parse(data);
+
+    console.log(parsed);
+    
+    const rows = parsed.map(row => {
+      const rawDate = row.eve_DateTime;
+      const formattedDate = rawDate ? localizeTimestamp(rawDate) : '-';
+      return [
+        formattedDate,
+        row.eve_EventType,
+        row.eve_IP,
+        row.eve_AdditionalInfo
+      ];
+    });
+
+    console.log(rows);
+    
 
 
-  function loadEventsData() {
-    // Define Events datasource and query dada
-    hideConnections = $('#chkHideConnectionEvents')[0].checked;
-    $('#tableEvents').DataTable().ajax.url('php/server/events.php?action=getDeviceEvents&mac=' + mac +'&period='+ period +'&hideConnections='+ hideConnections).load();
-  }
+    // Fill the table manually
+    const table = $('#tableEvents').DataTable();
+    table.clear();
+    table.rows.add(rows); // assuming each row is an array
+    table.draw();
+  });
+}
 
 function initializeSessionsDatatable () {
 

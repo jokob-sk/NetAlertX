@@ -362,18 +362,64 @@ function getLangCode() {
 // -----------------------------------------------------------------------------
 // String utilities
 // -----------------------------------------------------------------------------
+function localizeTimestamp(input) {
+  let tz = getSetting("TIMEZONE") || 'Europe/Berlin';
 
+  // Convert to string and trim
+  input = String(input || '').trim();
 
-function localizeTimestamp(result)
-{
-  // contains TZ in format Europe/Berlin
-  tz = getSetting("TIMEZONE")
+  // Normalize multiple spaces and remove commas
+  const cleaned = input.replace(',', ' ').replace(/\s+/g, ' ');
 
-  // set default if not available or app still loading
-  tz == ""  ? tz = 'Europe/Berlin' : tz = tz;
-  
-  const date = new Date(result); // Assumes result is a timestamp or ISO string
-  const formatter = new Intl.DateTimeFormat('default', {
+  // DD/MM/YYYY format check
+  const dateTimeParts = cleaned.split(' ');
+  if (dateTimeParts.length >= 2 && dateTimeParts[0].includes('/')) {
+    const [day, month, year] = dateTimeParts[0].split('/');
+    const timePart = dateTimeParts[1];
+
+    if (day && month && year && timePart) {
+      const isoString = `${year}-${month}-${day}T${timePart.length === 5 ? timePart + ':00' : timePart}`;
+      const date = new Date(isoString);
+      if (!isFinite(date)) return 'b-';
+
+      return new Intl.DateTimeFormat('default', {
+        timeZone: tz,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      }).format(date);
+    }
+  }
+
+  // ISO style YYYY-MM-DD HH:mm(:ss)?
+  const match = cleaned.match(/^(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2})(:\d{2})?$/);
+  if (match) {
+    let iso = `${match[1]}T${match[2]}${match[3] || ':00'}`;
+
+    const date = new Date(iso);
+    if (!isFinite(date)) return 'c-';
+
+    return new Intl.DateTimeFormat('default', {
+      timeZone: tz,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    }).format(date);
+  }
+
+  // Fallback: try to parse any other string input
+  const date = new Date(input);
+  if (!isFinite(date)) return 'Failed conversion: ' + input;
+
+  return new Intl.DateTimeFormat('default', {
     timeZone: tz,
     year: 'numeric',
     month: '2-digit',
@@ -381,11 +427,11 @@ function localizeTimestamp(result)
     hour: '2-digit',
     minute: '2-digit',
     second: '2-digit',
-    hour12: false // change to true if you want AM/PM format
-  });
-
-  return formatter.format(date);
+    hour12: false
+  }).format(date);
 }
+
+
 
 // ----------------------------------------------------
 /**
