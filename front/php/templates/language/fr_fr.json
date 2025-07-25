@@ -107,7 +107,7 @@
     "DevDetail_Network_Node_hover": "Sélectionner l'appareil du réseau principal auquel cet appareil est connecté afin de compléter l'arborescence du Réseau.",
     "DevDetail_Network_Port_hover": "Le port auquel cet appareil est connecté sur l'appareil du réseau principal. Si vide, une icône Wifi est affichée dans l'arborescence du Réseau.",
     "DevDetail_Nmap_Scans": "Scans manuels via Nmap",
-    "DevDetail_Nmap_Scans_desc": "Vous pouvez lancer des scans NMAP manuels. Vous pouvez aussi programmer des sans réguliers via le plugin Services & Ports (NMAP). Aller dans les <a href=\"/settings.php\" target=\"_blank\">Paramètres</a> pour plus de details",
+    "DevDetail_Nmap_Scans_desc": "Vous pouvez lancer des scans NMAP manuels. Vous pouvez aussi programmer des sans réguliers via le plugin Services & Ports (NMAP). Aller dans les <a href=\"https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/nmap_scan\" target=\"_blank\">Docs</a> pour plus de details",
     "DevDetail_Nmap_buttonDefault": "Scan par défaut",
     "DevDetail_Nmap_buttonDefault_text": "Scan par défaut : NMAP scanne les 1 000 premiers ports pour chaque demande de scan de protocole. Cela couvre environ 93% des ports TCP et 49% des ports UDP (environ 5 secondes)",
     "DevDetail_Nmap_buttonDetail": "Scan détaillé",
