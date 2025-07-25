@@ -107,7 +107,7 @@
     "DevDetail_Network_Node_hover": "Seleziona il dispositivo di rete principale a cui è connesso il dispositivo corrente per popolare la struttura di rete.",
     "DevDetail_Network_Port_hover": "La porta a cui è connesso questo dispositivo sul dispositivo di rete principale. Se lasciato vuoto, verrà visualizzata un'icona Wi-Fi nella struttura di rete.",
     "DevDetail_Nmap_Scans": "Scansioni Nmap manuali",
-    "DevDetail_Nmap_Scans_desc": "Qui puoi eseguire scansioni manuali NMAP. Puoi anche pianificare scansioni automatiche NMAP attraverso il plugin Servizi e porte (NMAP). Vai alle <a href=\"/settings.php\" target=\"_blank\">Impostazioni</a> per scoprire di più",
+    "DevDetail_Nmap_Scans_desc": "Qui puoi eseguire scansioni manuali NMAP. Puoi anche pianificare scansioni automatiche NMAP attraverso il plugin Servizi e porte (NMAP). Vai alla <a href=\"https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/nmap_scan\" target=\"_blank\">Documentazione</a> per saperne di più",
     "DevDetail_Nmap_buttonDefault": "Scansione predefinita",
     "DevDetail_Nmap_buttonDefault_text": "Scansione predefinita: Nmap scansiona 1000 porte per ogni protocollo richiesto. Questo dovrebbe coprire circa il 93% delle porte TCP e il 49% delle porte UDP (circa 5 secondi)",
     "DevDetail_Nmap_buttonDetail": "Scansione dettagliata",
