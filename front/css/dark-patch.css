@@ -11,6 +11,16 @@
 * Additional fixes For Pi.Alert UI by leiweibau */
 
 :root {
+  --color-aqua: #00c0ef;
+  --color-lightblue: #3c8dbc;
+  --color-blue: #0060df;
+  --color-green: #00a65a;
+  --color-yellow: #f39c12;
+  --color-red: #dd4b39;
+  --color-gray: #8c8c8c;
+}
+
+:root {
   --datatable-bgcolor: rgba(64, 76, 88, 0.8);
 }
 html {
@@ -770,4 +780,9 @@ input[type="password"]::-webkit-caps-lock-indicator {
 .thresholdFormControl
 {
   color:#000;   
+}
+
+.btn:hover
+{
+  color: var(--color-gray);
 }

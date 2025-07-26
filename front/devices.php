@@ -1047,39 +1047,23 @@ function multiEditDevices()
 // -----------------------------------------------------------------------------
 // Function collects shown devices from the DataTable  
 function getMacsOfShownDevices() {
-  rows = $('#tableDevices')[0].rows;
-  macs = [];
+  var table = $('#tableDevices').DataTable();
 
-  // var devicesDataTableData = $('#tableDevices').dataTable().fnGetData();
-  var devicesDataTableData = $('#tableDevices').DataTable().rows({ selected: false, page: 'current' }).data().toArray();
+  var macs = [];
 
-  console.log(devicesDataTableData);
+  // Get all row indexes on current page, in display order
+  var allIndexes = table.rows({ page: 'current' }).indexes();
 
-  var selectedDevices = [];
-
-  // first row is the heading, skip
-  for (var i = 1; i < rows.length; i++) {
-    var rowIndex = rows[i]._DT_RowIndex;
-    
-    // Ensure the rowIndex is valid and within bounds of devicesDataTableData
-    if (rowIndex >= 0 && rowIndex < devicesDataTableData.length) {
-      selectedDevices.push(devicesDataTableData[rowIndex]);    
-    } else {
-      console.log(`Invalid rowIndex: ${rowIndex} at row ${i}`);
+  allIndexes.each(function(idx) {
+    var rowData = table.row(idx).data();
+    if (rowData) {
+      macs.push(rowData[mapIndx(11)]);  // mapIndx(11) == MAC column
     }
-  }
-
-  for (var j = 0; j < selectedDevices.length; j++) {
-    // Ensure that selectedDevices[j] is not undefined
-    if (selectedDevices[j]) {
-      macs.push(selectedDevices[j][mapIndx(11)]);  // mapIndx(11) == MAC
-    } else {
-      console.log(`selectedDevices[${j}] is undefined`);
-    }
-  }
+  });
 
   return macs;
 }
+
 
 // -----------------------------------------------------------------------------
 // Handle custom actions/properties on a device    

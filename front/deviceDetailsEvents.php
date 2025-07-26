@@ -29,10 +29,7 @@
 
 <script>
 
-var eventsRows          = 10;
-var eventsHide          = true;
-var parEventsRows       = 'Front_Details_Events_Rows';
-var parEventsHide       = 'Front_Details_Events_Hide';
+
 
 
 
@@ -40,6 +37,8 @@ var parEventsHide       = 'Front_Details_Events_Hide';
 function loadEventsData() {
   const hideConnections = $('#chkHideConnectionEvents')[0].checked;
   const hideConnectionsStr = hideConnections ? 'true' : 'false';
+
+  mac = getMac()
 
   const rawSql = `
     SELECT eve_DateTime, eve_EventType, eve_IP, eve_AdditionalInfo
@@ -56,8 +55,6 @@ function loadEventsData() {
   // Manually load the data first
   $.get(apiUrl, function (data) {
     const parsed = JSON.parse(data);
-
-    console.log(parsed);
     
     const rows = parsed.map(row => {
       const rawDate = row.eve_DateTime;
@@ -70,62 +67,94 @@ function loadEventsData() {
       ];
     });
 
-    console.log(rows);
-    
-
-
     // Fill the table manually
     const table = $('#tableEvents').DataTable();
     table.clear();
     table.rows.add(rows); // assuming each row is an array
     table.draw();
+
+    hideSpinner();
   });
 }
 
-function initializeSessionsDatatable () {
+function initializeEventsDatatable (eventsRows) {
 
-  // Events datatable
+  if ($.fn.dataTable.isDataTable('#tableEvents')) {
+      $('#tableEvents').DataTable().clear().destroy();
+  }
+
   $('#tableEvents').DataTable({
-    'paging'      : true,
-    'lengthChange': true,
-    'lengthMenu'   : [[10, 25, 50, 100, 500, -1], [10, 25, 50, 100, 500, 'All']],
-    'searching'   : true,
-    'ordering'    : true,
-    'info'        : true,
-    'autoWidth'   : false,
-    'order'       : [[0,'desc']],
+      'paging'      : true,
+      'lengthChange': true,
+      'lengthMenu'  : [[10, 25, 50, 100, 500, -1], [10, 25, 50, 100, 500, 'All']],
+      'searching'   : true,
+      'ordering'    : true,
+      'info'        : true,
+      'autoWidth'   : false,
+      'order'       : [[0,'desc']],
+      'pageLength'  : eventsRows,
 
-    // Parameters
-    'pageLength'  : eventsRows,
+      'columnDefs'  : [
+          {
+              targets: [0],
+              'createdCell': function (td, cellData, rowData, row, col) {
+                  $(td).html(translateHTMLcodes(localizeTimestamp(cellData)));
+              }
+          }
+      ],
 
-    'columnDefs'  : [
-        // Replace HTML codes
-        {targets: [0],
-          'createdCell': function (td, cellData, rowData, row, col) {
-            $(td).html (translateHTMLcodes (localizeTimestamp(cellData)));
-        } }
-    ],
-
-    // Processing
-    'processing'  : true,
-    'language'    : {
-      processing: '<table><td width="130px" align="middle"><?= lang("DevDetail_Loading");?></td>'+
-                  '<td><i class="ion ion-ios-loop-strong fa-spin fa-2x fa-fw">'+
-                  '</td></table>',
-      emptyTable: 'No data',
-      "lengthMenu": "<?= lang('Events_Tablelenght');?>",
-      "search":     "<?= lang('Events_Searchbox');?>: ",
-      "paginate": {
-          "next":       "<?= lang('Events_Table_nav_next');?>",
-          "previous":   "<?= lang('Events_Table_nav_prev');?>"
-      },
-      "info":           "<?= lang('Events_Table_info');?>",
-    }
-});
-
+      'processing'  : true,
+      'language'    : {
+          processing: '<table><td width="130px" align="middle"><?= lang("DevDetail_Loading");?></td>'+
+                      '<td><i class="ion ion-ios-loop-strong fa-spin fa-2x fa-fw"></i></td></table>',
+          emptyTable: 'No data',
+          "lengthMenu": "<?= lang('Events_Tablelenght');?>",
+          "search":     "<?= lang('Events_Searchbox');?>: ",
+          "paginate": {
+              "next":     "<?= lang('Events_Table_nav_next');?>",
+              "previous": "<?= lang('Events_Table_nav_prev');?>"
+          },
+          "info": "<?= lang('Events_Table_info');?>",
+      }
+  });
 }
 
-initializeSessionsDatatable();
-loadEventsData();
+// -----------------------------------------------
+// INIT with polling for panel element visibility
+// -----------------------------------------------
+
+var eventsPageInitialized = false; 
+
+function initDeviceEventsPage()
+{
+  // Only proceed if .plugin-content is visible
+  if (!$('#panEvents:visible').length) {
+    return; // exit early if nothing is visible
+  }
+
+  // init page once
+  if (eventsPageInitialized) return; //  ENSURE ONCE
+  eventsPageInitialized = true;
+
+  showSpinner();
+
+  var eventsRows          = 10;
+  var eventsHide          = true;
+
+  initializeEventsDatatable(eventsRows);
+  loadEventsData();
+}
+
+// -----------------------------------------------------------------------------
+// Recurring function to monitor the URL and reinitialize if needed
+function deviceEventsPageUpdater() {
+  initDeviceEventsPage();
+
+  // Run updater again after delay
+  setTimeout(deviceEventsPageUpdater, 200);
+}
+
+deviceEventsPageUpdater();
+
 
 </script>

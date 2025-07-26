@@ -39,7 +39,7 @@
   
   // -------------------------------------------------------------------  
   // Get plugin and settings data from API endpoints
-  function getDeviceData(readAllData){
+  function getDeviceData(){
 
     mac = getMac()
 
@@ -53,13 +53,13 @@
 
       var deviceData = JSON.parse(data);
 
-      // Deactivate next previous buttons
-      if (readAllData) {
-        $('#btnPrevious').attr    ('disabled','');
-        $('#btnPrevious').addClass  ('text-gray50');
-        $('#btnNext').attr      ('disabled','');
-        $('#btnNext').addClass    ('text-gray50');
-      }
+      // // Deactivate next previous buttons
+      // if (readAllData) {
+      //   $('#btnPrevious').attr    ('disabled','');
+      //   $('#btnPrevious').addClass  ('text-gray50');
+      //   $('#btnNext').attr      ('disabled','');
+      //   $('#btnNext').addClass    ('text-gray50');
+      // }
 
       // some race condition, need to implement delay
       setTimeout(() => {
@@ -255,29 +255,12 @@
             updateAllIconPreviews();
 
             // update readonly fields
-            handleReadOnly(settingsData, disabledFields);
-
-            // Page title - Name
-            if (mac == "new") {
-                $('#pageTitle').html(`<i title="${getString("Gen_create_new_device")}" class="fa fa-square-plus"></i> ` +  getString("Gen_create_new_device"));
-                $('#devicePageInfoPlc .inner').html(`<i class="fa fa-circle-info"></i> ` +  getString("Gen_create_new_device_info"));
-                $('#devicePageInfoPlc').show();
-            } else if (deviceData['devOwner'] == null || deviceData['devOwner'] == '' ||
-                (deviceData['devName'].toString()).indexOf(deviceData['devOwner']) != -1) {
-                $('#pageTitle').html(deviceData['devName']);
-                $('#devicePageInfoPlc').hide();
-            } else {
-                $('#pageTitle').html(deviceData['devName'] + ' (' + deviceData['devOwner'] + ')');
-                $('#devicePageInfoPlc').hide();
-            }
+            handleReadOnly(settingsData, disabledFields);           
         };
 
         // console.log(relevantSettings)
 
         generateSimpleForm(relevantSettings);
-
-        // <> chevrons
-        updateChevrons(deviceData)
 
         toggleNetworkConfiguration(mac == 'Internet') 
 
@@ -293,46 +276,6 @@
   
   }
   
-
-  // ----------------------------------------
-  // Handle previous/next arrows/chevrons
-  function updateChevrons(deviceData) {
-
-    devicesList = getDevicesList();    
-
-    // console.log(devicesList);
-
-    // Check if device is part of the devicesList      
-    pos = devicesList.findIndex(item => item.rowid == deviceData['rowid']);        
-    
-    // console.log(pos);    
-
-    if (pos == -1) {
-      devicesList.push({"rowid" : deviceData['rowid'], "mac" : deviceData['devMac'], "name": deviceData['devName'], "type": deviceData['devType']});
-      pos=0;
-    }
-
-    // Record number
-    $('#txtRecord').html (pos+1 +' / '+ devicesList.length);
-
-    // Deactivate previous button
-    if (pos <= 0) {
-      $('#btnPrevious').attr        ('disabled','');
-      $('#btnPrevious').addClass    ('text-gray50');
-    } else {
-      $('#btnPrevious').removeAttr  ('disabled');
-      $('#btnPrevious').removeClass ('text-gray50');
-    }
-
-    // Deactivate next button
-    if (pos >= (devicesList.length-1)) {
-      $('#btnNext').attr        ('disabled','');
-      $('#btnNext').addClass    ('text-gray50');
-    } else {
-      $('#btnNext').removeAttr  ('disabled');
-      $('#btnNext').removeClass ('text-gray50');
-    }
-  }
 
   // ----------------------------------------
   // Handle the read-only fields
@@ -451,9 +394,47 @@
     }
   }
 
+// -----------------------------------------------
+// INIT with polling for panel element visibility
+// -----------------------------------------------
 
-  // -------------------- INIT ------------------------
-  getDeviceData(true);
+var deviceDetailsPageInitialized = false; 
+
+function initdeviceDetailsPage()
+{
+  // Only proceed if .plugin-content is visible
+  if (!$('#panDetails:visible').length) {
+    return; // exit early if nothing is visible
+  }
+
+  // init page once
+  if (deviceDetailsPageInitialized) return; //  ENSURE ONCE
+  deviceDetailsPageInitialized = true;
+
+  showSpinner();
+
+  getDeviceData();
+
+}
+
+// -----------------------------------------------------------------------------
+// Recurring function to monitor the URL and reinitialize if needed
+function deviceDetailsPageUpdater() {
+  initdeviceDetailsPage();
+
+  // Run updater again after delay
+  setTimeout(deviceDetailsPageUpdater, 200);
+}
+
+// if visible, load immediately, if not start updater
+if (!$('#panDetails:visible').length) {
+  deviceDetailsPageUpdater();
+}
+else
+{
+  getDeviceData();
+}
+
 
 
 </script>

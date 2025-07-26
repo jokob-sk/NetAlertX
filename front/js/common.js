@@ -1109,45 +1109,51 @@ function getGuid() {
 // -----------------------------------------------------------------------------
 //  Loading Spinner overlay
 // -----------------------------------------------------------------------------
-spinnerHtml = `
-    <!-- spinner -->
-    <div id="loadingSpinner" style="display: block">
-      <div class="pa_semitransparent-panel"></div>
-      <div class="panel panel-default pa_spinner">
-        <table>
-          <td width="130px" align="middle">_text_</td>
-          <td><i class="ion ion-ios-loop-strong fa-spin fa-2x fa-fw"></td>
-        </table>
-      </div>
-    </div>
-    `
 
-function showSpinner(stringKey='Loading')
-{
+let spinnerTimeout = null;
+let animationTime = 300
 
-  if(stringKey == "")
-  {
-    text = ''
-  } else
-  {
-    text = getString(stringKey)
-  }
+function showSpinner(stringKey = 'Loading') {
+  const text = isEmpty(stringKey) ? "Loading" : getString(stringKey || "Loading");
+  const spinner = $("#loadingSpinner");
+  
+  if (spinner.length && spinner.is(':visible')) {
+    clearTimeout(spinnerTimeout);
+    
+    console.log(spinner);
 
-  text = isEmpty(text) ?  "Loading" : text;
+    $("#loadingSpinnerText").text(text);
+    spinner.addClass("visible");
 
-  if($("#loadingSpinner").length)
-  {    
-    $("#loadingSpinner").show();
-  }
-  else{    
-    $(".wrapper").append(spinnerHtml.replace('_text_',text))
+    spinner.fadeIn(animationTime);
+  } else {
+    $("#loadingSpinnerText").text(text);
+
+    requestAnimationFrame(() => {
+      spinner.addClass("visible");
+      spinner.fadeIn(animationTime);
+    });
   }
 }
-// -----------------------------------------------------------------------------
-function hideSpinner()
-{
-  $("#loadingSpinner").hide()
+
+function hideSpinner() {
+  clearTimeout(spinnerTimeout);
+
+  const spinner = $("#loadingSpinner");
+
+  if (spinner.length) {
+    spinner.removeClass("visible");
+    spinner.fadeOut(animationTime);
+
+    spinnerTimeout = setTimeout(() => {
+      spinner.removeClass("visible");
+      spinner.fadeOut(animationTime); // optional remove or hide again
+    }, 300);
+  }
 }
+
+    
+    
 
 
 // --------------------------------------------------------

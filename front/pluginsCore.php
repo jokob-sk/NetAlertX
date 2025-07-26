@@ -49,9 +49,18 @@ function initMacFilter() {
   return mac;  
 }
 
+// -----------------------------------------------
+// INIT with polling for panel element visibility
+// -----------------------------------------------
+
 // -----------------------------------------------------------------------------
 // Initializes the fields if the MAC in the URL is different or not yet set
 function initFields() {
+
+  // Only proceed if .plugin-content is visible
+  if (!$('.plugin-content:visible').length) {
+    return; // exit early if nothing is visible
+  }
 
   // Get current value from the readonly text field
   const currentVal = initMacFilter();
@@ -72,15 +81,6 @@ function initFields() {
     keepUpdating = false; // stop updates
     getData();
   }
-}
-
-// -----------------------------------------------------------------------------
-// Recurring function to monitor the URL and reinitialize if needed
-function updater() {
-  initFields();
-
-  // Run updater again after 500 milliseconds
-  setTimeout(updater, 500);
 }
 
 // -----------------------------------------------------------------------------
@@ -285,11 +285,9 @@ function getData(){
           pluginHistory = res["data"];
 
           generateTabs()
-
         });
       });
     });
-
   });
 }
 
@@ -301,15 +299,24 @@ function generateTabs() {
   // Sort pluginDefinitions by unique_prefix alphabetically
   pluginDefinitions.sort((a, b) => a.unique_prefix.localeCompare(b.unique_prefix));
 
+  assignActive = true;
+
   // Iterate over the sorted pluginDefinitions to create tab headers and content
   pluginDefinitions.forEach(pluginObj => {
     if (pluginObj.show_ui) {
-      stats = createTabContent(pluginObj); // Create the content for each tab
-      createTabHeader(pluginObj, stats); // Create the header for each tab
-    }
-  });
+      stats = createTabContent(pluginObj, assignActive); // Create the content for each tab
 
-  hideSpinner()  
+      if(stats.objectDataCount > 0)
+      {        
+        createTabHeader(pluginObj, stats, assignActive); // Create the header for each tab
+        assignActive = false; // only mark first with content active
+      }
+    }
+  });  
+    
+
+  
+  hideSpinner()
 }
 
 function resetTabs() {
@@ -318,27 +325,30 @@ function resetTabs() {
   $('#tabs-content-location').empty();
 }
 
-function createTabHeader(pluginObj, stats) {
+// ---------------------------------------------------------------
+// left headers
+function createTabHeader(pluginObj, stats, assignActive) {
   const prefix = pluginObj.unique_prefix; // Get the unique prefix for the plugin
+  
   // Determine the active class for the first tab
-  const activeClass = pluginDefinitions.indexOf(pluginObj) === 0 ? 'active' : '';
+  assignActive ? activeClass = "active" : activeClass = "";
 
-  if(stats.objectDataCount > 0)
-  {
-    // Append the tab header to the tabs location
-    $('#tabs-location').append(`
-      <li class="left-nav ${activeClass} ">
-        <a class="col-sm-12 textOverflow" href="#${prefix}" data-plugin-prefix="${prefix}" id="${prefix}_id" data-toggle="tab">
-          ${getString(`${prefix}_icon`)} ${getString(`${prefix}_display_name`)}
-          
-        </a>
-        ${stats.objectDataCount > 0 ? `<div class="pluginBadgeWrap"><span title="" class="badge pluginBadge" >${stats.objectDataCount}</span></div>` : ""}      
-      </li>
-    `);
-  }
+  // Append the tab header to the tabs location
+  $('#tabs-location').append(`
+    <li class="left-nav ${activeClass} ">
+      <a class="col-sm-12 textOverflow" href="#${prefix}" data-plugin-prefix="${prefix}" id="${prefix}_id" data-toggle="tab">
+        ${getString(`${prefix}_icon`)} ${getString(`${prefix}_display_name`)}
+        
+      </a>
+      ${stats.objectDataCount > 0 ? `<div class="pluginBadgeWrap"><span title="" class="badge pluginBadge" >${stats.objectDataCount}</span></div>` : ""}      
+    </li>
+  `);
+  
 }
 
-function createTabContent(pluginObj) {
+// ---------------------------------------------------------------
+// Content of selected plugin (header)
+function createTabContent(pluginObj, assignActive) {
   const prefix = pluginObj.unique_prefix; // Get the unique prefix for the plugin
   const colDefinitions = getColumnDefinitions(pluginObj); // Get column definitions for DataTables
   
@@ -349,7 +359,7 @@ function createTabContent(pluginObj) {
 
   // Append the content structure for the plugin's tab to the content location
   $('#tabs-content-location').append(`
-    <div id="${prefix}" class="tab-pane ${pluginDefinitions.indexOf(pluginObj) === 0 ? 'active' : ''}">
+    <div id="${prefix}" class="tab-pane ${objectData.length > 0 && assignActive? 'active' : ''}">
       ${generateTabNavigation(prefix, objectData.length, eventData.length, historyData.length)} <!-- Create tab navigation -->
       <div class="tab-content">
         ${generateDataTable(prefix, 'Objects', objectData, colDefinitions)} 
@@ -435,7 +445,7 @@ function generateDataTable(prefix, tableType, data, colDefinitions) {
       </table>
       <div class="plugin-obj-purge">
         <button class="btn btn-primary" onclick="purgeAll('${prefix}', 'Plugins_${tableType}' )"><?= lang('Plugins_DeleteAll');?></button>
-        ${tableType !== 'Events' ? `<button class="btn btn-danger" onclick="deleteListed('${prefix}', 'Plugins_${tableType}' )"><?= lang('Plugins_Obj_DeleteListed');?></button>` : ''}
+        ${tableType !== 'Events' ? `<button class="btn btn-primary" onclick="deleteListed('${prefix}', 'Plugins_${tableType}' )"><?= lang('Plugins_Obj_DeleteListed');?></button>` : ''}
       </div>
     </div>
   `;
@@ -583,14 +593,22 @@ function deleteListedExecute() {
 // -----------------------------------------------------------------------------
 // Main sequence
 
-// show spinning icon
-showSpinner()
-// Start updater on page load
-$(document).ready(function () {
-  setTimeout(() => {
-    updater();  
-  }, 100);
-  
-});
+// -----------------------------------------------------------------------------
+// Recurring function to monitor the URL and reinitialize if needed
+function updater() {
+  initFields();
+
+  // Run updater again after delay
+  setTimeout(updater, 200);
+}
+
+// if visible, load immediately, if not start updater
+if (!$('.plugin-content:visible').length) {
+  updater();
+}
+else
+{  
+  initFields();
+}
 
 </script>

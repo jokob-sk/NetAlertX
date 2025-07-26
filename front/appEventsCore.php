@@ -1,3 +1,8 @@
+<span class="helpIcon"> 
+    <a target="_blank" href="https://github.com/jokob-sk/NetAlertX/blob/main/docs/WORKFLOWS_DEBUGGING.md">
+      <i class="fa fa-circle-question"></i>
+    </a>
+  </span>
 <section class="content">
   <div class="nav-tabs-custom app-event-content" style="margin-bottom: 0px;">
     <ul id="tabs-location" class="nav nav-tabs col-sm-2 hidden">

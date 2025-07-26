@@ -2090,36 +2090,45 @@ input[readonly] {
 /* -----------------------------------------------------------------------------
    Spin
 ----------------------------------------------------------------------------- */
+#loadingSpinner {
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    pointer-events: none;
+    display: block;
+    z-index: 999;
+}
+
+#loadingSpinner.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
 .pa_semitransparent-panel {
     position: absolute;
-    width: 100%; /*calc (100% -40px);*/
+    width: 100%;
     height: 100%;
-    left: 0;
-    top: 0;
-    display: block;
-
-    opacity: 0.8;
     background-color: #fff;
-    z-index: 800;
+    opacity: 0.8;
+    z-index: 99;
 }
 
 .pa_spinner {
-    position: fixed;
-    left: 0;
-    right: 0;
+    position: absolute;
     top: 100px;
-    margin-left: auto;
-    margin-right: auto;
+    left: 50%;
+    transform: translateX(-50%);
     padding: 15px;
     width: 200px;
     background-color: #fff;
-    z-index: 801;
+    z-index: 1000;
 }
 
-#loadingSpinner
-{
-    z-index: 100;
-}
 
 /* Multi-edit adjustements */
 .box-header

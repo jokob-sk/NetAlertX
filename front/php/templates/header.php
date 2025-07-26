@@ -136,7 +136,21 @@
 <!-- ----------------------------------------------------------------------- -->
 <!-- Layout Boxed Yellow -->
 
+<!-- spinner -->
+
+
 <body class="hold-transition fixed <?php echo $pia_skin_selected;?>  theme-<?php echo $UI_THEME;?>  sidebar-mini" onLoad="update_servertime();" >
+
+<div id="loadingSpinner">
+  <div class="pa_semitransparent-panel"></div>
+  <div class="panel panel-default pa_spinner">
+    <table>
+      <td id="loadingSpinnerText" width="130px" ></td>
+      <td><i class="ion ion-ios-loop-strong fa-spin fa-2x fa-fw"></td>
+    </table>
+  </div>
+</div>
+
 <!-- Site wrapper -->
 <div class="wrapper">
 

@@ -16,8 +16,9 @@
   require 'php/templates/header.php';
 ?>
 
-
-
+<script>
+  showSpinner();
+</script>
 
 <!-- Page ------------------------------------------------------------------ -->
   <div class="content-wrapper">
@@ -125,15 +126,11 @@
             <div class="tab-content" style="min-height: 430px;">
 
 <!-- tab page 1 ------------------------------------------------------------ -->
-<!--
-              <div class="tab-pane fade in active" id="panDetails">
--->
-              <div class="tab-pane fade" id="panDetails">
 
+              <div class="tab-pane fade" id="panDetails">
                 <?php  
                   require 'deviceDetailsEdit.php';
                 ?>
-                
               </div>                                                                         
 
 <!-- tab page 2 ------------------------------------------------------------ -->
@@ -141,51 +138,38 @@
               <?php  
                   require 'deviceDetailsSessions.php';
                 ?>
-                
               </div>
-
         
 <!-- tab page "Tools" ------------------------------------------------------------ -->
 
               <div class="tab-pane fade" id="panTools">
-
                 <?php  
                   require 'deviceDetailsTools.php';
-                ?>
-              
-		      
+                ?>        	      
               </div>
 
 <!-- tab page 3 ------------------------------------------------------------ -->
-              <div class="tab-pane fade table-responsive" id="panPresence">        
-                
+              <div class="tab-pane fade table-responsive" id="panPresence">                
                 <?php
                   // Include the other page
                   include 'deviceDetailsPresence.php';
                 ?>
-
               </div>
 
 <!-- tab page 4 ------------------------------------------------------------ -->
               <div class="tab-pane fade table-responsive" id="panEvents">
-
               <?php
                   // Include the other page
                   include 'deviceDetailsEvents.php';
-                ?>
-
-                
+                ?>                
               </div>
 
 <!-- tab page 7 ------------------------------------------------------------ -->
               <div class="tab-pane fade table-responsive" id="panPlugins">
-              
-
                 <?php
                   // Include the other page
                   include 'pluginsCore.php';
                 ?>
-
               </div>
 
             </div>
@@ -273,7 +257,7 @@ function main () {
   period = '1 day';
   sessionsRows = 50;
   eventsRows = 50;
-  $('#chkHideConnectionEvents')[0].checked = eval(eventsHide == 'true');  
+  // $('#chkHideConnectionEvents')[0].checked = eval(eventsHide == 'true');  
 
   // Initialize components with parameters
    	
@@ -282,26 +266,7 @@ function main () {
   $( document ).ready(function() {
     initializeTabs();
   });
-  
-
-  
-
-  // // Events tab toggle conenction events
-  // $('input').on('ifToggled', function(event){
-  //   // Hide / Show Events
-  //   if (event.currentTarget.id == 'chkHideConnectionEvents') {
-  //     getDeviceEvents();
-  //   } else {
-  //     // Activate save & restore
-  //     // activateSaveRestoreData();
-
-  //     // Ask skip notifications
-  //     // if (event.currentTarget.id == 'chkArchived' ) {
-  //     //   askSkipNotifications();
-  //     // }
-  //   }
-  // });
-       
+         
 }
 
 
@@ -328,6 +293,48 @@ function recordSwitch(direction) {
   }
 }
 
+
+// ----------------------------------------
+// Handle previous/next arrows/chevrons
+function updateChevrons(currentMac) {
+  const devicesList = getDevicesList();
+
+  // Find the index of the device by MAC
+  pos = devicesList.findIndex(item => item.devMac == currentMac);
+
+  // If device not found, optionally add it or handle error
+  if (pos === -1) {
+    // If you want to add a placeholder or handle missing device:
+    // devicesList.push({ mac: currentMac, name: 'Unknown', type: 'Unknown' });
+    // pos = devicesList.length - 1;
+
+    // Or just return early if device not found
+    console.warn('Device with MAC not found:', currentMac);
+    return;
+  }
+
+  // Update the record number display
+  $('#txtRecord').html((pos + 1) + ' / ' + devicesList.length);
+
+  // Enable/disable previous button
+  if (pos <= 0) {
+    $('#btnPrevious').attr('disabled', '');
+    $('#btnPrevious').addClass('text-gray50');
+  } else {
+    $('#btnPrevious').removeAttr('disabled');
+    $('#btnPrevious').removeClass('text-gray50');
+  }
+
+  // Enable/disable next button
+  if (pos >= devicesList.length - 1) {
+    $('#btnNext').attr('disabled', '');
+    $('#btnNext').addClass('text-gray50');
+  } else {
+    $('#btnNext').removeAttr('disabled');
+    $('#btnNext').removeClass('text-gray50');
+  }
+}
+
 // -----------------------------------------------------------------------------
 
 function performSwitch(direction)
@@ -338,7 +345,9 @@ function performSwitch(direction)
 
   // Update the global position in the devices list variable 'pos'
   if (direction === "next") {
-    if (pos < devicesList.length - 1) {
+    console.log("direction" + direction);
+    
+    if (pos < devicesList.length) {
       pos++;
     }
   } else if (direction === "prev") {
@@ -358,14 +367,11 @@ function performSwitch(direction)
 
 }
 
-
 // -----------------------------------------------------------------------------
 // Activate save & restore on any value change
 $(document).on('input', 'input:text', function() {  
   settingsChanged();
 });
-
-
 
 // -----------------------------------------------------------------------------
 
@@ -380,8 +386,6 @@ function initializeTabs () {
   }
   
   $('.nav-tabs a[id='+ selectedTab +']').tab('show');
-  // $('.nav-tabs a[id='+ selectedTab +']').parent().click();
-  //  $('.nav-tabs a[id="tabPlugins"]').tab('show');
 
   // When changed save new current tab
   $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
@@ -391,11 +395,6 @@ function initializeTabs () {
   // events on tab change
   $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
     var target = $(e.target).attr("href") // activated tab
-
-    // if(target == "#panTools")
-    // {
-    //   // loadTools();
-    // }
   });
 }
 
@@ -482,21 +481,40 @@ async function renderSmallBoxes() {
         console.error('Error in renderSmallBoxes:', error);
     } finally {
         // Hide loading dialog
-        hideSpinner();
+        // hideSpinner();
     }
 }
 
+function updateDevicePageName(mac) {
+
+  name = getDevDataByMac(mac, "devName")
+  owner = getDevDataByMac(mac, "devOwner")
+
+  // Page title - Name
+  if (mac == "new") {
+      $('#pageTitle').html(`<i title="${getString("Gen_create_new_device")}" class="fa fa-square-plus"></i> ` +  getString("Gen_create_new_device"));
+      $('#devicePageInfoPlc .inner').html(`<i class="fa fa-circle-info"></i> ` +  getString("Gen_create_new_device_info"));
+      $('#devicePageInfoPlc').show();
+  } else if (owner == null || owner == '' ||
+      (name.toString()).indexOf(owner) != -1) {
+      $('#pageTitle').html(name);
+      $('#devicePageInfoPlc').hide();
+  } else {
+      $('#pageTitle').html(name + ' (' + owner + ')');
+      $('#devicePageInfoPlc').hide();
+  }
+  
+}
 
 //-----------------------------------------------------------------------------------
+
 
 window.onload = function async()
 {
   initializeTabs();
-
+  updateChevrons(mac);
+  updateDevicePageName(mac);
 }
-
-
-
 
 </script>
 
