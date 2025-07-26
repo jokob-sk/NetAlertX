@@ -494,6 +494,7 @@
     "Network_Cant_Assign_No_Node_Selected": "无法分配，未选择父节点。",
     "Network_Configuration_Error": "配置错误",
     "Network_Connected": "联网设备",
+    "Network_Devices": "",
     "Network_ManageAdd": "添加设备",
     "Network_ManageAdd_Name": "设备名称",
     "Network_ManageAdd_Name_text": "名称不包含特殊字符",

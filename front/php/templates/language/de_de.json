@@ -531,6 +531,7 @@
     "Network_Cant_Assign_No_Node_Selected": "",
     "Network_Configuration_Error": "Konfigurationsfehler",
     "Network_Connected": "Verbundene Geräte",
+    "Network_Devices": "",
     "Network_ManageAdd": "Gerät hinzufügen",
     "Network_ManageAdd_Name": "Name des Gerätes",
     "Network_ManageAdd_Name_text": "Name ohne Sonderzeichen",

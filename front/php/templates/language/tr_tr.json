@@ -494,6 +494,7 @@
     "Network_Cant_Assign_No_Node_Selected": "",
     "Network_Configuration_Error": "Kurulum Hatası",
     "Network_Connected": "Bağlanmış cihazlar",
+    "Network_Devices": "",
     "Network_ManageAdd": "Cihaz Ekle",
     "Network_ManageAdd_Name": "Cihaz İsmi",
     "Network_ManageAdd_Name_text": "Özel karakterler olmadan isim veriniz",

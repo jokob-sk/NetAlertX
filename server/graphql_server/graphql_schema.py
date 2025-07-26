@@ -174,7 +174,9 @@ class Query(ObjectType):
                     devices_data = [device for device in devices_data if device["devIsArchived"] == 1]
                 elif status == "offline":
                     devices_data = [device for device in devices_data if device["devPresentLastScan"] == 0]
-                elif status == "all_nodes":
+                elif status == "network_devices":
+                    devices_data = [device for device in devices_data if device["devType"] in  get_setting_value("NETWORK_DEVICE_TYPES")]
+                elif status == "all_devices":
                     devices_data = devices_data # keep all
 
             # additional filters

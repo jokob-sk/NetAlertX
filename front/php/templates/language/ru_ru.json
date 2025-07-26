@@ -494,6 +494,7 @@
     "Network_Cant_Assign_No_Node_Selected": "",
     "Network_Configuration_Error": "Ошибка конфигурации",
     "Network_Connected": "Подключенные устройства",
+    "Network_Devices": "",
     "Network_ManageAdd": "Добавить устройство",
     "Network_ManageAdd_Name": "Имя устройства",
     "Network_ManageAdd_Name_text": "Имя без специальных символов",

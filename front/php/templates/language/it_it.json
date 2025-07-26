@@ -494,6 +494,7 @@
     "Network_Cant_Assign_No_Node_Selected": "Impossibile assegnare, nessun nodo padre selezionato.",
     "Network_Configuration_Error": "Errore di configurazione",
     "Network_Connected": "Dispositivi connessi",
+    "Network_Devices": "",
     "Network_ManageAdd": "Aggiungi dispositivo",
     "Network_ManageAdd_Name": "Nome dispositivo",
     "Network_ManageAdd_Name_text": "Nome senza caratteri speciali",

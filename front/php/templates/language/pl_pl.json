@@ -494,6 +494,7 @@
     "Network_Cant_Assign_No_Node_Selected": "",
     "Network_Configuration_Error": "Błąd konfiguracji",
     "Network_Connected": "Połączone urządzenia",
+    "Network_Devices": "",
     "Network_ManageAdd": "Dodaj urządzenie",
     "Network_ManageAdd_Name": "Nazwa urządzenia",
     "Network_ManageAdd_Name_text": "Nazwa bez znaków specjalnych",

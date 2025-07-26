@@ -494,6 +494,7 @@
     "Network_Cant_Assign_No_Node_Selected": "",
     "Network_Configuration_Error": "خطأ في التكوين",
     "Network_Connected": "متصل",
+    "Network_Devices": "",
     "Network_ManageAdd": "إضافة إدارة",
     "Network_ManageAdd_Name": "اسم الإدارة",
     "Network_ManageAdd_Name_text": "نص اسم الإدارة",

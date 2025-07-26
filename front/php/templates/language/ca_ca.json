@@ -494,6 +494,7 @@
     "Network_Cant_Assign_No_Node_Selected": "",
     "Network_Configuration_Error": "Error de configuració",
     "Network_Connected": "Dispositius connectats",
+    "Network_Devices": "",
     "Network_ManageAdd": "Afegir dispositiu",
     "Network_ManageAdd_Name": "Nom del dispositiu",
     "Network_ManageAdd_Name_text": "Nom sense caràcters especials",

@@ -494,6 +494,7 @@
     "Network_Cant_Assign_No_Node_Selected": "Неможливо призначити, не вибрано батьківський вузол.",
     "Network_Configuration_Error": "Помилка конфігурації",
     "Network_Connected": "Підключені пристрої",
+    "Network_Devices": "",
     "Network_ManageAdd": "Додати пристрій",
     "Network_ManageAdd_Name": "Назва пристрою",
     "Network_ManageAdd_Name_text": "Назва без спеціальних символів",

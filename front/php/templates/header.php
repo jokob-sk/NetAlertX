@@ -312,7 +312,10 @@
               <a href="devices.php#archived" onclick="forceLoadUrl('devices.php#archived')" >  <?= lang("Device_Shortcut_Archived");?> </a>
             </li>
             <li>
-              <a href="devices.php#all" onclick="forceLoadUrl('devices.php#all_nodes')" >  <?= lang("Device_Shortcut_AllNodes");?> </a>
+              <a href="devices.php#all_devices" onclick="forceLoadUrl('devices.php#all_devices')" >  <?= lang("Gen_All_Devices");?> </a>
+            </li>
+            <li>
+              <a href="devices.php#network_devices" onclick="forceLoadUrl('devices.php#network_devices')" >  <?= lang("Network_Devices");?> </a>
             </li>
           </ul>
 

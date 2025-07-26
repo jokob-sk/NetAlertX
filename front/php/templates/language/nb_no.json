@@ -494,6 +494,7 @@
     "Network_Cant_Assign_No_Node_Selected": "",
     "Network_Configuration_Error": "Konfigurasjonsfeil",
     "Network_Connected": "Tilkoblede enheter",
+    "Network_Devices": "",
     "Network_ManageAdd": "Legg til enhet",
     "Network_ManageAdd_Name": "Enhetsnavn",
     "Network_ManageAdd_Name_text": "Navn uten spesialtegn",
