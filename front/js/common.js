@@ -1120,8 +1120,6 @@ function showSpinner(stringKey = 'Loading') {
   if (spinner.length && spinner.is(':visible')) {
     clearTimeout(spinnerTimeout);
     
-    console.log(spinner);
-
     $("#loadingSpinnerText").text(text);
     spinner.addClass("visible");
 
@@ -1153,9 +1151,6 @@ function hideSpinner() {
 }
 
     
-    
-
-
 // --------------------------------------------------------
 // Calls a backend function to add a front-end event to an execution queue
 function updateApi(apiEndpoints)

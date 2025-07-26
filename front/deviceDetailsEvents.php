@@ -19,6 +19,7 @@
     <thead>
     <tr>
     <th><?= lang("DevDetail_Tab_EventsTableDate");?></th>
+    <th><?= lang("DevDetail_Tab_EventsTableDate");?></th>
     <th><?= lang("DevDetail_Tab_EventsTableEvent");?></th>
     <th><?= lang("DevDetail_Tab_EventsTableIP");?></th>
     <th><?= lang("DevDetail_Tab_EventsTableInfo");?></th>
@@ -41,7 +42,7 @@ function loadEventsData() {
   mac = getMac()
 
   const rawSql = `
-    SELECT eve_DateTime, eve_EventType, eve_IP, eve_AdditionalInfo
+    SELECT eve_DateTime, eve_DateTime, eve_EventType, eve_IP, eve_AdditionalInfo
     FROM Events 
     WHERE eve_MAC = "${mac}" 
       AND (
@@ -61,6 +62,7 @@ function loadEventsData() {
       const formattedDate = rawDate ? localizeTimestamp(rawDate) : '-';
       return [
         formattedDate,
+        row.eve_DateTime,
         row.eve_EventType,
         row.eve_IP,
         row.eve_AdditionalInfo
@@ -95,6 +97,8 @@ function initializeEventsDatatable (eventsRows) {
       'pageLength'  : eventsRows,
 
       'columnDefs'  : [
+          {   orderData: [1], targets:  [0]   },
+          {   visible:   false, targets: [1]  }, 
           {
               targets: [0],
               'createdCell': function (td, cellData, rowData, row, col) {

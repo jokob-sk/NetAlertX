@@ -414,7 +414,6 @@ async function renderSmallBoxes() {
         }
 
         const deviceData = await response.json();
-        console.log(deviceData);
 
         // Prepare custom data
         const customData = [
