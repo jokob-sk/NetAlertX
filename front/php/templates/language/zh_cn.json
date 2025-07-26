@@ -390,7 +390,7 @@
     "Maintenance_Tool_ImportPastedCSV_text": "使用此功能前，请先备份。导入一个包含设备列表（包括网络节点和所连接设备之间的网络关系）的 CSV（逗号分隔值）文件。",
     "Maintenance_Tool_ImportPastedConfig": "设置导入（粘贴）",
     "Maintenance_Tool_ImportPastedConfig_noti_text": "您确认要导入粘贴的设置吗？这会完全<b>覆盖</b><code>app.conf</code>的内容。",
-    "Maintenance_Tool_ImportPastedConfig_text": "",
+    "Maintenance_Tool_ImportPastedConfig_text": "导入包含所有应用程序设置的<code>app.config</code>文件。建议先通过<b>设置导出</b>功能下载当前的<code>app.conf</code>文件。",
     "Maintenance_Tool_arpscansw": "切换 arp 扫描（开/关）",
     "Maintenance_Tool_arpscansw_noti": "打开或关闭 arp 扫描",
     "Maintenance_Tool_arpscansw_noti_text": "当扫描关闭时，它会保持关闭状态，直到再次激活为止。",
