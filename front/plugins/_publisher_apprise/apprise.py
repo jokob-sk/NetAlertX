@@ -78,7 +78,7 @@ def main():
 
 #-------------------------------------------------------------------------------
 def check_config():
-        if get_setting_value('APPRISE_HOST') == '' or get_setting_value('APPRISE_URL') == '':            
+        if get_setting_value('APPRISE_URL') == '' or get_setting_value('APPRISE_HOST') == '':            
             return False
         else:
             return True
