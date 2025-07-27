@@ -115,7 +115,7 @@ def send(html, text):
 
     if get_setting_value('APPRISE_TARGETTYPE') == 'tag':
         _json_payload = {
-            "tags": get_setting_value('APPRISE_URL'),
+            "tag": get_setting_value('APPRISE_URL'),
             "title": "NetAlertX Notifications",
             "format": get_setting_value('APPRISE_PAYLOAD'),
             "body": payloadData
