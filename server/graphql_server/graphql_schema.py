@@ -135,14 +135,17 @@ class Query(ObjectType):
                 status = options.status
                 mylog('verbose', f'[graphql_schema] Applying status filter: {status}')
 
+                # Include devices matching criteria in UI_MY_DEVICES
+                allowed_statuses = get_setting_value("UI_MY_DEVICES")  
+                hidden_relationships = get_setting_value("UI_hide_rel_types")  
+                network_dev_types = get_setting_value("NETWORK_DEVICE_TYPES")  
+
+                mylog('verbose', f'[graphql_schema] allowed_statuses: {allowed_statuses}')
+                mylog('verbose', f'[graphql_schema] hidden_relationships: {hidden_relationships}')
+                mylog('verbose', f'[graphql_schema] network_dev_types: {network_dev_types}')
+
                 # Filtering based on the "status"
                 if status == "my_devices":
-                    # Include devices matching criteria in UI_MY_DEVICES
-                    allowed_statuses = get_setting_value("UI_MY_DEVICES")  
-                    hidden_relationships = get_setting_value("UI_hide_rel_types")  # 🆕
-
-                    mylog('verbose', f'[graphql_schema] allowed_statuses: {allowed_statuses}')
-                    mylog('verbose', f'[graphql_schema] hidden_relationships: {hidden_relationships}')
 
                     devices_data = [
                         device for device in devices_data
@@ -175,7 +178,7 @@ class Query(ObjectType):
                 elif status == "offline":
                     devices_data = [device for device in devices_data if device["devPresentLastScan"] == 0]
                 elif status == "network_devices":
-                    devices_data = [device for device in devices_data if device["devType"] in  get_setting_value("NETWORK_DEVICE_TYPES")]
+                    devices_data = [device for device in devices_data if device["devType"] in  network_dev_types]
                 elif status == "all_devices":
                     devices_data = devices_data # keep all
 
