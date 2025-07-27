@@ -106,20 +106,14 @@ def send(html, text):
 
     # Define Apprise compatible payload (https://github.com/caronc/apprise-api#stateless-solution)
 
+    target_key = "tags" if get_setting_value('APPRISE_TARGETTYPE') == 'tag' else "urls"
+
     _json_payload = {
-        "urls": get_setting_value('APPRISE_URL'),
+        target_key: get_setting_value('APPRISE_URL'),
         "title": "NetAlertX Notifications",
         "format": get_setting_value('APPRISE_PAYLOAD'),
         "body": payloadData
     }
-
-    if get_setting_value('APPRISE_TARGETTYPE') == 'tag':
-        _json_payload = {
-            "tag": get_setting_value('APPRISE_URL'),
-            "title": "NetAlertX Notifications",
-            "format": get_setting_value('APPRISE_PAYLOAD'),
-            "body": payloadData
-        }
 
     try:
         # try runnning a subprocess
