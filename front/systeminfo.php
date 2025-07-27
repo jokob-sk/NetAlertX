@@ -17,6 +17,12 @@
 <!-- ----------------------------------------------------------------------- -->
  
 
+<script>
+
+  // show spinning icon
+  showSpinner()
+</script>
+
 <!-- Page ------------------------------------------------------------------ -->
 <div class="content-wrapper">
 
@@ -574,26 +580,19 @@ echo '<br>';
 
 <!-- ----------------------------------------------------------------------- -->
 
-
-
-
 <!-- DataTable initialization -->
 <script>
 
-  // show spinning icon
-  showSpinner()
-
   setTimeout(() => {
-
-    $('#networkTable').DataTable({
-            "searching": true,
-            "order": [[0, "desc"]]
-        });
-
-    // hide spinning icon
-    hideSpinner()
+      $('#networkTable').DataTable({
+      searching: true,
+      order: [[0, "desc"]],
+      initComplete: function(settings, json) {
+          hideSpinner(); // Called after the DataTable is fully initialized
+      }
+  });
     
-  }, 500);
+  }, 200);
 
 </script>
 

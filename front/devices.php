@@ -274,7 +274,7 @@ function processDeviceTotals(devicesData) {
     { status: 'down',               color: 'bg-red',    label: getString('Device_Shortcut_DownOnly'),   icon: 'fa-warning' },
     { status: 'archived',           color: 'bg-gray',   label: getString('Device_Shortcut_Archived'),   icon: 'fa-eye-slash' },
     { status: 'offline',            color: 'bg-gray',   label: getString('Gen_Offline'),                icon: 'fa-xmark' },
-    { status: 'offline',            color: 'bg-gray',   label: getString('Gen_Offline'),                icon: 'fa-xmark' },
+    { status: 'all_devices',        color: 'bg-gray',   label: getString('Gen_All_Devices'),            icon: 'fa-laptop' },
     { status: 'network_devices',    color: 'bg-aqua',   label: getString('Network_Devices'),            icon: 'fa-sitemap fa-rotate-270' }
   ];
 
@@ -301,13 +301,7 @@ function processDeviceTotals(devicesData) {
     }
   });
 
-  // Render info boxes/tile cards
-  console.log(getSetting('UI_hide_empty'));
-  
-  console.log(dataArray);
-  console.log(devicesData);
-  
-  
+  // Render info boxes/tile cards  
   renderInfoboxes(dataArray);
 }
 
@@ -566,15 +560,17 @@ function initializeDatatable (status) {
 
   // Define color & title for the status selected
   switch (deviceStatus) {
-    case 'my_devices': tableTitle = getString('Device_Shortcut_AllDevices');  color = 'aqua';    break;
-    case 'connected':  tableTitle = getString('Device_Shortcut_Connected');   color = 'green';   break;
-    case 'all':        tableTitle = getString('Gen_All_Devices');             color = 'aqua';    break;
-    case 'favorites':  tableTitle = getString('Device_Shortcut_Favorites');   color = 'yellow';  break;
-    case 'new':        tableTitle = getString('Device_Shortcut_NewDevices');  color = 'yellow';  break;
-    case 'down':       tableTitle = getString('Device_Shortcut_DownOnly');    color = 'red';     break;
-    case 'archived':   tableTitle = getString('Device_Shortcut_Archived');    color = 'gray';    break;
-    case 'offline':    tableTitle = getString('Gen_Offline');                 color = 'gray';    break;
-    default:           tableTitle = getString('Device_Shortcut_Devices');     color = 'gray';    break;
+    case 'my_devices':      tableTitle = getString('Device_Shortcut_AllDevices');  color = 'aqua';    break;
+    case 'connected':       tableTitle = getString('Device_Shortcut_Connected');   color = 'green';   break;
+    case 'all':             tableTitle = getString('Gen_All_Devices');             color = 'aqua';    break;
+    case 'favorites':       tableTitle = getString('Device_Shortcut_Favorites');   color = 'yellow';  break;
+    case 'new':             tableTitle = getString('Device_Shortcut_NewDevices');  color = 'yellow';  break;
+    case 'down':            tableTitle = getString('Device_Shortcut_DownOnly');    color = 'red';     break;
+    case 'archived':        tableTitle = getString('Device_Shortcut_Archived');    color = 'gray';    break;
+    case 'offline':         tableTitle = getString('Gen_Offline');                 color = 'gray';    break;
+    case 'all_devices':     tableTitle = getString('Gen_All_Devices');             color = 'gray';    break;
+    case 'network_devices': tableTitle = getString('Network_Devices');             color = 'aqua';    break;
+    default:                tableTitle = getString('Device_Shortcut_Devices');     color = 'gray';    break;
   } 
 
   // Set title and color

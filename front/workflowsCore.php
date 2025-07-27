@@ -4,6 +4,10 @@
   require_once  $_SERVER['DOCUMENT_ROOT'] . '/php/templates/security.php';
 ?>
 
+<script>
+  showSpinner();
+</script>
+
 
 <section class="content workflows col-sm-12 col-xs-12">
   <div id="workflowContainerWrap" class="bg-grey-dark color-palette  col-sm-12 col-xs-12 box-default box-info ">
@@ -82,8 +86,6 @@ let emptyWorkflow = {
 // --------------------------------------
 // Retrieve and process the data
 function getData() {
-
-  showSpinner();
 
   getSetting()
 

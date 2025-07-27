@@ -2101,7 +2101,12 @@ input[readonly] {
     transition: opacity 0.3s ease-in-out;
     pointer-events: none;
     display: block;
-    z-index: 999;
+    z-index: 800;
+}
+
+.fa-spinner
+{
+    font-size: initial;
 }
 
 #loadingSpinner.visible {

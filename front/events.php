@@ -2,6 +2,10 @@
   require 'php/templates/header.php';  
 ?>
 
+<script>
+  showSpinner();
+</script>
+
 <!-- ----------------------------------------------------------------------- -->
  
 <!-- Page ------------------------------------------------------------------ -->
@@ -67,7 +71,7 @@
               <div class="inner"> <h3 id="eventsNewDevices"> -- </h3>
                 <p class="infobox_label"><?= lang('Events_Shortcut_NewDevices');?></p>
               </div>
-              <div class="icon"> <i class="ion ion-plus-round text-yellow-40"></i> </div>
+              <div class="icon"> <i class="fa-solid fa-circle-plus text-yellow-40"></i> </div>
             </div>
           </a>
         </div>
@@ -238,7 +242,7 @@ function initializeDatatable () {
     // Processing
     'processing'  : true,
     'language'    : {
-      processing: '<table><td width="130px" align="middle"><?= lang("Events_Loading");?></td><td><i class="ion ion-ios-loop-strong fa-spin fa-2x fa-fw"></td></table>',
+      processing: '<table><td width="130px" align="middle"><?= lang("Events_Loading");?></td><td><i class="fa-solid fa-spinner fa-spin-pulse"></i></td></table>',
       emptyTable: 'No data',
       "lengthMenu": "<?= lang('Events_Tablelenght');?>",
       "search":     "<?= lang('Events_Searchbox');?>: ",
@@ -247,6 +251,9 @@ function initializeDatatable () {
           "previous":   "<?= lang('Events_Table_nav_prev');?>"
       },
       "info":           "<?= lang('Events_Table_info');?>",
+    },
+    initComplete: function(settings, json) {
+        hideSpinner(); // Called after the DataTable is fully initialized
     }
   });
 

@@ -74,7 +74,7 @@ function initializeSessionsDatatable (sessionsRows) {
     'processing'  : true,
     'language'    : {
       processing: '<table><td width="130px" align="middle"><?= lang("DevDetail_Loading");?></td>'+
-                  '<td><i class="ion ion-ios-loop-strong fa-spin fa-2x fa-fw">'+
+                  '<td><i class="fa-solid fa-spinner fa-spin-pulse"></i>'+
                   '</td></table>',
       emptyTable: 'No data',
       "lengthMenu": "<?= lang('Events_Tablelenght');?>",

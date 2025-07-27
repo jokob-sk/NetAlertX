@@ -5,6 +5,10 @@
   
 ?>
 
+<script>
+  showSpinner();
+</script>
+
 <!-- Page ------------------------------------------------------------------ -->
 <div class="content-wrapper">
 
@@ -119,6 +123,9 @@
             })
             .catch(error => {
                 console.error('Error:', error);
+            })
+            .finally(() => {
+                hideSpinner(); // always called, even if error occurred
             });
     }
 

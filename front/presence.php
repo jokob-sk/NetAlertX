@@ -16,6 +16,10 @@
   require 'php/templates/header.php';
 ?>
 
+<script>
+  showSpinner();
+</script>
+
 <!-- Page ------------------------------------------------------------------ -->
   <div class="content-wrapper">
 
@@ -67,7 +71,7 @@
               <div class="inner"> <h3 id="devicesNew"> -- </h3>
                 <p class="infobox_label"><?= lang('Presence_Shortcut_NewDevices');?></p>
               </div>
-              <div class="icon"> <i class="ion ion-plus-round text-yellow-40"></i> </div>
+              <div class="icon"> <i class="fa-solid fa-circle-plus text-yellow-40"></i> </div>
             </div>
           </a>
         </div>

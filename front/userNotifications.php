@@ -9,6 +9,9 @@ require 'php/templates/header.php';
 
 <!-- ----------------------------------------------------------------------- -->
  
+<script>
+  showSpinner();
+</script>
 
 <div id="notifications" class="content-wrapper">
   <section class="content">
@@ -160,7 +163,10 @@ require 'php/templates/header.php';
         
       ],
       "order": [[0, "desc"]]
-    });
+    ,
+    initComplete: function(settings, json) {
+        hideSpinner(); // Called after the DataTable is fully initialized
+    }});
 
     fetchData(function(data) {
       table.clear().rows.add(data).draw();
