@@ -423,6 +423,38 @@
       ]
     },
     {
+      "function": "TARGETTYPE",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "select", "elementOptions": [], "transformers": [] }
+        ]
+      },
+      "default_value": "url",
+      "options": ["url", "tag"],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Target type"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Tipo de alvo"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Select the target type sent to Apprise."
+        },
+        {
+          "language_code": "es_es",
+          "string": "Seleccione el tipo de alvo enviada a Apprise."
+        }
+      ]
+    },
+    {
       "function": "URL",
       "type": {
         "dataType": "string",

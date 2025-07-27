@@ -78,7 +78,7 @@ def main():
 
 #-------------------------------------------------------------------------------
 def check_config():
-        if get_setting_value('APPRISE_URL') == '' or get_setting_value('APPRISE_HOST') == '':            
+        if get_setting_value('APPRISE_HOST') == '' or get_setting_value('APPRISE_URL') == '':            
             return False
         else:
             return True
@@ -112,6 +112,14 @@ def send(html, text):
         "format": get_setting_value('APPRISE_PAYLOAD'),
         "body": payloadData
     }
+
+    if get_setting_value('APPRISE_TARGETTYPE') == 'tag':
+        _json_payload = {
+            "tags": get_setting_value('APPRISE_URL'),
+            "title": "NetAlertX Notifications",
+            "format": get_setting_value('APPRISE_PAYLOAD'),
+            "body": payloadData
+        }
 
     try:
         # try runnning a subprocess
