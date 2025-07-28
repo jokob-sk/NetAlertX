@@ -78,7 +78,7 @@ def main():
 
 #-------------------------------------------------------------------------------
 def check_config():
-        if get_setting_value('APPRISE_URL') == '' or get_setting_value('APPRISE_HOST') == '':            
+        if get_setting_value('APPRISE_HOST') == '' or (get_setting_value('APPRISE_URL') == '' and get_setting_value('APPRISE_TAG') == ''):            
             return False
         else:
             return True
@@ -106,8 +106,11 @@ def send(html, text):
 
     # Define Apprise compatible payload (https://github.com/caronc/apprise-api#stateless-solution)
 
+    target_key = "tag" if get_setting_value('APPRISE_TARGETTYPE') == 'tag' else "urls"
+    target_value = get_setting_value('APPRISE_TAG') if target_key == 'tag' else get_setting_value('APPRISE_URL')
+
     _json_payload = {
-        "urls": get_setting_value('APPRISE_URL'),
+        target_key: target_value,
         "title": "NetAlertX Notifications",
         "format": get_setting_value('APPRISE_PAYLOAD'),
         "body": payloadData
