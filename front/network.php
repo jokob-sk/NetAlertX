@@ -437,7 +437,7 @@
 
     if(archivedCount > 0)
     {
-    $('#showArchivedNumber').text(`(${archivedCount})`);
+      $('#showArchivedNumber').text(`(${archivedCount})`);
     }
     
     if(offlineCount > 0)
@@ -968,7 +968,6 @@ $(window).on('resize', function () {
 // init pop up hover  boxes for device details
 initHoverNodeInfo();
 
-// display toggles
 $(document).ready(function () {
   // Restore cached values on load
   const cachedOffline = getCache('showOffline');
@@ -981,11 +980,33 @@ $(document).ready(function () {
     $('input[name="showArchived"]').prop('checked', cachedArchived === 'true');
   }
 
+  // Function to enable/disable showArchived based on showOffline
+  function updateArchivedToggle() {
+    const isOfflineChecked = $('input[name="showOffline"]').is(':checked');
+    const archivedToggle = $('input[name="showArchived"]');
+
+    if (!isOfflineChecked) {
+      archivedToggle.prop('checked', false);
+      archivedToggle.prop('disabled', true);
+      setCache('showArchived', false);
+    } else {
+      archivedToggle.prop('disabled', false);
+    }
+  }
+
+  // Initial state on load
+  updateArchivedToggle();
+
   // Bind change event for both toggles
   $('input[name="showOffline"], input[name="showArchived"]').on('change', function () {
     const name = $(this).attr('name');
     const value = $(this).is(':checked');
     setCache(name, value);
+
+    // Update state of showArchived if showOffline changed
+    if (name === 'showOffline') {
+      updateArchivedToggle();
+    }
 
     // Refresh page after a brief delay to ensure cache is written
     setTimeout(() => {
@@ -993,6 +1014,7 @@ $(document).ready(function () {
     }, 100);
   });
 });
+
 
 </script>
 

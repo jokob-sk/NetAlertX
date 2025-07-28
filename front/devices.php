@@ -148,10 +148,7 @@ function main () {
 
   //initialize the table headers in the correct order
   var availableColumns = getSettingOptions("UI_device_columns").split(",");
-  headersDefaultOrder = availableColumns.map(val => getString(val));
-
-  console.log(headersDefaultOrder);
-  
+  headersDefaultOrder = availableColumns.map(val => getString(val));  
 
   var selectedColumns = JSON.parse(getSetting("UI_device_columns").replace(/'/g, '"'));
 
@@ -352,8 +349,6 @@ function initFilters() {
 
                 // Clear any existing filters in the DOM
                 $('#columnFilters').empty();
-
-                console.log(displayedFilters);
 
                 // Ensure displayedFilters is an array and not empty
                 if (Array.isArray(displayedFilters) && displayedFilters.length > 0) {
@@ -690,8 +685,6 @@ function initializeDatatable (status) {
         return JSON.stringify(query);  // Send the JSON request
       },
       "dataSrc": function (json) {
-        console.log(json);
-
         // Set the total number of records for pagination
         json.recordsTotal = json.devices.count || 0;
         json.recordsFiltered = json.devices.count || 0;
