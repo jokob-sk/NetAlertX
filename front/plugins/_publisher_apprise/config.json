@@ -487,6 +487,38 @@
       ]
     },
     {
+      "function": "TAG",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "input", "elementOptions": [], "transformers": [] }
+        ]
+      },
+      "default_value": "",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Apprise notification tag"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Tag de notificación de Apprise"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Apprise notification target tag."
+        },
+        {
+          "language_code": "es_es",
+          "string": "Informar de la tag de destino de la notificación."
+        }
+      ]
+    },
+    {
       "function": "PAYLOAD",
       "type": {
         "dataType": "string",
