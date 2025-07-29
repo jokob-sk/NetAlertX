@@ -594,7 +594,6 @@ function initializeDatatable (status) {
     }    
   }
 
-  // todo: dynamically filter based on status
   var table = $('#tableDevices').DataTable({
     "serverSide": true,
     "processing": true,

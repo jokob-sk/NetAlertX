@@ -203,6 +203,16 @@ echo '        </tbody>
         </div>
       </div>';
 
+// Available IPs ----------------------------------------------------------
+echo '<div class="box box-solid">
+            <div class="box-header">
+              <h3 class="box-title availableips_headline"><i class="fa fa-list"></i> ' . lang('Systeminfo_AvailableIps') . '</h3>
+            </div>
+            <div class="box-body">
+               <table id="availableIpsTable" class="display" style="width:100%"></table>
+            </div>
+      </div>';
+
 // Client ----------------------------------------------------------
 echo '<div class="box box-solid">
             <div class="box-header">
@@ -583,16 +593,109 @@ echo '<br>';
 <!-- DataTable initialization -->
 <script>
 
-  setTimeout(() => {
-      $('#networkTable').DataTable({
-      searching: true,
-      order: [[0, "desc"]],
-      initComplete: function(settings, json) {
-          hideSpinner(); // Called after the DataTable is fully initialized
+// --------------------------------------------------------
+//  Available free IPS functionality
+function inferNetworkRange(usedIps) {
+  if (!usedIps || usedIps.length === 0) return [];
+
+  const subnetMap = {};
+
+  // Group IPs by /24 subnet
+  for (const ip of usedIps) {
+    const parts = ip.split('.');
+    if (parts.length !== 4) continue;
+    const subnet = `${parts[0]}.${parts[1]}.${parts[2]}`;
+    if (!subnetMap[subnet]) subnetMap[subnet] = [];
+    subnetMap[subnet].push(ip);
+  }
+
+  const result = [];
+
+  for (const [subnet, ips] of Object.entries(subnetMap)) {
+    if (ips.length > 5) {
+      for (let i = 2; i < 255; i++) {
+        const ip = `${subnet}.${i}`;
+        result.push({ subnet, ip });
       }
+    }
+  }
+
+  return result;
+}
+
+function fetchUsedIps(callback) {
+  $.ajax({
+    url: 'php/server/query_graphql.php',
+    type: 'POST',
+    contentType: 'application/json',
+    data: JSON.stringify({
+      query: `
+        query devices($options: PageQueryOptionsInput) {
+          devices(options: $options) {
+            devices {
+              devLastIP
+            }
+          }
+        }
+      `,
+      variables: {
+        options: {
+          status: "all_devices"  
+        }  
+      }
+    }),
+    success: function(response) {
+
+      console.log(response);
+      
+      const usedIps = (response?.devices?.devices || [])
+        .map(d => d.devLastIP)
+        .filter(ip => ip && ip.includes('.'));
+      callback(usedIps);
+    },
+    error: function(err) {
+      console.error("Error fetching IPs:", err);
+      callback([]);
+    }
   });
-    
+}
+
+function renderAvailableIpsTable(allIps, usedIps) {
+  const availableIps = allIps.filter(row => !usedIps.includes(row.ip));
+
+  console.log(allIps);
+  console.log(usedIps);
+  console.log(availableIps);
+
+  $('#availableIpsTable').DataTable({
+    destroy: true,
+    data: availableIps,
+    columns: [
+      { title: getString("Gen_Subnet"), data: "subnet" },
+      { title: getString("Systeminfo_AvailableIps"), data: "ip" }
+    ],
+    pageLength: 10
+  });
+}
+
+
+// INIT
+$(document).ready(function() {
+  fetchUsedIps(usedIps => {
+    const allIps = inferNetworkRange(usedIps);
+    renderAvailableIpsTable(allIps, usedIps);
+  });
+
+  setTimeout(() => {
+    $('#networkTable').DataTable({
+    searching: true,
+    order: [[0, "desc"]],
+    initComplete: function(settings, json) {
+        hideSpinner(); // Called after the DataTable is fully initialized
+    }
+  });    
   }, 200);
+});
 
 </script>
 
