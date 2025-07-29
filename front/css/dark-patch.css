@@ -659,8 +659,14 @@ input[type="password"]::-webkit-caps-lock-indicator {
   border-color: #888888;
 }
 .table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
-  background-color: rgb(189,192,198);
-  color: #444;
+  background-color: var(--datatable-bgcolor);
+  color: var(--fbc-white);
+}
+
+table.dataTable tbody  tr.selected, table.dataTable tbody  tr  .selected
+{
+  background-color: var(--datatable-bgcolor);
+  color: var(--fbc-white);
 }
 
 .db_info_table_cell:nth-child(1) {background: #272c30}

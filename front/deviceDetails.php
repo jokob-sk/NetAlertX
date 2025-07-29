@@ -225,13 +225,6 @@ switch ($UI_THEME) {
   var selectedTab         = 'tabDetails';
   var emptyArr            = ['undefined', "", undefined, null];
 
-
-// Call renderSmallBoxes, then main
-(async () => {
-    await renderSmallBoxes();
-    main();
-})();
-
 // -----------------------------------------------------------------------------
 function main () {
 
@@ -299,17 +292,32 @@ function recordSwitch(direction) {
 function updateChevrons(currentMac) {
   const devicesList = getDevicesList();
 
-  // Find the index of the device by MAC
-  pos = devicesList.findIndex(item => item.devMac == currentMac);
+  pos = devicesList.findIndex(item => item.devMac === currentMac);
 
-  // If device not found, optionally add it or handle error
   if (pos === -1) {
-    // If you want to add a placeholder or handle missing device:
-    // devicesList.push({ mac: currentMac, name: 'Unknown', type: 'Unknown' });
-    // pos = devicesList.length - 1;
+    console.warn('Device not found in cache. Re-caching devices...', currentMac);
 
-    // Or just return early if device not found
-    console.warn('Device with MAC not found:', currentMac);
+    showSpinner();
+
+    cacheDevices().then(() => {
+      hideSpinner();
+
+      // Retry after re-caching
+      const refreshedList = getDevicesList();
+      pos = refreshedList.findIndex(item => item.devMac === currentMac);
+
+      if (pos === -1) {
+        console.error('Still not found after re-cache:', currentMac);
+        return;
+      }
+
+      console.log('Device found after re-cache:', refreshedList[pos]);
+      // Proceed with using `refreshedList[pos]`
+    }).catch((err) => {
+      hideSpinner();
+      console.error('Failed to cache devices:', err);
+    });
+
     return;
   }
 
@@ -345,7 +353,7 @@ function performSwitch(direction)
 
   // Update the global position in the devices list variable 'pos'
   if (direction === "next") {
-    console.log("direction" + direction);
+    console.log("direction:" + direction);
     
     if (pos < devicesList.length) {
       pos++;
@@ -485,27 +493,50 @@ async function renderSmallBoxes() {
 }
 
 function updateDevicePageName(mac) {
+  let name = getDevDataByMac(mac, "devName");
+  let owner = getDevDataByMac(mac, "devOwner");
 
-  name = getDevDataByMac(mac, "devName")
-  owner = getDevDataByMac(mac, "devOwner")
+  // If data is missing, re-cache and retry once
+  if (name === "Unknown" || owner === "Unknown") {
+    console.warn("Device not found in cache, retrying after re-cache:", mac);
+    showSpinner();
+    cacheDevices().then(() => {
+      hideSpinner();
+      // Retry after successful cache
+      updateDevicePageName(mac);
+    }).catch((err) => {
+      hideSpinner();
+      console.error("Failed to refresh devices:", err);
+    });
+    return; // Exit early to avoid showing bad data
+  }
 
   // Page title - Name
   if (mac == "new") {
-      $('#pageTitle').html(`<i title="${getString("Gen_create_new_device")}" class="fa fa-square-plus"></i> ` +  getString("Gen_create_new_device"));
-      $('#devicePageInfoPlc .inner').html(`<i class="fa fa-circle-info"></i> ` +  getString("Gen_create_new_device_info"));
-      $('#devicePageInfoPlc').show();
-  } else if (owner == null || owner == '' ||
-      (name.toString()).indexOf(owner) != -1) {
-      $('#pageTitle').html(name);
-      $('#devicePageInfoPlc').hide();
+    $('#pageTitle').html(
+      `<i title="${getString("Gen_create_new_device")}" class="fa fa-square-plus"></i> ` + getString("Gen_create_new_device")
+    );
+    $('#devicePageInfoPlc .inner').html(
+      `<i class="fa fa-circle-info"></i> ` + getString("Gen_create_new_device_info")
+    );
+    $('#devicePageInfoPlc').show();
+  } else if (!owner || (name.toString()).indexOf(owner) !== -1) {
+    $('#pageTitle').html(name);
+    $('#devicePageInfoPlc').hide();
   } else {
-      $('#pageTitle').html(name + ' (' + owner + ')');
-      $('#devicePageInfoPlc').hide();
+    $('#pageTitle').html(name + ' (' + owner + ')');
+    $('#devicePageInfoPlc').hide();
   }
-  
 }
 
+
 //-----------------------------------------------------------------------------------
+
+// Call renderSmallBoxes, then main
+(async () => {
+      await renderSmallBoxes();
+      main();
+  })();
 
 
 window.onload = function async()
@@ -513,6 +544,7 @@ window.onload = function async()
   initializeTabs();
   updateChevrons(mac);
   updateDevicePageName(mac);
+
 }
 
 </script>

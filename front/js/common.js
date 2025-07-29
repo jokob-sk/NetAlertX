@@ -1039,11 +1039,8 @@ function getDevDataByMac(macAddress, dbColumn) {
 // Cache the devices as one JSON
 function cacheDevices()
 { 
-
   return new Promise((resolve, reject) => {
 
-    // if(!getCache('completedCalls').includes('cacheDevices'))
-    // {
     $.get('php/server/query_json.php', { file: 'table_devices.json', nocache: Date.now() }, function(data) {    
         
         // console.log(data)
@@ -1067,8 +1064,7 @@ function cacheDevices()
         // console.log(getCache('devicesListAll_JSON'))
       }).then(() => handleSuccess('cacheDevices', resolve())).catch(() => handleFailure('cacheDevices', reject("cacheDevices already completed"))); // handle AJAX synchronization
     } 
-  // }
-);
+  );
 }
 
 var devicesListAll_JSON      = [];   // this will contain a list off all devices 
