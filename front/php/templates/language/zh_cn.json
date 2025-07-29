@@ -564,7 +564,7 @@
     "Presence_Key_OnlineNow_desc": "该设备在上次扫描中被检测为在线。",
     "Presence_Key_OnlinePast": "之前在线",
     "Presence_Key_OnlinePastMiss": "之前在线（不匹配）",
-    "Presence_Key_OnlinePastMiss_desc": "设备曾在线，但目前离线。初始会话可能缺失或存在数据冲突。（可能是bug - 要是你知道怎么修复，请开个PR - 我不知道怎么处理）",
+    "Presence_Key_OnlinePastMiss_desc": "设备曾在线，但目前离线。初始会话可能缺失或存在数据冲突",
     "Presence_Key_OnlinePast_desc": "设备曾在线，但目前离线。",
     "Presence_Loading": "加载中…",
     "Presence_Shortcut_AllDevices": "我的设备",
