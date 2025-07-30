@@ -309,6 +309,7 @@
     "Gen_Filter": "Filtrer",
     "Gen_Generate": "Générer",
     "Gen_LockedDB": "Erreur - La base de données est peut-être verrouillée - Vérifier avec les outils de dév via F12 -> Console ou essayer plus tard.",
+    "Gen_NetworkMask": "",
     "Gen_Offline": "Hors ligne",
     "Gen_Okay": "OK",
     "Gen_Online": "En ligne",

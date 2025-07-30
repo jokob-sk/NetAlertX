@@ -311,6 +311,7 @@
     "Gen_Filter": "Filtro",
     "Gen_Generate": "Generar",
     "Gen_LockedDB": "Fallo - La base de datos puede estar bloqueada - Pulsa F1 -> Ajustes de desarrolladores -> Consola o prueba más tarde.",
+    "Gen_NetworkMask": "",
     "Gen_Offline": "Desconectado",
     "Gen_Okay": "Aceptar",
     "Gen_Online": "En linea",

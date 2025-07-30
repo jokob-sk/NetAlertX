@@ -261,35 +261,35 @@ pluginUnprocessedEvents = []
 pluginObjects = []
 pluginHistory = []
 
-function getData(){ 
-  
-  console.log("Plugins getData called");  
+async function getData() {
+  try {
+    showSpinner();
+    console.log("Plugins getData called");
 
-  // Show the loading spinner while generating 
-  showSpinner();
+    const [plugins, events, objects, history] = await Promise.all([
+      fetchJson('plugins.json'),
+      fetchJson('table_plugins_events.json'),
+      fetchJson('table_plugins_objects.json'),
+      fetchJson('table_plugins_history.json')
+    ]);
 
-  $.get('php/server/query_json.php?file=plugins.json', function(res) {  
-    
-    pluginDefinitions = res["data"];
+    pluginDefinitions = plugins.data;
+    pluginUnprocessedEvents = events.data;
+    pluginObjects = objects.data;
+    pluginHistory = history.data;
 
-    $.get('php/server/query_json.php?file=table_plugins_events.json', function(res) {
-
-      pluginUnprocessedEvents = res["data"];
-
-      $.get('php/server/query_json.php?file=table_plugins_objects.json', function(res) {
-
-        pluginObjects = res["data"];
-        
-        $.get('php/server/query_json.php?file=table_plugins_history.json', function(res) {        
-
-          pluginHistory = res["data"];
-
-          generateTabs()
-        });
-      });
-    });
-  });
+    generateTabs();
+  } catch (err) {
+    console.error("Failed to load data", err);
+  }
 }
+
+async function fetchJson(filename) {
+  const response = await fetch(`php/server/query_json.php?file=${filename}`);
+  if (!response.ok) throw new Error(`Failed to load ${filename}`);
+  return await response.json();
+}
+
 
 function generateTabs() {
 

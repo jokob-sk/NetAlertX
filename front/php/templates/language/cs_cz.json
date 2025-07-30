@@ -309,6 +309,7 @@
     "Gen_Filter": "Filtr",
     "Gen_Generate": "Vygenerovat",
     "Gen_LockedDB": "CHYBA - Databáze je možná zamčená - Zkontrolujte F12 -> Nástroje pro vývojáře -> Konzole. nebo to zkuste později.",
+    "Gen_NetworkMask": "",
     "Gen_Offline": "Offline",
     "Gen_Okay": "Ok",
     "Gen_Online": "Online",

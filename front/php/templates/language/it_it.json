@@ -309,6 +309,7 @@
     "Gen_Filter": "Filtro",
     "Gen_Generate": "Genera",
     "Gen_LockedDB": "ERRORE: il DB potrebbe essere bloccato, controlla F12 Strumenti di sviluppo -> Console o riprova più tardi.",
+    "Gen_NetworkMask": "",
     "Gen_Offline": "Offline",
     "Gen_Okay": "Ok",
     "Gen_Online": "Online",
