@@ -446,7 +446,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Select the target type sent to Apprise."
+          "string": "Select the target type to send to Apprise. If <code>url</code> is selected, the value of the <code>APPRISE_URL</code> setting will be used. If <code>tag</code> is selected, the <code>APPRISE_TAG</code> setting must be specified and will be used instead."
         },
         {
           "language_code": "es_es",
