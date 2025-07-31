@@ -497,7 +497,7 @@ function updateDevicePageName(mac) {
   let owner = getDevDataByMac(mac, "devOwner");
 
   // If data is missing, re-cache and retry once
-  if (name === "Unknown" || owner === "Unknown") {
+  if (mac != 'new' && (name === "Unknown" || owner === "Unknown")) {
     console.warn("Device not found in cache, retrying after re-cache:", mac);
     showSpinner();
     cacheDevices().then(() => {

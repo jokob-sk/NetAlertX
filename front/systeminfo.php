@@ -209,7 +209,7 @@ echo '<div class="box box-solid">
               <h3 class="box-title availableips_headline"><i class="fa fa-list"></i> ' . lang('Systeminfo_AvailableIps') . '</h3>
             </div>
             <div class="box-body">
-               <table id="availableIpsTable" class="display" style="width:100%"></table>
+               <table id="availableIpsTable" class="display table table-bordered table-hover dataTable no-footer" style="width:100%"></table>
             </div>
       </div>';
 
