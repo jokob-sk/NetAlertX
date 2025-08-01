@@ -308,6 +308,7 @@
     "Gen_Error": "خطأ",
     "Gen_Filter": "تصفية",
     "Gen_Generate": "إنشاء",
+    "Gen_InvalidMac": "",
     "Gen_LockedDB": "قاعدة البيانات مقفلة",
     "Gen_NetworkMask": "",
     "Gen_Offline": "غير متصل",

@@ -308,6 +308,7 @@
     "Gen_Error": "Erro",
     "Gen_Filter": "Filtro",
     "Gen_Generate": "Gerar",
+    "Gen_InvalidMac": "",
     "Gen_LockedDB": "ERRO - O banco de dados pode estar bloqueado - Verifique F12 Ferramentas de desenvolvimento -> Console ou tente mais tarde.",
     "Gen_NetworkMask": "",
     "Gen_Offline": "Offline",

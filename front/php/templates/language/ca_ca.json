@@ -308,6 +308,7 @@
     "Gen_Error": "Error",
     "Gen_Filter": "Filtrar",
     "Gen_Generate": "Generar",
+    "Gen_InvalidMac": "",
     "Gen_LockedDB": "ERROR - DB podria estar bloquejada - Fes servir F12 Eines desenvolupament -> Consola o provar-ho més tard.",
     "Gen_NetworkMask": "",
     "Gen_Offline": "Fora de línia",

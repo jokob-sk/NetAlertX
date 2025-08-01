@@ -308,6 +308,7 @@
     "Gen_Error": "Błąd",
     "Gen_Filter": "Filtr",
     "Gen_Generate": "Wygeneruj",
+    "Gen_InvalidMac": "",
     "Gen_LockedDB": "Błąd - Baza danych może być zablokowana - Sprawdź narzędzia deweloperskie F12 -> Konsola lub spróbuj później.",
     "Gen_NetworkMask": "",
     "Gen_Offline": "Niedostępne",

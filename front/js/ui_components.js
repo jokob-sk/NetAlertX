@@ -336,7 +336,8 @@ function execute_settingEvent(element) {
       getString('DevDetail_button_OverwriteIcons_Warning'),
       getString('Gen_Cancel'), 
       getString('Gen_Okay'), 
-      'overwriteIconType'
+      'overwriteIconType',
+      feSourceId // triggered by id
     );
   } else if (["go_to_device"].includes(feEvent)) {
 
@@ -347,9 +348,43 @@ function execute_settingEvent(element) {
 
   } else {
     console.warn(`🔺Not implemented: ${feEvent}`)
+  } 
+  
+}
+
+
+// -----------------------------------------------------------------------------
+// Go to the correct network node in the Network section
+function overwriteIconType()
+{ 
+  const mac = getMac();
+
+  if (!isValidMac(mac)) {
+    showModalOK("Error", getString("Gen_InvalidMac")) 
+    return;
   }
-  
-  
+
+  // Construct SQL query
+  const rawSql = `
+   UPDATE Devices 
+    SET devIcon = (
+      SELECT devIcon FROM Devices WHERE devMac = "${mac}"
+    )
+    WHERE devType IN (
+      SELECT devType FROM Devices WHERE devMac = "${mac}"
+    )
+  `;
+
+  const apiUrl = `php/server/dbHelper.php?action=write&rawSql=${btoa(encodeURIComponent(rawSql))}`;
+
+  $.get(apiUrl, function(response) {
+    if (response === 'OK') {
+      showMessage (response);
+      updateApi("devices")
+    } else {
+      showMessage (response, 3000, "modal_red");
+    }
+  });
 }
 
 

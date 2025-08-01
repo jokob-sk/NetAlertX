@@ -48,7 +48,6 @@
       case 'getDevicesListCalendar':  getDevicesListCalendar();                break;  //todo: slowly deprecate this
 
       case 'updateNetworkLeaf':       updateNetworkLeaf();                     break;
-      case 'overwriteIconType':       overwriteIconType();                     break;
       case 'getIcons':                getIcons();                              break;
       case 'getActions':              getActions();                            break;
       case 'getDevices':              getDevices();                            break;
@@ -919,33 +918,6 @@ function updateNetworkLeaf()
       echo 'OK';
     } else {
       echo 'KO';
-    }
-  }
-
-}
-
-// ----------------------------------------------------------------------------------------
-function overwriteIconType()
-{
-  $mac = $_REQUEST['mac'];
-  $icon = $_REQUEST['icon'];
-
-  if ((false === filter_var($mac , FILTER_VALIDATE_MAC) && $mac != "Internet" && $mac != "")  ) {
-    throw new Exception('Invalid mac address');
-  }
-  else
-  {
-    global $db;
-    // sql    
-    $sql = 'UPDATE Devices SET "devIcon" = "'. $icon .'" where devType in (select devType from Devices where devMac = "' . $mac.'")' ;
-    // update Data
-    $result = $db->query($sql);
-
-    // check result
-    if ($result == TRUE) {
-      echo 'OK';
-    } else {
-      echo lang('BackDevices_Device_UpdDevError');
     }
   }
 

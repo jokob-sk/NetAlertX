@@ -224,7 +224,7 @@ function modalWarningOK() {
     } else if (typeof modalCallbackFunction === "string" && typeof window[modalCallbackFunction] === "function") {
       window[modalCallbackFunction](); // Call via window
     } else {
-      console.error("Invalid callback function");
+      console.error("Invalid callback function: " + modalCallbackFunction);
     }
   }, 100);
 }
