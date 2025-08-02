@@ -160,7 +160,7 @@
     <a href="devices.php" class="logo">
       <!-- mini logo for sidebar mini 50x50 pixels -->
       <span class="logo-mini">
-        <img src="img/NetAlertX_logo.png" class="pia-top-left-logo" alt="NetAlertX Logo"/>        
+        <img src="img/NetAlertX_logo.png" class="top-left-logo" alt="NetAlertX Logo"/>        
       </span>
       <!-- logo for regular state and mobile devices -->
       <span class="logo-lg">Net<b>Alert</b><sup>x</sup>

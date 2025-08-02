@@ -301,6 +301,7 @@
     "Gen_Cancel": "Отмена",
     "Gen_Change": "Изменить",
     "Gen_Copy": "Запустить",
+    "Gen_CopyToClipboard": "",
     "Gen_DataUpdatedUITakesTime": "ОК - Обновление UI может занять некоторое время, если сканирование выполняется.",
     "Gen_Delete": "Удалить",
     "Gen_DeleteAll": "Удалить все",

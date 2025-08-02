@@ -305,6 +305,7 @@
     "Gen_Cancel": "Abbrechen",
     "Gen_Change": "Ändern",
     "Gen_Copy": "Ausführen",
+    "Gen_CopyToClipboard": "",
     "Gen_DataUpdatedUITakesTime": "OK – Es kann einen Moment dauern, bis die Benutzeroberfläche aktualisiert wird, während ein Scan ausgeführt wird.",
     "Gen_Delete": "Löschen",
     "Gen_DeleteAll": "Alles löschen",

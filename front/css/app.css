@@ -2160,9 +2160,10 @@ input[readonly] {
 
 }
 
-.pia-top-left-logo
+.top-left-logo
 {
-    height:50px;
+    height:35px;
+    width:35px;
 }
 
 /* -----------------------------------------------------------------------------

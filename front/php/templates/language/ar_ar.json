@@ -301,6 +301,7 @@
     "Gen_Cancel": "إلغاء",
     "Gen_Change": "تغيير",
     "Gen_Copy": "نسخ",
+    "Gen_CopyToClipboard": "",
     "Gen_DataUpdatedUITakesTime": "تم تحديث البيانات. قد يستغرق تحديث واجهة المستخدم بعض الوقت",
     "Gen_Delete": "حذف",
     "Gen_DeleteAll": "حذف الكل",

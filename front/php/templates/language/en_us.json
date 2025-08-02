@@ -301,6 +301,7 @@
     "Gen_Cancel": "Cancel",
     "Gen_Change": "Change",
     "Gen_Copy": "Run",
+    "Gen_CopyToClipboard": "Copy to clipboard",
     "Gen_DataUpdatedUITakesTime": "OK - It may take a while for the UI to update if a scan is running.",
     "Gen_Delete": "Delete",
     "Gen_DeleteAll": "Delete all",

@@ -301,6 +301,7 @@
     "Gen_Cancel": "Cancelar",
     "Gen_Change": "Alterar",
     "Gen_Copy": "Executar",
+    "Gen_CopyToClipboard": "",
     "Gen_DataUpdatedUITakesTime": "OK - Pode levar um tempo para a interface do usuário ser atualizada se uma verificação estiver em execução.",
     "Gen_Delete": "Excluir",
     "Gen_DeleteAll": "Excluir todos",

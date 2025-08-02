@@ -303,6 +303,7 @@
     "Gen_Cancel": "Cancelar",
     "Gen_Change": "Cambiar",
     "Gen_Copy": "Ejecutar",
+    "Gen_CopyToClipboard": "",
     "Gen_DataUpdatedUITakesTime": "Correcto - La interfaz puede tardar en actualizarse si se está ejecutando un escaneo.",
     "Gen_Delete": "Eliminar",
     "Gen_DeleteAll": "Eliminar todo",

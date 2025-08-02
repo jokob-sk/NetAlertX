@@ -301,6 +301,7 @@
     "Gen_Cancel": "取消",
     "Gen_Change": "修改",
     "Gen_Copy": "运行",
+    "Gen_CopyToClipboard": "",
     "Gen_DataUpdatedUITakesTime": "好的 - 如果扫描正在运行，UI 可能需要一段时间才能更新。",
     "Gen_Delete": "删除",
     "Gen_DeleteAll": "全部删除",

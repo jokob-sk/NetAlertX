@@ -250,13 +250,27 @@ function renderAvailableIpsTable(allIps, usedIps) {
     destroy: true,
     data: availableIps,
     columns: [
-      { title: getString("Gen_Subnet"), data: "subnet" },
-      { title: getString("Systeminfo_AvailableIps"), data: "ip" }
+      { 
+        title: getString("Gen_Subnet"), 
+        data: "subnet" 
+      },
+      { 
+        title: getString("Systeminfo_AvailableIps"), 
+        data: "ip",
+        render: function (data, type, row, meta) {
+          return `
+            <span>${data}</span>
+            <button class="copy-btn btn btn-sm btn-info ml-2 alignRight" data-text="${data}" title="${getString("Gen_CopyToClipboard")}" onclick="copyToClipboard(this)">
+              <i class="fa-solid fa-copy"></i>
+            </button>
+          `;
+        }
+      }
     ],
     pageLength: 10
   });
-}
 
+}
 
 // INIT
 $(document).ready(function() {
