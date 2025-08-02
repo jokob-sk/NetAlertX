@@ -1112,38 +1112,92 @@ let animationTime = 300
 function showSpinner(stringKey = 'Loading') {
   const text = isEmpty(stringKey) ? "Loading" : getString(stringKey || "Loading");
   const spinner = $("#loadingSpinner");
-  
-  if (spinner.length && spinner.is(':visible')) {
-    clearTimeout(spinnerTimeout);
-    
-    $("#loadingSpinnerText").text(text);
-    spinner.addClass("visible");
+  const target = $(".spinnerTarget").first(); // Only use the first one if multiple exist
 
-    spinner.fadeIn(animationTime);
+  $("#loadingSpinnerText").text(text);
+
+  if (target.length) {
+    // Position relative to target
+    const offset = target.offset();
+    const width = target.outerWidth();
+    const height = target.outerHeight();
+
+    spinner.css({
+      position: "absolute",
+      top: offset.top,
+      left: offset.left,
+      width: width,
+      height: height,
+      zIndex: 800
+    });
   } else {
-    $("#loadingSpinnerText").text(text);
-
-    requestAnimationFrame(() => {
-      spinner.addClass("visible");
-      spinner.fadeIn(animationTime);
+    // Fullscreen fallback
+    spinner.css({
+      position: "fixed",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      zIndex: 800
     });
   }
+
+  requestAnimationFrame(() => {
+    spinner.addClass("visible");
+    spinner.fadeIn(animationTime);
+  });
 }
 
 function hideSpinner() {
   clearTimeout(spinnerTimeout);
-
   const spinner = $("#loadingSpinner");
 
-  if (spinner.length) {
-    spinner.removeClass("visible");
-    spinner.fadeOut(animationTime);
+  if (!spinner.length) return;
 
-    spinnerTimeout = setTimeout(() => {
-      spinner.removeClass("visible");
-      spinner.fadeOut(animationTime); // optional remove or hide again
-    }, 300);
+  const target = $(".spinnerTarget").first();
+
+  if (target.length) {
+    // Lock position to target
+    const offset = target.offset();
+    const width = target.outerWidth();
+    const height = target.outerHeight();
+
+    spinner.css({
+      position: "absolute",
+      top: offset.top,
+      left: offset.left,
+      width: width,
+      height: height,
+      zIndex: 800
+    });
+  } else {
+    // Fullscreen fallback
+    spinner.css({
+      position: "fixed",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      zIndex: 800
+    });
   }
+
+  // Trigger fade-out and only remove styles AFTER fade completes AND display is none
+  spinner.removeClass("visible").fadeOut(animationTime, () => {
+    // Ensure it's really hidden before resetting styles
+    spinner.css({
+      display: "none"
+    });
+
+    spinner.css({
+      position: "",
+      top: "",
+      left: "",
+      width: "",
+      height: "",
+      zIndex: ""
+    });
+  });
 }
 
     

@@ -8,7 +8,10 @@
 
 <!-- Main content ---------------------------------------------------------- -->
 <section class="content">
-
+  
+<script>
+  showSpinner();
+</script>
 
 <?php
 
@@ -143,7 +146,7 @@ $db->close();
           </a>
         </li>
       </ul>
-    <div class="tab-content">
+    <div class="tab-content spinnerTarget">
         <div class="tab-pane active" id="tab_DBTools">
                 <div class="db_info_table">
                     <div class="db_info_table_row">
@@ -709,6 +712,8 @@ window.onload = function asyncFooter() {
 
 </script>
 
-
+<script>
+  hideSpinner();
+</script>
 
 

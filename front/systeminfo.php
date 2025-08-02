@@ -42,15 +42,15 @@
                       <?= lang('Systeminfo_System');?>  
                     </span>
                 </a>
-                </li>
-                <li> 
+              </li>
+              <li> 
                 <a id="tabNetwork"    href="#panNetwork"    data-toggle="tab"> 
                   <i class="fa fa-sitemap fa-rotate-270"></i> 
                     <span class="dev-detail-tab-name">
                       <?= lang('Systeminfo_Network');?>    
                     </span>
                 </a>
-                </li>
+              </li>
               <li> 
                 <a id="tabStorage" href="#panStorage" data-toggle="tab"> 
                   <i class="fa fa-hdd"></i> 
@@ -61,30 +61,20 @@
                 </li>
             </ul>
             
-            <div class="tab-content" style="min-height: 430px;">
-
-<!-- tab page  ------------------------------------------------------------ -->
-
+            <div class="tab-content spinnerTarget" style="min-height: 430px;">
               <div class="tab-pane fade" data-php-file="systeminfoServer.php" id="panServer">
                <!-- PLACEHOLDER -->
               </div>                                                                         
-        
-<!-- tab page  ------------------------------------------------------------ -->
-
               <div class="tab-pane fade" data-php-file="systeminfoNetwork.php" id="panNetwork">
                  <!-- PLACEHOLDER -->     	        
               </div>
-
-<!-- tab page  ------------------------------------------------------------ -->
               <div class="tab-pane fade table-responsive" data-php-file="systeminfoStorage.php" id="panStorage">
                <!-- PLACEHOLDER -->
               </div>
-
             </div>
             <!-- /.tab-content -->
           </div>
           <!-- /.nav-tabs-custom -->
-
           <!-- </div> -->
         </div>
         <!-- /.col -->
@@ -93,59 +83,22 @@
     </section>
 
     <!-- /.content -->
-    <?php
-      require 'php/templates/footer.php';
-    ?>
+
   </div>
   <!-- /.content-wrapper -->
+
+  <?php
+      require 'php/templates/footer.php';
+    ?>
 
 <!-- ----------------------------------------------------------------------- -->
 
 <script>
 
-// function initializeTabs () {  
-
-//   key ="activeSysinfoTab"
-
-//   // Activate panel
-//   if(!emptyArr.includes(getCache(key)))
-//   {
-//     selectedTab = getCache(key);
-//   }
-
-//   $('.nav-tabs a[id='+ selectedTab +']').tab('show');
-
-//   // When changed save new current tab
-//   $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-//     setCache(key, $(e.target).attr('id'))
-  
-//     var target = $(e.target).attr("href") // activated tab
-
-//     if (target === '#panStorage' && !$(target).data('loaded')) {
-//       // Load content only once
-
-//       showSpinner();
-//       $(target).load('systeminfoStorage.php', function () {
-//         $(target).data('loaded', true);
-//       });
-//     }    
-//   });
-// }
-
-// window.onload = function async()
-// {
-//   initializeTabs();  
-// }
-
-
 function loadTabContent(target) {
   const $tab = $(target);
   const phpFile = $tab.data('php-file');
 
-  console.log(phpFile);
-  console.log(target);
-  console.log($tab );
-  
 
   if (phpFile && !$tab.data('loaded')) {
     showSpinner();
@@ -164,8 +117,6 @@ function initializeTabs() {
     selectedTab = cached;
   }
 
-  console.log(selectedTab);
-  
   // Activate the correct tab
   const $tabLink = $('.nav-tabs a[id="' + selectedTab + '"]');
   $tabLink.tab('show');

@@ -123,7 +123,7 @@
               </div>
             </ul>
             
-            <div class="tab-content" style="min-height: 430px;">
+            <div class="tab-content spinnerTarget" style="min-height: 430px;">
 
 <!-- tab page 1 ------------------------------------------------------------ -->
 
