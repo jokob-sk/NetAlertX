@@ -541,7 +541,7 @@ function updateDevicePageName(mac) {
 
 window.onload = function async()
 {
-  initializeTabs();
+  // initializeTabs();
   updateChevrons(mac);
   updateDevicePageName(mac);
 

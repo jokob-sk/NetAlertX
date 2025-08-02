@@ -59,6 +59,9 @@ services:
       - ${DEV_LOCATION}/front/presence.php:/app/front/presence.php
       - ${DEV_LOCATION}/front/settings.php:/app/front/settings.php      
       - ${DEV_LOCATION}/front/systeminfo.php:/app/front/systeminfo.php      
+      - ${DEV_LOCATION}/front/systeminfoNetwork.php:/app/front/systeminfoNetwork.php      
+      - ${DEV_LOCATION}/front/systeminfoServer.php:/app/front/systeminfoServer.php      
+      - ${DEV_LOCATION}/front/systeminfoStorage.php:/app/front/systeminfoStorage.php      
       - ${DEV_LOCATION}/front/cloud_services.php:/app/front/cloud_services.php      
       - ${DEV_LOCATION}/front/report.php:/app/front/report.php      
       - ${DEV_LOCATION}/front/workflows.php:/app/front/workflows.php      
