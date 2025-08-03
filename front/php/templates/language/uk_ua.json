@@ -301,7 +301,7 @@
     "Gen_Cancel": "Скасувати",
     "Gen_Change": "Зміна",
     "Gen_Copy": "Запустити",
-    "Gen_CopyToClipboard": "",
+    "Gen_CopyToClipboard": "Копіювати в буфер обміну",
     "Gen_DataUpdatedUITakesTime": "Добре. Оновлення інтерфейсу може зайняти деякий час, якщо сканування виконується.",
     "Gen_Delete": "Видалити",
     "Gen_DeleteAll": "Видалити все",
