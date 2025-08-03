@@ -22,7 +22,7 @@
   // show spinning icon
   showSpinner()
 
-  var selectedTab         = 'tabServer';
+  //var selectedTab         = 'tabServer';
 </script>
 
 <!-- Page ------------------------------------------------------------------ -->
@@ -99,7 +99,6 @@ function loadTabContent(target) {
   const $tab = $(target);
   const phpFile = $tab.data('php-file');
 
-
   if (phpFile && !$tab.data('loaded')) {
     showSpinner();
     $tab.load(phpFile, function () {
@@ -110,7 +109,7 @@ function loadTabContent(target) {
 
 function initializeTabs() {
   const key = "activeSysinfoTab";
-  let selectedTab = "#panServer"; // fallback default
+  let selectedTab = "tabServer"; // fallback default
 
   const cached = getCache(key);
   if (!emptyArr.includes(cached)) {
