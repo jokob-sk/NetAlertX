@@ -13,7 +13,7 @@ from models.user_events_queue_instance import UserEventsQueueInstance
 from messaging.in_app import write_notification
 
 # Import the start_server function
-from graphql_server.graphql_server_start import start_server 
+from api_server.api_server_start import start_server 
 
 apiEndpoints = []
 
