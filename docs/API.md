@@ -323,6 +323,10 @@ scrape_configs:
       credentials: <API_TOKEN>
 ```
 
+### Grafana template
+
+Grafana template sample: [Download json](./samples/API/Grafana_Dashboard.json)
+
 ## API Endpoint: /log files
 
 This API endpoint retrieves files from the `/app/log` folder. 

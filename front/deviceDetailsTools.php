@@ -443,6 +443,37 @@
         }
 
         // init first time
-        initNmapButtons();
-        initCopyFromDevice();
+        // ----------------------------------------------------------- 
+        var toolsPageInitialized = false;
+
+        function initDeviceToolsPage()
+        {
+            // Only proceed if .panTools is visible
+            if (!$('#panTools:visible').length) {
+                return; // exit early if nothing is visible
+            }
+
+            // init page once
+            if (toolsPageInitialized) return;
+            toolsPageInitialized = true;
+
+            initNmapButtons();
+            initCopyFromDevice();
+
+            hideSpinner();
+
+        }
+
+        // -----------------------------------------------------------------------------
+        // Recurring function to monitor the URL and reinitialize if needed
+        function deviceToolsPageUpdater() {
+            initDeviceToolsPage();
+
+            // Run updater again after delay
+            setTimeout(deviceToolsPageUpdater, 200);
+        }
+
+        // start updater
+        deviceToolsPageUpdater();  
+
 </script>
