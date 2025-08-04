@@ -100,7 +100,7 @@ echo '<div class="box box-solid">
             <div class="box-body">
 			<div class="row">
 			  <div class="col-sm-3 sysinfo_network_a">' . lang('Systeminfo_Network_IP') . '</div>
-			  <div class="col-sm-9 sysinfo_network_b">' . shell_exec("curl https://ifconfig.co") . '</div>
+			  <div class="col-sm-9 sysinfo_network_b" id="external-ip">Loading...</div>
 			</div>
 			<div class="row">
 			  <div class="col-sm-3 sysinfo_network_a">' . lang('Systeminfo_Network_IP_Connection') . '</div>
@@ -274,19 +274,35 @@ function renderAvailableIpsTable(allIps, usedIps) {
 
 // INIT
 $(document).ready(function() {
+
+  // available IPs
   fetchUsedIps(usedIps => {
     const allIps = inferNetworkRange(usedIps);
     renderAvailableIpsTable(allIps, usedIps);
   });
 
   setTimeout(() => {
+    // Available IPs datatable
     $('#networkTable').DataTable({
-    searching: true,
-    order: [[0, "desc"]],
-    initComplete: function(settings, json) {
-        hideSpinner(); // Called after the DataTable is fully initialized
-    }
-  });    
+      searching: true,
+      order: [[0, "desc"]],
+      initComplete: function(settings, json) {
+          hideSpinner(); // Called after the DataTable is fully initialized
+      }
+    });    
+
+    // external IP
+    $.ajax({
+      url: 'https://api64.ipify.org?format=json',
+      method: 'GET',
+      timeout: 10000, // 10 seconds timeout
+      success: function (response) {
+        $('#external-ip').text(response.ip);
+      },
+      error: function() {
+        $('#external-ip').text('ERROR');
+      }
+    });
   }, 200);
 });
 
