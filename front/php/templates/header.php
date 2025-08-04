@@ -139,8 +139,8 @@
 <body class="hold-transition fixed <?php echo $pia_skin_selected;?>  theme-<?php echo $UI_THEME;?>  sidebar-mini" onLoad="update_servertime();" >
 
 <div id="loadingSpinner">
-  <div class="pa_semitransparent-panel"></div>
-  <div class="panel panel-default pa_spinner">
+  <div class="nax_semitransparent-panel"></div>
+  <div class="panel panel-default nax_spinner">
     <table>
       <td id="loadingSpinnerText" width="130px" ></td>
       <td><i class="fa-solid fa-spinner fa-spin-pulse"></i></td>

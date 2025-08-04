@@ -221,6 +221,108 @@ Example JSON of the `table_devices.json` endpoint with two Devices (database row
 
 ```
 
+## API Endpoint: Prometheus Exporter
+
+* **Endpoint URL**: `/metrics`
+* **Host**: (where NetAlertX exporter is running)
+* **Port**: as configured in the `GRAPHQL_PORT` setting (`20212` by default)
+
+---
+
+### Example Output of the `/metrics` Endpoint
+
+Below is a representative snippet of the metrics you may find when querying the `/metrics` endpoint for `netalertx`. It includes both aggregate counters and `device_status` labels per device.
+
+```
+netalertx_connected_devices 31
+netalertx_offline_devices 54
+netalertx_down_devices 0
+netalertx_new_devices 0
+netalertx_archived_devices 31
+netalertx_favorite_devices 2
+netalertx_my_devices 54
+
+netalertx_device_status{device="Net - Huawei", mac="Internet", ip="1111.111.111.111", vendor="None", first_connection="2021-01-01 00:00:00", last_connection="2025-08-04 17:57:00", dev_type="Router", device_status="Online"} 1
+netalertx_device_status{device="Net - USG", mac="74:ac:74:ac:74:ac", ip="192.168.1.1", vendor="Ubiquiti Networks Inc.", first_connection="2022-02-12 22:05:00", last_connection="2025-06-07 08:16:49", dev_type="Firewall", device_status="Archived"} 1
+netalertx_device_status{device="Raspberry Pi 4 LAN", mac="74:ac:74:ac:74:74", ip="192.168.1.9", vendor="Raspberry Pi Trading Ltd", first_connection="2022-02-12 22:05:00", last_connection="2025-08-04 17:57:00", dev_type="Singleboard Computer (SBC)", device_status="Online"} 1
+...
+```
+
+---
+
+### Metrics Explanation
+
+#### 1. Aggregate Device Counts
+
+Metric names prefixed with `netalertx_` provide aggregated counts by device status:
+
+* `netalertx_connected_devices`: number of devices currently connected
+* `netalertx_offline_devices`: devices currently offline
+* `netalertx_down_devices`: down/unreachable devices
+* `netalertx_new_devices`: devices recently detected
+* `netalertx_archived_devices`: archived devices
+* `netalertx_favorite_devices`: user-marked favorite devices
+* `netalertx_my_devices`: devices associated with the current user context
+
+These numeric values give a high-level overview of device distribution.
+
+#### 2. Per‑Device Status with Labels
+
+Each individual device is represented by a `netalertx_device_status` metric, with descriptive labels:
+
+* `device`: friendly name of the device
+* `mac`: MAC address (or placeholder)
+* `ip`: last recorded IP address
+* `vendor`: manufacturer or "None" if unknown
+* `first_connection`: timestamp when the device was first observed
+* `last_connection`: most recent contact timestamp
+* `dev_type`: device category or type
+* `device_status`: current status (Online / Offline / Archived / Down / ...)
+
+The metric value is always `1` (indicating presence or active state) and the combination of labels identifies the device.
+
+---
+
+### How to Query with `curl`
+
+To fetch the metrics from the NetAlertX exporter:
+
+```sh
+curl 'http://<server_ip>:<GRAPHQL_PORT>/metrics' \
+  -H 'Authorization: Bearer <API_TOKEN>' \
+  -H 'Accept: text/plain'
+```
+
+Replace:
+
+* `<server_ip>`: IP or hostname of the NetAlertX server
+* `<GRAPHQL_PORT>`: port specified in your `GRAPHQL_PORT` setting  (default: `20212`)
+* `<API_TOKEN>` your Bearer token from the `API_TOKEN` setting
+
+---
+
+### Summary
+
+* **Endpoint**: `/metrics` provides both summary counters and per-device status entries.
+* **Aggregate metrics** help monitor overall device states.
+* **Detailed metrics** expose each device’s metadata via labels.
+* **Use case**: feed into Prometheus for scraping, monitoring, alerting, or charting dashboard views.
+
+### Prometheus Scraping Configuration
+
+```yaml
+scrape_configs:
+  - job_name: 'netalertx'
+    metrics_path: /metrics
+    scheme: http
+    scrape_interval: 60s
+    static_configs:
+      - targets: ['<server_ip>:<GRAPHQL_PORT>']
+    authorization:
+      type: Bearer
+      credentials: <API_TOKEN>
+```
+
 ## API Endpoint: /log files
 
 This API endpoint retrieves files from the `/app/log` folder. 

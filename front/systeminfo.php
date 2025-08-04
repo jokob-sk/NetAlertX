@@ -21,8 +21,7 @@
 
   // show spinning icon
   showSpinner()
-
-  //var selectedTab         = 'tabServer';
+  
 </script>
 
 <!-- Page ------------------------------------------------------------------ -->
