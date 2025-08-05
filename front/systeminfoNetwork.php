@@ -264,8 +264,6 @@ function fetchUsedIps(callback) {
 function renderAvailableIpsTable(allIps, usedIps) {
   const availableIps = allIps.filter(row => !usedIps.includes(row.ip));
 
-  console.log(allIps);
-  console.log(usedIps);
   console.log(availableIps);
 
   $('#availableIpsTable').DataTable({

@@ -715,45 +715,7 @@ function initSelect2() {
           {
             var selectEl = $(this).select2({
               templateSelection: function (data, container) {
-                if (!data.id) return data.text; // default for placeholder etc.
-
-                const device = getDevDataByMac(data.id);
-
-                const badge = getStatusBadgeParts(
-                  device.devPresentLastScan, 
-                  device.devAlertDown, 
-                  device.devMac
-                )
-
-                $(container).addClass(badge.cssClass);
-                
-                // Custom HTML
-                const html = $(`
-                  <a href="${badge.url}" target="_blank">
-                    <span class="custom-chip hover-node-info" 
-                          data-name="${device.devName}"
-                          data-ip="${device.devLastIP}"
-                          data-mac="${device.devMac}"
-                          data-vendor="${device.devVendor}"
-                          data-type="${device.devType}"
-                          data-lastseen="${device.devLastConnection}"
-                          data-firstseen="${device.devFirstConnection}"
-                          data-relationship="${device.devParentRelType}"
-                          data-status="${device.devStatus}"
-                          data-present="${device.devPresentLastScan}"
-                          data-alert="${device.devAlertDown}"
-                          data-icon="${device.devIcon}"
-                    >
-                      <span class="iconPreview">${atob(device.devIcon)}</span>
-                      ${data.text}
-                      <span>
-                      (${badge.iconHtml})
-                      </span
-                    </span>
-                  </a>
-                `);
-          
-                return html;
+                return $(renderDeviceLink(data, container));
               },
               escapeMarkup: function (m) {
                 return m; // Allow HTML
@@ -816,6 +778,48 @@ function initSelect2() {
     }, 1000);
   }  
 }
+
+// ------------------------------------------
+// Render a device link with hover-over functionality
+function renderDeviceLink(data, container, useName=false) {
+  if (!data.id) return data.text; // default placeholder etc.
+
+  const device = getDevDataByMac(data.id);
+
+  const badge = getStatusBadgeParts(
+    device.devPresentLastScan,
+    device.devAlertDown,
+    device.devMac
+  );
+
+  $(container).addClass(badge.cssClass);
+
+  return `
+    <a href="${badge.url}" target="_blank">
+      <span class="custom-chip hover-node-info" 
+            data-name="${device.devName}"
+            data-ip="${device.devLastIP}"
+            data-mac="${device.devMac}"
+            data-vendor="${device.devVendor}"
+            data-type="${device.devType}"
+            data-lastseen="${device.devLastConnection}"
+            data-firstseen="${device.devFirstConnection}"
+            data-relationship="${device.devParentRelType}"
+            data-status="${device.devStatus}"
+            data-present="${device.devPresentLastScan}"
+            data-alert="${device.devAlertDown}"
+            data-icon="${device.devIcon}"
+      >
+        <span class="iconPreview">${atob(device.devIcon)}</span>
+        ${useName ? device.devName : data.text}
+        <span>
+        (${badge.iconHtml})
+        </span>
+      </span>
+    </a>
+  `;
+}
+
 
 // ------------------------------------------
 // Display device info on hover (attach only once)

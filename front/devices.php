@@ -503,36 +503,36 @@ function collectFilters() {
 function mapColumnIndexToFieldName(index, tableColumnVisible) {
   // the order is important, don't change it!
   const columnNames = [
-    "devName", 
-    "devOwner", 
-    "devType", 
-    "devIcon", 
-    "devFavorite", 
-    "devGroup", 
-    "devFirstConnection", 
-    "devLastConnection", 
-    "devLastIP", 
-    "devIsRandomMac",   // resolved on the fly
-    "devStatus", // resolved on the fly
-    "devMac", 
-    "devIpLong", //formatIPlong(device.devLastIP) || "",  // IP orderable
-    "rowid", 
-    "devParentMAC", 
-    "devParentChildrenCount",  // resolved on the fly
-    "devLocation",
-    "devVendor", 
-    "devParentPort", 
-    "devGUID", 
-    "devSyncHubNode", 
-    "devSite", 
-    "devSSID", 
-    "devSourcePlugin",
-    "devPresentLastScan",
-    "devAlertDown",
-    "devCustomProps",
-    "devFQDN",
-    "devParentRelType",
-    "devReqNicsOnline"
+    "devName",                 // 0
+    "devOwner",                // 1
+    "devType",                 // 2
+    "devIcon",                 // 3
+    "devFavorite",             // 4
+    "devGroup",                // 5
+    "devFirstConnection",      // 6
+    "devLastConnection",       // 7
+    "devLastIP",               // 8
+    "devIsRandomMac",          // 9 resolved on the fly
+    "devStatus",               // 10 resolved on the fly
+    "devMac",                  // 11
+    "devIpLong",               // 12 formatIPlong(device.devLastIP) || "",  // IP orderable
+    "rowid",                   // 13
+    "devParentMAC",            // 14
+    "devParentChildrenCount",  // 15 resolved on the fly
+    "devLocation",             // 16
+    "devVendor",               // 17
+    "devParentPort",           // 18
+    "devGUID",                 // 19
+    "devSyncHubNode",          // 20
+    "devSite",                 // 21
+    "devSSID",                 // 22
+    "devSourcePlugin",         // 23
+    "devPresentLastScan",      // 24
+    "devAlertDown",            // 25
+    "devCustomProps",          // 26
+    "devFQDN",                 // 27
+    "devParentRelType",        // 28
+    "devReqNicsOnline"         // 29
   ];
 
   // console.log("OrderBy: " + columnNames[tableColumnOrder[index]]);  
@@ -899,6 +899,28 @@ function initializeDatatable (status) {
           }
       } },
 
+      // Parent Mac      
+      {targets: [mapIndx(14)],
+        'createdCell': function (td, cellData, rowData, row, col) {
+          if (!cellData) {
+            $(td).html('');
+            return;
+          }
+
+          const data = {
+            id: cellData,       // MAC address
+            text: cellData      // Optional display text (you could use a name or something else)
+          };
+
+          spanWrap = $(`<span class="custom-badge text-white"></span>`)
+
+          $(td).html(spanWrap);
+
+          const chipHtml = renderDeviceLink(data, spanWrap, true); // pass the td as container
+
+          $(spanWrap).append(chipHtml); 
+        } 
+      },
       // Status color      
       {targets: [mapIndx(10)],
         'createdCell': function (td, cellData, rowData, row, col) {

@@ -1489,7 +1489,7 @@ input[readonly] {
 }
 
 #tableDevicesBox td svg, #tableDevicesBox td i{
-    height: 1.5em !important;
+    height: 1em !important;
 }
 
 #TileCards .tile .inner
@@ -1648,6 +1648,23 @@ input[readonly] {
     transform: translate(-50%, -50%);
     pointer-events: none;
   }
+
+.custom-badge a
+{
+    color: #fff !important;
+    font-size: 14px;
+}
+.custom-badge
+{    
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    border-style: solid;
+    margin-right: 5px;
+    margin-top: 5px;
+    padding: 0 5px;
+    font-size: 14px;
+    display: inline-block;
+}
 
 #deviceDetailsEdit .form-control
 {
