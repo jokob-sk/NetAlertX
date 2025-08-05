@@ -9,11 +9,33 @@
 
 <?php
 
+function getExternalIp() {
+  $ch = curl_init('https://api64.ipify.org?format=json');
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+  curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+  $response = curl_exec($ch);
+  if (curl_errno($ch)) {
+      curl_close($ch);
+      return 'ERROR: ' . curl_error($ch);
+  }
+  curl_close($ch);
+
+  $data = json_decode($response, true);
+  if (isset($data['ip'])) {
+      return htmlspecialchars($data['ip']);
+  }
+  return 'ERROR: Invalid response';
+}
+
 // ----------------------------------------------------------
 // Network
 // ----------------------------------------------------------
 
 //Network stats
+// Server IP
+
+$externalIp = getExternalIp();
+
 // Check Server name
 if (!empty(gethostname())) { $network_NAME = gethostname(); } else { $network_NAME = lang('Systeminfo_Network_Server_Name_String'); }
 // Check HTTPS
@@ -100,7 +122,7 @@ echo '<div class="box box-solid">
             <div class="box-body">
 			<div class="row">
 			  <div class="col-sm-3 sysinfo_network_a">' . lang('Systeminfo_Network_IP') . '</div>
-			  <div class="col-sm-9 sysinfo_network_b" id="external-ip">Loading...</div>
+			  <div class="col-sm-9 sysinfo_network_b" id="external-ip">' .$externalIp. '</div>
 			</div>
 			<div class="row">
 			  <div class="col-sm-3 sysinfo_network_a">' . lang('Systeminfo_Network_IP_Connection') . '</div>
@@ -290,19 +312,6 @@ $(document).ready(function() {
           hideSpinner(); // Called after the DataTable is fully initialized
       }
     });    
-
-    // external IP
-    $.ajax({
-      url: 'https://api64.ipify.org?format=json',
-      method: 'GET',
-      timeout: 10000, // 10 seconds timeout
-      success: function (response) {
-        $('#external-ip').text(response.ip);
-      },
-      error: function() {
-        $('#external-ip').text('ERROR');
-      }
-    });
   }, 200);
 });
 
