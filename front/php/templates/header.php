@@ -436,8 +436,24 @@
         </li>
 
         <!-- system info menu item -->
-        <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('systeminfo.php') ) ){ echo 'active'; } ?>">
-          <a href="systeminfo.php"><i class="fa fa-fw fa-info-circle"></i> <span><?= lang('Navigation_SystemInfo');?></span></a>
+        <li class=" treeview <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('systeminfo.php') ) ){ echo 'active menu-open'; } ?>">
+          <a href="#">
+          <i class="fa fa-fw fa-info-circle"></i> <span><?= lang('Navigation_SystemInfo');?></span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu " style="display: <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('systeminfo.php') ) ){ echo 'block'; } else {echo 'none';} ?>;">                    
+            <li>
+              <a href="systeminfo.php#panServer" onclick="setCache('activeSysinfoTab','tabServer');initializeTabs()"><?= lang('Systeminfo_System');?></a>
+            </li>           
+            <li>
+              <a href="systeminfo.php#panNetwork"  onclick="setCache('activeSysinfoTab','tabNetwork');initializeTabs()"><?= lang('Systeminfo_Network');?></a>
+            </li>           
+            <li>
+              <a href="systeminfo.php#panStorage" onclick="setCache('activeSysinfoTab','tabStorage');initializeTabs()"><?= lang('Systeminfo_Storage');?></a>
+            </li>           
+          </ul>
         </li>
 
       </ul>
@@ -449,24 +465,6 @@
 
 
 <script defer>
-
-// Generate work-in-progress icons
-function workInProgress() {
-
-  if($(".work-in-progress").length > 0 && $(".work-in-progress").html().trim() == "")
-  {
-    $(".work-in-progress").append(`
-              <a href="https://github.com/jokob-sk/NetAlertX/issues" target="_blank">
-                <b class="pointer" title="${getString("Gen_Work_In_Progress")}">🦺</b>
-              </a>
-            `)
-  }
-}
-
-//--------------------------------------------------------------
-
-
-  //--------------------------------------------------------------
 
   function toggleFullscreen() {
 
@@ -485,6 +483,5 @@ function workInProgress() {
 
   // Update server state in the header
   updateState()
-  workInProgress() 
   
 </script>

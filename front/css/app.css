@@ -387,6 +387,16 @@ body
     margin-bottom: 0px;
 }
 
+.plugin-content #tabs-location .nav-tabs-custom > .nav-tabs > li
+{
+    display: contents;
+}
+
+.plugin-content .left-nav
+{
+    display: contents;
+}
+
 .pa-small-box-2 .inner h3 {
     margin-left: 0em;
     margin-bottom: 1.3em;
@@ -1411,6 +1421,7 @@ input[readonly] {
 .iconPreview svg{
     min-width: 20px;
     max-width: 20px;
+    margin-bottom: -3px;
 }
 
 
@@ -1659,8 +1670,6 @@ input[readonly] {
     border: 1px solid #aaa;
     border-radius: 4px;
     border-style: solid;
-    margin-right: 5px;
-    margin-top: 5px;
     padding: 0 5px;
     font-size: 14px;
     display: inline-block;

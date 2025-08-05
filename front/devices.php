@@ -902,7 +902,7 @@ function initializeDatatable (status) {
       // Parent Mac      
       {targets: [mapIndx(14)],
         'createdCell': function (td, cellData, rowData, row, col) {
-          if (!cellData) {
+          if (!isValidMac(cellData)) {
             $(td).html('');
             return;
           }

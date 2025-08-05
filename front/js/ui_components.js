@@ -781,7 +781,7 @@ function initSelect2() {
 
 // ------------------------------------------
 // Render a device link with hover-over functionality
-function renderDeviceLink(data, container, useName=false) {
+function renderDeviceLink(data, container, useName = false) {
   if (!data.id) return data.text; // default placeholder etc.
 
   const device = getDevDataByMac(data.id);
@@ -792,34 +792,36 @@ function renderDeviceLink(data, container, useName=false) {
     device.devMac
   );
 
-  $(container).addClass(badge.cssClass);
-
+  // Add badge class and hover-info class to container
+  $(container)
+    .addClass(`${badge.cssClass} hover-node-info`)
+    .attr({
+      'data-name': device.devName,
+      'data-ip': device.devLastIP,
+      'data-mac': device.devMac,
+      'data-vendor': device.devVendor,
+      'data-type': device.devType,
+      'data-lastseen': device.devLastConnection,
+      'data-firstseen': device.devFirstConnection,
+      'data-relationship': device.devParentRelType,
+      'data-status': device.devStatus,
+      'data-present': device.devPresentLastScan,
+      'data-alert': device.devAlertDown,
+      'data-icon': device.devIcon
+    });
+  
   return `
     <a href="${badge.url}" target="_blank">
-      <span class="custom-chip hover-node-info" 
-            data-name="${device.devName}"
-            data-ip="${device.devLastIP}"
-            data-mac="${device.devMac}"
-            data-vendor="${device.devVendor}"
-            data-type="${device.devType}"
-            data-lastseen="${device.devLastConnection}"
-            data-firstseen="${device.devFirstConnection}"
-            data-relationship="${device.devParentRelType}"
-            data-status="${device.devStatus}"
-            data-present="${device.devPresentLastScan}"
-            data-alert="${device.devAlertDown}"
-            data-icon="${device.devIcon}"
-      >
+      <span class="custom-chip">
         <span class="iconPreview">${atob(device.devIcon)}</span>
         ${useName ? device.devName : data.text}
         <span>
-        (${badge.iconHtml})
+          (${badge.iconHtml})
         </span>
       </span>
     </a>
   `;
 }
-
 
 // ------------------------------------------
 // Display device info on hover (attach only once)

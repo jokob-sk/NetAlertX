@@ -197,7 +197,7 @@ class Query(ObjectType):
                 searchable_fields = [
                     "devName", "devMac", "devOwner", "devType", "devVendor", "devLastIP",
                     "devGroup", "devComments", "devLocation", "devStatus", "devSSID", 
-                    "devSite", "devSourcePlugin", "devSyncHubNode", "devFQDN", "devParentRelType"
+                    "devSite", "devSourcePlugin", "devSyncHubNode", "devFQDN", "devParentRelType", "devParentMAC"
                 ]
 
                 search_term = options.search.lower()
