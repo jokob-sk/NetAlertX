@@ -1,8 +1,11 @@
-# Icon and Type guessing: Device heuristics
+# Device Heuristics: Icon and Type Guessing
 
 This module is responsible for inferring the most likely **device type** and **icon** based on minimal identifying data like MAC address, vendor, IP, or device name.
 
 It does this using a set of heuristics defined in an external JSON rules file, which it evaluates **in priority order**.
+
+>[!NOTE]
+> You can find the full source code of the heuristics module in the `device_heuristics.py` file.  
 
 ---
 
@@ -23,6 +26,9 @@ Rules are defined in a file called `device_heuristics_rules.json` (located under
 ]
 ```
 
+>[!NOTE]
+> Feel free to raise a PR in case you'd like to add any rules into the `device_heuristics_rules.json` file. Please place new rules into the correct position and consider the priority of already available rules.
+
 ### Supported fields:
 
 | Field              | Type                 | Description                                                     |
@@ -41,44 +47,29 @@ Rules are defined in a file called `device_heuristics_rules.json` (located under
 
 The function `guess_device_attributes(...)` runs a series of matching functions in strict order:
 
-```text
-1. MAC + Vendor → match_mac_and_vendor()
-2. Vendor only → match_vendor()
-3. Name pattern → match_name()
-4. IP pattern → match_ip()
-5. Final fallback → defaults
-```
+1. MAC + Vendor → `match_mac_and_vendor()`
+2. Vendor only → `match_vendor()`
+3. Name pattern → `match_name()`
+4. IP pattern → `match_ip()`
+5. Final fallback → defaults defined in the `NEWDEV_devIcon` and `NEWDEV_devType` settings.
 
-### Even if defaults are passed in, matching continues
+### Use of default values
 
-For example, when `default_icon` is passed in from an external source (like `NEWDEV_devIcon`), that value **does not halt the guessing process**. The matchers still try to find a better match:
+The guessing process runs for every device **as long as the current type or icon still matches the default values**. Even if earlier heuristics return a match, the system continues evaluating additional clues — like name or IP — to try and replace placeholders.
 
 ```python
-# Even if default_icon is passed, match_ip() and others will still run
+# Still considered a match attempt if current values are defaults
 if (not type_ or type_ == default_type) or (not icon or icon == default_icon):
     type_, icon = match_ip(ip, default_type, default_icon)
 ```
 
-This is by design — you can pass in known fallbacks (e.g. `"unknown_icon"`), but the system will still guess and overwrite them **if it finds a better match**.
-
----
-
-## Defaults & Normalization
-
-Input sanitization ensures missing data doesn’t break detection:
-
-| Input         | Normalized to         |
-| ------------- | --------------------- |
-| `vendor=None` | `"unknown"`           |
-| `mac=None`    | `"00:00:00:00:00:00"` |
-| `ip=None`     | `"169.254.0.0"`       |
-| `name=None`   | `"(unknown)"`         |
-
-These placeholder values **still go through the matching pipeline**. This makes the logic robust and ensures IP- or name-based matching can still work even if MAC/Vendor are unknown.
+In other words: if the type or icon is still `"unknown"` (or matches the default), the system assumes the match isn’t final — and keeps looking. It stops only when both values are non-default (defaults are defined in the `NEWDEV_devIcon` and `NEWDEV_devType` settings).
 
 ---
 
 ## Match Behavior (per function)
+
+These functions are executed in the following order:
 
 ### `match_mac_and_vendor(mac_clean, vendor, ...)`
 
@@ -109,7 +100,7 @@ These placeholder values **still go through the matching pipeline**. This makes 
 * If missing, it falls back to the passed-in `default_icon` (`NEWDEV_devIcon` setting)
 * If a match is found but icon is still blank, default is used
 
-**TL;DR:** If a match sets the type but has no icon, the default icon is used. If the match has both, defaults are overridden.
+**TL;DR:** Type and icon must both be matched. If only one is matched, the other falls back to the default.
 
 ---
 

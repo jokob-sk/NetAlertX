@@ -1,47 +1,4 @@
 {
-  "__inputs": [
-    {
-      "name": "DS_PROMETHEUS",
-      "label": "Prometheus",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "prometheus",
-      "pluginName": "Prometheus"
-    }
-  ],
-  "__elements": {},
-  "__requires": [
-    {
-      "type": "panel",
-      "id": "barchart",
-      "name": "Bar chart",
-      "version": ""
-    },
-    {
-      "type": "grafana",
-      "id": "grafana",
-      "name": "Grafana",
-      "version": "12.0.0"
-    },
-    {
-      "type": "datasource",
-      "id": "prometheus",
-      "name": "Prometheus",
-      "version": "1.0.0"
-    },
-    {
-      "type": "panel",
-      "id": "stat",
-      "name": "Stat",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "table",
-      "name": "Table",
-      "version": ""
-    }
-  ],
   "annotations": {
     "list": [
       {
@@ -61,14 +18,11 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": null,
+  "id": 7,
   "links": [],
   "panels": [
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -77,8 +31,6 @@
           },
           "decimals": 0,
           "mappings": [],
-          "max": 105,
-          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -122,12 +74,8 @@
       "pluginVersion": "12.0.0",
       "targets": [
         {
-          "expr": "netalertx_total_devices",
-          "refId": "A",
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          }
+          "expr": "netalertx_connected_devices + netalertx_offline_devices",
+          "refId": "A"
         }
       ],
       "title": "Total Devices",
@@ -136,7 +84,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "PBFA97CFB590B2093"
       },
       "fieldConfig": {
         "defaults": {
@@ -190,12 +138,12 @@
       "pluginVersion": "12.0.0",
       "targets": [
         {
-          "expr": "netalertx_connected_devices",
-          "refId": "A",
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          }
+            "uid": "PBFA97CFB590B2093"
+          },
+          "expr": "netalertx_connected_devices",
+          "refId": "A"
         }
       ],
       "title": "Connected",
@@ -204,7 +152,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "PBFA97CFB590B2093"
       },
       "fieldConfig": {
         "defaults": {
@@ -259,12 +207,12 @@
       "pluginVersion": "12.0.0",
       "targets": [
         {
-          "expr": "netalertx_favorite_devices",
-          "refId": "A",
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          }
+            "uid": "PBFA97CFB590B2093"
+          },
+          "expr": "netalertx_favorite_devices",
+          "refId": "A"
         }
       ],
       "title": "Favorites",
@@ -273,7 +221,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "PBFA97CFB590B2093"
       },
       "fieldConfig": {
         "defaults": {
@@ -328,12 +276,12 @@
       "pluginVersion": "12.0.0",
       "targets": [
         {
-          "expr": "netalertx_new_devices",
-          "refId": "A",
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          }
+            "uid": "PBFA97CFB590B2093"
+          },
+          "expr": "netalertx_new_devices",
+          "refId": "A"
         }
       ],
       "title": "New Devices",
@@ -342,7 +290,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "PBFA97CFB590B2093"
       },
       "fieldConfig": {
         "defaults": {
@@ -397,12 +345,12 @@
       "pluginVersion": "12.0.0",
       "targets": [
         {
-          "expr": "netalertx_down_devices",
-          "refId": "A",
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          }
+            "uid": "PBFA97CFB590B2093"
+          },
+          "expr": "netalertx_down_devices",
+          "refId": "A"
         }
       ],
       "title": "Down",
@@ -411,7 +359,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "PBFA97CFB590B2093"
       },
       "fieldConfig": {
         "defaults": {
@@ -466,12 +414,12 @@
       "pluginVersion": "12.0.0",
       "targets": [
         {
-          "expr": "netalertx_archived_devices",
-          "refId": "A",
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          }
+            "uid": "PBFA97CFB590B2093"
+          },
+          "expr": "netalertx_archived_devices",
+          "refId": "A"
         }
       ],
       "title": "Archived",
@@ -480,7 +428,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "PBFA97CFB590B2093"
       },
       "fieldConfig": {
         "defaults": {
@@ -605,31 +553,31 @@
       "pluginVersion": "12.0.0",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
           "expr": "netalertx_connected_devices",
           "legendFormat": "Connected",
-          "refId": "A",
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          }
+          "refId": "A"
         },
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
           "expr": "netalertx_total_devices - (netalertx_connected_devices + netalertx_down_devices)",
           "legendFormat": "Offline",
-          "refId": "B",
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          }
+          "refId": "B"
         },
         {
-          "expr": "netalertx_down_devices",
-          "legendFormat": "Down Devices",
-          "refId": "C",
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          }
+            "uid": "PBFA97CFB590B2093"
+          },
+          "expr": "netalertx_down_devices",
+          "legendFormat": "Down Devices",
+          "refId": "C"
         }
       ],
       "title": "Device Presence",
@@ -638,7 +586,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "PBFA97CFB590B2093"
       },
       "description": "Connected (Online) Devices",
       "fieldConfig": {
@@ -826,15 +774,15 @@
       "pluginVersion": "12.0.0",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
           "editorMode": "code",
           "expr": "netalertx_device_status{device_status=\"Online\"}",
           "format": "table",
           "range": true,
-          "refId": "A",
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          }
+          "refId": "A"
         }
       ],
       "title": "Connected Devices",
@@ -892,7 +840,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "PBFA97CFB590B2093"
       },
       "description": "Disconnected(Offline) Devices",
       "fieldConfig": {
@@ -1079,15 +1027,15 @@
       "pluginVersion": "12.0.0",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
           "editorMode": "code",
           "expr": "netalertx_device_status{device_status=\"Offline\"}",
           "format": "table",
           "range": true,
-          "refId": "A",
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          }
+          "refId": "A"
         }
       ],
       "title": "Disconnected Devices",
@@ -1143,6 +1091,7 @@
       "type": "table"
     }
   ],
+  "preload": false,
   "refresh": "30s",
   "schemaVersion": 41,
   "tags": [],
@@ -1156,7 +1105,6 @@
   "timepicker": {},
   "timezone": "browser",
   "title": "NetAlertX Overview",
-  "uid": "netalertx-overview_7_26_2025",
-  "version": 7,
-  "weekStart": ""
+  "uid": "netalertx-overview_8_4_2025",
+  "version": 2
 }
