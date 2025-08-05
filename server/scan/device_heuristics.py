@@ -141,7 +141,7 @@ def match_name(
 
 #-------------------------------------------------------------------------------
 #
-def match_ip_rule(
+def match_ip(
     ip: str,
     default_type: str,
     default_icon: str
@@ -215,7 +215,7 @@ def guess_device_attributes(
 
     # --- Loose IP-based fallback ---
     if (not type_ or type_ == default_type) or (not icon or icon == default_icon):
-        type_, icon = match_ip_rule(ip, default_type, default_icon)
+        type_, icon = match_ip(ip, default_type, default_icon)
 
     # Final fallbacks
     type_ = type_ or default_type

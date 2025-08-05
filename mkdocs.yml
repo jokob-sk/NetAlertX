@@ -75,6 +75,7 @@ nav:
         - Database: DATABASE.md
         - Settings: SETTINGS_SYSTEM.md
         - Versions: VERSIONS.md
+        - Icon and Type guessing: DEVICE_HEURISTICS.md
       - Integrations:
         - Webhook Secret: WEBHOOK_SECRET.md
         - API: API.md     
