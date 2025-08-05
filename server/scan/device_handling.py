@@ -447,8 +447,8 @@ def create_new_devices (db):
         cur_MAC, cur_Name, cur_Vendor, cur_ScanMethod, cur_IP, cur_SyncHubNodeName, cur_NetworkNodeMAC, cur_PORT, cur_NetworkSite, cur_SSID, cur_Type = row
 
         # Handle NoneType
-        cur_Name = cur_Name.strip() if cur_Name else '(unknown)'
-        cur_Type = cur_Type.strip() if cur_Type else get_setting_value("NEWDEV_devType")
+        cur_Name = str(cur_Name).strip() if cur_Name else '(unknown)'
+        cur_Type = str(cur_Type).strip() if cur_Type else get_setting_value("NEWDEV_devType")
         cur_NetworkNodeMAC = cur_NetworkNodeMAC.strip() if cur_NetworkNodeMAC else ''
         cur_NetworkNodeMAC = cur_NetworkNodeMAC if cur_NetworkNodeMAC and cur_MAC != "Internet" else (get_setting_value("NEWDEV_devParentMAC") if cur_MAC != "Internet" else "null")
         cur_SyncHubNodeName = cur_SyncHubNodeName if cur_SyncHubNodeName and cur_SyncHubNodeName != "null" else (get_setting_value("SYNC_node_name"))
