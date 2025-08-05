@@ -667,7 +667,10 @@ def checkNewVersion():
         buildTimestamp = int(f.read().strip())
 
     try:
-        response = requests.get("https://api.github.com/repos/jokob-sk/NetAlertX/releases")
+        response = requests.get(
+            "https://api.github.com/repos/jokob-sk/NetAlertX/releases",
+            timeout=5
+        )
         response.raise_for_status()  # Raise an exception for HTTP errors
         text = response.text
     except requests.exceptions.RequestException as e:

@@ -185,6 +185,12 @@ $db->close();
                         </div>
                         <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_del_ActHistory_text');?></div>
                     </div>
+                    <div class="db_info_table_row">
+                        <div class="db_tools_table_cell_a" >
+                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnRestartServer" onclick="askRestartBackend()"><?= lang('Maint_RestartServer');?></button>
+                        </div>
+                        <div class="db_tools_table_cell_b"><?= lang('Maint_Restart_Server_noti_text');?></div>
+                    </div>
                 </div>
         </div>
 

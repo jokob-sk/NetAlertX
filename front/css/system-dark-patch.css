@@ -20,6 +20,7 @@
     --color-yellow: #f39c12;
     --color-red: #dd4b39;
     --color-gray: #8c8c8c;
+    --color-white: #fff;
   }
     
   :root {
@@ -793,5 +794,5 @@
 
 .btn:hover
 {
-  color: var(--color-gray);
+  color: var(--color-white);
 }
