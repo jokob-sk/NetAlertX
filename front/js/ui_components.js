@@ -786,6 +786,14 @@ function renderDeviceLink(data, container, useName = false) {
 
   const device = getDevDataByMac(data.id);
 
+  console.log('mac 🔽');  
+  console.log(data.id);  
+  console.log('mac 🔼');  
+
+  console.log('device 🔽');  
+  console.log(device);  
+  console.log('device 🔼');  
+
   const badge = getStatusBadgeParts(
     device.devPresentLastScan,
     device.devAlertDown,
