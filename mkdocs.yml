@@ -64,6 +64,7 @@ nav:
       - Debugging Tips: DEBUG_TIPS.md
       - Debugging GraphQL: DEBUG_GRAPHQL.md
       - Debugging Invalid JSON: DEBUG_INVALID_JSON.md
+      - Debugging PHP: DEBUG_PHP.md
       - Debugging Plugins: DEBUG_PLUGINS.md
       - Debugging Web UI Port: WEB_UI_PORT_DEBUG.md
       - Debugging Workflows: WORKFLOWS_DEBUGGING.md
