@@ -58,6 +58,12 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
 
 <div id="settingsPage" class="content-wrapper">
 
+<a style="cursor:pointer">
+  <span>
+    <i id='toggleSettings' onclick="toggleAllSettings()" class="settings-expand-icon fa fa-angle-double-down"></i>
+  </span> 
+</a>
+
 <!-- Content header--------------------------------------------------------- -->
 
     <section class="content-header">
@@ -597,7 +603,8 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
             customParams,
             customId,
             columns,
-            base64Regex
+            base64Regex,
+            elementOptionsBase64
           } = handleElementOptions('none', elementOptions, transformers, val = "");
 
           let value;

@@ -25,7 +25,7 @@
 
 <!-- Content header--------------------------------------------------------- -->
     <section class="content-header">
-      <?php require 'php/templates/notification.php'; ?>
+      <?php require 'php/templates/modals.php'; ?>
 
       <h1 id="pageTitle">
         &nbsp<small>Quering device info...</small>

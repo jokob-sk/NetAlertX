@@ -136,7 +136,8 @@
                     customParams,
                     customId,
                     columns,
-                    base64Regex
+                    base64Regex,
+                    elementOptionsBase64
                   } = handleElementOptions('none', elementOptions, transformers, val = "");
 
                   //  render based on element type 

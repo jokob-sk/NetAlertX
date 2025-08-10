@@ -67,6 +67,15 @@ function getPluginConfig(pluginsData, prefix) {
   return result;
 }
 
+// ----------------------------------------
+// Show the description of a setting
+function showDescriptionPopup(e) {
+
+  console.log($(e).attr("my-set-key"));    
+
+  showModalOK("Info", getString($(e).attr("my-set-key") + '_description'))
+}
+
 // -------------------------------------------------------------------
 // Generate plugin HTML card based on prefixes in an array
 function pluginCards(prefixesOfEnabledPlugins, includeSettings) {
@@ -298,6 +307,45 @@ function removeDataTableRow(el) {
     showMessage (getString("CustProps_cant_remove"), 3000, "modal_red");  
   }
 }
+
+// ---------------------------------------------------------
+// Add item via pop up form dialog
+function addViaPopupForm(element) {
+  console.log(element)
+
+  const fromId = $(element).attr("my-input-from");
+  const toId = $(element).attr("my-input-to");
+  const curValue = $(`#${fromId}`).val();
+  const triggeredBy = $(element).attr("id");
+  const parsed = JSON.parse(atob($(element).data("elementoptionsbase64")));  
+  const popupFormJson = parsed.find(obj => "popupForm" in obj)?.popupForm ?? null;
+  
+  console.log(`fromId | toId | triggeredBy | curValue: ${fromId} | ${toId} | ${triggeredBy} | ${curValue}`);
+
+  showModalPopupForm(
+    `<i class="fa fa-pen-to-square"></i> ${getString(
+      "Gen_Update_Value"
+    )}`,                                        // title
+    getString("settings_update_item_warning"),  // message
+    getString("Gen_Cancel"),                    // btnCancel
+    getString("Gen_Add"),                       // btnOK
+    curValue,                                   // curValue
+    null,                                       // callbackFunction
+    triggeredBy,                                // triggeredBy
+    popupFormJson,                              // popupform
+    toId                                        // parentSettingKey
+  );
+}
+
+// ---------------------------------------------------------
+// Add item to list via popup form
+function addViaPopupFormToList(element, clearInput = true) {
+
+
+  // flag something changes to prevent navigating from page
+  settingsChanged();
+}
+
 
 // ---------------------------------------------------------
 // Add item to list
@@ -622,8 +670,6 @@ function generateOptionsOrSetOptions(
   // obj.push({ id: item, name: item })
   options = arrayToObject(createArray(overrideOptions ? overrideOptions : getSettingOptions(setKey)))
 
-  
-  
   // Call to render lists
   renderList(
     options,
@@ -633,8 +679,6 @@ function generateOptionsOrSetOptions(
     targetField,
     transformers
   );
-  
-  
 }
 
 
@@ -654,6 +698,13 @@ function applyTransformers(val, transformers) {
         if (!isBase64(val)) {
           val = btoa(val);
         }
+        break;
+      case "name|base64":
+        // // Implement base64  logic
+        // if (!isBase64(val)) {
+        //   val = btoa(val);
+        // }
+        val = val;   // probably TODO ⚠
         break;
       case "getString":
         // no change
@@ -680,6 +731,13 @@ function reverseTransformers(val, transformers) {
         if (isBase64(val)) {
           val = atob(val);
         }
+        break;
+      case "name|base64":
+        // // Implement base64 decoding logic
+        // if (isBase64(val)) {
+        //   val = atob(val);
+        // }
+        val = val;   // probably TODO ⚠
         break;
       case "getString":
         // retrieve string
@@ -720,8 +778,8 @@ const handleElementOptions = (setKey, elementOptions, transformers, val) => {
   let customParams = "";
   let customId = "";
   let columns = [];
-  let base64Regex = "";
-
+  let base64Regex = "";  
+  let elementOptionsBase64 = btoa(JSON.stringify(elementOptions));
 
   elementOptions.forEach((option) => {
     if (option.prefillValue) {
@@ -804,7 +862,8 @@ const handleElementOptions = (setKey, elementOptions, transformers, val) => {
     customParams,
     customId,
     columns,
-    base64Regex
+    base64Regex,
+    elementOptionsBase64
   };
 };
 
@@ -955,6 +1014,8 @@ function generateFormHtml(settingsData, set, overrideValue, overrideOptions, ori
   // }
 
   // Parse the setType JSON string
+  console.log(processQuotes(setType));
+  
   const setTypeObject = JSON.parse(processQuotes(setType))
   const dataType = setTypeObject.dataType;
   const elements = setTypeObject.elements || [];
@@ -982,7 +1043,8 @@ function generateFormHtml(settingsData, set, overrideValue, overrideOptions, ori
       customParams,
       customId,
       columns,
-      base64Regex
+      base64Regex,
+      elementOptionsBase64
     } = handleElementOptions(setKey, elementOptions, transformers, inVal);
 
     // Override value
@@ -1051,6 +1113,7 @@ function generateFormHtml(settingsData, set, overrideValue, overrideOptions, ori
                         my-originalSetKey="${originalSetKey}"
                         my-input-from="${sourceIds}" 
                         my-input-to="${setKey}" 
+                        data-elementoptionsbase64="${elementOptionsBase64}"
                         onclick="${onClick}">
                         ${getString(getStringKey)}
                       </button>`;

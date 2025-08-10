@@ -290,18 +290,6 @@
   });
   }
 
-
-  // ----------------------------------------
-  // Show the description of a setting
-  function showDescriptionPopup(e) {
-
-    console.log($(e).attr("my-set-key"));    
-
-    showModalOK("Info", getString($(e).attr("my-set-key") + '_description'))
-  }
-
-
-
   // -----------------------------------------------------------------------------
   // Save device data to DB
   function setDeviceData(direction = '', refreshCallback = '') {

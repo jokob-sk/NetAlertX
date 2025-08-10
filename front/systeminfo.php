@@ -13,7 +13,7 @@
 
   require 'php/templates/header.php';
 ?>
-<?php require 'php/templates/notification.php'; ?>
+<?php require 'php/templates/modals.php'; ?>
 <!-- ----------------------------------------------------------------------- -->
  
 
