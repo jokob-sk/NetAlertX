@@ -2,7 +2,7 @@
   "code_name": "unifi_api_import",
   "unique_prefix": "UNIFIAPI",
   "plugin_type": "device_scanner",
-  "execution_order" : "Layer_0",
+  "execution_order": "Layer_0",
   "enabled": true,
   "data_source": "script",
   "mapped_to_table": "CurrentScan",
@@ -16,17 +16,21 @@
     }
   ],
   "show_ui": true,
-  "localized": ["display_name", "description", "icon"],
+  "localized": [
+    "display_name",
+    "description",
+    "icon"
+  ],
   "display_name": [
     {
       "language_code": "en_us",
-      "string": "Display Name"
+      "string": "UniFi import (API)"
     }
   ],
   "description": [
     {
       "language_code": "en_us",
-      "string": "Plugin to ..."
+      "string": "This plugin is used to import devices from an UNIFI controller via the Site Manager API."
     }
   ],
   "icon": [
@@ -39,21 +43,29 @@
   "settings": [
     {
       "function": "RUN",
-      "events": ["run"],
+      "events": [
+        "run"
+      ],
       "type": {
         "dataType": "string",
         "elements": [
-          { "elementType": "select", "elementOptions": [], "transformers": [] }
+          {
+            "elementType": "select",
+            "elementOptions": [],
+            "transformers": []
+          }
         ]
       },
-
       "default_value": "disabled",
       "options": [
         "disabled",
         "once",
         "schedule"
       ],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -63,7 +75,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "When the plugin should run. Good options are <code>always_after_scan</code>, <code>on_new_device</code>, <code>on_notification</code>"
+          "string": "When the plugin should run. Good options are <code>schedule</code>, <code>once</code>."
         }
       ]
     },
@@ -100,7 +112,10 @@
       },
       "default_value": "*/5 * * * *",
       "options": [],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -110,7 +125,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Only enabled if you select <code>schedule</code> in the <a href=\"#SYNC_RUN\"><code>SYNC_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes."
+          "string": "Only enabled if you select <code>schedule</code> in the <a href=\"#UNIFIAPI_RUN\"><code>UNIFIAPI_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes."
         }
       ]
     },
@@ -121,14 +136,21 @@
         "elements": [
           {
             "elementType": "input",
-            "elementOptions": [{ "readonly": "true" }],
+            "elementOptions": [
+              {
+                "readonly": "true"
+              }
+            ],
             "transformers": []
           }
         ]
       },
       "default_value": "python3 /app/front/plugins/unifi_api_import/unifi_api_import.py",
       "options": [],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -149,14 +171,21 @@
         "elements": [
           {
             "elementType": "input",
-            "elementOptions": [{ "type": "number" }],
+            "elementOptions": [
+              {
+                "type": "number"
+              }
+            ],
             "transformers": []
           }
         ]
       },
       "default_value": 10,
       "options": [],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -171,28 +200,52 @@
       ]
     },
     {
-      "function": "devCustomProps",
+      "function": "sites",
       "type": {
         "dataType": "array",
         "elements": [
           {
-            "elementType": "popupform",
-            "elementHasInputValue": 1,
+            "elementType": "button",
             "elementOptions": [
               {
-                "fields": [
+                "sourceSuffixes": [
+                  "_in"
+                ]
+              },
+              {
+                "separator": ""
+              },
+              {
+                "cssClasses": "col-xs-12"
+              },
+              {
+                "onClick": "addViaPopupForm(this)"
+              },
+              {
+                "getStringKey": "Gen_Add"
+              },
+              {
+                "popupForm": [
                   {
-                    "function": "hide.site.name",
+                    "function": "name",
                     "type": {
                       "dataType": "string",
                       "elements": [
                         {
                           "elementType": "input",
                           "elementOptions": [
-                            { "placeholder": "Enter value" },
-                            { "suffix": "_in" },
-                            { "cssClasses": "col-sm-10" },
-                            { "prefillValue": "null" }
+                            {
+                              "placeholder": "Enter value"
+                            },
+                            {
+                              "suffix": "_in"
+                            },
+                            {
+                              "cssClasses": "col-sm-10"
+                            },
+                            {
+                              "prefillValue": "null"
+                            }
                           ],
                           "transformers": []
                         }
@@ -200,7 +253,10 @@
                     },
                     "default_value": "default",
                     "options": [],
-                    "localized": ["name", "description"],
+                    "localized": [
+                      "name",
+                      "description"
+                    ],
                     "name": [
                       {
                         "language_code": "en_us",
@@ -210,74 +266,239 @@
                     "description": [
                       {
                         "language_code": "en_us",
-                        "string": "The name of your site. Not used in code and only for.... "
+                        "string": "The name of your site. Use a descriptive name."
                       }
                     ]
-    
                   },
                   {
-                    "settingKey": "hide.site.name",
-                    "typeOverride": {
+                    "function": "base_url",
+                    "type": {
                       "dataType": "string",
                       "elements": [
                         {
-                          "elementType": "span",
+                          "elementType": "input",
                           "elementOptions": [
                             {
-                              "cssClasses": "input-group-addon iconPreview"
+                              "placeholder": "https://host_ip/proxy/network/integration/"
                             },
                             {
-                              "getStringKey": "Gen_SelectIcon"
+                              "suffix": "_in"
                             },
                             {
-                              "customId": "CUSTPROP_icon_preview"
-                            }
-                          ],
-                          "transformers": []
-                        },
-                        {
-                          "elementType": "select",
-                          "elementHasInputValue": 1,
-                          "elementOptions": [
-                            {
-                              "cssClasses": "iconInputVal myhidden"
+                              "cssClasses": "col-sm-10"
                             },
                             {
-                              "onChange": "updateIconPreview(this)"
-                            },
-                            {
-                              "customParams": "CUSTPROP_icon,CUSTPROP_icon_preview"
+                              "prefillValue": "null"
                             }
                           ],
                           "transformers": []
                         }
                       ]
-                    }
+                    },
+                    "default_value": "default",
+                    "options": [],
+                    "localized": [
+                      "name",
+                      "description"
+                    ],
+                    "name": [
+                      {
+                        "language_code": "en_us",
+                        "string": "Base URL"
+                      }
+                    ],
+                    "description": [
+                      {
+                        "language_code": "en_us",
+                        "string": "You can find your base url in the UniFi Site Manager in <i>Settings -> Control Plane -> Integrations</i> in the <i>API Request Format</i> section, (e.g. <code>https://host_ip/proxy/network/integration/</code>)."
+                      }
+                    ]
                   },
                   {
-                    "settingKey": "hide.site.base_url",
-                    "optionsOverride": "setting.CUSTPROP_type",
-                    "typeOverride": {
+                    "function": "version",
+                    "type": {
                       "dataType": "string",
                       "elements": [
                         {
-                          "elementType": "select",
-                          "elementOptions": [],
+                          "elementType": "input",
+                          "elementOptions": [
+                            {
+                              "placeholder": "v1"
+                            },
+                            {
+                              "suffix": "_in"
+                            },
+                            {
+                              "cssClasses": "col-sm-10"
+                            },
+                            {
+                              "prefillValue": "null"
+                            }
+                          ],
                           "transformers": []
                         }
                       ]
-                    }
+                    },
+                    "default_value": "default",
+                    "options": [],
+                    "localized": [
+                      "name",
+                      "description"
+                    ],
+                    "name": [
+                      {
+                        "language_code": "en_us",
+                        "string": "API version"
+                      }
+                    ],
+                    "description": [
+                      {
+                        "language_code": "en_us",
+                        "string": "The version of the API (e.g.: <code>v1</code>)."
+                      }
+                    ]
                   },
                   {
-                    "settingKey": "hide.site.version"
+                    "function": "api_key",
+                    "type": {
+                      "dataType": "string",
+                      "elements": [
+                        {
+                          "elementType": "input",
+                          "elementOptions": [
+                            {
+                              "placeholder": "Enter value"
+                            },
+                            {
+                              "suffix": "_in"
+                            },
+                            {
+                              "cssClasses": "col-sm-10"
+                            },
+                            {
+                              "prefillValue": "null"
+                            }
+                          ],
+                          "transformers": []
+                        }
+                      ]
+                    },
+                    "default_value": "default",
+                    "options": [],
+                    "localized": [
+                      "name",
+                      "description"
+                    ],
+                    "name": [
+                      {
+                        "language_code": "en_us",
+                        "string": "API key"
+                      }
+                    ],
+                    "description": [
+                      {
+                        "language_code": "en_us",
+                        "string": "You can get an API key in your UniFi Site Manager in <i>Settings -> Control Plane -> Integrations</i>."
+                      }
+                    ]
                   },
                   {
-                    "settingKey": "hide.site.api_key"
-                  },
-                  {
-                    "settingKey": "hide.site.verify_ssl"
+                    "function": "hide.site.verify_ssl",
+                    "type": {
+                      "dataType": "boolean",
+                      "elements": [
+                        {
+                          "elementType": "input",
+                          "elementOptions": [
+                            {
+                              "type": "checkbox"
+                            }
+                          ],
+                          "transformers": []
+                        }
+                      ]
+                    },
+                    "default_value": 1,
+                    "options": [],
+                    "localized": [
+                      "name",
+                      "description"
+                    ],
+                    "name": [
+                      {
+                        "language_code": "en_us",
+                        "string": "Verify SSL"
+                      }
+                    ],
+                    "description": [
+                      {
+                        "language_code": "en_us",
+                        "string": "Disable if you do not have an SSL certificate set up."
+                      }
+                    ]
                   }
-                ]
+                ],
+                "transformers": []
+              }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "select",
+            "elementHasInputValue": 1,
+            "elementOptions": [
+              {
+                "multiple": "true"
+              },
+              {
+                "readonly": "true"
+              },
+              {
+                "editable": "true"
+              }
+            ],
+            "transformers": [
+              "name|base64"
+            ]
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              {
+                "sourceSuffixes": []
+              },
+              {
+                "separator": ""
+              },
+              {
+                "cssClasses": "col-xs-6"
+              },
+              {
+                "onClick": "removeFromList(this)"
+              },
+              {
+                "getStringKey": "Gen_Remove_Last"
+              }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              {
+                "sourceSuffixes": []
+              },
+              {
+                "separator": ""
+              },
+              {
+                "cssClasses": "col-xs-6"
+              },
+              {
+                "onClick": "removeAllOptions(this)"
+              },
+              {
+                "getStringKey": "Gen_Remove_All"
               }
             ],
             "transformers": []
@@ -299,92 +520,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Unifi sites"
-        }
-      ]
-    },
-    {
-      "function": "sites",
-      "type": {
-        "dataType": "array",
-        "elements": [
-          {
-            "elementType": "input",
-            "elementOptions": [
-              { "placeholder": "Enter value" },
-              { "suffix": "_in" },
-              { "cssClasses": "col-sm-10" },
-              { "prefillValue": "null" }
-            ],
-            "transformers": []
-          },
-          {
-            "elementType": "button",
-            "elementOptions": [
-              { "sourceSuffixes": ["_in"] },
-              { "separator": "" },
-              { "cssClasses": "col-xs-12" },
-              { "onClick": "addList(this,false)" },
-              { "getStringKey": "Gen_Add" }
-            ],
-            "transformers": []
-          },
-          {
-            "elementType": "select",
-            "elementHasInputValue": 1,
-            "elementOptions": [
-              { "multiple": "true" },
-              { "readonly": "true" },
-              { "editable": "true" }
-            ],
-            "transformers": []
-          },
-          {
-            "elementType": "button",
-            "elementOptions": [
-              { "sourceSuffixes": [] },
-              { "separator": "" },
-              { "cssClasses": "col-xs-6" },
-              { "onClick": "removeAllOptions(this)" },
-              { "getStringKey": "Gen_Remove_All" }
-            ],
-            "transformers": []
-          },
-          {
-            "elementType": "button",
-            "elementOptions": [
-              { "sourceSuffixes": [] },
-              { "separator": "" },
-              { "cssClasses": "col-xs-6" },
-              { "onClick": "removeFromList(this)" },
-              { "getStringKey": "Gen_Remove_Last" }
-            ],
-            "transformers": []
-          }
-        ]
-      },
-      "maxLength": 50,
-      "default_value": [
-        "none",
-        "data",
-        "link",
-        "link_new_tab",
-        "show_notes",
-        "delete_dev",
-        "run_plugin"
-      ],
-      "options": [],
-      "localized": ["name","description"],
-      "name": [
-        {
-          "language_code": "en_us",
-          "string": "Type"
-        }
-      ],
-      "description": [
-        {
-          "language_code": "en_us",
-          "string": "List of property types. The default ones have specific functionality associated with it."
+          "string": "UniFi sites"
         }
       ]
     }
@@ -397,7 +533,9 @@
       "type": "none",
       "default_value": "",
       "options": [],
-      "localized": ["name"],
+      "localized": [
+        "name"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -413,7 +551,9 @@
       "type": "device_name_mac",
       "default_value": "",
       "options": [],
-      "localized": ["name"],
+      "localized": [
+        "name"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -429,7 +569,9 @@
       "type": "device_ip",
       "default_value": "",
       "options": [],
-      "localized": ["name"],
+      "localized": [
+        "name"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -445,7 +587,9 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": ["name"],
+      "localized": [
+        "name"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -461,7 +605,9 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": ["name"],
+      "localized": [
+        "name"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -477,7 +623,9 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": ["name"],
+      "localized": [
+        "name"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -492,7 +640,9 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": ["name"],
+      "localized": [
+        "name"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -511,7 +661,9 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": ["name"],
+      "localized": [
+        "name"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -526,7 +678,9 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": ["name"],
+      "localized": [
+        "name"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -541,7 +695,9 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": ["name"],
+      "localized": [
+        "name"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -573,7 +729,9 @@
           "replacement": "<div style='text-align:center'><i class='fa-solid fa-question'></i></div>"
         }
       ],
-      "localized": ["name"],
+      "localized": [
+        "name"
+      ],
       "name": [
         {
           "language_code": "en_us",

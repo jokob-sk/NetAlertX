@@ -1004,9 +1004,7 @@ function initializeDatatable (status) {
                 
     }
     
-  });
-
-  
+  });  
 }
 
 

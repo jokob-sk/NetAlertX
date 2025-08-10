@@ -117,6 +117,29 @@
   </div>
 </div>
 
+<!-- Modal form input -->
+<div class="modal fade" id="modal-form" data-myparam-triggered-by="" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 id="modal-form-title" class="modal-title"> Modal Title </h4>
+      </div>
+
+      <div id="modal-form-message" class="modal-body"> Modal message </div>
+
+      <div id="modal-form-plc"></div>
+
+      <div class="modal-footer">
+        <button id="modal-form-cancel" type="button" class="btn btn-outline pull-left" style="min-width: 80px;" data-dismiss="modal"> Cancel </button>
+        <button id="modal-form-OK" type="button" class="btn btn-outline btn-modal-submit" style="min-width: 80px;" onclick="modalDefaultForm()"> OK </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 
 <!-- Modal field input -->
 <div class="modal modal-warning fade" id="modal-field-input" data-myparam-triggered-by="" style="display: none;">

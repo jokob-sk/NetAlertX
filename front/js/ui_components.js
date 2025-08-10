@@ -782,25 +782,17 @@ function initSelect2() {
 // ------------------------------------------
 // Render a device link with hover-over functionality
 function renderDeviceLink(data, container, useName = false) {
-  if (!data.id) return data.text; // default placeholder etc.
+  if (!data.id || !isValidMac(data.id)) return data.text; // default placeholder etc.
 
   const device = getDevDataByMac(data.id);
-
-  console.log('mac 🔽');  
-  console.log(data.id);  
-  console.log('mac 🔼');  
-
-  console.log('device 🔽');  
-  console.log(device);  
-  console.log('device 🔼');  
-
+  
   const badge = getStatusBadgeParts(
     device.devPresentLastScan,
     device.devAlertDown,
     device.devMac
   );
 
-  // Add badge class and hover-info class to container
+  // badge class and hover-info class to container
   $(container)
     .addClass(`${badge.cssClass} hover-node-info`)
     .attr({

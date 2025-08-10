@@ -275,6 +275,15 @@ def importConfigs (db, all_plugins):
                 # Save the user defined value into the object
                 set["value"] = v
 
+                # Now check for popupForm inside elements → elementOptions
+                elements = set.get("type", {}).get("elements", [])
+                for element in elements:
+                    for option in element.get("elementOptions", []):
+                        if "popupForm" in option:
+                            for popup_entry in option["popupForm"]:
+                                popup_pref = key + "_popupform_" + popup_entry.get("function", "")
+                                stringSqlParams = collect_lang_strings(popup_entry, popup_pref, stringSqlParams)
+
                 # Collect settings related language strings
                 # Creates an entry with key, for example ARPSCAN_CMD_name
                 stringSqlParams = collect_lang_strings(set,  pref + "_" + set["function"], stringSqlParams)

@@ -162,6 +162,91 @@ function showModalFieldInput(
 }
 
 // -----------------------------------------------------------------------------
+function showModalPopupForm(
+  title,
+  message,
+  btnCancel = getString("Gen_Cancel"),
+  btnOK = getString("Gen_Okay"),
+  curValue = "",
+  callbackFunction = null,
+  triggeredBy = null,
+  popupFormJson = null,
+  parentSettingKey = null
+) {
+  // set captions
+  prefix = "modal-form";
+  console.log(popupFormJson);
+
+  $(`#${prefix}-title`).html(title);
+  $(`#${prefix}-message`).html(message);
+  $(`#${prefix}-cancel`).html(btnCancel);
+  $(`#${prefix}-OK`).html(btnOK);
+
+  if (callbackFunction != null) {    
+    modalCallbackFunction = callbackFunction;
+  }
+
+  if (triggeredBy != null) {
+    $('#'+prefix).attr("data-myparam-triggered-by", triggeredBy)
+  }
+
+  outputHtml = "";
+
+  if (Array.isArray(popupFormJson)) {
+    popupFormJson.forEach((field, index) => {
+        // You'll need to define these or map them from `field`
+        const setName = field.name?.find(n => n.language_code === "en_us")?.string || setKey;
+        const labelClasses = "col-sm-2"; // example, or from your obj.labelClasses
+        const inputClasses = "col-sm-10"; // example, or from your obj.inputClasses
+        const fieldData = field.default_value ?? "";
+        const fieldOptionsOverride = field.type?.elements[0]?.elementOptions || [];
+
+        const setKey = field.function || `field_${index}`;
+        const setValue = field.default_value ?? "";
+        const setType = JSON.stringify(field.type); 
+        const setEvents = field.events || [];  // default to empty array if missing
+
+        const setObj = { setKey, setValue, setType, setEvents };
+
+        // Generate the input field HTML
+        const inputFormHtml = `
+                              <div class="form-group col-xs-12">
+                                  <label id="${setKey}_label" class="${labelClasses}"> ${setName}
+                                      <i my-set-key="${parentSettingKey}_popupform_${setKey}"
+                                          title="${getString("Settings_Show_Description")}" 
+                                          class="fa fa-circle-info pointer helpIconSmallTopRight" 
+                                          onclick="showDescriptionPopup(this)">
+                                      </i>
+                                  </label>
+                                  <div class="${inputClasses}">
+                                      ${generateFormHtml(
+                                        null, // settingsData only required for datatables
+                                        setObj, 
+                                        fieldData.toString(), 
+                                        fieldOptionsOverride, 
+                                        null
+                                      )}
+                                  </div>
+                              </div>
+                  `;
+
+        // Append to result
+        outputHtml += inputFormHtml;
+    });
+  }
+  
+  $(`#modal-form-plc`).html(outputHtml);
+
+  // $(`#${prefix}-field`).val(curValue);
+  // setTimeout(function () {
+  //   $(`#${prefix}-field`).focus();
+  // }, 500);
+
+  // Show modal
+  $(`#${prefix}`).modal("show");
+}
+
+// -----------------------------------------------------------------------------
 function modalDefaultOK() {
   // Hide modal
   $("#modal-default").modal("hide");

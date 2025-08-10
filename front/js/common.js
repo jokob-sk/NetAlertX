@@ -1032,6 +1032,7 @@ function getDevDataByMac(macAddress, dbColumn) {
       }
   }
 
+  console.error("⚠ Device with MAC not found:" + macAddress)
   return "Unknown"; // Return a default value if MAC address is not found
 }
 

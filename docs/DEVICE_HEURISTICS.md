@@ -53,6 +53,9 @@ The function `guess_device_attributes(...)` runs a series of matching functions 
 4. IP pattern → `match_ip()`
 5. Final fallback → defaults defined in the `NEWDEV_devIcon` and `NEWDEV_devType` settings.
 
+> [!NOTE]
+> The app will try guessing the device type or icon if `devType` or `devIcon` are `""` or `"null"`.
+
 ### Use of default values
 
 The guessing process runs for every device **as long as the current type or icon still matches the default values**. Even if earlier heuristics return a match, the system continues evaluating additional clues — like name or IP — to try and replace placeholders.
