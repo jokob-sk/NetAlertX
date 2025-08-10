@@ -182,10 +182,6 @@ function showModalPopupForm(
   $(`#${prefix}-cancel`).html(btnCancel);
   $(`#${prefix}-OK`).html(btnOK);
 
-  if (callbackFunction != null) {    
-    modalCallbackFunction = callbackFunction;
-  }
-
   if (triggeredBy != null) {
     $('#'+prefix).attr("data-myparam-triggered-by", triggeredBy)
   }
@@ -241,6 +237,31 @@ function showModalPopupForm(
   // setTimeout(function () {
   //   $(`#${prefix}-field`).focus();
   // }, 500);
+
+  // Bind OK button click event
+  $(`#${prefix}-OK`).off("click").on("click", function() {
+    let settingsArray = [];
+    if (Array.isArray(popupFormJson)) {
+        popupFormJson.forEach(field => {
+            collectSetting(
+                `${parentSettingKey}_popupform`, // prefix
+                field.function + '_in',          // setCodeName + sourceSuffixes
+                field.type,                      // setType (object)
+                settingsArray
+            );
+        });
+    }
+
+    console.log("Collected popup form settings:", settingsArray);
+
+    if (typeof modalCallbackFunction === "function") {
+        modalCallbackFunction(settingsArray);
+    }
+
+    $(`#${prefix}`).modal("hide");
+});
+
+
 
   // Show modal
   $(`#${prefix}`).modal("show");

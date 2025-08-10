@@ -993,6 +993,96 @@ function genListWithInputSet(options, valuesArray, targetField, transformers, pl
   $("#" + placeholder).replaceWith(listHtml);
 }
 
+// -----------------------------------------------------------------
+// Collects a setting based on code name
+function collectSetting(prefix, setCodeName, setType, settingsArray) {
+  // Parse setType if it's a JSON string
+  const setTypeObject = (typeof setType === "string") 
+      ? JSON.parse(processQuotes(setType)) 
+      : setType;
+
+  const dataType = setTypeObject.dataType;
+
+  // Pick element with input value
+  let elements = setTypeObject.elements.filter(el => el.elementHasInputValue === 1);
+  let elementWithInputValue = elements.length === 0
+      ? setTypeObject.elements[setTypeObject.elements.length - 1]
+      : elements[0];
+
+  const { elementType, elementOptions = [], transformers = [] } = elementWithInputValue;
+
+  const opts = handleElementOptions('none', elementOptions, transformers, val = "");
+
+  // Map of handlers
+  const handlers = {
+      datatableString: () => {
+          const value = collectTableData(`#${setCodeName}_table`);
+          return btoa(JSON.stringify(value));
+      },
+      simpleValue: () => {
+          let value = $(`#${setCodeName}`).val();
+          return applyTransformers(value, transformers);
+      },
+      checkbox: () => {
+          let value = $(`#${setCodeName}`).is(':checked') ? 1 : 0;
+          if (dataType === "boolean") {
+              value = value === 1 ? "True" : "False";
+          }
+          return applyTransformers(value, transformers);
+      },
+      array: () => {
+          let temps = [];
+          if (opts.isOrdeable) {
+              temps = $(`#${setCodeName}`).val();
+          } else {            
+              const sel = $(`#${setCodeName}`).attr("my-editable") === "true" ? "" : ":selected";
+              $(`#${setCodeName} option${sel}`).each(function() {
+                  const vl = $(this).val();
+                  if (vl !== '') {
+                      temps.push(applyTransformers(vl, transformers));
+                  }
+              });
+          }
+          return JSON.stringify(temps);
+      },
+      none: () => "",
+      json: () => {
+          let value = $(`#${setCodeName}`).val();
+          value = applyTransformers(value, transformers);
+          return JSON.stringify(value, null, 2);
+      },
+      fallback: () => {
+          console.error(`[collectSetting] Couldn't determine how to handle (${setCodeName}|${dataType}|${opts.inputType})`);
+          let value = $(`#${setCodeName}`).val();
+          return applyTransformers(value, transformers);
+      }
+  };
+
+  // Select handler key
+  let handlerKey;
+  if (dataType === "string" && elementType === "datatable") {
+      handlerKey = "datatableString";
+  } else if (dataType === "string" || 
+            (dataType === "integer" && (opts.inputType === "number" || opts.inputType === "text"))) {
+      handlerKey = "simpleValue";
+  } else if (opts.inputType === "checkbox") {
+      handlerKey = "checkbox";
+  } else if (dataType === "array") {
+      handlerKey = "array";
+  } else if (dataType === "none") {
+      handlerKey = "none";
+  } else if (dataType === "json") {
+      handlerKey = "json";
+  } else {
+      handlerKey = "fallback";
+  }
+
+  const value = handlers[handlerKey]();
+  settingsArray.push([prefix, setCodeName, dataType, value]);
+
+  return settingsArray;
+}
+
 
 // ------------------------------------------------------------------------------
 // Generate the form control for setting

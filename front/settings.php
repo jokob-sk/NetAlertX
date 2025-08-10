@@ -553,7 +553,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
             }, 1500);
          
     } else {
-      var settingsArray = [];
+      let settingsArray = [];
 
       // collect values for each of the different input form controls
       // get settings to determine setting type to store values appropriately
@@ -565,121 +565,123 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
           setType     = set["setType"]
           setCodeName = set["setKey"]
 
-          // console.log(prefix);
+          settingsArray = collectSetting(prefix, setCodeName, setType, settingsArray)
 
-          const setTypeObject = JSON.parse(processQuotes(setType))      
-          // console.log(setTypeObject);
+          // // console.log(prefix);
 
-          const dataType = setTypeObject.dataType;
+          // const setTypeObject = JSON.parse(processQuotes(setType))      
+          // // console.log(setTypeObject);
 
-          // get the element with the input value(s)
-          let elements = setTypeObject.elements.filter(element => element.elementHasInputValue === 1);
+          // const dataType = setTypeObject.dataType;
 
-          //  if none found, take last
-          if(elements.length == 0)
-          {
-            elementWithInputValue = setTypeObject.elements[setTypeObject.elements.length - 1]
-          } else
-          {
-            elementWithInputValue = elements[0]
-          }
+          // // get the element with the input value(s)
+          // let elements = setTypeObject.elements.filter(element => element.elementHasInputValue === 1);
 
-          const { elementType, elementOptions = [], transformers = [] } = elementWithInputValue;
-          const { 
-            inputType,
-            readOnly,
-            isMultiSelect,
-            isOrdeable,
-            cssClasses,
-            placeholder,
-            suffix,
-            sourceIds,
-            separator,
-            editable,
-            valRes,
-            getStringKey,
-            onClick,
-            onChange,
-            customParams,
-            customId,
-            columns,
-            base64Regex,
-            elementOptionsBase64
-          } = handleElementOptions('none', elementOptions, transformers, val = "");
+          // //  if none found, take last
+          // if(elements.length == 0)
+          // {
+          //   elementWithInputValue = setTypeObject.elements[setTypeObject.elements.length - 1]
+          // } else
+          // {
+          //   elementWithInputValue = elements[0]
+          // }
 
-          let value;
+          // const { elementType, elementOptions = [], transformers = [] } = elementWithInputValue;
+          // const { 
+          //   inputType,
+          //   readOnly,
+          //   isMultiSelect,
+          //   isOrdeable,
+          //   cssClasses,
+          //   placeholder,
+          //   suffix,
+          //   sourceIds,
+          //   separator,
+          //   editable,
+          //   valRes,
+          //   getStringKey,
+          //   onClick,
+          //   onChange,
+          //   customParams,
+          //   customId,
+          //   columns,
+          //   base64Regex,
+          //   elementOptionsBase64
+          // } = handleElementOptions('none', elementOptions, transformers, val = "");
 
-          if (dataType === "string" && elementWithInputValue.elementType === "datatable" ) {
+          // let value;
 
-            value = collectTableData(`#${setCodeName}_table`)
-            settingsArray.push([prefix, setCodeName, dataType, btoa(JSON.stringify(value))]);
+          // if (dataType === "string" && elementWithInputValue.elementType === "datatable" ) {
 
-          } else if (dataType === "string" || 
-              (dataType === "integer" && (inputType === "number" || inputType === "text"))) {
+          //   value = collectTableData(`#${setCodeName}_table`)
+          //   settingsArray.push([prefix, setCodeName, dataType, btoa(JSON.stringify(value))]);
+
+          // } else if (dataType === "string" || 
+          //     (dataType === "integer" && (inputType === "number" || inputType === "text"))) {
            
-            value = $('#' + setCodeName).val();
-            value = applyTransformers(value, transformers);
+          //   value = $('#' + setCodeName).val();
+          //   value = applyTransformers(value, transformers);
 
-            settingsArray.push([prefix, setCodeName, dataType, value]);
+          //   settingsArray.push([prefix, setCodeName, dataType, value]);
 
-          } else if (inputType === 'checkbox') {
+          // } else if (inputType === 'checkbox') {
             
-            value = $(`#${setCodeName}`).is(':checked') ? 1 : 0;            
+          //   value = $(`#${setCodeName}`).is(':checked') ? 1 : 0;            
 
-            if(dataType === "boolean")
-            {
-              value = value == 1 ? "True" : "False";
-            }
+          //   if(dataType === "boolean")
+          //   {
+          //     value = value == 1 ? "True" : "False";
+          //   }
 
-            value = applyTransformers(value, transformers);
-            settingsArray.push([prefix, setCodeName, dataType, value]);
+          //   value = applyTransformers(value, transformers);
+          //   settingsArray.push([prefix, setCodeName, dataType, value]);
 
-          } else if (dataType === "array" ) {
+          // } else if (dataType === "array" ) {
 
-            let temps = [];
+          //   let temps = [];
 
-            if(isOrdeable)
-            {
-              temps = $(`#${setCodeName}`).val()
-            } else
-            {            
-              // make sure to collect all if set as "editable" or selected only otherwise
-              $(`#${setCodeName}`).attr("my-editable") == "true" ? additionalSelector = "" : additionalSelector = ":selected"; 
+          //   if(isOrdeable)
+          //   {
+          //     temps = $(`#${setCodeName}`).val()
+          //   } else
+          //   {            
+          //     // make sure to collect all if set as "editable" or selected only otherwise
+          //     $(`#${setCodeName}`).attr("my-editable") == "true" ? additionalSelector = "" : additionalSelector = ":selected"; 
               
-              $(`#${setCodeName} option${additionalSelector}`).each(function() {
-                const vl = $(this).val();
-                if (vl !== '') {
-                  temps.push(applyTransformers(vl, transformers));
-                }
-              });
-            }
+          //     $(`#${setCodeName} option${additionalSelector}`).each(function() {
+          //       const vl = $(this).val();
+          //       if (vl !== '') {
+          //         temps.push(applyTransformers(vl, transformers));
+          //       }
+          //     });
+          //   }
 
-            value = JSON.stringify(temps);
+          //   value = JSON.stringify(temps);
 
-            settingsArray.push([prefix, setCodeName, dataType, value]);
+          //   settingsArray.push([prefix, setCodeName, dataType, value]);
 
           
-          } else if (dataType === "none") {
-            // no value to save
-            value = ""
-            settingsArray.push([prefix, setCodeName, dataType, value]);
+          // } else if (dataType === "none") {
+          //   // no value to save
+          //   value = ""
+          //   settingsArray.push([prefix, setCodeName, dataType, value]);
 
-          } else if (dataType === "json") {
+          // } else if (dataType === "json") {
             
-            value = $('#' + setCodeName).val();
-            value = applyTransformers(value, transformers);
-            value = JSON.stringify(value, null, 2)
-            settingsArray.push([prefix, setCodeName, dataType, value]);
+          //   value = $('#' + setCodeName).val();
+          //   value = applyTransformers(value, transformers);
+          //   value = JSON.stringify(value, null, 2)
+          //   settingsArray.push([prefix, setCodeName, dataType, value]);
 
-          } else {
+          // } else {
             
-            console.error(`[saveSettings] Couldn't determine how to handle (setCodeName|dataType|inputType):(${setCodeName}|${dataType}|${inputType})`);
+          //   console.error(`[saveSettings] Couldn't determine how to handle (setCodeName|dataType|inputType):(${setCodeName}|${dataType}|${inputType})`);
 
-            value = $('#' + setCodeName).val();
-            value = applyTransformers(value, transformers);
-            console.error(`[saveSettings] Saving value "${value}"`);
-            settingsArray.push([prefix, setCodeName, dataType, value]);
-          }
+          //   value = $('#' + setCodeName).val();
+          //   value = applyTransformers(value, transformers);
+          //   console.error(`[saveSettings] Saving value "${value}"`);
+          //   settingsArray.push([prefix, setCodeName, dataType, value]);
+          // }
         });
 
         // sanity check to make sure settings were loaded & collected correctly
