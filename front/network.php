@@ -197,7 +197,7 @@
                     <div class="col-sm-9">
                       ${isRootNode ? '' : `<a class="anonymize" href="#">`}
                         <span my-data-mac="${node.parent_mac}" data-mac="${node.parent_mac}" data-devIsNetworkNodeDynamic="1" onclick="handleNodeClick(this)">
-                          ${isRootNode ? getString('Network_Root') : getNameByMacAddress(node.parent_mac)}
+                          ${isRootNode ? getString('Network_Root') : getDevDataByMac(node.parent_mac, "devName")}
                         </span>
                       ${isRootNode ? '' : `</a>`}
                     </div>

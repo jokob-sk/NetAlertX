@@ -609,7 +609,7 @@ function createDeviceLink(input)
 {
   if(checkMacOrInternet(input))
   {
-    return `<span class="anonymizeMac"><a href="/deviceDetails.php?mac=${input}" target="_blank">${getNameByMacAddress(input)}</a><span>`
+    return `<span class="anonymizeMac"><a href="/deviceDetails.php?mac=${input}" target="_blank">${getDevDataByMac(input, "devName")}</a><span>`
   }
 
   return input;
@@ -813,7 +813,6 @@ function forceLoadUrl(relativeUrl) {
   
 }
 
-
 // -----------------------------------------------------------------------------
 function navigateToDeviceWithIp (ip) {
 
@@ -834,11 +833,6 @@ function navigateToDeviceWithIp (ip) {
     });
     
   });
-}
-
-// -----------------------------------------------------------------------------
-function getNameByMacAddress(macAddress) {
-  return getDevDataByMac(macAddress, "devName")
 }
 
 // -----------------------------------------------------------------------------
@@ -1013,7 +1007,7 @@ function getDevDataByMac(macAddress, dbColumn) {
 
   if (!devicesCache || devicesCache == "") {
       console.error(`Session variable "${sessionDataKey}" not found.`);
-      return "Unknown";
+      return null;
   }
 
   const devices = JSON.parse(devicesCache);
@@ -1033,7 +1027,7 @@ function getDevDataByMac(macAddress, dbColumn) {
   }
 
   console.error("⚠ Device with MAC not found:" + macAddress)
-  return "Unknown"; // Return a default value if MAC address is not found
+  return null; // Return a default value if MAC address is not found
 }
 
 // -----------------------------------------------------------------------------
