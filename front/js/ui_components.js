@@ -784,13 +784,20 @@ function initSelect2() {
 function renderDeviceLink(data, container, useName = false) {
   // If no valid MAC, return placeholder text
   if (!data.id || !isValidMac(data.id)) {
-    return data.text;
+    return `<span>${data.text}<span/>`;
   }
 
   const device = getDevDataByMac(data.id);
   if (!device) {
     return data.text;
   }
+
+  // Build and return badge parts
+  const badge = getStatusBadgeParts(
+    device.devPresentLastScan,
+    device.devAlertDown,
+    device.devMac
+  );
 
   // badge class and hover-info class to container
   $(container)
