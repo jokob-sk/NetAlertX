@@ -573,24 +573,6 @@
     },
     {
       "column": "Watched_Value2",
-      "mapped_to_column": "cur_Vendor",
-      "css_classes": "col-sm-2",
-      "show": true,
-      "type": "label",
-      "default_value": "",
-      "options": [],
-      "localized": [
-        "name"
-      ],
-      "name": [
-        {
-          "language_code": "en_us",
-          "string": "Vendor"
-        }
-      ]
-    },
-    {
-      "column": "Watched_Value3",
       "mapped_to_column": "cur_Type",
       "css_classes": "col-sm-2",
       "show": true,
@@ -608,9 +590,9 @@
       ]
     },
     {
-      "column": "Watched_Value4",
+      "column": "Watched_Value3",
       "css_classes": "col-sm-2",
-      "show": false,
+      "show": true,
       "type": "label",
       "default_value": "",
       "options": [],
@@ -620,7 +602,25 @@
       "name": [
         {
           "language_code": "en_us",
-          "string": "N/A"
+          "string": "Connected"
+        }
+      ]
+    },
+    {
+      "column": "Watched_Value4",
+      "mapped_to_column": "cur_NetworkNodeMAC",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "device_mac",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Parent"
         }
       ]
     },
@@ -628,7 +628,7 @@
       "column": "Dummy",
       "mapped_to_column": "cur_ScanMethod",
       "mapped_to_column_data": {
-        "value": "Example Plugin"
+        "value": "UNIFIAPI"
       },
       "css_classes": "col-sm-2",
       "show": false,
