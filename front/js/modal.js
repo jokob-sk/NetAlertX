@@ -167,11 +167,10 @@ function showModalPopupForm(
   message,
   btnCancel = getString("Gen_Cancel"),
   btnOK = getString("Gen_Okay"),
-  curValue = "",
-  callbackFunction = null,
-  triggeredBy = null,
+  curValue = null,
   popupFormJson = null,
-  parentSettingKey = null
+  parentSettingKey = null,
+  triggeredBy = null
 ) {
   // set captions
   prefix = "modal-form";
@@ -182,8 +181,11 @@ function showModalPopupForm(
   $(`#${prefix}-cancel`).html(btnCancel);
   $(`#${prefix}-OK`).html(btnOK);
 
-  if (triggeredBy != null) {
-    $('#'+prefix).attr("data-myparam-triggered-by", triggeredBy)
+  // if curValue not null 
+
+  if (curValue)
+  {
+    initialValues = JSON.parse(atob(curValue));    
   }
 
   outputHtml = "";
@@ -191,17 +193,24 @@ function showModalPopupForm(
   if (Array.isArray(popupFormJson)) {
     popupFormJson.forEach((field, index) => {
         // You'll need to define these or map them from `field`
-        const setName = field.name?.find(n => n.language_code === "en_us")?.string || setKey;
+        const setKey = field.function || `field_${index}`;        
+        const setName = getString(`${parentSettingKey}_popupform_${setKey}_name`);
         const labelClasses = "col-sm-2"; // example, or from your obj.labelClasses
         const inputClasses = "col-sm-10"; // example, or from your obj.inputClasses
-        const fieldData = field.default_value ?? "";
-        const fieldOptionsOverride = field.type?.elements[0]?.elementOptions || [];
+        let initialValue = '';
+        if (curValue && Array.isArray(initialValues)) {
+          const match = initialValues.find(
+            v => v[1] == setKey
+          );
+          if (match) {
+            initialValue = match[3];
+          }
+        }
 
-        const setKey = field.function || `field_${index}`;
-        const setValue = field.default_value ?? "";
+        const fieldOptionsOverride = field.type?.elements[0]?.elementOptions || [];        
+        const setValue = initialValue;
         const setType = JSON.stringify(field.type); 
         const setEvents = field.events || [];  // default to empty array if missing
-
         const setObj = { setKey, setValue, setType, setEvents };
 
         // Generate the input field HTML
@@ -218,7 +227,7 @@ function showModalPopupForm(
                                       ${generateFormHtml(
                                         null, // settingsData only required for datatables
                                         setObj, 
-                                        fieldData.toString(), 
+                                        null, 
                                         fieldOptionsOverride, 
                                         null
                                       )}
@@ -233,11 +242,6 @@ function showModalPopupForm(
   
   $(`#modal-form-plc`).html(outputHtml);
 
-  // $(`#${prefix}-field`).val(curValue);
-  // setTimeout(function () {
-  //   $(`#${prefix}-field`).focus();
-  // }, 500);
-
   // Bind OK button click event
   $(`#${prefix}-OK`).off("click").on("click", function() {
     let settingsArray = [];
@@ -245,11 +249,36 @@ function showModalPopupForm(
         popupFormJson.forEach(field => {
             collectSetting(
                 `${parentSettingKey}_popupform`, // prefix
-                field.function + '_in',          // setCodeName + sourceSuffixes
+                field.function,                  // setCodeName
                 field.type,                      // setType (object)
                 settingsArray
             );
         });
+    }
+
+    // Encode settings
+    const jsonData = JSON.stringify(settingsArray);
+    const encodedValue = btoa(jsonData);
+
+    // Get label from the FIRST field (value in 4th column)
+    const label = settingsArray[0][3]
+
+    // Add new option to target select
+    const selectId = parentSettingKey;
+
+    // If triggered by an option, update it; otherwise append new
+    if (triggeredBy && $(triggeredBy).is("option")) {
+      // Update existing option
+      $(triggeredBy)
+        .attr("value", encodedValue)
+        .text(label);
+    } else {
+      const newOption = $("<option class='interactable-option'></option>")
+          .attr("value", encodedValue)
+          .text(label);
+  
+      $("#" + selectId).append(newOption);
+      initListInteractionOptions(newOption);
     }
 
     console.log("Collected popup form settings:", settingsArray);
@@ -259,9 +288,7 @@ function showModalPopupForm(
     }
 
     $(`#${prefix}`).modal("hide");
-});
-
-
+  });
 
   // Show modal
   $(`#${prefix}`).modal("show");

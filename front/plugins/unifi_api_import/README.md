@@ -7,7 +7,7 @@ Unifi import plugin using the Site Manager API.
 
 ### Quick setup guide
 
-Navigate to your UniFi Site Manager _⚙️ Settings -> Control Plane -> Integrations_.
+Navigate to your UniFi Site Manager _Settings -> Control Plane -> Integrations_.
 
 - `api_key` : You can generate your API key under the _Your API Keys_ section.
 - `base_url` : You can find your base url in the _API Request Format_ section, e.g. `https://192.168.100.1/proxy/network/integration/`

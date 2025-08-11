@@ -247,13 +247,6 @@ function settingsCollectedCorrectly(settingsArray, settingsJSON_DB) {
 // -------------------------------------------------------------------
 
 // ---------------------------------------------------------
-// Add row to datatable
-function addDataTableRow(el)
-{
-  alert("a")
-}
-
-// ---------------------------------------------------------
 // Clone datatable row
 function cloneDataTableRow(el){
 
@@ -311,41 +304,31 @@ function removeDataTableRow(el) {
 // ---------------------------------------------------------
 // Add item via pop up form dialog
 function addViaPopupForm(element) {
-  console.log(element)
+  console.log(element);
 
-  const fromId = $(element).attr("my-input-from");
   const toId = $(element).attr("my-input-to");
-  const curValue = $(`#${fromId}`).val();
-  const triggeredBy = $(element).attr("id");
-  const parsed = JSON.parse(atob($(element).data("elementoptionsbase64")));  
+  const curValue = $(`#${toId}`).val();
+  const parsed = JSON.parse(atob($(`#${toId}`).data("elementoptionsbase64")));  
   const popupFormJson = parsed.find(obj => "popupForm" in obj)?.popupForm ?? null;
   
-  console.log(`fromId | toId | triggeredBy | curValue: ${fromId} | ${toId} | ${triggeredBy} | ${curValue}`);
+  console.log(`toId  | curValue: ${toId}  | ${curValue}`);
 
   showModalPopupForm(
     `<i class="fa fa-pen-to-square"></i> ${getString(
       "Gen_Update_Value"
-    )}`,                                        // title
-    getString("settings_update_item_warning"),  // message
-    getString("Gen_Cancel"),                    // btnCancel
-    getString("Gen_Add"),                       // btnOK
-    curValue,                                   // curValue
-    null,                                       // callbackFunction
-    triggeredBy,                                // triggeredBy
-    popupFormJson,                              // popupform
-    toId                                        // parentSettingKey
+    )}`,                                                            // title
+    getString("settings_update_item_warning"),                      // message
+    getString("Gen_Cancel"),                                        // btnCancel
+    getString("Gen_Add"),                                           // btnOK
+    null,                                                           // curValue
+    popupFormJson,                                                  // popupform
+    toId,                                                           // parentSettingKey
+    element                                                         // triggeredBy
   );
-}
-
-// ---------------------------------------------------------
-// Add item to list via popup form
-function addViaPopupFormToList(element, clearInput = true) {
-
 
   // flag something changes to prevent navigating from page
   settingsChanged();
 }
-
 
 // ---------------------------------------------------------
 // Add item to list
@@ -475,18 +458,43 @@ function initListInteractionOptions(element) {
       // Perform action based on click count
       if (clickCounter === 1) {
         // Single-click action
-        showModalFieldInput(
-          `<i class="fa fa-pen-to-square"></i> ${getString(
-            "Gen_Update_Value"
-          )}`,
-          getString("settings_update_item_warning"),
-          getString("Gen_Cancel"),
-          getString("Gen_Update"),
-          $option.html(),
-          function () {
-            updateOptionItem($option, $(`#modal-field-input-field`).val());
-          }
-        );
+
+        const $parent = $option.parent();
+        const transformers = $parent.attr("my-transformers");
+
+        if (transformers && transformers === "name|base64") {
+          // Parent has my-transformers="name|base64"
+          const toId =  $parent.attr("id");
+          const curValue = $option.val();
+          const parsed = JSON.parse(atob($parent.data("elementoptionsbase64")));  
+          const popupFormJson = parsed.find(obj => "popupForm" in obj)?.popupForm ?? null;
+                  
+          showModalPopupForm(
+            `<i class="fa fa-pen-to-square"></i> ${getString(
+              "Gen_Update_Value"
+            )}`,                                                            // title
+            getString("settings_update_item_warning"),                      // message
+            getString("Gen_Cancel"),                                        // btnCancel
+            getString("Gen_Update"),                                        // btnOK
+            curValue,                                                       // curValue
+            popupFormJson,                                                  // popupform
+            toId,                                                           // parentSettingKey
+            this                                                            // triggeredBy
+          );
+        } else {
+          // Fallback to normal field input
+          showModalFieldInput(
+            `<i class="fa fa-pen-to-square"></i> ${getString("Gen_Update_Value")}`,
+            getString("settings_update_item_warning"),
+            getString("Gen_Cancel"),
+            getString("Gen_Update"),
+            $option.html(),
+            function () {
+              updateOptionItem($option, $(`#modal-field-input-field`).val());
+            }
+          );
+        }
+
       } else if (clickCounter === 2) {
         // Double-click action
         removeOptionItem($option);
@@ -718,7 +726,7 @@ function applyTransformers(val, transformers) {
 }
 
 // ------------------------------------------------------------
-// Function to reverse transformers applied to a value
+// Function to reverse transformers applied to a value - returns the LABEL
 function reverseTransformers(val, transformers) {
   transformers.reverse().forEach((transformer) => {
     switch (transformer) {
@@ -733,10 +741,10 @@ function reverseTransformers(val, transformers) {
         }
         break;
       case "name|base64":
-        // // Implement base64 decoding logic
-        // if (isBase64(val)) {
-        //   val = atob(val);
-        // }
+        // Implement base64 decoding logic
+        if (isBase64(val)) {
+          val = JSON.parse(atob(val))[0][3];
+        }
         val = val;   // probably TODO ⚠
         break;
       case "getString":
@@ -1089,7 +1097,6 @@ function collectSetting(prefix, setCodeName, setType, settingsArray) {
 function generateFormHtml(settingsData, set, overrideValue, overrideOptions, originalSetKey) {
   let inputHtml = '';
 
-
   isEmpty(overrideValue) ? inVal = set['setValue'] : inVal = overrideValue;  
   const setKey = set['setKey'];
   const setType = set['setType'];
@@ -1104,7 +1111,7 @@ function generateFormHtml(settingsData, set, overrideValue, overrideOptions, ori
   // }
 
   // Parse the setType JSON string
-  console.log(processQuotes(setType));
+  // console.log(processQuotes(setType));
   
   const setTypeObject = JSON.parse(processQuotes(setType))
   const dataType = setTypeObject.dataType;
@@ -1166,6 +1173,7 @@ function generateFormHtml(settingsData, set, overrideValue, overrideOptions, ori
                               my-customparams="${customParams}" 
                               my-customid="${customId}" 
                               my-originalSetKey="${originalSetKey}" 
+                              data-elementoptionsbase64="${elementOptionsBase64}"
                               ${multi}
                               ${readOnly ? "disabled" : ""}>
                           <option value="" id="${setKey + "_temp_"}"></option>
