@@ -9,11 +9,10 @@ Unifi import plugin using the Site Manager API.
 
 Navigate to your UniFi Site Manager _Settings -> Control Plane -> Integrations_.
 
-- `api_key` : You can generate your API key under the _Your API Keys_ section.
-- `base_url` : You can find your base url in the _API Request Format_ section, e.g. `https://192.168.100.1/proxy/network/integration/`
-- `version` : You can find your version as part of the url in the _API Request Format_ section, e.g. `v1`
-- `skip_ssl` : To skip SSL with you don't have an SSL certificate
-
+- `UNIFIAPI_api_key` : You can generate your API key under the _Your API Keys_ section.
+- `UNIFIAPI_base_url` : You can find your base url in the _API Request Format_ section, e.g. `https://192.168.100.1/proxy/network/integration/`
+- `UNIFIAPI_api_version` : You can find your version as part of the url in the _API Request Format_ section, e.g. `v1`
+- `UNIFIAPI_verify_ssl` : To skip SSL with you don't have an SSL certificate
 
 ### Usage
 

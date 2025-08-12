@@ -241,7 +241,7 @@
               {
                 "popupForm": [
                   {
-                    "function": "name",
+                    "function": "UNIFIAPI_site_name",
                     "type": {
                       "dataType": "string",
                       "elements": [
@@ -279,7 +279,7 @@
                     ]
                   },
                   {
-                    "function": "base_url",
+                    "function": "UNIFIAPI_base_url",
                     "type": {
                       "dataType": "string",
                       "elements": [
@@ -317,7 +317,7 @@
                     ]
                   },
                   {
-                    "function": "api_version",
+                    "function": "UNIFIAPI_api_version",
                     "type": {
                       "dataType": "string",
                       "elements": [
@@ -355,7 +355,7 @@
                     ]
                   },
                   {
-                    "function": "api_key",
+                    "function": "UNIFIAPI_api_key",
                     "type": {
                       "dataType": "string",
                       "elements": [
@@ -393,7 +393,7 @@
                     ]
                   },
                   {
-                    "function": "verify_ssl",
+                    "function": "UNIFIAPI_verify_ssl",
                     "type": {
                       "dataType": "boolean",
                       "elements": [

@@ -38,7 +38,6 @@ RESULT_FILE = os.path.join(LOG_PATH, f'last_result.{pluginName}.log')
 plugin_objects = Plugin_Objects(RESULT_FILE)
 
 
-
 def main():
     mylog('verbose', [f'[{pluginName}] In script']) 
 
@@ -46,20 +45,19 @@ def main():
     unifi_sites_configs = get_setting_value('UNIFIAPI_sites')
 
     mylog('verbose', [f'[{pluginName}] number of unifi_sites_configs: {len(unifi_sites_configs)}'])
-
     
     for site_config in unifi_sites_configs:
 
         siteDict = decode_settings_base64(site_config)
 
         mylog('verbose', [f'[{pluginName}] siteDict: {json.dumps(siteDict)}'])
-        mylog('none', [f'[{pluginName}] Connecting to: {siteDict["name"]}'])
+        mylog('none', [f'[{pluginName}] Connecting to: {siteDict["UNIFIAPI_site_name"]}'])
 
         api = SiteManagerAPI(
-                api_key=siteDict["api_key"], 
-                version=siteDict["api_version"], 
-                base_url=siteDict["base_url"], 
-                verify_ssl=siteDict["verify_ssl"]
+                api_key=siteDict["UNIFIAPI_api_key"], 
+                version=siteDict["UNIFIAPI_api_version"], 
+                base_url=siteDict["UNIFIAPI_base_url"], 
+                verify_ssl=siteDict["UNIFIAPI_verify_ssl"]
             )
 
         sites_resp = api.get_sites()

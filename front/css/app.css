@@ -18,6 +18,7 @@
     --color-yellow: #f39c12;
     --color-red: #dd4b39;
     --color-gray: #8c8c8c;
+    --color-black: #000;
 }
 
 .input-group .checkbox
@@ -602,6 +603,20 @@ body
     border-color: #ddd;
     background-color: #f4f4f4;
     cursor: default;
+}
+
+.btn-outline:hover
+{
+  border: 1px solid var(--color-black);
+  background: transparent;
+  color: var(--color-black);
+}
+
+.btn-outline
+{
+  border: 1px solid var(--color-gray);
+  background: transparent;
+  color: var(--color-gray);
 }
 
 /* -----------------------------------------------------------------------------
