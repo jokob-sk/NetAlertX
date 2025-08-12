@@ -422,6 +422,12 @@
     border: 1px solid #353c42;
   }
 
+  .btn-outline {
+    border: 1px solid var(--color-black);
+    background: transparent;
+    color: var(--color-white);
+  }
+  
   /* Used in debug log page */
   .log-red {
     color: #ff4038;

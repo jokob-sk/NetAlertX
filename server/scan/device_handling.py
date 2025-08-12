@@ -68,10 +68,23 @@ def update_devices_data_from_scan (db):
     # Update IP 
     mylog('debug', '[Update Devices] - cur_IP -> devLastIP (always updated)')
     sql.execute("""UPDATE Devices
-                    SET devLastIP = (SELECT cur_IP FROM CurrentScan
-                                      WHERE devMac = cur_MAC)
-                    WHERE EXISTS (SELECT 1 FROM CurrentScan
-                                  WHERE devMac = cur_MAC) """)
+            SET devLastIP = (
+                SELECT cur_IP
+                FROM CurrentScan
+                WHERE devMac = cur_MAC
+                AND cur_IP IS NOT NULL
+                AND cur_IP NOT IN ('', 'null', '(unknown)', '(Unknown)')
+                ORDER BY cur_DateTime DESC
+                LIMIT 1
+            )
+            WHERE EXISTS (
+                SELECT 1
+                FROM CurrentScan
+                WHERE devMac = cur_MAC
+                AND cur_IP IS NOT NULL
+                AND cur_IP NOT IN ('', 'null', '(unknown)', '(Unknown)')
+            )""")
+
 
     # Update only devices with empty, NULL or (u(U)nknown) vendors
     mylog('debug', '[Update Devices] - cur_Vendor -> (if empty) devVendor')
