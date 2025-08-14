@@ -245,7 +245,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "If specified, the hub will pull Devices data from the listed nodes. The <code>API_TOKEN</code> and <code>SYNC_encryption_key</code> must be set to the same value across the hub and all the nodes to ensure proper authentication and communication."
+          "string": "If specified, the hub will pull Devices data from the listed nodes. The <code>API_TOKEN</code> and <code>SYNC_encryption_key</code> must be set to the same value across the hub and all the nodes to ensure proper authentication and communication. Add full host URL and use the value of the <code>GRAPHQL_PORT</code> setting of the target, as the port."
         }
       ]
     },
@@ -271,7 +271,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "The URL of the hub (target instance). Set on the Node. Without a trailig slash, for example <code>http://192.168.1.82:20211</code>"
+          "string": "The URL of the hub (target instance) with the targets <code>GRAPHQL_PORT</code> set as port. Set on the Node. Without a trailig slash, for example <code>http://192.168.1.82:20212</code>"
         }
       ]
     },

@@ -1,9 +1,9 @@
 import threading
 from flask import Flask, request, jsonify, Response
 from flask_cors import CORS
-from .graphql_schema import devicesSchema
-from .prometheus_metrics import getMetricStats
-from graphene import Schema
+from .graphql_endpoint import devicesSchema
+from .prometheus_endpoint import getMetricStats
+from .sync_endpoint import handle_sync_post, handle_sync_get
 import sys
 
 # Register NetAlertX directories
@@ -57,21 +57,43 @@ def metrics():
 
     # Check for API token in headers
     if not is_authorized():
-        msg = '[metrics] Unauthorized access attempt - make sure your GRAPHQL_PORT and API_TOKEN settings are correct.'
-        mylog('verbose', [msg])
-        return jsonify({"error": msg}), 401
+        return jsonify({"error": "Forbidden"}), 403
 
 
     # Return Prometheus metrics as plain text
     return  Response(getMetricStats(), mimetype="text/plain")
     
+# --------------------------
+# SYNC endpoint
+# --------------------------
+@app.route("/sync", methods=["GET", "POST"])
+def sync_endpoint():
+    if not is_authorized():
+        return jsonify({"error": "Forbidden"}), 403
+
+    if request.method == "GET":
+        return handle_sync_get()
+    elif request.method == "POST":
+        return handle_sync_post()
+    else:
+        msg = "[sync endpoint] Method Not Allowed"
+        write_notification(msg, "alert")
+        mylog("verbose", [msg])
+        return jsonify({"error": "Method Not Allowed"}), 405
 
 # --------------------------
 # Background Server Start
 # --------------------------
 def is_authorized():
     token = request.headers.get("Authorization")
-    return token == f"Bearer {get_setting_value('API_TOKEN')}"
+    is_authorized = token == f"Bearer {get_setting_value('API_TOKEN')}"
+
+    if not is_authorized:
+        msg = f"[api] Unauthorized access attempt - make sure your GRAPHQL_PORT and API_TOKEN settings are correct."
+        write_notification(msg, "alert")
+        mylog("verbose", [msg])
+
+    return is_authorized
 
 
 def start_server(graphql_port, app_state):
@@ -79,7 +101,7 @@ def start_server(graphql_port, app_state):
 
     if app_state.graphQLServerStarted == 0:
                 
-        mylog('verbose', [f'[graphql_server] Starting on port: {graphql_port}'])
+        mylog('verbose', [f'[graphql endpoint] Starting on port: {graphql_port}'])
 
         # Start Flask app in a separate thread
         thread = threading.Thread(

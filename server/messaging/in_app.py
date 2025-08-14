@@ -24,43 +24,46 @@ from helper import generate_mac_links, removeDuplicateNewLines, timeNowTZ, get_f
 NOTIFICATION_API_FILE = apiPath + 'user_notifications.json'
 
 # Show Frontend User Notification
-def write_notification(content, level, timestamp):        
+def write_notification(content, level='alert', timestamp=None):   
 
-        # Generate GUID
-        guid = str(uuid.uuid4())
+    if timestamp is None:
+        timestamp = timeNowTZ()     
 
-        # Prepare notification dictionary
-        notification = {
-            'timestamp': str(timestamp),
-            'guid': guid,
-            'read': 0,
-            'level': level,
-            'content': content
-        }
+    # Generate GUID
+    guid = str(uuid.uuid4())
 
-        # If file exists, load existing data, otherwise initialize as empty list
-        if os.path.exists(NOTIFICATION_API_FILE):
-            with open(NOTIFICATION_API_FILE, 'r') as file:
-                # Check if the file object is of type _io.TextIOWrapper
-                if isinstance(file, _io.TextIOWrapper):
-                    file_contents = file.read()  # Read file contents
-                    if file_contents == '':
-                        file_contents = '[]'  # If file is empty, initialize as empty list
+    # Prepare notification dictionary
+    notification = {
+        'timestamp': str(timestamp),
+        'guid': guid,
+        'read': 0,
+        'level': level,
+        'content': content
+    }
 
-                    # mylog('debug', ['[Notification] User Notifications file: ', file_contents])
-                    notifications = json.loads(file_contents)  # Parse JSON data
-                else:
-                    mylog('none', '[Notification] File is not of type _io.TextIOWrapper')
-                    notifications = []
-        else:
-            notifications = []
+    # If file exists, load existing data, otherwise initialize as empty list
+    if os.path.exists(NOTIFICATION_API_FILE):
+        with open(NOTIFICATION_API_FILE, 'r') as file:
+            # Check if the file object is of type _io.TextIOWrapper
+            if isinstance(file, _io.TextIOWrapper):
+                file_contents = file.read()  # Read file contents
+                if file_contents == '':
+                    file_contents = '[]'  # If file is empty, initialize as empty list
 
-        # Append new notification
-        notifications.append(notification)
+                # mylog('debug', ['[Notification] User Notifications file: ', file_contents])
+                notifications = json.loads(file_contents)  # Parse JSON data
+            else:
+                mylog('none', '[Notification] File is not of type _io.TextIOWrapper')
+                notifications = []
+    else:
+        notifications = []
 
-        # Write updated data back to file
-        with open(NOTIFICATION_API_FILE, 'w') as file:
-            json.dump(notifications, file, indent=4)
+    # Append new notification
+    notifications.append(notification)
+
+    # Write updated data back to file
+    with open(NOTIFICATION_API_FILE, 'w') as file:
+        json.dump(notifications, file, indent=4)
 
 # Trim notifications
 def remove_old(keepNumberOfEntries):

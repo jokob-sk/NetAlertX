@@ -314,16 +314,14 @@ function addViaPopupForm(element) {
   console.log(`toId  | curValue: ${toId}  | ${curValue}`);
 
   showModalPopupForm(
-    `<i class="fa fa-pen-to-square"></i> ${getString(
-      "Gen_Update_Value"
-    )}`,                                                            // title
-    getString("settings_update_item_warning"),                      // message
-    getString("Gen_Cancel"),                                        // btnCancel
-    getString("Gen_Add"),                                           // btnOK
-    null,                                                           // curValue
-    popupFormJson,                                                  // popupform
-    toId,                                                           // parentSettingKey
-    element                                                         // triggeredBy
+    `<i class="fa-solid fa-square-plus"></i> ${getString("Gen_Add")}`,  // title
+    "",                                                                 // message
+    getString("Gen_Cancel"),                                            // btnCancel
+    getString("Gen_Add"),                                               // btnOK
+    null,                                                               // curValue
+    popupFormJson,                                                      // popupform
+    toId,                                                               // parentSettingKey
+    element                                                             // triggeredBy
   );
 
   // flag something changes to prevent navigating from page
@@ -470,16 +468,14 @@ function initListInteractionOptions(element) {
           const popupFormJson = parsed.find(obj => "popupForm" in obj)?.popupForm ?? null;
                   
           showModalPopupForm(
-            `<i class="fa fa-pen-to-square"></i> ${getString(
-              "Gen_Update_Value"
-            )}`,                                                            // title
-            getString("settings_update_item_warning"),                      // message
-            getString("Gen_Cancel"),                                        // btnCancel
-            getString("Gen_Update"),                                        // btnOK
-            curValue,                                                       // curValue
-            popupFormJson,                                                  // popupform
-            toId,                                                           // parentSettingKey
-            this                                                            // triggeredBy
+            `<i class="fa fa-pen-to-square"></i> ${getString("Gen_Update_Value")}`, // title
+            "",                                                                     // message
+            getString("Gen_Cancel"),                                                // btnCancel
+            getString("Gen_Update"),                                                // btnOK
+            curValue,                                                               // curValue
+            popupFormJson,                                                          // popupform
+            toId,                                                                   // parentSettingKey
+            this                                                                    // triggeredBy
           );
         } else {
           // Fallback to normal field input
