@@ -204,3 +204,11 @@ def get_array_from_sql_rows(rows):
 
 #-------------------------------------------------------------------------------
 
+def get_temp_db_connection():
+    """
+    Returns a new SQLite connection with Row factory.
+    Should be used per-thread/request to avoid cross-thread issues.
+    """
+    conn = sqlite3.connect(fullDbPath)
+    conn.row_factory = sqlite3.Row
+    return conn

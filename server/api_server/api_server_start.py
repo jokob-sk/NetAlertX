@@ -2,6 +2,7 @@ import threading
 from flask import Flask, request, jsonify, Response
 from flask_cors import CORS
 from .graphql_endpoint import devicesSchema
+from .device_endpoint import get_device_data, set_device_data
 from .prometheus_endpoint import getMetricStats
 from .sync_endpoint import handle_sync_post, handle_sync_get
 import sys
@@ -17,7 +18,15 @@ from messaging.in_app import write_notification
 
 # Flask application
 app = Flask(__name__)
-CORS(app, resources={r"/metrics": {"origins": "*"}}, supports_credentials=True, allow_headers=["Authorization"])
+CORS(
+    app,
+    resources={
+        r"/metrics": {"origins": "*"},
+        r"/device/*": {"origins": "*"}
+    },
+    supports_credentials=True,
+    allow_headers=["Authorization", "Content-Type"]
+)
 
 # --------------------------
 # GraphQL Endpoints
@@ -49,9 +58,108 @@ def graphql_endpoint():
     return jsonify(result.data)
 
 # --------------------------
-# Prometheus /metrics Endpoint
+# Device Endpoints
 # --------------------------
 
+@app.route("/device/<mac>", methods=["GET"])
+def api_get_device(mac):
+    if not is_authorized():
+        return jsonify({"error": "Forbidden"}), 403
+    return get_device_data(mac)
+
+@app.route("/device/<mac>", methods=["POST"])
+def api_set_device(mac):
+    if not is_authorized():
+        return jsonify({"error": "Forbidden"}), 403
+    return set_device_data(mac, request.json)
+
+@app.route("/device/<mac>/delete", methods=["DELETE"])
+def api_delete_device(mac):
+    if not is_authorized():
+        return jsonify({"error": "Forbidden"}), 403
+    return delete_device(mac)
+
+@app.route("/device/<mac>/events/delete", methods=["DELETE"])
+def api_delete_device_events(mac):
+    if not is_authorized():
+        return jsonify({"error": "Forbidden"}), 403
+    return delete_device_events(mac)
+
+@app.route("/device/<mac>/reset-props", methods=["POST"])
+def api_reset_device_props(mac):
+    if not is_authorized():
+        return jsonify({"error": "Forbidden"}), 403
+    return reset_device_props(mac, request.json)
+
+# --------------------------
+# Device Collections
+# --------------------------
+
+@app.route("/devices", methods=["DELETE"])
+def api_delete_all_devices():
+    if not is_authorized():
+        return jsonify({"error": "Forbidden"}), 403
+    return delete_all_devices()
+
+@app.route("/devices/empty-macs", methods=["DELETE"])
+def api_delete_all_empty_macs():
+    if not is_authorized():
+        return jsonify({"error": "Forbidden"}), 403
+    return delete_all_with_empty_macs()
+
+@app.route("/devices/unknown", methods=["DELETE"])
+def api_delete_unknown_devices():
+    if not is_authorized():
+        return jsonify({"error": "Forbidden"}), 403
+    return delete_unknown_devices()
+
+@app.route("/devices/totals", methods=["GET"])
+def api_get_devices_totals():
+    if not is_authorized():
+        return jsonify({"error": "Forbidden"}), 403
+    return get_devices_totals()
+
+# --------------------------
+# Device Events / History
+# --------------------------
+
+@app.route("/events", methods=["DELETE"])
+def api_delete_events():
+    if not is_authorized():
+        return jsonify({"error": "Forbidden"}), 403
+    return delete_events()
+
+@app.route("/events/30days", methods=["DELETE"])
+def api_delete_events_30():
+    if not is_authorized():
+        return jsonify({"error": "Forbidden"}), 403
+    return delete_events_30()
+
+@app.route("/history/actions", methods=["DELETE"])
+def api_delete_act_history():
+    if not is_authorized():
+        return jsonify({"error": "Forbidden"}), 403
+    return delete_act_history()
+
+# --------------------------
+# CSV Import / Export
+# --------------------------
+
+@app.route("/devices/export", methods=["GET"])
+def api_export_csv():
+    if not is_authorized():
+        return jsonify({"error": "Forbidden"}), 403
+    return export_csv()
+
+@app.route("/devices/import", methods=["POST"])
+def api_import_csv():
+    if not is_authorized():
+        return jsonify({"error": "Forbidden"}), 403
+    return import_csv(request.files.get("file"))
+
+# --------------------------
+# Prometheus metrics endpoint
+# --------------------------
 @app.route("/metrics")
 def metrics():
 

@@ -53,14 +53,6 @@
 
       var deviceData = JSON.parse(data);
 
-      // // Deactivate next previous buttons
-      // if (readAllData) {
-      //   $('#btnPrevious').attr    ('disabled','');
-      //   $('#btnPrevious').addClass  ('text-gray50');
-      //   $('#btnNext').attr      ('disabled','');
-      //   $('#btnNext').addClass    ('text-gray50');
-      // }
-
       // some race condition, need to implement delay
       setTimeout(() => {
         $.get('php/server/query_json.php', { 
@@ -256,25 +248,27 @@
 
             // update readonly fields
             handleReadOnly(settingsData, disabledFields);           
-        };
+          };
 
-        // console.log(relevantSettings)
+          // console.log(relevantSettings)
 
-        generateSimpleForm(relevantSettings);
+          generateSimpleForm(relevantSettings);
 
-        toggleNetworkConfiguration(mac == 'Internet') 
+          toggleNetworkConfiguration(mac == 'Internet') 
 
-        initSelect2();
-        initHoverNodeInfo();
+          initSelect2();
+          initHoverNodeInfo();
 
-        hideSpinner();
+          hideSpinner();
+        
+        })
       
-      })
+        }, 100);
+      });
     
-      }, 100);
-    });
-  
-  }
+    }
+
+
   
 
   // ----------------------------------------

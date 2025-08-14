@@ -636,6 +636,69 @@ def collect_lang_strings(json, pref, stringSqlParams):
 #  Misc
 #-------------------------------------------------------------------------------
 
+# -------------------------------------------------------------------------------------------
+def format_date(date_str: str) -> str:
+    """Format a date string as 'YYYY-MM-DD   HH:MM'"""
+    dt = datetime.datetime.fromisoformat(date_str) if isinstance(date_str, str) else date_str
+    return dt.strftime('%Y-%m-%d   %H:%M')
+
+# -------------------------------------------------------------------------------------------
+def format_date_diff(date1: str, date2: str) -> str:
+    """Return difference between two dates formatted as 'Xd   HH:MM'"""
+    dt1 = datetime.datetime.fromisoformat(date1) if isinstance(date1, str) else date1
+    dt2 = datetime.datetime.fromisoformat(date2) if isinstance(date2, str) else date2
+    delta = dt2 - dt1
+
+    days = delta.days
+    hours, remainder = divmod(delta.seconds, 3600)
+    minutes = remainder // 60
+
+    return f"{days}d   {hours:02}:{minutes:02}"
+
+# -------------------------------------------------------------------------------------------
+def format_date_iso(date1: str) -> str:
+    """Return ISO 8601 string for a date"""
+    dt = datetime.datetime.fromisoformat(date1) if isinstance(date1, str) else date1
+    return dt.isoformat()
+
+# -------------------------------------------------------------------------------------------    
+def is_random_mac(mac: str) -> bool:
+    """Determine if a MAC address is random, respecting user-defined prefixes not to mark as random."""
+
+    is_random = mac[1].upper() in ["2", "6", "A", "E"]
+
+    # Get prefixes from settings
+    prefixes = get_setting_value("UI_NOT_RANDOM_MAC")  
+
+    # If detected as random, make sure it doesn't start with a prefix the user wants to exclude
+    if is_random:
+        for prefix in prefixes:
+            if mac.upper().startswith(prefix.upper()):
+                is_random = False
+                break
+
+    return is_random
+
+
+# -------------------------------------------------------------------------------------------   
+def get_date_from_period(period):
+    """
+    Convert a period request parameter into an SQLite date expression.
+    Equivalent to PHP getDateFromPeriod().
+    Returns a string like "date('now', '-7 day')"
+    """    
+    days_map = {
+        '7 days': 7,
+        '1 month': 30,
+        '1 year': 365,
+        '100 years': 3650,  # actually 10 years in original PHP
+    }
+
+    days = days_map.get(period, 1)  # default 1 day
+    period_sql = f"date('now', '-{days} day')"
+
+    return period_sql
+
 #-------------------------------------------------------------------------------
 def print_table_schema(db, table):
     sql = db.sql

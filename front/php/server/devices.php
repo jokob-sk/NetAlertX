@@ -37,10 +37,7 @@
       case 'deleteEvents30':          deleteEvents30();                        break;
       case 'deleteActHistory':        deleteActHistory();                      break;
       case 'deleteDeviceEvents':      deleteDeviceEvents();                    break;
-      case 'resetDeviceProps':        resetDeviceProps();                      break;
-      case 'PiaBackupDBtoArchive':    PiaBackupDBtoArchive();                  break;
-      case 'PiaRestoreDBfromArchive': PiaRestoreDBfromArchive();               break;
-      case 'PiaPurgeDBBackups':       PiaPurgeDBBackups();                     break;             
+      case 'resetDeviceProps':        resetDeviceProps();                      break;          
       case 'ExportCSV':               ExportCSV();                             break;    
       case 'ImportCSV':               ImportCSV();                             break;     
 
@@ -48,8 +45,7 @@
       case 'getDevicesListCalendar':  getDevicesListCalendar();                break;  //todo: slowly deprecate this
 
       case 'updateNetworkLeaf':       updateNetworkLeaf();                     break;
-      case 'getIcons':                getIcons();                              break;
-      case 'getActions':              getActions();                            break;
+
       case 'getDevices':              getDevices();                            break;
       case 'copyFromDevice':          copyFromDevice();                        break;
       case 'wakeonlan':               wakeonlan();                             break;
@@ -518,92 +514,6 @@ function deleteActHistory() {
 }
 
 //------------------------------------------------------------------------------
-//  Backup DB to Archiv
-//------------------------------------------------------------------------------
-function PiaBackupDBtoArchive() {
-  // prepare fast Backup
-  $dbfilename = 'app.db';
-  $file = '../../../db/'.$dbfilename;
-  $newfile = '../../../db/'.$dbfilename.'.latestbackup';
-  
-  // copy files as a fast Backup
-  if (!copy($file, $newfile)) {
-      echo lang('BackDevices_Backup_CopError');
-  } else {
-    // Create archive with actual date
-    $Pia_Archive_Name = 'appdb_'.date("Ymd_His").'.zip';
-    $Pia_Archive_Path = '../../../db/';
-    exec('zip -j '.$Pia_Archive_Path.$Pia_Archive_Name.' ../../../db/'.$dbfilename, $output);
-    // chheck if archive exists
-    if (file_exists($Pia_Archive_Path.$Pia_Archive_Name) && filesize($Pia_Archive_Path.$Pia_Archive_Name) > 0) {
-      echo lang('BackDevices_Backup_okay').': ('.$Pia_Archive_Name.')';
-      unlink($newfile);
-      echo("<meta http-equiv='refresh' content='1'>");
-    } else {
-      echo lang('BackDevices_Backup_Failed').' ('.$dbfilename.'.latestbackup)';
-    }
-  }
-
-}
-
-//------------------------------------------------------------------------------
-//  Restore DB from Archiv
-//------------------------------------------------------------------------------
-function PiaRestoreDBfromArchive() {
-  // prepare fast Backup
-  $file = '../../../db/'.$dbfilename;
-  $oldfile = '../../../db/'.$dbfilename.'.prerestore';  
-
-  // copy files as a fast Backup
-  if (!copy($file, $oldfile)) {
-      echo lang('BackDevices_Restore_CopError');
-  } else {
-    // extract latest archive and overwrite the actual .db
-    $Pia_Archive_Path = '../../../db/';
-    exec('/bin/ls -Art '.$Pia_Archive_Path.'*.zip | /bin/tail -n 1 | /usr/bin/xargs -n1 /bin/unzip -o -d ../../../db/', $output);
-    // check if the .db exists
-    if (file_exists($file)) {
-       echo lang('BackDevices_Restore_okay');
-       unlink($oldfile);
-       echo("<meta http-equiv='refresh' content='1'>");
-     } else {
-       echo lang('BackDevices_Restore_Failed');
-     }
-  }
-
-}
-
-//------------------------------------------------------------------------------
-//  Purge Backups
-//------------------------------------------------------------------------------
-function PiaPurgeDBBackups() {  
-
-  $Pia_Archive_Path = '../../../db';
-  $Pia_Backupfiles = array();
-  $files = array_diff(scandir($Pia_Archive_Path, SCANDIR_SORT_DESCENDING), array('.', '..', $dbfilename, 'netalertxdb-reset.zip'));
-
-  foreach ($files as &$item) 
-    {
-      $item = $Pia_Archive_Path.'/'.$item;
-      if (stristr($item, 'setting_') == '') {array_push($Pia_Backupfiles, $item);}
-    }
-
-  if (sizeof($Pia_Backupfiles) > 3) 
-    {
-      rsort($Pia_Backupfiles);
-      unset($Pia_Backupfiles[0], $Pia_Backupfiles[1], $Pia_Backupfiles[2]);
-      $Pia_Backupfiles_Purge = array_values($Pia_Backupfiles);
-      for ($i = 0; $i < sizeof($Pia_Backupfiles_Purge); $i++) 
-        {
-          unlink($Pia_Backupfiles_Purge[$i]);
-        }
-  }
-  echo lang('BackDevices_DBTools_Purge');
-  echo("<meta http-equiv='refresh' content='1'>");
-    
-}
-
-//------------------------------------------------------------------------------
 //  Export CSV of devices
 //------------------------------------------------------------------------------
 function ExportCSV() {
@@ -827,44 +737,6 @@ function getDevicesListCalendar() {
 //  Query Device Data
 //------------------------------------------------------------------------------
 
-//------------------------------------------------------------------------------
-function getIcons() {
-  global $db;
-
-  // Device Data
-  $sql = 'select devIcon from Devices group by devIcon';
-
-  $result = $db->query($sql);
-
-  // arrays of rows
-  $tableData = array();
-  while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {  
-    $icon = handleNull($row['devIcon'], "<i class='fa fa-laptop'></i>"); 
-    // Push row data
-    $tableData[] = array('id'    => $icon, 
-                         'name'  => $icon );                          
-  }
-  
-  // Control no rows
-  if (empty($tableData)) {
-    $tableData = [];
-  }
-  
-    // Return json
-  echo (json_encode ($tableData));
-}
-
-//------------------------------------------------------------------------------
-function getActions() {
-  
-  $tableData = array(
-    array('id'    => 'wake-on-lan', 
-          'name'  =>  lang('DevDetail_WOL_Title'))
-  );
-
-  // Return json
-  echo (json_encode ($tableData));
-}
 
 //------------------------------------------------------------------------------
 function getDevices() {
