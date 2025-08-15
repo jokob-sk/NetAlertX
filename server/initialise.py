@@ -176,7 +176,7 @@ def importConfigs (db, all_plugins):
     conf.API_TOKEN = ccd('API_TOKEN', 't_' + generate_random_string(20) , c_d, 'API token', '{"dataType": "string","elements": [{"elementType": "input","elementHasInputValue": 1,"elementOptions": [{ "cssClasses": "col-xs-12" }],"transformers": []},{"elementType": "button","elementOptions": [{ "getStringKey": "Gen_Generate" },{ "customParams": "API_TOKEN" },{ "onClick": "generateApiToken(this, 20)" },{ "cssClasses": "col-xs-12" }],"transformers": []}]}', '[]', 'General')
 
     # UI
-    conf.UI_LANG = ccd('UI_LANG', 'English' , c_d, 'Language Interface', '{"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]}', "['English', 'German', 'Spanish', 'French', 'Norwegian', 'Russian', 'Italian (it_it)', 'Portuguese (pt_br)', 'Polish (pl_pl)', 'Chinese (zh_cn)', 'Turkish (tr_tr)', 'Czech (cs_cz)', 'Arabic (ar_ar)',  'Catalan (ca_ca)', 'Ukrainian (uk_ua)' ]", 'UI') 
+    conf.UI_LANG = ccd('UI_LANG', 'English' , c_d, 'Language Interface', '{"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]}', "['English', 'German', 'Spanish', 'French', 'Norwegian', 'Russian', 'Italian (it_it)', 'Portuguese (pt_br)', 'Portuguese (pt_pt)', 'Polish (pl_pl)', 'Chinese (zh_cn)', 'Turkish (tr_tr)', 'Czech (cs_cz)', 'Arabic (ar_ar)',  'Catalan (ca_ca)', 'Ukrainian (uk_ua)' ]", 'UI') 
     
     #  Init timezone in case it changed and handle invalid values
     try:
