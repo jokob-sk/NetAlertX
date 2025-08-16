@@ -261,7 +261,6 @@ def delete_device_events(mac):
 
 def reset_device_props(mac, data=None):
     """Reset device custom properties to default."""
-    from .helpers import get_setting_value
     default_props = get_setting_value("NEWDEV_devCustomProps")
     conn = get_temp_db_connection()
     cur = conn.cursor()

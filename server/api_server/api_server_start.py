@@ -2,7 +2,8 @@ import threading
 from flask import Flask, request, jsonify, Response
 from flask_cors import CORS
 from .graphql_endpoint import devicesSchema
-from .device_endpoint import get_device_data, set_device_data
+from .device_endpoint import get_device_data, set_device_data, delete_device, delete_device_events, reset_device_props
+from .devices_endpoint import delete_unknown_devices, delete_all_with_empty_macs, delete_devices
 from .prometheus_endpoint import getMetricStats
 from .sync_endpoint import handle_sync_post, handle_sync_get
 import sys
@@ -22,7 +23,8 @@ CORS(
     app,
     resources={
         r"/metrics": {"origins": "*"},
-        r"/device/*": {"origins": "*"}
+        r"/device/*": {"origins": "*"},
+        r"/devices/*": {"origins": "*"}
     },
     supports_credentials=True,
     allow_headers=["Authorization", "Content-Type"]
@@ -92,14 +94,17 @@ def api_reset_device_props(mac):
     return reset_device_props(mac, request.json)
 
 # --------------------------
-# Device Collections
+# Devices Collections
 # --------------------------
 
 @app.route("/devices", methods=["DELETE"])
-def api_delete_all_devices():
+def api_delete_devices():
     if not is_authorized():
         return jsonify({"error": "Forbidden"}), 403
-    return delete_all_devices()
+    
+    macs = request.json.get("macs") if request.is_json else None
+
+    return delete_devices(macs)
 
 @app.route("/devices/empty-macs", methods=["DELETE"])
 def api_delete_all_empty_macs():
@@ -118,6 +123,7 @@ def api_get_devices_totals():
     if not is_authorized():
         return jsonify({"error": "Forbidden"}), 403
     return get_devices_totals()
+
 
 # --------------------------
 # Device Events / History

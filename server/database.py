@@ -209,6 +209,8 @@ def get_temp_db_connection():
     Returns a new SQLite connection with Row factory.
     Should be used per-thread/request to avoid cross-thread issues.
     """
-    conn = sqlite3.connect(fullDbPath)
+    conn = sqlite3.connect(fullDbPath, timeout=5, isolation_level=None)
+    conn.execute("PRAGMA journal_mode=WAL;")
+    conn.execute("PRAGMA busy_timeout=5000;")  # 5s wait before giving up
     conn.row_factory = sqlite3.Row
     return conn
