@@ -4,6 +4,8 @@ from flask_cors import CORS
 from .graphql_endpoint import devicesSchema
 from .device_endpoint import get_device_data, set_device_data, delete_device, delete_device_events, reset_device_props
 from .devices_endpoint import delete_unknown_devices, delete_all_with_empty_macs, delete_devices
+from .events_endpoint import delete_device_events, delete_events, delete_events_30, get_events
+from .history_endpoint import delete_online_history
 from .prometheus_endpoint import getMetricStats
 from .sync_endpoint import handle_sync_post, handle_sync_get
 import sys
@@ -24,7 +26,9 @@ CORS(
     resources={
         r"/metrics": {"origins": "*"},
         r"/device/*": {"origins": "*"},
-        r"/devices/*": {"origins": "*"}
+        r"/devices/*": {"origins": "*"},
+        r"/history/*": {"origins": "*"},
+        r"/events/*": {"origins": "*"}
     },
     supports_credentials=True,
     allow_headers=["Authorization", "Content-Type"]
@@ -126,26 +130,45 @@ def api_get_devices_totals():
 
 
 # --------------------------
-# Device Events / History
+# Online history
 # --------------------------
 
+@app.route("/history", methods=["DELETE"])
+def api_delete_online_history():
+    if not is_authorized():
+        return jsonify({"error": "Forbidden"}), 403
+    return delete_online_history()
+
+# --------------------------
+# Device Events
+# --------------------------
+
+@app.route("/events/<mac>", methods=["DELETE"])
+def api_delete_device_events(mac):
+    if not is_authorized():
+        return jsonify({"error": "Forbidden"}), 403
+    return delete_device_events(mac)
+
 @app.route("/events", methods=["DELETE"])
-def api_delete_events():
+def api_delete_all_events():
     if not is_authorized():
         return jsonify({"error": "Forbidden"}), 403
     return delete_events()
 
+@app.route("/events", methods=["GET"])
+def api_delete_all_events():
+    if not is_authorized():
+        return jsonify({"error": "Forbidden"}), 403
+
+    mac = request.json.get("mac") if request.is_json else None
+
+    return get_events(mac)
+
 @app.route("/events/30days", methods=["DELETE"])
-def api_delete_events_30():
+def api_delete_old_events():
     if not is_authorized():
         return jsonify({"error": "Forbidden"}), 403
     return delete_events_30()
-
-@app.route("/history/actions", methods=["DELETE"])
-def api_delete_act_history():
-    if not is_authorized():
-        return jsonify({"error": "Forbidden"}), 403
-    return delete_act_history()
 
 # --------------------------
 # CSV Import / Export
