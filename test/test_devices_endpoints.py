@@ -1,6 +1,7 @@
 import sys
 import pathlib
 import sqlite3
+import base64
 import random
 import string
 import uuid
@@ -29,9 +30,8 @@ def test_mac():
 def auth_headers(token):
     return {"Authorization": f"Bearer {token}"}
 
-def test_delete_devices_with_macs(client, api_token, test_mac):
 
-    # First create device so it exists
+def create_dummy(client, api_token, test_mac):
     payload = {
         "createNew": True,
         "name": "Test Device",
@@ -40,6 +40,10 @@ def test_delete_devices_with_macs(client, api_token, test_mac):
         "vendor": "TestVendor",
     }
     resp = client.post(f"/device/{test_mac}", json=payload, headers=auth_headers(api_token))
+
+def test_delete_devices_with_macs(client, api_token, test_mac):
+    # First create device so it exists
+    create_dummy(client, api_token, test_mac)
     
     client.post(f"/device/{test_mac}", json={"createNew": True}, headers=auth_headers(api_token))
 
@@ -47,14 +51,6 @@ def test_delete_devices_with_macs(client, api_token, test_mac):
     resp = client.delete("/devices", json={"macs": [test_mac]}, headers=auth_headers(api_token))
     assert resp.status_code == 200
     assert resp.json.get("success") is True
-
-def test_delete_test_devices(client, api_token, test_mac):
-
-    # Delete by MAC
-    resp = client.delete("/devices", json={"macs": ["AA:BB:CC:*"]}, headers=auth_headers(api_token))
-    assert resp.status_code == 200
-    assert resp.json.get("success") is True
-
 
 def test_delete_all_empty_macs(client, api_token):
     resp = client.delete("/devices/empty-macs", headers=auth_headers(api_token))
@@ -68,3 +64,72 @@ def test_delete_unknown_devices(client, api_token):
     assert resp.status_code == 200
     assert resp.json.get("success") is True
 
+def test_export_devices_csv(client, api_token, test_mac):
+    # Create a device first
+    create_dummy(client, api_token, test_mac)
+
+    # Export devices as CSV
+    resp = client.get("/devices/export/csv", headers=auth_headers(api_token))
+    assert resp.status_code == 200
+    assert resp.mimetype == "text/csv"
+    assert "attachment; filename=devices.csv" in resp.headers.get("Content-disposition", "")
+
+    # CSV should contain test_mac
+    assert test_mac in resp.data.decode()
+
+def test_export_devices_json(client, api_token, test_mac):
+    # Create a device first
+    create_dummy(client, api_token, test_mac)
+
+    # Export devices as JSON
+    resp = client.get("/devices/export/json", headers=auth_headers(api_token))
+    assert resp.status_code == 200
+    assert resp.is_json
+    data = resp.get_json()
+    assert  any(dev.get("devMac") == test_mac for dev in data["data"])
+
+
+def test_export_devices_invalid_format(client, api_token):
+    # Request with unsupported format
+    resp = client.get("/devices/export/invalid", headers=auth_headers(api_token))
+    assert resp.status_code == 400
+    assert "Unsupported format" in resp.json.get("error")
+
+
+def test_export_import_cycle_base64(client, api_token, test_mac):
+    # 1. Create a dummy device
+    create_dummy(client, api_token, test_mac)
+
+    # 2. Export devices as CSV
+    resp = client.get("/devices/export/csv", headers=auth_headers(api_token))
+    assert resp.status_code == 200
+    csv_data = resp.data.decode("utf-8")
+
+    # Ensure our dummy device is in the CSV
+    assert test_mac in csv_data
+    assert "Test Device" in csv_data
+
+    # 3. Base64-encode the CSV for JSON payload
+    csv_base64 = base64.b64encode(csv_data.encode("utf-8")).decode("utf-8")
+    json_payload = {"content": csv_base64}
+
+    # 4. POST to import endpoint with JSON content
+    resp = client.post(
+        "/devices/import",
+        json=json_payload,
+        headers={**auth_headers(api_token), "Content-Type": "application/json"}
+    )
+    assert resp.status_code == 200
+    assert resp.json.get("success") is True
+
+    # 5. Verify import results
+    assert resp.json.get("inserted") >= 1
+    assert resp.json.get("skipped_lines") == []
+
+
+def test_delete_test_devices(client, api_token, test_mac):
+
+    # Delete by MAC
+    resp = client.delete("/devices", json={"macs": ["AA:BB:CC:*"]}, headers=auth_headers(api_token))
+    assert resp.status_code == 200
+    assert resp.json.get("success") is True

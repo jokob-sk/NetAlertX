@@ -8,7 +8,8 @@ import json
 from const import fullDbPath, sql_devices_stats, sql_devices_all, sql_generateGuid
 
 from logger import mylog
-from helper import json_obj, initOrSetParam, row_to_json, timeNowTZ
+from helper import timeNowTZ
+from db.db_helper import row_to_json, get_table_json, json_obj
 from workflows.app_events import AppEvent_obj
 from db.db_upgrade import ensure_column, ensure_views, ensure_CurrentScan, ensure_plugins_tables, ensure_Parameters, ensure_Settings, ensure_Indexes
 
@@ -121,26 +122,41 @@ class DB():
         AppEvent_obj(self)
 
 
-    #-------------------------------------------------------------------------------
+    # #-------------------------------------------------------------------------------
+    # def get_table_as_json(self, sqlQuery):
+
+    #     # mylog('debug',[ '[Database] - get_table_as_json - Query: ', sqlQuery])
+    #     try:
+    #         self.sql.execute(sqlQuery)
+    #         columnNames = list(map(lambda x: x[0], self.sql.description))
+    #         rows = self.sql.fetchall()
+    #     except sqlite3.Error as e:
+    #         mylog('verbose',[ '[Database] - SQL ERROR: ', e])
+    #         return json_obj({}, []) # return empty object
+
+    #     result = {"data":[]}
+    #     for row in rows:
+    #         tmp = row_to_json(columnNames, row)
+    #         result["data"].append(tmp)
+
+    #     # mylog('debug',[ '[Database] - get_table_as_json - returning ', len(rows), " rows with columns: ", columnNames])
+    #     # mylog('debug',[ '[Database] - get_table_as_json - returning json ', json.dumps(result) ])
+    #     return json_obj(result, columnNames)
+
     def get_table_as_json(self, sqlQuery):
-
-        # mylog('debug',[ '[Database] - get_table_as_json - Query: ', sqlQuery])
+        """
+        Wrapper to use the central get_table_as_json helper.
+        """
         try:
-            self.sql.execute(sqlQuery)
-            columnNames = list(map(lambda x: x[0], self.sql.description))
-            rows = self.sql.fetchall()
-        except sqlite3.Error as e:
-            mylog('verbose',[ '[Database] - SQL ERROR: ', e])
-            return json_obj({}, []) # return empty object
-
-        result = {"data":[]}
-        for row in rows:
-            tmp = row_to_json(columnNames, row)
-            result["data"].append(tmp)
+            result = get_table_json(self.sql, sqlQuery)
+        except Exception as e:
+            mylog('verbose', ['[Database] - get_table_as_json ERROR:', e])
+            return json_obj({}, [])  # return empty object on failure
 
         # mylog('debug',[ '[Database] - get_table_as_json - returning ', len(rows), " rows with columns: ", columnNames])
         # mylog('debug',[ '[Database] - get_table_as_json - returning json ', json.dumps(result) ])
-        return json_obj(result, columnNames)
+
+        return result
 
     #-------------------------------------------------------------------------------
     # referece from here: https://codereview.stackexchange.com/questions/241043/interface-class-for-sqlite-databases

@@ -8,12 +8,13 @@ import re
 INSTALL_PATH="/app"
 sys.path.extend([f"{INSTALL_PATH}/server"])
 
-from helper import timeNowTZ, get_setting_value, list_to_where, check_IP_format, sanitize_SQL_input
+from helper import timeNowTZ, get_setting_value, check_IP_format
 from logger import mylog
 from const import vendorsPath, vendorsPathNewest, sql_generateGuid
 from models.device_instance import DeviceInstance
 from scan.name_resolution import NameResolver
 from scan.device_heuristics import guess_icon, guess_type
+from db.db_helper import sanitize_SQL_input, list_to_where
 
 #-------------------------------------------------------------------------------
 # Removing devices from the CurrentScan DB table which the user chose to ignore by MAC or IP

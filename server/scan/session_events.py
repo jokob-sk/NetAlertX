@@ -6,7 +6,8 @@ sys.path.extend([f"{INSTALL_PATH}/server"])
 
 import conf
 from scan.device_handling import create_new_devices, print_scan_stats, save_scanned_devices, exclude_ignored_devices, update_devices_data_from_scan
-from helper import timeNowTZ, print_table_schema, get_setting_value
+from helper import timeNowTZ, get_setting_value
+from db.db_helper import print_table_schema
 from logger import mylog, Logger
 from messaging.reporting import skip_repeated_notifications
 

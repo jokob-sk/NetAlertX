@@ -66,3 +66,56 @@ def test_delete_device(client, api_token, test_mac):
     resp = client.delete(f"/device/{test_mac}/delete", headers=auth_headers(api_token))
     assert resp.status_code == 200
     assert resp.json.get("success") is True
+
+def test_copy_device(client, api_token, test_mac):
+    # Step 1: Create the source device
+    payload = {"createNew": True, "name": "Source Device"}
+    resp = client.post(f"/device/{test_mac}", json=payload, headers=auth_headers(api_token))
+    assert resp.status_code == 200
+    assert resp.json.get("success") is True
+
+    # Step 2: Generate a target MAC
+    target_mac = "AA:BB:CC:" + ":".join(f"{random.randint(0,255):02X}" for _ in range(3))
+
+    # Step 3: Copy device
+    copy_payload = {"macFrom": test_mac, "macTo": target_mac}
+    resp = client.post("/device/copy", json=copy_payload, headers=auth_headers(api_token))
+    assert resp.status_code == 200
+    assert resp.json.get("success") is True
+
+    # Step 4: Verify new device exists
+    resp = client.get(f"/device/{target_mac}", headers=auth_headers(api_token))
+    assert resp.status_code == 200
+    assert resp.json.get("devMac") == target_mac
+
+    # Cleanup: delete both devices
+    client.delete(f"/device/{test_mac}/delete", headers=auth_headers(api_token))
+    client.delete(f"/device/{target_mac}/delete", headers=auth_headers(api_token))
+
+def test_update_device_column(client, api_token, test_mac):
+    # First, create the device
+    client.post(
+        f"/device/{test_mac}",
+        json={"createNew": True},
+        headers=auth_headers(api_token),
+    )
+
+    # Update its parent MAC
+    resp = client.post(
+        f"/device/{test_mac}/update-column",
+        json={"columnName": "devParentMAC", "columnValue": "Internet"},
+        headers=auth_headers(api_token),
+    )
+
+    assert resp.status_code == 200
+    assert resp.json.get("success") is True
+
+    # Try updating a non-existent device
+    resp_missing = client.post(
+        "/device/11:22:33:44:55:66/update-column",
+        json={"columnName": "devParentMAC", "columnValue": "Internet"},
+        headers=auth_headers(api_token),
+    )
+
+    assert resp_missing.status_code == 404
+    assert resp_missing.json.get("success") is False

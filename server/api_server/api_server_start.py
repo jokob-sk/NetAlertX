@@ -2,9 +2,9 @@ import threading
 from flask import Flask, request, jsonify, Response
 from flask_cors import CORS
 from .graphql_endpoint import devicesSchema
-from .device_endpoint import get_device_data, set_device_data, delete_device, delete_device_events, reset_device_props
-from .devices_endpoint import delete_unknown_devices, delete_all_with_empty_macs, delete_devices
-from .events_endpoint import delete_device_events, delete_events, delete_events_30, get_events
+from .device_endpoint import get_device_data, set_device_data, delete_device, delete_device_events, reset_device_props, copy_device, update_device_column
+from .devices_endpoint import delete_unknown_devices, delete_all_with_empty_macs, delete_devices, export_devices, import_csv
+from .events_endpoint import delete_events, delete_events_30, get_events
 from .history_endpoint import delete_online_history
 from .prometheus_endpoint import getMetricStats
 from .sync_endpoint import handle_sync_post, handle_sync_get
@@ -97,6 +97,34 @@ def api_reset_device_props(mac):
         return jsonify({"error": "Forbidden"}), 403
     return reset_device_props(mac, request.json)
 
+@app.route("/device/copy", methods=["POST"])
+def api_copy_device():
+    if not is_authorized():
+        return jsonify({"error": "Forbidden"}), 403
+
+    data = request.get_json() or {}
+    mac_from = data.get("macFrom")
+    mac_to = data.get("macTo")
+
+    if not mac_from or not mac_to:
+        return jsonify({"success": False, "error": "macFrom and macTo are required"}), 400
+
+    return copy_device(mac_from, mac_to)
+
+@app.route("/device/<mac>/update-column", methods=["POST"])
+def api_update_device_column(mac):
+    if not is_authorized():
+        return jsonify({"error": "Forbidden"}), 403
+
+    data = request.get_json() or {}
+    column_name = data.get("columnName")
+    column_value = data.get("columnValue")
+
+    if not column_name or not column_value:
+        return jsonify({"success": False, "error": "columnName and columnValue are required"}), 400
+
+    return update_device_column(mac, column_name, column_value)
+
 # --------------------------
 # Devices Collections
 # --------------------------
@@ -129,6 +157,21 @@ def api_get_devices_totals():
     return get_devices_totals()
 
 
+@app.route("/devices/export", methods=["GET"])
+@app.route("/devices/export/<format>", methods=["GET"])
+def api_export_devices(format=None):
+    if not is_authorized():
+        return jsonify({"error": "Forbidden"}), 403
+
+    export_format = (format or request.args.get("format", "csv")).lower()
+    return export_devices(export_format)
+
+@app.route("/devices/import", methods=["POST"])
+def api_import_csv():
+    if not is_authorized():
+        return jsonify({"error": "Forbidden"}), 403
+    return import_csv(request.files.get("file"))
+
 # --------------------------
 # Online history
 # --------------------------
@@ -144,7 +187,7 @@ def api_delete_online_history():
 # --------------------------
 
 @app.route("/events/<mac>", methods=["DELETE"])
-def api_delete_device_events(mac):
+def api_events_by_mac(mac):
     if not is_authorized():
         return jsonify({"error": "Forbidden"}), 403
     return delete_device_events(mac)
@@ -156,7 +199,7 @@ def api_delete_all_events():
     return delete_events()
 
 @app.route("/events", methods=["GET"])
-def api_delete_all_events():
+def api_get_events():
     if not is_authorized():
         return jsonify({"error": "Forbidden"}), 403
 
@@ -169,22 +212,6 @@ def api_delete_old_events():
     if not is_authorized():
         return jsonify({"error": "Forbidden"}), 403
     return delete_events_30()
-
-# --------------------------
-# CSV Import / Export
-# --------------------------
-
-@app.route("/devices/export", methods=["GET"])
-def api_export_csv():
-    if not is_authorized():
-        return jsonify({"error": "Forbidden"}), 403
-    return export_csv()
-
-@app.route("/devices/import", methods=["POST"])
-def api_import_csv():
-    if not is_authorized():
-        return jsonify({"error": "Forbidden"}), 403
-    return import_csv(request.files.get("file"))
 
 # --------------------------
 # Prometheus metrics endpoint

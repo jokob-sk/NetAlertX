@@ -14,8 +14,8 @@ INSTALL_PATH="/app"
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from database import get_temp_db_connection
-from helper import row_to_json, get_date_from_period, is_random_mac, format_date, get_setting_value
-
+from helper import is_random_mac, format_date, get_setting_value
+from db.db_helper import row_to_json, get_date_from_period
 
 # --------------------------
 # Device Endpoints Functions
@@ -271,4 +271,64 @@ def reset_device_props(mac, data=None):
     conn.commit()
     conn.close()
     return jsonify({"success": True})
+
+def update_device_column(mac, column_name, column_value):
+    """
+    Update a specific column for a given device.
+    Example: update_device_column("AA:BB:CC:DD:EE:FF", "devParentMAC", "Internet")
+    """
+    
+    conn = get_temp_db_connection()
+    cur = conn.cursor()
+
+    # Build safe SQL with column name whitelisted
+    sql = f"UPDATE Devices SET {column_name}=? WHERE devMac=?"
+    cur.execute(sql, (column_value, mac))
+    conn.commit()
+
+    if cur.rowcount > 0:
+        return jsonify({"success": True})
+    else:
+        return jsonify({"success": False, "error": "Device not found"}), 404
+    
+    conn.close()
+
+    return jsonify({"success": True})
+
+def copy_device(mac_from, mac_to):
+    """
+    Copy a device entry from one MAC to another.
+    If a device already exists with mac_to, it will be replaced.
+    """
+    conn = get_temp_db_connection()
+    cur = conn.cursor()
+
+    try:
+        # Drop temporary table if exists
+        cur.execute("DROP TABLE IF EXISTS temp_devices")
+
+        # Create temporary table with source device
+        cur.execute("CREATE TABLE temp_devices AS SELECT * FROM Devices WHERE devMac = ?", (mac_from,))
+
+        # Update temporary table to target MAC
+        cur.execute("UPDATE temp_devices SET devMac = ?", (mac_to,))
+
+        # Delete previous entry with target MAC
+        cur.execute("DELETE FROM Devices WHERE devMac = ?", (mac_to,))
+
+        # Insert new entry from temporary table
+        cur.execute("INSERT INTO Devices SELECT * FROM temp_devices WHERE devMac = ?", (mac_to,))
+
+        # Drop temporary table
+        cur.execute("DROP TABLE temp_devices")
+
+        conn.commit()
+        return jsonify({"success": True, "message": f"Device copied from {mac_from} to {mac_to}"})
+    
+    except Exception as e:
+        conn.rollback()
+        return jsonify({"success": False, "error": str(e)})
+    
+    finally:
+        conn.close()
 

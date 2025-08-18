@@ -38,17 +38,16 @@
       case 'deleteActHistory':        deleteActHistory();                      break;
       case 'deleteDeviceEvents':      deleteDeviceEvents();                    break;
       case 'resetDeviceProps':        resetDeviceProps();                      break;          
-      case 'ExportCSV':               ExportCSV();                             break;    
-      case 'ImportCSV':               ImportCSV();                             break;     
+      case 'ExportCSV':               ExportCSV();                             break;  // todo 
+      case 'ImportCSV':               ImportCSV();                             break;  // todo  
 
-      case 'getDevicesTotals':        getDevicesTotals();                      break;
-      case 'getDevicesListCalendar':  getDevicesListCalendar();                break;  //todo: slowly deprecate this
+      case 'getDevicesTotals':        getDevicesTotals();                      break;  // todo
+      case 'getDevicesListCalendar':  getDevicesListCalendar();                break;  // todo
 
-      case 'updateNetworkLeaf':       updateNetworkLeaf();                     break;
+      case 'updateNetworkLeaf':       updateNetworkLeaf();                     break;  // todo
 
-      case 'getDevices':              getDevices();                            break;
       case 'copyFromDevice':          copyFromDevice();                        break;
-      case 'wakeonlan':               wakeonlan();                             break;
+      case 'wakeonlan':               wakeonlan();                             break;  // todo
 
       default:                        logServerConsole ('Action: '. $action);  break;
     }
@@ -736,37 +735,6 @@ function getDevicesListCalendar() {
 //------------------------------------------------------------------------------
 //  Query Device Data
 //------------------------------------------------------------------------------
-
-
-//------------------------------------------------------------------------------
-function getDevices() {
-  
-  global $db;
-
-  // Device Data
-  $sql = 'select devMac, devName from Devices';
-
-  $result = $db->query($sql);
-
-  // arrays of rows
-  $tableData = array();
-
-  while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {  
-    $name = handleNull($row['devName'], "(unknown)"); 
-    $mac = handleNull($row['devMac'], "(unknown)"); 
-    // Push row data
-    $tableData[] = array('id'    => $mac, 
-                         'name'  => $name  );                          
-  }
-  
-  // Control no rows
-  if (empty($tableData)) {
-    $tableData = [];
-  }
-  
-    // Return json
-  echo (json_encode ($tableData));
-}
 
 // ----------------------------------------------------------------------------------------
 function updateNetworkLeaf()
