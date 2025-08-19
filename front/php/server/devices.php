@@ -26,30 +26,30 @@
   if (isset ($_REQUEST['action']) && !empty ($_REQUEST['action'])) {
     $action = $_REQUEST['action'];
     switch ($action) {
-      case 'getServerDeviceData':     getServerDeviceData();                   break;
-      case 'setDeviceData':           setDeviceData();                         break;
-      case 'deleteDevice':            deleteDevice();                          break;
-      case 'deleteAllWithEmptyMACs':  deleteAllWithEmptyMACs();                break;      
+      case 'getServerDeviceData':     getServerDeviceData();                   break; // equivalent: get_device_data  
+      case 'setDeviceData':           setDeviceData();                         break; // equivalent: set_device_data
+      case 'deleteDevice':            deleteDevice();                          break; // equivalent: delete_device(mac)
+      case 'deleteAllWithEmptyMACs':  deleteAllWithEmptyMACs();                break; // equivalent: delete_all_with_empty_macs      
       
-      case 'deleteAllDevices':        deleteAllDevices();                      break;
-      case 'deleteUnknownDevices':    deleteUnknownDevices();                  break;
-      case 'deleteEvents':            deleteEvents();                          break;
-      case 'deleteEvents30':          deleteEvents30();                        break;
-      case 'deleteActHistory':        deleteActHistory();                      break;
-      case 'deleteDeviceEvents':      deleteDeviceEvents();                    break;
-      case 'resetDeviceProps':        resetDeviceProps();                      break;          
-      case 'ExportCSV':               ExportCSV();                             break;  // todo 
-      case 'ImportCSV':               ImportCSV();                             break;  // todo  
+      case 'deleteAllDevices':        deleteAllDevices();                      break; // equivalent: delete_devices(macs)
+      case 'deleteUnknownDevices':    deleteUnknownDevices();                  break; // equivalent: delete_unknown_devices
+      case 'deleteEvents':            deleteEvents();                          break; // equivalent: delete_events
+      case 'deleteEvents30':          deleteEvents30();                        break; // equivalent: delete_events_30
+      case 'deleteActHistory':        deleteActHistory();                      break; // equivalent: delete_online_history
+      case 'deleteDeviceEvents':      deleteDeviceEvents();                    break; // equivalent: delete_device_events(mac)
+      case 'resetDeviceProps':        resetDeviceProps();                      break; // equivalent: reset_device_props        
+      case 'ExportCSV':               ExportCSV();                             break; // equivalent: export_devices
+      case 'ImportCSV':               ImportCSV();                             break; // equivalent: import_csv
 
-      case 'getDevicesTotals':        getDevicesTotals();                      break;  // todo
-      case 'getDevicesListCalendar':  getDevicesListCalendar();                break;  // todo
+      case 'getDevicesTotals':        getDevicesTotals();                      break; // equivalent: devices_totals
+      case 'getDevicesListCalendar':  getDevicesListCalendar();                break; // equivalent: devices_by_status
 
-      case 'updateNetworkLeaf':       updateNetworkLeaf();                     break;  // todo
+      case 'updateNetworkLeaf':       updateNetworkLeaf();                     break; // equivalent: update_device_column(mac, column_name, column_value)
 
-      case 'copyFromDevice':          copyFromDevice();                        break;
-      case 'wakeonlan':               wakeonlan();                             break;  // todo
+      case 'copyFromDevice':          copyFromDevice();                        break; // equivalent: copy_device(mac_from, mac_to)
+      case 'wakeonlan':               wakeonlan();                             break; // equivalent:
 
-      default:                        logServerConsole ('Action: '. $action);  break;
+      default:                        logServerConsole ('Action: '. $action);  break; // equivalent: 
     }
   }
 
