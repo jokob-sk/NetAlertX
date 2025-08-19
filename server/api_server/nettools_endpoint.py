@@ -1,7 +1,12 @@
 import subprocess
 import re
+import sys
 import ipaddress
 from flask import jsonify
+
+# Register NetAlertX directories
+INSTALL_PATH = "/app"
+sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 def wakeonlan(mac):  
 
@@ -63,5 +68,31 @@ def traceroute(ip):
         return jsonify({
             "success": False,
             "error": "Traceroute failed",
+            "details": e.stderr.strip()
+        }), 500
+
+
+def speedtest():
+    """
+    API endpoint to run a speedtest using speedtest-cli.
+    Returns JSON with the test output or error.
+    """
+    try:
+        # Run speedtest-cli command
+        result = subprocess.run(
+            [f"{INSTALL_PATH}/back/speedtest-cli", "--secure", "--simple"],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+
+        # Return each line as a list
+        output_lines = result.stdout.strip().split("\n")
+        return jsonify({"success": True, "output": output_lines})
+
+    except subprocess.CalledProcessError as e:
+        return jsonify({
+            "success": False,
+            "error": "Speedtest failed",
             "details": e.stderr.strip()
         }), 500

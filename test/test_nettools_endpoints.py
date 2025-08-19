@@ -71,6 +71,26 @@ def test_wakeonlan_device(client, api_token, test_mac):
         data = resp.json
         assert data.get("success") is True
         assert "WOL packet sent" in data.get("message", "")
+
+def test_speedtest_endpoint(client, api_token):
+    # 1. Call the speedtest endpoint
+    resp = client.get("/nettools/speedtest", headers=auth_headers(api_token))
+
+    # 2. Assertions
+    if resp.status_code == 403:
+        # Unauthorized access
+        data = resp.json
+        assert "error" in data
+        assert data["error"] == "Forbidden"
+    else:
+        # Expect success
+        assert resp.status_code == 200
+        data = resp.json
+        assert data.get("success") is True
+        assert "output" in data
+        assert isinstance(data["output"], list)
+        # Optionally check that output lines are strings
+        assert all(isinstance(line, str) for line in data["output"])
         
 def test_traceroute_device(client, api_token, test_mac):
     # 1. Ensure at least one device exists
@@ -106,4 +126,4 @@ def test_traceroute_device(client, api_token, test_mac):
         assert "output" in data
         assert isinstance(data["output"], str)
 
-    
+
