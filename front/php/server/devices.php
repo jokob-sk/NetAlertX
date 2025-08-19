@@ -26,6 +26,7 @@
   if (isset ($_REQUEST['action']) && !empty ($_REQUEST['action'])) {
     $action = $_REQUEST['action'];
     switch ($action) {
+                                                                                      // check server/api_server/api_server_start.py for equivalents
       case 'getServerDeviceData':     getServerDeviceData();                   break; // equivalent: get_device_data  
       case 'setDeviceData':           setDeviceData();                         break; // equivalent: set_device_data
       case 'deleteDevice':            deleteDevice();                          break; // equivalent: delete_device(mac)
@@ -47,7 +48,7 @@
       case 'updateNetworkLeaf':       updateNetworkLeaf();                     break; // equivalent: update_device_column(mac, column_name, column_value)
 
       case 'copyFromDevice':          copyFromDevice();                        break; // equivalent: copy_device(mac_from, mac_to)
-      case 'wakeonlan':               wakeonlan();                             break; // equivalent:
+      case 'wakeonlan':               wakeonlan();                             break; // equivalent: wakeonlan
 
       default:                        logServerConsole ('Action: '. $action);  break; // equivalent: 
     }
