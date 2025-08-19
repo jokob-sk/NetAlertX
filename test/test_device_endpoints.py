@@ -32,10 +32,10 @@ def auth_headers(token):
 def test_create_device(client, api_token, test_mac):
     payload = {
         "createNew": True,
-        "name": "Test Device",
-        "owner": "Unit Test",
-        "type": "Router",
-        "vendor": "TestVendor",
+        "devType": "Test Device",
+        "devOwner": "Unit Test",
+        "devType": "Router",
+        "devVendor": "TestVendor",
     }
     resp = client.post(f"/device/{test_mac}", json=payload, headers=auth_headers(api_token))
     assert resp.status_code == 200
@@ -69,7 +69,7 @@ def test_delete_device(client, api_token, test_mac):
 
 def test_copy_device(client, api_token, test_mac):
     # Step 1: Create the source device
-    payload = {"createNew": True, "name": "Source Device"}
+    payload = {"createNew": True}
     resp = client.post(f"/device/{test_mac}", json=payload, headers=auth_headers(api_token))
     assert resp.status_code == 200
     assert resp.json.get("success") is True

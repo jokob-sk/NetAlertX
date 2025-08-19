@@ -34,10 +34,10 @@ def auth_headers(token):
 def create_dummy(client, api_token, test_mac):
     payload = {
         "createNew": True,
-        "name": "Test Device",
-        "owner": "Unit Test",
-        "type": "Router",
-        "vendor": "TestVendor",
+        "devName": "Test Device",
+        "devOwner": "Unit Test",
+        "devType": "Router",
+        "devVendor": "TestVendor",
     }
     resp = client.post(f"/device/{test_mac}", json=payload, headers=auth_headers(api_token))
 
@@ -105,6 +105,8 @@ def test_export_import_cycle_base64(client, api_token, test_mac):
     assert resp.status_code == 200
     csv_data = resp.data.decode("utf-8")
 
+    print(csv_data)
+
     # Ensure our dummy device is in the CSV
     assert test_mac in csv_data
     assert "Test Device" in csv_data
@@ -126,6 +128,51 @@ def test_export_import_cycle_base64(client, api_token, test_mac):
     assert resp.json.get("inserted") >= 1
     assert resp.json.get("skipped_lines") == []
 
+def test_devices_totals(client, api_token, test_mac):
+    # 1. Create a dummy device
+    create_dummy(client, api_token, test_mac)
+
+    # 2. Call the totals endpoint
+    resp = client.get("/devices/totals", headers=auth_headers(api_token))
+    assert resp.status_code == 200
+
+    # 3. Ensure the response is a JSON list
+    data = resp.json
+    assert isinstance(data, list)
+    assert len(data) == 6  # devices, connected, favorites, new, down, archived
+
+    # 4. Check that at least 1 device exists
+    assert data[0] >= 1  # 'devices' count includes the dummy device
+
+
+def test_devices_by_status(client, api_token, test_mac):
+    # 1. Create a dummy device
+    create_dummy(client, api_token, test_mac)
+
+    # 2. Request devices by a valid status
+    resp = client.get("/devices/by-status?status=my", headers=auth_headers(api_token))
+    assert resp.status_code == 200
+    data = resp.json
+    assert isinstance(data, list)
+    assert any(d["id"] == test_mac for d in data)
+
+    # 3. Request devices with an invalid/unknown status
+    resp_invalid = client.get("/devices/by-status?status=invalid_status", headers=auth_headers(api_token))
+    assert resp_invalid.status_code == 200
+    # Should return empty list for unknown status
+    assert resp_invalid.json == []
+
+    # 4. Check favorite formatting if devFavorite = 1
+    # Update dummy device to favorite
+    client.post(
+        f"/device/{test_mac}",
+        json={"devFavorite": 1},
+        headers=auth_headers(api_token)
+    )
+    resp_fav = client.get("/devices/by-status?status=my", headers=auth_headers(api_token))
+    fav_data = next((d for d in resp_fav.json if d["id"] == test_mac), None)
+    assert fav_data is not None
+    assert "&#9733" in fav_data["title"]
 
 def test_delete_test_devices(client, api_token, test_mac):
 

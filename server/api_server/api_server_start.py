@@ -3,7 +3,7 @@ from flask import Flask, request, jsonify, Response
 from flask_cors import CORS
 from .graphql_endpoint import devicesSchema
 from .device_endpoint import get_device_data, set_device_data, delete_device, delete_device_events, reset_device_props, copy_device, update_device_column
-from .devices_endpoint import delete_unknown_devices, delete_all_with_empty_macs, delete_devices, export_devices, import_csv
+from .devices_endpoint import delete_unknown_devices, delete_all_with_empty_macs, delete_devices, export_devices, import_csv, devices_totals, devices_by_status
 from .events_endpoint import delete_events, delete_events_30, get_events
 from .history_endpoint import delete_online_history
 from .prometheus_endpoint import getMetricStats
@@ -150,12 +150,6 @@ def api_delete_unknown_devices():
         return jsonify({"error": "Forbidden"}), 403
     return delete_unknown_devices()
 
-@app.route("/devices/totals", methods=["GET"])
-def api_get_devices_totals():
-    if not is_authorized():
-        return jsonify({"error": "Forbidden"}), 403
-    return get_devices_totals()
-
 
 @app.route("/devices/export", methods=["GET"])
 @app.route("/devices/export/<format>", methods=["GET"])
@@ -171,6 +165,21 @@ def api_import_csv():
     if not is_authorized():
         return jsonify({"error": "Forbidden"}), 403
     return import_csv(request.files.get("file"))
+
+@app.route("/devices/totals", methods=["GET"])
+def api_devices_totals():
+    if not is_authorized():
+        return jsonify({"error": "Forbidden"}), 403
+    return devices_totals()
+
+@app.route("/devices/by-status", methods=["GET"])
+def api_devices_by_status():
+    if not is_authorized():
+        return jsonify({"error": "Forbidden"}), 403
+
+    status = request.args.get("status", "") if request.args else None
+
+    return devices_by_status(status)
 
 # --------------------------
 # Online history

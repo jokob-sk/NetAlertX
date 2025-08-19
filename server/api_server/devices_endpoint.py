@@ -20,7 +20,7 @@ sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from database import get_temp_db_connection
 from helper import is_random_mac, format_date, get_setting_value
-from db.db_helper import get_table_json
+from db.db_helper import get_table_json, get_device_condition_by_status
 
 
 # --------------------------
@@ -193,3 +193,57 @@ def import_csv(file_storage=None):
         "inserted": row_count,
         "skipped_lines": skipped
     })
+
+def devices_totals():
+    conn = get_temp_db_connection()
+    sql = conn.cursor()
+
+    # Build a combined query with sub-selects for each status
+    query = f"""
+    SELECT
+        (SELECT COUNT(*) FROM Devices {get_device_condition_by_status('my')}) AS devices,
+        (SELECT COUNT(*) FROM Devices {get_device_condition_by_status('connected')}) AS connected,
+        (SELECT COUNT(*) FROM Devices {get_device_condition_by_status('favorites')}) AS favorites,
+        (SELECT COUNT(*) FROM Devices {get_device_condition_by_status('new')}) AS new,
+        (SELECT COUNT(*) FROM Devices {get_device_condition_by_status('down')}) AS down,
+        (SELECT COUNT(*) FROM Devices {get_device_condition_by_status('archived')}) AS archived
+    """
+    sql.execute(query)
+    row = sql.fetchone()  # returns a tuple like (devices, connected, favorites, new, down, archived)
+
+    conn.close()
+
+    # Return counts as JSON array
+    return jsonify(list(row))
+
+
+def devices_by_status(status=None):
+    """
+    Return devices filtered by status.
+    """
+
+    conn = get_temp_db_connection()
+    sql = conn.cursor()
+
+    # Build condition for SQL
+    condition = get_device_condition_by_status(status) if status else ""
+
+    query = f"SELECT * FROM Devices {condition}"
+    sql.execute(query)
+
+    table_data = []
+    for row in sql.fetchall():
+        r = dict(row)  # Convert sqlite3.Row to dict for .get()
+        dev_name = r.get("devName", "")
+        if r.get("devFavorite") == 1:
+            dev_name = f'<span class="text-yellow">&#9733</span>&nbsp;{dev_name}'
+
+        table_data.append({
+            "id": r.get("devMac", ""),
+            "title": dev_name,
+            "favorite": r.get("devFavorite", 0)
+        })
+
+    conn.close()
+    return jsonify(table_data)
+
