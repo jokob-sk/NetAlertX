@@ -86,7 +86,7 @@
     // Function to update the displayed data and timestamp based on the selected format and index
     function updateData(format, index) {
         // Fetch data from the API endpoint
-        fetch(`/php/server/query_json.php?file=table_notifications.json&nocache=${Date.now()}`)
+        fetch(`php/server/query_json.php?file=table_notifications.json&nocache=${Date.now()}`)
             .then(response => response.json())
             .then(data => {
                 if (index < 0) {
