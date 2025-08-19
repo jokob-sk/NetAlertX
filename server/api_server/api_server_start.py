@@ -3,10 +3,11 @@ from flask import Flask, request, jsonify, Response
 from flask_cors import CORS
 from .graphql_endpoint import devicesSchema
 from .device_endpoint import get_device_data, set_device_data, delete_device, delete_device_events, reset_device_props, copy_device, update_device_column
-from .devices_endpoint import delete_unknown_devices, delete_all_with_empty_macs, delete_devices, export_devices, import_csv, devices_totals, devices_by_status
+from .devices_endpoint import get_all_devices, delete_unknown_devices, delete_all_with_empty_macs, delete_devices, export_devices, import_csv, devices_totals, devices_by_status
 from .events_endpoint import delete_events, delete_events_30, get_events
 from .history_endpoint import delete_online_history
 from .prometheus_endpoint import getMetricStats
+from .nettools_endpoint import wakeonlan
 from .sync_endpoint import handle_sync_post, handle_sync_get
 import sys
 
@@ -28,6 +29,7 @@ CORS(
         r"/device/*": {"origins": "*"},
         r"/devices/*": {"origins": "*"},
         r"/history/*": {"origins": "*"},
+        r"/nettools/*": {"origins": "*"},
         r"/events/*": {"origins": "*"}
     },
     supports_credentials=True,
@@ -129,6 +131,12 @@ def api_update_device_column(mac):
 # Devices Collections
 # --------------------------
 
+@app.route("/devices", methods=["GET"])
+def api_get_devices():
+    if not is_authorized():
+        return jsonify({"error": "Forbidden"}), 403
+    return get_all_devices()
+
 @app.route("/devices", methods=["DELETE"])
 def api_delete_devices():
     if not is_authorized():
@@ -180,6 +188,17 @@ def api_devices_by_status():
     status = request.args.get("status", "") if request.args else None
 
     return devices_by_status(status)
+
+# --------------------------
+# Net tools
+# --------------------------
+@app.route("/nettools/wakeonlan", methods=["POST"])
+def api_wakeonlan():
+    if not is_authorized():
+        return jsonify({"error": "Forbidden"}), 403
+
+    mac = request.json.get("devMac")
+    return wakeonlan(mac)
 
 # --------------------------
 # Online history

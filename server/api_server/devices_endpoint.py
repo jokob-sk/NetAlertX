@@ -27,6 +27,20 @@ from db.db_helper import get_table_json, get_device_condition_by_status
 # Device Endpoints Functions
 # --------------------------
 
+def get_all_devices():
+    """Retrieve all devices from the database."""
+    conn = get_temp_db_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM Devices")
+    rows = cur.fetchall()
+
+    # Convert rows to list of dicts using column names
+    columns = [col[0] for col in cur.description]
+    devices = [dict(zip(columns, row)) for row in rows]
+
+    conn.close()
+    return jsonify({"success": True, "devices": devices})
+
 def delete_devices(macs):
     """
     Delete devices from the Devices table.

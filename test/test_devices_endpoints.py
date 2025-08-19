@@ -41,6 +41,20 @@ def create_dummy(client, api_token, test_mac):
     }
     resp = client.post(f"/device/{test_mac}", json=payload, headers=auth_headers(api_token))
 
+def test_get_all_devices(client, api_token, test_mac):
+    # Ensure there is at least one device
+    create_dummy(client, api_token, test_mac)
+    
+    # Fetch all devices
+    resp = client.get("/devices", headers=auth_headers(api_token))
+    assert resp.status_code == 200
+    assert resp.json.get("success") is True
+    devices = resp.json.get("devices")
+    assert isinstance(devices, list)
+    # Ensure our test device is in the list
+    assert any(d["devMac"] == test_mac for d in devices)
+
+
 def test_delete_devices_with_macs(client, api_token, test_mac):
     # First create device so it exists
     create_dummy(client, api_token, test_mac)
