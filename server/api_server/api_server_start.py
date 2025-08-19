@@ -7,7 +7,7 @@ from .devices_endpoint import get_all_devices, delete_unknown_devices, delete_al
 from .events_endpoint import delete_events, delete_events_30, get_events
 from .history_endpoint import delete_online_history
 from .prometheus_endpoint import getMetricStats
-from .nettools_endpoint import wakeonlan
+from .nettools_endpoint import wakeonlan, traceroute
 from .sync_endpoint import handle_sync_post, handle_sync_get
 import sys
 
@@ -199,6 +199,13 @@ def api_wakeonlan():
 
     mac = request.json.get("devMac")
     return wakeonlan(mac)
+
+@app.route("/nettools/traceroute", methods=["POST"])
+def api_traceroute():
+    if not is_authorized():
+        return jsonify({"error": "Forbidden"}), 403
+    ip = request.json.get("devLastIP")
+    return traceroute(ip)
 
 # --------------------------
 # Online history

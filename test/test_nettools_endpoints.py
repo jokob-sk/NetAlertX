@@ -72,5 +72,38 @@ def test_wakeonlan_device(client, api_token, test_mac):
         assert data.get("success") is True
         assert "WOL packet sent" in data.get("message", "")
         
-   
+def test_traceroute_device(client, api_token, test_mac):
+    # 1. Ensure at least one device exists
+    create_dummy(client, api_token, test_mac)
+
+    # 2. Fetch all devices
+    resp = client.get("/devices", headers=auth_headers(api_token))
+    assert resp.status_code == 200
+    devices = resp.json.get("devices", [])
+    assert len(devices) > 0
+
+    # 3. Pick the first device
+    device_ip = devices[0].get("devLastIP", "192.168.1.1")  # fallback if dummy has no IP
+
+    # 4. Call the traceroute endpoint
+    resp = client.post(
+        "/nettools/traceroute",
+        json={"devLastIP": device_ip},
+        headers=auth_headers(api_token)
+    )
+
+    # 5. Assertions
+    if not device_ip or device_ip.lower() == 'invalid':
+        # Expect 400 if IP is missing or invalid
+        assert resp.status_code == 400
+        data = resp.json
+        assert data.get("success") is False
+    else:
+        # Expect 200 and valid traceroute output
+        assert resp.status_code == 200
+        data = resp.json
+        assert data.get("success") is True
+        assert "output" in data
+        assert isinstance(data["output"], str)
+
     

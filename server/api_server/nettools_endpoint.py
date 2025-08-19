@@ -1,5 +1,6 @@
 import subprocess
 import re
+import ipaddress
 from flask import jsonify
 
 def wakeonlan(mac):  
@@ -19,3 +20,48 @@ def wakeonlan(mac):
     except subprocess.CalledProcessError as e:
         return jsonify({"success": False, "error": "Failed to send WOL packet", "details": e.stderr.strip()}), 500
 
+def traceroute(ip):
+    """
+    Executes a traceroute to the given IP address.
+
+    Parameters:
+        ip (str): The target IP address to trace.
+
+    Returns:
+        JSON response with:
+            - success (bool)
+            - output (str) if successful
+            - error (str) and details (str) if failed
+    """
+    # --------------------------
+    # Step 1: Validate IP address
+    # --------------------------
+    try:
+        ipaddress.ip_address(ip)
+    except ValueError:
+        # Return 400 if IP is invalid
+        return jsonify({"success": False, "error": f"Invalid IP: {ip}"}), 400
+
+    # --------------------------
+    # Step 2: Execute traceroute
+    # --------------------------
+    try:
+        result = subprocess.run(
+            ["traceroute", ip],       # Command and argument
+            capture_output=True,      # Capture stdout/stderr
+            text=True,                # Return output as string
+            check=True                # Raise CalledProcessError on non-zero exit
+        )
+        # Return success response with traceroute output
+        return jsonify({"success": True, "output": result.stdout.strip()})
+
+    # --------------------------
+    # Step 3: Handle command errors
+    # --------------------------
+    except subprocess.CalledProcessError as e:
+        # Return 500 if traceroute fails
+        return jsonify({
+            "success": False,
+            "error": "Traceroute failed",
+            "details": e.stderr.strip()
+        }), 500
