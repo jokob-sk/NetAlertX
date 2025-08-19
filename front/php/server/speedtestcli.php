@@ -1,6 +1,8 @@
 <?php
 require dirname(__FILE__).'/../server/init.php';
 
+// EQUIVALENT: /nettools/speedtest
+
 //------------------------------------------------------------------------------
 // check if authenticated
 require_once  $_SERVER['DOCUMENT_ROOT'] . '/php/templates/security.php';
