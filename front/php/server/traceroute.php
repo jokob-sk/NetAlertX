@@ -19,6 +19,8 @@ require dirname(__FILE__).'/../server/init.php';
 // check if authenticated
 require_once  $_SERVER['DOCUMENT_ROOT'] . '/php/templates/security.php';
 
+// NEW ENDPOINT EQUIVALENT: /nettools/traceroute
+
 // Get IP
 $ip = $_GET['ip'];
 
