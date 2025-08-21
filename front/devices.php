@@ -683,7 +683,9 @@ function initializeDatatable (status) {
 
         return JSON.stringify(query);  // Send the JSON request
       },
-      "dataSrc": function (json) {
+      "dataSrc": function (res) {
+
+        json = res["data"];
         // Set the total number of records for pagination
         json.recordsTotal = json.devices.count || 0;
         json.recordsFiltered = json.devices.count || 0;
