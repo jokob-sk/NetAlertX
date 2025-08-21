@@ -7,6 +7,7 @@ import os
 import re
 import unicodedata
 import subprocess
+from typing import Union
 import pytz
 from pytz import timezone
 import json
@@ -51,6 +52,55 @@ def get_timezone_offset():
     offset_formatted =  "{:+03d}:{:02d}".format(int(offset_hours), int((offset_hours % 1) * 60))
     return offset_formatted
 
+
+#-------------------------------------------------------------------------------
+#  Date and time methods
+#-------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------------------
+def format_date(date_str: str) -> str:
+    """Format a date string as 'YYYY-MM-DD   HH:MM'"""
+    dt = datetime.datetime.fromisoformat(date_str) if isinstance(date_str, str) else date_str
+    return dt.strftime('%Y-%m-%d   %H:%M')
+
+# -------------------------------------------------------------------------------------------
+def format_date_diff(date1: str, date2: str) -> str:
+    """Return difference between two dates formatted as 'Xd   HH:MM'"""
+    dt1 = datetime.datetime.fromisoformat(date1) if isinstance(date1, str) else date1
+    dt2 = datetime.datetime.fromisoformat(date2) if isinstance(date2, str) else date2
+    delta = dt2 - dt1
+
+    days = delta.days
+    hours, remainder = divmod(delta.seconds, 3600)
+    minutes = remainder // 60
+
+    return f"{days}d   {hours:02}:{minutes:02}"
+
+# -------------------------------------------------------------------------------------------
+def format_date_iso(date1: str) -> str:
+    """Return ISO 8601 string for a date or None if empty"""
+    if date1 is None:
+        return None
+    dt = datetime.datetime.fromisoformat(date1) if isinstance(date1, str) else date1
+    return dt.isoformat()
+
+# -------------------------------------------------------------------------------------------
+def format_event_date(date_str: str, event_type: str) -> str:
+    """Format event date with fallback rules."""
+    if date_str:
+        return format_date(date_str)
+    elif event_type == "<missing event>":
+        return "<missing event>"
+    else:
+        return "<still connected>"
+
+# -------------------------------------------------------------------------------------------
+def ensure_datetime(dt: Union[str, datetime, None]) -> datetime:
+    if dt is None:
+        return timeNowTZ()
+    if isinstance(dt, str):
+        return datetime.datetime.fromisoformat(dt)
+    return dt
 
 #-------------------------------------------------------------------------------
 # File system permission handling
@@ -591,35 +641,6 @@ def collect_lang_strings(json, pref, stringSqlParams):
 
 
     return stringSqlParams
-
-#-------------------------------------------------------------------------------
-#  Date and time methods
-#-------------------------------------------------------------------------------
-
-# -------------------------------------------------------------------------------------------
-def format_date(date_str: str) -> str:
-    """Format a date string as 'YYYY-MM-DD   HH:MM'"""
-    dt = datetime.datetime.fromisoformat(date_str) if isinstance(date_str, str) else date_str
-    return dt.strftime('%Y-%m-%d   %H:%M')
-
-# -------------------------------------------------------------------------------------------
-def format_date_diff(date1: str, date2: str) -> str:
-    """Return difference between two dates formatted as 'Xd   HH:MM'"""
-    dt1 = datetime.datetime.fromisoformat(date1) if isinstance(date1, str) else date1
-    dt2 = datetime.datetime.fromisoformat(date2) if isinstance(date2, str) else date2
-    delta = dt2 - dt1
-
-    days = delta.days
-    hours, remainder = divmod(delta.seconds, 3600)
-    minutes = remainder // 60
-
-    return f"{days}d   {hours:02}:{minutes:02}"
-
-# -------------------------------------------------------------------------------------------
-def format_date_iso(date1: str) -> str:
-    """Return ISO 8601 string for a date"""
-    dt = datetime.datetime.fromisoformat(date1) if isinstance(date1, str) else date1
-    return dt.isoformat()
 
 #-------------------------------------------------------------------------------
 def checkNewVersion():

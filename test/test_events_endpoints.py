@@ -5,6 +5,7 @@ import random
 import string
 import uuid
 import pytest
+from datetime import datetime, timedelta
 
 INSTALL_PATH = "/app"
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
@@ -30,20 +31,32 @@ def auth_headers(token):
     return {"Authorization": f"Bearer {token}"}
 
 def create_event(client, api_token, mac, event="UnitTest Event", days_old=None):
-    """
-    Create event using API (POST /event/<mac>).
-    If days_old is set, adds it to payload for backdating support.
-    """
-    payload = {
-        "event": event,
-    }
-    if days_old:
-        payload["days_old"] = days_old
-    return client.post(f"/event/{mac}", json=payload, headers=auth_headers(api_token))
+    payload = {"ip": "0.0.0.0", "event_type": event}
+
+    # Calculate the event_time if days_old is given
+    if days_old is not None:
+        event_time = timeNowTZ() - timedelta(days=days_old)
+        # ISO 8601 string
+        payload["event_time"] = event_time.isoformat()
+
+    return client.post(f"/events/create/{mac}", json=payload, headers=auth_headers(api_token))
 
 def list_events(client, api_token, mac=None):
-    url = "/events" if mac is None else f"/events/{mac}"
+    url = "/events" if mac is None else f"/events?mac={mac}"
     return client.get(url, headers=auth_headers(api_token))
+
+def test_create_event(client, api_token, test_mac):
+    # create event
+    resp = create_event(client, api_token, test_mac)
+    assert resp.status_code == 200
+    data = resp.get_json()
+    assert data.get("success") is True
+
+    # confirm event exists
+    resp = list_events(client, api_token, test_mac)
+    assert resp.status_code == 200
+    events = resp.get_json().get("events", [])
+    assert any(ev.get("eve_MAC") == test_mac for ev in events)
 
 
 def test_delete_events_for_mac(client, api_token, test_mac):
@@ -54,7 +67,8 @@ def test_delete_events_for_mac(client, api_token, test_mac):
     # confirm exists
     resp = list_events(client, api_token, test_mac)
     assert resp.status_code == 200
-    assert any(ev["eve_MAC"] == test_mac for ev in resp.json)
+    events = resp.json.get("events", [])
+    assert any(ev["eve_MAC"] == test_mac for ev in events)
 
     # delete
     resp = client.delete(f"/events/{test_mac}", headers=auth_headers(api_token))
@@ -64,7 +78,7 @@ def test_delete_events_for_mac(client, api_token, test_mac):
     # confirm deleted
     resp = list_events(client, api_token, test_mac)
     assert resp.status_code == 200
-    assert len(resp.json) == 0
+    assert len(resp.json.get("events", [])) == 0
 
 
 def test_delete_all_events(client, api_token, test_mac):
@@ -82,7 +96,7 @@ def test_delete_all_events(client, api_token, test_mac):
 
     # confirm no events
     resp = list_events(client, api_token)
-    assert len(resp.json) == 0
+    assert len(resp.json.get("events", [])) == 0
 
 
 def test_delete_events_30days(client, api_token, test_mac):
@@ -100,5 +114,7 @@ def test_delete_events_30days(client, api_token, test_mac):
 
     # confirm only recent remains
     resp = list_events(client, api_token, test_mac)
-    mac_events = [ev for ev in resp.json if ev["eve_MAC"] == test_mac]
+    events = resp.get_json().get("events", [])
+    mac_events = [ev for ev in events if ev.get("eve_MAC") == test_mac]
     assert len(mac_events) == 1
+

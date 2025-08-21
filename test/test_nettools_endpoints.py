@@ -126,4 +126,78 @@ def test_traceroute_device(client, api_token, test_mac):
         assert "output" in data
         assert isinstance(data["output"], str)
 
+@pytest.mark.parametrize("ip,expected_status", [
+    ("8.8.8.8", 200),
+    ("256.256.256.256", 400),  # Invalid IP
+    ("", 400),                  # Missing IP
+])
+def test_nslookup_endpoint(client, api_token, ip, expected_status):
+    payload = {"devLastIP": ip} if ip else {}
+    resp = client.post("/nettools/nslookup", json=payload, headers=auth_headers(api_token))
 
+    assert resp.status_code == expected_status
+    data = resp.json
+
+    if expected_status == 200:
+        assert data.get("success") is True
+        assert isinstance(data["output"], list)
+        assert all(isinstance(line, str) for line in data["output"])
+    else:
+        assert data.get("success") is False
+        assert "error" in data
+
+@pytest.mark.parametrize("ip,mode,expected_status", [
+    ("127.0.0.1", "fast", 200),
+    ("127.0.0.1", "normal", 200),
+    ("127.0.0.1", "detail", 200),
+    ("127.0.0.1", "skipdiscovery", 200),
+    ("127.0.0.1", "invalidmode", 400),
+    ("999.999.999.999", "fast", 400),
+])
+def test_nmap_endpoint(client, api_token, ip, mode, expected_status):
+    payload = {"scan": ip, "mode": mode}
+    resp = client.post("/nettools/nmap", json=payload, headers=auth_headers(api_token))
+
+    assert resp.status_code == expected_status
+    data = resp.json
+
+    if expected_status == 200:
+        assert data.get("success") is True
+        assert data.get("mode") == mode
+        assert data.get("ip") == ip
+        assert isinstance(data["output"], list)
+        assert all(isinstance(line, str) for line in data["output"])
+    else:
+        assert data.get("success") is False
+        assert "error" in data
+
+def test_nslookup_unauthorized(client):
+    # No auth headers
+    resp = client.post("/nettools/nslookup", json={"devLastIP": "8.8.8.8"})
+    assert resp.status_code == 403
+    data = resp.json
+    assert data.get("success") is False
+    assert data.get("error") == "Forbidden"
+
+def test_nmap_unauthorized(client):
+    # No auth headers
+    resp = client.post("/nettools/nmap", json={"scan": "127.0.0.1", "mode": "fast"})
+    assert resp.status_code == 403
+    data = resp.json
+    assert data.get("success") is False
+    assert data.get("error") == "Forbidden"
+
+
+def test_internet_info_endpoint(client, api_token):
+    resp = client.get("/nettools/internetinfo", headers=auth_headers(api_token))
+    data = resp.json
+
+    if resp.status_code == 200:
+        assert data.get("success") is True
+        assert isinstance(data.get("output"), str)
+        assert len(data["output"]) > 0  # ensure output is not empty
+    else:
+        # Handle errors, e.g., curl failure
+        assert data.get("success") is False
+        assert "error" in data
+        assert "details" in data

@@ -18,7 +18,7 @@ def escape_label_value(val):
 # Define a base URL with the user's home directory
 folder = apiPath
 
-def getMetricStats():
+def get_metric_stats():
     output = []
 
     # 1. Dashboard totals

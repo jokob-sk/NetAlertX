@@ -4,10 +4,11 @@ from flask_cors import CORS
 from .graphql_endpoint import devicesSchema
 from .device_endpoint import get_device_data, set_device_data, delete_device, delete_device_events, reset_device_props, copy_device, update_device_column
 from .devices_endpoint import get_all_devices, delete_unknown_devices, delete_all_with_empty_macs, delete_devices, export_devices, import_csv, devices_totals, devices_by_status
-from .events_endpoint import delete_events, delete_events_30, get_events
+from .events_endpoint import delete_events, delete_events_30, get_events, create_event
 from .history_endpoint import delete_online_history
-from .prometheus_endpoint import getMetricStats
-from .nettools_endpoint import wakeonlan, traceroute, speedtest
+from .prometheus_endpoint import get_metric_stats
+from .sessions_endpoint import get_sessions, delete_session, create_session, get_sessions_calendar
+from .nettools_endpoint import wakeonlan, traceroute, speedtest, nslookup, nmap_scan, internet_info
 from .sync_endpoint import handle_sync_post, handle_sync_get
 import sys
 
@@ -30,6 +31,7 @@ CORS(
         r"/devices/*": {"origins": "*"},
         r"/history/*": {"origins": "*"},
         r"/nettools/*": {"origins": "*"},
+        r"/sessions/*": {"origins": "*"},
         r"/events/*": {"origins": "*"}
     },
     supports_credentials=True,
@@ -212,7 +214,47 @@ def api_speedtest():
     if not is_authorized():
         return jsonify({"error": "Forbidden"}), 403
     return speedtest()
+
+@app.route("/nettools/nslookup", methods=["POST"])
+def api_nslookup():
+    """
+    API endpoint to handle nslookup requests.
+    Expects JSON with 'devLastIP'.
+    """
+    if not is_authorized():
+        return jsonify({"success": False, "error": "Forbidden"}), 403
+
+    data = request.get_json(silent=True)
+    if not data or "devLastIP" not in data:
+        return jsonify({"success": False, "error": "Missing 'devLastIP'"}), 400
+
+    ip = data["devLastIP"]
+    return nslookup(ip)
+
+@app.route("/nettools/nmap", methods=["POST"])
+def api_nmap():
+    """
+    API endpoint to handle nmap scan requests.
+    Expects JSON with 'scan' (IP address) and 'mode' (scan mode).
+    """
+    if not is_authorized():
+        return jsonify({"success": False, "error": "Forbidden"}), 403
+
+    data = request.get_json(silent=True)
+    if not data or "scan" not in data or "mode" not in data:
+        return jsonify({"success": False, "error": "Missing 'scan' or 'mode'"}), 400
+
+    ip = data["scan"]
+    mode = data["mode"]
+    return nmap_scan(ip, mode)
     
+
+@app.route("/nettools/internetinfo", methods=["GET"])
+def api_internet_info():
+    if not is_authorized():
+        return jsonify({"success": False, "error": "Forbidden"}), 403
+    return internet_info()
+
 # --------------------------
 # Online history
 # --------------------------
@@ -226,6 +268,25 @@ def api_delete_online_history():
 # --------------------------
 # Device Events
 # --------------------------
+
+@app.route("/events/create/<mac>", methods=["POST"])
+def api_create_event(mac):
+    if not is_authorized():
+        return jsonify({"error": "Forbidden"}), 403
+
+    data = request.json or {}
+    ip = data.get("ip", "0.0.0.0")
+    event_type = data.get("event_type", "Device Down")
+    additional_info = data.get("additional_info", "")
+    pending_alert = data.get("pending_alert", 1)
+    event_time = data.get("event_time", None)
+
+    # Call the helper to insert into DB
+    create_event(mac, ip, event_type, additional_info, pending_alert, event_time)
+
+    # Return consistent JSON response
+    return jsonify({"success": True, "message": f"Event created for {mac}"})
+
 
 @app.route("/events/<mac>", methods=["DELETE"])
 def api_events_by_mac(mac):
@@ -244,8 +305,7 @@ def api_get_events():
     if not is_authorized():
         return jsonify({"error": "Forbidden"}), 403
 
-    mac = request.json.get("mac") if request.is_json else None
-
+    mac = request.args.get("mac")
     return get_events(mac)
 
 @app.route("/events/30days", methods=["DELETE"])
@@ -255,18 +315,73 @@ def api_delete_old_events():
     return delete_events_30()
 
 # --------------------------
+# Sessions
+# --------------------------
+
+@app.route("/sessions/create", methods=["POST"])
+def api_create_session():
+    if not is_authorized():
+        return jsonify({"error": "Forbidden"}), 403
+
+    data = request.json
+    mac = data.get("mac")
+    ip = data.get("ip")
+    start_time = data.get("start_time")
+    end_time = data.get("end_time")
+    event_type_conn = data.get("event_type_conn", "Connected")
+    event_type_disc = data.get("event_type_disc", "Disconnected")
+
+    if not mac or not ip or not start_time:
+        return jsonify({"success": False, "error": "Missing required parameters"}), 400
+
+    return create_session(mac, ip, start_time, end_time, event_type_conn, event_type_disc)
+
+
+@app.route("/sessions/delete", methods=["DELETE"])
+def api_delete_session():
+    if not is_authorized():
+        return jsonify({"error": "Forbidden"}), 403
+
+    mac = request.json.get("mac") if request.is_json else None
+    if not mac:
+        return jsonify({"success": False, "error": "Missing MAC parameter"}), 400
+
+    return delete_session(mac)
+
+
+@app.route("/sessions/list", methods=["GET"])
+def api_get_sessions():
+    if not is_authorized():
+        return jsonify({"error": "Forbidden"}), 403
+
+    mac = request.args.get("mac")
+    start_date = request.args.get("start_date")
+    end_date = request.args.get("end_date")
+
+    return get_sessions(mac, start_date, end_date)
+
+@app.route("/sessions/calendar", methods=["GET"])
+def api_get_sessions_calendar():
+    if not is_authorized():
+        return jsonify({"error": "Forbidden"}), 403
+
+    # Query params: /sessions/calendar?start=2025-08-01&end=2025-08-21
+    start_date = request.args.get("start")
+    end_date = request.args.get("end")
+
+    return get_sessions_calendar(start_date, end_date)
+
+
+# --------------------------
 # Prometheus metrics endpoint
 # --------------------------
 @app.route("/metrics")
 def metrics():
-
-    # Check for API token in headers
     if not is_authorized():
         return jsonify({"error": "Forbidden"}), 403
 
-
     # Return Prometheus metrics as plain text
-    return  Response(getMetricStats(), mimetype="text/plain")
+    return  Response(get_metric_stats(), mimetype="text/plain")
     
 # --------------------------
 # SYNC endpoint

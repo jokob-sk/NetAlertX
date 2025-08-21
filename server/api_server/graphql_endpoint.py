@@ -113,6 +113,7 @@ class Query(ObjectType):
         try:
             with open(folder + 'table_devices.json', 'r') as f:
                 devices_data = json.load(f)["data"]
+                total_count = len(devices_data)  
         except (FileNotFoundError, json.JSONDecodeError) as e:
             mylog('none', f'[graphql_schema] Error loading devices data: {e}')
             return DeviceResult(devices=[], count=0)
