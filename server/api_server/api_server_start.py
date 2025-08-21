@@ -4,10 +4,10 @@ from flask_cors import CORS
 from .graphql_endpoint import devicesSchema
 from .device_endpoint import get_device_data, set_device_data, delete_device, delete_device_events, reset_device_props, copy_device, update_device_column
 from .devices_endpoint import get_all_devices, delete_unknown_devices, delete_all_with_empty_macs, delete_devices, export_devices, import_csv, devices_totals, devices_by_status
-from .events_endpoint import delete_events, delete_events_older_than, get_events, create_event
+from .events_endpoint import delete_events, delete_events_older_than, get_events, create_event, get_events_totals
 from .history_endpoint import delete_online_history
 from .prometheus_endpoint import get_metric_stats
-from .sessions_endpoint import get_sessions, delete_session, create_session, get_sessions_calendar
+from .sessions_endpoint import get_sessions, delete_session, create_session, get_sessions_calendar, get_device_sessions, get_session_events
 from .nettools_endpoint import wakeonlan, traceroute, speedtest, nslookup, nmap_scan, internet_info
 from .sync_endpoint import handle_sync_post, handle_sync_get
 import sys
@@ -18,6 +18,7 @@ sys.path.extend([f"{INSTALL_PATH}/server"])
 
 from logger import mylog
 from helper import get_setting_value, timeNowTZ
+from db.db_helper import get_date_from_period
 from app_state import updateState
 from messaging.in_app import write_notification
 
@@ -326,6 +327,14 @@ def api_delete_old_events(days: int):
     
     return delete_events_older_than(days)
 
+@app.route("/sessions/totals", methods=["GET"])
+def api_get_events_totals():
+    if not is_authorized():
+        return jsonify({"error": "Forbidden"}), 403
+
+    period = get_date_from_period(request.args.get("period", "7 days"))
+    return get_events_totals(period)
+
 # --------------------------
 # Sessions
 # --------------------------
@@ -383,6 +392,22 @@ def api_get_sessions_calendar():
 
     return get_sessions_calendar(start_date, end_date)
 
+@app.route("/sessions/<mac>", methods=["GET"])
+def api_device_sessions(mac):
+    if not is_authorized():
+        return jsonify({"error": "Forbidden"}), 403
+
+    period = request.args.get("period", "1 day")
+    return get_device_sessions(mac, period)
+
+@app.route("/sessions/session-events", methods=["GET"])
+def api_get_session_events():
+    if not is_authorized():
+        return jsonify({"error": "Forbidden"}), 403
+
+    session_event_type = request.args.get("type", "all")
+    period = get_date_from_period(request.args.get("period", "7 days"))
+    return get_session_events(session_event_type, period)
 
 # --------------------------
 # Prometheus metrics endpoint

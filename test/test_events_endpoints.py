@@ -80,6 +80,32 @@ def test_delete_events_for_mac(client, api_token, test_mac):
     assert resp.status_code == 200
     assert len(resp.json.get("events", [])) == 0
 
+def test_get_events_totals(client, api_token):
+    # 1. Request totals with default period
+    resp = client.get(
+        "/sessions/totals",
+        headers=auth_headers(api_token)
+    )
+    assert resp.status_code == 200
+
+    data = resp.json
+    assert isinstance(data, list)
+    # Expecting 6 counts: all_events, sessions, missing, voided, new, down
+    assert len(data) == 6
+    for count in data:
+        assert isinstance(count, int)  # each should be a number
+
+    # 2. Request totals with custom period
+    resp_month = client.get(
+        "/sessions/totals?period=1 month",
+        headers=auth_headers(api_token)
+    )
+    assert resp_month.status_code == 200
+    data_month = resp_month.json
+    assert isinstance(data_month, list)
+    assert len(data_month) == 6
+
+
 
 def test_delete_all_events(client, api_token, test_mac):
     # create two events

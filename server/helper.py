@@ -17,6 +17,7 @@ import requests
 import base64
 import hashlib
 import random
+import email
 import string
 import ipaddress
 
@@ -57,24 +58,24 @@ def get_timezone_offset():
 #  Date and time methods
 #-------------------------------------------------------------------------------
 
-# -------------------------------------------------------------------------------------------
-def format_date(date_str: str) -> str:
-    """Format a date string as 'YYYY-MM-DD   HH:MM'"""
-    dt = datetime.datetime.fromisoformat(date_str) if isinstance(date_str, str) else date_str
-    return dt.strftime('%Y-%m-%d   %H:%M')
+# # -------------------------------------------------------------------------------------------
+# def format_date(date_str: str) -> str:
+#     """Format a date string as 'YYYY-MM-DD   HH:MM'"""
+#     dt = datetime.datetime.fromisoformat(date_str) if isinstance(date_str, str) else date_str
+#     return dt.strftime('%Y-%m-%d   %H:%M')
 
-# -------------------------------------------------------------------------------------------
-def format_date_diff(date1: str, date2: str) -> str:
-    """Return difference between two dates formatted as 'Xd   HH:MM'"""
-    dt1 = datetime.datetime.fromisoformat(date1) if isinstance(date1, str) else date1
-    dt2 = datetime.datetime.fromisoformat(date2) if isinstance(date2, str) else date2
-    delta = dt2 - dt1
+# # -------------------------------------------------------------------------------------------
+# def format_date_diff(date1: str, date2: str) -> str:
+#     """Return difference between two dates formatted as 'Xd   HH:MM'"""
+#     dt1 = datetime.datetime.fromisoformat(date1) if isinstance(date1, str) else date1
+#     dt2 = datetime.datetime.fromisoformat(date2) if isinstance(date2, str) else date2
+#     delta = dt2 - dt1
 
-    days = delta.days
-    hours, remainder = divmod(delta.seconds, 3600)
-    minutes = remainder // 60
+#     days = delta.days
+#     hours, remainder = divmod(delta.seconds, 3600)
+#     minutes = remainder // 60
 
-    return f"{days}d   {hours:02}:{minutes:02}"
+#     return f"{days}d   {hours:02}:{minutes:02}"
 
 # -------------------------------------------------------------------------------------------
 def format_date_iso(date1: str) -> str:
@@ -101,6 +102,67 @@ def ensure_datetime(dt: Union[str, datetime, None]) -> datetime:
     if isinstance(dt, str):
         return datetime.datetime.fromisoformat(dt)
     return dt
+
+
+def parse_datetime(dt_str):
+    if not dt_str:
+        return None
+    try:
+        # Try ISO8601 first
+        return datetime.datetime.fromisoformat(dt_str)
+    except ValueError:
+        # Try RFC1123 / HTTP format
+        try:
+            return datetime.datetime.strptime(dt_str, '%a, %d %b %Y %H:%M:%S GMT')
+        except ValueError:
+            return None
+
+def format_date(date_str: str) -> str:
+    dt = parse_datetime(date_str)
+    return dt.strftime('%Y-%m-%d   %H:%M') if dt else "invalid"
+
+def format_date_diff(date1, date2):
+    """
+    Return difference between two datetimes as 'Xd   HH:MM'.
+    Uses app timezone if datetime is naive.
+    date2 can be None (uses now).
+    """
+    # Get timezone from settings
+    tz_name = get_setting_value("TIMEZONE") or "UTC"
+    tz = pytz.timezone(tz_name)
+
+    def parse_dt(dt):
+        if dt is None:
+            return datetime.datetime.now(tz)
+        if isinstance(dt, str):
+            try:
+                dt_parsed = email.utils.parsedate_to_datetime(dt)
+            except Exception:
+                # fallback: parse ISO string
+                dt_parsed = datetime.datetime.fromisoformat(dt)
+            # convert naive GMT/UTC to app timezone
+            if dt_parsed.tzinfo is None:
+                dt_parsed = tz.localize(dt_parsed)
+            else:
+                dt_parsed = dt_parsed.astimezone(tz)
+            return dt_parsed
+        return dt if dt.tzinfo else tz.localize(dt)
+
+    dt1 = parse_dt(date1)
+    dt2 = parse_dt(date2)
+
+    delta = dt2 - dt1
+    total_minutes = int(delta.total_seconds() // 60)
+    days, rem_minutes = divmod(total_minutes, 1440)  # 1440 mins in a day
+    hours, minutes = divmod(rem_minutes, 60)
+
+    return {
+        "text": f"{days}d {hours:02}:{minutes:02}",
+        "days": days,
+        "hours": hours,
+        "minutes": minutes,
+        "total_minutes": total_minutes
+    }
 
 #-------------------------------------------------------------------------------
 # File system permission handling

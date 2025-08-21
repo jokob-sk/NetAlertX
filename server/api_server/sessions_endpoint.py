@@ -5,6 +5,8 @@ import subprocess
 import argparse
 import os
 import pathlib
+import sqlite3
+import time
 import sys
 from datetime import datetime
 from flask import jsonify, request
@@ -14,8 +16,8 @@ INSTALL_PATH="/app"
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from database import get_temp_db_connection
-from helper import is_random_mac, format_date, get_setting_value, format_date_iso, format_event_date, mylog, timeNowTZ
-from db.db_helper import row_to_json
+from helper import is_random_mac, format_date, get_setting_value, format_date_iso, format_event_date, mylog, timeNowTZ, format_date_diff, format_ip_long, parse_datetime
+from db.db_helper import row_to_json, get_date_from_period
 
 
 # --------------------------
@@ -170,3 +172,212 @@ def get_sessions_calendar(start_date, end_date):
 
     conn.close()
     return jsonify({"success": True, "sessions": table_data})
+
+
+
+def get_device_sessions(mac, period):
+    """
+    Fetch device sessions for a given MAC address and period.
+    """
+    period_date = get_date_from_period(period)
+
+    conn = get_temp_db_connection()
+    cur = conn.cursor()
+
+    sql = f"""
+        SELECT 
+            IFNULL(ses_DateTimeConnection, ses_DateTimeDisconnection) AS ses_DateTimeOrder,
+            ses_EventTypeConnection,
+            ses_DateTimeConnection,
+            ses_EventTypeDisconnection,
+            ses_DateTimeDisconnection,
+            ses_StillConnected,
+            ses_IP,
+            ses_AdditionalInfo
+        FROM Sessions
+        WHERE ses_MAC = ?
+          AND (
+              ses_DateTimeConnection >= {period_date}
+              OR ses_DateTimeDisconnection >= {period_date}
+              OR ses_StillConnected = 1
+          )
+    """
+
+
+    cur.execute(sql, (mac,))
+    rows = cur.fetchall()
+    conn.close()
+
+    table_data = {"data": []}
+
+    for row in rows:
+        # Connection DateTime
+        if row["ses_EventTypeConnection"] == "<missing event>":
+            ini = row["ses_EventTypeConnection"]
+        else:
+            ini = format_date(row["ses_DateTimeConnection"])
+
+        # Disconnection DateTime
+        if row["ses_StillConnected"]:
+            end = "..."
+        elif row["ses_EventTypeDisconnection"] == "<missing event>":
+            end = row["ses_EventTypeDisconnection"]
+        else:
+            end = format_date(row["ses_DateTimeDisconnection"])
+
+        # Duration
+        if row["ses_EventTypeConnection"] in ("<missing event>", None) or row["ses_EventTypeDisconnection"] in ("<missing event>", None):
+            dur = "..."
+        elif row["ses_StillConnected"]:
+            dur = format_date_diff(row["ses_DateTimeConnection"], None)["text"]
+        else:
+            dur = format_date_diff(row["ses_DateTimeConnection"], row["ses_DateTimeDisconnection"])["text"]
+
+        # Additional Info
+        info = row["ses_AdditionalInfo"]
+        if row["ses_EventTypeConnection"] == "New Device":
+            info = f"{row['ses_EventTypeConnection']}:   {info}"
+
+        # Push row data
+        table_data["data"].append({
+            "ses_MAC": mac,
+            "ses_DateTimeOrder": row["ses_DateTimeOrder"],
+            "ses_Connection": ini,
+            "ses_Disconnection": end,
+            "ses_Duration": dur,
+            "ses_IP": row["ses_IP"],
+            "ses_Info": info,
+        })
+
+    # Control no rows
+    if not table_data["data"]:
+        table_data["data"] = []
+
+    sessions = table_data["data"]
+
+    return jsonify({
+        "success": True,
+        "sessions": sessions
+    })
+
+
+def get_session_events(event_type, period_date):
+    """
+    Fetch events or sessions based on type and period.
+    """
+    conn = get_temp_db_connection()
+    conn.row_factory = sqlite3.Row
+    cur = conn.cursor()
+
+    # Base SQLs
+    sql_events = f"""
+        SELECT 
+            eve_DateTime AS eve_DateTimeOrder,
+            devName,
+            devOwner,
+            eve_DateTime,
+            eve_EventType,
+            NULL,
+            NULL,
+            NULL,
+            NULL,
+            eve_IP,
+            NULL,
+            eve_AdditionalInfo,
+            NULL,
+            devMac,
+            eve_PendingAlertEmail
+        FROM Events_Devices
+        WHERE eve_DateTime >= {period_date}
+    """
+
+    sql_sessions = f"""
+        SELECT 
+            IFNULL(ses_DateTimeConnection, ses_DateTimeDisconnection) AS ses_DateTimeOrder,
+            devName,
+            devOwner,
+            NULL,
+            NULL,
+            ses_DateTimeConnection,
+            ses_DateTimeDisconnection,
+            NULL,
+            NULL,
+            ses_IP,
+            NULL,
+            ses_AdditionalInfo,
+            ses_StillConnected,
+            devMac
+        FROM Sessions_Devices
+    """
+
+    # Build SQL based on type
+    if event_type == "all":
+        sql = sql_events
+    elif event_type == "sessions":
+        sql = sql_sessions + f"""
+            WHERE (
+                ses_DateTimeConnection >= {period_date}
+                OR ses_DateTimeDisconnection >= {period_date}
+                OR ses_StillConnected = 1
+            )
+        """
+    elif event_type == "missing":
+        sql = sql_sessions + f"""
+            WHERE (
+                (ses_DateTimeConnection IS NULL AND ses_DateTimeDisconnection >= {period_date})
+                OR (ses_DateTimeDisconnection IS NULL AND ses_StillConnected = 0 AND ses_DateTimeConnection >= {period_date})
+            )
+        """
+    elif event_type == "voided":
+        sql = sql_events + ' AND eve_EventType LIKE "VOIDED%"'
+    elif event_type == "new":
+        sql = sql_events + ' AND eve_EventType = "New Device"'
+    elif event_type == "down":
+        sql = sql_events + ' AND eve_EventType = "Device Down"'
+    else:
+        sql = sql_events + ' AND 1=0'
+
+    cur.execute(sql)
+    rows = cur.fetchall()
+    conn.close()
+
+    table_data = {"data": []}
+
+    for row in rows:
+        row = list(row)  # make mutable
+
+        if event_type in ("sessions", "missing"):
+            # Duration
+            if row[5] and row[6]:
+                delta = format_date_diff(row[5], row[6])
+                row[7] = delta["text"]
+                row[8] = int(delta["total_minutes"] * 60)  # seconds
+            elif row[12] == 1:
+                delta = format_date_diff(row[5], None)
+                row[7] = delta["text"]
+                row[8] = int(delta["total_minutes"] * 60)  # seconds
+            else:
+                row[7] = "..."
+                row[8] = 0
+
+            # Connection
+            row[5] = format_date(row[5]) if row[5] else "<missing event>"
+
+            # Disconnection
+            if row[6]:
+                row[6] = format_date(row[6])
+            elif row[12] == 0:
+                row[6] = "<missing event>"
+            else:
+                row[6] = "..."
+
+        else:
+            # Event Date
+            row[3] = format_date(row[3])
+
+        # IP Order
+        row[10] = format_ip_long(row[9])
+
+        table_data["data"].append(row)
+
+    return jsonify(table_data)

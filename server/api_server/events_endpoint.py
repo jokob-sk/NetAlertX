@@ -15,7 +15,7 @@ sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from database import get_temp_db_connection
 from helper import is_random_mac, format_date, get_setting_value, format_date_iso, format_event_date, timeNowTZ, mylog, ensure_datetime
-from db.db_helper import row_to_json
+from db.db_helper import row_to_json, get_date_from_period
 
 
 # --------------------------
@@ -107,4 +107,40 @@ def delete_events():
     return jsonify({"success": True, "message": "Deleted all events"})
 
 
+
+def get_events_totals(period: str = "7 days"):
+    """
+    Return counts for events and sessions totals over a given period.
+    period: "7 days", "1 month", "1 year", "100 years"
+    """
+    # Convert period to SQLite date expression
+    period_date_sql = get_date_from_period(period)
+
+    conn = get_temp_db_connection()
+    cur = conn.cursor()
+
+    sql = f"""
+        SELECT 
+            (SELECT COUNT(*) FROM Events WHERE eve_DateTime >= {period_date_sql}) AS all_events,
+            (SELECT COUNT(*) FROM Sessions WHERE 
+                ses_DateTimeConnection >= {period_date_sql}
+                OR ses_DateTimeDisconnection >= {period_date_sql}
+                OR ses_StillConnected = 1
+            ) AS sessions,
+            (SELECT COUNT(*) FROM Sessions WHERE 
+                (ses_DateTimeConnection IS NULL AND ses_DateTimeDisconnection >= {period_date_sql})
+                OR (ses_DateTimeDisconnection IS NULL AND ses_StillConnected = 0 AND ses_DateTimeConnection >= {period_date_sql})
+            ) AS missing,
+            (SELECT COUNT(*) FROM Events WHERE eve_DateTime >= {period_date_sql} AND eve_EventType LIKE 'VOIDED%') AS voided,
+            (SELECT COUNT(*) FROM Events WHERE eve_DateTime >= {period_date_sql} AND eve_EventType LIKE 'New Device') AS new,
+            (SELECT COUNT(*) FROM Events WHERE eve_DateTime >= {period_date_sql} AND eve_EventType LIKE 'Device Down') AS down
+    """
+
+    cur.execute(sql)
+    row = cur.fetchone()
+    conn.close()
+
+    # Return as JSON array
+    result_json = [row[0], row[1], row[2], row[3], row[4], row[5]]
+    return jsonify(result_json)
 

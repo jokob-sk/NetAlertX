@@ -44,8 +44,6 @@ def test_create_device(client, api_token, test_mac):
 
 
 # -----------------------------
-# CREATE SESSION
-# -----------------------------
 def test_create_session(client, api_token, test_mac):
     payload = {
         "mac": test_mac,
@@ -59,8 +57,6 @@ def test_create_session(client, api_token, test_mac):
     assert resp.json.get("success") is True
 
 
-# -----------------------------
-# LIST SESSIONS
 # -----------------------------
 def test_list_sessions(client, api_token, test_mac):
     # Ensure at least one session exists
@@ -79,8 +75,88 @@ def test_list_sessions(client, api_token, test_mac):
     assert any(ses["ses_MAC"] == test_mac for ses in sessions)
 
 
-# -----------------------------
-# DELETE SESSION
+def test_device_sessions_by_period(client, api_token, test_mac):
+    # 1. Create a dummy session so we have data
+    payload = {
+        "mac": test_mac,
+        "ip": "192.168.1.200",
+        "start_time": timeNowTZ()
+    }
+    resp_create = client.post("/sessions/create", json=payload, headers=auth_headers(api_token))
+    assert resp_create.status_code == 200
+    assert resp_create.json.get("success") is True
+
+    # 2. Query sessions for the device with a valid period
+    resp = client.get(
+        f"/sessions/{test_mac}?period=7 days",
+        headers=auth_headers(api_token)
+    )
+    assert resp.status_code == 200
+
+    data = resp.json
+    assert data.get("success") is True
+    assert "sessions" in data
+
+    sessions = data["sessions"]
+
+    print(sessions)
+    print(test_mac)
+
+    assert isinstance(sessions, list)
+    assert any(s["ses_MAC"] == test_mac for s in sessions)
+
+
+def test_device_session_events(client, api_token, test_mac):
+    """
+    Test fetching session/events from the /sessions/session-events endpoint.
+    """
+
+    # 1. Create a dummy session to ensure we have data
+    payload = {
+        "mac": test_mac,
+        "ip": "192.168.1.250",
+        "start_time": timeNowTZ()
+    }
+    resp_create = client.post(
+        "/sessions/create",
+        json=payload,
+        headers=auth_headers(api_token)
+    )
+    assert resp_create.status_code == 200
+    assert resp_create.json.get("success") is True
+
+    # 2. Fetch session events with default type ('all') and period ('7 days')
+    resp = client.get(
+        f"/sessions/session-events?type=all&period=7 days",
+        headers=auth_headers(api_token)
+    )
+    assert resp.status_code == 200
+
+    data = resp.json
+    assert "data" in data  # table data key
+    events = data["data"]
+
+    # 3. Validate the response structure
+    assert isinstance(events, list)
+
+    # If there is at least one row, check fields for sessions
+    if events:
+        row = events[0]
+        # Expecting row as list with at least expected columns
+        assert isinstance(row, list)
+        # IP and datetime fields should exist
+        assert row[9]  # IP column
+        assert row[3]  # Event datetime column
+
+    # 4. Optionally, test filtering by session type
+    resp_sessions = client.get(
+        "/sessions/session-events?type=sessions&period=7 days",
+        headers=auth_headers(api_token)
+    )
+    assert resp_sessions.status_code == 200
+    sessions = resp_sessions.json["data"]
+    assert isinstance(sessions, list)
+
 # -----------------------------
 def test_delete_session(client, api_token, test_mac):
     # First create session
