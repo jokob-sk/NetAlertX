@@ -65,7 +65,6 @@ def test_graphql_post_devices(client, api_token):
     assert resp.status_code == 200
 
     body = resp.get_json()
-    # print("FULL RESPONSE:", body)
 
     # GraphQL spec: response always under "data"
     assert "data" in body

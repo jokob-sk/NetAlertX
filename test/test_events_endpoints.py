@@ -99,7 +99,7 @@ def test_delete_all_events(client, api_token, test_mac):
     assert len(resp.json.get("events", [])) == 0
 
 
-def test_delete_events_30days(client, api_token, test_mac):
+def test_delete_events_dynamic_days(client, api_token, test_mac):
     # create old + new events
     create_event(client, api_token, test_mac, days_old=40)  # should be deleted
     create_event(client, api_token, test_mac, days_old=5)   # should remain
@@ -108,13 +108,15 @@ def test_delete_events_30days(client, api_token, test_mac):
     assert len(resp.json) == 2
 
     # delete events older than 30 days
-    resp = client.delete("/events/30days", headers=auth_headers(api_token))
+    resp = client.delete("/events/30", headers=auth_headers(api_token))
     assert resp.status_code == 200
     assert resp.json.get("success") is True
+    assert "Deleted events older than 30 days" in resp.json.get("message", "")
 
     # confirm only recent remains
     resp = list_events(client, api_token, test_mac)
     events = resp.get_json().get("events", [])
     mac_events = [ev for ev in events if ev.get("eve_MAC") == test_mac]
     assert len(mac_events) == 1
+
 

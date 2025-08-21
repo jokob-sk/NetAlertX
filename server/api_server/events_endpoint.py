@@ -75,18 +75,23 @@ def get_events(mac=None):
     conn.close()
     return jsonify({"success": True, "events": events})
 
-def delete_events_30():
-    """Delete all events older than 30 days"""
+def delete_events_older_than(days):
+    """Delete all events older than a specified number of days"""
 
     conn = get_temp_db_connection()
     cur = conn.cursor()
 
-    sql = "DELETE FROM Events WHERE eve_DateTime <= date('now', '-30 days')"
-    cur.execute(sql)
+    # Use a parameterized query with sqlite date function
+    sql = "DELETE FROM Events WHERE eve_DateTime <= date('now', ?)"
+    cur.execute(sql, [f'-{days} days'])
+    
     conn.commit()
     conn.close()
 
-    return jsonify({"success": True, "message": "Deleted events older than 30 days"})
+    return jsonify({
+        "success": True, 
+        "message": f"Deleted events older than {days} days"
+    })
 
 def delete_events():
     """Delete all events"""

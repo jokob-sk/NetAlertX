@@ -4,7 +4,7 @@ from flask_cors import CORS
 from .graphql_endpoint import devicesSchema
 from .device_endpoint import get_device_data, set_device_data, delete_device, delete_device_events, reset_device_props, copy_device, update_device_column
 from .devices_endpoint import get_all_devices, delete_unknown_devices, delete_all_with_empty_macs, delete_devices, export_devices, import_csv, devices_totals, devices_by_status
-from .events_endpoint import delete_events, delete_events_30, get_events, create_event
+from .events_endpoint import delete_events, delete_events_older_than, get_events, create_event
 from .history_endpoint import delete_online_history
 from .prometheus_endpoint import get_metric_stats
 from .sessions_endpoint import get_sessions, delete_session, create_session, get_sessions_calendar
@@ -315,11 +315,16 @@ def api_get_events():
     mac = request.args.get("mac")
     return get_events(mac)
 
-@app.route("/events/30days", methods=["DELETE"])
-def api_delete_old_events():
+@app.route("/events/<int:days>", methods=["DELETE"])
+def api_delete_old_events(days: int):
+    """
+    Delete events older than <days> days.
+    Example: DELETE /events/30
+    """
     if not is_authorized():
         return jsonify({"error": "Forbidden"}), 403
-    return delete_events_30()
+    
+    return delete_events_older_than(days)
 
 # --------------------------
 # Sessions
