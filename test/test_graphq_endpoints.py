@@ -50,7 +50,12 @@ def test_graphql_post_devices(client, api_token):
         "query": """
         {
             devices {
-                devices { devName devMac devIsRandomMac devParentChildrenCount }
+                devices { 
+                    devGUID
+                    devGroup
+                    devIsRandomMac
+                    devParentChildrenCount
+                }
                 count
             }
         }
@@ -58,9 +63,17 @@ def test_graphql_post_devices(client, api_token):
     }
     resp = client.post("/graphql", json=query, headers=auth_headers(api_token))
     assert resp.status_code == 200
-    data = resp.json.get("data", {})
+
+    body = resp.get_json()
+    # print("FULL RESPONSE:", body)
+
+    # GraphQL spec: response always under "data"
+    assert "data" in body
+    data = body["data"]
+
     assert "devices" in data
     assert isinstance(data["devices"]["devices"], list)
+    assert isinstance(data["devices"]["count"], int)
 
 def test_graphql_post_settings(client, api_token):
     """POST /graphql should return settings data"""

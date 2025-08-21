@@ -125,7 +125,7 @@ class Query(ObjectType):
             device["devParentChildrenCount"] = get_number_of_children(device["devMac"], devices_data)
             device["devIpLong"] = format_ip_long(device.get("devLastIP", ""))
         
-        mylog('verbose', f'[graphql_schema] devices_data: {devices_data}')
+        mylog('trace', f'[graphql_schema] devices_data: {devices_data}')
 
 
         # Apply sorting if options are provided
@@ -134,16 +134,16 @@ class Query(ObjectType):
             # Define status-specific filtering
             if options.status:
                 status = options.status
-                mylog('verbose', f'[graphql_schema] Applying status filter: {status}')
+                mylog('trace', f'[graphql_schema] Applying status filter: {status}')
 
                 # Include devices matching criteria in UI_MY_DEVICES
                 allowed_statuses = get_setting_value("UI_MY_DEVICES")  
                 hidden_relationships = get_setting_value("UI_hide_rel_types")  
                 network_dev_types = get_setting_value("NETWORK_DEVICE_TYPES")  
 
-                mylog('verbose', f'[graphql_schema] allowed_statuses: {allowed_statuses}')
-                mylog('verbose', f'[graphql_schema] hidden_relationships: {hidden_relationships}')
-                mylog('verbose', f'[graphql_schema] network_dev_types: {network_dev_types}')
+                mylog('trace', f'[graphql_schema] allowed_statuses: {allowed_statuses}')
+                mylog('trace', f'[graphql_schema] hidden_relationships: {hidden_relationships}')
+                mylog('trace', f'[graphql_schema] network_dev_types: {network_dev_types}')
 
                 # Filtering based on the "status"
                 if status == "my_devices":
@@ -249,7 +249,7 @@ class Query(ObjectType):
             return SettingResult(settings=[], count=0)
 
 
-        mylog('verbose', f'[graphql_schema] settings_data: {settings_data}')
+        mylog('trace', f'[graphql_schema] settings_data: {settings_data}')
 
         # Convert to Setting objects
         settings = [Setting(**setting) for setting in settings_data]

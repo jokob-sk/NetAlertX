@@ -64,8 +64,15 @@ def graphql_endpoint():
     # Execute the GraphQL query
     result = devicesSchema.execute(data.get("query"), variables=data.get("variables"))
 
-    # Return the result as JSON
-    return jsonify(result.data)
+    # Initialize response
+    response = {}
+
+    if result.errors:
+        response["errors"] = [str(e) for e in result.errors]
+    if result.data:
+        response["data"] = result.data
+
+    return jsonify(response)
 
 # --------------------------
 # Device Endpoints
