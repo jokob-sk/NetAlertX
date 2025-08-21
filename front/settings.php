@@ -199,8 +199,8 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
           console.log("Response:", response);
 
           // Handle the successful response
-          if (response && response.settings) {
-              const settingsData = response.settings.settings;
+          if (response && response.data && response.data.settings && response.data.settings.settings) {
+              const settingsData = response.data.settings.settings;
               console.log("Settings:", settingsData);
 
               // Wrong number of settings processing

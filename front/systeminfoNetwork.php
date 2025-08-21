@@ -249,7 +249,7 @@ function fetchUsedIps(callback) {
 
       console.log(response);
       
-      const usedIps = (response?.devices?.devices || [])
+      const usedIps = (response?.data?.devices?.devices || [])
         .map(d => d.devLastIP)
         .filter(ip => ip && ip.includes('.'));
       callback(usedIps);
