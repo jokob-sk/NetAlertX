@@ -113,7 +113,6 @@ class Query(ObjectType):
         try:
             with open(folder + 'table_devices.json', 'r') as f:
                 devices_data = json.load(f)["data"]
-                total_count = len(devices_data)  
         except (FileNotFoundError, json.JSONDecodeError) as e:
             mylog('none', f'[graphql_schema] Error loading devices data: {e}')
             return DeviceResult(devices=[], count=0)
@@ -127,6 +126,8 @@ class Query(ObjectType):
         
         mylog('trace', f'[graphql_schema] devices_data: {devices_data}')
 
+        # initialize total_count
+        total_count = len(devices_data)
 
         # Apply sorting if options are provided
         if options:
@@ -222,7 +223,7 @@ class Query(ObjectType):
                         reverse=(sort_option.order.lower() == "desc")
                     )
 
-            # capture total count after all the filtering and searching 
+            # capture total count after all the filtering and searching, BEFORE pagination 
             total_count = len(devices_data)
 
             # Then apply pagination
@@ -233,6 +234,7 @@ class Query(ObjectType):
 
         # Convert dict objects to Device instances to enable field resolution
         devices = [Device(**device) for device in devices_data]
+       
 
         return DeviceResult(devices=devices, count=total_count)
 
