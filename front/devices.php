@@ -685,11 +685,17 @@ function initializeDatatable (status) {
       },
       "dataSrc": function (res) {
 
-        json = res["data"];
-        // Set the total number of records for pagination
-        json.recordsTotal = json.devices.count || 0;
-        json.recordsFiltered = json.devices.count || 0;
+        console.log("Raw response:", res);
+        const json = res["data"];
 
+        // Set the total number of records for pagination at the *root level* so DataTables sees them
+        res.recordsTotal = json.devices.count || 0;
+        res.recordsFiltered = json.devices.count || 0;
+
+        // console.log("recordsTotal:", res.recordsTotal, "recordsFiltered:", res.recordsFiltered);
+        // console.log("tableRows:", tableRows);
+
+        // Return only the array of rows for the table
         return json.devices.devices.map(device => {
             // Convert each device record into the required DataTable row format
             // Order has to be the same as in the UI_device_columns setting options
@@ -703,10 +709,10 @@ function initializeDatatable (status) {
                 device.devFirstConnection || "",
                 device.devLastConnection || "",
                 device.devLastIP || "",
-                device.devIsRandomMac || "",  // Custom logic for randomized MAC
+                device.devIsRandomMac || "",
                 device.devStatus || "",
-                device.devMac || "",  // hidden
-                device.devIpLong || "",  // IP orderable
+                device.devMac || "",
+                device.devIpLong || "",
                 device.rowid || "",
                 device.devParentMAC || "",
                 device.devParentChildrenCount || 0,
@@ -731,7 +737,6 @@ function initializeDatatable (status) {
             for (let index = 0; index < tableColumnOrder.length; index++) {
                 newRow.push(originalRow[tableColumnOrder[index]]);
             }
-
             return newRow;
         });
       }
