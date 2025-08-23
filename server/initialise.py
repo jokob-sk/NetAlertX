@@ -123,7 +123,7 @@ def importConfigs (db, all_plugins):
     # this avoids time zone issues as we just compare the previous timestamp to the current time stamp
 
     # rename settings that have changed names due to code cleanup and migration to plugins
-    renameSettings(config_file)
+    # renameSettings(config_file)
 
     fileModifiedTime = os.path.getmtime(config_file)
 

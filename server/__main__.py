@@ -20,6 +20,7 @@ import time
 import datetime
 import multiprocessing
 import subprocess
+from pathlib import Path
 
 # Register NetAlertX modules 
 import conf
@@ -29,7 +30,7 @@ from helper import  filePermissions, timeNowTZ, get_setting_value
 from app_state import updateState
 from api import update_api
 from scan.session_events import process_scan
-from initialise import importConfigs
+from initialise import importConfigs, renameSettings
 from database import DB
 from messaging.reporting import get_notifications
 from models.notification_instance import NotificationInstance
@@ -44,9 +45,10 @@ from workflows.manager import WorkflowManager
 #===============================================================================
 #===============================================================================
 """
-main structure of Pi Alert
+main structure of NetAlertX
 
     Initialise All
+    Rename old settings
     start Loop forever
         initialise loop 
             (re)import config
@@ -91,6 +93,11 @@ def main ():
     mylog('debug', '[MAIN] Starting loop')
 
     all_plugins = None
+
+    # -- SETTINGS BACKWARD COMPATIBILITY START --
+    # rename settings that have changed names due to code cleanup or migration to plugins
+    renameSettings(Path(fullConfPath))
+    # -- SETTINGS BACKWARD COMPATIBILITY END --
 
     while True:
 
