@@ -35,35 +35,71 @@ curl 'http://<server>:<GRAPHQL_PORT>/sync' \
 
 ---
 
-#### 9.2 POST `/sync`
+#### 9.2 POST `/sync` 
 
-Used by a node to send data to the hub. The hub receives **form-encoded data** and stores it for processing.
+The **POST** endpoint is used by nodes to **send data to the hub**. The hub expects the data as **form-encoded fields** (application/x-www-form-urlencoded or multipart/form-data). The hub then stores the data in the plugin log folder for processing.
 
-**Required Form Fields:**
+#### Required Fields
 
-| Field       | Description                         |
-| ----------- | ----------------------------------- |
-| `data`      | The payload (plain text or JSON)    |
-| `node_name` | Name of the node sending the data   |
-| `plugin`    | The plugin name generating the data |
+| Field       | Type              | Description                                                                                                                                                                  |
+| ----------- | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `data`      | string            | The payload from the plugin or devices. Typically **plain text**, **JSON**, or **encrypted Base64** data. In your Python script, `encrypt_data()` is applied before sending. |
+| `node_name` | string            | The name of the node sending the data. Matches the node’s `SYNC_node_name` setting. Used to generate the filename on the hub.                                                |
+| `plugin`    | string            | The name of the plugin sending the data. Determines the filename prefix (`last_result.<plugin>...`).                                                                         |
+| `file_path` | string (optional) | Path of the local file being sent. Used only for logging/debugging purposes on the hub; **not required for processing**.                                                     |
 
-**Example Request (cURL):**
+---
 
-```sh
-curl -X POST 'http://<server>:<GRAPHQL_PORT>/sync' \
+### How the Hub Processes the POST Data
+
+1. **Receives the data** and validates the API token.
+2. **Stores the raw payload** in:
+
+```
+INSTALL_PATH/log/plugins/last_result.<plugin>.encoded.<node_name>.<sequence>.log
+```
+
+* `<plugin>` → plugin name from the POST request.
+* `<node_name>` → node name from the POST request.
+* `<sequence>` → incremented number for each submission.
+
+3. **Decodes / decrypts the data** if necessary (Base64 or encrypted) before processing.
+4. **Processes JSON payloads** (e.g., device info) to:
+
+   * Avoid duplicates by tracking `devMac`.
+   * Add metadata like `devSyncHubNode`.
+   * Insert new devices into the database.
+5. **Renames files** to indicate they have been processed:
+
+```
+processed_last_result.<plugin>.<node_name>.<sequence>.log
+```
+
+---
+
+### Example POST Payload
+
+If a node is sending device data:
+
+```bash
+curl -X POST 'http://<hub>:<PORT>/sync' \
   -H 'Authorization: Bearer <API_TOKEN>' \
-  -F 'data=<payload here>' \
+  -F 'data={"data":[{"devMac":"00:11:22:33:44:55","devName":"Device 1","devVendor":"Vendor A","devLastIP":"192.168.1.10"}]}' \
   -F 'node_name=NODE-01' \
   -F 'plugin=SYNC'
 ```
 
-**Response Example:**
+* The `data` field contains JSON with a **`data` array**, where each element is a **device object** or **plugin data object**.
+* The `plugin` and `node_name` fields allow the hub to **organize and store the file correctly**.
 
-```json
-{
-  "message": "Data received and stored successfully"
-}
-```
+---
+
+### Key Notes
+
+* **Always use the same `plugin` and `node_name` values** for consistent storage.
+* **Encrypted data**: The Python script uses `encrypt_data()` before sending, and the hub decodes it before processing.
+* **Sequence numbers**: Every submission generates a new sequence, preventing overwriting previous data.
+* **Form-encoded**: The hub expects `multipart/form-data` (cURL `-F`) or `application/x-www-form-urlencoded`.
 
 **Storage Details:**
 

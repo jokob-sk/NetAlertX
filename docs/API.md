@@ -51,6 +51,10 @@ http://<server>:<GRAPHQL_PORT>/
 
 ## Endpoints
 
+
+> [!TIP]
+> When retrieving devices try using the GraphQL API endpoint first as it is read-optimized.
+
 * [Device API Endpoints](API_DEVICE.md) – Manage individual devices
 * [Devices Collection](API_DEVICES.md) – Bulk operations on multiple devices
 * [Events](API_EVENTS.md) – Device event logging and management

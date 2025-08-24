@@ -82,7 +82,7 @@ The Events API provides access to **device event logs**, allowing creation, retr
 ```json
 {
   "success": true,
-  "message": "Deleted events older than 30 days"
+  "message": "Deleted events older than <days> days"
 }
 ```
 
