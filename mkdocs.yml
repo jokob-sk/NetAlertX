@@ -89,7 +89,6 @@ nav:
         - Online History: API_ONLINEHISTORY.md
         - Sync: API_SYNC.md
         - GraphQL: API_GRAPHQL.md
-        - New Device: API_NEW.md
         - Tests: API_TESTS.md
       - Integrations:
         - Webhook Secret: WEBHOOK_SECRET.md            
