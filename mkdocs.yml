@@ -77,9 +77,22 @@ nav:
         - Settings: SETTINGS_SYSTEM.md
         - Versions: VERSIONS.md
         - Icon and Type guessing: DEVICE_HEURISTICS.md
+      - API: 
+        - Overview: API.md   
+        - OLD API Overview: API_OLD.md   
+        - Devices Collection: API_DEVICES.md
+        - Device: API_DEVICE.md
+        - Sessions: API_SESSIONS.md
+        - Events: API_EVENTS.md
+        - Metrics: API_METRICS.md
+        - Net Tools: API_NETTOOLS.md
+        - Online History: API_ONLINEHISTORY.md
+        - Sync: API_SYNC.md
+        - GraphQL: API_GRAPHQL.md
+        - New Device: API_NEW.md
+        - Tests: API_TESTS.md
       - Integrations:
-        - Webhook Secret: WEBHOOK_SECRET.md
-        - API: API.md     
+        - Webhook Secret: WEBHOOK_SECRET.md            
         - Helper scripts: HELPER_SCRIPTS.md
 
 
