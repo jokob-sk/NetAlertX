@@ -112,7 +112,7 @@ def update_or_append(settings_list, item_tuple, key):
     
 #-------------------------------------------------------------------------------
 
-def importConfigs (db, all_plugins): 
+def importConfigs (pm, db, all_plugins): 
 
     sql = db.sql
 
@@ -134,7 +134,7 @@ def importConfigs (db, all_plugins):
 
     if (fileModifiedTime == conf.lastImportedConfFile) and all_plugins is not None:
         mylog('debug', ['[Import Config] skipping config file import'])
-        return all_plugins, False
+        return pm, all_plugins, False
 
     # Header
     updateState("Import config", showSpinner = True)  
@@ -413,6 +413,7 @@ def importConfigs (db, all_plugins):
     
     # run plugins that are modifying the config   
     pm = plugin_manager(db, all_plugins)
+    pm.clear_cache()
     pm.run_plugin_scripts('before_config_save')
 
     # Used to determine the next import
@@ -431,7 +432,7 @@ def importConfigs (db, all_plugins):
     # front end app log loggging
     write_notification(msg, 'info', timeNowTZ())    
 
-    return all_plugins, True
+    return pm, all_plugins, True
 
 
 

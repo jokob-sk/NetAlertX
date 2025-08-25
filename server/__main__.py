@@ -93,6 +93,7 @@ def main ():
     mylog('debug', '[MAIN] Starting loop')
 
     all_plugins = None
+    pm = None
 
     # -- SETTINGS BACKWARD COMPATIBILITY START --
     # rename settings that have changed names due to code cleanup or migration to plugins
@@ -102,10 +103,7 @@ def main ():
     while True:
 
         # re-load user configuration and plugins   
-        all_plugins, imported = importConfigs(db, all_plugins)
-
-        # initiate plugin manager
-        pm = plugin_manager(db, all_plugins)
+        pm, all_plugins, imported = importConfigs(pm, db, all_plugins)
 
         # update time started
         conf.loop_start_time = timeNowTZ()       

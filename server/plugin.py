@@ -27,8 +27,28 @@ class plugin_manager:
         self.db = db
         self.all_plugins = all_plugins
 
+        # object cache of settings and schedules for faster lookups
+        self._cache = {}
+        self._build_cache()
+
         # Make sure log level is initialized correctly
         Logger(get_setting_value('LOG_LEVEL'))
+
+    def _build_cache(self):
+        """Build a cache of settings and schedules for faster lookups."""
+        self._cache["settings"] = {
+            p["unique_prefix"]: {
+                "RUN": get_plugin_setting_obj(p, "RUN"),
+                "CMD": get_plugin_setting_obj(p, "CMD"),
+            }
+            for p in self.all_plugins
+        }
+        self._cache["schedules"] = {s.service: s for s in conf.mySchedules}
+
+    def clear_cache(self):
+        """Force rebuild of the cache (e.g. after config reload)."""
+        self._cache = {}
+        self._build_cache()
 
     #-------------------------------------------------------------------------------
     def run_plugin_scripts(self, runType):
@@ -43,34 +63,65 @@ class plugin_manager:
             shouldRun = False        
             prefix = plugin["unique_prefix"]
 
-            set = get_plugin_setting_obj(plugin, "RUN")
+            # 🔹 Lookup RUN setting from cache instead of calling get_plugin_setting_obj each time
+            run_setting = self._cache["settings"].get(prefix, {}).get("RUN")
+
+            # set = get_plugin_setting_obj(plugin, "RUN")
             
             # mylog('debug', [f'[run_plugin_scripts] plugin: {plugin}'])
             # mylog('debug', [f'[run_plugin_scripts] set: {set}'])
-            if set != None and set['value'] == runType:
+            # if set != None and set['value'] == runType:
+            #     if runType != "schedule":
+            #         shouldRun = True
+            #     elif  runType == "schedule":
+            #         # run if overdue scheduled time   
+            #         # check schedules if any contains a unique plugin prefix matching the current plugin
+            #         for schd in conf.mySchedules:
+            #             if schd.service == prefix:          
+            #                 # Check if schedule overdue
+            #                 shouldRun = schd.runScheduleCheck()  
+            if run_setting != None and run_setting['value'] == runType:
                 if runType != "schedule":
                     shouldRun = True
-                elif  runType == "schedule":
-                    # run if overdue scheduled time   
-                    # check schedules if any contains a unique plugin prefix matching the current plugin
-                    for schd in conf.mySchedules:
-                        if schd.service == prefix:          
-                            # Check if schedule overdue
-                            shouldRun = schd.runScheduleCheck()  
+                elif runType == "schedule":
+                    # run if overdue scheduled time
+                    # 🔹 Lookup schedule from cache instead of scanning conf.mySchedules
+                    schd = self._cache["schedules"].get(prefix)
+                    if schd:
+                        # Check if schedule overdue
+                        shouldRun = schd.runScheduleCheck()  
 
+            # if shouldRun:            
+            #     # Header
+            #     updateState(f"Plugin: {prefix}")
+                            
+            #     print_plugin_info(plugin, ['display_name'])
+            #     mylog('debug', ['[Plugins] CMD: ', get_plugin_setting_obj(plugin, "CMD")["value"]])
+            #     execute_plugin(self.db, self.all_plugins, plugin) 
+            #     #  update last run time
+            #     if runType == "schedule":
+            #         for schd in conf.mySchedules:
+            #             if schd.service == prefix:          
+            #                 # note the last time the scheduled plugin run was executed
+            #                 schd.last_run = timeNowTZ()
             if shouldRun:            
                 # Header
                 updateState(f"Plugin: {prefix}")
                             
                 print_plugin_info(plugin, ['display_name'])
-                mylog('debug', ['[Plugins] CMD: ', get_plugin_setting_obj(plugin, "CMD")["value"]])
+
+                # 🔹 CMD also retrieved from cache
+                cmd_setting = self._cache["settings"].get(prefix, {}).get("CMD")
+                mylog('debug', ['[Plugins] CMD: ', cmd_setting["value"] if cmd_setting else None])
+
                 execute_plugin(self.db, self.all_plugins, plugin) 
-                #  update last run time
+
+                # update last run time
                 if runType == "schedule":
-                    for schd in conf.mySchedules:
-                        if schd.service == prefix:          
-                            # note the last time the scheduled plugin run was executed
-                            schd.last_run = timeNowTZ()
+                    schd = self._cache["schedules"].get(prefix)
+                    if schd:
+                        # note the last time the scheduled plugin run was executed
+                        schd.last_run = timeNowTZ()
 
     #===============================================================================
     # Handling of  user initialized front-end events
