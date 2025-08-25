@@ -1,6 +1,6 @@
 # NetAlertX API Documentation
 
-This API provides programmatic access to **devices, events, sessions, metrics, network tools, and sync** in NetAlertX. It is implemented as a **REST and GraphQL server**. All requests require authentication via **API Token** (`API_TOKEN` setting) unless explicitly noted.
+This API provides programmatic access to **devices, events, sessions, metrics, network tools, and sync** in NetAlertX. It is implemented as a **REST and GraphQL server**. All requests require authentication via **API Token** (`API_TOKEN` setting) unless explicitly noted. For example, to authorize a GraphQL request, you need to use a `Authorization: Bearer API_TOKEN` header as per example below:
 
 ```graphql
 curl 'http://host:GRAPHQL_PORT/graphql' \
@@ -21,7 +21,7 @@ curl 'http://host:GRAPHQL_PORT/graphql' \
   }'
 ```
 
-It runs on `0.0.0.0:<graphql_port>` with **CORS enabled** for all main endpoints.
+The API server runs on `0.0.0.0:<graphql_port>` with **CORS enabled** for all main endpoints.
 
 ---
 
@@ -51,9 +51,8 @@ http://<server>:<GRAPHQL_PORT>/
 
 ## Endpoints
 
-
 > [!TIP]
-> When retrieving devices try using the GraphQL API endpoint first as it is read-optimized.
+> When retrieving devices or settings try using the GraphQL API endpoint first as it is read-optimized.
 
 * [Device API Endpoints](API_DEVICE.md) – Manage individual devices
 * [Devices Collection](API_DEVICES.md) – Bulk operations on multiple devices
@@ -76,5 +75,3 @@ See [Testing](API_TESTS.md) for example requests and usage.
 * GraphQL is available for advanced queries, while REST endpoints cover structured use cases.
 * Endpoints run on `0.0.0.0:<GRAPHQL_PORT>` with **CORS enabled**.
 * Use consistent API tokens and node/plugin names when interacting with `/sync` to ensure data integrity.
-
-

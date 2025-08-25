@@ -91,6 +91,7 @@ curl -X POST 'http://<hub>:<PORT>/sync' \
 
 * The `data` field contains JSON with a **`data` array**, where each element is a **device object** or **plugin data object**.
 * The `plugin` and `node_name` fields allow the hub to **organize and store the file correctly**.
+* The data is only processed if the relevant plugins are enabled and run on the target server. 
 
 ---
 
@@ -111,6 +112,7 @@ last_result.<plugin>.encoded.<node_name>.<sequence>.log
 
 * Both encoded and decoded files are tracked, and new submissions increment the sequence number.
 * If storing fails, the API returns HTTP 500 with an error message.
+* The data is only processed if the relevant plugins are enabled and run on the target server. 
 
 ---
 

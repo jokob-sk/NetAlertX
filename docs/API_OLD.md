@@ -1,6 +1,6 @@
-# API endpoints
+# [Deprecated] API endpoints
 
-> [!NOTE] 
+> [!WARNING] 
 > Some of these endpoints will be deprecated soon. Please refere to the new [API](API.md) endpoints docs for details on the new API layer. 
 
 NetAlertX comes with a couple of API endpoints. All requests need to be authorized (executed in a logged in browser session) or you have to pass the value of the `API_TOKEN` settings as authorization bearer, for example:
