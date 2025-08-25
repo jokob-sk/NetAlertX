@@ -368,41 +368,39 @@ function getLangCode() {
 function localizeTimestamp(input) {
   let tz = getSetting("TIMEZONE") || 'Europe/Berlin';
 
-  // Convert to string and trim
   input = String(input || '').trim();
-
-  // Normalize multiple spaces and remove commas
   const cleaned = input.replace(',', ' ').replace(/\s+/g, ' ');
 
-  // DD/MM/YYYY format check
   const dateTimeParts = cleaned.split(' ');
-  if (dateTimeParts.length >= 2 && dateTimeParts[0].includes('/')) {
+
+  // ✅ Strict DD/MM/YYYY check
+  if (dateTimeParts.length >= 2 && /^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateTimeParts[0])) {
     const [day, month, year] = dateTimeParts[0].split('/');
-    const timePart = dateTimeParts[1];
+    const timePart = dateTimeParts[1] || "00:00:00";
 
-    if (day && month && year && timePart) {
-      const isoString = `${year}-${month}-${day}T${timePart.length === 5 ? timePart + ':00' : timePart}`;
-      const date = new Date(isoString);
-      if (!isFinite(date)) return 'b-';
+    // strip timezone offsets from timePart if present
+    const timeClean = timePart.replace(/([+-]\d{2}:?\d{2})$/, '');
+    const isoString = `${year}-${month.padStart(2,'0')}-${day.padStart(2,'0')}T${timeClean.length === 5 ? timeClean + ':00' : timeClean}`;
 
-      return new Intl.DateTimeFormat('default', {
-        timeZone: tz,
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false
-      }).format(date);
-    }
+    const date = new Date(isoString);
+    if (!isFinite(date)) return 'b-';
+
+    return new Intl.DateTimeFormat('default', {
+      timeZone: tz,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    }).format(date);
   }
 
-  // ISO style YYYY-MM-DD HH:mm(:ss)?
-  const match = cleaned.match(/^(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2})(:\d{2})?$/);
+  // ✅ ISO style YYYY-MM-DD HH:mm:ss with optional timezone
+  const match = cleaned.match(/^(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2})(:\d{2})?([+-]\d{2}:?\d{2})?$/);
   if (match) {
-    let iso = `${match[1]}T${match[2]}${match[3] || ':00'}`;
-
+    let iso = `${match[1]}T${match[2]}${match[3] || ':00'}${match[4] || ''}`;
     const date = new Date(iso);
     if (!isFinite(date)) return 'c-';
 
@@ -418,7 +416,7 @@ function localizeTimestamp(input) {
     }).format(date);
   }
 
-  // Fallback: try to parse any other string input
+  // ✅ Fallback
   const date = new Date(input);
   if (!isFinite(date)) return 'Failed conversion: ' + input;
 
@@ -433,7 +431,6 @@ function localizeTimestamp(input) {
     hour12: false
   }).format(date);
 }
-
 
 
 // ----------------------------------------------------
