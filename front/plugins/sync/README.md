@@ -41,7 +41,7 @@ The plugin operates in three different modes based on the configuration settings
 - **Schedule** `[n,h]`: `SYNC_RUN_SCHD`
 - **Encryption Key** `[n,h]`: `SYNC_encryption_key`
 - **Node Name** `[n]`: `SYNC_node_name`
-- **Hub URL** `[n]`: `SYNC_hub_url`
+- **Hub URL** `[n]`: `SYNC_hub_url` + `GRAPHQL_PORT` of the target
 - **Sync Devices** `[n]`: `SYNC_devices`
 - **Sync Plugins** `[n]`: `SYNC_plugins`
 
@@ -52,7 +52,7 @@ The plugin operates in three different modes based on the configuration settings
 - **When to Run** `[n,h]`: `SYNC_RUN`
 - **Schedule** `[n,h]`: `SYNC_RUN_SCHD`
 - **Encryption Key** `[n,h]`: `SYNC_encryption_key`
-- **Nodes to Pull From** `[h]`: `SYNC_nodes`
+- **Nodes to Pull From** `[h]`: `SYNC_nodes` + `GRAPHQL_PORT` of the source nodes
 
 ### Usage
 
