@@ -367,69 +367,67 @@ function getLangCode() {
 // -----------------------------------------------------------------------------
 function localizeTimestamp(input) {
   let tz = getSetting("TIMEZONE") || 'Europe/Berlin';
-
   input = String(input || '').trim();
-  const cleaned = input.replace(',', ' ').replace(/\s+/g, ' ');
 
-  const dateTimeParts = cleaned.split(' ');
-
-  // ✅ Strict DD/MM/YYYY check
-  if (dateTimeParts.length >= 2 && /^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateTimeParts[0])) {
-    const [day, month, year] = dateTimeParts[0].split('/');
-    const timePart = dateTimeParts[1] || "00:00:00";
-
-    // strip timezone offsets from timePart if present
-    const timeClean = timePart.replace(/([+-]\d{2}:?\d{2})$/, '');
-    const isoString = `${year}-${month.padStart(2,'0')}-${day.padStart(2,'0')}T${timeClean.length === 5 ? timeClean + ':00' : timeClean}`;
-
-    const date = new Date(isoString);
-    if (!isFinite(date)) return 'b-';
-
+  // ✅ 1. Unix timestamps (10 or 13 digits)
+  if (/^\d+$/.test(input)) {
+    const ms = input.length === 10 ? parseInt(input, 10) * 1000 : parseInt(input, 10);
     return new Intl.DateTimeFormat('default', {
       timeZone: tz,
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
+      year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', second: '2-digit',
       hour12: false
-    }).format(date);
+    }).format(new Date(ms));
   }
 
-  // ✅ ISO style YYYY-MM-DD HH:mm:ss with optional timezone
-  const match = cleaned.match(/^(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2})(:\d{2})?([+-]\d{2}:?\d{2})?$/);
+  // ✅ 2. European DD/MM/YYYY
+  let match = input.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:[ ,]+(\d{1,2}:\d{2}(?::\d{2})?))?(.*)$/);
   if (match) {
-    let iso = `${match[1]}T${match[2]}${match[3] || ':00'}${match[4] || ''}`;
-    const date = new Date(iso);
-    if (!isFinite(date)) return 'c-';
+    let [ , d, m, y, t = "00:00:00", tzPart = "" ] = match;
+    const iso = `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}T${t.length===5?t+":00":t}${tzPart}`;
+    return formatSafe(iso, tz);
+  }
 
+  // ✅ 3. US MM/DD/YYYY
+  match = input.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:[ ,]+(\d{1,2}:\d{2}(?::\d{2})?))?(.*)$/);
+  if (match) {
+    let [ , m, d, y, t = "00:00:00", tzPart = "" ] = match;
+    const iso = `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}T${t.length===5?t+":00":t}${tzPart}`;
+    return formatSafe(iso, tz);
+  }
+
+  // ✅ 4. ISO-style (with T, Z, offsets)
+  match = input.match(/^(\d{4}-\d{1,2}-\d{1,2})[ T](\d{1,2}:\d{2}(?::\d{2})?)(Z|[+-]\d{2}:?\d{2})?$/);
+  if (match) {
+    let [ , ymd, time, offset = "" ] = match;
+    // normalize to YYYY-MM-DD
+    let [y, m, d] = ymd.split('-').map(x => x.padStart(2,'0'));
+    const iso = `${y}-${m}-${d}T${time.length===5?time+":00":time}${offset}`;
+    return formatSafe(iso, tz);
+  }
+
+  // ✅ 5. RFC2822 / "25 Aug 2025 13:45:22 +0200"
+  match = input.match(/^\d{1,2} [A-Za-z]{3,} \d{4}/);
+  if (match) {
+    return formatSafe(input, tz);
+  }
+
+  // ✅ 6. Fallback (whatever Date() can parse)
+  return formatSafe(input, tz);
+
+  function formatSafe(str, tz) {
+    const date = new Date(str);
+    if (!isFinite(date)) {
+      console.error(`ERROR: Couldn't parse date: '${str}' with TIMEZONE ${tz}`);
+      return 'Failed conversion - Check browser console';
+    }
     return new Intl.DateTimeFormat('default', {
       timeZone: tz,
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
+      year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', second: '2-digit',
       hour12: false
     }).format(date);
   }
-
-  // ✅ Fallback
-  const date = new Date(input);
-  if (!isFinite(date)) return 'Failed conversion: ' + input;
-
-  return new Intl.DateTimeFormat('default', {
-    timeZone: tz,
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false
-  }).format(date);
 }
 
 
