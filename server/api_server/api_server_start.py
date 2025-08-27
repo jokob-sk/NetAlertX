@@ -9,6 +9,7 @@ from .history_endpoint import delete_online_history
 from .prometheus_endpoint import get_metric_stats
 from .sessions_endpoint import get_sessions, delete_session, create_session, get_sessions_calendar, get_device_sessions, get_session_events
 from .nettools_endpoint import wakeonlan, traceroute, speedtest, nslookup, nmap_scan, internet_info
+from .dbquery_endpoint import read_query, write_query, update_query, delete_query
 from .sync_endpoint import handle_sync_post, handle_sync_get
 import sys
 
@@ -33,6 +34,7 @@ CORS(
         r"/history/*": {"origins": "*"},
         r"/nettools/*": {"origins": "*"},
         r"/sessions/*": {"origins": "*"},
+        r"/dbquery/*": {"origins": "*"},
         r"/events/*": {"origins": "*"}
     },
     supports_credentials=True,
@@ -262,6 +264,73 @@ def api_internet_info():
     if not is_authorized():
         return jsonify({"success": False, "error": "Forbidden"}), 403
     return internet_info()
+
+
+# --------------------------
+# DB query
+# --------------------------
+
+@app.route("/dbquery/read", methods=["POST"])
+def dbquery_read():
+    if not is_authorized():
+        return jsonify({"error": "Forbidden"}), 403
+
+    data = request.get_json() or {}
+    raw_sql_b64 = data.get("rawSql")
+
+    if not raw_sql_b64:
+        return jsonify({"error": "rawSql is required"}), 400
+    
+    return read_query(raw_sql_b64)
+    
+
+@app.route("/dbquery/write", methods=["POST"])
+def dbquery_write():
+    if not is_authorized():
+        return jsonify({"error": "Forbidden"}), 403
+
+    data = request.get_json() or {}
+    raw_sql_b64 = data.get("rawSql")
+    if not raw_sql_b64:
+        return jsonify({"error": "rawSql is required"}), 400
+
+    return write_query(raw_sql_b64)
+
+
+@app.route("/dbquery/update", methods=["POST"])
+def dbquery_update():
+    if not is_authorized():
+        return jsonify({"error": "Forbidden"}), 403
+
+    data = request.get_json() or {}
+    required = ["columnName", "id", "dbtable", "columns", "values"]
+    if not all(data.get(k) for k in required):
+        return jsonify({"error": "Missing required parameters"}), 400
+
+    return update_query(
+                column_name=data["columnName"],
+                ids=data["id"],
+                dbtable=data["dbtable"],
+                columns=data["columns"],
+                values=data["values"],
+            )       
+
+
+@app.route("/dbquery/delete", methods=["POST"])
+def dbquery_delete():
+    if not is_authorized():
+        return jsonify({"error": "Forbidden"}), 403
+
+    data = request.get_json() or {}
+    required = ["columnName", "id", "dbtable"]
+    if not all(data.get(k) for k in required):
+        return jsonify({"error": "Missing required parameters"}), 400
+
+    return  delete_query(
+                column_name=data["columnName"],
+                ids=data["id"],
+                dbtable=data["dbtable"],
+            )
 
 # --------------------------
 # Online history
