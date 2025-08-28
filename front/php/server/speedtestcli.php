@@ -1,7 +1,10 @@
 <?php
 require dirname(__FILE__).'/../server/init.php';
 
-// EQUIVALENT: /nettools/speedtest
+// 🔺----- API ENDPOINTS SUPERSEDED -----🔺
+// check server/api_server/api_server_start.py for equivalents
+// equivalent: /nettools
+// 🔺----- API ENDPOINTS SUPERSEDED -----🔺
 
 //------------------------------------------------------------------------------
 // check if authenticated

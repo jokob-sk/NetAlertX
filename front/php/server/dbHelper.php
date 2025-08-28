@@ -7,6 +7,10 @@
 #  Puche 2022+ jokob             jokob@duck.com                GNU GPLv3
 //------------------------------------------------------------------------------
 
+// 🔺----- API ENDPOINTS SUPERSEDED -----🔺
+// check server/api_server/api_server_start.py for equivalents
+// equivalent: /dbquery
+// 🔺----- API ENDPOINTS SUPERSEDED -----🔺
 
 //------------------------------------------------------------------------------
 // External files

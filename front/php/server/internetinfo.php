@@ -12,6 +12,12 @@
 #    cvc90      2023        https://github.com/cvc90         GNU GPLv3            #
 ###################################################################################
 
+
+// 🔺----- API ENDPOINTS SUPERSEDED -----🔺
+// check server/api_server/api_server_start.py for equivalents
+// equivalent: /nettools
+// 🔺----- API ENDPOINTS SUPERSEDED -----🔺
+
 // Get init.php 
 require dirname(__FILE__).'/../server/init.php';
 
