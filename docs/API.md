@@ -63,6 +63,7 @@ http://<server>:<GRAPHQL_PORT>/
 * [Online History](API_ONLINEHISTORY.md) – Online/offline device records
 * [GraphQL](API_GRAPHQL.md) – Advanced queries and filtering
 * [Sync](API_SYNC.md) – Synchronization between multiple NetAlertX instances
+* [DB query](API_DBQUERY.md) (⚠ Internal) - Low level database access - use other endpoints if possible
 
 See [Testing](API_TESTS.md) for example requests and usage.
 
