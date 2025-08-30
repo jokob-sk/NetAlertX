@@ -34,6 +34,7 @@ CORS(
         r"/history/*": {"origins": "*"},
         r"/nettools/*": {"origins": "*"},
         r"/sessions/*": {"origins": "*"},
+        r"/settings/*": {"origins": "*"},
         r"/dbquery/*": {"origins": "*"},
         r"/events/*": {"origins": "*"}
     },
@@ -76,6 +77,17 @@ def graphql_endpoint():
         response["data"] = result.data
 
     return jsonify(response)
+
+# --------------------------
+# Settings Endpoints
+# --------------------------
+
+@app.route("/settings/<setKey>", methods=["GET"])
+def api_get_setting(setKey):
+    if not is_authorized():
+        return jsonify({"error": "Forbidden"}), 403
+    value = get_setting_value(setKey)
+    return jsonify({"success": True, "value": value})
 
 # --------------------------
 # Device Endpoints
