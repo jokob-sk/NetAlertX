@@ -28,6 +28,24 @@ Track and manage device connection sessions. Sessions record when a device conne
   }
   ```
 
+#### `curl` Example
+
+```bash
+curl -X POST "http://<server_ip>:<GRAPHQL_PORT>/sessions/create" \
+  -H "Authorization: Bearer <API_TOKEN>" \
+  -H "Accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "mac": "AA:BB:CC:DD:EE:FF",
+    "ip": "192.168.1.10",
+    "start_time": "2025-08-01T10:00:00",
+    "end_time": "2025-08-01T12:00:00",
+    "event_type_conn": "Connected",
+    "event_type_disc": "Disconnected"
+  }'
+
+```
+
 ---
 
 ### Delete Sessions
@@ -50,6 +68,18 @@ Track and manage device connection sessions. Sessions record when a device conne
     "message": "Deleted sessions for MAC AA:BB:CC:DD:EE:FF"
   }
   ```
+
+#### `curl` Example
+
+```bash
+curl -X DELETE "http://<server_ip>:<GRAPHQL_PORT>/sessions/delete" \
+  -H "Authorization: Bearer <API_TOKEN>" \
+  -H "Accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "mac": "AA:BB:CC:DD:EE:FF"
+  }'
+```
 
 ---
 
@@ -86,7 +116,13 @@ Track and manage device connection sessions. Sessions record when a device conne
     ]
   }
   ```
+#### `curl` Example
 
+```bash
+curl -X GET "http://<server_ip>:<GRAPHQL_PORT>/sessions/list?mac=AA:BB:CC:DD:EE:FF&start_date=2025-08-01&end_date=2025-08-21" \
+  -H "Authorization: Bearer <API_TOKEN>" \
+  -H "Accept: application/json"
+```
 ---
 
 ### Calendar View of Sessions
@@ -123,6 +159,14 @@ Track and manage device connection sessions. Sessions record when a device conne
   }
   ```
 
+#### `curl` Example
+
+```bash
+curl -X GET "http://<server_ip>:<GRAPHQL_PORT>/sessions/calendar?start=2025-08-01&end=2025-08-21" \
+  -H "Authorization: Bearer <API_TOKEN>" \
+  -H "Accept: application/json"
+```
+
 ---
 
 ### Device Sessions
@@ -158,6 +202,14 @@ Track and manage device connection sessions. Sessions record when a device conne
   }
   ```
 
+#### `curl` Example
+
+```bash
+curl -X GET "http://<server_ip>:<GRAPHQL_PORT>/sessions/AA:BB:CC:DD:EE:FF?period=7%20days" \
+  -H "Authorization: Bearer <API_TOKEN>" \
+  -H "Accept: application/json"
+```
+
 ---
 
 ### Session Events Summary
@@ -179,3 +231,10 @@ Track and manage device connection sessions. Sessions record when a device conne
   **Response:**
   Returns a list of events or sessions with formatted connection, disconnection, duration, and IP information.
 
+#### `curl` Example
+
+```bash
+curl -X GET "http://<server_ip>:<GRAPHQL_PORT>/sessions/session-events?type=all&period=7%20days" \
+  -H "Authorization: Bearer <API_TOKEN>" \
+  -H "Accept: application/json"
+```

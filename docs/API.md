@@ -58,6 +58,7 @@ http://<server>:<GRAPHQL_PORT>/
 * [Devices Collection](API_DEVICES.md) – Bulk operations on multiple devices
 * [Events](API_EVENTS.md) – Device event logging and management
 * [Sessions](API_SESSIONS.md) – Connection sessions and history
+* [Settings](API_SETTINGS.md) – Settings
 * [Metrics](API_METRICS.md) – Prometheus metrics and per-device status
 * [Network Tools](API_NETTOOLS.md) – Utilities like Wake-on-LAN, traceroute, nslookup, nmap, and internet info
 * [Online History](API_ONLINEHISTORY.md) – Online/offline device records

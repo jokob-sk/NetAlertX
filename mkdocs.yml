@@ -79,10 +79,10 @@ nav:
         - Icon and Type guessing: DEVICE_HEURISTICS.md
       - API: 
         - Overview: API.md   
-        - OLD API Overview: API_OLD.md   
         - Devices Collection: API_DEVICES.md
         - Device: API_DEVICE.md
         - Sessions: API_SESSIONS.md
+        - Settings: API_SETTINGS.md
         - Events: API_EVENTS.md
         - Metrics: API_METRICS.md
         - Net Tools: API_NETTOOLS.md
@@ -91,6 +91,7 @@ nav:
         - GraphQL: API_GRAPHQL.md
         - DB query: API_DBQUERY.md
         - Tests: API_TESTS.md
+        - SUPERSEDED OLD API Overview: API_OLD.md   
       - Integrations:
         - Webhook Secret: WEBHOOK_SECRET.md            
         - Helper scripts: HELPER_SCRIPTS.md

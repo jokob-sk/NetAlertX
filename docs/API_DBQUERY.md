@@ -55,6 +55,18 @@ SELECT * FROM Devices;
 }
 ```
 
+#### `curl` Example
+
+```bash
+curl -X POST "http://<server_ip>:<GRAPHQL_PORT>/dbquery/read" \
+  -H "Authorization: Bearer <API_TOKEN>" \
+  -H "Accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "rawSql": "U0VMRUNUICogRlJPTSBERVZJQ0VT"
+  }'
+```
+
 ---
 
 ### 2. `POST /dbquery/update` (safer than `/dbquery/write`)
@@ -79,6 +91,22 @@ Update rows in a table by `columnName` + `id`. `/dbquery/update` is parameterize
 { "success": true, "updated_count": 1 }
 ```
 
+#### `curl` Example
+
+```bash
+curl -X POST "http://<server_ip>:<GRAPHQL_PORT>/dbquery/update" \
+  -H "Authorization: Bearer <API_TOKEN>" \
+  -H "Accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "columnName": "devMac",
+    "id": ["AA:BB:CC:DD:EE:FF"],
+    "dbtable": "Devices",
+    "columns": ["devName", "devOwner"],
+    "values": ["Laptop", "Alice"]
+  }'
+```
+
 ---
 
 ### 3. `POST /dbquery/write`
@@ -91,7 +119,6 @@ Execute a **write query** (`INSERT`, `UPDATE`, `DELETE`).
 {
   "rawSql": "SU5TRVJUIElOVE8gRGV2aWNlcyAoZGV2TWFjLCBkZXYgTmFtZSwgZGV2Rmlyc3RDb25uZWN0aW9uLCBkZXZMYXN0Q29ubmVjdGlvbiwgZGV2TGFzdElQKSBWQUxVRVMgKCc2QTpCQjo0Qzo1RDo2RTonLCAnVGVzdERldmljZScsICcyMDI1LTA4LTMwIDEyOjAwOjAwJywgJzIwMjUtMDgtMzAgMTI6MDA6MDAnLCAnMTAuMC4wLjEwJyk="
 }
-
 ```
 
 Decoded SQL:
@@ -99,7 +126,6 @@ Decoded SQL:
 ```sql
 INSERT INTO Devices (devMac, devName, devFirstConnection, devLastConnection, devLastIP)
 VALUES ('6A:BB:4C:5D:6E', 'TestDevice', '2025-08-30 12:00:00', '2025-08-30 12:00:00', '10.0.0.10');
-
 ```
 
 #### Response
@@ -108,6 +134,17 @@ VALUES ('6A:BB:4C:5D:6E', 'TestDevice', '2025-08-30 12:00:00', '2025-08-30 12:00
 { "success": true, "affected_rows": 1 }
 ```
 
+#### `curl` Example
+
+```bash
+curl -X POST "http://<server_ip>:<GRAPHQL_PORT>/dbquery/write" \
+  -H "Authorization: Bearer <API_TOKEN>" \
+  -H "Accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "rawSql": "SU5TRVJUIElOVE8gRGV2aWNlcyAoZGV2TWFjLCBkZXYgTmFtZSwgZGV2Rmlyc3RDb25uZWN0aW9uLCBkZXZMYXN0Q29ubmVjdGlvbiwgZGV2TGFzdElQKSBWQUxVRVMgKCc2QTpCQjo0Qzo1RDo2RTonLCAnVGVzdERldmljZScsICcyMDI1LTA4LTMwIDEyOjAwOjAwJywgJzIwMjUtMDgtMzAgMTI6MDA6MDAnLCAnMTAuMC4wLjEwJyk="
+  }'
+```
 
 ---
 
@@ -131,11 +168,16 @@ Delete rows in a table by `columnName` + `id`.
 { "success": true, "deleted_count": 1 }
 ```
 
----
+#### `curl` Example
 
-## Notes & Best Practices
-
-* All queries must be **base64 encoded** when passed as `rawSql`.
-* `update` and `delete` endpoints use **structured parameters** to prevent SQL injection.
-* Avoid large or complex queries in `read` — paginate results instead.
-* Always validate queries in a safe environment before running them via API.
+```bash
+curl -X POST "http://<server_ip>:<GRAPHQL_PORT>/dbquery/delete" \
+  -H "Authorization: Bearer <API_TOKEN>" \
+  -H "Accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "columnName": "devMac",
+    "id": ["AA:BB:CC:DD:EE:FF"],
+    "dbtable": "Devices"
+  }'
+```
