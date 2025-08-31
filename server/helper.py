@@ -315,25 +315,53 @@ def get_setting(key):
 #-------------------------------------------------------------------------------
 #  Return setting value
 def get_setting_value(key):
+    """
+    Retrieve a setting value from configuration.
 
-    # Returns empty string if not set
+    - First checks if `conf.mySettings` is populated and contains the key.
+    - Falls back to `get_setting(key)` if not found.
+    - Converts the raw stored value into the correct Python type
+      using `setting_value_to_python_type`.
+
+    Args:
+        key (str): The setting key to look up.
+
+    Returns:
+        Any: The Python-typed setting value, or an empty string if not found.
+    """
+
+    # Returns empty string if not found
     value = ''
-    
+
+    # Prefer conf.mySettings if available
+    if hasattr(conf, "mySettings") and conf.mySettings:
+        # conf.mySettings is a list of tuples, find by key (tuple[0])
+        for item in conf.mySettings:
+            if item[0] == key:
+                set_type = item[3]   # inputtype
+                set_value = item[5]  # result                
+                if isinstance(set_value, (list, dict)):
+                    value = setting_value_to_python_type(set_type, set_value)
+                else:
+                    value = setting_value_to_python_type(set_type, str(set_value))
+                return value
+
+    # Otherwise fall back toretrive from json
     setting = get_setting(key)
 
     if setting is not None:
-
         # mylog('none', [f'[SETTINGS] setting json:{json.dumps(setting)}'])        
 
         set_type  = 'Error: Not handled'
         set_value = 'Error: Not handled'
 
         set_value = setting["setValue"]  # Setting value (Value (upper case) = user overridden default_value)
-        set_type = setting["setType"]  # Setting type  # lower case "type" - default json value vs uppper-case "setType" (= from user defined settings)
+        set_type  = setting["setType"]   # Setting type  # lower case "type" - default json value vs uppper-case "setType" (= from user defined settings)
 
         value = setting_value_to_python_type(set_type, set_value)
 
     return value
+
 
 #-------------------------------------------------------------------------------
 #  Convert the setting value to the corresponding python type
