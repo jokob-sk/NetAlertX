@@ -28,9 +28,6 @@ from logger import mylog, logResult
 # Register NetAlertX directories
 INSTALL_PATH="/app"
 
-LASTCACHEDATE=''
-CACHE={}
-
 #-------------------------------------------------------------------------------
 # DateTime
 #-------------------------------------------------------------------------------
@@ -291,8 +288,8 @@ def write_file(pPath, pText):
 # Setting methods
 #-------------------------------------------------------------------------------
 
-CACHE = {}
-LASTCACHEDATE = 0
+SETTINGS_CACHE = {}
+SETTINGS_LASTCACHEDATE = 0
 
 #-------------------------------------------------------------------------------
 #  Return whole setting touple
@@ -310,7 +307,7 @@ def get_setting(key):
     Returns:
         dict | None: The setting dictionary for the key, or None if not found.
     """
-    global LASTCACHEDATE, CACHE
+    global SETTINGS_LASTCACHEDATE, SETTINGS_CACHE
     
     settingsFile = apiPath + 'table_settings.json'
     try:
@@ -321,22 +318,22 @@ def get_setting(key):
 
     mylog('trace', [
         '[Import table_settings.json] checking table_settings.json file',
-        f'LASTCACHEDATE: {LASTCACHEDATE}',
+        f'SETTINGS_LASTCACHEDATE: {SETTINGS_LASTCACHEDATE}',
         f'fileModifiedTime: {fileModifiedTime}'
     ])
 
     # Use cache if file hasn't changed
-    if fileModifiedTime == LASTCACHEDATE and CACHE:
+    if fileModifiedTime == SETTINGS_LASTCACHEDATE and SETTINGS_CACHE:
         mylog('trace', ['[Import table_settings.json] using cached version'])
-        return CACHE.get(key)
+        return SETTINGS_CACHE.get(key)
 
-    LASTCACHEDATE = fileModifiedTime
+    SETTINGS_LASTCACHEDATE = fileModifiedTime
 
     # Load JSON and populate cache
     try:
         with open(settingsFile, 'r') as json_file:
             data = json.load(json_file)
-            CACHE = {item["setKey"]: item for item in data.get("data", [])}
+            SETTINGS_CACHE = {item["setKey"]: item for item in data.get("data", [])}
     except json.JSONDecodeError:
         mylog('none', [f'[Settings] ⚠ JSON decode error in file {settingsFile}'])
         return None
@@ -344,11 +341,11 @@ def get_setting(key):
         mylog('none', [f'[Settings] ⚠ Value error: {e} in file {settingsFile}'])
         return None
 
-    if key not in CACHE:
+    if key not in SETTINGS_CACHE:
         mylog('none', [f'[Settings] ⚠ ERROR - setting_missing - {key} not in {settingsFile}'])
         return None
 
-    return CACHE[key]
+    return SETTINGS_CACHE[key]
 
 #-------------------------------------------------------------------------------
 #  Return setting value
@@ -376,8 +373,8 @@ def get_setting_value(key):
         # conf.mySettings is a list of tuples, find by key (tuple[0])
         for item in conf.mySettings:
             if item[0] == key:
-                set_type = item[3]   # inputtype
-                set_value = item[5]  # result                
+                set_type = item[3]   # type
+                set_value = item[5]  # value                
                 if isinstance(set_value, (list, dict)):
                     value = setting_value_to_python_type(set_type, set_value)
                 else:
