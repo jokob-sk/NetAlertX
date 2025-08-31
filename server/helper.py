@@ -290,72 +290,65 @@ def write_file(pPath, pText):
 #-------------------------------------------------------------------------------
 # Setting methods
 #-------------------------------------------------------------------------------
+
+CACHE = {}
+LASTCACHEDATE = 0
+
 #-------------------------------------------------------------------------------
 #  Return whole setting touple
 def get_setting(key):
-    global LASTCACHEDATE
-    global CACHE
+    """
+    Retrieve the full setting tuple (dictionary) for a given key from the JSON settings file.
+
+    - Uses a cache to avoid re-reading the file if it hasn't changed.
+    - Loads settings from `table_settings.json` located at `apiPath`.
+    - Returns `None` if the key is not found or the file cannot be read.
+
+    Args:
+        key (str): The key of the setting to retrieve.
+
+    Returns:
+        dict | None: The setting dictionary for the key, or None if not found.
+    """
+    global LASTCACHEDATE, CACHE
     
     settingsFile = apiPath + 'table_settings.json'
+    try:
+        fileModifiedTime = os.path.getmtime(settingsFile)
+    except FileNotFoundError:
+        mylog('none', [f'[Settings] ⚠ File not found: {settingsFile}'])
+        return None
 
-    ###################################################
-    # fix by IR
-    ###################################################
-    
-    fileModifiedTime = os.path.getmtime(settingsFile)
-    mylog('debug', ['[Import table_settings.json] checking table_settings.json file '])
-    mylog('debug', ['[Import table_settings.json] LASTCACHEDATE     :', LASTCACHEDATE])
-    mylog('debug', ['[Import table_settings.json] fileModifiedTime         :', fileModifiedTime])
+    mylog('trace', [
+        '[Import table_settings.json] checking table_settings.json file',
+        f'LASTCACHEDATE: {LASTCACHEDATE}',
+        f'fileModifiedTime: {fileModifiedTime}'
+    ])
+
+    # Use cache if file hasn't changed
     if fileModifiedTime == LASTCACHEDATE and CACHE:
-        mylog('debug', ['[Import table_settings.json] using cached version of table_settings.json '])
-        try:
-            return CACHE[key]
-        except KeyError:
-            mylog('none', [f'[Settings] ⚠ ERROR - setting_missing - Setting not found for key: {key} in cached file {settingsFile}'])  
-    
+        mylog('trace', ['[Import table_settings.json] using cached version'])
+        return CACHE.get(key)
+
     LASTCACHEDATE = fileModifiedTime
-    
+
+    # Load JSON and populate cache
     try:
         with open(settingsFile, 'r') as json_file:
             data = json.load(json_file)
-            for item in data.get("data",[]):
-                # map setkey to item
-                CACHE[item["setKey"]] = item
-    except (FileNotFoundError, json.JSONDecodeError, ValueError) as e:
-        # Handle the case when the file is not found, JSON decoding fails, or data is not in the expected format
-        mylog('none', [f'[Settings] ⚠ ERROR - JSONDecodeError or FileNotFoundError for file {settingsFile}'])                
+            CACHE = {item["setKey"]: item for item in data.get("data", [])}
+    except json.JSONDecodeError:
+        mylog('none', [f'[Settings] ⚠ JSON decode error in file {settingsFile}'])
         return None
-    
-    try:
-        return CACHE[key]
-    except KeyError:    
-        mylog('none', [f'[Settings] ⚠ ERROR - setting_missing - Setting not found for key: {key} in file {settingsFile}'])  
-        return None 
-    
-    ###################################################
-    # / fix by IR
-    ###################################################
-    
-    try:
-
-        with open(settingsFile, 'r') as json_file:
-
-            data = json.load(json_file)
-            CACHE=data.get("data",[])
-
-            for item in data.get("data",[]):
-                if item.get("setKey") == key:
-                    return item
-
-            mylog('debug', [f'[Settings] ⚠ ERROR - setting_missing - Setting not found for key: {key} in file {settingsFile}'])  
-
-            return None
-
-    except (FileNotFoundError, json.JSONDecodeError, ValueError) as e:
-        # Handle the case when the file is not found, JSON decoding fails, or data is not in the expected format
-        mylog('none', [f'[Settings] ⚠ ERROR - JSONDecodeError or FileNotFoundError for file {settingsFile}'])                
-
+    except ValueError as e:
+        mylog('none', [f'[Settings] ⚠ Value error: {e} in file {settingsFile}'])
         return None
+
+    if key not in CACHE:
+        mylog('none', [f'[Settings] ⚠ ERROR - setting_missing - {key} not in {settingsFile}'])
+        return None
+
+    return CACHE[key]
 
 #-------------------------------------------------------------------------------
 #  Return setting value
