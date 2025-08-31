@@ -28,6 +28,9 @@ from logger import mylog, logResult
 # Register NetAlertX directories
 INSTALL_PATH="/app"
 
+LASTCACHEDATE=''
+CACHE={}
+
 #-------------------------------------------------------------------------------
 # DateTime
 #-------------------------------------------------------------------------------
@@ -290,13 +293,55 @@ def write_file(pPath, pText):
 #-------------------------------------------------------------------------------
 #  Return whole setting touple
 def get_setting(key):
-
+    global LASTCACHEDATE
+    global CACHE
+    
     settingsFile = apiPath + 'table_settings.json'
 
+    ###################################################
+    # fix by IR
+    ###################################################
+    
+    fileModifiedTime = os.path.getmtime(settingsFile)
+    mylog('debug', ['[Import table_settings.json] checking table_settings.json file '])
+    mylog('debug', ['[Import table_settings.json] LASTCACHEDATE     :', LASTCACHEDATE])
+    mylog('debug', ['[Import table_settings.json] fileModifiedTime         :', fileModifiedTime])
+    if fileModifiedTime == LASTCACHEDATE and CACHE:
+        mylog('debug', ['[Import table_settings.json] using cached version of table_settings.json '])
+        try:
+            return CACHE[key]
+        except KeyError:
+            mylog('none', [f'[Settings] ⚠ ERROR - setting_missing - Setting not found for key: {key} in cached file {settingsFile}'])  
+    
+    LASTCACHEDATE = fileModifiedTime
+    
     try:
+        with open(settingsFile, 'r') as json_file:
+            data = json.load(json_file)
+            for item in data.get("data",[]):
+                # map setkey to item
+                CACHE[item["setKey"]] = item
+    except (FileNotFoundError, json.JSONDecodeError, ValueError) as e:
+        # Handle the case when the file is not found, JSON decoding fails, or data is not in the expected format
+        mylog('none', [f'[Settings] ⚠ ERROR - JSONDecodeError or FileNotFoundError for file {settingsFile}'])                
+        return None
+    
+    try:
+        return CACHE[key]
+    except KeyError:    
+        mylog('none', [f'[Settings] ⚠ ERROR - setting_missing - Setting not found for key: {key} in file {settingsFile}'])  
+        return None 
+    
+    ###################################################
+    # / fix by IR
+    ###################################################
+    
+    try:
+
         with open(settingsFile, 'r') as json_file:
 
             data = json.load(json_file)
+            CACHE=data.get("data",[])
 
             for item in data.get("data",[]):
                 if item.get("setKey") == key:
