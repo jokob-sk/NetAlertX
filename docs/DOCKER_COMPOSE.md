@@ -63,21 +63,21 @@ To run the container execute: `sudo docker-compose up -d`
 services:
   netalertx:
     container_name: netalertx
-    # use the below line if you want to test the latest dev image
+    # use the below line if you want to test the latest dev image instead of the stable release
     # image: "ghcr.io/jokob-sk/netalertx-dev:latest" 
     image: "ghcr.io/jokob-sk/netalertx:latest"      
     network_mode: "host"        
     restart: unless-stopped
     volumes:
-      - ${APP_CONFIG_LOCATION}/netalertx/config:/app/config
-      - ${APP_DATA_LOCATION}/netalertx/db/:/app/db/      
+      - ${APP_FOLDER}/netalertx/config:/app/config
+      - ${APP_FOLDER}/netalertx/db/:/app/db     
       # (optional) useful for debugging if you have issues setting up the container
-      - ${LOGS_LOCATION}:/app/log
-      # (API: OPTION 1) use for performance
+      - ${APP_FOLDER}:/app/log
+      # (API: OPTION 1) default -> use for performance
       - type: tmpfs
         target: /app/api
       # (API: OPTION 2) use when debugging issues 
-      # -  local/path/api:/app/api
+      # -  ${APP_FOLDER}/api:/app/api
     environment:
       - TZ=${TZ}      
       - PORT=${PORT}
@@ -86,20 +86,34 @@ services:
 `.env` file
 
 ```yaml
-#GLOBAL PATH VARIABLES
-
-APP_DATA_LOCATION=/path/to/docker_appdata
-APP_CONFIG_LOCATION=/path/to/docker_config
-LOGS_LOCATION=/path/to/docker_logs
+APP_FOLDER=/path/to/local/NetAlertX/location
 
 #ENVIRONMENT VARIABLES
-
-TZ=Europe/Paris
+PUID=300
+PGID=200
+TZ=America/New_York
+LISTEN_ADDR=0.0.0.0
 PORT=20211
+#GLOBAL PATH VARIABLE
+APP_FOLDER=/path/to/local/NetAlertX/location
+APP_FOLDER=/big/netalertX/latest
 
-#DEVELOPMENT VARIABLES
+# you may want to create a dedicated user and group to run the container with 
+# sudo groupadd -g 300 nax-g 
+# sudo useradd -u 200 -g 300 nax-u
+# mkdir -p $APP_FOLDER/{db,config,log} 
+# chown -R 200:300 $APP_FOLDER
+# chmod -R 775 $APP_FOLDER
 
-DEV_LOCATION=/path/to/local/source/code
+# DEVELOPMENT VARIABLES
+# only uncomment the line below if this file is for a dev clone of your main install
+# and remove the APP_FOLDER at the top... 
+# APP_FOLDER=/path/to/my/dev/folder/clone1
+# you can create  multiple env files called .env.dev1, .env.dev2 etc and use them by running:
+# docker compose --env-file .env.dev1 up -d
+
+
+
 ```
 
 To run the container execute: `sudo docker-compose --env-file /path/to/.env up`
