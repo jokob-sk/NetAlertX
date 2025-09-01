@@ -137,7 +137,7 @@ networks:
 
 
 ```
-### Example 5: same as 3 but with a top level root, also works in portainder as-is
+### Example 5: same as 3 but with a top-level root directory; also works in Portainer as-is
 
 `docker-compose.yml` 
 
