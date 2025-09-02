@@ -377,9 +377,8 @@ def get_setting_value(key):
     value = ''
 
     # lookup key in secondary cache
-    if SETTINGS_SECONDARYCACHE.get(key) is not None:
+    if key in SETTINGS_SECONDARYCACHE:
         return SETTINGS_SECONDARYCACHE[key]
-
     # Prefer conf.mySettings if available
     if hasattr(conf, "mySettings") and conf.mySettings:
         # conf.mySettings is a list of tuples, find by key (tuple[0])
