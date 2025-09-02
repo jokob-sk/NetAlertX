@@ -148,11 +148,12 @@ services:
     # use the below line if you want to test the latest dev image instead of the stable release
     # image: "ghcr.io/jokob-sk/netalertx-dev:latest" 
     image: "ghcr.io/jokob-sk/netalertx:latest"      
-    network_mode: "host"        
+    network_mode: "host"
     restart: unless-stopped
+    user: "${PUID}:${PGID}"
     volumes:
       - ${APP_FOLDER}/netalertx/config:/app/config
-      - ${APP_FOLDER}/netalertx/db:/app/db     
+      - ${APP_FOLDER}/netalertx/db:/app/db
       # (optional) useful for debugging if you have issues setting up the container
       - ${APP_FOLDER}/netalertx/log:/app/log
       # (API: OPTION 1) default -> use for performance
@@ -161,9 +162,11 @@ services:
       # (API: OPTION 2) use when debugging issues 
       # -  ${APP_FOLDER}/netalertx/api:/app/api
     environment:
-      - TZ=${TZ}      
+      - TZ=${TZ}
       - PORT=${PORT}
-```
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - LISTEN_ADDR=${LISTEN_ADDR}
 
 `.env` file
 
