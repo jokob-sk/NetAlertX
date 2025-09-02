@@ -290,6 +290,7 @@ def write_file(pPath, pText):
 
 SETTINGS_CACHE = {}
 SETTINGS_LASTCACHEDATE = 0
+SETTINGS_SECONDARYCACHE={}
 
 #-------------------------------------------------------------------------------
 #  Return whole setting touple
@@ -307,7 +308,7 @@ def get_setting(key):
     Returns:
         dict | None: The setting dictionary for the key, or None if not found.
     """
-    global SETTINGS_LASTCACHEDATE, SETTINGS_CACHE
+    global SETTINGS_LASTCACHEDATE, SETTINGS_CACHE, SETTINGS_SECONDARYCACHE
     
     settingsFile = apiPath + 'table_settings.json'
     try:
@@ -327,7 +328,9 @@ def get_setting(key):
         mylog('trace', ['[Import table_settings.json] using cached version'])
         return SETTINGS_CACHE.get(key)
 
-    SETTINGS_LASTCACHEDATE = fileModifiedTime
+    # invalidate CACHE
+    SETTINGS_CACHE = {}
+    SETTINGS_SECONDARYCACHE={}
 
     # Load JSON and populate cache
     try:
@@ -341,6 +344,9 @@ def get_setting(key):
         mylog('none', [f'[Settings] ⚠ Value error: {e} in file {settingsFile}'])
         return None
 
+    # Only update file date when we successfully parsed the file
+    SETTINGS_LASTCACHEDATE = fileModifiedTime
+    
     if key not in SETTINGS_CACHE:
         mylog('none', [f'[Settings] ⚠ ERROR - setting_missing - {key} not in {settingsFile}'])
         return None
@@ -365,8 +371,14 @@ def get_setting_value(key):
         Any: The Python-typed setting value, or an empty string if not found.
     """
 
+    global SETTINGS_SECONDARYCACHE
+    
     # Returns empty string if not found
     value = ''
+
+    # lookup key in secondary cache
+    if SETTINGS_SECONDARYCACHE.get(key) is not None:
+        return SETTINGS_SECONDARYCACHE[key]
 
     # Prefer conf.mySettings if available
     if hasattr(conf, "mySettings") and conf.mySettings:
@@ -379,9 +391,10 @@ def get_setting_value(key):
                     value = setting_value_to_python_type(set_type, set_value)
                 else:
                     value = setting_value_to_python_type(set_type, str(set_value))
+                SETTINGS_SECONDARYCACHE[key] = value
                 return value
 
-    # Otherwise fall back toretrive from json
+    # Otherwise fall back to retrive from json
     setting = get_setting(key)
 
     if setting is not None:
@@ -394,6 +407,7 @@ def get_setting_value(key):
         set_type  = setting["setType"]   # Setting type  # lower case "type" - default json value vs uppper-case "setType" (= from user defined settings)
 
         value = setting_value_to_python_type(set_type, set_value)
+        SETTINGS_SECONDARYCACHE[key] = value
 
     return value
 
@@ -814,4 +828,3 @@ class noti_obj:
         self.json = json
         self.text = text
         self.html = html  
-
