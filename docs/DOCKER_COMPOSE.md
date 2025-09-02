@@ -137,3 +137,58 @@ networks:
 
 
 ```
+### Example 5: same as 3 but with a single top level folder, fixed log ready to drop in portainer
+
+`docker-compose.yml` 
+
+```yaml
+services:
+  netalertx:
+    container_name: netalertx
+    # use the below line if you want to test the latest dev image instead of the stable release
+    # image: "ghcr.io/jokob-sk/netalertx-dev:latest" 
+    image: "ghcr.io/jokob-sk/netalertx:latest"      
+    network_mode: "host"        
+    restart: unless-stopped
+    volumes:
+      - ${APP_FOLDER}/netalertx/config:/app/config
+      - ${APP_FOLDER}/netalertx/db:/app/db     
+      # (optional) useful for debugging if you have issues setting up the container
+      - ${APP_FOLDER}/netalertx/log:/app/log
+      # (API: OPTION 1) default -> use for performance
+      - type: tmpfs
+        target: /app/api
+      # (API: OPTION 2) use when debugging issues 
+      # -  ${APP_FOLDER}/netalertx/api:/app/api
+    environment:
+      - TZ=${TZ}      
+      - PORT=${PORT}
+```
+
+`.env` file
+
+```yaml
+APP_FOLDER=/path/to/local/NetAlertX/location
+
+#ENVIRONMENT VARIABLES
+PUID=200
+PGID=300
+TZ=America/New_York
+LISTEN_ADDR=0.0.0.0
+PORT=20211
+#GLOBAL PATH VARIABLE
+
+# you may want to create a dedicated user and group to run the container with 
+# sudo groupadd -g 300 nax-g 
+# sudo useradd -u 200 -g 300 nax-u
+# mkdir -p $APP_FOLDER/{db,config,log} 
+# chown -R 200:300 $APP_FOLDER
+# chmod -R 775 $APP_FOLDER
+
+# DEVELOPMENT VARIABLES
+# you can create  multiple env files called .env.dev1, .env.dev2 etc and use them by running:
+# docker compose --env-file .env.dev1 up -d
+# you can then clone  multiple dev copies of NetAlertX just make sure to change the APP_FOLDER and PORT variables in each .env.devX file
+```
+
+To run the container execute: `sudo docker-compose --env-file /path/to/.env up`
