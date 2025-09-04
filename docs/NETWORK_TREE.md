@@ -91,6 +91,12 @@ You can confirm that `raspberrypi` now acts as a network device in two places:
 
 > Hovering over devices in the tree reveals connection details and tooltips for quick inspection.
 
+> [!NOTE]
+> Selecting certain relationship types hides the device in the default device views.  
+> You can change this behavior by adjusting the `UI_hide_rel_types` setting, which by default is set to `["nic","virtual"]`.  
+> This means devices with `devParentRelType` set to `nic` or `virtual` will not be shown.  
+> All devices, regardless of relationship type, are always accessible in the **All devices** view.
+
 ---
 
 ## ✅ Summary
