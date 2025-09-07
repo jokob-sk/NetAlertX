@@ -148,7 +148,7 @@ def main():
 
             message = f'[{pluginName}] Device data from node "{node_name}" written to {log_file_name}'
             mylog('verbose', [message])
-            lggr.isAbove('verbose'):
+            if lggr.isAbove('verbose'):
                 write_notification(message, 'info', timeNowTZ())           
         
 
