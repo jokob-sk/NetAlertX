@@ -271,7 +271,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "The URL of the hub (target instance) with the targets <code>GRAPHQL_PORT</code> set as port. Set on the Node. Without a trailig slash, for example <code>http://192.168.1.82:20212</code>"
+          "string": "If specified, this node will push data to the <code>GRAPHQL_PORT</code> API of the target. Use the target device <code>GRAPHQL_PORT</code> URL Without a trailing slash, for example <code>http://192.168.1.82:20212</code>"
         }
       ]
     },
@@ -296,7 +296,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Use a unique node name, without spaces or special characters, such as <code>Node_Vlan01</code>"
+          "string": "The unique name of this node, without spaces or special characters, such as <code>Node_Vlan01</code>"
         }
       ]
     },
