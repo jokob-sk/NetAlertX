@@ -137,6 +137,7 @@ networks:
 
 
 ```
+
 ### Example 5: same as 3 but with a top-level root directory; also works in Portainer as-is
 
 `docker-compose.yml` 
@@ -148,6 +149,7 @@ services:
     # use the below line if you want to test the latest dev image instead of the stable release
     # image: "ghcr.io/jokob-sk/netalertx-dev:latest" 
     image: "ghcr.io/jokob-sk/netalertx:latest"      
+
     network_mode: "host"        
     restart: unless-stopped
     volumes:
@@ -161,8 +163,12 @@ services:
       # (API: OPTION 2) use when debugging issues 
       # -  ${APP_FOLDER}/netalertx/api:/app/api
     environment:
-      - TZ=${TZ}      
+
+      - TZ=${TZ}
       - PORT=${PORT}
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - LISTEN_ADDR=${LISTEN_ADDR}
 ```
 
 `.env` file
@@ -171,8 +177,10 @@ services:
 APP_FOLDER=/path/to/local/NetAlertX/location
 
 #ENVIRONMENT VARIABLES
-PUID=300
-PGID=200
+
+PUID=200
+PGID=300
+
 TZ=America/New_York
 LISTEN_ADDR=0.0.0.0
 PORT=20211
