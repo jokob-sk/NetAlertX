@@ -28,7 +28,7 @@ from pytz import timezone
 conf.tz = timezone(get_setting_value('TIMEZONE'))
 
 # Make sure log level is initialized correctly
-Logger(get_setting_value('LOG_LEVEL'))
+lggr = Logger(get_setting_value('LOG_LEVEL'))
 
 pluginName = 'SYNC'
 
@@ -148,7 +148,8 @@ def main():
 
             message = f'[{pluginName}] Device data from node "{node_name}" written to {log_file_name}'
             mylog('verbose', [message])
-            write_notification(message, 'info', timeNowTZ())           
+            lggr.isAbove('verbose'):
+                write_notification(message, 'info', timeNowTZ())           
         
 
     # Process any received data for the Device DB table (ONLY JSON)
