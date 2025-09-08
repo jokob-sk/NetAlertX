@@ -19,6 +19,7 @@ nav:
         - Docker Updates: UPDATES.md
       - Other:
         - Synology Guide: SYNOLOGY_GUIDE.md
+        - Portainer Stacks: DOCKER_PORTAINER.md
         - Community Guides: COMMUNITY_GUIDES.md
         - Bare-metal (Experimental): HW_INSTALL.md
         - Migration Guide: MIGRATION.md
