@@ -143,11 +143,11 @@ fi
 # create log and api mounts
 
 echo "[INSTALL] Create log and api mounts"
-sudo umount "${INSTALL_DIR}"/log
-sudo umount "${INSTALL_DIR}"/api
-sudo mount tmpfs -t tmpfs "${INSTALL_DIR}"/log
-sudo mount tmpfs -t tmpfs "${INSTALL_DIR}"/api
-
+mkdir -p "${INSTALL_DIR}/log" "${INSTALL_DIR}/api"
+sudo umount "${INSTALL_DIR}/log" 2>/dev/null || true
+sudo umount "${INSTALL_DIR}/api" 2>/dev/null || true
+sudo mount -t tmpfs -o size=32m,noexec,nosuid,nodev tmpfs "${INSTALL_DIR}/log"
+sudo mount -t tmpfs -o size=16m,noexec,nosuid,nodev tmpfs "${INSTALL_DIR}/api"
 # Create an empty log files
 
 # Create the execution_queue.log file if it doesn't exist
