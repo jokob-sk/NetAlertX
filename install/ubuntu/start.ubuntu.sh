@@ -110,13 +110,13 @@ sudo ln -s "${INSTALL_PATH}/install/ubuntu/$NGINX_CONF_FILE" $NGINX_CONFIG_FILE
 # Use user-supplied port if set
 if [ -n "${PORT}" ]; then
   echo "[INSTALL] Setting webserver to user-supplied port ($PORT)"
-  sudo sed -i 's/listen 20211/listen '"$PORT"'/g' $NGINX_CONFIG_FILE
+  sudo sed -i 's/listen 20211/listen '"$PORT"'/g' "$NGINX_CONFIG_FILE"
 fi
 
 # Change web interface address if set
 if [ -n "${LISTEN_ADDR}" ]; then
   echo "[INSTALL] Setting webserver to user-supplied address (${LISTEN_ADDR})"
-  sed -ie 's/listen /listen '"${LISTEN_ADDR}":'/g' $NGINX_CONFIG_FILE
+  sed -i -e 's/listen /listen '"${LISTEN_ADDR}":'/g' "$NGINX_CONFIG_FILE"
 fi
 
 # Change php version
