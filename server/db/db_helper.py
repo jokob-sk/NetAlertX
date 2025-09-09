@@ -203,8 +203,8 @@ def get_table_json(sql, sql_query):
         result = {"data": [row_to_json(column_names, row) for row in rows]}
         return json_obj(result, column_names)
     else:
-        # the SQL query returned no rows
-        return json_obj({}, [])  # return empty object
+        result = {"data": []}
+        return json_obj(result, column_names)
 
 
 #-------------------------------------------------------------------------------
