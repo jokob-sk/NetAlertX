@@ -47,21 +47,21 @@ echo
 
 
 # Install dependencies
-sudo apt-get install -y \
-    tini snmp ca-certificates curl libwww-perl arp-scan perl apt-utils cron sudo \
+apt-get install -y \
+    tini snmp ca-certificates curl libwww-perl arp-scan perl apt-utils cron \
     nginx-light php php-cgi php-fpm php-sqlite3 php-curl sqlite3 dnsutils net-tools \
     python3 python3-dev iproute2 nmap python3-pip zip usbutils traceroute nbtscan avahi-daemon avahi-utils build-essential
 
 # alternate dependencies
-sudo apt-get install nginx nginx-core mtr php-fpm php${PHPVERSION}-fpm php-cli php${PHPVERSION} php${PHPVERSION}-sqlite3 -y
-sudo phpenmod -v ${PHPVERSION} sqlite3
+apt-get install nginx nginx-core mtr php-fpm php${PHPVERSION}-fpm php-cli php${PHPVERSION} php${PHPVERSION}-sqlite3 -y
+phpenmod -v ${PHPVERSION} sqlite3
 
-sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 10
+update-alternatives --install /usr/bin/python python /usr/bin/python3 10
 
 cd $INSTALL_DIR/install/ubuntu || { echo "Failed to change directory to $INSTALL_DIR/install/ubuntu"; exit 1; }
 
 # setup virtual python environment so we can use pip3 to install packages
-sudo apt-get install python3-venv -y
+apt-get install python3-venv -y
 python3 -m venv myenv
 source myenv/bin/activate
 
@@ -85,32 +85,30 @@ echo "[INSTALL] Updating the existing installation..."
 # Remove default NGINX site if it is symlinked, or backup it otherwise
 if [ -L /etc/nginx/sites-enabled/default ] ; then
   echo "[INSTALL] Disabling default NGINX site, removing sym-link in /etc/nginx/sites-enabled"
-  sudo rm /etc/nginx/sites-enabled/default
+  rm /etc/nginx/sites-enabled/default
 elif [ -f /etc/nginx/sites-enabled/default ]; then
   echo "[INSTALL] Disabling default NGINX site, moving config to /etc/nginx/sites-available"
-  sudo mv /etc/nginx/sites-enabled/default /etc/nginx/sites-available/default.bkp_netalertx
+  mv /etc/nginx/sites-enabled/default /etc/nginx/sites-available/default.bkp_netalertx
 fi
 
 # Clear existing directories and files
 if [ -d $WEB_UI_DIR ]; then
   echo "[INSTALL] Removing existing NetAlertX web-UI"
-  sudo rm -R $WEB_UI_DIR
+  rm -R $WEB_UI_DIR
 fi
 
-if [ -L "$NGINX_CONFIG_FILE" ]; then
-  echo "[INSTALL] Removing existing NetAlertX NGINX config"
-  sudo rm "$NGINX_CONFIG_FILE"
-fi
+echo "[INSTALL] Removing existing NetAlertX NGINX config"
+rm "$NGINX_CONFIG_FILE" 2>/dev/null || true
 
 # create symbolic link to the  install directory
 ln -s $INSTALL_PATH/front $WEB_UI_DIR
 # create symbolic link to NGINX configuration coming with NetAlertX
-sudo ln -s "${INSTALL_PATH}/install/ubuntu/$NGINX_CONF_FILE" $NGINX_CONFIG_FILE
+ln -s "${INSTALL_PATH}/install/ubuntu/$NGINX_CONF_FILE" $NGINX_CONFIG_FILE
 
 # Use user-supplied port if set
 if [ -n "${PORT}" ]; then
   echo "[INSTALL] Setting webserver to user-supplied port ($PORT)"
-  sudo sed -i 's/listen 20211/listen '"$PORT"'/g' "$NGINX_CONFIG_FILE"
+  sed -i 's/listen 20211/listen '"$PORT"'/g' "$NGINX_CONFIG_FILE"
 fi
 
 # Change web interface address if set
@@ -144,10 +142,10 @@ fi
 
 echo "[INSTALL] Create log and api mounts"
 mkdir -p "${INSTALL_DIR}/log" "${INSTALL_DIR}/api"
-sudo umount "${INSTALL_DIR}/log" 2>/dev/null || true
-sudo umount "${INSTALL_DIR}/api" 2>/dev/null || true
-sudo mount -t tmpfs -o size=32m,noexec,nosuid,nodev tmpfs "${INSTALL_DIR}/log"
-sudo mount -t tmpfs -o size=16m,noexec,nosuid,nodev tmpfs "${INSTALL_DIR}/api"
+umount "${INSTALL_DIR}/log" 2>/dev/null || true
+umount "${INSTALL_DIR}/api" 2>/dev/null || true
+mount -t tmpfs -o size=32m,noexec,nosuid,nodev tmpfs "${INSTALL_DIR}/log"
+mount -t tmpfs -o size=16m,noexec,nosuid,nodev tmpfs "${INSTALL_DIR}/api"
 # Create an empty log files
 
 # Create the execution_queue.log file if it doesn't exist
@@ -195,7 +193,7 @@ fi
 
 chmod -R a+rwx $INSTALL_DIR # second time after we copied the files
 chmod -R a+rw $INSTALL_PATH/config
-sudo chgrp -R www-data  $INSTALL_PATH
+chgrp -R www-data  $INSTALL_PATH
 
 # Check if buildtimestamp.txt doesn't exist
 if [ ! -f "${INSTALL_PATH}/front/buildtimestamp.txt" ]; then
@@ -213,4 +211,4 @@ source myenv/bin/activate
 echo "[INSTALL] 🚀 Starting app - navigate to your <server IP>:${PORT}"
 
 # Start the NetAlertX python script
-python $INSTALL_PATH/server/ 2>/dev/null 1>/dev/null &
+python $INSTALL_PATH/server/ &
