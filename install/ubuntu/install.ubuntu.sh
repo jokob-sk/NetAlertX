@@ -46,14 +46,33 @@ if [ -d "$INSTALL_DIR" ]; then
     read -p "Enter your choice: " confirmation
   fi
   if [ "$confirmation" == "install" ]; then
-    if [ -n "$INSTALL_DIR" ] && [ "$INSTALL_DIR" != "" ]; then
+    # Ensure INSTALL_DIR is safe to wipe
+    if [ -n "$INSTALL_DIR" ] && [ "$INSTALL_DIR" != "" ] && [ "$INSTALL_DIR" != "/" ] && [ "$INSTALL_DIR" != "." ] && [ -d "$INSTALL_DIR" ]; then
       echo "Removing existing installation..."
+
+      # Stop nginx if running
+      if command -v systemctl >/dev/null 2>&1 && systemctl list-units --type=service | grep -q nginx; then
+      systemctl stop nginx 2>/dev/null
+      elif command -v service >/dev/null 2>&1; then
       service nginx stop 2>/dev/null
-      pkill -f "python /app/server" 2>/dev/null
-      umount  "$INSTALL_DIR/api" 2>/dev/null
-      umount  "$INSTALL_DIR/front" 2>/dev/null
-      rm -rf "$INSTALL_DIR/"
+      fi
+
+      # Kill running NetAlertX server processes in this INSTALL_DIR
+      pkill -f "python.*${INSTALL_DIR}/server" 2>/dev/null
+
+      # Unmount only if mountpoints exist
+      mountpoint -q "$INSTALL_DIR/api" && umount "$INSTALL_DIR/api" 2>/dev/null
+      mountpoint -q "$INSTALL_DIR/front" && umount "$INSTALL_DIR/front" 2>/dev/null
+
+      # Remove all contents safely
+      rm -rf -- "$INSTALL_DIR"/* "$INSTALL_DIR"/.[!.]* "$INSTALL_DIR"/..?* 2>/dev/null
+
+      # Re-clone repository
       git clone https://github.com/jokob-sk/NetAlertX "$INSTALL_DIR/"
+    else
+      echo "INSTALL_DIR is not set, is root, or is invalid. Aborting for safety."
+      exit 1
+    fi
     else
       echo "INSTALL_DIR is not set or is root. Aborting for safety."
       exit 1
