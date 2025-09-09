@@ -61,7 +61,7 @@ if [ -d "$INSTALL_DIR" ]; then
   elif [ "$confirmation" == "update" ]; then
     echo "Updating the existing installation..."
     service nginx stop 2>/dev/null
-    pkill -f "python /app/server" 2>/dev/null
+   pkill -f "python ${INSTALL_DIR}/server" 2>/dev/null
     cd "$INSTALL_DIR" || { echo "Failed to change directory to $INSTALL_DIR"; exit 1; }
     git pull
   elif [ "$confirmation" == "start" ]; then
