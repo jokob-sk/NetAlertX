@@ -25,9 +25,9 @@ PHPVERSION="8.3"
 if [ -n "${TZ}" ]; then    
   FILECONF=$INSTALL_PATH/config/$CONF_FILE 
   if [ -f "$FILECONF" ]; then
-    sed -ie "s|Europe/Berlin|${TZ}|g" $INSTALL_PATH/config/$CONF_FILE 
+    sed -i -e "s|Europe/Berlin|${TZ}|g" "$INSTALL_PATH/config/$CONF_FILE"
   else 
-    sed -ie "s|Europe/Berlin|${TZ}|g" $INSTALL_PATH/back/$CONF_FILE.bak 
+    sed -i -e "s|Europe/Berlin|${TZ}|g" "$INSTALL_PATH/back/$CONF_FILE.bak"
   fi
 fi
 
