@@ -41,7 +41,7 @@ fi
 
 
 echo "---------------------------------------------------------"
-echo "[INSTALL] Installing depemdecies"
+echo "[INSTALL] Installing dependencies"
 echo "---------------------------------------------------------"
 echo
 
@@ -75,11 +75,10 @@ echo "---------------------------------------------------------"
 echo "[INSTALL] Installing NGINX and setting up the web server"
 echo "---------------------------------------------------------"
 echo
-echo "[INSTALL] Stopping anyNGINX web server"
+echo "[INSTALL] Stopping any NGINX web server"
 
 service nginx stop 2>/dev/null
-pkill -f "python /app/server" 2>/dev/null
-
+pkill -f "python ${INSTALL_DIR}/server" 2>/dev/null
 echo "[INSTALL] Updating the existing installation..."
 
 # Remove default NGINX site if it is symlinked, or backup it otherwise
@@ -211,4 +210,6 @@ source myenv/bin/activate
 echo "[INSTALL] 🚀 Starting app - navigate to your <server IP>:${PORT}"
 
 # Start the NetAlertX python script
-python $INSTALL_PATH/server/ &
+# All error and console output being diverted to null,
+# otherwise we can get critical errors re I/O
+python "$INSTALL_PATH/server/" 2>/dev/null 1>/dev/null &
