@@ -205,8 +205,8 @@ fi
 
 # start PHP
 /etc/init.d/php${PHPVERSION}-fpm start
+nginx -t || { echo "[INSTALL] nginx config test failed"; exit 1; }
 /etc/init.d/nginx start
-
 #  Activate the virtual python environment
 source myenv/bin/activate
 
