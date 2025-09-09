@@ -199,8 +199,12 @@ def get_table_json(sql, sql_query):
         mylog('verbose', ['[Database] - SQL ERROR: ', e])
         return json_obj({}, [])  # return empty object
 
-    result = {"data": [row_to_json(column_names, row) for row in rows]}
-    return json_obj(result, column_names)
+    if (rows):
+        result = {"data": [row_to_json(column_names, row) for row in rows]}
+        return json_obj(result, column_names)
+    else:
+        # the SQL query returned no rows
+        return json_obj({}, [])  # return empty object
 
 
 #-------------------------------------------------------------------------------
