@@ -193,16 +193,21 @@ def get_table_json(sql, sql_query):
     """
     try:
         sql.execute(sql_query)
-        column_names = [col[0] for col in sql.description]
         rows = sql.fetchall()
-        data = [row_to_json(column_names, row) for row in rows] if rows else []
-        return json_obj({"data": data}, column_names if rows else [])
+        if (rows):
+            # We only return data if we actually got some out of SQLite
+            column_names = [col[0] for col in sql.description]
+            data = [row_to_json(column_names, row) for row in rows]
+            return json_obj({"data": data}, column_names)
     except sqlite3.Error as e:
+        # SQLite error, e.g. malformed query
         mylog('verbose', ['[Database] - SQL ERROR: ', e])
-        return json_obj({"data": []}, [])  # return empty object
     except Exception as e:
+        # Catch-all for other exceptions, e.g. iteration error
         mylog('verbose', ['[Database] - Unexpected ERROR: ', e])
-        return json_obj({"data": []}, [])
+        
+    # In case of any error or no data, return empty object
+    return json_obj({"data": []}, [])
 
 #-------------------------------------------------------------------------------
 class json_obj:
