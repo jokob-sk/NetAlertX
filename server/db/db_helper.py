@@ -6,7 +6,8 @@ INSTALL_PATH="/app"
 sys.path.extend([f"{INSTALL_PATH}/server"])
 
 from helper import if_byte_then_to_str
-from logger import mylog  
+from logger import mylog
+
 
 #-------------------------------------------------------------------------------
 #  Return the SQL WHERE clause for filtering devices based on their status.
@@ -41,7 +42,6 @@ def get_device_condition_by_status(device_status):
     return conditions.get(device_status, 'WHERE 1=0')
 
 
-
 #-------------------------------------------------------------------------------
 #  Creates a JSON-like dictionary from a database row
 def row_to_json(names, row):
@@ -70,6 +70,7 @@ def row_to_json(names, row):
         rowEntry[name] = if_byte_then_to_str(row[name])
 
     return rowEntry
+
 
 #-------------------------------------------------------------------------------
 def sanitize_SQL_input(val):
@@ -114,7 +115,6 @@ def get_date_from_period(period):
     period_sql = f"date('now', '-{days} day')"
 
     return period_sql
-
 
 
 #-------------------------------------------------------------------------------
@@ -195,16 +195,11 @@ def get_table_json(sql, sql_query):
         sql.execute(sql_query)
         column_names = [col[0] for col in sql.description]
         rows = sql.fetchall()
+        data = [row_to_json(column_names, row) for row in rows] if rows else []
+        return json_obj({"data": data}, column_names if rows else [])
     except sqlite3.Error as e:
         mylog('verbose', ['[Database] - SQL ERROR: ', e])
-        return json_obj({}, [])  # return empty object
-
-    if (rows):
-        result = {"data": [row_to_json(column_names, row) for row in rows]}
-        return json_obj(result, column_names)
-    else:
-        result = {"data": []}
-        return json_obj(result, column_names)
+        return json_obj({"data": []}, [])  # return empty object
 
 
 #-------------------------------------------------------------------------------
