@@ -1,17 +1,15 @@
 """ all things database to support NetAlertX """
 
 import sqlite3
-import base64
-import json
 
 # Register NetAlertX modules 
-from const import fullDbPath, sql_devices_stats, sql_devices_all, sql_generateGuid
+from const import fullDbPath, sql_devices_stats, sql_devices_all
 
 from logger import mylog
-from helper import timeNowTZ
-from db.db_helper import row_to_json, get_table_json, json_obj
+from db.db_helper import get_table_json, json_obj
 from workflows.app_events import AppEvent_obj
 from db.db_upgrade import ensure_column, ensure_views, ensure_CurrentScan, ensure_plugins_tables, ensure_Parameters, ensure_Settings, ensure_Indexes
+
 
 class DB():
     """
@@ -24,28 +22,38 @@ class DB():
         self.sql_connection = None
 
     #-------------------------------------------------------------------------------
-    def open (self):
+    def open(self):
         # Check if DB is open
-        if self.sql_connection != None :
-            mylog('debug','openDB: database already open')
+        if self.sql_connection is not None:
+            mylog('debug', 'openDB: database already open')
             return
 
-        mylog('verbose', '[Database] Opening DB' )
+        mylog('verbose', '[Database] Opening DB')
         # Open DB and Cursor
         try:
-            self.sql_connection = sqlite3.connect (fullDbPath, isolation_level=None)
-            self.sql_connection.execute('pragma journal_mode=wal') #
+            self.sql_connection = sqlite3.connect(fullDbPath, isolation_level=None)
+
+            # The WAL journaling mode uses a write-ahead log instead of a
+            # rollback journal to implement transactions.
+            self.sql_connection.execute('pragma journal_mode=WAL;')
+            # When synchronous is NORMAL (1), the SQLite database engine will still sync
+            # at the most critical moments, but less often than in FULL mode.
+            self.sql_connection.execute('PRAGMA synchronous=NORMAL;')
+            # When temp_store is MEMORY (2) temporary tables and indices
+            # are kept as if they were in pure in-memory databases.
+            self.sql_connection.execute('PRAGMA temp_store=MEMORY;')
+
             self.sql_connection.text_factory = str
             self.sql_connection.row_factory = sqlite3.Row
             self.sql = self.sql_connection.cursor()
         except sqlite3.Error as e:
-            mylog('verbose',[ '[Database] - Open DB Error: ', e])
+            mylog('minimal', ['[Database] - Open DB Error: ', e])
 
 
     #-------------------------------------------------------------------------------
-    def commitDB (self):
-        if self.sql_connection == None :
-            mylog('debug','commitDB: database is not open')
+    def commitDB(self):
+        if self.sql_connection is None:
+            mylog('debug', 'commitDB: database is not open')
             return False
 
         # Commit changes to DB
@@ -59,23 +67,19 @@ class DB():
 
     #-------------------------------------------------------------------------------    
     def get_sql_array(self, query):
-        if self.sql_connection == None :
-            mylog('debug','getQueryArray: database is not open')
+        if self.sql_connection is None:
+            mylog('debug', 'getQueryArray: database is not open')
             return
 
         self.sql.execute(query)
         rows = self.sql.fetchall()
-        #self.commitDB()
+        # self.commitDB()
 
-        #  convert result into list of lists
-        arr = []
-        for row in rows:
-            r_temp = []
-            for column in row:
-                r_temp.append(column)
-            arr.append(r_temp)
+        # Convert result into list of lists
+        # Efficiently convert each row to a list
 
-        return arr
+        return [list(row) for row in rows]
+
 
     #-------------------------------------------------------------------------------
     def initDB(self):
@@ -84,39 +88,39 @@ class DB():
         """
 
         # Add Devices fields if missing
-            
-        # devFQDN 
+
+        # devFQDN
         if ensure_column(self.sql, "Devices", "devFQDN", "TEXT") is False:
-            return # addition failed
+            return  # addition failed
 
         # devParentRelType 
         if ensure_column(self.sql, "Devices", "devParentRelType", "TEXT") is False:
-            return # addition failed
+            return  # addition failed
 
         # devRequireNicsOnline 
         if ensure_column(self.sql, "Devices", "devReqNicsOnline", "INTEGER") is False:
-            return # addition failed
-        
+            return  # addition failed
+
         # Settings table setup
         ensure_Settings(self.sql)
 
         # Parameters tables setup
         ensure_Parameters(self.sql)
-        
+
         # Plugins tables setup
         ensure_plugins_tables(self.sql)
-       
+
         # CurrentScan table setup
         ensure_CurrentScan(self.sql)
-        
-        # Views        
+
+        # Views
         ensure_views(self.sql)
 
-        # Views        
+        # Views
         ensure_Indexes(self.sql)
 
         # commit changes
-        self.commitDB()   
+        self.commitDB()
 
         # Init the AppEvent database table
         AppEvent_obj(self)
@@ -150,7 +154,7 @@ class DB():
         try:
             result = get_table_json(self.sql, sqlQuery)
         except Exception as e:
-            mylog('verbose', ['[Database] - get_table_as_json ERROR:', e])
+            mylog('minimal', ['[Database] - get_table_as_json ERROR:', e])
             return json_obj({}, [])  # return empty object on failure
 
         # mylog('debug',[ '[Database] - get_table_as_json - returning ', len(rows), " rows with columns: ", columnNames])
@@ -171,13 +175,13 @@ class DB():
             rows = self.sql.fetchall()
             return rows
         except AssertionError:
-            mylog('verbose',[ '[Database] - ERROR: inconsistent query and/or arguments.', query, " params: ", args])
+            mylog('minimal', [ '[Database] - ERROR: inconsistent query and/or arguments.', query, " params: ", args])
         except sqlite3.Error as e:
-            mylog('verbose',[ '[Database] - SQL ERROR: ', e])
+            mylog('minimal', [ '[Database] - SQL ERROR: ', e])
         return None
 
     def read_one(self, query, *args):
-        """ 
+        """
         call read() with the same arguments but only returns the first row.
         should only be used when there is a single row result expected
         """
@@ -186,8 +190,8 @@ class DB():
         rows = self.read(query, *args)
         if len(rows) == 1:
             return rows[0]
-                
-        if len(rows) > 1: 
+
+        if len(rows) > 1:
             mylog('verbose',[ '[Database] - Warning!: query returns multiple rows, only first row is passed on!', query, " params: ", args])
             return rows[0]
         # empty result set
@@ -199,19 +203,22 @@ class DB():
 def get_device_stats(db):
     # columns = ["online","down","all","archived","new","unknown"]
     return db.read_one(sql_devices_stats)
+
+
 #-------------------------------------------------------------------------------
 def get_all_devices(db):
     return db.read(sql_devices_all)
 
+
 #-------------------------------------------------------------------------------
-   
+
 def get_array_from_sql_rows(rows):
     # Convert result into list of lists
     arr = []
     for row in rows:
         if isinstance(row, sqlite3.Row):
             arr.append(list(row))  # Convert row to list
-        elif isinstance(row, (tuple, list)):  
+        elif isinstance(row, (tuple, list)):
             arr.append(list(row))  # Already iterable, just convert to list
         else:
             arr.append([row])  # Handle single values safely
