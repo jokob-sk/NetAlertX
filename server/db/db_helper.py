@@ -200,7 +200,9 @@ def get_table_json(sql, sql_query):
     except sqlite3.Error as e:
         mylog('verbose', ['[Database] - SQL ERROR: ', e])
         return json_obj({"data": []}, [])  # return empty object
-
+    except Exception as e:
+        mylog('verbose', ['[Database] - Unexpected ERROR: ', e])
+        return json_obj({"data": []}, [])
 
 #-------------------------------------------------------------------------------
 class json_obj:
