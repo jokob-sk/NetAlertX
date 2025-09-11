@@ -57,7 +57,7 @@ def check_services_health(site):
     requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
     
     try:
-        resp = requests.get(site, verify=False, timeout=get_setting_value('WEBMON_RUN_TIMEOUT'))
+        resp = requests.get(site, verify=False, timeout=get_setting_value('WEBMON_RUN_TIMEOUT'), headers={"User-Agent": "NetAlertX"})
         latency = resp.elapsed.total_seconds()
         status = resp.status_code
     except SSLError:
