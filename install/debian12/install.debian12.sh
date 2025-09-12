@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
 # 🛑 Important: This is only used for the bare-metal install 🛑 
-# Update /install/start.debian.sh in most cases is preferred 
+# Update /install/start.debian12.sh in most cases is preferred 
 
 echo "---------------------------------------------------------"
-echo "[INSTALL]                           Run install.debian.sh"
+echo "[INSTALL]                         Run install.debian12.sh"
 echo "---------------------------------------------------------"
 
 # Set environment variables
@@ -35,4 +35,5 @@ if [ ! -f $INSTALL_DIR/front/buildtimestamp.txt ]; then
 fi
 
 # Start NetAlertX
-"$INSTALL_DIR/install/start.debian.sh"
+chmod +x "$INSTALL_DIR/install/debian12/start.debian12.sh"
+"$INSTALL_DIR/install/debian12/start.debian12.sh"

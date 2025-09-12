@@ -4,15 +4,16 @@ echo "---------------------------------------------------------"
 echo "[INSTALL]"
 echo "---------------------------------------------------------"
 echo
-echo "This script will set up and start NetAlertX on your Ubuntu system."
+echo "This script will set up and start NetAlertX on your Ubuntu24 system."
 
 # Specify the installation directory here
 INSTALL_DIR=/app
 
 # DO NOT CHANGE ANYTHING BELOW THIS LINE!
+INSTALLER_DIR=$INSTALL_DIR/install/ubuntu24
 CONF_FILE=app.conf
 DB_FILE=app.db
-NGINX_CONF_FILE=netalertx.ubuntu.conf
+NGINX_CONF_FILE=netalertx.conf
 WEB_UI_DIR=/var/www/html/netalertx
 NGINX_CONFIG_FILE=/etc/nginx/conf.d/$NGINX_CONF_FILE
 OUI_FILE="/usr/share/arp-scan/ieee-oui.txt" # Define the path to ieee-oui.txt and ieee-iab.txt
@@ -58,7 +59,7 @@ phpenmod -v ${PHPVERSION} sqlite3
 
 update-alternatives --install /usr/bin/python python /usr/bin/python3 10
 
-cd $INSTALL_DIR/install/ubuntu || { echo "Failed to change directory to $INSTALL_DIR/install/ubuntu"; exit 1; }
+cd $INSTALLER_DIR || { echo "Failed to change directory to $INSTALLER_DIR"; exit 1; }
 
 # setup virtual python environment so we can use pip3 to install packages
 apt-get install python3-venv -y
@@ -102,7 +103,7 @@ rm "$NGINX_CONFIG_FILE" 2>/dev/null || true
 # create symbolic link to the  install directory
 ln -s $INSTALL_PATH/front $WEB_UI_DIR
 # create symbolic link to NGINX configuration coming with NetAlertX
-ln -s "${INSTALL_PATH}/install/ubuntu/$NGINX_CONF_FILE" $NGINX_CONFIG_FILE
+ln -s "${INSTALLER_DIR}/$NGINX_CONF_FILE" $NGINX_CONFIG_FILE
 
 # Use user-supplied port if set
 if [ -n "${PORT}" ]; then
