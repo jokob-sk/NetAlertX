@@ -9,7 +9,7 @@ echo "This script will set up and start NetAlertX on your Debian12 system."
 INSTALL_DIR=/app  # Specify the installation directory here
 
 # DO NOT CHANGE ANYTHING BELOW THIS LINE!
-INSTALLER_DIR=$INSTALL_DIR/install/ubuntu24
+INSTALLER_DIR=$INSTALL_DIR/install/debian12
 CONF_FILE=app.conf
 DB_FILE=app.db
 NGINX_CONF_FILE=netalertx.conf
@@ -44,7 +44,7 @@ echo "---------------------------------------------------------"
 echo
 
 
-"${INSTALL_PATH}/install/debian12/install_dependencies.debian12.sh" # if modifying this file transfer the changes into the root Dockerfile.debian as well!
+"${INSTALLER_DIR}/install_dependencies.debian12.sh" # if modifying this file transfer the changes into the root Dockerfile.debian as well!
 
 
 echo "---------------------------------------------------------"

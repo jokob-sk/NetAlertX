@@ -220,7 +220,7 @@
     </VirtualHost>
 ``` 
 
-4. Check your config with `httpd -t`. If there are any issues, it will tell you.
+4. Check your config with `httpd -t` (or `apache2ctl -t` on Debian/Ubuntu). If there are any issues, it will tell you.
    
 5. Activate the new website by running the following command:
 
@@ -247,7 +247,7 @@
     </VirtualHost>
 ```   
 
-4. Check your config with `httpd -t`. If there are any issues, it will tell you.
+4. Check your config with `httpd -t` (or `apache2ctl -t` on Debian/Ubuntu). If there are any issues, it will tell you.
    
 5. Activate the new website by running the following command:
 
@@ -275,7 +275,7 @@
     </VirtualHost>
 ```   
 
-4. Check your config with `httpd -t`. If there are any issues, it will tell you.
+4. Check your config with `httpd -t` (or `apache2ctl -t` on Debian/Ubuntu). If there are any issues, it will tell you.
    
 5. Activate the new website by running the following command:
 
@@ -305,7 +305,7 @@
     </VirtualHost>
 ```       
 
-4. Check your config with `httpd -t`. If there are any issues, it will tell you.
+4. Check your config with `httpd -t` (or `apache2ctl -t` on Debian/Ubuntu). If there are any issues, it will tell you.
    
 5. Activate the new website by running the following command:
 
@@ -381,7 +381,7 @@ location ^~ /netalertx/ {
 
 > Submitted by [Isegrimm](https://github.com/Isegrimm) 🙏 (based on this [discussion](https://github.com/jokob-sk/NetAlertX/discussions/449#discussioncomment-7281442))
 
-Asuming the user already has a working Traefik setup, this is what's needed to make NetAlertX work at a URL like www.domain.com/netalertx/. 
+Assuming the user already has a working Traefik setup, this is what's needed to make NetAlertX work at a URL like www.domain.com/netalertx/. 
 
 Note: Everything in these configs assumes '**www.domain.com**' as your domainname and '**section31**' as an arbitrary name for your certificate setup. You will have to substitute these with your own.
 
