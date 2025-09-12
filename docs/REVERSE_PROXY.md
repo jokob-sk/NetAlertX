@@ -56,13 +56,13 @@
     }
 ``` 
 
-4. Check your config with `nginx -t`. If there are any issues, it will tell you.
+3. Check your config with `nginx -t`. If there are any issues, it will tell you.
 
-5. Activate the new website by running the following command:
+4. Activate the new website by running the following command:
 
    `nginx -s reload` or `systemctl restart nginx`
 
-6. Once NGINX restarts, you should be able to access the proxy website at http://netalertx/netalertx/
+5. Once NGINX restarts, you should be able to access the proxy website at http://netalertx/netalertx/
 
 <br/>
 
@@ -123,13 +123,13 @@
     }
 ``` 
 
-4. Check your config with `nginx -t`. If there are any issues, it will tell you.
+3. Check your config with `nginx -t`. If there are any issues, it will tell you.
 
-5. Activate the new website by running the following command:
+4. Activate the new website by running the following command:
 
    `nginx -s reload` or `systemctl restart nginx`
 
-6. Once NGINX restarts, you should be able to access the proxy website at https://netalertx/
+5. Once NGINX restarts, you should be able to access the proxy website at https://netalertx/
 
 <br/>
 
@@ -155,13 +155,13 @@
     }
 ``` 
 
-4. Check your config with `nginx -t`. If there are any issues, it will tell you.
+3. Check your config with `nginx -t`. If there are any issues, it will tell you.
    
-5. Activate the new website by running the following command:
+4. Activate the new website by running the following command:
 
    `nginx -s reload` or `systemctl restart nginx`
 
-6. Once NGINX restarts, you should be able to access the proxy website at https://netalertx/netalertx/
+5. Once NGINX restarts, you should be able to access the proxy website at https://netalertx/netalertx/
 
 <br/>
 
@@ -195,13 +195,13 @@
     }
 ``` 
 
-4. Check your config with `nginx -t`. If there are any issues, it will tell you.
+3. Check your config with `nginx -t`. If there are any issues, it will tell you.
    
-5. Activate the new website by running the following command:
+4. Activate the new website by running the following command:
 
    `nginx -s reload` or `systemctl restart nginx`
 
-6. Once NGINX restarts, you should be able to access the proxy website at https://netalertx/netalertx/
+5. Once NGINX restarts, you should be able to access the proxy website at https://netalertx/netalertx/
 
 <br/>
 
@@ -220,13 +220,13 @@
     </VirtualHost>
 ``` 
 
-4. Check your config with `httpd -t` (or `apache2ctl -t` on Debian/Ubuntu). If there are any issues, it will tell you.
+3. Check your config with `httpd -t` (or `apache2ctl -t` on Debian/Ubuntu). If there are any issues, it will tell you.
    
-5. Activate the new website by running the following command:
+4. Activate the new website by running the following command:
 
    `a2ensite netalertx` or `service apache2 reload`
 
-6. Once Apache restarts, you should be able to access the proxy website at http://netalertx/
+5. Once Apache restarts, you should be able to access the proxy website at http://netalertx/
 
 <br/>
 
@@ -247,13 +247,13 @@
     </VirtualHost>
 ```   
 
-4. Check your config with `httpd -t` (or `apache2ctl -t` on Debian/Ubuntu). If there are any issues, it will tell you.
+3. Check your config with `httpd -t` (or `apache2ctl -t` on Debian/Ubuntu). If there are any issues, it will tell you.
    
-5. Activate the new website by running the following command:
+4. Activate the new website by running the following command:
 
    `a2ensite netalertx` or `service apache2 reload`
 
-6. Once Apache restarts, you should be able to access the proxy website at http://netalertx/
+5. Once Apache restarts, you should be able to access the proxy website at http://netalertx/
 
 <br/>
 
@@ -275,13 +275,13 @@
     </VirtualHost>
 ```   
 
-4. Check your config with `httpd -t` (or `apache2ctl -t` on Debian/Ubuntu). If there are any issues, it will tell you.
+3. Check your config with `httpd -t` (or `apache2ctl -t` on Debian/Ubuntu). If there are any issues, it will tell you.
    
-5. Activate the new website by running the following command:
+4. Activate the new website by running the following command:
 
     `a2ensite netalertx` or `service apache2 reload`
 
-6. Once Apache restarts, you should be able to access the proxy website at https://netalertx/
+5. Once Apache restarts, you should be able to access the proxy website at https://netalertx/
 
 <br/>
 
@@ -305,13 +305,13 @@
     </VirtualHost>
 ```       
 
-4. Check your config with `httpd -t` (or `apache2ctl -t` on Debian/Ubuntu). If there are any issues, it will tell you.
+3. Check your config with `httpd -t` (or `apache2ctl -t` on Debian/Ubuntu). If there are any issues, it will tell you.
    
-5. Activate the new website by running the following command:
+4. Activate the new website by running the following command:
 
    `a2ensite netalertx` or `service apache2 reload`
 
-6. Once Apache restarts, you should be able to access the proxy website at https://netalertx/netalertx/
+5. Once Apache restarts, you should be able to access the proxy website at https://netalertx/netalertx/
 
 <br/>
 
