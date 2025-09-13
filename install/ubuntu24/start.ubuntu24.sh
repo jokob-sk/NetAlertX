@@ -138,21 +138,30 @@ else
   fi
 fi
 
-# create log and api mounts
-
+echo "---------------------------------------------------------"
 echo "[INSTALL] Create log and api mounts"
-mkdir -p "${INSTALL_DIR}/log" "${INSTALL_DIR}/api"
-umount "${INSTALL_DIR}/log" 2>/dev/null || true
-umount "${INSTALL_DIR}/api" 2>/dev/null || true
-mount -t tmpfs -o size=32m,noexec,nosuid,nodev tmpfs "${INSTALL_DIR}/log"
-mount -t tmpfs -o size=16m,noexec,nosuid,nodev tmpfs "${INSTALL_DIR}/api"
-# Create an empty log files
+echo "---------------------------------------------------------"
+echo
 
-# Create the execution_queue.log file if it doesn't exist
+echo "[INSTALL] Cleaning up old mounts if any"
+umount "${INSTALL_DIR}/log"
+umount "${INSTALL_DIR}/api"
+
+echo "[INSTALL] Creating log and api folders if they don't exist"
+mkdir -p "${INSTALL_DIR}/log" "${INSTALL_DIR}/api"
+
+echo "[INSTALL] Mounting log and api folders as tmpfs"
+mount -t tmpfs -o noexec,nosuid,nodev tmpfs "${INSTALL_DIR}/log"
+mount -t tmpfs -o noexec,nosuid,nodev tmpfs "${INSTALL_DIR}/api"
+
+
+# Create log files if they don't exist
+echo "[INSTALL] Creating log files if they don't exist"
 touch "${INSTALL_DIR}"/log/{app.log,execution_queue.log,app_front.log,app.php_errors.log,stderr.log,stdout.log,db_is_locked.log}
 touch "${INSTALL_DIR}"/api/user_notifications.json
 # Create plugins sub-directory if it doesn't exist in case a custom log folder is used
 mkdir -p "${INSTALL_DIR}"/log/plugins
+
 
 # Fixing file permissions
 echo "[INSTALL] Fixing file permissions"
