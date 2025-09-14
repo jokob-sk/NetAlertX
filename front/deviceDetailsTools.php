@@ -198,7 +198,7 @@
                 <?= lang("DevDetail_Nmap_buttonSkipDiscovery_text") ?>
             </li>
             <li>
-                <a onclick="setCache('activeMaintenanceTab', 'tab_Logging_id')" href="/maintenance.php#tab_Logging">
+                <a onclick="setCache('activeMaintenanceTab', 'tab_Logging_id')" href="maintenance.php#tab_Logging">
                     <?= lang("DevDetail_Nmap_resultsLink") ?>
                 </a>
             </li>

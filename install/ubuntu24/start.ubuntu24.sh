@@ -4,15 +4,16 @@ echo "---------------------------------------------------------"
 echo "[INSTALL]"
 echo "---------------------------------------------------------"
 echo
-echo "This script will set up and start NetAlertX on your Ubuntu system."
+echo "This script will set up and start NetAlertX on your Ubuntu24 system."
 
 # Specify the installation directory here
 INSTALL_DIR=/app
 
 # DO NOT CHANGE ANYTHING BELOW THIS LINE!
+INSTALLER_DIR=$INSTALL_DIR/install/ubuntu24
 CONF_FILE=app.conf
 DB_FILE=app.db
-NGINX_CONF_FILE=netalertx.ubuntu.conf
+NGINX_CONF_FILE=netalertx.conf
 WEB_UI_DIR=/var/www/html/netalertx
 NGINX_CONFIG_FILE=/etc/nginx/conf.d/$NGINX_CONF_FILE
 OUI_FILE="/usr/share/arp-scan/ieee-oui.txt" # Define the path to ieee-oui.txt and ieee-iab.txt
@@ -58,7 +59,7 @@ phpenmod -v ${PHPVERSION} sqlite3
 
 update-alternatives --install /usr/bin/python python /usr/bin/python3 10
 
-cd $INSTALL_DIR/install/ubuntu || { echo "Failed to change directory to $INSTALL_DIR/install/ubuntu"; exit 1; }
+cd $INSTALLER_DIR || { echo "Failed to change directory to $INSTALLER_DIR"; exit 1; }
 
 # setup virtual python environment so we can use pip3 to install packages
 apt-get install python3-venv -y
@@ -102,7 +103,7 @@ rm "$NGINX_CONFIG_FILE" 2>/dev/null || true
 # create symbolic link to the  install directory
 ln -s $INSTALL_PATH/front $WEB_UI_DIR
 # create symbolic link to NGINX configuration coming with NetAlertX
-ln -s "${INSTALL_PATH}/install/ubuntu/$NGINX_CONF_FILE" $NGINX_CONFIG_FILE
+ln -s "${INSTALLER_DIR}/$NGINX_CONF_FILE" $NGINX_CONFIG_FILE
 
 # Use user-supplied port if set
 if [ -n "${PORT}" ]; then
@@ -137,21 +138,30 @@ else
   fi
 fi
 
-# create log and api mounts
-
+echo "---------------------------------------------------------"
 echo "[INSTALL] Create log and api mounts"
-mkdir -p "${INSTALL_DIR}/log" "${INSTALL_DIR}/api"
-umount "${INSTALL_DIR}/log" 2>/dev/null || true
-umount "${INSTALL_DIR}/api" 2>/dev/null || true
-mount -t tmpfs -o size=32m,noexec,nosuid,nodev tmpfs "${INSTALL_DIR}/log"
-mount -t tmpfs -o size=16m,noexec,nosuid,nodev tmpfs "${INSTALL_DIR}/api"
-# Create an empty log files
+echo "---------------------------------------------------------"
+echo
 
-# Create the execution_queue.log file if it doesn't exist
+echo "[INSTALL] Cleaning up old mounts if any"
+umount "${INSTALL_DIR}/log"
+umount "${INSTALL_DIR}/api"
+
+echo "[INSTALL] Creating log and api folders if they don't exist"
+mkdir -p "${INSTALL_DIR}/log" "${INSTALL_DIR}/api"
+
+echo "[INSTALL] Mounting log and api folders as tmpfs"
+mount -t tmpfs -o noexec,nosuid,nodev tmpfs "${INSTALL_DIR}/log"
+mount -t tmpfs -o noexec,nosuid,nodev tmpfs "${INSTALL_DIR}/api"
+
+
+# Create log files if they don't exist
+echo "[INSTALL] Creating log files if they don't exist"
 touch "${INSTALL_DIR}"/log/{app.log,execution_queue.log,app_front.log,app.php_errors.log,stderr.log,stdout.log,db_is_locked.log}
 touch "${INSTALL_DIR}"/api/user_notifications.json
 # Create plugins sub-directory if it doesn't exist in case a custom log folder is used
 mkdir -p "${INSTALL_DIR}"/log/plugins
+
 
 # Fixing file permissions
 echo "[INSTALL] Fixing file permissions"
