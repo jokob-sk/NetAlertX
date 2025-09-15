@@ -189,7 +189,7 @@ def main ():
                 notification.clearPendingEmailFlag()
                 
             else:
-                notification.clearPluginObjects()
+                notification.clearPluginEvents()
                 mylog('verbose', ['[Notification] No changes to report'])
 
             # Commit SQL

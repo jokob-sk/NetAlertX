@@ -283,7 +283,7 @@ class NotificationInstance:
 
         self.save()
 
-    def clearPluginObjects(self):
+    def clearPluginEvents(self):
         # clear plugin events
         self.db.sql.execute("DELETE FROM Plugins_Events")
         self.save()
