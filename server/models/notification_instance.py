@@ -118,12 +118,28 @@ class NotificationInstance:
             mail_html = mail_html.replace('<SERVER_NAME>', socket.gethostname())
 
             # Report "VERSION" in Header & footer
-            VERSIONFILE = subprocess.check_output(['php', applicationPath + '/front/php/templates/version.php']).decode('utf-8')
+            try:
+                VERSIONFILE = subprocess.check_output(
+                    ['php', applicationPath + '/front/php/templates/version.php'],
+                    timeout=5
+                ).decode('utf-8')
+            except Exception as e:
+                mylog('debug', [f'[Notification] Unable to read version.php: {e}'])
+                VERSIONFILE = 'unknown'
+
             mail_text = mail_text.replace('<BUILD_VERSION>', VERSIONFILE)
             mail_html = mail_html.replace('<BUILD_VERSION>', VERSIONFILE)
 
             # Report "BUILD" in Header & footer
-            BUILDFILE = subprocess.check_output(['php', applicationPath + '/front/php/templates/build.php']).decode('utf-8')
+            try:
+                BUILDFILE = subprocess.check_output(
+                    ['php', applicationPath + '/front/php/templates/build.php'],
+                    timeout=5
+                ).decode('utf-8')
+            except Exception as e:
+                mylog('debug', [f'[Notification] Unable to read build.php: {e}'])
+                BUILDFILE = 'unknown'
+
             mail_text = mail_text.replace('<BUILD_DATE>', BUILDFILE)
             mail_html = mail_html.replace('<BUILD_DATE>', BUILDFILE)
 
@@ -257,34 +273,39 @@ class NotificationInstance:
     def clearPendingEmailFlag(self):
 
         # Clean Pending Alert Events
-        self.db.sql.execute("""UPDATE Devices SET devLastNotification = ?
-                            WHERE devMac IN (
-                                SELECT eve_MAC FROM Events
-                                    WHERE eve_PendingAlertEmail = 1
-                            )
-                        """, (timeNowTZ(),))
+        self.db.sql.execute("""
+            UPDATE Devices SET devLastNotification = ?
+                WHERE devMac IN (
+                    SELECT eve_MAC FROM Events
+                        WHERE eve_PendingAlertEmail = 1
+                    )
+                """, (timeNowTZ(),))
 
-        self.db.sql.execute("""UPDATE Events SET eve_PendingAlertEmail = 0
-                                    WHERE eve_PendingAlertEmail = 1
-                                    AND eve_EventType !='Device Down' """)
+        self.db.sql.execute("""
+            UPDATE Events SET eve_PendingAlertEmail = 0
+                WHERE eve_PendingAlertEmail = 1
+                AND eve_EventType !='Device Down' """)
 
         # Clear down events flag after the reporting window passed
-        self.db.sql.execute(f"""UPDATE Events SET eve_PendingAlertEmail = 0
-                                    WHERE eve_PendingAlertEmail = 1
-                                    AND eve_EventType =='Device Down'
-                                    AND eve_DateTime < datetime('now', '-{get_setting_value('NTFPRCS_alert_down_time')} minutes', '{get_timezone_offset()}')
-                            """)
+        minutes = int(get_setting_value('NTFPRCS_alert_down_time') or 0)
+        tz_offset = get_timezone_offset()
+        self.db.sql.execute("""
+            UPDATE Events
+            SET eve_PendingAlertEmail = 0
+            WHERE eve_PendingAlertEmail = 1
+                AND eve_EventType = 'Device Down'
+                AND eve_DateTime < datetime('now', ?, ?)
+                """, (f"-{minutes} minutes", tz_offset))
+
+        mylog('minimal', ['[Notification] Notifications changes: ',
+                          self.db.sql.rowcount])
 
         # clear plugin events
-        self.db.sql.execute("DELETE FROM Plugins_Events")
+        self.clearPluginEvents()
 
-        # DEBUG - print number of rows updated
-        mylog('minimal', ['[Notification] Notifications changes: ', self.db.sql.rowcount])
-
-        self.save()
 
     def clearPluginEvents(self):
-        # clear plugin events
+        # clear plugin events table
         self.db.sql.execute("DELETE FROM Plugins_Events")
         self.save()
 
