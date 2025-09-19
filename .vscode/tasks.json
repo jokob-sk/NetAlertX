@@ -1,0 +1,94 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Generate Dockerfile",
+      "type": "shell",
+      "command": "${workspaceFolder:NetAlertX}/.devcontainer/scripts/generate-dockerfile.sh",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "panel": "shared",
+        "showReuseMessage": false
+      },
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "options": {
+        "cwd": "${workspaceFolder:NetAlertX}"
+      },
+      "icon": {
+        "id": "tools",
+        "color": "terminal.ansiYellow"
+      }
+    },
+    {
+      "label": "Re-Run Startup Script",
+      "type": "shell",
+      "command": "${workspaceFolder:NetAlertX}/.devcontainer/scripts/setup.sh",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "panel": "shared",
+        "showReuseMessage": false
+      },
+      "problemMatcher": [],
+      "icon": {
+        "id": "beaker",
+        "color": "terminal.ansiBlue"
+      }
+    },
+    {
+      "label": "Start Backend (Python)",
+      "type": "shell",
+      "command": "/workspaces/NetAlertX/.devcontainer/scripts/restart-backend.sh",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "panel": "shared",
+        "showReuseMessage": false,
+        "clear": false
+      },
+      "problemMatcher": [],
+      "icon": {
+        "id": "debug-restart",
+        "color": "terminal.ansiGreen"
+      }
+    },
+    {
+      "label": "Start Frontend (nginx and PHP-FPM)",
+      "type": "shell",
+      "command": "killall php-fpm83 nginx 2>/dev/null || true; sleep 1; php-fpm83 & nginx",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "panel": "shared",
+        "showReuseMessage": false,
+        "clear": false
+      },
+      "problemMatcher": [],
+      "icon": {
+        "id": "debug-restart",
+        "color": "terminal.ansiGreen"
+      }
+    },
+    {
+      "label": "Stop Frontend & Backend Services",
+      "type": "shell",
+      "command": "pkill -f 'php-fpm83|nginx|crond|python3' || true",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "panel": "shared",
+        "showReuseMessage": false
+      },
+      "problemMatcher": [],
+      "icon": {
+        "id": "debug-stop",
+        "color": "terminal.ansiRed"
+      }
+    }
+  ]
+}

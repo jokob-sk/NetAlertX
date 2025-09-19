@@ -1,0 +1,34 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python Backend Debug: Attach",
+            "type": "debugpy",
+            "request": "attach",
+            "connect": {
+                "host": "localhost",
+                "port": 5678
+            },
+            "pathMappings": [
+                {
+                    // Map workspace root to /app for PHP and other resources, plus explicit server mapping for Python.
+                    "localRoot": "${workspaceFolder}",
+                    "remoteRoot": "/app"
+                },
+                {
+                    "localRoot": "${workspaceFolder}/server",
+                    "remoteRoot": "/app/server"
+                }
+            ]
+        },
+        {
+            "name": "PHP Frontend Xdebug: Listen",
+            "type": "php",
+            "request": "launch",
+            "port": 9003,
+            "pathMappings": {
+                "/app": "${workspaceFolder}"
+            }
+        }
+    ]
+}
