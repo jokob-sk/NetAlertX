@@ -14,7 +14,8 @@ echo "---------------------------------------------------------"
 
 # Set environment variables
 INSTALL_DIR=/app  # Specify the installation directory here
-INSTALLER_DIR=$INSTALL_DIR/install/ubuntu24
+INSTALL_SYSTEM_NAME=ubuntu24
+INSTALLER_DIR=$INSTALL_DIR/install/$INSTALL_SYSTEM_NAME
 
 # Check if script is run as root
 if [[ $EUID -ne 0 ]]; then
@@ -101,5 +102,5 @@ fi
 
 # This is where we setup the virtual environment and install dependencies
 cd "$INSTALLER_DIR" || { echo "Failed to change directory to $INSTALLER_DIR"; exit 1; }
-chmod +x "$INSTALLER_DIR/start.ubuntu24.sh"
-"$INSTALLER_DIR/start.ubuntu24.sh"
+chmod +x "$INSTALLER_DIR/start.$INSTALL_SYSTEM_NAME.sh"
+"$INSTALLER_DIR/start.$INSTALL_SYSTEM_NAME.sh"
