@@ -107,12 +107,10 @@ configure_source() {
 
     echo "  -> Empty log"|tee ${INSTALL_DIR}/log/app.log \
         ${INSTALL_DIR}/log/app_front.log \
-        ${INSTALL_DIR}/log/app_front.log \
-        ${INSTALL_DIR}/log/execution_queue.log \
-        ${INSTALL_DIR}/log/db_is_locked.log \
-        ${INSTALL_DIR}/log/stdout.log \
-        ${INSTALL_DIR}/log/stderr.log \
-        /var/log/nginx/error.log
+        ${INSTALL_DIR}/log/stdout.log
+    touch ${INSTALL_DIR}/log/stderr.log \
+    ${INSTALL_DIR}/log/execution_queue.log
+
     date +%s > /app/front/buildtimestamp.txt
 
     killall python &>/dev/null
