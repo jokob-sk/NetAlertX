@@ -69,12 +69,12 @@ configure_source() {
     echo "Dev">${INSTALL_DIR}/.VERSION
     safe_link ${SOURCE_DIR}/api ${INSTALL_DIR}/api
     safe_link ${SOURCE_DIR}/back ${INSTALL_DIR}/back
-    if [ ! -f "${INSTALL_DIR}/config/app.conf" ]; then
-        rm -Rf ${INSTALL_DIR}/config
-        install -d -o netalertx -g www-data -m 750 ${INSTALL_DIR}/config
-        cp -R ${SOURCE_DIR}/config/* ${INSTALL_DIR}/config/
+    if [ ! -f "${SOURCE_DIR}/config/app.conf" ]; then
+        cp ${SOURCE_DIR}/back/app.conf ${INSTALL_DIR}/config/
+        rm /workspaces/NetAlertX/db/app.db
     fi
 
+    safe_link "${SOURCE_DIR}/config"         "${INSTALL_DIR}/config"
     safe_link "${SOURCE_DIR}/db"         "${INSTALL_DIR}/db"
     safe_link "${SOURCE_DIR}/docs"       "${INSTALL_DIR}/docs"
     safe_link "${SOURCE_DIR}/front"      "${INSTALL_DIR}/front"
