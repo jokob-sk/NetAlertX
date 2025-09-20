@@ -298,6 +298,62 @@ class SafeConditionBuilder:
 
         return f"AND devName = :{param_name}", self.parameters
 
+    def build_condition(self, conditions: List[Dict[str, str]], logical_operator: str = "AND") -> Tuple[str, Dict[str, Any]]:
+        """
+        Build a safe SQL condition from a list of condition dictionaries.
+        
+        Args:
+            conditions: List of condition dicts with 'column', 'operator', 'value' keys
+            logical_operator: Logical operator to join conditions (AND/OR)
+            
+        Returns:
+            Tuple of (safe_sql_snippet, parameters_dict)
+        """
+        if not conditions:
+            return "", {}
+        
+        if not self._validate_logical_operator(logical_operator):
+            return "", {}
+        
+        condition_parts = []
+        all_params = {}
+        
+        for condition_dict in conditions:
+            try:
+                column = condition_dict.get('column', '')
+                operator = condition_dict.get('operator', '')
+                value = condition_dict.get('value', '')
+                
+                # Validate each component
+                if not self._validate_column_name(column):
+                    mylog('verbose', [f'[SafeConditionBuilder] Invalid column: {column}'])
+                    return "", {}
+                
+                if not self._validate_operator(operator):
+                    mylog('verbose', [f'[SafeConditionBuilder] Invalid operator: {operator}'])
+                    return "", {}
+                
+                # Create parameter binding
+                param_name = self._generate_param_name()
+                all_params[param_name] = self._sanitize_string(str(value))
+                
+                # Build condition part
+                condition_part = f"{column} {operator} :{param_name}"
+                condition_parts.append(condition_part)
+                
+            except Exception as e:
+                mylog('verbose', [f'[SafeConditionBuilder] Error processing condition: {e}'])
+                return "", {}
+        
+        if not condition_parts:
+            return "", {}
+        
+        # Join all parts with the logical operator
+        final_condition = f" {logical_operator} ".join(condition_parts)
+        self.parameters.update(all_params)
+        
+        return final_condition, self.parameters
+
     def build_event_type_filter(self, event_types: List[str]) -> Tuple[str, Dict[str, Any]]:
         """
         Build a safe event type filter condition.
