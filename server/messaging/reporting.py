@@ -22,6 +22,7 @@ import conf
 from const import applicationPath, logPath, apiPath, confFileName
 from helper import timeNowTZ, get_file_content, write_file, get_timezone_offset, get_setting_value
 from logger import logResult, mylog
+from db.sql_safe_builder import create_safe_condition_builder
 
 #===============================================================================
 # REPORTING
@@ -70,18 +71,30 @@ def get_notifications (db):
 
     if 'new_devices' in sections:
         # Compose New Devices Section (no empty lines in SQL queries!)
-        # Note: NTFPRCS_new_dev_condition should be validated/sanitized at the settings level
-        # to prevent SQL injection. For now, we preserve existing functionality but flag the risk.
-        new_dev_condition = get_setting_value('NTFPRCS_new_dev_condition').replace('{s-quote}',"'")
-        sqlQuery = f"""SELECT eve_MAC as MAC, eve_DateTime as Datetime, devLastIP as IP, eve_EventType as "Event Type", devName as "Device name", devComments as Comments  FROM Events_Devices
-                        WHERE eve_PendingAlertEmail = 1
-                        AND eve_EventType = 'New Device' {new_dev_condition} 
-                        ORDER BY eve_DateTime"""   
+        # Use SafeConditionBuilder to prevent SQL injection vulnerabilities
+        condition_builder = create_safe_condition_builder()
+        new_dev_condition_setting = get_setting_value('NTFPRCS_new_dev_condition')
+        
+        try:
+            safe_condition, parameters = condition_builder.get_safe_condition_legacy(new_dev_condition_setting)
+            sqlQuery = """SELECT eve_MAC as MAC, eve_DateTime as Datetime, devLastIP as IP, eve_EventType as "Event Type", devName as "Device name", devComments as Comments  FROM Events_Devices
+                            WHERE eve_PendingAlertEmail = 1
+                            AND eve_EventType = 'New Device' {}
+                            ORDER BY eve_DateTime""".format(safe_condition)
+        except Exception as e:
+            mylog('verbose', ['[Notification] Error building safe condition for new devices: ', e])
+            # Fall back to safe default (no additional conditions)
+            sqlQuery = """SELECT eve_MAC as MAC, eve_DateTime as Datetime, devLastIP as IP, eve_EventType as "Event Type", devName as "Device name", devComments as Comments  FROM Events_Devices
+                            WHERE eve_PendingAlertEmail = 1
+                            AND eve_EventType = 'New Device'
+                            ORDER BY eve_DateTime"""
+            parameters = {}
 
         mylog('debug', ['[Notification] new_devices SQL query: ', sqlQuery ])
+        mylog('debug', ['[Notification] new_devices parameters: ', parameters ])
 
-        # Get the events as JSON
-        json_obj = db.get_table_as_json(sqlQuery)
+        # Get the events as JSON using parameterized query
+        json_obj = db.get_table_as_json(sqlQuery, parameters)
 
         json_new_devices_meta = {
             "title": "🆕 New devices",
@@ -146,18 +159,30 @@ def get_notifications (db):
 
     if 'events' in sections:
         # Compose Events Section (no empty lines in SQL queries!)
-        # Note: NTFPRCS_event_condition should be validated/sanitized at the settings level
-        # to prevent SQL injection. For now, we preserve existing functionality but flag the risk.
-        event_condition = get_setting_value('NTFPRCS_event_condition').replace('{s-quote}',"'")
-        sqlQuery = f"""SELECT eve_MAC as MAC, eve_DateTime as Datetime, devLastIP as IP, eve_EventType as "Event Type", devName as "Device name", devComments as Comments  FROM Events_Devices
-                        WHERE eve_PendingAlertEmail = 1
-                        AND eve_EventType IN ('Connected', 'Down Reconnected', 'Disconnected','IP Changed') {event_condition} 
-                        ORDER BY eve_DateTime"""      
+        # Use SafeConditionBuilder to prevent SQL injection vulnerabilities
+        condition_builder = create_safe_condition_builder()
+        event_condition_setting = get_setting_value('NTFPRCS_event_condition')
+        
+        try:
+            safe_condition, parameters = condition_builder.get_safe_condition_legacy(event_condition_setting)
+            sqlQuery = """SELECT eve_MAC as MAC, eve_DateTime as Datetime, devLastIP as IP, eve_EventType as "Event Type", devName as "Device name", devComments as Comments  FROM Events_Devices
+                            WHERE eve_PendingAlertEmail = 1
+                            AND eve_EventType IN ('Connected', 'Down Reconnected', 'Disconnected','IP Changed') {}
+                            ORDER BY eve_DateTime""".format(safe_condition)
+        except Exception as e:
+            mylog('verbose', ['[Notification] Error building safe condition for events: ', e])
+            # Fall back to safe default (no additional conditions)
+            sqlQuery = """SELECT eve_MAC as MAC, eve_DateTime as Datetime, devLastIP as IP, eve_EventType as "Event Type", devName as "Device name", devComments as Comments  FROM Events_Devices
+                            WHERE eve_PendingAlertEmail = 1
+                            AND eve_EventType IN ('Connected', 'Down Reconnected', 'Disconnected','IP Changed')
+                            ORDER BY eve_DateTime"""
+            parameters = {}
 
         mylog('debug', ['[Notification] events SQL query: ', sqlQuery ])
+        mylog('debug', ['[Notification] events parameters: ', parameters ])
         
-        # Get the events as JSON        
-        json_obj = db.get_table_as_json(sqlQuery)
+        # Get the events as JSON using parameterized query
+        json_obj = db.get_table_as_json(sqlQuery, parameters)
 
         json_events_meta = {
             "title": "⚡ Events",
