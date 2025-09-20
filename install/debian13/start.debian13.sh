@@ -193,8 +193,8 @@ fi
 
 
 # Copy starter $DB_FILE and $CONF_FILE if they don't exist
-cp --update=none "${INSTALL_PATH}/back/$CONF_FILE" "${INSTALL_PATH}/config/$CONF_FILE" 
-cp --update=none "${INSTALL_PATH}/back/$DB_FILE"  "$FILEDB"
+cp -u "${INSTALL_PATH}/back/$CONF_FILE" "${INSTALL_PATH}/config/$CONF_FILE" 
+cp -u "${INSTALL_PATH}/back/$DB_FILE"  "$FILEDB"
 
 echo "[INSTALL] Fixing permissions after copied starter config & DB"
 
