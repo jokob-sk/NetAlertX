@@ -162,6 +162,9 @@ configure_php() {
     sudo sed -i 's|^listen = .*|listen = 127.0.0.1:9000|' /etc/php83/php-fpm.d/www.conf
     sudo sed -i 's|fastcgi_pass .*|fastcgi_pass 127.0.0.1:9000;|' /etc/nginx/http.d/*.conf
 
+    #increase max child process count to 10
+    sudo sed -i -e 's/pm.max_children = 5/pm.max_children = 10/' /etc/php83/php-fpm.d/www.conf 
+
     # find any line in php-fmp that starts with either ;error_log or error_log = and replace it with error_log = /app/log/app.php_errors.log
     sudo sed -i '/^;*error_log\s*=/c\error_log = /app/log/app.php_errors.log' /etc/php83/php-fpm.conf
     # If the line was not found, append it to the end of the file
