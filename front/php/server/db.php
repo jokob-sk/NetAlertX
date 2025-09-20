@@ -82,8 +82,7 @@ class CustomDatabaseWrapper {
     private $maxRetries;
     private $retryDelay;
 
-    public function __construct($filename, $flags = SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE, 
-            $maxRetries = 3, $retryDelay = 1000, $encryptionKey = "") {
+    public function __construct($filename, $flags = SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE, $maxRetries = 3, $retryDelay = 1000, $encryptionKey = "") {
         $this->sqlite = new SQLite3($filename, $flags, $encryptionKey);
         $this->maxRetries = $maxRetries;
         $this->retryDelay = $retryDelay;

@@ -48,7 +48,7 @@ if (!empty($_REQUEST['action']) && $_REQUEST['action'] == 'logout') {
 
 // Load configuration
 if (!file_exists(CONFIG_PATH)) {
-    die("Configuration file not found.");
+    die("Configuration file not found in " . $_SERVER['DOCUMENT_ROOT'] . "/../config/app.conf");
 }
 $configLines = file(CONFIG_PATH);
 

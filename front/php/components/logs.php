@@ -62,7 +62,7 @@ function renderLogArea($params) {
                 '</textarea>
             </div>
             <div class="row logs-row">
-                <div class="log-file col-sm-6 col-xs-12">' . htmlspecialchars($fileName) . '
+                <div class="log-file col-sm-6 col-xs-12">' . htmlspecialchars($filePath) . '
                     <div class="logs-size">' . number_format((filesize($filePath) / 1000000), 2, ",", ".") . ' MB'
                     . $downloadButtonHtml .
                     '</div>
