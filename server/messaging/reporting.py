@@ -70,9 +70,12 @@ def get_notifications (db):
 
     if 'new_devices' in sections:
         # Compose New Devices Section (no empty lines in SQL queries!)
+        # Note: NTFPRCS_new_dev_condition should be validated/sanitized at the settings level
+        # to prevent SQL injection. For now, we preserve existing functionality but flag the risk.
+        new_dev_condition = get_setting_value('NTFPRCS_new_dev_condition').replace('{s-quote}',"'")
         sqlQuery = f"""SELECT eve_MAC as MAC, eve_DateTime as Datetime, devLastIP as IP, eve_EventType as "Event Type", devName as "Device name", devComments as Comments  FROM Events_Devices
                         WHERE eve_PendingAlertEmail = 1
-                        AND eve_EventType = 'New Device' {get_setting_value('NTFPRCS_new_dev_condition').replace('{s-quote}',"'")} 
+                        AND eve_EventType = 'New Device' {new_dev_condition} 
                         ORDER BY eve_DateTime"""   
 
         mylog('debug', ['[Notification] new_devices SQL query: ', sqlQuery ])
@@ -90,12 +93,14 @@ def get_notifications (db):
     if 'down_devices' in sections:
         # Compose Devices Down Section 
         # - select only Down Alerts with pending email of devices that didn't reconnect within the specified time window
+        minutes = int(get_setting_value('NTFPRCS_alert_down_time') or 0)
+        tz_offset = get_timezone_offset()
         sqlQuery = f"""
                     SELECT devName, eve_MAC, devVendor, eve_IP, eve_DateTime, eve_EventType  
                         FROM Events_Devices AS down_events
                         WHERE eve_PendingAlertEmail = 1 
                         AND down_events.eve_EventType = 'Device Down' 
-                        AND eve_DateTime < datetime('now', '-{get_setting_value('NTFPRCS_alert_down_time')} minutes', '{get_timezone_offset()}')
+                        AND eve_DateTime < datetime('now', '-{minutes} minutes', '{tz_offset}')
                         AND NOT EXISTS (
                             SELECT 1
                             FROM Events AS connected_events
@@ -141,9 +146,12 @@ def get_notifications (db):
 
     if 'events' in sections:
         # Compose Events Section (no empty lines in SQL queries!)
+        # Note: NTFPRCS_event_condition should be validated/sanitized at the settings level
+        # to prevent SQL injection. For now, we preserve existing functionality but flag the risk.
+        event_condition = get_setting_value('NTFPRCS_event_condition').replace('{s-quote}',"'")
         sqlQuery = f"""SELECT eve_MAC as MAC, eve_DateTime as Datetime, devLastIP as IP, eve_EventType as "Event Type", devName as "Device name", devComments as Comments  FROM Events_Devices
                         WHERE eve_PendingAlertEmail = 1
-                        AND eve_EventType IN ('Connected', 'Down Reconnected', 'Disconnected','IP Changed') {get_setting_value('NTFPRCS_event_condition').replace('{s-quote}',"'")} 
+                        AND eve_EventType IN ('Connected', 'Down Reconnected', 'Disconnected','IP Changed') {event_condition} 
                         ORDER BY eve_DateTime"""      
 
         mylog('debug', ['[Notification] events SQL query: ', sqlQuery ])

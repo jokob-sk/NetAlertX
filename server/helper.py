@@ -96,7 +96,7 @@ def format_event_date(date_str: str, event_type: str) -> str:
         return "<still connected>"
 
 # -------------------------------------------------------------------------------------------
-def ensure_datetime(dt: Union[str, datetime, None]) -> datetime:
+def ensure_datetime(dt: Union[str, datetime.datetime, None]) -> datetime.datetime:
     if dt is None:
         return timeNowTZ()
     if isinstance(dt, str):
