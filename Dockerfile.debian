@@ -27,7 +27,7 @@ RUN groupadd --gid "${USER_GID}" "${USER}" && \
 COPY --chmod=775 --chown=${USER_ID}:${USER_GID} . ${INSTALL_DIR}/
 
 
-# ❗ IMPORTANT - if you modify this file modify the /install/install_dependecies.debian.sh file as well ❗ 
+# ❗ IMPORTANT - if you modify this file modify the /install/debian12/install_dependecies.debian12.sh file as well ❗ 
 
 
 RUN apt-get install -y \
@@ -49,5 +49,3 @@ RUN /bin/bash -c "source myenv/bin/activate && update-alternatives --install /us
 RUN date +%s > ${INSTALL_DIR}/front/buildtimestamp.txt
 
 CMD ["${INSTALL_DIR}/install/start.debian.sh"]
-
-
