@@ -1,0 +1,13 @@
+{
+    "terminal.integrated.suggest.enabled": true,
+    // Use pytest and look under the test/ folder
+    "python.testing.pytestEnabled": true,
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestArgs": [
+        "test"
+    ],
+    // Ensure VS Code uses the devcontainer virtualenv
+    "python.defaultInterpreterPath": "/opt/venv/bin/python",
+    // Let the Python extension invoke pytest via the interpreter; avoid hardcoded paths
+    // Removed python.testing.pytestPath and legacy pytest.command overrides
+}
