@@ -72,6 +72,7 @@ nav:
   - Development:
       - Plugin and app development:
         - Environment Setup: DEV_ENV_SETUP.md
+        - Devcontainer: DEV_DEVCONTAINER.md
         - Custom Plugins: PLUGINS_DEV.md
         - Frontend Development: FRONTEND_DEVELOPMENT.md
         - Database: DATABASE.md
