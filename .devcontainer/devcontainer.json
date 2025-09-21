@@ -7,14 +7,18 @@
     "target": "devcontainer"
   },
   "workspaceFolder": "/workspaces/NetAlertX",
-
   "runArgs": [
-    "--privileged",
-    "--cap-add=NET_ADMIN",
-    "--cap-add=NET_RAW",
-    // Ensure containers can resolve host.docker.internal to the host (required on Linux)
-    "--add-host=host.docker.internal:host-gateway"
+    "--add-host=host.docker.internal:host-gateway",
+    "--security-opt", "apparmor=unconfined" // for alowing ramdisk mounts
   ],
+
+  "capAdd": [
+    "SYS_ADMIN", // For mounting ramdisks
+    "NET_ADMIN", // For network interface configuration
+    "NET_RAW"    // For raw packet manipulation
+  ],
+  
+  
   
   "postStartCommand": "${containerWorkspaceFolder}/.devcontainer/scripts/setup.sh",
   
