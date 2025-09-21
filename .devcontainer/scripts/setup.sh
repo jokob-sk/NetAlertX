@@ -82,7 +82,7 @@ configure_source() {
     safe_link "${SOURCE_DIR}/scripts"    "${INSTALL_DIR}/scripts"
     safe_link "${SOURCE_DIR}/server"     "${INSTALL_DIR}/server"
     safe_link "${SOURCE_DIR}/test"       "${INSTALL_DIR}/test"
-    safe_link "${SOURCE_DIR}/logs"       "${INSTALL_DIR}/logs"
+    safe_link "${SOURCE_DIR}/log"       "${INSTALL_DIR}/log"
     safe_link "${SOURCE_DIR}/mkdocs.yml" "${INSTALL_DIR}/mkdocs.yml"
 
     echo "  -> Copying static files to ${INSTALL_DIR}"
@@ -102,8 +102,6 @@ configure_source() {
     sudo chmod 640 "${INSTALL_DIR}/config/${CONF_FILE}" || true
 
     echo "  -> Setting up log directory"
-    sudo rm -Rf ${INSTALL_DIR}/log
-    install -d -o netalertx -g www-data -m 777 ${INSTALL_DIR}/log
     install -d -o netalertx -g www-data -m 777 ${INSTALL_DIR}/log/plugins
 
     echo "  -> Empty log"|tee ${INSTALL_DIR}/log/app.log \
