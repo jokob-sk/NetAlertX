@@ -67,9 +67,9 @@ configure_source() {
     echo "[1/3] Configuring Source..."
     echo "  -> Linking source to ${INSTALL_DIR}"
     echo "Dev">${INSTALL_DIR}/.VERSION
-    safe_link ${SOURCE_DIR}/api ${INSTALL_DIR}/api
-    safe_link ${SOURCE_DIR}/back ${INSTALL_DIR}/back
-    safe_link "${SOURCE_DIR}/config"         "${INSTALL_DIR}/config"
+    safe_link ${SOURCE_DIR}/api           ${INSTALL_DIR}/api
+    safe_link ${SOURCE_DIR}/back          ${INSTALL_DIR}/back
+    safe_link "${SOURCE_DIR}/config"     "${INSTALL_DIR}/config"
     safe_link "${SOURCE_DIR}/db"         "${INSTALL_DIR}/db"
     if [ ! -f "${SOURCE_DIR}/config/app.conf" ]; then
         cp ${SOURCE_DIR}/back/app.conf ${INSTALL_DIR}/config/
@@ -82,6 +82,7 @@ configure_source() {
     safe_link "${SOURCE_DIR}/scripts"    "${INSTALL_DIR}/scripts"
     safe_link "${SOURCE_DIR}/server"     "${INSTALL_DIR}/server"
     safe_link "${SOURCE_DIR}/test"       "${INSTALL_DIR}/test"
+    safe_link "${SOURCE_DIR}/logs"       "${INSTALL_DIR}/logs"
     safe_link "${SOURCE_DIR}/mkdocs.yml" "${INSTALL_DIR}/mkdocs.yml"
 
     echo "  -> Copying static files to ${INSTALL_DIR}"
@@ -110,6 +111,7 @@ configure_source() {
         ${INSTALL_DIR}/log/stdout.log
     touch ${INSTALL_DIR}/log/stderr.log \
     ${INSTALL_DIR}/log/execution_queue.log
+    echo 0>${INSTALL_DIR}/log/db_is_locked.log
 
     date +%s > /app/front/buildtimestamp.txt
 
