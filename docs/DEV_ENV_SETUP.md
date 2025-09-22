@@ -32,6 +32,9 @@ Examples:
 
 ## Development Environment Set Up
 
+>[!TIP]
+> There is also a ready to use [devcontainer](DEV_DEVCONTAINER.md) available.
+
 The following steps will guide you to set up your environment for local development and to run a custom docker build on your system. For most changes the container doesn't need to be rebuild which speeds up the development significantly.
 
 >[!NOTE]
@@ -94,7 +97,7 @@ Most code changes can be tested without rebuilding the container. When working o
 
 1. You can usually restart the backend via _Maintenance > Logs > Restart_ server
 
-![image](./img/DEV_ENV_SETUP/Maintenance_Logs_Restart_server.png)
+![image](./img/DEV/Maintenance_Logs_Restart_server.png)
 
 2. If above doesn't work, SSH into the container and kill & restart the main script loop 
 

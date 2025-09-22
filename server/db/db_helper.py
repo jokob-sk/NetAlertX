@@ -180,19 +180,23 @@ def list_to_where(logical_operator, column_name, condition_operator, values_list
     return f'({condition})'
 
 #-------------------------------------------------------------------------------
-def get_table_json(sql, sql_query):
+def get_table_json(sql, sql_query, parameters=None):
     """
     Execute a SQL query and return the results as JSON-like dict.
 
     Args:
         sql: SQLite cursor or connection wrapper supporting execute(), description, and fetchall().
         sql_query (str): The SQL query to execute.
+        parameters (dict, optional): Named parameters for the SQL query.
 
     Returns:
         dict: JSON-style object with data and column names.
     """
     try:
-        sql.execute(sql_query)
+        if parameters:
+            sql.execute(sql_query, parameters)
+        else:
+            sql.execute(sql_query)
         rows = sql.fetchall()
         if (rows):
             # We only return data if we actually got some out of SQLite

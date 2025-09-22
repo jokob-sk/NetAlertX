@@ -198,12 +198,16 @@ class DB():
     #     # mylog('debug',[ '[Database] - get_table_as_json - returning json ', json.dumps(result) ])
     #     return json_obj(result, columnNames)
 
-    def get_table_as_json(self, sqlQuery):
+    def get_table_as_json(self, sqlQuery, parameters=None):
         """
         Wrapper to use the central get_table_as_json helper.
+        
+        Args:
+            sqlQuery (str): The SQL query to execute.
+            parameters (dict, optional): Named parameters for the SQL query.
         """
         try:
-            result = get_table_json(self.sql, sqlQuery)
+            result = get_table_json(self.sql, sqlQuery, parameters)
         except Exception as e:
             mylog('minimal', ['[Database] - get_table_as_json ERROR:', e])
             return json_obj({}, [])  # return empty object on failure
