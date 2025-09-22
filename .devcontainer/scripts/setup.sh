@@ -67,6 +67,10 @@ configure_source() {
     echo "[1/3] Configuring Source..."
     echo "  -> Linking source to ${INSTALL_DIR}"
     echo "Dev">${INSTALL_DIR}/.VERSION
+
+    echo "  -> Mounting ramdisks for /log and /api"
+    sudo mount -t tmpfs -o size=256M tmpfs "${SOURCE_DIR}/log"
+    sudo mount -t tmpfs -o size=512M tmpfs "${SOURCE_DIR}/api"
     safe_link ${SOURCE_DIR}/api           ${INSTALL_DIR}/api
     safe_link ${SOURCE_DIR}/back          ${INSTALL_DIR}/back
     safe_link "${SOURCE_DIR}/config"     "${INSTALL_DIR}/config"
@@ -94,12 +98,16 @@ configure_source() {
         echo "  -> Removing existing user_notifications.json"
         sudo rm "${INSTALL_DIR}"/api/user_notifications.json
     fi
+
+
     
     echo "  -> Setting ownership and permissions"
     sudo find ${INSTALL_DIR}/ -type d -exec chmod 775 {} \;
     sudo find ${INSTALL_DIR}/ -type f -exec chmod 664 {} \;
     sudo date +%s > "${INSTALL_DIR}/front/buildtimestamp.txt"
     sudo chmod 640 "${INSTALL_DIR}/config/${CONF_FILE}" || true
+
+
 
     echo "  -> Setting up log directory"
     install -d -o netalertx -g www-data -m 777 ${INSTALL_DIR}/log/plugins
