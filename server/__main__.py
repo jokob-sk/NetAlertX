@@ -186,9 +186,15 @@ def main ():
                 
                 pm.run_plugin_scripts('on_notification') 
                 notification.setAllProcessed()
+                
+                # clear pending email flag
+                # and the plugin events
                 notification.clearPendingEmailFlag()
                 
             else:
+                # If there are no notifications to process,
+                # we still need to clear all plugin events
+                notification.clearPluginEvents()
                 mylog('verbose', ['[Notification] No changes to report'])
 
             # Commit SQL

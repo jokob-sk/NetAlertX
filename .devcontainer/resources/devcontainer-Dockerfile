@@ -1,0 +1,51 @@
+# Devcontainer build stage (do not build directly)
+# This file is combined with the root /Dockerfile by
+#   .devcontainer/scripts/generate-dockerfile.sh
+# The generator appends this stage to produce .devcontainer/Dockerfile.
+# Prefer to place dev-only setup here; use setup.sh only for runtime fixes.
+
+FROM runner AS devcontainer
+ENV INSTALL_DIR=/app 
+ENV PYTHONPATH=/workspaces/NetAlertX/test:/workspaces/NetAlertX/server:/app:/app/server:/opt/venv/lib/python3.12/site-packages
+
+# Install common tools, create user, and set up sudo
+RUN apk add --no-cache git nano vim jq php83-pecl-xdebug py3-pip nodejs sudo gpgconf pytest pytest-cov && \
+    adduser -D -s /bin/sh netalertx && \
+    addgroup netalertx nginx && \
+    addgroup netalertx www-data && \
+    echo "netalertx ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/90-netalertx && \
+    chmod 440 /etc/sudoers.d/90-netalertx
+# Install debugpy in the virtualenv if present, otherwise into system python3
+RUN /bin/sh -c '(/opt/venv/bin/python3 -m pip install --no-cache-dir debugpy) || (python3 -m pip install --no-cache-dir debugpy) || true'
+# setup nginx
+COPY .devcontainer/resources/netalertx-devcontainer.conf /etc/nginx/http.d/netalert-frontend.conf
+RUN set -e; \
+    chown netalertx:nginx /etc/nginx/http.d/netalert-frontend.conf; \
+    install -d -o netalertx -g www-data -m 775 /app; \
+    install -d -o netalertx -g www-data -m 755 /run/nginx; \
+    install -d -o netalertx -g www-data -m 755 /var/lib/nginx/logs; \
+    rm -f /var/lib/nginx/logs/* || true; \
+    for f in error access; do : > /var/lib/nginx/logs/$f.log; done; \
+    install -d -o netalertx -g www-data -m 777 /run/php; \
+    install -d -o netalertx -g www-data -m 775 /var/log/php; \
+    chown -R netalertx:www-data /etc/nginx/http.d; \
+    chmod -R 775 /etc/nginx/http.d; \
+    chown -R netalertx:www-data /var/lib/nginx; \
+    chmod -R 755 /var/lib/nginx && \
+    chown -R netalertx:www-data /var/log/nginx/ && \
+    sed -i '/^user /d' /etc/nginx/nginx.conf; \
+    sed -i 's|^error_log .*|error_log /dev/stderr warn;|' /etc/nginx/nginx.conf; \
+    sed -i 's|^access_log .*|access_log /dev/stdout main;|' /etc/nginx/nginx.conf; \
+    sed -i 's|error_log .*|error_log /dev/stderr warn;|g' /etc/nginx/http.d/*.conf 2>/dev/null || true; \
+    sed -i 's|access_log .*|access_log /dev/stdout main;|g' /etc/nginx/http.d/*.conf 2>/dev/null || true; \
+    mkdir -p /run/openrc; \
+    chown netalertx:nginx /run/openrc/; \
+    rm -Rf /run/openrc/*;
+
+# setup pytest
+RUN sudo /opt/venv/bin/python -m pip install -U pytest pytest-cov
+
+WORKDIR /workspaces/NetAlertX
+
+
+ENTRYPOINT ["/bin/sh","-c","sleep infinity"]

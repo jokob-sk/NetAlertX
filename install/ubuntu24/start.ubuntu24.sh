@@ -10,7 +10,8 @@ echo "This script will set up and start NetAlertX on your Ubuntu24 system."
 INSTALL_DIR=/app
 
 # DO NOT CHANGE ANYTHING BELOW THIS LINE!
-INSTALLER_DIR=$INSTALL_DIR/install/ubuntu24
+INSTALL_SYSTEM_NAME=ubuntu24
+INSTALLER_DIR=$INSTALL_DIR/install/$INSTALL_SYSTEM_NAME
 CONF_FILE=app.conf
 DB_FILE=app.db
 NGINX_CONF_FILE=netalertx.conf
@@ -50,11 +51,12 @@ echo
 # Install dependencies
 apt-get install -y \
     tini snmp ca-certificates curl libwww-perl arp-scan perl apt-utils cron \
-    nginx-light php php-cgi php-fpm php-sqlite3 php-curl sqlite3 dnsutils net-tools \
+    sqlite3 dnsutils net-tools mtr \
     python3 python3-dev iproute2 nmap python3-pip zip usbutils traceroute nbtscan avahi-daemon avahi-utils build-essential
 
 # alternate dependencies
-apt-get install nginx nginx-core mtr php-fpm php${PHPVERSION}-fpm php-cli php${PHPVERSION} php${PHPVERSION}-sqlite3 -y
+# nginx-core install nginx and nginx-common as dependencies
+apt-get install nginx-core php${PHPVERSION} php${PHPVERSION}-sqlite3 php php-cgi php-fpm php-sqlite3 php-curl php-fpm php${PHPVERSION}-fpm php-cli -y
 phpenmod -v ${PHPVERSION} sqlite3
 
 update-alternatives --install /usr/bin/python python /usr/bin/python3 10
@@ -191,8 +193,8 @@ fi
 
 
 # Copy starter $DB_FILE and $CONF_FILE if they don't exist
-cp --update=none "${INSTALL_PATH}/back/$CONF_FILE" "${INSTALL_PATH}/config/$CONF_FILE" 
-cp --update=none "${INSTALL_PATH}/back/$DB_FILE"  "$FILEDB"
+cp -u "${INSTALL_PATH}/back/$CONF_FILE" "${INSTALL_PATH}/config/$CONF_FILE"
+cp -u "${INSTALL_PATH}/back/$DB_FILE" "$FILEDB"
 
 echo "[INSTALL] Fixing permissions after copied starter config & DB"
 
