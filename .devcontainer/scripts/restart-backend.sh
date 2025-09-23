@@ -14,7 +14,7 @@ PORT_DEBUG=5678
 sudo killall python3 2>/dev/null || true
 sleep 2
 
-echo ''|tee -a $LOG_DIR/stdout.log $LOG_DIR/stderr.log $LOG_DIR/app.log
+echo ''|tee $LOG_DIR/stdout.log $LOG_DIR/stderr.log $LOG_DIR/app.log
 
 cd "$APP_DIR"
 
