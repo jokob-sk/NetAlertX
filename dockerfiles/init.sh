@@ -12,14 +12,8 @@ PGID=${PGID:-${DEFAULT_GID}}
 
 echo "[INSTALL] Setting up user UID and GID"
 
-if ! groupmod -o -g "$PGID" www-data && [ "$PGID" != "$DEFAULT_GID" ] ; then
-   echo "Failed to set user GID to ${PGID}, trying with default GID ${DEFAULT_GID}"
-   groupmod -o -g "$DEFAULT_GID" www-data
-fi
-if ! usermod -o -u "$PUID" nginx && [ "$PUID" != "$DEFAULT_PUID" ] ; then
-   echo "Failed to set user UID to ${PUID}, trying with default PUID ${DEFAULT_PUID}"
-   usermod -o -u "$DEFAULT_PUID" nginx
-fi
+groupmod -o -g "$PGID" www-data 2>/dev/null || echo "Failed to set user GID to ${PGID}, using existing GID"
+usermod -o -u "$PUID" nginx 2>/dev/null || echo "Failed to set user UID to ${PUID}, using existing UID"
 
 echo "
 ---------------------------------------------------------
@@ -29,18 +23,11 @@ User UID:    $(id -u nginx)
 User GID:    $(getent group www-data | cut -d: -f3)
 ---------------------------------------------------------"
 
-chown nginx:nginx /run/nginx/ /var/log/nginx/ /var/lib/nginx/ /var/lib/nginx/tmp/
-chgrp www-data /var/www/localhost/htdocs/
-
-export INSTALL_DIR=/app  # Specify the installation directory here
-
 # DO NOT CHANGE ANYTHING BELOW THIS LINE!
 
 CONF_FILE="app.conf"
-NGINX_CONF_FILE=netalertx.conf
 DB_FILE="app.db"
-FULL_FILEDB_PATH="${INSTALL_DIR}/db/${DB_FILE}"
-NGINX_CONFIG_FILE="/etc/nginx/http.d/${NGINX_CONF_FILE}"
+FULL_FILEDB_PATH="${NETALERTX_DB}/${DB_FILE}"
 OUI_FILE="/usr/share/arp-scan/ieee-oui.txt" # Define the path to ieee-oui.txt and ieee-iab.txt
 
 INSTALL_DIR_OLD=/home/pi/pialert
@@ -58,51 +45,49 @@ fi
 if [ "$ALWAYS_FRESH_INSTALL" = true ]; then
   echo "[INSTALL] ❗ ALERT /db and /config folders are cleared because the ALWAYS_FRESH_INSTALL is set to: $ALWAYS_FRESH_INSTALL❗"
 
-  # Delete content of "$INSTALL_DIR/config/"
-  rm -rf "$INSTALL_DIR/config/"*
-  rm -rf "$INSTALL_DIR_OLD/config/"*
+  # Delete content of "$NETALERTX_CONFIG/"
+  rm -rf ${NETALERTX_CONFIG}/*
 
-  # Delete content of "$INSTALL_DIR/db/"
-  rm -rf "$INSTALL_DIR/db/"*
-  rm -rf "$INSTALL_DIR_OLD/db/"*
+  # Delete content of "$NETALERTX_DB/"
+  rm -rf ${NETALERTX_DB}/*
 fi
 
 # OVERRIDE settings: Handling APP_CONF_OVERRIDE
 # Check if APP_CONF_OVERRIDE is set
 
 # remove old
-rm "${INSTALL_DIR}/config/app_conf_override.json"
+rm -f "${NETALERTX_CONFIG}/app_conf_override.json"
 
 if [ -z "$APP_CONF_OVERRIDE" ]; then
   echo "APP_CONF_OVERRIDE is not set. Skipping config file creation."
 else
   # Save the APP_CONF_OVERRIDE env variable as a JSON file
-  echo "$APP_CONF_OVERRIDE" > "${INSTALL_DIR}/config/app_conf_override.json"
-  echo "Config file saved to ${INSTALL_DIR}/config/app_conf_override.json"
+  echo "$APP_CONF_OVERRIDE" > "${NETALERTX_CONFIG}/app_conf_override.json"
+  echo "Config file saved to ${NETALERTX_CONFIG}/app_conf_override.json"
 fi
 
 # 🔻 FOR BACKWARD COMPATIBILITY - REMOVE AFTER 12/12/2025
 
 # Check if pialert.db exists, then create a symbolic link to app.db
 if [ -f "${INSTALL_DIR_OLD}/db/${OLD_APP_NAME}.db" ]; then
-    ln -s "${INSTALL_DIR_OLD}/db/${OLD_APP_NAME}.db" "${FULL_FILEDB_PATH}"
+    ln -sf "${INSTALL_DIR_OLD}/db/${OLD_APP_NAME}.db" "${FULL_FILEDB_PATH}"
 fi
 
 # Check if ${OLD_APP_NAME}.conf exists, then create a symbolic link to app.conf
 if [ -f "${INSTALL_DIR_OLD}/config/${OLD_APP_NAME}.conf" ]; then
-    ln -s "${INSTALL_DIR_OLD}/config/${OLD_APP_NAME}.conf" "${INSTALL_DIR}/config/${CONF_FILE}"
+    ln -sf "${INSTALL_DIR_OLD}/config/${OLD_APP_NAME}.conf" "${NETALERTX_CONFIG}/${CONF_FILE}"
 fi
 # 🔺 FOR BACKWARD COMPATIBILITY - REMOVE AFTER 12/12/2025
 
 echo "[INSTALL] Copy starter ${DB_FILE} and ${CONF_FILE} if they don't exist"
 
 # Copy starter app.db, app.conf if they don't exist
-cp -na "${INSTALL_DIR}/back/${CONF_FILE}" "${INSTALL_DIR}/config/${CONF_FILE}"
-cp -na "${INSTALL_DIR}/back/${DB_FILE}" "${FULL_FILEDB_PATH}"
+cp -n "${NETALERTX_BACK}/${CONF_FILE}" "${NETALERTX_CONFIG}/${CONF_FILE}" 2>/dev/null || true
+cp -n "${NETALERTX_BACK}/${DB_FILE}" "${FULL_FILEDB_PATH}" 2>/dev/null || true
 
 # if custom variables not set we do not need to do anything
 if [ -n "${TZ}" ]; then
-  FILECONF="${INSTALL_DIR}/config/${CONF_FILE}"
+  FILECONF="${NETALERTX_CONFIG}/${CONF_FILE}"
   echo "[INSTALL] Setup timezone"
   sed -i "\#^TIMEZONE=#c\TIMEZONE='${TZ}'" "${FILECONF}"
 
@@ -113,14 +98,14 @@ fi
 
 # if custom variables not set we do not need to do anything
 if [ -n "${LOADED_PLUGINS}" ]; then
-  FILECONF="${INSTALL_DIR}/config/${CONF_FILE}"
+  FILECONF="${NETALERTX_CONFIG}/${CONF_FILE}"
   echo "[INSTALL] Setup custom LOADED_PLUGINS variable"
   sed -i "\#^LOADED_PLUGINS=#c\LOADED_PLUGINS=${LOADED_PLUGINS}" "${FILECONF}"
 fi
 
 echo "[INSTALL] Setup NGINX"
 echo "Setting webserver to address ($LISTEN_ADDR) and port ($PORT)"
-envsubst '$INSTALL_DIR $LISTEN_ADDR $PORT' < "${INSTALL_DIR}/install/netalertx.template.conf" > "${NGINX_CONFIG_FILE}"
+envsubst '$NETALERTX_APP $LISTEN_ADDR $PORT' < "${NETALERTX_APP}/install/netalertx.template.conf" > "${NGINX_CONFIG_FILE}"
 
 # Run the hardware vendors update at least once
 echo "[INSTALL] Run the hardware vendors update"
@@ -132,33 +117,15 @@ else
   echo "The file ieee-oui.txt does not exist. Running update_vendors..."
 
   # Run the update_vendors.sh script
-  if [ -f "${INSTALL_DIR}/back/update_vendors.sh" ]; then
-    "${INSTALL_DIR}/back/update_vendors.sh"
+  if [ -f "${NETALERTX_BACK}/update_vendors.sh" ]; then
+    "${NETALERTX_BACK}/update_vendors.sh"
   else
-    echo "update_vendors.sh script not found in ${INSTALL_DIR}."
+    echo "update_vendors.sh script not found in ${NETALERTX_APP}."
   fi
 fi
 
-# Create an empty log files
-# Create the execution_queue.log and app_front.log files if they don't exist
-touch "${INSTALL_DIR}"/log/{app.log,execution_queue.log,app_front.log,app.php_errors.log,stderr.log,stdout.log,db_is_locked.log}
-touch "${INSTALL_DIR}"/api/user_notifications.json
-
-# Create plugins sub-directory if it doesn't exist in case a custom log folder is used
-mkdir -p "${INSTALL_DIR}"/log/plugins
-
-echo "[INSTALL] Fixing permissions after copied starter config & DB"
-chown -R nginx:www-data "${INSTALL_DIR}"
-
-chmod 750 "${INSTALL_DIR}"/{config,log,db}
-find "${INSTALL_DIR}"/{config,log,db} -type f -exec chmod 640 {} \;
-
-# Check if buildtimestamp.txt doesn't exist
-if [ ! -f "${INSTALL_DIR}/front/buildtimestamp.txt" ]; then
-    # Create buildtimestamp.txt
-    date +%s > "${INSTALL_DIR}/front/buildtimestamp.txt"
-    chown nginx:www-data "${INSTALL_DIR}/front/buildtimestamp.txt"
-fi
+echo "[INSTALL] Fixing permissions after runtime initialization"
+chown -R nginx:www-data "${NETALERTX_CONFIG}" "${NETALERTX_DB}" "${NETALERTX_LOG}"
 
 echo -e "
             [ENV] PATH                      is ${PATH}
