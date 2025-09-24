@@ -1,3 +1,3 @@
 #!/bin/bash
 echo "Starting crond..."
-exec /usr/sbin/crond -f -L /dev/stdout
+exec /usr/sbin/crond -f -L "${LOG_EXECUTION_QUEUE}"
