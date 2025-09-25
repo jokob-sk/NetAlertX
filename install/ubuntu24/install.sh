@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
 # 🛑 Important: This is only used for the bare-metal install 🛑 
-# Update /install/start.ubuntu.sh in most cases is preferred 
+
+set -euo pipefail
 
 echo "---------------------------------------------------------"
 echo "[INSTALL] Starting NetAlertX installation for Ubuntu"
@@ -12,12 +13,8 @@ echo "It will clone the repository, set up necessary files, and start the applic
 echo "Please ensure you have a stable internet connection."
 echo "---------------------------------------------------------"
 
-# Set environment variables
-# Specify the installation directory here
-INSTALL_DIR=/app
-
-
 # DO NOT CHANGE ANYTHING BELOW THIS LINE!
+INSTALL_DIR=/app
 INSTALL_SYSTEM_NAME=ubuntu24
 INSTALLER_DIR=$INSTALL_DIR/install/$INSTALL_SYSTEM_NAME
 CONF_FILE=app.conf
@@ -34,7 +31,7 @@ PHPVERSION="8.3"
 
 # Check if script is run as root
 if [[ $EUID -ne 0 ]]; then
-    echo "This script must be run as root. Please use 'sudo'." 
+    echo "[INSTALL] This script must be run as root. Please use 'sudo'." 
     exit 1
 fi
 
@@ -43,6 +40,7 @@ echo "---------------------------------------------------------"
 echo "[INSTALL] Starting NetAlertX installation for Ubuntu"
 echo "---------------------------------------------------------"
 echo
+
 apt-get update -y
 echo "[INSTALL] Making sure sudo is installed"
 apt-get install sudo -y
@@ -81,6 +79,20 @@ source /opt/netalertx-python/bin/activate
 
 pip3 install -r ./requirements.txt
 
+echo "---------------------------------------------------------"
+echo "[INSTALL] Stopping any NGINX web server and components"
+echo "          (There may be errors stopping services, that's OK)"
+echo "---------------------------------------------------------"
+echo
+# stopping nginx for setup
+systemctl stop nginx
+# stopping netalertx for setup
+systemctl stop netalertx
+# in case and older setup is running, kill it
+pkill -f "python ${INSTALL_DIR}/server"
+# stopping php fpm
+systemctl stop php${PHPVERSION}-fpm
+
 
 echo "---------------------------------------------------------"
 echo "[INSTALL] Downloading NetAlertX repository"
@@ -107,16 +119,6 @@ if [ -d "$INSTALL_DIR" ]; then
     if [ -n "$INSTALL_DIR" ] && [ "$INSTALL_DIR" != "" ] && [ "$INSTALL_DIR" != "/" ] && [ "$INSTALL_DIR" != "." ] && [ -d "$INSTALL_DIR" ]; then
       echo "Removing existing installation..."
 
-      # Stop nginx if running
-      if command -v systemctl >/dev/null 2>&1 && systemctl list-units --type=service | grep -q nginx; then
-        systemctl stop nginx 2>/dev/null
-      elif command -v service >/dev/null 2>&1; then
-        service nginx stop 2>/dev/null
-      fi
-
-      # Kill running NetAlertX server processes in this INSTALL_DIR
-      pkill -f "python.*${INSTALL_DIR}/server" 2>/dev/null
-
       # Unmount only if mountpoints exist
       mountpoint -q "$INSTALL_DIR/api" && umount "$INSTALL_DIR/api" 2>/dev/null
       mountpoint -q "$INSTALL_DIR/front" && umount "$INSTALL_DIR/front" 2>/dev/null
@@ -127,35 +129,38 @@ if [ -d "$INSTALL_DIR" ]; then
       # Re-clone repository
       git clone https://github.com/jokob-sk/NetAlertX "$INSTALL_DIR/"
     else
-      echo "INSTALL_DIR is not set, is root, or is invalid. Aborting for safety."
+      echo "[INSTALL] INSTALL_DIR is not set, is root, or is invalid. Aborting for safety."
       exit 1
     fi
   elif [ "$confirmation" == "update" ]; then
-    echo "Updating the existing installation..."
-    service nginx stop 2>/dev/null
-    pkill -f "python ${INSTALL_DIR}/server" 2>/dev/null
-    cd "$INSTALL_DIR" || { echo "Failed to change directory to $INSTALL_DIR"; exit 1; }
+    echo "[INSTALL] Updating the existing installation..."
+    cd "$INSTALL_DIR" || { echo "[INSTALL] Failed to change directory to $INSTALL_DIR"; exit 1; }
+    # In case there were changes, stash them
+    git stash -q
     git pull
+    echo "[INSTALL] If there werwe any local chnages, thery have been STASHED"
   elif [ "$confirmation" == "start" ]; then
-    echo "Continuing without changes."
+    echo "[INSTALL] Continuing without changes."
   else
-    echo "Installation aborted."
+    echo "[INSTALL] Installation aborted."
     exit 1
   fi
 else
   git clone https://github.com/jokob-sk/NetAlertX "$INSTALL_DIR/"
 fi
 
-# Check for buildtimestamp.txt existence, otherwise create it
-if [ ! -f "$INSTALL_DIR/front/buildtimestamp.txt" ]; then
-  date +%s > "$INSTALL_DIR/front/buildtimestamp.txt"
-fi
 
 
 # We now should have all dependencies and files in place
 # We can now configure the web server and start the application
 
-cd "$INSTALLER_DIR" || { echo "Failed to change directory to $INSTALLER_DIR"; exit 1; }
+cd "$INSTALLER_DIR" || { echo "[INSTALL] Failed to change directory to $INSTALLER_DIR"; exit 1; }
+
+
+# Check for buildtimestamp.txt existence, otherwise create it
+if [ ! -f "$INSTALL_DIR/front/buildtimestamp.txt" ]; then
+  date +%s > "$INSTALL_DIR/front/buildtimestamp.txt"
+fi
 
 
 # if custom variables not set we do not need to do anything
@@ -169,16 +174,12 @@ if [ -n "${TZ}" ]; then
 fi
 
 
-
-
 echo "---------------------------------------------------------"
 echo "[INSTALL] Setting up the web server"
 echo "---------------------------------------------------------"
 echo
-echo "[INSTALL] Stopping any NGINX web server"
 
-service nginx stop 2>/dev/null
-pkill -f "python ${INSTALL_DIR}/server" 2>/dev/null
+
 echo "[INSTALL] Updating the existing installation..."
 
 # Remove default NGINX site if it is symlinked, or backup it otherwise
@@ -199,7 +200,7 @@ fi
 echo "[INSTALL] Removing existing NetAlertX NGINX config"
 rm "$NGINX_CONFIG_FILE" 2>/dev/null || true
 
-# create symbolic link to the  install directory
+# create symbolic link to the install directory
 ln -s $INSTALL_PATH/front $WEB_UI_DIR
 # create symbolic link to NGINX configuration coming with NetAlertX
 ln -s "${INSTALLER_DIR}/$NGINX_CONF_FILE" $NGINX_CONFIG_FILE
@@ -266,22 +267,6 @@ touch "${INSTALL_DIR}"/api/user_notifications.json
 mkdir -p "${INSTALL_DIR}"/log/plugins
 
 
-# Fixing file permissions
-echo "[INSTALL] Fixing file permissions"
-chown root:www-data "${INSTALL_DIR}"/api/user_notifications.json
-
-echo "[INSTALL] Fixing WEB_UI_DIR: ${WEB_UI_DIR}"
-
-chmod -R a+rwx $WEB_UI_DIR
-
-echo "[INSTALL] Fixing INSTALL_DIR: ${INSTALL_DIR}"
-
-chmod -R a+rw $INSTALL_PATH/log
-chmod -R a+rwx $INSTALL_DIR
-
-echo "[INSTALL] Copy starter $DB_FILE and $CONF_FILE if they don't exist"
-
-
 # DANGER ZONE: ALWAYS_FRESH_INSTALL 
 if [ "$ALWAYS_FRESH_INSTALL" = true ]; then
   echo "[INSTALL] ❗ ALERT /db and /config folders are cleared because the ALWAYS_FRESH_INSTALL is set to: ${ALWAYS_FRESH_INSTALL}❗"
@@ -292,6 +277,7 @@ if [ "$ALWAYS_FRESH_INSTALL" = true ]; then
   rm -rf "${INSTALL_PATH}/db/"*
 fi
 
+echo "[INSTALL] Copy starter $DB_FILE and $CONF_FILE if they don't exist"
 
 # Copy starter $DB_FILE and $CONF_FILE if they don't exist
 cp -u "${INSTALL_PATH}/back/$CONF_FILE" "${INSTALL_PATH}/config/$CONF_FILE"
@@ -300,12 +286,14 @@ cp -u "${INSTALL_PATH}/back/$DB_FILE" "$FILEDB"
 echo "[INSTALL] Fixing permissions after copied starter config & DB"
 
 if [ -f "$FILEDB" ]; then
-    chown -R www-data:www-data $FILEDB
+    chown -R www-data:www-data "$FILEDB"
 fi
-
-chmod -R a+rwx $INSTALL_DIR # second time after we copied the files
-chmod -R a+rw $INSTALL_PATH/config
-chgrp -R www-data  $INSTALL_PATH
+chown root:www-data "${INSTALL_DIR}"/api/user_notifications.json
+chgrp -R www-data "$INSTALL_PATH"
+chmod -R u+rwx,g+rwx,o=rx "$WEB_UI_DIR"
+chmod -R u+rwx,g+rwx,o=rx "$INSTALL_DIR"
+chmod -R u+rwX,g+rwX,o=rX "$INSTALL_PATH/log"
+chmod -R u+rwX,g+rwX,o=rX "$INSTALL_PATH/config"
 
 # Check if buildtimestamp.txt doesn't exist
 if [ ! -f "${INSTALL_PATH}/front/buildtimestamp.txt" ]; then
@@ -314,9 +302,9 @@ if [ ! -f "${INSTALL_PATH}/front/buildtimestamp.txt" ]; then
 fi
 
 # start PHP and nginx
-/etc/init.d/php${PHPVERSION}-fpm start
+systemctl start php${PHPVERSION}-fpm || { echo "[INSTALL] Failed to start php${PHPVERSION}-fpm"; exit 1; }
 nginx -t || { echo "[INSTALL] nginx config test failed"; exit 1; }
-/etc/init.d/nginx start
+systemctl start nginx || { echo "[INSTALL] Failed to start nginx"; exit 1; }
 
 
 
