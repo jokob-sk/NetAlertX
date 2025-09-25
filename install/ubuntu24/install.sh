@@ -2,8 +2,6 @@
 
 # 🛑 Important: This is only used for the bare-metal install 🛑 
 
-set -euo pipefail
-
 echo "---------------------------------------------------------"
 echo "[INSTALL] Starting NetAlertX installation for Ubuntu"
 echo "---------------------------------------------------------"
