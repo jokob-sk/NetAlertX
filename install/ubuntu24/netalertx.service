@@ -4,7 +4,7 @@ ConditionPathExists=/app/server
 
 [Service]
 EnvironmentFile=/app/.env
-ExecStart=source /opt/netalertx-python/bin/activate && python "$INSTALL_PATH/server/"
+ExecStart=/opt/netalertx-python/bin/python /app/server/
 Restart=on-failure
 Type=simple
 

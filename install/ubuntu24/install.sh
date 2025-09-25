@@ -331,9 +331,11 @@ for var in "${env_vars[@]}"; do
   echo "$var=${!var}" >> /app/.env
 done
 
+# Create systemd service
+systemctl start netalertx 2>/dev/null
 cp ./netalertx.service /etc/systemd/system/netalertx.service || { echo "[INSTALL] Failed to copy systemd service file"; exit 1; }
 systemctl daemon-reload
 echo "[INSTALL] 🚀 Starting app - navigate to your <server IP>:${PORT}"
 systemctl enable netalertx
-systemctl start netalertx
-echo "[INSTALL] To see the logs use: sudo journalctl -u netalertx -f"
+systemctl start netalertx || { echo "[INSTALL] Failed to start NetAlertX service"; exit 1; }
+systemctl status netalertx
