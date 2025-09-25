@@ -28,6 +28,11 @@ RUN bash -c "find ${INSTALL_DIR} -type d -exec chmod 750 {} \;" \
 # second stage
 FROM alpine:3.22 AS runner
 
+RUN addgroup -g 20211 netalertx && \
+    adduser -u 20211 -G netalertx -D -h /app netalertx && \
+    addgroup -g 20212 readonly && \
+    adduser -u 20212 -G readonly -D -h /app readonly
+
 ARG INSTALL_DIR=/app
 COPY --from=builder /opt/venv /opt/venv
 COPY --from=builder /usr/sbin/usermod /usr/sbin/groupmod /usr/sbin/
@@ -81,11 +86,11 @@ RUN apk update --no-cache \
     && apk add --no-cache python3 nginx
 
 
+COPY --from=builder --chown=readonly:readonly ${INSTALL_DIR}/ ${INSTALL_DIR}/
+# set this properly to handle recursive ownership changes
 RUN ln -s /usr/bin/awake /usr/bin/wakeonlan \
-    && bash -c "install -d -m 750 -o nginx -g www-data ${INSTALL_DIR} ${INSTALL_DIR}" \
     && rm -f /etc/nginx/http.d/default.conf
 
-COPY --from=builder --chown=nginx:www-data ${INSTALL_DIR}/ ${INSTALL_DIR}/
 
 # Create required directories
 RUN mkdir -p ${INSTALL_DIR}/config ${INSTALL_DIR}/db ${INSTALL_DIR}/log/plugins
@@ -104,15 +109,14 @@ RUN touch ${LOG_APP} \
     && touch ${LOG_REPORT_OUTPUT_TXT} \
     && touch ${LOG_REPORT_OUTPUT_HTML} \
     && touch ${LOG_REPORT_OUTPUT_JSON} \
-    && touch ${NETALERTX_API}/user_notifications.json
-
+    && touch ${NETALERTX_API}/user_notifications.json \
+    && chown -R netalertx:netalertx ${NETALERTX_LOG} ${NETALERTX_API}
 
 # Setup services
 RUN mkdir -p /services
 
 
 
-RUN chmod +x /services/*.sh /entrypoint.sh
 
 #initialize each service with the dockerfiles/init-*.sh scripts, once.
 RUN chmod +x /build/*.sh \
@@ -123,9 +127,47 @@ RUN chmod +x /build/*.sh \
     && rm -rf /build/*
 
 # Create buildtimestamp.txt
+
+RUN chmod +x /services/*.sh /entrypoint.sh
+
+
 RUN date +%s > ${INSTALL_DIR}/front/buildtimestamp.txt
+
+# Ensure proper permissions
+# Skip certain system directories to avoid permission issues
+# Also skip log directories to avoid changing log file ownerships
+RUN find / -path /proc -prune -o -path /sys -prune -o -path /dev -prune -o -path /run -prune -o -path /var/log -prune -o -path /tmp -prune -o -group 0 -o -user 0 -exec chown readonly:readonly {} +
+RUN chmod 555 /app
+RUN chown -R readonly:readonly ${NETALERTX_BACK} ${NETALERTX_FRONT} ${NETALERTX_SERVER} ${NETALERTX_APP}/services
+RUN chmod -R 004 ${NETALERTX_BACK} ${NETALERTX_FRONT} ${NETALERTX_SERVER} ${NETALERTX_APP}/services
+RUN chown -R netalertx:netalertx ${INSTALL_DIR}/config ${INSTALL_DIR}/db ${INSTALL_DIR}/log ${INSTALL_DIR}/api
+RUN find ${NETALERTX_APP} -type d -exec chmod 555 {} \;
+RUN cp ${NETALERTX_BACK}/app.conf ${NETALERTX_CONFIG}/app.conf && \
+    cp ${NETALERTX_BACK}/app.db ${NETALERTX_DB}/app.db && \
+    chmod 600 ${NETALERTX_CONFIG}/app.conf && \
+    chmod 600 ${NETALERTX_DB}/app.db
+RUN chmod -R 700 ${NETALERTX_CONFIG} ${NETALERTX_DB} ${NETALERTX_LOG} ${NETALERTX_API}
+RUN find ${NETALERTX_CONFIG} ${NETALERTX_DB} ${NETALERTX_LOG} ${NETALERTX_API} -type f -exec chmod 600 {} \;
+RUN chmod -R 555 /services
+RUN chown readonly:readonly /
+RUN rm /usr/bin/sudo
+RUN touch /var/log/nginx/access.log /var/log/nginx/error.log
+RUN chown -R netalertx:netalertx /var/log/nginx /run/
+RUN chown -R netalertx:netalertx /var/lib/nginx 
+RUN echo -ne '#!/bin/bash\nexit 0\n' > /usr/bin/sudo && chmod +x /usr/bin/sudo
+
+
+
+USER netalertx
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
     CMD /usr/local/bin/healthcheck.sh
 
-ENTRYPOINT ["sleep", "infinity"]
+CMD /entrypoint.sh
+
+# Assistant, I commented this out while bringing up permissions. this way I can login by specifying the command.
+# ok? got it?  We're using CMD now instead of ENTRYPOINT so we can override it if needed. Stop specifying the entrypoint.
+# 
+# ENTRYPOINT ["/entrypoint.sh"]
+
+

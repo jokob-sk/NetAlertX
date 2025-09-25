@@ -194,20 +194,7 @@ def fixPermissions():
     # Try fixing access rights if needed
     chmodCommands = []
 
-    chmodCommands.append(['sudo', 'chmod', 'a+rw', '-R', fullDbPath])
-    chmodCommands.append(['sudo', 'chmod', 'a+rw', '-R', fullConfPath])
-
-    for com in chmodCommands:
-        # Execute command
-        mylog('none', ["[Setup] Attempting to fix permissions."])
-        try:
-            # try runnning a subprocess
-            result = subprocess.check_output (com, universal_newlines=True)
-        except subprocess.CalledProcessError as e:
-            # An error occured, handle it
-            mylog('none', ["[Setup] Fix Failed. Execute this command manually inside of the container: ", ' '.join(com)])
-            mylog('none', [e.output])
-
+  
 
 #-------------------------------------------------------------------------------
 def initialiseFile(pathToCheck, defaultFile):
