@@ -1,0 +1,12 @@
+[Unit]
+Description=NetAlertX - Network, presence scanner and alert framework
+ConditionPathExists=/app/server
+
+[Service]
+EnvironmentFile=/app/.env
+ExecStart=python "$INSTALL_PATH/server/" 2>/dev/null 1>/dev/null &
+Restart=on-failure
+Type=simple
+
+[Install]
+WantedBy=multi-user.target

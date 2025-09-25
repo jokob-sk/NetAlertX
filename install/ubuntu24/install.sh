@@ -1,13 +1,21 @@
 #!/usr/bin/env bash
 
+# 🛑 Important: This is only used for the bare-metal install 🛑 
+# Update /install/start.ubuntu.sh in most cases is preferred 
+
 echo "---------------------------------------------------------"
-echo "[INSTALL]"
+echo "[INSTALL] Starting NetAlertX installation for Ubuntu"
 echo "---------------------------------------------------------"
 echo
-echo "This script will set up and start NetAlertX on your Ubuntu24 system."
+echo "This script will install NetAlertX on your Ubuntu system."
+echo "It will clone the repository, set up necessary files, and start the application."
+echo "Please ensure you have a stable internet connection."
+echo "---------------------------------------------------------"
 
+# Set environment variables
 # Specify the installation directory here
 INSTALL_DIR=/app
+
 
 # DO NOT CHANGE ANYTHING BELOW THIS LINE!
 INSTALL_SYSTEM_NAME=ubuntu24
@@ -23,6 +31,133 @@ FILEDB=$INSTALL_PATH/db/$DB_FILE
 PHPVERSION="8.3"
 # DO NOT CHANGE ANYTHING ABOVE THIS LINE!
 
+
+# Check if script is run as root
+if [[ $EUID -ne 0 ]]; then
+    echo "This script must be run as root. Please use 'sudo'." 
+    exit 1
+fi
+
+# Install sudo if not present
+echo "---------------------------------------------------------"
+echo "[INSTALL] Starting NetAlertX installation for Ubuntu"
+echo "---------------------------------------------------------"
+echo
+apt-get update -y
+echo "[INSTALL] Making sure sudo is installed"
+apt-get install sudo -y
+
+echo "---------------------------------------------------------"
+echo "[INSTALL] Installing dependencies"
+echo "---------------------------------------------------------"
+echo
+
+# Install core dependencies
+apt-get install -y --no-install-recommends \
+  git \
+  tini ca-certificates curl libwww-perl perl apt-utils cron build-essential \
+  sqlite3 net-tools \
+  python3 python3-venv python3-dev python3-pip
+
+# Install plugin dependencies
+apt-get install -y --no-install-recommends \
+  dnsutils mtr arp-scan snmp iproute2 nmap zip usbutils traceroute nbtscan avahi-daemon avahi-utils
+
+# nginx-core install nginx and nginx-common as dependencies
+apt-get install -y --no-install-recommends \
+  nginx-core \
+  php${PHPVERSION} php${PHPVERSION}-sqlite3 php php-fpm php-cgi php${PHPVERSION}-fpm php-fpm php-sqlite3 php-curl php-cli
+# make sure sqlite is activated
+phpenmod -v ${PHPVERSION} sqlite3
+
+
+echo "---------------------------------------------------------"
+echo "[INSTALL] Setting up Python environment"
+echo "---------------------------------------------------------"
+echo
+update-alternatives --install /usr/bin/python python /usr/bin/python3 10
+python3 -m venv /opt/netalertx-python
+source /opt/netalertx-python/bin/activate
+
+pip3 install -r ./requirements.txt
+
+
+echo "---------------------------------------------------------"
+echo "[INSTALL] Downloading NetAlertX repository"
+echo "---------------------------------------------------------"
+echo
+
+# Clean the directory, ask for confirmation
+if [ -d "$INSTALL_DIR" ]; then
+  echo "The installation directory exists. Removing it to ensure a clean install."
+  echo "Are you sure you want to continue? This will delete all existing files in $INSTALL_DIR."
+  echo "This will include ALL YOUR SETTINGS AND DATABASE! (if there are any)"
+  echo
+  echo "Type:"
+  echo " - 'install' to continue and DELETE ALL!"
+  echo " - 'update' to just update from GIT (keeps your db and settings)"
+  echo " - 'start' to do nothing, leave install as-is (just run the start script)"
+  if [ "$1" == "install" ] || [ "$1" == "update" ] || [ "$1" == "start" ]; then
+    confirmation=$1
+  else
+    read -p "Enter your choice: " confirmation
+  fi
+  if [ "$confirmation" == "install" ]; then
+    # Ensure INSTALL_DIR is safe to wipe
+    if [ -n "$INSTALL_DIR" ] && [ "$INSTALL_DIR" != "" ] && [ "$INSTALL_DIR" != "/" ] && [ "$INSTALL_DIR" != "." ] && [ -d "$INSTALL_DIR" ]; then
+      echo "Removing existing installation..."
+
+      # Stop nginx if running
+      if command -v systemctl >/dev/null 2>&1 && systemctl list-units --type=service | grep -q nginx; then
+        systemctl stop nginx 2>/dev/null
+      elif command -v service >/dev/null 2>&1; then
+        service nginx stop 2>/dev/null
+      fi
+
+      # Kill running NetAlertX server processes in this INSTALL_DIR
+      pkill -f "python.*${INSTALL_DIR}/server" 2>/dev/null
+
+      # Unmount only if mountpoints exist
+      mountpoint -q "$INSTALL_DIR/api" && umount "$INSTALL_DIR/api" 2>/dev/null
+      mountpoint -q "$INSTALL_DIR/front" && umount "$INSTALL_DIR/front" 2>/dev/null
+
+      # Remove all contents safely
+      rm -rf -- "$INSTALL_DIR"/* "$INSTALL_DIR"/.[!.]* "$INSTALL_DIR"/..?* 2>/dev/null
+
+      # Re-clone repository
+      git clone https://github.com/jokob-sk/NetAlertX "$INSTALL_DIR/"
+    else
+      echo "INSTALL_DIR is not set, is root, or is invalid. Aborting for safety."
+      exit 1
+    fi
+  elif [ "$confirmation" == "update" ]; then
+    echo "Updating the existing installation..."
+    service nginx stop 2>/dev/null
+    pkill -f "python ${INSTALL_DIR}/server" 2>/dev/null
+    cd "$INSTALL_DIR" || { echo "Failed to change directory to $INSTALL_DIR"; exit 1; }
+    git pull
+  elif [ "$confirmation" == "start" ]; then
+    echo "Continuing without changes."
+  else
+    echo "Installation aborted."
+    exit 1
+  fi
+else
+  git clone https://github.com/jokob-sk/NetAlertX "$INSTALL_DIR/"
+fi
+
+# Check for buildtimestamp.txt existence, otherwise create it
+if [ ! -f "$INSTALL_DIR/front/buildtimestamp.txt" ]; then
+  date +%s > "$INSTALL_DIR/front/buildtimestamp.txt"
+fi
+
+
+# We now should have all dependencies and files in place
+# We can now configure the web server and start the application
+
+cd "$INSTALLER_DIR" || { echo "Failed to change directory to $INSTALLER_DIR"; exit 1; }
+
+
 # if custom variables not set we do not need to do anything
 if [ -n "${TZ}" ]; then    
   FILECONF=$INSTALL_PATH/config/$CONF_FILE 
@@ -34,48 +169,10 @@ if [ -n "${TZ}" ]; then
 fi
 
 
-# Check if script is run as root
-if [[ $EUID -ne 0 ]]; then
-    echo "This script must be run as root. Please use 'sudo'." 
-    exit 1
-fi
-
 
 
 echo "---------------------------------------------------------"
-echo "[INSTALL] Installing dependencies"
-echo "---------------------------------------------------------"
-echo
-
-
-# Install dependencies
-apt-get install -y \
-    tini snmp ca-certificates curl libwww-perl arp-scan perl apt-utils cron \
-    sqlite3 dnsutils net-tools mtr \
-    python3 python3-dev iproute2 nmap python3-pip zip usbutils traceroute nbtscan avahi-daemon avahi-utils build-essential
-
-# alternate dependencies
-# nginx-core install nginx and nginx-common as dependencies
-apt-get install nginx-core php${PHPVERSION} php${PHPVERSION}-sqlite3 php php-cgi php-fpm php-sqlite3 php-curl php-fpm php${PHPVERSION}-fpm php-cli -y
-phpenmod -v ${PHPVERSION} sqlite3
-
-update-alternatives --install /usr/bin/python python /usr/bin/python3 10
-
-cd $INSTALLER_DIR || { echo "Failed to change directory to $INSTALLER_DIR"; exit 1; }
-
-# setup virtual python environment so we can use pip3 to install packages
-apt-get install python3-venv -y
-python3 -m venv myenv
-source myenv/bin/activate
-
-#  install packages thru pip3
-pip3 install openwrt-luci-rpc asusrouter asyncio aiohttp graphene flask flask-cors unifi-sm-api tplink-omada-client wakeonlan pycryptodome requests paho-mqtt scapy cron-converter pytz json2table dhcp-leases pyunifi speedtest-cli chardet python-nmap dnspython librouteros yattag git+https://github.com/foreign-sub/aiofreepybox.git 
-
-
-
-
-echo "---------------------------------------------------------"
-echo "[INSTALL] Installing NGINX and setting up the web server"
+echo "[INSTALL] Setting up the web server"
 echo "---------------------------------------------------------"
 echo
 echo "[INSTALL] Stopping any NGINX web server"
@@ -111,12 +208,16 @@ ln -s "${INSTALLER_DIR}/$NGINX_CONF_FILE" $NGINX_CONFIG_FILE
 if [ -n "${PORT}" ]; then
   echo "[INSTALL] Setting webserver to user-supplied port ($PORT)"
   sed -i 's/listen 20211/listen '"$PORT"'/g' "$NGINX_CONFIG_FILE"
+else
+  PORT=20211
 fi
 
 # Change web interface address if set
 if [ -n "${LISTEN_ADDR}" ]; then
   echo "[INSTALL] Setting webserver to user-supplied address (${LISTEN_ADDR})"
   sed -i -e 's/listen /listen '"${LISTEN_ADDR}":'/g' "$NGINX_CONFIG_FILE"
+else
+  LISTEN_ADDR="0.0.0.0"
 fi
 
 # Change php version
@@ -212,16 +313,27 @@ if [ ! -f "${INSTALL_PATH}/front/buildtimestamp.txt" ]; then
     date +%s > "${INSTALL_PATH}/front/buildtimestamp.txt"
 fi
 
-# start PHP
+# start PHP and nginx
 /etc/init.d/php${PHPVERSION}-fpm start
 nginx -t || { echo "[INSTALL] nginx config test failed"; exit 1; }
 /etc/init.d/nginx start
-#  Activate the virtual python environment
-source myenv/bin/activate
 
+
+
+echo "---------------------------------------------------------"
+echo "[INSTALL] Installation complete"
+echo "---------------------------------------------------------"
+
+# Export all variables to a .env file for use by the systemd service
+env_vars=( "INSTALL_SYSTEM_NAME" "INSTALLER_DIR" "INSTALL_PATH" "PHPVERSION" )
+echo "" > /app/.env
+for var in "${env_vars[@]}"; do
+  echo "$var=${!var}" >> /app/.env
+done
+
+cp ./netalertx.service /etc/systemd/system/netalertx.service || { echo "[INSTALL] Failed to copy systemd service file"; exit 1; }
+systemctl daemon-reload
 echo "[INSTALL] 🚀 Starting app - navigate to your <server IP>:${PORT}"
-
-# Start the NetAlertX python script
-# All error and console output being diverted to null,
-# otherwise we can get critical errors re I/O
-python "$INSTALL_PATH/server/" 2>/dev/null 1>/dev/null &
+systemctl enable netalertx
+systemctl start netalertx
+echo "[INSTALL] To see the logs use: sudo journalctl -u netalertx -f"
