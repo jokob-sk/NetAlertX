@@ -136,7 +136,9 @@ if [ -d "$INSTALL_DIR" ]; then
     # In case there were changes, stash them
     git stash -q
     git pull
-    echo "[INSTALL] If there werwe any local chnages, thery have been STASHED"
+    echo "[INSTALL] If there were any local changes, they have been >>STASHED<<"
+    echo "[INSTALL] You can recover them with 'git stash pop' in $INSTALL_DIR"
+    echo
   elif [ "$confirmation" == "start" ]; then
     echo "[INSTALL] Continuing without changes."
   else
