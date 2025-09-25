@@ -14,11 +14,13 @@ PORT_DEBUG=5678
 sudo killall python3 2>/dev/null || true
 sleep 2
 
+echo ''|tee $LOG_DIR/stdout.log $LOG_DIR/stderr.log $LOG_DIR/app.log
 
 cd "$APP_DIR"
 
 # Launch using absolute module path for clarity; rely on cwd for local imports
-setsid nohup ${PY} -m debugpy --listen 0.0.0.0:${PORT_DEBUG} /app/server/__main__.py >/dev/null 2>&1 &
+setsid nohup "${PY}" -m debugpy --listen "0.0.0.0:${PORT_DEBUG}" /app/server/__main__.py \
+  1>>"$LOG_DIR/stdout.log" \
+  2>>"$LOG_DIR/stderr.log" &
 PID=$!
 sleep 2
-
