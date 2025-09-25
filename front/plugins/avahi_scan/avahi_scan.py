@@ -4,8 +4,8 @@ import os
 import pathlib
 import sys
 import json
-import sqlite3
-import subprocess
+import time
+import dns.resolver
 
 # Define the installation path and extend the system path for plugin imports
 INSTALL_PATH = "/app"
@@ -13,9 +13,9 @@ sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64
 from plugin_utils import get_plugins_configs
-from logger import mylog, Logger
+from logger import mylog as write_log, Logger
 from const import pluginsPath, fullDbPath, logPath
-from helper import timeNowTZ, get_setting_value 
+from helper import timeNowTZ, get_setting_value
 from messaging.in_app import write_notification
 from database import DB
 from models.device_instance import DeviceInstance
@@ -38,178 +38,91 @@ RESULT_FILE = os.path.join(LOG_PATH, f'last_result.{pluginName}.log')
 # Initialize the Plugin obj output file
 plugin_objects = Plugin_Objects(RESULT_FILE)
 
-
+#===============================================================================
+# Execute scan using DNS resolver
+#===============================================================================
+def resolve_ips_with_zeroconf(ips, timeout):
+    """
+    Uses DNS resolver to actively query PTR records for reverse DNS lookups on given IP addresses.
+    """
+    resolved_hosts = {}
+    
+    for ip in ips:
+        try:
+            # Construct the reverse IP for PTR query (e.g., 8.1.168.192.in-addr.arpa.)
+            reverse_ip = '.'.join(reversed(ip.split('.'))) + '.in-addr.arpa.'
+            
+            # Query PTR record with timeout
+            answers = dns.resolver.resolve(reverse_ip, 'PTR', lifetime=max(1, min(timeout, 5)))
+            
+            if answers:
+                # For PTR records, the hostname is in the target field
+                hostname = str(answers[0].target).rstrip('.')
+                resolved_hosts[ip] = hostname
+                write_log('verbose', [f'[{pluginName}] Resolved {ip} -> {hostname}'])
+        except Exception as e:
+            write_log('verbose', [f'[{pluginName}] Error resolving {ip}: {e}'])
+    
+    write_log('verbose', [f'[{pluginName}] Active resolution finished. Found {len(resolved_hosts)} hosts.'])
+    return resolved_hosts
 
 def main():
-    mylog('verbose', [f'[{pluginName}] In script']) 
+    write_log('verbose', [f'[{pluginName}] In script'])
 
-    # timeout = get_setting_value('AVAHI_RUN_TIMEOUT')
-    timeout = 20
+    # Get timeout from settings, default to 20s, and subtract a buffer
+    try:
+        timeout_setting = int(get_setting_value('AVAHISCAN_RUN_TIMEOUT'))
+    except (ValueError, TypeError):
+        timeout_setting = 30 # Default to 30s as a safe value
     
-    # Create a database connection
-    db = DB()  # instance of class DB
+    # Use a timeout 5 seconds less than the plugin's configured timeout to allow for cleanup
+    scan_duration = max(5, timeout_setting - 5)
+    
+    db = DB()
     db.open()
 
-    # Initialize the Plugin obj output file
     plugin_objects = Plugin_Objects(RESULT_FILE)
-
-    # Create a DeviceInstance instance
     device_handler = DeviceInstance(db)
 
-    # Retrieve devices
-    if get_setting_value("REFRESH_FQDN"): 
+    # Retrieve devices based on REFRESH_FQDN setting to match original script's logic
+    if get_setting_value("REFRESH_FQDN"):
         devices = device_handler.getAll()
-    else:        
+        write_log('verbose', [f'[{pluginName}] REFRESH_FQDN is true, getting all devices.'])
+    else:
         devices = device_handler.getUnknown()
+        write_log('verbose', [f'[{pluginName}] REFRESH_FQDN is false, getting devices with unknown hostnames.'])
 
-    mylog('verbose', [f'[{pluginName}] Devices count: {len(devices)}'])   
-    
-    # Mock list of devices (replace with actual device_handler.getUnknown() in production)
-    # devices = [
-    #     {'devMac': '00:11:22:33:44:55', 'devLastIP': '192.168.1.121'},
-    #     {'devMac': '00:11:22:33:44:56', 'devLastIP': '192.168.1.9'},
-    #     {'devMac': '00:11:22:33:44:57', 'devLastIP': '192.168.1.82'},
-    # ]
+    # db.close() # This was causing the crash, DB object doesn't have a close method.
+
+    write_log('verbose', [f'[{pluginName}] Devices to scan: {len(devices)}'])
 
     if len(devices) > 0:
-        # ensure service is running
-        ensure_avahi_running()
+        ips_to_find = [device['devLastIP'] for device in devices if device['devLastIP']]
+        if ips_to_find:
+            write_log('verbose', [f'[{pluginName}] IPs to be scanned: {ips_to_find}'])
+            resolved_hosts = resolve_ips_with_zeroconf(ips_to_find, scan_duration)
 
-    for device in devices:
-        domain_name = execute_name_lookup(device['devLastIP'], timeout)
-
-        #  check if found and not a timeout ('to')
-        if domain_name != '' and domain_name != 'to': 
-            plugin_objects.add_object(
-            # "MAC", "IP", "Server", "Name"
-            primaryId   = device['devMac'],
-            secondaryId = device['devLastIP'],
-            watched1    = '',  # You can add any relevant info here if needed
-            watched2    = domain_name,
-            watched3    = '',
-            watched4    = '',
-            extra       = '',
-            foreignKey  = device['devMac'])
+            for device in devices:
+                domain_name = resolved_hosts.get(device['devLastIP'])
+                if domain_name:
+                    plugin_objects.add_object(
+                        primaryId   = device['devMac'],
+                        secondaryId = device['devLastIP'],
+                        watched1    = '',
+                        watched2    = domain_name,
+                        watched3    = '',
+                        watched4    = '',
+                        extra       = '',
+                        foreignKey  = device['devMac']
+                    )
+        else:
+            write_log('verbose', [f'[{pluginName}] No devices with IP addresses to scan.'])
 
     plugin_objects.write_result_file()
     
-    mylog('verbose', [f'[{pluginName}] Script finished'])   
+    write_log('verbose', [f'[{pluginName}] Script finished'])
     
     return 0
-
-#===============================================================================
-# Execute scan
-#===============================================================================
-def execute_name_lookup(ip, timeout):
-    """
-    Execute the avahi-resolve command on the IP.
-    """
-
-    args = ['avahi-resolve', '-a', ip]
-
-    # Execute command
-    output = ""
-
-    try:
-        mylog('debug', [f'[{pluginName}] DEBUG CMD :', args])
-        
-        # Run the subprocess with a forced timeout
-        output = subprocess.check_output(args, universal_newlines=True, stderr=subprocess.STDOUT, timeout=timeout)
-
-        mylog('debug', [f'[{pluginName}] DEBUG OUTPUT : {output}'])
-        
-        domain_name = ''
-
-        # Split the output into lines
-        lines = output.splitlines()
-
-        # Look for the resolved IP address
-        for line in lines:
-            if ip in line:
-                parts = line.split()
-                if len(parts) > 1:
-                    domain_name = parts[1]  # Second part is the resolved domain name
-                else:
-                    mylog('verbose', [f'[{pluginName}] ⚠ ERROR - Unexpected output format: {line}'])
-
-        mylog('debug', [f'[{pluginName}] Domain Name: {domain_name}'])
-
-        return domain_name
-
-    except subprocess.CalledProcessError as e:
-        mylog('none', [f'[{pluginName}] ⚠ ERROR - {e.output}'])                    
-
-    except subprocess.TimeoutExpired:
-        mylog('none', [f'[{pluginName}] TIMEOUT - the process forcefully terminated as timeout reached']) 
-
-    if output == "":
-        mylog('none', [f'[{pluginName}] Scan: FAIL - check logs']) 
-    else: 
-        mylog('debug', [f'[{pluginName}] Scan: SUCCESS'])
-
-    return ''   
-
-# Function to ensure Avahi and its dependencies are running
-def ensure_avahi_running(attempt=1, max_retries=2):
-    """
-    Ensure that D-Bus is running and the Avahi daemon is started, with recursive retry logic.
-    """
-    mylog('debug', [f'[{pluginName}] Attempt {attempt} - Ensuring D-Bus and Avahi daemon are running...'])
-
-    # Check rc-status
-    try:
-        subprocess.run(['rc-status'], check=True)
-    except subprocess.CalledProcessError as e:
-        mylog('none', [f'[{pluginName}] ⚠ ERROR - Failed to check rc-status: {e.output}'])
-        return
-
-    # Create OpenRC soft level
-    subprocess.run(['touch', '/run/openrc/softlevel'], check=True)
-
-    # Add Avahi daemon to runlevel
-    try:
-        subprocess.run(['rc-update', 'add', 'avahi-daemon'], check=True)
-    except subprocess.CalledProcessError as e:
-        mylog('none', [f'[{pluginName}] ⚠ ERROR - Failed to add Avahi to runlevel: {e.output}'])
-        return
-
-    # Start the D-Bus service
-    try:
-        subprocess.run(['rc-service', 'dbus', 'start'], check=True)
-    except subprocess.CalledProcessError as e:
-        mylog('none', [f'[{pluginName}] ⚠ ERROR - Failed to start D-Bus: {e.output}'])
-        return
-
-    # Check Avahi status
-    status_output = subprocess.run(['rc-service', 'avahi-daemon', 'status'], capture_output=True, text=True)
-    if 'started' in status_output.stdout:
-        mylog('debug', [f'[{pluginName}] Avahi Daemon is already running.'])
-        return
-
-    mylog('none', [f'[{pluginName}] Avahi Daemon is not running, attempting to start... (Attempt {attempt})'])
-
-    # Start the Avahi daemon
-    try:
-        subprocess.run(['rc-service', 'avahi-daemon', 'start'], check=True)
-    except subprocess.CalledProcessError as e:
-        mylog('none', [f'[{pluginName}] ⚠ ERROR - Failed to start Avahi daemon: {e.output}'])
-
-    # Check status after starting
-    status_output = subprocess.run(['rc-service', 'avahi-daemon', 'status'], capture_output=True, text=True)
-    if 'started' in status_output.stdout:
-        mylog('debug', [f'[{pluginName}] Avahi Daemon successfully started.'])
-        return
-
-    # Retry if not started and attempts are left
-    if attempt < max_retries:
-        mylog('debug', [f'[{pluginName}] Retrying... ({attempt + 1}/{max_retries})'])
-        ensure_avahi_running(attempt + 1, max_retries)
-    else:
-        mylog('none', [f'[{pluginName}] ⚠ ERROR - Avahi Daemon failed to start after {max_retries} attempts.'])
-
-    # rc-update add avahi-daemon
-    # rc-service avahi-daemon status
-    # rc-service avahi-daemon start
 
 if __name__ == '__main__':
     main()

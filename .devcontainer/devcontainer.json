@@ -2,9 +2,9 @@
   "name": "NetAlertX DevContainer",
   "remoteUser": "netalertx",
   "build": {
-    "dockerfile": "Dockerfile",
+    "dockerfile": "../Dockerfile",
     "context": "..",
-    "target": "devcontainer"
+    "target": "runner"
   },
   "workspaceFolder": "/workspaces/NetAlertX",
   "runArgs": [
@@ -20,7 +20,7 @@
   
   
   
-  "postStartCommand": "${containerWorkspaceFolder}/.devcontainer/scripts/setup.sh",
+  "postStartCommand": "sudo ${containerWorkspaceFolder}/.devcontainer/scripts/setup.sh",
   
   "customizations": {
     "vscode": {

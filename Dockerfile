@@ -19,7 +19,7 @@ COPY db ${INSTALL_DIR}/db
 COPY front ${INSTALL_DIR}/front
 COPY server ${INSTALL_DIR}/server
 
-RUN pip install openwrt-luci-rpc asusrouter asyncio aiohttp graphene flask flask-cors unifi-sm-api tplink-omada-client wakeonlan pycryptodome requests paho-mqtt scapy cron-converter pytz json2table dhcp-leases pyunifi speedtest-cli chardet python-nmap dnspython librouteros yattag git+https://github.com/foreign-sub/aiofreepybox.git
+RUN pip install openwrt-luci-rpc asusrouter asyncio aiohttp graphene flask flask-cors unifi-sm-api tplink-omada-client wakeonlan pycryptodome requests paho-mqtt scapy cron-converter pytz json2table dhcp-leases pyunifi speedtest-cli chardet python-nmap dnspython librouteros yattag zeroconf git+https://github.com/foreign-sub/aiofreepybox.git
 
 RUN bash -c "find ${INSTALL_DIR} -type d -exec chmod 750 {} \;" \
     && bash -c "find ${INSTALL_DIR} -type f -exec chmod 640 {} \;" \
@@ -46,7 +46,7 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 ENV PORT=20211 LISTEN_ADDR=0.0.0.0 GRAPHQL_PORT=20212
 # NetAlertX app directories
-ENV NETALERTX_APP=${INSTALL_DIR}
+ENV NETALERTX_APP=/app
 ENV NETALERTX_CONFIG=${NETALERTX_APP}/config
 ENV NETALERTX_FRONT=${NETALERTX_APP}/front
 ENV NETALERTX_SERVER=${NETALERTX_APP}/server
@@ -56,6 +56,7 @@ ENV NETALERTX_BACK=${NETALERTX_APP}/back
 ENV NETALERTX_LOG=${NETALERTX_APP}/log
 ENV NETALERTX_PLUGINS_LOG=${NETALERTX_LOG}/plugins
 ENV NETALERTX_NGINIX_CONFIG=${NETALERTX_APP}/services/nginx
+ENV NETALERTX_SERVICES=${NETALERTX_APP}/services
 
 # NetAlertX log files
 ENV LOG_IP_CHANGES=${NETALERTX_LOG}/IP_changes.log
@@ -77,16 +78,17 @@ ENV NETALERTX_CONFIG_FILE=${NETALERTX_CONFIG}/app.conf
 ENV NETALERTX_DB_FILE=${NETALERTX_DB}/app.db
 ENV PHP_FPM_CONFIG_FILE=/etc/php83/php-fpm.conf
 ENV PHP_WWW_CONF_FILE=/etc/php83/php-fpm.d/www.conf
+ENV SYSTEM_SERVICES=/services
 
 
 RUN apk update --no-cache \
     && apk add --no-cache bash libbsd zip lsblk gettext-envsubst sudo mtr tzdata \
-    && apk add --no-cache curl arp-scan iproute2 iproute2-ss nmap nmap-scripts traceroute nbtscan avahi avahi-tools openrc dbus net-tools net-snmp-tools bind-tools awake ca-certificates \
+    && apk add --no-cache curl arp-scan iproute2 iproute2-ss nmap nmap-scripts traceroute nbtscan openrc dbus net-tools net-snmp-tools bind-tools awake ca-certificates \
     && apk add --no-cache sqlite php83 php83-fpm php83-cgi php83-curl php83-sqlite3 php83-session \
     && apk add --no-cache python3 nginx
 
 
-COPY --from=builder --chown=readonly:readonly ${INSTALL_DIR}/ ${INSTALL_DIR}/
+COPY --from=builder --chown=netalertx:netalertx ${INSTALL_DIR}/ ${INSTALL_DIR}/
 # set this properly to handle recursive ownership changes
 RUN ln -s /usr/bin/awake /usr/bin/wakeonlan \
     && rm -f /etc/nginx/http.d/default.conf
@@ -109,11 +111,10 @@ RUN touch ${LOG_APP} \
     && touch ${LOG_REPORT_OUTPUT_TXT} \
     && touch ${LOG_REPORT_OUTPUT_HTML} \
     && touch ${LOG_REPORT_OUTPUT_JSON} \
-    && touch ${NETALERTX_API}/user_notifications.json \
-    && chown -R netalertx:netalertx ${NETALERTX_LOG} ${NETALERTX_API}
+    && touch ${NETALERTX_API}/user_notifications.json 
 
 # Setup services
-RUN mkdir -p /services
+RUN mkdir -p ${SYSTEM_SERVICES}
 
 
 
@@ -128,27 +129,36 @@ RUN chmod +x /build/*.sh \
 
 # Create buildtimestamp.txt
 
-RUN chmod +x /services/*.sh /entrypoint.sh
+RUN chmod +x ${SYSTEM_SERVICES}/*.sh /entrypoint.sh
 
+# Setup config and db files
+RUN cp ${NETALERTX_BACK}/app.conf ${NETALERTX_CONFIG_FILE} && \
+    cp ${NETALERTX_BACK}/app.db ${NETALERTX_DB_FILE}
+
+
+# set netalertx to allow sudoers for any command, no password
+RUN echo "netalertx ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 RUN date +%s > ${INSTALL_DIR}/front/buildtimestamp.txt
 
-# Ensure proper permissions
-# Skip certain system directories to avoid permission issues
-# Also skip log directories to avoid changing log file ownerships
-RUN find / -path /proc -prune -o -path /sys -prune -o -path /dev -prune -o -path /run -prune -o -path /var/log -prune -o -path /tmp -prune -o -group 0 -o -user 0 -exec chown readonly:readonly {} +
-RUN chmod 555 /app
-RUN chown -R readonly:readonly ${NETALERTX_BACK} ${NETALERTX_FRONT} ${NETALERTX_SERVER} ${NETALERTX_APP}/services
-RUN chmod -R 004 ${NETALERTX_BACK} ${NETALERTX_FRONT} ${NETALERTX_SERVER} ${NETALERTX_APP}/services
-RUN chown -R netalertx:netalertx ${INSTALL_DIR}/config ${INSTALL_DIR}/db ${INSTALL_DIR}/log ${INSTALL_DIR}/api
-RUN find ${NETALERTX_APP} -type d -exec chmod 555 {} \;
-RUN cp ${NETALERTX_BACK}/app.conf ${NETALERTX_CONFIG}/app.conf && \
-    cp ${NETALERTX_BACK}/app.db ${NETALERTX_DB}/app.db && \
-    chmod 600 ${NETALERTX_CONFIG}/app.conf && \
-    chmod 600 ${NETALERTX_DB}/app.db
-RUN chmod -R 700 ${NETALERTX_CONFIG} ${NETALERTX_DB} ${NETALERTX_LOG} ${NETALERTX_API}
-RUN find ${NETALERTX_CONFIG} ${NETALERTX_DB} ${NETALERTX_LOG} ${NETALERTX_API} -type f -exec chmod 600 {} \;
-RUN chmod -R 555 /services
+
+
+
+FROM runner AS hardened
+
+# remove netalertx from sudoers
+RUN sed -i '/netalertx ALL=(ALL) NOPASSWD: ALL/d
+
+RUN chown -R readonly:readonly ${NETALERTX_BACK} ${NETALERTX_FRONT} ${NETALERTX_SERVER} ${SYSTEM_SERVICES}
+RUN chmod -R 004 ${NETALERTX_BACK} ${NETALERTX_FRONT} ${NETALERTX_SERVER} 
+RUN chmod 005 ${NETALERTX_BACK} ${NETALERTX_FRONT} ${NETALERTX_SERVER} 
+RUN chmod -R 005 ${SYSTEM_SERVICES}
+
+RUN chown -R netalertx:netalertx ${NETALERTX_CONFIG} ${NETALERTX_DB} ${NETALERTX_DB} ${NETALERTX_API} ${NETALERTX_LOG} ${NETALERTX_CONFIG_FILE} ${NETALERTX_DB_FILE} && \
+    chmod -R 600 ${NETALERTX_CONFIG} ${NETALERTX_DB} ${NETALERTX_LOG} ${NETALERTX_API} && \
+    chmod 700 ${NETALERTX_CONFIG} ${NETALERTX_DB} ${NETALERTX_LOG} ${NETALERTX_API}
+
+
 RUN chown readonly:readonly /
 RUN rm /usr/bin/sudo
 RUN touch /var/log/nginx/access.log /var/log/nginx/error.log
@@ -156,18 +166,14 @@ RUN chown -R netalertx:netalertx /var/log/nginx /run/
 RUN chown -R netalertx:netalertx /var/lib/nginx 
 RUN echo -ne '#!/bin/bash\nexit 0\n' > /usr/bin/sudo && chmod +x /usr/bin/sudo
 
+RUN find / -path /proc -prune -o -path /sys -prune -o -path /dev -prune -o -path /run -prune -o -path /var/log -prune -o -path /tmp -prune -o -group 0 -o -user 0 -exec chown readonly:readonly {} +
 
 
 USER netalertx
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD /usr/local/bin/healthcheck.sh
+CMD /usr/local/bin/healthcheck.sh
 
-CMD /entrypoint.sh
-
-# Assistant, I commented this out while bringing up permissions. this way I can login by specifying the command.
-# ok? got it?  We're using CMD now instead of ENTRYPOINT so we can override it if needed. Stop specifying the entrypoint.
-# 
-# ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
 
 

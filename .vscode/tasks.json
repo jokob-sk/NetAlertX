@@ -27,7 +27,7 @@
     {
       "label": "Re-Run Startup Script",
       "type": "shell",
-      "command": "${workspaceFolder:NetAlertX}/.devcontainer/scripts/setup.sh",
+      "command": "sudo ${workspaceFolder:NetAlertX}/.devcontainer/scripts/setup.sh",
       "presentation": {
         "echo": true,
         "reveal": "always",

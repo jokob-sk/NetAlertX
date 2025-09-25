@@ -29,7 +29,7 @@ export TZ=Europe/Paris
 export PORT=20211
 export SOURCE_DIR="/workspaces/NetAlertX"
 
-
+apk add git
  
 main() {
     echo "=== NetAlertX Development Container Setup ==="
@@ -91,9 +91,7 @@ configure_source() {
 
     echo "  -> Copying static files to ${INSTALL_DIR}"
     cp -R ${SOURCE_DIR}/CODE_OF_CONDUCT.md ${INSTALL_DIR}/
-    cp -R ${SOURCE_DIR}/dockerfiles ${INSTALL_DIR}/dockerfiles
-    sudo cp -na "${INSTALL_DIR}/back/${CONF_FILE}" "${INSTALL_DIR}/config/${CONF_FILE}"
-    sudo cp -na "${INSTALL_DIR}/back/${DB_FILE}" "${FULL_FILEDB_PATH}"
+    cp -R ${SOURCE_DIR}/install/ /
     if [ -e "${INSTALL_DIR}/api/user_notifications.json" ]; then
         echo "  -> Removing existing user_notifications.json"
         sudo rm "${INSTALL_DIR}"/api/user_notifications.json
