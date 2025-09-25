@@ -1,0 +1,2 @@
+# Schedule cron jobs
+* * * * * /app/back/cron_script.sh

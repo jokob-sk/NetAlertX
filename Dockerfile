@@ -16,11 +16,8 @@ COPY api ${INSTALL_DIR}/api
 COPY back ${INSTALL_DIR}/back
 COPY config ${INSTALL_DIR}/config
 COPY db ${INSTALL_DIR}/db
-COPY dockerfiles ${INSTALL_DIR}/dockerfiles
 COPY front ${INSTALL_DIR}/front
 COPY server ${INSTALL_DIR}/server
-COPY install/crontab /etc/crontabs/root
-#COPY . ${INSTALL_DIR}/
 
 RUN pip install openwrt-luci-rpc asusrouter asyncio aiohttp graphene flask flask-cors unifi-sm-api tplink-omada-client wakeonlan pycryptodome requests paho-mqtt scapy cron-converter pytz json2table dhcp-leases pyunifi speedtest-cli chardet python-nmap dnspython librouteros yattag git+https://github.com/foreign-sub/aiofreepybox.git
 
@@ -28,28 +25,23 @@ RUN bash -c "find ${INSTALL_DIR} -type d -exec chmod 750 {} \;" \
     && bash -c "find ${INSTALL_DIR} -type f -exec chmod 640 {} \;" \
     && bash -c "find ${INSTALL_DIR} -type f \( -name '*.sh' -o -name '*.py'  -o -name 'speedtest-cli' \) -exec chmod 750 {} \;"
 
-# Append Iliadbox certificate to aiofreepybox
-COPY install/freebox_certificate.pem /opt/venv/lib/python3.12/site-packages/aiofreepybox/freebox_certificates.pem
-
 # second stage
 FROM alpine:3.22 AS runner
 
 ARG INSTALL_DIR=/app
-
 COPY --from=builder /opt/venv /opt/venv
 COPY --from=builder /usr/sbin/usermod /usr/sbin/groupmod /usr/sbin/
+
+COPY install/alpine-docker/ /
 
 # Enable venv
 ENV PATH="/opt/venv/bin:$PATH" 
 
-# default port and listen address
+
+
 ENV PORT=20211 LISTEN_ADDR=0.0.0.0 GRAPHQL_PORT=20212
-
-# needed for s6-overlay
-# ENV S6_CMD_WAIT_FOR_SERVICES_MAXTIME=0
-
 # NetAlertX app directories
-ENV NETALERTX_APP=/app
+ENV NETALERTX_APP=${INSTALL_DIR}
 ENV NETALERTX_CONFIG=${NETALERTX_APP}/config
 ENV NETALERTX_FRONT=${NETALERTX_APP}/front
 ENV NETALERTX_SERVER=${NETALERTX_APP}/server
@@ -58,6 +50,7 @@ ENV NETALERTX_DB=${NETALERTX_APP}/db
 ENV NETALERTX_BACK=${NETALERTX_APP}/back
 ENV NETALERTX_LOG=${NETALERTX_APP}/log
 ENV NETALERTX_PLUGINS_LOG=${NETALERTX_LOG}/plugins
+ENV NETALERTX_NGINIX_CONFIG=${NETALERTX_APP}/services/nginx
 
 # NetAlertX log files
 ENV LOG_IP_CHANGES=${NETALERTX_LOG}/IP_changes.log
@@ -71,22 +64,24 @@ ENV LOG_APP_PHP_ERRORS=${NETALERTX_LOG}/app.php_errors.log
 ENV LOG_EXECUTION_QUEUE=${NETALERTX_LOG}/execution_queue.log
 ENV LOG_REPORT_OUTPUT_JSON=${NETALERTX_LOG}/report_output.json
 ENV LOG_STDOUT=${NETALERTX_LOG}/stdout.log
+ENV LOG_CROND=${NETALERTX_LOG}/crond.log
 
 # Important configuration files
-ENV NGINX_CONFIG_FILE="/etc/nginx/http.d/netalertx.conf"
+ENV NGINX_CONFIG_FILE=${NETALERTX_NGINIX_CONFIG}/nginx.conf
 ENV NETALERTX_CONFIG_FILE=${NETALERTX_CONFIG}/app.conf
 ENV NETALERTX_DB_FILE=${NETALERTX_DB}/app.db
 ENV PHP_FPM_CONFIG_FILE=/etc/php83/php-fpm.conf
 ENV PHP_WWW_CONF_FILE=/etc/php83/php-fpm.d/www.conf
 
-# ❗ IMPORTANT - if you modify this file modify the /install/install_dependecies.sh file as well ❗ 
 
 RUN apk update --no-cache \
     && apk add --no-cache bash libbsd zip lsblk gettext-envsubst sudo mtr tzdata \
     && apk add --no-cache curl arp-scan iproute2 iproute2-ss nmap nmap-scripts traceroute nbtscan avahi avahi-tools openrc dbus net-tools net-snmp-tools bind-tools awake ca-certificates \
     && apk add --no-cache sqlite php83 php83-fpm php83-cgi php83-curl php83-sqlite3 php83-session \
-    && apk add --no-cache python3 nginx \
-    && ln -s /usr/bin/awake /usr/bin/wakeonlan \
+    && apk add --no-cache python3 nginx
+
+
+RUN ln -s /usr/bin/awake /usr/bin/wakeonlan \
     && bash -c "install -d -m 750 -o nginx -g www-data ${INSTALL_DIR} ${INSTALL_DIR}" \
     && rm -f /etc/nginx/http.d/default.conf
 
@@ -95,11 +90,7 @@ COPY --from=builder --chown=nginx:www-data ${INSTALL_DIR}/ ${INSTALL_DIR}/
 # Create required directories
 RUN mkdir -p ${INSTALL_DIR}/config ${INSTALL_DIR}/db ${INSTALL_DIR}/log/plugins
 
-# Add crontab file
-COPY --chmod=600 --chown=root:root install/crontab /etc/crontabs/root
 
-# Add healthcheck script
-COPY --chmod=755 dockerfiles/healthcheck.sh /usr/local/bin/healthcheck.sh
 
 # Create empty log files and API files
 RUN touch ${LOG_APP} \
@@ -118,20 +109,18 @@ RUN touch ${LOG_APP} \
 
 # Setup services
 RUN mkdir -p /services
-COPY dockerfiles/start-*.sh /services/
-COPY dockerfiles/entrypoint.sh /usr/local/bin/
-RUN chmod +x /services/*.sh /usr/local/bin/entrypoint.sh
-COPY dockerfiles/*.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/*.sh
+
+
+
+RUN chmod +x /services/*.sh /entrypoint.sh
 
 #initialize each service with the dockerfiles/init-*.sh scripts, once.
-COPY dockerfiles/init-*.sh /tmp/
-RUN chmod +x /tmp/*.sh \
-    && /tmp/init-nginx.sh \
-    && /tmp/init-php-fpm.sh \
-    && /tmp/init-crond.sh \
-    && /tmp/init-backend.sh \
-    && rm -rf /tmp/*
+RUN chmod +x /build/*.sh \
+    && /build/init-nginx.sh \
+    && /build/init-php-fpm.sh \
+    && /build/init-crond.sh \
+    && /build/init-backend.sh \
+    && rm -rf /build/*
 
 # Create buildtimestamp.txt
 RUN date +%s > ${INSTALL_DIR}/front/buildtimestamp.txt
@@ -139,4 +128,4 @@ RUN date +%s > ${INSTALL_DIR}/front/buildtimestamp.txt
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
     CMD /usr/local/bin/healthcheck.sh
 
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+ENTRYPOINT ["sleep", "infinity"]
