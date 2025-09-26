@@ -23,12 +23,6 @@ echo "# ---/Dockerfile---" >> "$OUT_FILE"
 
 sed '/${INSTALL_DIR}/d' "${ROOT_DIR}/Dockerfile" >> "$OUT_FILE"
 
-# sed the line https://github.com/foreign-sub/aiofreepybox.git \\ to remove trailing backslash
-sed -i '/aiofreepybox.git/ s/ \\$//' "$OUT_FILE"
-
-# don't cat the file, just copy it in because it doesn't exist at build time
-sed -i 's|^ RUN cat ${INSTALL_DIR}/install/freebox_certificate.pem >> /opt/venv/lib/python3.12/site-packages/aiofreepybox/freebox_certificates.pem$| COPY install/freebox_certificate.pem /opt/venv/lib/python3.12/site-packages/aiofreepybox/freebox_certificates.pem |' "$OUT_FILE"
-
 echo "" >> "$OUT_FILE"
 echo "# ---/resources/devcontainer-Dockerfile---" >> "$OUT_FILE"
 echo "" >> "$OUT_FILE"

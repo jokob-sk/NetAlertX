@@ -1,4 +1,4 @@
-#! /bin/bash
+#! /bin/sh
 # Runtime setup for devcontainer (executed after container starts).
 # Prefer building setup into resources/devcontainer-Dockerfile when possible.
 # Use this script for runtime-only adjustments (permissions, sockets, ownership,
@@ -29,8 +29,7 @@ export TZ=Europe/Paris
 export PORT=20211
 export SOURCE_DIR="/workspaces/NetAlertX"
 
-apk add git
- 
+
 main() {
     echo "=== NetAlertX Development Container Setup ==="
     echo "Setting up ${SOURCE_DIR}..."
@@ -66,49 +65,35 @@ safe_link() {
 configure_source() {
     echo "[1/3] Configuring Source..."
     echo "  -> Linking source to ${INSTALL_DIR}"
-    echo "Dev">${INSTALL_DIR}/.VERSION
+    rm -Rf ${INSTALL_DIR}/* || true
+
+    sudo ln -s -fT ${SOURCE_DIR}/back ${INSTALL_DIR}/back
+    sudo ln -s -fT ${SOURCE_DIR}/front ${INSTALL_DIR}/front
+    sudo ln -s -fT ${SOURCE_DIR}/config ${INSTALL_DIR}/config
+    sudo ln -s -fT ${SOURCE_DIR}/db ${INSTALL_DIR}/db
+    sudo ln -s -fT ${SOURCE_DIR}/server ${INSTALL_DIR}/server
+    
 
     echo "  -> Mounting ramdisks for /log and /api"
-    sudo mount -t tmpfs -o size=256M tmpfs "${SOURCE_DIR}/log"
-    sudo mount -t tmpfs -o size=512M tmpfs "${SOURCE_DIR}/api"
-    safe_link ${SOURCE_DIR}/api           ${INSTALL_DIR}/api
-    safe_link ${SOURCE_DIR}/back          ${INSTALL_DIR}/back
-    safe_link "${SOURCE_DIR}/config"     "${INSTALL_DIR}/config"
-    safe_link "${SOURCE_DIR}/db"         "${INSTALL_DIR}/db"
-    if [ ! -f "${SOURCE_DIR}/config/app.conf" ]; then
-        cp ${SOURCE_DIR}/back/app.conf ${INSTALL_DIR}/config/
-        cp ${SOURCE_DIR}/back/app.db ${INSTALL_DIR}/db/
-    fi
-
-    safe_link "${SOURCE_DIR}/docs"       "${INSTALL_DIR}/docs"
-    safe_link "${SOURCE_DIR}/front"      "${INSTALL_DIR}/front"
-    safe_link "${SOURCE_DIR}/install"    "${INSTALL_DIR}/install"
-    safe_link "${SOURCE_DIR}/scripts"    "${INSTALL_DIR}/scripts"
-    safe_link "${SOURCE_DIR}/server"     "${INSTALL_DIR}/server"
-    safe_link "${SOURCE_DIR}/test"       "${INSTALL_DIR}/test"
-    safe_link "${SOURCE_DIR}/log"       "${INSTALL_DIR}/log"
-    safe_link "${SOURCE_DIR}/mkdocs.yml" "${INSTALL_DIR}/mkdocs.yml"
-
-    echo "  -> Copying static files to ${INSTALL_DIR}"
-    cp -R ${SOURCE_DIR}/CODE_OF_CONDUCT.md ${INSTALL_DIR}/
-    cp -R ${SOURCE_DIR}/install/ /
-    if [ -e "${INSTALL_DIR}/api/user_notifications.json" ]; then
-        echo "  -> Removing existing user_notifications.json"
-        sudo rm "${INSTALL_DIR}"/api/user_notifications.json
-    fi
+   
+    mkdir ${INSTALL_DIR}/logt ${INSTALL_DIR}/apit || true
+    cp -R ${SOURCE_DIR}/log/* ${INSTALL_DIR}/logt/ || true
+    cp ${SOURCE_DIR}/api/* ${INSTALL_DIR}/apit/ || true
+    sudo mount -t tmpfs -o size=256M tmpfs "${INSTALL_DIR}/log"
+    sudo mount -t tmpfs -o size=512M tmpfs "${INSTALL_DIR}/api"
+    sudo cp -R ${INSTALL_DIR}/logt/* ${INSTALL_DIR}/log/ || true
+    sudo cp -R ${INSTALL_DIR}/apit/* ${INSTALL_DIR}/api/ || true
+    rm -Rf ${INSTALL_DIR}/logt ${INSTALL_DIR}/apit || true
+    echo "Dev">${INSTALL_DIR}/.VERSION
+    
 
 
     
     echo "  -> Setting ownership and permissions"
-    sudo find ${INSTALL_DIR}/ -type d -exec chmod 775 {} \;
-    sudo find ${INSTALL_DIR}/ -type f -exec chmod 664 {} \;
+    usermod -g netalertx nginx 
     sudo date +%s > "${INSTALL_DIR}/front/buildtimestamp.txt"
-    sudo chmod 640 "${INSTALL_DIR}/config/${CONF_FILE}" || true
+    
 
-
-
-    echo "  -> Setting up log directory"
-    install -d -o netalertx -g www-data -m 777 ${INSTALL_DIR}/log/plugins
 
     echo "  -> Empty log"|tee ${INSTALL_DIR}/log/app.log \
         ${INSTALL_DIR}/log/app_front.log \
