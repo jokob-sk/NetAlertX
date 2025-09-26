@@ -1,6 +1,14 @@
 .vscode
+.dotnet
+.vscode-server
+.gitconfig
+\.*CommandMarker
+deviceid
+.git-placeholder
 .DS_Store
 config/*
+.ash_history
+.VERSION
 config/pialert.conf
 config/app.conf
 db/*
