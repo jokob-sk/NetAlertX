@@ -164,7 +164,11 @@ fi
  printf "%b\n" "--------------------------------------------------------------------------"
  printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}Setting up Python environment"
  printf "%b\n" "--------------------------------------------------------------------------"
-python3 -m venv /opt/myenv
+if [ ! -d /opt/myenv ]; then
+  python3 -m venv /opt/myenv
+else
+  python3 -m venv --upgrade /opt/myenv
+fi
 source /opt/myenv/bin/activate
 
 update-alternatives --install /usr/bin/python python /usr/bin/python3 10
