@@ -11,7 +11,7 @@ ENV PYTHONPATH=/workspaces/NetAlertX/test:/workspaces/NetAlertX/server:/app:/app
 COPY .devcontainer/resources/99-xdebug.ini /etc/php83/conf.d/99-xdebug.ini
 
 # Install common tools, create user, and set up sudo
-RUN apk add --no-cache git nano vim jq php83-pecl-xdebug py3-pip nodejs sudo gpgconf pytest pytest-cov shadow
+RUN apk add --no-cache git nano vim jq php83-pecl-xdebug py3-pip nodejs sudo gpgconf pytest pytest-cov shadow github-cli
   
 # Install debugpy in the virtualenv if present, otherwise into system python3
 RUN /bin/sh -c '(/opt/venv/bin/python3 -m pip install --no-cache-dir debugpy) || (python3 -m pip install --no-cache-dir debugpy) || true'
