@@ -65,32 +65,27 @@ safe_link() {
 configure_source() {
     echo "[1/3] Configuring Source..."
     echo "  -> Linking source to ${INSTALL_DIR}"
-    rm -Rf ${INSTALL_DIR}/* || true
-
-    sudo ln -s -fT ${SOURCE_DIR}/back ${INSTALL_DIR}/back
-    sudo ln -s -fT ${SOURCE_DIR}/front ${INSTALL_DIR}/front
-    sudo ln -s -fT ${SOURCE_DIR}/config ${INSTALL_DIR}/config
-    sudo ln -s -fT ${SOURCE_DIR}/db ${INSTALL_DIR}/db
-    sudo ln -s -fT ${SOURCE_DIR}/server ${INSTALL_DIR}/server
+    sudo umount "${INSTALL_DIR}/log" 2>/dev/null
+    sudo umount "${INSTALL_DIR}/api" 2>/dev/null
+    sudo rm -Rf ${INSTALL_DIR} || true
+    sudo ln -s ${SOURCE_DIR} ${INSTALL_DIR}
     
-
     echo "  -> Mounting ramdisks for /log and /api"
-   
-    mkdir ${INSTALL_DIR}/logt ${INSTALL_DIR}/apit || true
-    cp -R ${SOURCE_DIR}/log/* ${INSTALL_DIR}/logt/ || true
-    cp ${SOURCE_DIR}/api/* ${INSTALL_DIR}/apit/ || true
+    sudo mkdir -p /tmp/log /tmp/api || true
+    sudo cp -R ${SOURCE_DIR}/log/ /tmp/log/ || true
+    sudo cp -R ${SOURCE_DIR}/api/ /tmp/api/ || true
+    sudo mkdir -p ${NETALERTX_API} ${NETALERTX_LOG}
     sudo mount -t tmpfs -o size=256M tmpfs "${INSTALL_DIR}/log"
     sudo mount -t tmpfs -o size=512M tmpfs "${INSTALL_DIR}/api"
-    sudo cp -R ${INSTALL_DIR}/logt/* ${INSTALL_DIR}/log/ || true
-    sudo cp -R ${INSTALL_DIR}/apit/* ${INSTALL_DIR}/api/ || true
-    rm -Rf ${INSTALL_DIR}/logt ${INSTALL_DIR}/apit || true
+    sudo cp -R /tmp/log/* ${NETALERTX_LOG} 2>/dev/null || true
+    sudo cp -R /tmp/api/* ${NETALERTX_API} 2>/dev/null || true
+    sudo rm -Rf /tmp/log /tmp/api || true 
     echo "Dev">${INSTALL_DIR}/.VERSION
     
 
 
     
     echo "  -> Setting ownership and permissions"
-    usermod -g netalertx nginx 
     sudo date +%s > "${INSTALL_DIR}/front/buildtimestamp.txt"
     
 
