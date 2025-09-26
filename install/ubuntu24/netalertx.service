@@ -4,7 +4,8 @@ ConditionPathExists=/app/server
 
 [Service]
 EnvironmentFile=/app/.env
-ExecStart=/opt/netalertx-python/bin/python /app/server/
+WorkingDirectory=/app/server
+ExecStart=/opt/netalertx-python/bin/python -m /app/server
 Restart=on-failure
 Type=simple
 
