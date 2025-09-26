@@ -76,7 +76,10 @@ update-alternatives --install /usr/bin/python python /usr/bin/python3 10
 python3 -m venv "${VENV_DIR}"
 source "${VENV_DIR}/bin/activate"
 
-pip3 install -r "$SCRIPT_DIR/requirements.txt"
+pip3 install -r "$SCRIPT_DIR/requirements.txt" || {  
+  echo "[INSTALL] Failed to install Python dependencies"  
+  exit 1  
+}  
 
 echo "---------------------------------------------------------"
 echo "[INSTALL] Stopping any NGINX web server and components"
