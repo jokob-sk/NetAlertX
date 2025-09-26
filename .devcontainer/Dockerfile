@@ -73,7 +73,7 @@ ENV PHP_FPM_CONFIG_FILE=/etc/php83/php-fpm.conf
 ENV PHP_WWW_CONF_FILE=/etc/php83/php-fpm.d/www.conf
 ENV SYSTEM_SERVICES=/services
 
-RUN apk update --no-cache bash libbsd zip lsblk gettext-envsubst sudo mtr tzdata curl arp-scan iproute2 \
+RUN apk add --no-cache bash libbsd zip lsblk gettext-envsubst sudo mtr tzdata curl arp-scan iproute2 \
     iproute2-ss nmap nmap-scripts traceroute nbtscan openrc dbus net-tools net-snmp-tools bind-tools awake \
     ca-certificates sqlite php83 php83-fpm php83-cgi php83-curl php83-sqlite3 php83-session python3 nginx sudo && \
     rm -rf /var/cache/apk/* && \

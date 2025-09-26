@@ -6,6 +6,7 @@
 deviceid
 .git-placeholder
 .DS_Store
+.cache
 config/*
 .ash_history
 .VERSION
