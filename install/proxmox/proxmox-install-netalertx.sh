@@ -339,55 +339,57 @@ chown root:www-data "${INSTALL_DIR}"/api/user_notifications.json
  printf "%b\n" "--------------------------------------------------------------------------"
  printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}Fixing WEB_UI_DIR: ${WEB_UI_DIR}"
  printf "%b\n" "--------------------------------------------------------------------------"
-chmod -R a+rwx "$WEB_UI_DIR"
+ chown -R www-data:www-data "$WEB_UI_DIR"
+ chmod -R u=rwX,g=rX,o= "$WEB_UI_DIR"
 
  printf "%b\n" "--------------------------------------------------------------------------"
  printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}Fixing INSTALL_DIR: ${INSTALL_DIR}"
  printf "%b\n" "--------------------------------------------------------------------------"
 
-chmod -R a+rw "$INSTALL_DIR/log"
-chmod -R a+rwx "$INSTALL_DIR"
+ chown -R www-data:www-data "$INSTALL_DIR/log" "$INSTALL_DIR/api"
+ chmod -R u=rwX,g=rwX,o= "$INSTALL_DIR/log" "$INSTALL_DIR/api"
+ chown -R www-data:www-data "$INSTALL_DIR"
+ chmod -R u=rwX,g=rX,o= "$INSTALL_DIR"
 
  printf "%b\n" "--------------------------------------------------------------------------"
  printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}Copy starter $DB_FILE and $CONF_FILE if they don't exist"
  printf "%b\n" "--------------------------------------------------------------------------"
 
-# DANGER ZONE: ALWAYS_FRESH_INSTALL 
-if [ "${ALWAYS_FRESH_INSTALL:-false}" = true ]; then
-     printf "%b\n" "--------------------------------------------------------------------------"
-     printf "%b\n" "${GREEN}[INSTALLING]  ${RESET}❗ ALERT /db and /config folders are cleared because the"
-     printf "%b\n" "                    ALWAYS_FRESH_INSTALL is set to: ${ALWAYS_FRESH_INSTALL}❗"
-     printf "%b\n" "--------------------------------------------------------------------------"
-    # Delete content of "/config/"
-    rm -rf "${INSTALL_DIR}/config/"*
-  
-    # Delete content of "/db/"
-    rm -rf "${INSTALL_DIR}/db/"*
-fi
+ # DANGER ZONE: ALWAYS_FRESH_INSTALL 
+ if [ "${ALWAYS_FRESH_INSTALL:-false}" = true ]; then
+      printf "%b\n" "--------------------------------------------------------------------------"
+      printf "%b\n" "${GREEN}[INSTALLING]  ${RESET}❗ ALERT /db and /config folders are cleared because the"
+      printf "%b\n" "                    ALWAYS_FRESH_INSTALL is set to: ${ALWAYS_FRESH_INSTALL}❗"
+      printf "%b\n" "--------------------------------------------------------------------------"
+     # Delete content of "/config/"
+     rm -rf "${INSTALL_DIR}/config/"*
+   
+     # Delete content of "/db/"
+     rm -rf "${INSTALL_DIR}/db/"*
+ fi
 
 
-# Copy starter $DB_FILE and $CONF_FILE if they don't exist
-mkdir -p "${INSTALL_DIR}/config" "${INSTALL_DIR}/db"
-cp -u "${INSTALL_DIR}/back/${CONF_FILE}" "${INSTALL_DIR}/config/${CONF_FILE}"
-cp -u "${INSTALL_DIR}/back/${DB_FILE}"  "${FILEDB}"
+ # Copy starter $DB_FILE and $CONF_FILE if they don't exist
+ mkdir -p "${INSTALL_DIR}/config" "${INSTALL_DIR}/db"
+ cp -u "${INSTALL_DIR}/back/${CONF_FILE}" "${INSTALL_DIR}/config/${CONF_FILE}"
+ cp -u "${INSTALL_DIR}/back/${DB_FILE}"  "${FILEDB}"
 
  printf "%b\n" "--------------------------------------------------------------------------"
  printf "%b\n" "${GREEN}[INSTALLING]                ${RESET}Fixing permissions after copied starter config & DB"
  printf "%b\n" "--------------------------------------------------------------------------"
 
-if [ -f "$FILEDB" ]; then
-    chown -R www-data:www-data "$FILEDB"
-fi
-# Change Nginx User
-sed -i '2s/.*/user  www-data;/' /etc/nginx/nginx.conf
+ if [ -f "$FILEDB" ]; then
+     chown -R www-data:www-data "$FILEDB"
+ fi
+ # Change Nginx User
+ sed -i '2s/.*/user  www-data;/' /etc/nginx/nginx.conf
 
-# Change Nginx User
-sed -i '2s/.*/user  www-data;/' /etc/nginx/nginx.conf
+ # Change Nginx User
+ sed -i '2s/.*/user  www-data;/' /etc/nginx/nginx.conf
 
-chmod -R a+rwx "$INSTALL_DIR" # second time after we copied the files
-chmod -R a+rw "$INSTALL_DIR/config"
-chgrp -R www-data  "$INSTALL_DIR"
-
+ chmod -R u=rwX,g=rX,o= "$INSTALL_DIR" # second time after we copied the files
+ chmod -R u=rw,g=r,o= "$INSTALL_DIR/config"
+ chgrp -R www-data  "$INSTALL_DIR"
 # Check if buildtimestamp.txt doesn't exist
 if [ ! -f "${INSTALL_DIR}/front/buildtimestamp.txt" ]; then
     # Create buildtimestamp.txt
