@@ -44,73 +44,49 @@ main() {
     start_services
 }
 
-# safe_link: create a symlink from source to target, removing existing target if necessary
-# bypassing the default behavior of symlinking the directory into the target directory if it is a directory
-safe_link() {
-    # usage: safe_link <source> <target>
-    local src="$1"
-    local dst="$2"
-
-    # Ensure parent directory exists
-    install -d -m 775 "$(dirname "$dst")" >/dev/null 2>&1 || true
-
-    # If target exists, remove it without dereferencing symlinks
-    if [ -L "$dst" ] || [ -e "$dst" ]; then
-        rm -rf "$dst"
-    fi
-
-    # Create link; -n prevents deref, -f replaces if somehow still exists
-    ln -sfn "$src" "$dst"
-}
 
 # Setup source directory
 configure_source() {
     echo "[1/3] Configuring Source..."
-    echo "  -> Linking source to ${INSTALL_DIR}"
+    echo "  -> Cleaning up previous instances"
     sudo umount "${INSTALL_DIR}/log" 2>/dev/null
     sudo umount "${INSTALL_DIR}/api" 2>/dev/null
     sudo rm -Rf ${INSTALL_DIR} || true
+
+    echo "  -> Linking source to ${INSTALL_DIR}"
     sudo ln -s ${SOURCE_DIR} ${INSTALL_DIR}
     
     echo "  -> Mounting ramdisks for /log and /api"
-    sudo mkdir -p /tmp/log /tmp/api || true
-    sudo cp -R ${SOURCE_DIR}/log/ /tmp/log/ || true
-    sudo cp -R ${SOURCE_DIR}/api/ /tmp/api/ || true
-    sudo mkdir -p ${NETALERTX_API} ${NETALERTX_LOG}
-    # mount tmpfs with netalertx:netalertx ownership and 775 permissions
     sudo mount -o uid=$(id -u netalertx),gid=$(id -g netalertx),mode=775 -t tmpfs -o size=256M tmpfs "${NETALERTX_LOG}"
     sudo mount -o uid=$(id -u netalertx),gid=$(id -g netalertx),mode=775 -t tmpfs -o size=256M tmpfs "${NETALERTX_API}"
+    mkdir -p ${NETALERTX_PLUGINS_LOG}
+    touch ${NETALERTX_PLUGINS_LOG}/.git-placeholder ${NETALERTX_API}/.git-placeholder
     # mount tmpfs with root:root ownership and 755 permissions
-    sudo cp -R /tmp/log/* ${NETALERTX_LOG} 2>/dev/null || true
-    sudo cp -R /tmp/api/* ${NETALERTX_API} 2>/dev/null || true
-    sudo rm -Rf /tmp/log /tmp/api || true 
-    echo "Dev">${INSTALL_DIR}/.VERSION
-    
-
-
-    
-    echo "  -> Setting ownership and permissions"
-    chmod +x /workspaces/NetAlertX/.devcontainer/scripts/start-nginx.sh
-    sudo date +%s > "${INSTALL_DIR}/front/buildtimestamp.txt"
-    
 
 
     echo "  -> Empty log"|tee ${INSTALL_DIR}/log/app.log \
         ${INSTALL_DIR}/log/app_front.log \
         ${INSTALL_DIR}/log/stdout.log
     touch ${INSTALL_DIR}/log/stderr.log \
-    ${INSTALL_DIR}/log/execution_queue.log
+        ${INSTALL_DIR}/log/execution_queue.log
     echo 0>${INSTALL_DIR}/log/db_is_locked.log
     mkdir -p /app/log/plugins
     sudo chown -R netalertx:www-data ${INSTALL_DIR}
 
-    date +%s > /app/front/buildtimestamp.txt
+    
 
     killall python &>/dev/null
     sleep 1
 }
 
-#
+# configure_php: configure PHP-FPM and enable dev debug options
+configure_php() {
+    echo "[2/3] Configuring PHP-FPM..."
+    sudo killall php-fpm83 &>/dev/null || true
+    sudo chown netalertx:netalertx /run/php/ 2>/dev/null || true
+    sudo cp /workspaces/NetAlertX/.devcontainer/resources/99-xdebug.ini /etc/php83/conf.d/99-xdebug.ini
+
+}
 
 # start_services: start crond, PHP-FPM, nginx and the application
 start_services() {
@@ -143,44 +119,6 @@ start_services() {
     $APP_COMMAND 
     sleep 2
 }
-
-# configure_php: configure PHP-FPM and enable dev debug options
-configure_php() {
-    echo "[2/3] Configuring PHP-FPM..."
-    sudo killall php-fpm83 &>/dev/null || true
-    install -d -o netalertx -g www-data /run/php/ &>/dev/null
-    sudo sed -i "/^;pid/c\pid = /run/php/php8.3-fpm.pid" /etc/php83/php-fpm.conf
-    sudo sed -i 's|^listen = .*|listen = 127.0.0.1:9000|' /etc/php83/php-fpm.d/www.conf
-    sudo sed -i 's|fastcgi_pass .*|fastcgi_pass 127.0.0.1:9000;|' /etc/nginx/http.d/*.conf
-    
-
-    #increase max child process count to 10
-    sudo sed -i -e 's/pm.max_children = 5/pm.max_children = 10/' /etc/php83/php-fpm.d/www.conf 
-
-    # find any line in php-fmp that starts with either ;error_log or error_log = and replace it with error_log = /app/log/app.php_errors.log
-    sudo sed -i '/^;*error_log\s*=/c\error_log = /app/log/app.php_errors.log' /etc/php83/php-fpm.conf
-    # If the line was not found, append it to the end of the file
-    if ! grep -q '^error_log\s*=' /etc/php83/php-fpm.conf; then
-        echo 'error_log = /app/log/app.php_errors.log' | sudo tee -a /etc/php83/php-fpm.conf
-    fi
-    
-    sudo mkdir -p /etc/php83/conf.d
-    sudo cp /workspaces/NetAlertX/.devcontainer/resources/99-xdebug.ini /etc/php83/conf.d/99-xdebug.ini
-
-    sudo rm -R /var/log/php83 &>/dev/null || true
-    install -d -o netalertx -g www-data -m 755 var/log/php83;
-
-    sudo chmod 644 /etc/php83/conf.d/99-xdebug.ini || true
-    sudo install -d -o netalertx -g www-data -m 775 /run/php
-
-    sudo rm /var/lib/nginx/logs/ && sudo install -d -o netalertx -g www-data /var/lib/nginx/logs/
-    sudo rm /var/log/nginx && sudo install -d -o netalertx -g www-data /var/log/nginx
-    sudo chown -R netalertx:www-data /var/log/nginx
-    sudo chown -R netalertx:www-data /run/nginx
-
-}
-
-# (duplicate start_services removed)
 
 
 

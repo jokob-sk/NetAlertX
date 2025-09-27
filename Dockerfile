@@ -23,7 +23,7 @@ ARG INSTALL_DIR=/app
 ENV PATH="/opt/venv/bin:/usr/bin:/sbin:/bin:$PATH" 
 
 # NetAlertX app directories
-ENV NETALERTX_APP=/app
+ENV NETALERTX_APP=${INSTALL_DIR}
 ENV NETALERTX_CONFIG=${NETALERTX_APP}/config
 ENV NETALERTX_FRONT=${NETALERTX_APP}/front
 ENV NETALERTX_SERVER=${NETALERTX_APP}/server
@@ -32,8 +32,6 @@ ENV NETALERTX_DB=${NETALERTX_APP}/db
 ENV NETALERTX_BACK=${NETALERTX_APP}/back
 ENV NETALERTX_LOG=${NETALERTX_APP}/log
 ENV NETALERTX_PLUGINS_LOG=${NETALERTX_LOG}/plugins
-ENV NETALERTX_NGINIX_CONFIG=${NETALERTX_APP}/services/nginx
-ENV NETALERTX_SERVICES=${NETALERTX_APP}/services
 
 # NetAlertX log files
 ENV LOG_IP_CHANGES=${NETALERTX_LOG}/IP_changes.log
@@ -49,20 +47,24 @@ ENV LOG_REPORT_OUTPUT_JSON=${NETALERTX_LOG}/report_output.json
 ENV LOG_STDOUT=${NETALERTX_LOG}/stdout.log
 ENV LOG_CROND=${NETALERTX_LOG}/crond.log
 
-# Important configuration files
-ENV NGINX_CONFIG_FILE=${NETALERTX_NGINIX_CONFIG}/nginx.conf
+# System Services configuration files
+ENV SYSTEM_SERVICES=/services
+ENV SYSTEM_SERVICES_CONFIG=${SYSTEM_SERVICES}/config
+ENV SYSTEM_NGINIX_CONFIG=${SYSTEM_SERVICES_CONFIG}/nginx
+ENV NGINX_CONFIG_FILE=${SYSTEM_NGINIX_CONFIG}/nginx.conf
 ENV NETALERTX_CONFIG_FILE=${NETALERTX_CONFIG}/app.conf
 ENV NETALERTX_DB_FILE=${NETALERTX_DB}/app.db
 ENV PHP_FPM_CONFIG_FILE=/etc/php83/php-fpm.conf
 ENV PHP_WWW_CONF_FILE=/etc/php83/php-fpm.d/www.conf
-ENV SYSTEM_SERVICES=/services
+ENV PYTHONPATH=${NETALERTX_SERVER}
+
 
 #Create netalertx user and group
 RUN addgroup -g 20211 netalertx && \
-    adduser -u 20211 -G netalertx -D -h /app netalertx 
+    adduser -u 20211 -G netalertx -D -h ${NETALERTX_APP} netalertx 
 
-RUN apk add --no-cache bash libbsd zip lsblk gettext-envsubst sudo mtr tzdata curl arp-scan iproute2 \
-    iproute2-ss nmap nmap-scripts traceroute nbtscan openrc dbus net-tools net-snmp-tools bind-tools awake \
+RUN apk add --no-cache bash mtr libbsd zip lsblk sudo tzdata curl arp-scan iproute2 \
+    iproute2-ss nmap nmap-scripts traceroute nbtscan net-tools net-snmp-tools bind-tools awake \
     ca-certificates sqlite php83 php83-fpm php83-cgi php83-curl php83-sqlite3 php83-session python3 nginx sudo && \
     rm -rf /var/cache/apk/* && \
     rm -f /etc/nginx/http.d/default.conf
@@ -84,7 +86,7 @@ RUN sh /build/init-nginx.sh && \
     sh /build/init-php-fpm.sh && \
     sh /build/init-crond.sh && \
     sh /build/init-backend.sh && \
-    rm -rf /build/*
+    rm -rf /build
 
 # set netalertx to allow sudoers for any command, no password
 RUN echo "netalertx ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
@@ -100,25 +102,39 @@ RUN addgroup -g 20212 readonly && \
     adduser -u 20212 -G readonly -D -h /app readonly
     
 # remove netalertx from sudoers
-RUN sh -c "sed -i '/netalertx ALL=(ALL) NOPASSWD: ALL/d' /etc/sudoers"
 
-RUN chown -R readonly:readonly ${NETALERTX_BACK} ${NETALERTX_FRONT} ${NETALERTX_SERVER} ${SYSTEM_SERVICES} ${NETALERTX_SERVICES} && \
+RUN chown -R readonly:readonly ${NETALERTX_BACK} ${NETALERTX_FRONT} ${NETALERTX_SERVER} ${SYSTEM_SERVICES} ${SYSTEM_SERVICES} && \
     chmod -R 004 ${NETALERTX_BACK} ${NETALERTX_FRONT} ${NETALERTX_SERVER} && \
-    chmod 005 ${NETALERTX_BACK} ${NETALERTX_FRONT} ${NETALERTX_SERVER} && \
-    chmod -R 005 ${SYSTEM_SERVICES} ${NETALERTX_SERVICES} && \
+    find ${NETALERTX_BACK} ${NETALERTX_FRONT} ${NETALERTX_SERVER} -type d -exec chmod 005 {} + && \
+    chmod -R 005 ${SYSTEM_SERVICES} ${SYSTEM_SERVICES}/* && \
     chown -R netalertx:netalertx ${NETALERTX_CONFIG} ${NETALERTX_DB} ${NETALERTX_API} ${NETALERTX_LOG} && \
-    chmod -R 600 ${NETALERTX_CONFIG} ${NETALERTX_DB}  {NETALERTX_API} ${NETALERTX_LOG} && \
+    chmod -R 600 ${NETALERTX_CONFIG} ${NETALERTX_DB} ${NETALERTX_API} ${NETALERTX_LOG} && \
     chmod 700 ${NETALERTX_CONFIG} ${NETALERTX_DB} ${NETALERTX_API} ${NETALERTX_LOG} ${NETALERTX_PLUGINS_LOG} && \
     chown readonly:readonly / && \
     chown -R netalertx:netalertx /var/log/nginx /var/lib/nginx /run && \
-    echo -ne '#!/bin/bash\nexit 0\n' > /usr/bin/sudo && chmod +x /usr/bin/sudo && \
     find / -path /proc -prune -o -path /sys -prune -o -path /dev -prune -o \
          -path /run -prune -o -path /var/log -prune -o -path /tmp -prune -o \
          -group 0 -o -user 0 -exec chown readonly:readonly {} +
+
+#
+# remove sudo and alpine installers pacakges
+RUN apk del sudo && \
+    rm -rf /var/cache/apk/*
+# remove all users and groups except readonly and netalertx without userdel/groupdel binaries
+# RUN awk -F: '($1 != "readonly" && $1 != "netalertx") {print $1}' /etc/passwd | xargs -r -n 1 deluser -r && \
+#     awk -F: '($1 != "readonly" && $1 != "netalertx") {print $1}' /etc/group | xargs -r -n 1 delgroup
+# Remove all sudoers
+RUN rm -Rf /etc/sudoers.d/* /etc/shadow /etc/gshadow /etc/sudoers \
+    /lib/apk /lib/firmware  /lib/modules-load.d /lib/sysctl.d /mnt /home/ /root \
+    /srv /media && \
+    echo -ne '#!/bin/bash\nexit 0\n' > /usr/bin/sudo && chmod +x /usr/bin/sudo
+
+
+
 
 USER netalertx
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
     CMD /usr/local/bin/healthcheck.sh
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT [ "bash", "/entrypoint.sh" ]
