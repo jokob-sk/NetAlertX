@@ -368,8 +368,19 @@ def importConfigs (pm, db, all_plugins):
         # mylog('verbose', [f"[Config] pref {plugin["unique_prefix"]} run_val {run_val} run_sch {run_sch} "])
 
         if run_val == 'schedule':
-            newSchedule = Cron(run_sch).schedule(start_date=datetime.datetime.now(conf.tz))
-            conf.mySchedules.append(schedule_class(plugin["unique_prefix"], newSchedule, newSchedule.next(), False))
+            newSchedule = None
+            try:
+                newSchedule = Cron(run_sch).schedule(start_date=datetime.datetime.now(conf.tz))
+                if (newSchedule is not None):
+                    conf.mySchedules.append(schedule_class(plugin["unique_prefix"], newSchedule, newSchedule.next(), False))
+                else:
+                    raise(ValueError("Invalid schedule"))
+            except ValueError as e:
+                mylog('none', [f"[Config] [ERROR] Invalid schedule '{run_sch}' for plugin '{plugin['unique_prefix']}'. Error: {e}."])
+            except Exception as e:
+                mylog('none', [f"[Config] [ERROR] Could not set schedule '{run_sch}' for plugin '{plugin['unique_prefix']}'. Error: {e}."])
+
+    
 
     # mylog('verbose', [f"[Config] conf.mySchedules {conf.mySchedules}"])
 
