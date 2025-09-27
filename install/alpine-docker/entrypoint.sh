@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# verify container capabilities at startup
+/services/capcheck.sh
+
 # Function to clean up background processes
 cleanup() {
     echo "Caught signal, shutting down services..."

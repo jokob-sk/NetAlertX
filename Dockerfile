@@ -65,7 +65,8 @@ RUN addgroup -g 20211 netalertx && \
 
 RUN apk add --no-cache bash mtr libbsd zip lsblk sudo tzdata curl arp-scan iproute2 \
     iproute2-ss nmap nmap-scripts traceroute nbtscan net-tools net-snmp-tools bind-tools awake \
-    ca-certificates sqlite php83 php83-fpm php83-cgi php83-curl php83-sqlite3 php83-session python3 nginx sudo && \
+    ca-certificates sqlite php83 php83-fpm php83-cgi php83-curl php83-sqlite3 php83-session python3 \
+    nginx sudo libcap  && \
     rm -rf /var/cache/apk/* && \
     rm -f /etc/nginx/http.d/default.conf
 
@@ -80,6 +81,9 @@ RUN install -d -o netalertx -g netalertx -m 755 ${NETALERTX_API} && \
     install -d -o netalertx -g netalertx -m 755 ${NETALERTX_LOG} && \
     sh -c "find ${NETALERTX_APP} -type f \( -name '*.sh' -o -name 'speedtest-cli' \) \
         -exec chmod 750 {} \;"
+
+# setcap to allow nmap to run without root
+RUN setcap cap_net_raw,cap_net_admin+eip /usr/bin/nmap
 
 #initialize each service with the dockerfiles/init-*.sh scripts, once.
 RUN sh /build/init-nginx.sh && \
@@ -127,7 +131,7 @@ RUN apk del sudo && \
 RUN rm -Rf /etc/sudoers.d/* /etc/shadow /etc/gshadow /etc/sudoers \
     /lib/apk /lib/firmware  /lib/modules-load.d /lib/sysctl.d /mnt /home/ /root \
     /srv /media && \
-    echo -ne '#!/bin/bash\nexit 0\n' > /usr/bin/sudo && chmod +x /usr/bin/sudo
+    echo -ne '#!/bin/bash\n"$@"\n' > /usr/bin/sudo && chmod +x /usr/bin/sudo
 
 
 

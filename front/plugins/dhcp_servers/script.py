@@ -41,7 +41,7 @@ def main():
     plugin_objects = Plugin_Objects(RESULT_FILE)
     timeoutSec = get_setting_value('DHCPSRVS_RUN_TIMEOUT')
 
-    nmapArgs = ['sudo', 'nmap', '--script', 'broadcast-dhcp-discover']
+    nmapArgs = ['sudo', 'nmap', '--privileged' '--script', 'broadcast-dhcp-discover']
 
     try:
         dhcp_probes = 1
