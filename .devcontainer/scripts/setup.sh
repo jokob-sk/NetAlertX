@@ -10,7 +10,7 @@ id
 export APP_DIR="/app"
 export APP_COMMAND="/workspaces/NetAlertX/.devcontainer/scripts/restart-backend.sh"
 export PHP_FPM_BIN="/usr/sbin/php-fpm83"
-export NGINX_BIN="/usr/sbin/nginx"
+export NGINX_BIN="/workspaces/NetAlertX/.devcontainer/scripts/start-nginx.sh"
 export CROND_BIN="/usr/sbin/crond -f"
 
 
@@ -33,6 +33,8 @@ export SOURCE_DIR="/workspaces/NetAlertX"
 main() {
     echo "=== NetAlertX Development Container Setup ==="
     echo "Setting up ${SOURCE_DIR}..."
+    sudo chown $(id -u):$(id -g) /workspaces
+    sudo chown 755 /workspaces
     configure_source
     
     echo "--- Starting Development Services ---"
@@ -75,8 +77,10 @@ configure_source() {
     sudo cp -R ${SOURCE_DIR}/log/ /tmp/log/ || true
     sudo cp -R ${SOURCE_DIR}/api/ /tmp/api/ || true
     sudo mkdir -p ${NETALERTX_API} ${NETALERTX_LOG}
-    sudo mount -t tmpfs -o size=256M tmpfs "${INSTALL_DIR}/log"
-    sudo mount -t tmpfs -o size=512M tmpfs "${INSTALL_DIR}/api"
+    # mount tmpfs with netalertx:netalertx ownership and 775 permissions
+    sudo mount -o uid=$(id -u netalertx),gid=$(id -g netalertx),mode=775 -t tmpfs -o size=256M tmpfs "${NETALERTX_LOG}"
+    sudo mount -o uid=$(id -u netalertx),gid=$(id -g netalertx),mode=775 -t tmpfs -o size=256M tmpfs "${NETALERTX_API}"
+    # mount tmpfs with root:root ownership and 755 permissions
     sudo cp -R /tmp/log/* ${NETALERTX_LOG} 2>/dev/null || true
     sudo cp -R /tmp/api/* ${NETALERTX_API} 2>/dev/null || true
     sudo rm -Rf /tmp/log /tmp/api || true 
@@ -86,6 +90,7 @@ configure_source() {
 
     
     echo "  -> Setting ownership and permissions"
+    chmod +x /workspaces/NetAlertX/.devcontainer/scripts/start-nginx.sh
     sudo date +%s > "${INSTALL_DIR}/front/buildtimestamp.txt"
     
 
@@ -96,6 +101,8 @@ configure_source() {
     touch ${INSTALL_DIR}/log/stderr.log \
     ${INSTALL_DIR}/log/execution_queue.log
     echo 0>${INSTALL_DIR}/log/db_is_locked.log
+    mkdir -p /app/log/plugins
+    sudo chown -R netalertx:www-data ${INSTALL_DIR}
 
     date +%s > /app/front/buildtimestamp.txt
 
@@ -141,10 +148,11 @@ start_services() {
 configure_php() {
     echo "[2/3] Configuring PHP-FPM..."
     sudo killall php-fpm83 &>/dev/null || true
-    install -d -o nginx -g www-data /run/php/ &>/dev/null
+    install -d -o netalertx -g www-data /run/php/ &>/dev/null
     sudo sed -i "/^;pid/c\pid = /run/php/php8.3-fpm.pid" /etc/php83/php-fpm.conf
     sudo sed -i 's|^listen = .*|listen = 127.0.0.1:9000|' /etc/php83/php-fpm.d/www.conf
     sudo sed -i 's|fastcgi_pass .*|fastcgi_pass 127.0.0.1:9000;|' /etc/nginx/http.d/*.conf
+    
 
     #increase max child process count to 10
     sudo sed -i -e 's/pm.max_children = 5/pm.max_children = 10/' /etc/php83/php-fpm.d/www.conf 
@@ -155,7 +163,7 @@ configure_php() {
     if ! grep -q '^error_log\s*=' /etc/php83/php-fpm.conf; then
         echo 'error_log = /app/log/app.php_errors.log' | sudo tee -a /etc/php83/php-fpm.conf
     fi
-
+    
     sudo mkdir -p /etc/php83/conf.d
     sudo cp /workspaces/NetAlertX/.devcontainer/resources/99-xdebug.ini /etc/php83/conf.d/99-xdebug.ini
 
@@ -163,6 +171,12 @@ configure_php() {
     install -d -o netalertx -g www-data -m 755 var/log/php83;
 
     sudo chmod 644 /etc/php83/conf.d/99-xdebug.ini || true
+    sudo install -d -o netalertx -g www-data -m 775 /run/php
+
+    sudo rm /var/lib/nginx/logs/ && sudo install -d -o netalertx -g www-data /var/lib/nginx/logs/
+    sudo rm /var/log/nginx && sudo install -d -o netalertx -g www-data /var/log/nginx
+    sudo chown -R netalertx:www-data /var/log/nginx
+    sudo chown -R netalertx:www-data /run/nginx
 
 }
 

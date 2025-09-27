@@ -27,23 +27,25 @@
     {
       "label": "Re-Run Startup Script",
       "type": "shell",
-      "command": "${workspaceFolder:NetAlertX}/.devcontainer/scripts/setup.sh",
+      "command": "test ! -d /workspaces && echo not in container && exit 1; ${workspaceFolder:NetAlertX}/.devcontainer/scripts/setup.sh",
       "presentation": {
         "echo": true,
         "reveal": "always",
         "panel": "shared",
         "showReuseMessage": false
       },
+      
       "problemMatcher": [],
       "icon": {
         "id": "beaker",
         "color": "terminal.ansiBlue"
       }
+      
     },
     {
       "label": "Start Backend (Python)",
       "type": "shell",
-      "command": "/workspaces/NetAlertX/.devcontainer/scripts/restart-backend.sh",
+      "command": "test ! -d /workspaces && echo not in container && exit 1; /workspaces/NetAlertX/.devcontainer/scripts/restart-backend.sh",
       "presentation": {
         "echo": true,
         "reveal": "always",
@@ -60,7 +62,7 @@
     {
       "label": "Start Frontend (nginx and PHP-FPM)",
       "type": "shell",
-      "command": "killall php-fpm83 nginx 2>/dev/null || true; sleep 1; php-fpm83 & nginx",
+      "command": "test ! -d /workspaces && echo not in container && exit 1; killall php-fpm83 nginx 2>/dev/null || true; sleep 1; php-fpm83 & nginx",
       "presentation": {
         "echo": true,
         "reveal": "always",
@@ -77,7 +79,7 @@
     {
       "label": "Stop Frontend & Backend Services",
       "type": "shell",
-      "command": "pkill -f 'php-fpm83|nginx|crond|python3' || true",
+      "command": "test ! -d /workspaces && echo not in container && exit 1; pkill -f 'php-fpm83|nginx|crond|python3' || true",
       "presentation": {
         "echo": true,
         "reveal": "always",

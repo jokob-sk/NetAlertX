@@ -79,27 +79,19 @@ RUN apk add --no-cache bash libbsd zip lsblk gettext-envsubst sudo mtr tzdata cu
     rm -rf /var/cache/apk/* && \
     rm -f /etc/nginx/http.d/default.conf
 
-# Install from previous build stage
+
+
+# Install application, copy files, set permissions
 COPY --from=builder /opt/venv /opt/venv
 COPY --from=builder /usr/sbin/usermod /usr/sbin/groupmod /usr/sbin/
-
-# Simple copy of directory structure instead of individual files or complicated directory structure with RUN mkdir
 COPY --chown=netalertx:netalertx install/alpine-docker/ /
-
-RUN chmod -R a+x ${SYSTEM_SERVICES} /build/ /entrypoint.sh && \
-    sh -c "find ${NETALERTX_APP} -type d -exec chmod 750 {} \;" && \
-    sh -c "find ${NETALERTX_APP} -type f -exec chmod 640 {} \;" && \
-    sh -c "find ${NETALERTX_APP} -type f \( -name '*.sh' -o -name 'speedtest-cli' \) -exec chmod 750 {} \;"
-
-# Copy source
 COPY --chown=netalertx:netalertx --chmod=755 back ${NETALERTX_BACK}
 COPY --chown=netalertx:netalertx --chmod=755 front ${NETALERTX_FRONT}
 COPY --chown=netalertx:netalertx --chmod=755 server ${NETALERTX_SERVER}
-# create folders with netalertx user ownership and 755 permissions
-RUN install -d -o netalertx -g netalertx -m 755 ${NETALERTX_API}
-
-# Install runtime dependencies
-
+RUN install -d -o netalertx -g netalertx -m 755 ${NETALERTX_API} && \
+    install -d -o netalertx -g netalertx -m 755 ${NETALERTX_LOG} && \
+    sh -c "find ${NETALERTX_APP} -type f \( -name '*.sh' -o -name 'speedtest-cli' \) \
+        -exec chmod 750 {} \;"
 
 
 #initialize each service with the dockerfiles/init-*.sh scripts, once.
@@ -113,9 +105,7 @@ RUN sh /build/init-nginx.sh && \
 # set netalertx to allow sudoers for any command, no password
 RUN echo "netalertx ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
-
-
-
+ENTRYPOINT ["/bin/sh","-c","sleep infinity"]
 # Final hardened stage to improve security by setting correct permissions and removing sudo access
 # When complete, if the image is compromised, there's not much that can be done with it.
 FROM runner AS hardened
@@ -163,13 +153,16 @@ ENTRYPOINT ["/entrypoint.sh"]
 # Prefer to place dev-only setup here; use setup.sh only for runtime fixes.
 
 FROM runner AS netalertx-devcontainer
+USER root
 ENV INSTALL_DIR=/app 
 ENV PYTHONPATH=/workspaces/NetAlertX/test:/workspaces/NetAlertX/server:/app:/app/server:/opt/venv/lib/python3.12/site-packages
+ENV HOME=/workspaces
 
 COPY .devcontainer/resources/99-xdebug.ini /etc/php83/conf.d/99-xdebug.ini
 
 # Install common tools, create user, and set up sudo
-RUN apk add --no-cache git nano vim jq php83-pecl-xdebug py3-pip nodejs sudo gpgconf pytest pytest-cov shadow
+RUN apk add --no-cache git nano vim jq php83-pecl-xdebug py3-pip nodejs sudo gpgconf pytest pytest-cov shadow github-cli fish
+
   
 # Install debugpy in the virtualenv if present, otherwise into system python3
 RUN /bin/sh -c '(/opt/venv/bin/python3 -m pip install --no-cache-dir debugpy) || (python3 -m pip install --no-cache-dir debugpy) || true'
@@ -177,7 +170,8 @@ RUN /opt/venv/bin/python -m pip install -U pytest pytest-cov
 
 USER netalertx
 
-WORKDIR /workspaces/NetAlertX
+WORKDIR /workspaces/
+RUN mkdir -p /workspaces && \
+    sudo chmod 777 /workspaces
 
-
-ENTRYPOINT ["/bin/sh","-c","sleep infinity"]
+USER netalertx

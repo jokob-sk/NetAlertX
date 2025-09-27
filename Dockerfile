@@ -1,7 +1,4 @@
-# Builder stage performs venv creation and installs some tools which are not needed in the final image.
-# By separating the image, we are able to discard build tools and reduce the final image size.
 FROM alpine:3.22 AS builder
-
 
 ARG INSTALL_DIR=/app
 
@@ -14,8 +11,6 @@ RUN apk add --no-cache bash shadow python3 python3-dev gcc musl-dev libffi-dev o
 # Enable venv
 ENV PATH="/opt/venv/bin:$PATH"
 
-
-
 RUN pip install openwrt-luci-rpc asusrouter asyncio aiohttp graphene flask flask-cors unifi-sm-api tplink-omada-client wakeonlan pycryptodome requests paho-mqtt scapy cron-converter pytz json2table dhcp-leases pyunifi speedtest-cli chardet python-nmap dnspython librouteros yattag zeroconf git+https://github.com/foreign-sub/aiofreepybox.git
 
 
@@ -23,18 +18,10 @@ RUN pip install openwrt-luci-rpc asusrouter asyncio aiohttp graphene flask flask
 # The runner is used for both devcontainer, and as a base for the hardened stage.
 FROM alpine:3.22 AS runner
 
-RUN addgroup -g 20211 netalertx && \
-    adduser -u 20211 -G netalertx -D -h /app netalertx 
-
 ARG INSTALL_DIR=/app
 
-
-# Enable venv
 ENV PATH="/opt/venv/bin:/usr/bin:/sbin:/bin:$PATH" 
 
-
-
-ENV PORT=20211 LISTEN_ADDR=0.0.0.0 GRAPHQL_PORT=20212
 # NetAlertX app directories
 ENV NETALERTX_APP=/app
 ENV NETALERTX_CONFIG=${NETALERTX_APP}/config
@@ -70,34 +57,27 @@ ENV PHP_FPM_CONFIG_FILE=/etc/php83/php-fpm.conf
 ENV PHP_WWW_CONF_FILE=/etc/php83/php-fpm.d/www.conf
 ENV SYSTEM_SERVICES=/services
 
+#Create netalertx user and group
+RUN addgroup -g 20211 netalertx && \
+    adduser -u 20211 -G netalertx -D -h /app netalertx 
+
 RUN apk add --no-cache bash libbsd zip lsblk gettext-envsubst sudo mtr tzdata curl arp-scan iproute2 \
     iproute2-ss nmap nmap-scripts traceroute nbtscan openrc dbus net-tools net-snmp-tools bind-tools awake \
     ca-certificates sqlite php83 php83-fpm php83-cgi php83-curl php83-sqlite3 php83-session python3 nginx sudo && \
     rm -rf /var/cache/apk/* && \
     rm -f /etc/nginx/http.d/default.conf
 
-# Install from previous build stage
+# Install application, copy files, set permissions
 COPY --from=builder /opt/venv /opt/venv
 COPY --from=builder /usr/sbin/usermod /usr/sbin/groupmod /usr/sbin/
-
-# Simple copy of directory structure instead of individual files or complicated directory structure with RUN mkdir
 COPY --chown=netalertx:netalertx install/alpine-docker/ /
-
-RUN chmod -R a+x ${SYSTEM_SERVICES} /build/ /entrypoint.sh && \
-    sh -c "find ${NETALERTX_APP} -type d -exec chmod 750 {} \;" && \
-    sh -c "find ${NETALERTX_APP} -type f -exec chmod 640 {} \;" && \
-    sh -c "find ${NETALERTX_APP} -type f \( -name '*.sh' -o -name 'speedtest-cli' \) -exec chmod 750 {} \;"
-
-# Copy source
 COPY --chown=netalertx:netalertx --chmod=755 back ${NETALERTX_BACK}
 COPY --chown=netalertx:netalertx --chmod=755 front ${NETALERTX_FRONT}
 COPY --chown=netalertx:netalertx --chmod=755 server ${NETALERTX_SERVER}
-# create folders with netalertx user ownership and 755 permissions
-RUN install -d -o netalertx -g netalertx -m 755 ${NETALERTX_API}
-
-# Install runtime dependencies
-
-
+RUN install -d -o netalertx -g netalertx -m 755 ${NETALERTX_API} && \
+    install -d -o netalertx -g netalertx -m 755 ${NETALERTX_LOG} && \
+    sh -c "find ${NETALERTX_APP} -type f \( -name '*.sh' -o -name 'speedtest-cli' \) \
+        -exec chmod 750 {} \;"
 
 #initialize each service with the dockerfiles/init-*.sh scripts, once.
 RUN sh /build/init-nginx.sh && \
@@ -106,18 +86,14 @@ RUN sh /build/init-nginx.sh && \
     sh /build/init-backend.sh && \
     rm -rf /build/*
 
-
 # set netalertx to allow sudoers for any command, no password
 RUN echo "netalertx ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
-RUN date +%s > ${INSTALL_DIR}/front/buildtimestamp.txt
-
-
+ENTRYPOINT ["/bin/sh","-c","sleep infinity"]
 
 # Final hardened stage to improve security by setting correct permissions and removing sudo access
 # When complete, if the image is compromised, there's not much that can be done with it.
 FROM runner AS hardened
-
 
 # create readonly user and group with no shell access
 RUN addgroup -g 20212 readonly && \
@@ -126,28 +102,23 @@ RUN addgroup -g 20212 readonly && \
 # remove netalertx from sudoers
 RUN sh -c "sed -i '/netalertx ALL=(ALL) NOPASSWD: ALL/d' /etc/sudoers"
 
-RUN chown -R readonly:readonly ${NETALERTX_BACK} ${NETALERTX_FRONT} ${NETALERTX_SERVER} ${SYSTEM_SERVICES} ${NETALERTX_SERVICES}
-RUN chmod -R 004 ${NETALERTX_BACK} ${NETALERTX_FRONT} ${NETALERTX_SERVER} 
-RUN chmod 005 ${NETALERTX_BACK} ${NETALERTX_FRONT} ${NETALERTX_SERVER}
-RUN chmod -R 005 ${SYSTEM_SERVICES} ${NETALERTX_SERVICES} 
-
-RUN chown -R netalertx:netalertx ${NETALERTX_CONFIG} ${NETALERTX_DB} ${NETALERTX_API} ${NETALERTX_LOG} && \
+RUN chown -R readonly:readonly ${NETALERTX_BACK} ${NETALERTX_FRONT} ${NETALERTX_SERVER} ${SYSTEM_SERVICES} ${NETALERTX_SERVICES} && \
+    chmod -R 004 ${NETALERTX_BACK} ${NETALERTX_FRONT} ${NETALERTX_SERVER} && \
+    chmod 005 ${NETALERTX_BACK} ${NETALERTX_FRONT} ${NETALERTX_SERVER} && \
+    chmod -R 005 ${SYSTEM_SERVICES} ${NETALERTX_SERVICES} && \
+    chown -R netalertx:netalertx ${NETALERTX_CONFIG} ${NETALERTX_DB} ${NETALERTX_API} ${NETALERTX_LOG} && \
     chmod -R 600 ${NETALERTX_CONFIG} ${NETALERTX_DB}  {NETALERTX_API} ${NETALERTX_LOG} && \
-    chmod 700 ${NETALERTX_CONFIG} ${NETALERTX_DB} ${NETALERTX_API} ${NETALERTX_LOG} ${NETALERTX_PLUGINS_LOG}
-
-
-RUN chown readonly:readonly /
-RUN chown -R netalertx:netalertx /var/log/nginx /var/lib/nginx /run
-RUN echo -ne '#!/bin/bash\nexit 0\n' > /usr/bin/sudo && chmod +x /usr/bin/sudo
-
-RUN find / -path /proc -prune -o -path /sys -prune -o -path /dev -prune -o -path /run -prune -o -path /var/log -prune -o -path /tmp -prune -o -group 0 -o -user 0 -exec chown readonly:readonly {} +
-
+    chmod 700 ${NETALERTX_CONFIG} ${NETALERTX_DB} ${NETALERTX_API} ${NETALERTX_LOG} ${NETALERTX_PLUGINS_LOG} && \
+    chown readonly:readonly / && \
+    chown -R netalertx:netalertx /var/log/nginx /var/lib/nginx /run && \
+    echo -ne '#!/bin/bash\nexit 0\n' > /usr/bin/sudo && chmod +x /usr/bin/sudo && \
+    find / -path /proc -prune -o -path /sys -prune -o -path /dev -prune -o \
+         -path /run -prune -o -path /var/log -prune -o -path /tmp -prune -o \
+         -group 0 -o -user 0 -exec chown readonly:readonly {} +
 
 USER netalertx
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-CMD /usr/local/bin/healthcheck.sh
+    CMD /usr/local/bin/healthcheck.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
-
-
