@@ -431,7 +431,7 @@ if command -v systemctl >/dev/null 2>&1; then
   printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}Setting up systemd service"
   printf "%b\n" "--------------------------------------------------------------------------"
 
-cat /etc/systemd/system/netalertx.service << 'EOF'
+cat > /etc/systemd/system/netalertx.service << 'EOF'
 [Unit]
 Description=NetAlertX Service
 After=network-online.target nginx.service
