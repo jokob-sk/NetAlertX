@@ -10,6 +10,7 @@ import paho.mqtt.client as mqtt
 # from paho.mqtt import client as mqtt_client
 # from paho.mqtt import CallbackAPIVersion as mqtt_CallbackAPIVersion
 import hashlib
+from pytz import timezone
 
 
 # Register NetAlertX directories
@@ -25,7 +26,7 @@ from logger import mylog, Logger
 from helper import timeNowTZ, get_setting_value, bytes_to_string, \
     sanitize_string, normalize_string
 from database import DB, get_device_stats
-from pytz import timezone
+
 
 # Make sure the TIMEZONE for logging is correct
 conf.tz = timezone(get_setting_value('TIMEZONE'))
@@ -561,7 +562,7 @@ def prepTimeStamp(datetime_str):
 
         # If the parsed datetime is naive (i.e., does not contain timezone info), add UTC timezone
         if parsed_datetime.tzinfo is None:
-            parsed_datetime = parsed_datetime.replace(tzinfo=conf.tz)
+            parsed_datetime = conf.tz.localize(parsed_datetime)
 
     except ValueError:
         mylog('verbose', [f"[{pluginName}]  Timestamp conversion failed of string '{datetime_str}'"])
