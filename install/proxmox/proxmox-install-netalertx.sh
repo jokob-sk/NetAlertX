@@ -444,8 +444,7 @@ Cmnd_Alias WWW_CHMOD = /bin/chmod -R u=rwX,g=rX,o= /app/*, \
 www-data ALL=(ALL) NOPASSWD: WWW_CHOWN, WWW_CHMOD
 EOF
 
-  chmod 440 /etc/sudoers.d/www-data
-fi
+chmod 440 /etc/sudoers.d/www-data
 
 echo -e "--------------------------------------------------------------------------"
 echo -e "Starting NetAlertX - navigate to http://${SERVER_IP}:${PORT}"
