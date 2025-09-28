@@ -366,7 +366,7 @@ chown root:www-data "${INSTALL_DIR}"/api/user_notifications.json
       printf "%b\n" "                    ALWAYS_FRESH_INSTALL is set to: ${ALWAYS_FRESH_INSTALL}❗"
       printf "%b\n" "--------------------------------------------------------------------------"
      # Delete content of "/config/"
-     rm -rf "${INSTALL_DIR}/config/"*
+     rm -rf "${WEB_UI_DIR}/config/"*
    
      # Delete content of "/db/"
      rm -rf "${INSTALL_DIR}/db/"*
@@ -374,8 +374,8 @@ chown root:www-data "${INSTALL_DIR}"/api/user_notifications.json
 
 
  # Copy starter $DB_FILE and $CONF_FILE if they don't exist
- mkdir -p "${INSTALL_DIR}/config" "${INSTALL_DIR}/db"
- cp -u "${INSTALL_DIR}/back/${CONF_FILE}" "${INSTALL_DIR}/config/${CONF_FILE}"
+ mkdir -p "${WEB_UI_DIR}/config" "${INSTALL_DIR}/db"
+ cp -u "${INSTALL_DIR}/back/${CONF_FILE}" "${WEB_UI_DIR}/config/${CONF_FILE}"
  cp -u "${INSTALL_DIR}/back/${DB_FILE}"  "${FILEDB}"
 
  printf "%b\n" "--------------------------------------------------------------------------"
@@ -392,7 +392,7 @@ chown root:www-data "${INSTALL_DIR}"/api/user_notifications.json
  sed -i '2s/.*/user  www-data;/' /etc/nginx/nginx.conf
 
  chmod -R u=rwX,g=rX,o= "$INSTALL_DIR" # second time after we copied the files
- chmod -R u=rw,g=r,o= "$INSTALL_DIR/config"
+ chmod -R u=rw,g=r,o= "$WEB_UI_DIR/config"
  chgrp -R www-data  "$INSTALL_DIR"
 # Check if buildtimestamp.txt doesn't exist
 if [ ! -f "${INSTALL_DIR}/front/buildtimestamp.txt" ]; then
