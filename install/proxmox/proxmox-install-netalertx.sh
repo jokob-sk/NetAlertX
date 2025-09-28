@@ -433,7 +433,7 @@ echo -e "Configure passwordless sudo for www-data (restricted to NetAlertX direc
 echo -e "-----------------------------------------------------"
 
 if [ ! -f /etc/sudoers.d/www-data ]; then
-  cat > /etc/sudoers.d/www-data << 'EOF'
+  cat <<'EOF' > /etc/sudoers.d/www-data
 # Allow www-data to manage permissions only inside NetAlertX directories
 Cmnd_Alias WWW_CHOWN = /bin/chown -R www-data:www-data /app/*, \
                        /bin/chown -R www-data:www-data /var/www/html/netalertx/*
@@ -443,6 +443,7 @@ Cmnd_Alias WWW_CHMOD = /bin/chmod -R u=rwX,g=rX,o= /app/*, \
 
 www-data ALL=(ALL) NOPASSWD: WWW_CHOWN, WWW_CHMOD
 EOF
+
   chmod 440 /etc/sudoers.d/www-data
 fi
 
