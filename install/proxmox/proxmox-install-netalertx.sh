@@ -213,7 +213,7 @@ printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}Cloning app
 printf "%b\n" "--------------------------------------------------------------------------"
 
 mkdir -p "$INSTALL_DIR"
-git clone https://github.com/jokob-sk/NetAlertX.git "$INSTALL_DIR/" #change after testing
+git clone https://github.com/krishill1776-lab/NetAlertX.git "$INSTALL_DIR/" #change after testing
 
 # 5. FINAL SETUP
  printf "%b\n" "--------------------------------------------------------------------------"
@@ -431,7 +431,7 @@ if command -v systemctl >/dev/null 2>&1; then
   printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}Setting up systemd service"
   printf "%b\n" "--------------------------------------------------------------------------"
 
-cat > /etc/systemd/system/netalertx.service << 'EOF'
+cat /etc/systemd/system/netalertx.service << 'EOF'
 [Unit]
 Description=NetAlertX Service
 After=network-online.target nginx.service
