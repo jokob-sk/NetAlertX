@@ -371,7 +371,7 @@ chown root:www-data "${INSTALL_DIR}"/api/user_notifications.json
      rm -rf "${INSTALL_DIR}/db/"*
 
      # Delete content of /web/config
-     rm -rf "${WEB_UI_DIR}/config"*
+     #rm -rf "${WEB_UI_DIR}/config"*
  fi
 
 
@@ -390,12 +390,12 @@ chown root:www-data "${INSTALL_DIR}"/api/user_notifications.json
  if [ -f "$FILEDB" ]; then
      chown -R www-data:www-data "$FILEDB"
  fi
- #if [ -f "${INSTALL_DIR}/config" ]; then
-  #   chown -R www-data:www-data "${INSTALL_DIR}/config"
- #fi
- # if [ -f "$WEB_UI_DIR" ]; then
-  #   chown -R www-data:www-data "$WEB_UI_DIR"
- #fi
+ if [ -f "${INSTALL_DIR}/config" ]; then
+     chown -R www-data:www-data "${INSTALL_DIR}/config"
+ fi
+  if [ -f "$WEB_UI_DIR" ]; then
+     chown -R www-data:www-data "$WEB_UI_DIR"
+ fi
  # Change Nginx User
  sed -i '2s/.*/user  www-data;/' /etc/nginx/nginx.conf
 
