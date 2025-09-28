@@ -13,6 +13,8 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 RUN pip install openwrt-luci-rpc asusrouter asyncio aiohttp graphene flask flask-cors unifi-sm-api tplink-omada-client wakeonlan pycryptodome requests paho-mqtt scapy cron-converter pytz json2table dhcp-leases pyunifi speedtest-cli chardet python-nmap dnspython librouteros yattag zeroconf git+https://github.com/foreign-sub/aiofreepybox.git
 
+RUN chown -R 20212:20212 /opt && \
+    chmod -R u-rwx,g-rwx /opt
 
 # second stage is the main runtime stage with just the minimum required to run the application
 # The runner is used for both devcontainer, and as a base for the hardened stage.
@@ -54,21 +56,25 @@ ENV SYSTEM_NGINIX_CONFIG=${SYSTEM_SERVICES_CONFIG}/nginx
 ENV NGINX_CONFIG_FILE=${SYSTEM_NGINIX_CONFIG}/nginx.conf
 ENV NETALERTX_CONFIG_FILE=${NETALERTX_CONFIG}/app.conf
 ENV NETALERTX_DB_FILE=${NETALERTX_DB}/app.db
-ENV PHP_FPM_CONFIG_FILE=/etc/php83/php-fpm.conf
-ENV PHP_WWW_CONF_FILE=/etc/php83/php-fpm.d/www.conf
+ENV SYSTEM_SERVICES_PHP_FOLDER=${SYSTEM_SERVICES_CONFIG}/php
+ENV SYSTEM_SERVICES_PHP_FPM_D=${SYSTEM_SERVICES_PHP_FOLDER}/php-fpm.d
+ENV SYSTEM_SERVICES_CROND=${SYSTEM_SERVICES_CONFIG}/crond
+ENV PHP_FPM_CONFIG_FILE=${SYSTEM_SERVICES_PHP_FOLDER}/php-fpm.conf
+
 ENV PYTHONPATH=${NETALERTX_SERVER}
 
 
-#Create netalertx user and group
-RUN addgroup -g 20211 netalertx && \
-    adduser -u 20211 -G netalertx -D -h ${NETALERTX_APP} netalertx 
 
 RUN apk add --no-cache bash mtr libbsd zip lsblk sudo tzdata curl arp-scan iproute2 \
-    iproute2-ss nmap nmap-scripts traceroute nbtscan net-tools net-snmp-tools bind-tools awake \
-    ca-certificates sqlite php83 php83-fpm php83-cgi php83-curl php83-sqlite3 php83-session python3 \
-    nginx sudo libcap  && \
-    rm -rf /var/cache/apk/* && \
-    rm -f /etc/nginx/http.d/default.conf
+iproute2-ss nmap nmap-scripts traceroute nbtscan net-tools net-snmp-tools bind-tools awake \
+ca-certificates sqlite php83 php83-fpm php83-cgi php83-curl php83-sqlite3 php83-session python3 \
+nginx sudo libcap shadow && \
+rm -rf /var/cache/apk/* && \
+rm -f /etc/nginx/http.d/default.conf
+
+#Create netalertx user and group
+RUN addgroup -g 20211 netalertx && \
+    adduser -u 20211 -D -h ${NETALERTX_APP} -G netalertx netalertx
 
 # Install application, copy files, set permissions
 COPY --from=builder /opt/venv /opt/venv
@@ -119,11 +125,9 @@ RUN chown -R readonly:readonly ${NETALERTX_BACK} ${NETALERTX_FRONT} ${NETALERTX_
     chown -R netalertx:netalertx ${NETALERTX_CONFIG} ${NETALERTX_DB} ${NETALERTX_API} ${NETALERTX_LOG} && \
     chmod -R 600 ${NETALERTX_CONFIG} ${NETALERTX_DB} ${NETALERTX_API} ${NETALERTX_LOG} && \
     chmod 700 ${NETALERTX_CONFIG} ${NETALERTX_DB} ${NETALERTX_API} ${NETALERTX_LOG} ${NETALERTX_PLUGINS_LOG} && \
-    chown readonly:readonly / && \
     chown -R netalertx:netalertx /var/log/nginx /var/lib/nginx /run && \
-    find / -path /proc -prune -o -path /sys -prune -o -path /dev -prune -o \
-    -path /run -prune -o -path /var/log -prune -o -path /tmp -prune -o \
-    -group 0 -o -user 0 -exec chown readonly:readonly {} +
+    chown readonly:readonly /entrypoint.sh && \
+    chmod 005 /entrypoint.sh
 
 #
 # remove sudo and alpine installers pacakges

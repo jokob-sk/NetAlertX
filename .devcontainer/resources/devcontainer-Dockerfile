@@ -15,7 +15,7 @@ RUN apk add --no-cache git nano vim jq php83-pecl-xdebug py3-pip nodejs sudo gpg
   
 # Install debugpy in the virtualenv if present, otherwise into system python3
 RUN /bin/sh -c '(/opt/venv/bin/python3 -m pip install --no-cache-dir debugpy) || (python3 -m pip install --no-cache-dir debugpy) || true'
-RUN sudo /env/bin/python -m pip install -U pytest pytest-cov
+RUN python -m pip install -U pytest pytest-cov
 
-RUN  ["/bin/sh","-c","sleep infinity"]
+ENTRYPOINT  ["/bin/sh","-c","sleep infinity"]
     

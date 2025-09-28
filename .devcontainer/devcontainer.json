@@ -4,7 +4,9 @@
   "build": {
     "dockerfile": "./Dockerfile",
     "context": "../",
-    "target": "netalertx-devcontainer"
+    "target": "netalertx-devcontainer",
+    "pull": true,
+    "noCache": true
   },
   "workspaceFolder": "/workspaces/NetAlertX",
   "runArgs": [
@@ -34,7 +36,9 @@
         "pamaron.pytest-runner",
         "coderabbit.coderabbit-vscode",
         "ms-python.black-formatter",
-        "jeff-hykin.better-dockerfile-syntax"
+        "jeff-hykin.better-dockerfile-syntax",
+        "GitHub.codespaces",
+        "ms-azuretools.vscode-containers"
       ]
       ,
       "settings": {

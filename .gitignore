@@ -17,6 +17,7 @@ db/pialert.db
 db/app.db
 front/log/*
 /log/*
+/log/plugins/*
 front/api/*
 /api/*
 **/plugins/**/*.log

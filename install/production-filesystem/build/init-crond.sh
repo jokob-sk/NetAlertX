@@ -1,7 +1,4 @@
 #!/bin/bash
 echo "Initializing crond..."
-# Add crontab file
-rm /etc/crontabs/root
-chmod 600 /etc/crontabs/netalertx
-chown netalertx:netalertx /etc/crontabs/netalertx
+#Future crond initializations can go here.
 echo "crond initialized."

@@ -1,3 +1,4 @@
 #!/bin/bash
 echo "Initializing nginx..."
-# Nothing to do here, nginx is configured at runtime
+#Future crond initializations can go here.
+echo "nginx initialized."
