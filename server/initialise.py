@@ -157,7 +157,7 @@ def importConfigs (pm, db, all_plugins):
     # ----------------------------------------
     # ccd(key, default, config_dir, name, inputtype, options, group, events=[], desc = "", regex = "", setJsonMetadata = {}, overrideTemplate = {})
     
-    conf.LOADED_PLUGINS = ccd('LOADED_PLUGINS', [] , c_d, 'Loaded plugins', '{"dataType":"array","elements":[{"elementType":"select","elementOptions":[{"multiple":"true","ordeable":"true"}],"transformers":[]},{"elementType":"button","elementOptions":[{"sourceSuffixes":[]},{"separator":""},{"cssClasses":"col-xs-12"},{"onClick":"selectChange(this)"},{"getStringKey":"Gen_Change"}],"transformers":[]}]}', '[]', 'General')
+    conf.LOADED_PLUGINS = ccd('LOADED_PLUGINS', [] , c_d, 'Loaded plugins', '{"dataType":"array","elements":[{"elementType":"select","elementHasInputValue":1,"elementOptions":[{"multiple":"true","ordeable":"true"}],"transformers":[]},{"elementType":"button","elementOptions":[{"sourceSuffixes":[]},{"separator":""},{"cssClasses":"col-xs-12"},{"onClick":"selectChange(this)"},{"getStringKey":"Gen_Change"}],"transformers":[]}]}', '[]', 'General')
     conf.DISCOVER_PLUGINS = ccd('DISCOVER_PLUGINS', True , c_d, 'Discover plugins', """{"dataType": "boolean","elements": [{"elementType": "input","elementOptions": [{ "type": "checkbox" }],"transformers": []}]}""", '[]', 'General')
     conf.SCAN_SUBNETS = ccd('SCAN_SUBNETS', ['192.168.1.0/24 --interface=eth1', '192.168.1.0/24 --interface=eth0'] , c_d, 'Subnets to scan', '''{"dataType": "array","elements": [{"elementType": "input","elementOptions": [{"placeholder": "192.168.1.0/24 --interface=eth1"},{"suffix": "_in"},{"cssClasses": "col-sm-10"},{"prefillValue": "null"}],"transformers": []},{"elementType": "button","elementOptions": [{"sourceSuffixes": ["_in"]},{"separator": ""},{"cssClasses": "col-xs-12"},{"onClick": "addList(this, false)"},{"getStringKey": "Gen_Add"}],"transformers": []},{"elementType": "select","elementHasInputValue": 1,"elementOptions": [{"multiple": "true"},{"readonly": "true"},{"editable": "true"}],"transformers": []},{"elementType": "button","elementOptions": [{"sourceSuffixes": []},{"separator": ""},{"cssClasses": "col-xs-6"},{"onClick": "removeAllOptions(this)"},{"getStringKey": "Gen_Remove_All"}],"transformers": []},{"elementType": "button","elementOptions": [{"sourceSuffixes": []},{"separator": ""},{"cssClasses": "col-xs-6"},{"onClick": "removeFromList(this)"},{"getStringKey": "Gen_Remove_Last"}],"transformers": []}]}''', '[]', 'General')    
     conf.LOG_LEVEL = ccd('LOG_LEVEL', 'verbose' , c_d, 'Log verboseness', '{"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]}', "['none', 'minimal', 'verbose', 'debug', 'trace']", 'General')
@@ -368,19 +368,8 @@ def importConfigs (pm, db, all_plugins):
         # mylog('verbose', [f"[Config] pref {plugin["unique_prefix"]} run_val {run_val} run_sch {run_sch} "])
 
         if run_val == 'schedule':
-            newSchedule = None
-            try:
-                newSchedule = Cron(run_sch).schedule(start_date=datetime.datetime.now(conf.tz))
-                if (newSchedule is not None):
-                    conf.mySchedules.append(schedule_class(plugin["unique_prefix"], newSchedule, newSchedule.next(), False))
-                else:
-                    raise(ValueError("Invalid schedule"))
-            except ValueError as e:
-                mylog('none', [f"[Config] [ERROR] Invalid schedule '{run_sch}' for plugin '{plugin['unique_prefix']}'. Error: {e}."])
-            except Exception as e:
-                mylog('none', [f"[Config] [ERROR] Could not set schedule '{run_sch}' for plugin '{plugin['unique_prefix']}'. Error: {e}."])
-
-    
+            newSchedule = Cron(run_sch).schedule(start_date=datetime.datetime.now(conf.tz))
+            conf.mySchedules.append(schedule_class(plugin["unique_prefix"], newSchedule, newSchedule.next(), False))
 
     # mylog('verbose', [f"[Config] conf.mySchedules {conf.mySchedules}"])
 
