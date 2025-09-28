@@ -57,9 +57,6 @@ def main():
 
     # Check if basic config settings supplied
     if not check_config():
-        mylog('verbose', [f'[{pluginName}] ⚠ ERROR: Publisher notification \
-            gateway not set up correctly. Check your {confFileName} \
-                {pluginName}_* variables.'])
         return
 
     # Create a database connection
@@ -273,8 +270,8 @@ def publish_mqtt(mqtt_client, topic, message):
 
     qos = get_setting_value('MQTT_QOS')
 
-    mylog('debug', [f"[{pluginName}] Sending MQTT topic: {topic}"])
-    mylog('debug', [f"[{pluginName}] Sending MQTT message: {message}"])
+    mylog('debug', [f"[{pluginName}] Sending MQTT topic: {topic}",
+                    f"[{pluginName}] Sending MQTT message: {message}"])
     # mylog('verbose', [f"[{pluginName}] get_setting_value('MQTT_QOS'): {qos}"])
 
     if not mqtt_connected_to_broker:
@@ -443,7 +440,7 @@ def mqtt_start(db):
     # General stats
 
     # Create a generic device for overal stats
-    if get_setting_value('MQTT_SEND_STATS') == True:
+    if get_setting_value('MQTT_SEND_STATS'):
         # Create a new device representing overall stats
         create_generic_device(mqtt_client, deviceId, deviceName)
 
@@ -473,8 +470,6 @@ def mqtt_start(db):
         sec_delay = len(devices) * int(get_setting_value('MQTT_DELAY_SEC'))*5
 
         mylog('verbose', [f"[{pluginName}]         Estimated delay: ", (sec_delay), 's ', '(', round(sec_delay/60, 1), 'min)'])
-
-        debug_index = 0
 
         for device in devices:
 
@@ -543,23 +538,18 @@ def mqtt_start(db):
 # Home Assistant UTILs
 # =============================================================================
 def to_binary_sensor(input):
-    # In HA a binary sensor returns ON or OFF
-    result = "OFF"
-
-    # bytestring
-    if isinstance(input, str):
-        if input == "1":
-            result = "ON"
-    elif isinstance(input, int):
-        if input == 1:
-            result = "ON"
-    elif isinstance(input, bool):
-        if input == True:
-            result = "ON"
-    elif isinstance(input, bytes):
-        if bytes_to_string(input) == "1":
-            result = "ON"
-    return result
+    """
+    Converts various input types to a binary sensor state ("ON" or "OFF") for Home Assistant.
+    """
+    if isinstance(input, (int, float)) and input >= 1:
+        return "ON"
+    elif isinstance(input, bool) and input:
+        return "ON"
+    elif isinstance(input, str) and input == "1":
+        return "ON"  
+    elif isinstance(input, bytes) and bytes_to_string(input) == "1":
+        return "ON"
+    return "OFF"
 
 
 #  -------------------------------------
