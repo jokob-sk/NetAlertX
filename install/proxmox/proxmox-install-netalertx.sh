@@ -390,10 +390,10 @@ chown root:www-data "${INSTALL_DIR}"/api/user_notifications.json
  if [ -f "$FILEDB" ]; then
      chown -R www-data:www-data "$FILEDB"
  fi
- if [ -f "${INSTALL_DIR}/config" ]; then
+ if [ -d "${INSTALL_DIR}/config" ]; then
      chown -R www-data:www-data "${INSTALL_DIR}/config"
  fi
-  if [ -f "$WEB_UI_DIR" ]; then
+  if [ -d "$WEB_UI_DIR" ]; then
      chown -R www-data:www-data "$WEB_UI_DIR"
  fi
  # Change Nginx User
@@ -426,6 +426,25 @@ cat > "$INSTALL_DIR/start.netalertx.sh" << 'EOF'
 
 # Activate the virtual python environment
 source /opt/myenv/bin/activate
+
+
+echo -e "-----------------------------------------------------"
+echo -e "Configure passwordless sudo for www-data (restricted to NetAlertX directories)"
+echo -e "-----------------------------------------------------"
+
+if [ ! -f /etc/sudoers.d/www-data ]; then
+  cat > /etc/sudoers.d/www-data << 'EOF'
+# Allow www-data to manage permissions only inside NetAlertX directories
+Cmnd_Alias WWW_CHOWN = /bin/chown -R www-data:www-data /app/*, \
+                       /bin/chown -R www-data:www-data /var/www/html/netalertx/*
+
+Cmnd_Alias WWW_CHMOD = /bin/chmod -R u=rwX,g=rX,o= /app/*, \
+                       /bin/chmod -R u=rwX,g=rX,o= /var/www/html/netalertx/*
+
+www-data ALL=(ALL) NOPASSWD: WWW_CHOWN, WWW_CHMOD
+EOF
+  chmod 440 /etc/sudoers.d/www-data
+fi
 
 echo -e "--------------------------------------------------------------------------"
 echo -e "Starting NetAlertX - navigate to http://${SERVER_IP}:${PORT}"
