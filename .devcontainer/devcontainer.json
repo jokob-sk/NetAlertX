@@ -33,7 +33,8 @@
         "ms-python.vscode-pylance",
         "pamaron.pytest-runner",
         "coderabbit.coderabbit-vscode",
-        "ms-python.black-formatter"
+        "ms-python.black-formatter",
+        "jeff-hykin.better-dockerfile-syntax"
       ]
       ,
       "settings": {

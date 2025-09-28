@@ -73,23 +73,26 @@ RUN apk add --no-cache bash mtr libbsd zip lsblk sudo tzdata curl arp-scan iprou
 # Install application, copy files, set permissions
 COPY --from=builder /opt/venv /opt/venv
 COPY --from=builder /usr/sbin/usermod /usr/sbin/groupmod /usr/sbin/
-COPY --chown=netalertx:netalertx install/alpine-docker/ /
+COPY --chown=netalertx:netalertx install/production-filesystem/ /
 COPY --chown=netalertx:netalertx --chmod=755 back ${NETALERTX_BACK}
 COPY --chown=netalertx:netalertx --chmod=755 front ${NETALERTX_FRONT}
 COPY --chown=netalertx:netalertx --chmod=755 server ${NETALERTX_SERVER}
 RUN install -d -o netalertx -g netalertx -m 755 ${NETALERTX_API} && \
     install -d -o netalertx -g netalertx -m 755 ${NETALERTX_LOG} && \
     sh -c "find ${NETALERTX_APP} -type f \( -name '*.sh' -o -name 'speedtest-cli' \) \
-        -exec chmod 750 {} \;"
+    -exec chmod 750 {} \;"
 
-# setcap to allow nmap to run without root
-RUN setcap cap_net_raw,cap_net_admin+eip /usr/bin/nmap
+# setcap to allow network tools with raw packet access  to run without root
+RUN setcap cap_net_raw,cap_net_admin+eip /usr/bin/nmap && \
+    setcap cap_net_raw,cap_net_admin+eip /usr/bin/arp-scan && \
+    setcap cap_net_raw,cap_net_admin+eip /usr/bin/traceroute && \
+    setcap cap_net_raw,cap_net_admin+eip /opt/venv/bin/scapy
 
 #initialize each service with the dockerfiles/init-*.sh scripts, once.
-RUN sh /build/init-nginx.sh && \
-    sh /build/init-php-fpm.sh && \
-    sh /build/init-crond.sh && \
-    sh /build/init-backend.sh && \
+RUN /bin/sh /build/init-nginx.sh && \
+    /bin/sh /build/init-php-fpm.sh && \
+    /bin/sh /build/init-crond.sh && \
+    /bin/sh /build/init-backend.sh && \
     rm -rf /build
 
 # set netalertx to allow sudoers for any command, no password
@@ -103,8 +106,10 @@ FROM runner AS hardened
 
 # create readonly user and group with no shell access
 RUN addgroup -g 20212 readonly && \
-    adduser -u 20212 -G readonly -D -h /app readonly
-    
+    adduser -u 20212 -G readonly -D -h /app readonly && \
+    usermod -s /sbin/nologin readonly
+
+
 # remove netalertx from sudoers
 
 RUN chown -R readonly:readonly ${NETALERTX_BACK} ${NETALERTX_FRONT} ${NETALERTX_SERVER} ${SYSTEM_SERVICES} ${SYSTEM_SERVICES} && \
@@ -117,12 +122,12 @@ RUN chown -R readonly:readonly ${NETALERTX_BACK} ${NETALERTX_FRONT} ${NETALERTX_
     chown readonly:readonly / && \
     chown -R netalertx:netalertx /var/log/nginx /var/lib/nginx /run && \
     find / -path /proc -prune -o -path /sys -prune -o -path /dev -prune -o \
-         -path /run -prune -o -path /var/log -prune -o -path /tmp -prune -o \
-         -group 0 -o -user 0 -exec chown readonly:readonly {} +
+    -path /run -prune -o -path /var/log -prune -o -path /tmp -prune -o \
+    -group 0 -o -user 0 -exec chown readonly:readonly {} +
 
 #
 # remove sudo and alpine installers pacakges
-RUN apk del sudo && \
+RUN apk del sudo libcap apk-tools && \
     rm -rf /var/cache/apk/*
 # remove all users and groups except readonly and netalertx without userdel/groupdel binaries
 # RUN awk -F: '($1 != "readonly" && $1 != "netalertx") {print $1}' /etc/passwd | xargs -r -n 1 deluser -r && \
@@ -131,7 +136,9 @@ RUN apk del sudo && \
 RUN rm -Rf /etc/sudoers.d/* /etc/shadow /etc/gshadow /etc/sudoers \
     /lib/apk /lib/firmware  /lib/modules-load.d /lib/sysctl.d /mnt /home/ /root \
     /srv /media && \
-    echo -ne '#!/bin/bash\n"$@"\n' > /usr/bin/sudo && chmod +x /usr/bin/sudo
+    sed -i -n -e '/^readonly:/p' -e '/^netalertx:/p' /etc/passwd && \
+    sed -i -n -e '/^readonly:/p' -e '/^netalertx:/p' /etc/group && \
+    echo -ne '#!/bin/sh\n"$@"\n' > /usr/bin/sudo && chmod +x /usr/bin/sudo
 
 
 
@@ -141,4 +148,5 @@ USER netalertx
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
     CMD /usr/local/bin/healthcheck.sh
 
-ENTRYPOINT [ "bash", "/entrypoint.sh" ]
+#ENTRYPOINT [ "/bin/sh" ]
+ENTRYPOINT [ "/bin/sh", "/entrypoint.sh" ]
