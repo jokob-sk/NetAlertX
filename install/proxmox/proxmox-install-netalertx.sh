@@ -381,7 +381,7 @@ chown root:www-data "${INSTALL_DIR}"/api/user_notifications.json
  cp -u "${INSTALL_DIR}/back/${CONF_FILE}" "${INSTALL_DIR}/config/${CONF_FILE}"
  cp -u "${INSTALL_DIR}/back/${DB_FILE}"  "${FILEDB}"
  
- ln -sfn "${INSTALL_DIR}/config" "${WEB_UI_DIR}"
+ ln -sfn "${INSTALL_DIR}/config" "${WEB_UI_DIR}/config"
 
  printf "%b\n" "--------------------------------------------------------------------------"
  printf "%b\n" "${GREEN}[INSTALLING]                ${RESET}Fixing permissions after copied starter config & DB"
