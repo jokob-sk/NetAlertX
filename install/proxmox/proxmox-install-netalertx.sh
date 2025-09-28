@@ -427,6 +427,17 @@ cat > "$INSTALL_DIR/start.netalertx.sh" << 'EOF'
 # Activate the virtual python environment
 source /opt/myenv/bin/activate
 
+# Ensure we are in the correct directory
+cd /app || { echo "ERROR: /app directory not found"; exit 1; }
+
+printf "%b\n" "--------------------------------------------------------------------------"
+printf "%b\n" "[SETUP] Fixing arp-scan vendor file permissions for www-data"
+printf "%b\n" "--------------------------------------------------------------------------"
+
+if [ -f /usr/share/arp-scan/]; then
+    chown root:www-data /usr/share/arp-scan
+    chmod 640 /usr/share/arp-scan
+fi
 
 echo -e "-----------------------------------------------------"
 echo -e "Configure passwordless sudo for www-data (restricted to NetAlertX directories)"
@@ -451,7 +462,7 @@ echo -e "Starting NetAlertX - navigate to http://${SERVER_IP}:${PORT}"
 echo -e "--------------------------------------------------------------------------"
 
 # Start the NetAlertX python script
-python server/
+python /app/server/
 EOF
 
 chmod +x "$INSTALL_DIR/start.netalertx.sh"
