@@ -375,6 +375,7 @@ chown root:www-data "${INSTALL_DIR}"/api/user_notifications.json
 
  # Copy starter $DB_FILE and $CONF_FILE if they don't exist
  mkdir -p "${INSTALL_DIR}/config" "${INSTALL_DIR}/db"
+ mkdir -p "${WEB_UI_DIR}/config"
  cp -u "${INSTALL_DIR}/back/${CONF_FILE}" "${INSTALL_DIR}/config/${CONF_FILE}"
  cp -u "${INSTALL_DIR}/back/${DB_FILE}"  "${FILEDB}"
  
