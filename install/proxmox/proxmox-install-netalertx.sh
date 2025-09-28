@@ -403,7 +403,7 @@ chown root:www-data "${INSTALL_DIR}"/api/user_notifications.json
  sed -i '2s/.*/user  www-data;/' /etc/nginx/nginx.conf
 
  chmod -R u=rwX,g=rX,o= "$INSTALL_DIR" # second time after we copied the files
- chmod -R u=rwX,g=rwX,o= "$WEB_UI_DIR/config"
+ chmod -R u=rwX,g=rwX,o= "$WEB_UI_DIR"
  chmod -R u=rwX,g=rX,o= "$INSTALL_DIR/config"
  chgrp -R www-data  "$INSTALL_DIR"
 # Check if buildtimestamp.txt doesn't exist
