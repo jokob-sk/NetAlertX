@@ -110,7 +110,7 @@ ENTRYPOINT ["/bin/sh","-c","sleep infinity"]
 # When complete, if the image is compromised, there's not much that can be done with it.
 FROM runner AS hardened
 
-# create readonly user and group with no shell access
+# create readonly user and group with no shell access.  Readonly user marks folders that are created by NetAlertX, but should not be modified.
 RUN addgroup -g 20212 readonly && \
     adduser -u 20212 -G readonly -D -h /app readonly && \
     usermod -s /sbin/nologin readonly
@@ -133,10 +133,7 @@ RUN chown -R readonly:readonly ${NETALERTX_BACK} ${NETALERTX_FRONT} ${NETALERTX_
 # remove sudo and alpine installers pacakges
 RUN apk del sudo libcap apk-tools && \
     rm -rf /var/cache/apk/*
-# remove all users and groups except readonly and netalertx without userdel/groupdel binaries
-# RUN awk -F: '($1 != "readonly" && $1 != "netalertx") {print $1}' /etc/passwd | xargs -r -n 1 deluser -r && \
-#     awk -F: '($1 != "readonly" && $1 != "netalertx") {print $1}' /etc/group | xargs -r -n 1 delgroup
-# Remove all sudoers
+# remove all users and groups except readonly and netalertx & remove all sudoers
 RUN rm -Rf /etc/sudoers.d/* /etc/shadow /etc/gshadow /etc/sudoers \
     /lib/apk /lib/firmware  /lib/modules-load.d /lib/sysctl.d /mnt /home/ /root \
     /srv /media && \
