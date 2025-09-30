@@ -8,7 +8,7 @@ FROM runner AS netalertx-devcontainer
 ENV INSTALL_DIR=/app 
 ENV PYTHONPATH=/workspaces/NetAlertX/test:/workspaces/NetAlertX/server:/app:/app/server:/opt/venv/lib/python3.12/site-packages
 
-COPY .devcontainer/resources/99-xdebug.ini /etc/php83/conf.d/99-xdebug.ini
+COPY .devcontainer/resources/devcontainer-overlay/ /
 
 # Install common tools, create user, and set up sudo
 RUN apk add --no-cache git nano vim jq php83-pecl-xdebug py3-pip nodejs sudo gpgconf pytest pytest-cov 

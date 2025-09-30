@@ -4,7 +4,6 @@
 .gitconfig
 \.*CommandMarker
 deviceid
-.git-placeholder
 .DS_Store
 .cache
 config/*

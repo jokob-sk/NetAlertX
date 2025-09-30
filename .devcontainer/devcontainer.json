@@ -4,9 +4,7 @@
   "build": {
     "dockerfile": "./Dockerfile",
     "context": "../",
-    "target": "netalertx-devcontainer",
-    "pull": true,
-    "noCache": true
+    "target": "netalertx-devcontainer"
   },
   "workspaceFolder": "/workspaces/NetAlertX",
   "runArgs": [
@@ -38,7 +36,8 @@
         "ms-python.black-formatter",
         "jeff-hykin.better-dockerfile-syntax",
         "GitHub.codespaces",
-        "ms-azuretools.vscode-containers"
+        "ms-azuretools.vscode-containers",
+        "ms-python.vscode-python-envs"
       ]
       ,
       "settings": {

@@ -16,6 +16,7 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 RUN pip install openwrt-luci-rpc asusrouter asyncio aiohttp graphene flask flask-cors unifi-sm-api tplink-omada-client wakeonlan pycryptodome requests paho-mqtt scapy cron-converter pytz json2table dhcp-leases pyunifi speedtest-cli chardet python-nmap dnspython librouteros yattag zeroconf git+https://github.com/foreign-sub/aiofreepybox.git
 
+RUN chmod -R u-rwx,g-rwx /opt
 
 # second stage is the main runtime stage with just the minimum required to run the application
 # The runner is used for both devcontainer, and as a base for the hardened stage.
@@ -60,6 +61,7 @@ ENV NETALERTX_DB_FILE=${NETALERTX_DB}/app.db
 ENV SYSTEM_SERVICES_PHP_FOLDER=${SYSTEM_SERVICES_CONFIG}/php
 ENV SYSTEM_SERVICES_PHP_FPM_D=${SYSTEM_SERVICES_PHP_FOLDER}/php-fpm.d
 ENV SYSTEM_SERVICES_CROND=${SYSTEM_SERVICES_CONFIG}/crond
+ENV SYSTEM_SERVICES_PHP_RUN=${SYSTEM_SERVICES}/run
 ENV PHP_FPM_CONFIG_FILE=${SYSTEM_SERVICES_PHP_FOLDER}/php-fpm.conf
 
 ENV PYTHONPATH=${NETALERTX_SERVER}
@@ -78,14 +80,13 @@ RUN addgroup -g 20211 netalertx && \
     adduser -u 20211 -D -h ${NETALERTX_APP} -G netalertx netalertx
 
 # Install application, copy files, set permissions
-COPY --from=builder /opt/venv /opt/venv
+COPY --from=builder --chown=20212:20212 /opt/venv /opt/venv
 COPY --from=builder /usr/sbin/usermod /usr/sbin/groupmod /usr/sbin/
 COPY --chown=netalertx:netalertx install/production-filesystem/ /
 COPY --chown=netalertx:netalertx --chmod=755 back ${NETALERTX_BACK}
 COPY --chown=netalertx:netalertx --chmod=755 front ${NETALERTX_FRONT}
 COPY --chown=netalertx:netalertx --chmod=755 server ${NETALERTX_SERVER}
-RUN install -d -o netalertx -g netalertx -m 755 ${NETALERTX_API} && \
-    install -d -o netalertx -g netalertx -m 755 ${NETALERTX_LOG} && \
+RUN install -d -o netalertx -g netalertx -m 755 ${NETALERTX_API} ${NETALERTX_LOG} ${SYSTEM_SERVICES_PHP_RUN} && \
     sh -c "find ${NETALERTX_APP} -type f \( -name '*.sh' -o -name 'speedtest-cli' \) \
     -exec chmod 750 {} \;"
 
@@ -111,13 +112,13 @@ ENTRYPOINT ["/bin/sh","-c","sleep infinity"]
 # When complete, if the image is compromised, there's not much that can be done with it.
 FROM runner AS hardened
 
-# create readonly user and group with no shell access
+# create readonly user and group with no shell access.  Readonly user marks folders that are created by NetAlertX, but should not be modified.
 RUN addgroup -g 20212 readonly && \
     adduser -u 20212 -G readonly -D -h /app readonly && \
     usermod -s /sbin/nologin readonly
 
 
-# remove netalertx from sudoers
+# reduce permissions to minimum necessary for all NetAlertX files and folders
 
 RUN chown -R readonly:readonly ${NETALERTX_BACK} ${NETALERTX_FRONT} ${NETALERTX_SERVER} ${SYSTEM_SERVICES} ${SYSTEM_SERVICES} && \
     chmod -R 004 ${NETALERTX_BACK} ${NETALERTX_FRONT} ${NETALERTX_SERVER} && \
@@ -125,21 +126,16 @@ RUN chown -R readonly:readonly ${NETALERTX_BACK} ${NETALERTX_FRONT} ${NETALERTX_
     chmod -R 005 ${SYSTEM_SERVICES} ${SYSTEM_SERVICES}/* && \
     chown -R netalertx:netalertx ${NETALERTX_CONFIG} ${NETALERTX_DB} ${NETALERTX_API} ${NETALERTX_LOG} && \
     chmod -R 600 ${NETALERTX_CONFIG} ${NETALERTX_DB} ${NETALERTX_API} ${NETALERTX_LOG} && \
-    chmod 700 ${NETALERTX_CONFIG} ${NETALERTX_DB} ${NETALERTX_API} ${NETALERTX_LOG} ${NETALERTX_PLUGINS_LOG} && \
-    chown readonly:readonly / && \
-    chown -R netalertx:netalertx /var/log/nginx /var/lib/nginx /run && \
-    find / -path /proc -prune -o -path /sys -prune -o -path /dev -prune -o \
-    -path /run -prune -o -path /var/log -prune -o -path /tmp -prune -o \
-    -group 0 -o -user 0 -exec chown readonly:readonly {} +
+    chmod 700 ${NETALERTX_CONFIG} ${NETALERTX_DB} ${NETALERTX_API} ${NETALERTX_LOG} ${NETALERTX_PLUGINS_LOG}  SYSTEM_SERVICES_PHP_RUN&& \
+    chown readonly:readonly /entrypoint.sh && \
+    install -d -o netalertx -g netalertx -m 700 /services/run && \
+    chmod 005 /entrypoint.sh
 
 #
 # remove sudo and alpine installers pacakges
 RUN apk del sudo libcap apk-tools && \
     rm -rf /var/cache/apk/*
-# remove all users and groups except readonly and netalertx without userdel/groupdel binaries
-# RUN awk -F: '($1 != "readonly" && $1 != "netalertx") {print $1}' /etc/passwd | xargs -r -n 1 deluser -r && \
-#     awk -F: '($1 != "readonly" && $1 != "netalertx") {print $1}' /etc/group | xargs -r -n 1 delgroup
-# Remove all sudoers
+# remove all users and groups except readonly and netalertx & remove all sudoers
 RUN rm -Rf /etc/sudoers.d/* /etc/shadow /etc/gshadow /etc/sudoers \
     /lib/apk /lib/firmware  /lib/modules-load.d /lib/sysctl.d /mnt /home/ /root \
     /srv /media && \
@@ -170,7 +166,7 @@ FROM runner AS netalertx-devcontainer
 ENV INSTALL_DIR=/app 
 ENV PYTHONPATH=/workspaces/NetAlertX/test:/workspaces/NetAlertX/server:/app:/app/server:/opt/venv/lib/python3.12/site-packages
 
-COPY .devcontainer/resources/99-xdebug.ini /etc/php83/conf.d/99-xdebug.ini
+COPY .devcontainer/resources/devcontainer-overlay/ /
 
 # Install common tools, create user, and set up sudo
 RUN apk add --no-cache git nano vim jq php83-pecl-xdebug py3-pip nodejs sudo gpgconf pytest pytest-cov 

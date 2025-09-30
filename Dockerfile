@@ -13,8 +13,7 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 RUN pip install openwrt-luci-rpc asusrouter asyncio aiohttp graphene flask flask-cors unifi-sm-api tplink-omada-client wakeonlan pycryptodome requests paho-mqtt scapy cron-converter pytz json2table dhcp-leases pyunifi speedtest-cli chardet python-nmap dnspython librouteros yattag zeroconf git+https://github.com/foreign-sub/aiofreepybox.git
 
-RUN chown -R 20212:20212 /opt && \
-    chmod -R u-rwx,g-rwx /opt
+RUN chmod -R u-rwx,g-rwx /opt
 
 # second stage is the main runtime stage with just the minimum required to run the application
 # The runner is used for both devcontainer, and as a base for the hardened stage.
@@ -59,6 +58,8 @@ ENV NETALERTX_DB_FILE=${NETALERTX_DB}/app.db
 ENV SYSTEM_SERVICES_PHP_FOLDER=${SYSTEM_SERVICES_CONFIG}/php
 ENV SYSTEM_SERVICES_PHP_FPM_D=${SYSTEM_SERVICES_PHP_FOLDER}/php-fpm.d
 ENV SYSTEM_SERVICES_CROND=${SYSTEM_SERVICES_CONFIG}/crond
+ENV SYSTEM_SERVICES_RUN=${SYSTEM_SERVICES}/run
+ENV SYSTEM_SERVICES_RUN_TMP=${SYSTEM_SERVICES_RUN}/tmp
 ENV PHP_FPM_CONFIG_FILE=${SYSTEM_SERVICES_PHP_FOLDER}/php-fpm.conf
 
 ENV PYTHONPATH=${NETALERTX_SERVER}
@@ -77,14 +78,13 @@ RUN addgroup -g 20211 netalertx && \
     adduser -u 20211 -D -h ${NETALERTX_APP} -G netalertx netalertx
 
 # Install application, copy files, set permissions
-COPY --from=builder /opt/venv /opt/venv
+COPY --from=builder --chown=20212:20212 /opt/venv /opt/venv
 COPY --from=builder /usr/sbin/usermod /usr/sbin/groupmod /usr/sbin/
 COPY --chown=netalertx:netalertx install/production-filesystem/ /
 COPY --chown=netalertx:netalertx --chmod=755 back ${NETALERTX_BACK}
 COPY --chown=netalertx:netalertx --chmod=755 front ${NETALERTX_FRONT}
 COPY --chown=netalertx:netalertx --chmod=755 server ${NETALERTX_SERVER}
-RUN install -d -o netalertx -g netalertx -m 755 ${NETALERTX_API} && \
-    install -d -o netalertx -g netalertx -m 755 ${NETALERTX_LOG} && \
+RUN install -d -o netalertx -g netalertx -m 755 ${NETALERTX_API} ${NETALERTX_LOG} ${SYSTEM_SERVICES_RUN_TMP} && \
     sh -c "find ${NETALERTX_APP} -type f \( -name '*.sh' -o -name 'speedtest-cli' \) \
     -exec chmod 750 {} \;"
 
@@ -116,7 +116,7 @@ RUN addgroup -g 20212 readonly && \
     usermod -s /sbin/nologin readonly
 
 
-# remove netalertx from sudoers
+# reduce permissions to minimum necessary for all NetAlertX files and folders
 
 RUN chown -R readonly:readonly ${NETALERTX_BACK} ${NETALERTX_FRONT} ${NETALERTX_SERVER} ${SYSTEM_SERVICES} ${SYSTEM_SERVICES} && \
     chmod -R 004 ${NETALERTX_BACK} ${NETALERTX_FRONT} ${NETALERTX_SERVER} && \
@@ -124,9 +124,9 @@ RUN chown -R readonly:readonly ${NETALERTX_BACK} ${NETALERTX_FRONT} ${NETALERTX_
     chmod -R 005 ${SYSTEM_SERVICES} ${SYSTEM_SERVICES}/* && \
     chown -R netalertx:netalertx ${NETALERTX_CONFIG} ${NETALERTX_DB} ${NETALERTX_API} ${NETALERTX_LOG} && \
     chmod -R 600 ${NETALERTX_CONFIG} ${NETALERTX_DB} ${NETALERTX_API} ${NETALERTX_LOG} && \
-    chmod 700 ${NETALERTX_CONFIG} ${NETALERTX_DB} ${NETALERTX_API} ${NETALERTX_LOG} ${NETALERTX_PLUGINS_LOG} && \
-    chown -R netalertx:netalertx /var/log/nginx /var/lib/nginx /run && \
+    chmod 700 ${NETALERTX_CONFIG} ${NETALERTX_DB} ${NETALERTX_API} ${NETALERTX_LOG} ${NETALERTX_PLUGINS_LOG} ${SYSTEM_SERVICES_RUN_TMP} && \
     chown readonly:readonly /entrypoint.sh && \
+    install -d -o netalertx -g netalertx -m 700 ${SYSTEM_SERVICES_RUN} ${SYSTEM_SERVICES_RUN_TMP} && \
     chmod 005 /entrypoint.sh
 
 #

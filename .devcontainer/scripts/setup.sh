@@ -32,7 +32,7 @@ export SOURCE_DIR="/workspaces/NetAlertX"
 main() {
     echo "=== NetAlertX Development Container Setup ==="
     killall php-fpm83 nginx crond python3 2>/dev/null
-    
+    sleep 1
     echo "Setting up ${SOURCE_DIR}..."
     sudo chown $(id -u):$(id -g) /workspaces
     sudo chown 755 /workspaces
@@ -65,10 +65,11 @@ isRamDisk() {
 configure_source() {
     echo "[1/3] Configuring Source..."
     echo "  -> Cleaning up previous instances"
-    isRamDisk ${NETALERTX_LOG} && sudo umount "${NETALERTX_LOG}"
-    isRamDisk ${NETALERTX_API} && sudo umount "${NETALERTX_API}"
-    sleep 1
-    sudo rm -Rf ${NETALERTX_APP}/ 
+    
+    sudo umount "${NETALERTX_LOG}" 2>/dev/null || true
+    sudo umount "${NETALERTX_API}" 2>/dev/null || true
+    sudo rm -Rf ${NETALERTX_APP}/
+    ls -al /app
 
     echo "  -> Linking source to ${NETALERTX_APP}"
     sudo ln -s ${SOURCE_DIR}/ ${NETALERTX_APP}
@@ -100,9 +101,7 @@ configure_source() {
 # configure_php: configure PHP-FPM and enable dev debug options
 configure_php() {
     echo "[2/3] Configuring PHP-FPM..."
-    sudo chown netalertx:netalertx /run/php/ 2>/dev/null || true
-
-    sudo cp /workspaces/NetAlertX/.devcontainer/resources/99-xdebug.ini ${SYSTEM_SERVICES_PHP_FPM_D}/99-xdebug.ini
+    sudo chown netalertx:netalertx  ${SYSTEM_SERVICES_PHP_RUN} 2>/dev/null || true
 
 }
 
@@ -114,7 +113,7 @@ start_services() {
     setsid nohup /services/start-crond.sh &>/dev/null &
 
     echo "      -> Starting PHP-FPM"
-    setsid nohup services/start-php-fpm.sh &>/dev/null &
+    setsid nohup /services/start-php-fpm.sh &>/dev/null &
 
     sudo killall nginx &>/dev/null || true
     # Wait for the previous nginx processes to exit and for the port to free up
@@ -128,7 +127,7 @@ start_services() {
     echo "      -> Starting Nginx"
     setsid nohup /services/start-nginx.sh &>/dev/null &
     echo "      -> Starting Backend ${APP_DIR}/server..."
-    /services/start-backend.sh 
+    /services/start-backend.sh &
     sleep 2
 }
 

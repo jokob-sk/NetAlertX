@@ -2,7 +2,7 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "[Any Linux] Generate Dockerfile",
+      "label": "[Any POSIX] Generate Dockerfile",
       "type": "shell",
       "command": "${workspaceFolder:NetAlertX}/.devcontainer/scripts/generate-dockerfile.sh",
       "presentation": {
@@ -22,6 +22,29 @@
       "icon": {
         "id": "tools",
         "color": "terminal.ansiYellow"
+      }
+    },
+    {
+      "label": "[Any] Docker system and build Prune",
+      "type": "shell",
+      "command": "docker system prune -af && docker builder prune -af",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "panel": "shared",
+        "showReuseMessage": false
+      },
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "options": {
+        "cwd": "${workspaceFolder:NetAlertX}"
+      },
+      "icon": {
+        "id": "trash",
+        "color": "terminal.ansiRed"
       }
     },
     {

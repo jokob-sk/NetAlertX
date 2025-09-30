@@ -6,7 +6,7 @@ export PYTHONPATH="${NETALERTX_SERVER}:${NETALERTX_APP}"
 
 EXTRA_PARAMS=""
 if [ -f /services/config/python/backend-extra-launch-parameters ]; then
-    EXTRA_PARAMS=$(cat /services/config/python-backend-extra-launch-parameters)
+    EXTRA_PARAMS=$(cat /services/config/python/backend-extra-launch-parameters)
 fi
 
 # Start the backend, teeing stdout and stderr to log files and the container's console
