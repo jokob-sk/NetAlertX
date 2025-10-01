@@ -365,7 +365,7 @@ chmod -R ug+rwX,o-rwx "$WEB_UI_DIR"
 chmod -R ug+rwX "$INSTALL_DIR/log" "$INSTALL_DIR/config"
 chown -R www-data:www-data "$FILEDB" 2>/dev/null || true
 # Add nginx to www-data
-usermod -aG www-data nginx || true
+# usermod -aG www-data nginx || true
 
 # start PHP
 printf "%b\n" "--------------------------------------------------------------------------"
