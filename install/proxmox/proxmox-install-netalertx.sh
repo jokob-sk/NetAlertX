@@ -34,9 +34,9 @@ INSTALL_DIR=/app  # default installation directory
 INSTALLER_DIR="$INSTALL_DIR/install/proxmox"
 CONF_FILE=app.conf
 DB_FILE=app.db
-NGINX_CONF_NAME=netalertx.conf
+NGINX_CONF_FILE=netalertx.conf
 WEB_UI_DIR=/var/www/html/netalertx
-NGINX_CONFIG_FILE="/etc/nginx/conf.d/${NGINX_CONF_NAME}"
+NGINX_CONFIG_FILE=/etc/nginx/conf.d/$NGINX_CONF_FILE
 OUI_FILE="/usr/share/arp-scan/ieee-oui.txt" 
 FILEDB=$INSTALL_DIR/db/$DB_FILE
 # DO NOT CHANGE ANYTHING ABOVE THIS LINE! 
