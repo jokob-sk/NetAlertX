@@ -15,14 +15,10 @@ export CROND_BIN="/usr/sbin/crond -f"
 
 export ALWAYS_FRESH_INSTALL=false
 export INSTALL_DIR=/app
-export APP_DATA_LOCATION=/app/config
-export APP_CONFIG_LOCATION=/app/config
 export LOGS_LOCATION=/app/logs
 export CONF_FILE="app.conf"
-export NGINX_CONF_FILE=netalertx.conf
 export DB_FILE="app.db"
 export FULL_FILEDB_PATH="${INSTALL_DIR}/db/${DB_FILE}"
-export NGINX_CONFIG_FILE="/etc/nginx/http.d/${NGINX_CONF_FILE}"
 export OUI_FILE="/usr/share/arp-scan/ieee-oui.txt" # Define the path to ieee-oui.txt and ieee-iab.txt
 export TZ=Europe/Paris
 export PORT=20211
@@ -63,17 +59,20 @@ isRamDisk() {
 
 # Setup source directory
 configure_source() {
-    echo "[1/3] Configuring Source..."
+    echo "[1/4] Configuring System..."
+    echo "  -> Setting up /services permissions"
+    sudo chown -R netalertx /services
+
+    echo "[2/4] Configuring Source..."
     echo "  -> Cleaning up previous instances"
-    
-    sudo umount "${NETALERTX_LOG}" 2>/dev/null || true
-    sudo umount "${NETALERTX_API}" 2>/dev/null || true
-    sudo rm -Rf ${NETALERTX_APP}/
-    ls -al /app
+
+    test -e ${NETALERTX_LOG} && sudo umount "${NETALERTX_LOG}" 2>/dev/null || true
+    test -e ${NETALERTX_API} && sudo umount "${NETALERTX_API}" 2>/dev/null || true
+    test -e ${NETALERTX_APP} && sudo rm -Rf ${NETALERTX_APP}/
 
     echo "  -> Linking source to ${NETALERTX_APP}"
     sudo ln -s ${SOURCE_DIR}/ ${NETALERTX_APP}
-    
+
     echo "  -> Mounting ramdisks for /log and /api"
     mkdir -p ${NETALERTX_LOG} ${NETALERTX_API}
     sudo mount -o uid=$(id -u netalertx),gid=$(id -g netalertx),mode=775 -t tmpfs -o size=256M tmpfs "${NETALERTX_LOG}"
@@ -81,6 +80,7 @@ configure_source() {
     mkdir -p ${NETALERTX_PLUGINS_LOG}
     touch ${NETALERTX_PLUGINS_LOG}/.git-placeholder ${NETALERTX_API}/.git-placeholder
     # mount tmpfs with root:root ownership and 755 permissions
+    touch /app/log/nginx_error.log
 
 
     echo "  -> Empty log"|tee ${INSTALL_DIR}/log/app.log \
@@ -100,14 +100,14 @@ configure_source() {
 
 # configure_php: configure PHP-FPM and enable dev debug options
 configure_php() {
-    echo "[2/3] Configuring PHP-FPM..."
+    echo "[3/4] Configuring PHP-FPM..."
     sudo chown netalertx:netalertx  ${SYSTEM_SERVICES_PHP_RUN} 2>/dev/null || true
 
 }
 
 # start_services: start crond, PHP-FPM, nginx and the application
 start_services() {
-    echo "[3/3] Starting services..."
+    echo "[4/4] Starting services..."
 
     echo "      -> Starting CronD"
     setsid nohup /services/start-crond.sh &>/dev/null &
@@ -115,7 +115,6 @@ start_services() {
     echo "      -> Starting PHP-FPM"
     setsid nohup /services/start-php-fpm.sh &>/dev/null &
 
-    sudo killall nginx &>/dev/null || true
     # Wait for the previous nginx processes to exit and for the port to free up
     tries=0
     while ss -ltn | grep -q ":${PORT}[[:space:]]" && [ $tries -lt 10 ]; do
@@ -123,11 +122,11 @@ start_services() {
         sleep 0.2
         tries=$((tries+1))
     done
-    sleep 0.2
+    sleep 1
     echo "      -> Starting Nginx"
-    setsid nohup /services/start-nginx.sh &>/dev/null &
+    /services/start-nginx.sh 
     echo "      -> Starting Backend ${APP_DIR}/server..."
-    /services/start-backend.sh &
+    setsid nohup /services/start-backend.sh &
     sleep 2
 }
 

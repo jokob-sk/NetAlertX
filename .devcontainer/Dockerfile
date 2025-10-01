@@ -33,6 +33,7 @@ ENV NETALERTX_FRONT=${NETALERTX_APP}/front
 ENV NETALERTX_SERVER=${NETALERTX_APP}/server
 ENV NETALERTX_API=${NETALERTX_APP}/api
 ENV NETALERTX_DB=${NETALERTX_APP}/db
+ENV NETALERTX_DB_FILE=${NETALERTX_DB}/app.db
 ENV NETALERTX_BACK=${NETALERTX_APP}/back
 ENV NETALERTX_LOG=${NETALERTX_APP}/log
 ENV NETALERTX_PLUGINS_LOG=${NETALERTX_LOG}/plugins
@@ -55,13 +56,14 @@ ENV LOG_CROND=${NETALERTX_LOG}/crond.log
 ENV SYSTEM_SERVICES=/services
 ENV SYSTEM_SERVICES_CONFIG=${SYSTEM_SERVICES}/config
 ENV SYSTEM_NGINIX_CONFIG=${SYSTEM_SERVICES_CONFIG}/nginx
-ENV NGINX_CONFIG_FILE=${SYSTEM_NGINIX_CONFIG}/nginx.conf
+ENV SYSTEM_NGINX_CONFIG_FILE=${SYSTEM_NGINIX_CONFIG}/nginx.conf
 ENV NETALERTX_CONFIG_FILE=${NETALERTX_CONFIG}/app.conf
-ENV NETALERTX_DB_FILE=${NETALERTX_DB}/app.db
 ENV SYSTEM_SERVICES_PHP_FOLDER=${SYSTEM_SERVICES_CONFIG}/php
 ENV SYSTEM_SERVICES_PHP_FPM_D=${SYSTEM_SERVICES_PHP_FOLDER}/php-fpm.d
 ENV SYSTEM_SERVICES_CROND=${SYSTEM_SERVICES_CONFIG}/crond
-ENV SYSTEM_SERVICES_PHP_RUN=${SYSTEM_SERVICES}/run
+ENV SYSTEM_SERVICES_RUN=${SYSTEM_SERVICES}/run
+ENV SYSTEM_SERVICES_RUN_TMP=${SYSTEM_SERVICES_RUN}/tmp
+ENV SYSTEM_SERVICES_RUN_LOG=${SYSTEM_SERVICES_RUN}/logs
 ENV PHP_FPM_CONFIG_FILE=${SYSTEM_SERVICES_PHP_FOLDER}/php-fpm.conf
 
 ENV PYTHONPATH=${NETALERTX_SERVER}
@@ -69,15 +71,16 @@ ENV PYTHONPATH=${NETALERTX_SERVER}
 
 
 RUN apk add --no-cache bash mtr libbsd zip lsblk sudo tzdata curl arp-scan iproute2 \
-iproute2-ss nmap nmap-scripts traceroute nbtscan net-tools net-snmp-tools bind-tools awake \
-ca-certificates sqlite php83 php83-fpm php83-cgi php83-curl php83-sqlite3 php83-session python3 \
-nginx sudo libcap shadow && \
-rm -rf /var/cache/apk/* && \
-rm -f /etc/nginx/http.d/default.conf
+        iproute2-ss nmap nmap-scripts traceroute nbtscan net-tools net-snmp-tools bind-tools awake \
+        ca-certificates sqlite php83 php83-fpm php83-cgi php83-curl php83-sqlite3 php83-session python3 \
+        nginx sudo shadow && \
+    rm -Rf /var/cache/apk/*  && \
+    rm -Rf /etc/nginx && \
+    addgroup -g 20211 netalertx && \
+    adduser -u 20211 -D -h ${NETALERTX_APP} -G netalertx netalertx && \
+    apk del shadow
 
-#Create netalertx user and group
-RUN addgroup -g 20211 netalertx && \
-    adduser -u 20211 -D -h ${NETALERTX_APP} -G netalertx netalertx
+
 
 # Install application, copy files, set permissions
 COPY --from=builder --chown=20212:20212 /opt/venv /opt/venv
@@ -86,33 +89,36 @@ COPY --chown=netalertx:netalertx install/production-filesystem/ /
 COPY --chown=netalertx:netalertx --chmod=755 back ${NETALERTX_BACK}
 COPY --chown=netalertx:netalertx --chmod=755 front ${NETALERTX_FRONT}
 COPY --chown=netalertx:netalertx --chmod=755 server ${NETALERTX_SERVER}
-RUN install -d -o netalertx -g netalertx -m 755 ${NETALERTX_API} ${NETALERTX_LOG} ${SYSTEM_SERVICES_PHP_RUN} && \
+RUN install -d -o netalertx -g netalertx -m 755 ${NETALERTX_API}  \
+    ${NETALERTX_LOG} ${SYSTEM_SERVICES_RUN_TMP} ${SYSTEM_SERVICES_RUN_LOG} && \
     sh -c "find ${NETALERTX_APP} -type f \( -name '*.sh' -o -name 'speedtest-cli' \) \
     -exec chmod 750 {} \;"
 
-# setcap to allow network tools with raw packet access  to run without root
-RUN setcap cap_net_raw,cap_net_admin+eip /usr/bin/nmap && \
-    setcap cap_net_raw,cap_net_admin+eip /usr/bin/arp-scan && \
-    setcap cap_net_raw,cap_net_admin+eip /usr/bin/traceroute && \
-    setcap cap_net_raw,cap_net_admin+eip /opt/venv/bin/scapy
 
 #initialize each service with the dockerfiles/init-*.sh scripts, once.
-RUN /bin/sh /build/init-nginx.sh && \
+RUN apk add libcap && \
+    setcap cap_net_raw,cap_net_admin+eip /usr/bin/nmap && \
+    setcap cap_net_raw,cap_net_admin+eip /usr/bin/arp-scan && \
+    setcap cap_net_raw,cap_net_admin+eip /usr/bin/traceroute && \
+    setcap cap_net_raw,cap_net_admin+eip /opt/venv/bin/scapy && \
+    /bin/sh /build/init-nginx.sh && \
     /bin/sh /build/init-php-fpm.sh && \
     /bin/sh /build/init-crond.sh && \
     /bin/sh /build/init-backend.sh && \
-    rm -rf /build
-
+    rm -rf /build && \
+    apk del libcap
 # set netalertx to allow sudoers for any command, no password
 RUN echo "netalertx ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 ENTRYPOINT ["/bin/sh","-c","sleep infinity"]
 
-# Final hardened stage to improve security by setting correct permissions and removing sudo access
+# Final hardened stage to improve security by setting least possible permissions and removing sudo access.
 # When complete, if the image is compromised, there's not much that can be done with it.
+# This stage is separate from Runner stage so that devcontainer can use the Runner stage.
 FROM runner AS hardened
 
-# create readonly user and group with no shell access.  Readonly user marks folders that are created by NetAlertX, but should not be modified.
+# create readonly user and group with no shell access.
+# Readonly user marks folders that are created by NetAlertX, but should not be modified.
 RUN addgroup -g 20212 readonly && \
     adduser -u 20212 -G readonly -D -h /app readonly && \
     usermod -s /sbin/nologin readonly
@@ -126,15 +132,15 @@ RUN chown -R readonly:readonly ${NETALERTX_BACK} ${NETALERTX_FRONT} ${NETALERTX_
     chmod -R 005 ${SYSTEM_SERVICES} ${SYSTEM_SERVICES}/* && \
     chown -R netalertx:netalertx ${NETALERTX_CONFIG} ${NETALERTX_DB} ${NETALERTX_API} ${NETALERTX_LOG} && \
     chmod -R 600 ${NETALERTX_CONFIG} ${NETALERTX_DB} ${NETALERTX_API} ${NETALERTX_LOG} && \
-    chmod 700 ${NETALERTX_CONFIG} ${NETALERTX_DB} ${NETALERTX_API} ${NETALERTX_LOG} ${NETALERTX_PLUGINS_LOG}  SYSTEM_SERVICES_PHP_RUN&& \
+    chmod 700 ${NETALERTX_CONFIG} ${NETALERTX_DB} ${NETALERTX_API} ${NETALERTX_LOG} ${NETALERTX_PLUGINS_LOG} ${SYSTEM_SERVICES_RUN_TMP} && \
     chown readonly:readonly /entrypoint.sh && \
-    install -d -o netalertx -g netalertx -m 700 /services/run && \
+    install -d -o netalertx -g netalertx -m 700 ${SYSTEM_SERVICES_RUN} ${SYSTEM_SERVICES_RUN_TMP} ${SYSTEM_SERVICES_RUN_LOG} && \
     chmod 005 /entrypoint.sh
 
 #
 # remove sudo and alpine installers pacakges
-RUN apk del sudo libcap apk-tools && \
-    rm -rf /var/cache/apk/*
+RUN apk del sudo apk-tools && \
+    rm -rf /var/cache/apk/* 
 # remove all users and groups except readonly and netalertx & remove all sudoers
 RUN rm -Rf /etc/sudoers.d/* /etc/shadow /etc/gshadow /etc/sudoers \
     /lib/apk /lib/firmware  /lib/modules-load.d /lib/sysctl.d /mnt /home/ /root \
@@ -165,15 +171,18 @@ ENTRYPOINT [ "/bin/sh", "/entrypoint.sh" ]
 FROM runner AS netalertx-devcontainer
 ENV INSTALL_DIR=/app 
 ENV PYTHONPATH=/workspaces/NetAlertX/test:/workspaces/NetAlertX/server:/app:/app/server:/opt/venv/lib/python3.12/site-packages
-
+ENV PATH=/services:${PATH}
 COPY .devcontainer/resources/devcontainer-overlay/ /
 
 # Install common tools, create user, and set up sudo
 RUN apk add --no-cache git nano vim jq php83-pecl-xdebug py3-pip nodejs sudo gpgconf pytest pytest-cov 
-  
 # Install debugpy in the virtualenv if present, otherwise into system python3
-RUN /bin/sh -c '(/opt/venv/bin/python3 -m pip install --no-cache-dir debugpy) || (python3 -m pip install --no-cache-dir debugpy) || true'
-RUN python -m pip install -U pytest pytest-cov
+RUN /bin/sh -c '(/opt/venv/bin/python3 -m pip install --no-cache-dir debugpy) || (python3 -m pip install --no-cache-dir debugpy) || true' && \
+    mkdir /workspaces && \
+    install -d -o netalertx -g netalertx -m 777 /services/run/logs && \
+    install -d -o netalertx -g netalertx -m 777 /app/run/tmp/client_body && \
+    sed -i -e 's|:/app:|:/workspaces:|' /etc/passwd && \
+    python -m pip install -U pytest pytest-cov
 
 ENTRYPOINT  ["/bin/sh","-c","sleep infinity"]
     

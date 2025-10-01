@@ -1,4 +1,4 @@
 #!/bin/bash
 echo "Initializing nginx..."
-#Future crond initializations can go here.
+install -d -o netalertx -g netalertx -m 700 /app/run/tmp/client_body;
 echo "nginx initialized."
