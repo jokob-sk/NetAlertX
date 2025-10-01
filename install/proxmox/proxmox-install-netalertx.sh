@@ -328,18 +328,23 @@ umount "${INSTALL_DIR}/api" 2>/dev/null || true
 
 printf "%b\n" "Creating log api folders if they don't exist"
 mkdir -p "${INSTALL_DIR}/log" "${INSTALL_DIR}/api"
-mkdir -p "${INSTALL_DIR}"/log/plugins
 
 printf "%b\n" "--------------------------------------------------------------------------"
 printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}Mounting log and api folders as tmpfs"
 printf "%b\n" "--------------------------------------------------------------------------"
 mountpoint -q "${INSTALL_DIR}/log" || mount -t tmpfs -o noexec,nosuid,nodev tmpfs "${INSTALL_DIR}/log"
 mountpoint -q "${INSTALL_DIR}/api" || mount -t tmpfs -o noexec,nosuid,nodev tmpfs "${INSTALL_DIR}/api"
+chown -R www-data:www-data "${INSTALL_DIR}/log" "${INSTALL_DIR}/api"
+
+# Ensure plugins directory exists within the tmpfs mount
+mkdir -p "${INSTALL_DIR}"/log/plugins
+chown -R www-data:www-data "${INSTALL_DIR}"/log/plugins
 
 # Create the execution_queue.log file if it doesn't exist
 touch "${INSTALL_DIR}"/log/{app.log,execution_queue.log,app_front.log,app.php_errors.log,stderr.log,stdout.log,db_is_locked.log}
 touch "${INSTALL_DIR}"/api/user_notifications.json
-chown root:www-data "${INSTALL_DIR}"/api/user_notifications.json
+chown -R www-data:www-data "${INSTALL_DIR}"/log "${INSTALL_DIR}"/api
+chmod -R ug+rwX "${INSTALL_DIR}"/log "${INSTALL_DIR}"/api
 
 printf "%b\n" "--------------------------------------------------------------------------"
 printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}Setting up DB and CONF files"
