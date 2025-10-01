@@ -13,20 +13,27 @@ IFS=$' \t\n'
 # Colors (guarded)
 if [ -t 1 ] && [ -z "${NO_COLOR:-}" ]; then
   RESET='\e[0m'
-  GREEN='\e[38;5;2m'
-  BOLD='\e[1m'
-  WHITE='\e[97m'
+  GREEN='\e[1;38;5;2m'
   RED='\e[31m'
 else
-  RESET=''; GREEN=''; BOLD=''; WHITE=''; RED=''
+  RESET=''; GREEN=''; RED=''
 fi
 
- printf "%b\n" "--------------------------------------------------------------------------"
- printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}Running proxmox-install-netalertx.sh"
- printf "%b\n" "--------------------------------------------------------------------------"
+printf "%b\n" "--------------------------------------------------------------------------"
+printf "%b\n" "${GREEN}[UPDATING]                          ${RESET}Making sure the system is up to date"
+printf "%b\n" "--------------------------------------------------------------------------"
+
+# Getting up to date
+apt-get update -y
+apt-get upgrade -y
+
+printf "%b\n" "--------------------------------------------------------------------------"
+printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}Running proxmox-install-netalertx.sh"
+printf "%b\n" "--------------------------------------------------------------------------"
 
 # Set environment variables
 INSTALL_DIR=/app  # default installation directory
+
 # DO NOT CHANGE ANYTHING BELOW THIS LINE!
 INSTALLER_DIR="$INSTALL_DIR/install/proxmox"
 CONF_FILE=app.conf
@@ -90,7 +97,7 @@ else
 fi
 export PORT
 
-# Detect primary server IP for final prompt/use
+# Detect primary server IP
 SERVER_IP="$(ip -4 route get 1.1.1.1 2>/dev/null | awk '{for(i=1;i<=NF;i++) if ($i=="src") {print $(i+1); exit}}')"
 if [ -z "${SERVER_IP}" ]; then
   SERVER_IP="$(hostname -I 2>/dev/null | awk '{print $1}')"
@@ -100,7 +107,7 @@ if [ -z "${SERVER_IP}" ]; then
 fi
 export SERVER_IP
 
-# Remove existing installation directory immediately (no prompt), with safety guard
+# Making sure the system is clean
 if [ -d "$INSTALL_DIR" ]; then
   printf "%b\n" "Removing existing directory: $INSTALL_DIR"
   rm -rf "$INSTALL_DIR"
@@ -125,68 +132,40 @@ printf "%b\n" "-----------------------------------------------------------------
 printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}Detected OS: ${OS_ID} ${OS_VER}"
 printf "%b\n" "--------------------------------------------------------------------------"
 
-if [ "${OS_ID}" = "debian" ] && printf '%s' "${OS_VER}" | grep -q '^13'; then
-  # Debian 13 (trixie) ships PHP 8.4 in main repos; no extra repo needed
-  printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}Debian 13 detected - using built-in PHP 8.4"
-  apt-get install -y --no-install-recommends \
-      tini snmp ca-certificates curl libwww-perl arp-scan perl apt-utils cron sudo \
-      php8.4 php8.4-cgi php8.4-fpm php8.4-sqlite3 php8.4-curl sqlite3 dnsutils net-tools mtr \
-      python3 python3-dev iproute2 nmap python3-pip zip usbutils traceroute nbtscan \
-      avahi-daemon avahi-utils build-essential git gnupg2 lsb-release \
-      debian-archive-keyring python3-venv
-elif [ "${OS_ID}" = "ubuntu" ] && printf '%s' "${OS_VER}" | grep -q '^24'; then
+if 
+  [ "${OS_ID}" = "ubuntu" ] && printf '%s' "${OS_VER}" | grep -q '^24'; then
   # Ubuntu 24.x typically ships PHP 8.3; add ondrej/php PPA and set 8.4
+  printf "%b\n" "--------------------------------------------------------------------------"
   printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}Ubuntu 24 detected - enabling ondrej/php PPA for PHP 8.4"
+  printf "%b\n" "--------------------------------------------------------------------------"
   apt-get install -y --no-install-recommends software-properties-common || true
-  if command -v add-apt-repository >/dev/null 2>&1; then
-    add-apt-repository -y ppa:ondrej/php || true
-  else
-    # Fallback: manually add ondrej/php PPA for the current codename
-    CODENAME=$(lsb_release -sc 2>/dev/null || echo noble)
-    curl -fsSL https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x4F4EA0AAE5267A6C | gpg --dearmor | tee /usr/share/keyrings/ondrej-php.gpg >/dev/null
-    echo "deb [signed-by=/usr/share/keyrings/ondrej-php.gpg] http://ppa.launchpad.net/ondrej/php/ubuntu ${CODENAME} main" > /etc/apt/sources.list.d/ondrej-php.list
-  fi
-  apt-get update -y
-  apt-get install -y --no-install-recommends \
-      tini snmp ca-certificates curl libwww-perl arp-scan perl apt-utils cron sudo \
-      php8.4 php8.4-cgi php8.4-fpm php8.4-sqlite3 php8.4-curl sqlite3 dnsutils net-tools mtr \
-      python3 python3-dev iproute2 nmap python3-pip zip usbutils traceroute nbtscan \
-      avahi-daemon avahi-utils build-essential git gnupg2 lsb-release \
-      python3-venv
-  # Set PHP 8.4 as the default alternatives where applicable
+  add-apt-repository ppa:ondrej/php -y
+  apt update -y
+elif
+  [ "${OS_ID}" = "debian" ] && printf '%s' "${OS_VER}" | grep -q '^13'; then
+  printf "%b\n" "--------------------------------------------------------------------------"
+  printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}Debian 13 detected - using built-in PHP 8.4"
+  printf "%b\n" "--------------------------------------------------------------------------"
+fi
+  
+apt-get install -y --no-install-recommends \
+    tini snmp ca-certificates curl libwww-perl arp-scan perl apt-utils cron sudo \
+    php8.4 php8.4-cgi php8.4-fpm php8.4-sqlite3 php8.4-curl sqlite3 dnsutils net-tools mtr \
+    python3 python3-dev iproute2 nmap python3-pip zip usbutils traceroute nbtscan \
+    avahi-daemon avahi-utils build-essential git gnupg2 lsb-release \
+    debian-archive-keyring python3-venv
+
+if 
+  [ "${OS_ID}" = "ubuntu" ] && printf '%s' "${OS_VER}" | grep -q '^24'; then  # Set PHP 8.4 as the default alternatives where applicable
   update-alternatives --set php /usr/bin/php8.4 || true
   systemctl enable php8.4-fpm || true
   systemctl restart php8.4-fpm || true
-else
-  # Generic fallback: try installing PHP 8.4, may require external repo on older OSes
-  printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}Generic install path - attempting PHP 8.4 from current repos"
-  apt-get install -y --no-install-recommends \
-      tini snmp ca-certificates curl libwww-perl arp-scan perl apt-utils cron sudo \
-      php8.4 php8.4-cgi php8.4-fpm php8.4-sqlite3 php8.4-curl sqlite3 dnsutils net-tools mtr \
-      python3 python3-dev iproute2 nmap python3-pip zip usbutils traceroute nbtscan \
-      avahi-daemon avahi-utils build-essential git gnupg2 lsb-release \
-      python3-venv || true
 fi
 
-# 2. SET UP NGINX REPOSITORY AND INSTALL
- printf "%b\n" "--------------------------------------------------------------------------"
- printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}Setting up NGINX"
- printf "%b\n" "--------------------------------------------------------------------------"
-curl -fsSL https://nginx.org/keys/nginx_signing.key | gpg --dearmor \
-   | tee /usr/share/keyrings/nginx-archive-keyring.gpg >/dev/null
+printf "%b\n" "--------------------------------------------------------------------------"
+printf "%b\n" "${GREEN}[INSTALLING]              ${RESET}Setting up NGINX - Might take a minute!"
+printf "%b\n" "--------------------------------------------------------------------------"
 
-
-echo "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] http://nginx.org/packages/debian $(lsb_release -cs) nginx" \
-   | tee /etc/apt/sources.list.d/nginx.list
-
-printf "Package: *\\nPin: origin nginx.org\\nPin: release o=nginx\\nPin-Priority: 900\\n" \
-   | tee /etc/apt/preferences.d/99nginx
-
- printf "%b\n" "--------------------------------------------------------------------------"
- printf "%b\n" "${GREEN}[INSTALLING]              ${RESET}Setting up NGINX - Might take a minute!"
- printf "%b\n" "--------------------------------------------------------------------------"
-
-apt-get update -y
 apt-get install -y nginx
 
 # Enable and start nginx
@@ -196,9 +175,9 @@ if command -v systemctl >/dev/null 2>&1; then
 fi
 
 # 3. SET UP PYTHON VIRTUAL ENVIRONMENT & DEPENDENCIES
- printf "%b\n" "--------------------------------------------------------------------------"
- printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}Setting up Python environment"
- printf "%b\n" "--------------------------------------------------------------------------"
+printf "%b\n" "--------------------------------------------------------------------------"
+printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}Setting up Python environment"
+printf "%b\n" "--------------------------------------------------------------------------"
 python3 -m venv /opt/myenv
 source /opt/myenv/bin/activate
 
@@ -240,55 +219,43 @@ rm /tmp/requirements.txt
 
 # 4. CLONE OR UPDATE APPLICATION REPOSITORY
 printf "%b\n" "--------------------------------------------------------------------------"
-printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}Cloning application repository"
+printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}Cloning application repository and setup"
 printf "%b\n" "--------------------------------------------------------------------------"
 
 mkdir -p "$INSTALL_DIR"
-git clone https://github.com/JVKeller/NetAlertX.git "$INSTALL_DIR/" #change after testing
+git clone -b proxmox-baremetal-installer https://github.com/JVKeller/NetAlertX.git "$INSTALL_DIR/" #change after testing
 
-# 5. FINAL SETUP
- printf "%b\n" "--------------------------------------------------------------------------"
- printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}Starting NetAlertX"
- printf "%b\n" "--------------------------------------------------------------------------"
 if [ ! -f "$INSTALL_DIR/front/buildtimestamp.txt" ]; then
   date +%s > "$INSTALL_DIR/front/buildtimestamp.txt"
 fi
 
- printf "%b\n" "--------------------------------------------------------------------------"
- printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}NetAlertX Installation complete"
- printf "%b\n" "--------------------------------------------------------------------------"
- printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}Installing NGINX and setting up the web server"
- printf "%b\n" "--------------------------------------------------------------------------"
- printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}Stopping any NGINX web server"
- printf "%b\n" "--------------------------------------------------------------------------"
+printf "%b\n" "--------------------------------------------------------------------------"
+printf "%b\n" "${GREEN}[FINISHED]                          ${RESET}NetAlertX Installation complete"
+printf "%b\n" "--------------------------------------------------------------------------"
+printf "%b\n" "${GREEN}[CONFIGURATION]                       ${RESET}Configuring the web server"
+printf "%b\n" "--------------------------------------------------------------------------"
 
 service nginx stop 2>/dev/null || true
 pkill -f "python ${INSTALL_DIR}/server" 2>/dev/null || true
 
- printf "%b\n" "--------------------------------------------------------------------------"
- printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}Updating the existing installation..."
- printf "%b\n" "--------------------------------------------------------------------------"
-
-# Remove default NGINX site if it is symlinked, or backup it otherwise
+# Backup default NGINX site just in case  
 if [ -L /etc/nginx/sites-enabled/default ] ; then
-  echo "Disabling default NGINX site, removing symlink in /etc/nginx/sites-enabled"
   rm /etc/nginx/sites-enabled/default
 elif [ -f /etc/nginx/sites-enabled/default ]; then
-  echo "Disabling default NGINX site, moving config to /etc/nginx/sites-available"
   mv /etc/nginx/sites-enabled/default /etc/nginx/sites-available/default.bkp_netalertx
 fi
 
 # Clear existing directories and files
 if [ -d "$WEB_UI_DIR" ]; then
    printf "%b\n" "--------------------------------------------------------------------------"
-   printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}Removing existing NetAlertX web-UI"
+   printf "%b\n" "${GREEN}[CHECKING]                          ${RESET}Removing existing NetAlertX web-UI"
    printf "%b\n" "--------------------------------------------------------------------------"
-  rm -R "$WEB_UI_DIR"
+   rm -R "$WEB_UI_DIR"
 fi
 
- printf "%b\n" "--------------------------------------------------------------------------"
- printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}Removing existing NetAlertX NGINX config"
- printf "%b\n" "--------------------------------------------------------------------------"
+printf "%b\n" "--------------------------------------------------------------------------"
+printf "%b\n" "${GREEN}[CHECKING]                          ${RESET}Removing existing NetAlertX NGINX config"
+printf "%b\n" "--------------------------------------------------------------------------"
 rm "$NGINX_CONFIG_FILE" 2>/dev/null || true
 
 # Create web directory if it doesn't exist
@@ -298,30 +265,31 @@ mkdir -p /var/www/html
 ln -sfn "${INSTALL_DIR}/front" "$WEB_UI_DIR"
 # create symbolic link to NGINX configuration coming with NetAlertX
 ln -sfn "${INSTALLER_DIR}/${NGINX_CONF_NAME}" "${NGINX_CONFIG_FILE}"
+ln -sfn "${INSTALLER_DIR}/$NGINX_CONF_FILE" $NGINX_CONFIG_FILE 
 
 # Use selected port (may be default 20211)
 if [ -n "${PORT-}" ]; then
    printf "%b\n" "--------------------------------------------------------------------------"
    printf "%b\n" "Setting webserver to port ($PORT)"
    printf "%b\n" "--------------------------------------------------------------------------"
-  sed -i "s/listen 20211;/listen ${PORT};/g" "${NGINX_CONFIG_FILE}"
-  # Also update the template file so it reflects the chosen port
-  sed -i "s/listen 20211;/listen ${PORT};/g" "${INSTALLER_DIR}/${NGINX_CONF_NAME}"
+   sed -i "s/listen 20211;/listen ${PORT};/g" "${NGINX_CONFIG_FILE}"
+   # Update the template to reflect the right port
+   sed -i "s/listen 20211;/listen ${PORT};/g" "${INSTALLER_DIR}/${NGINX_CONF_NAME}"
 fi
 
 # Change web interface address if set
-if [ -n "${LISTEN_ADDR-}" ]; then
-   printf "%b\n" "--------------------------------------------------------------------------"
-   printf "%b\n" "Setting webserver to user-supplied address (${LISTEN_ADDR})"
-   printf "%b\n" "--------------------------------------------------------------------------"
-  sed -i "s/listen /listen ${LISTEN_ADDR}:/g" "${NGINX_CONFIG_FILE}"
-  sed -i "s/listen /listen ${LISTEN_ADDR}:/g" "${INSTALLER_DIR}/${NGINX_CONF_NAME}"
-fi
+# if [ -n "${LISTEN_ADDR-}" ]; then
+#    printf "%b\n" "--------------------------------------------------------------------------"
+#    printf "%b\n" "Setting webserver to user-supplied address (${LISTEN_ADDR})"
+#    printf "%b\n" "--------------------------------------------------------------------------"
+#    sed -i "s/listen /listen ${LISTEN_ADDR}:/g" "${NGINX_CONFIG_FILE}"
+#    sed -i "s/listen /listen ${LISTEN_ADDR}:/g" "${INSTALLER_DIR}/${NGINX_CONF_NAME}"
+# fi
 
 # Run the hardware vendors update at least once
- printf "%b\n" "--------------------------------------------------------------------------"
- printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}Run the hardware vendors update"
- printf "%b\n" "--------------------------------------------------------------------------"
+printf "%b\n" "--------------------------------------------------------------------------"
+printf "%b\n" "${GREEN}[VENDORS UPDATE]                        ${RESET}Run the hardware vendors update"
+printf "%b\n" "--------------------------------------------------------------------------"
 
 # Check if ieee-oui.txt or ieee-iab.txt exist
 if [ -f "$OUI_FILE" ]; then
@@ -343,99 +311,61 @@ else
   fi
 fi
 
-# Create empty log files
+# Create empty log files and plugin folders
 printf "%b\n" "--------------------------------------------------------------------------"
-printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}Creating log and api mounts"
+printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}Creating mounts and file structure"
 printf "%b\n" "--------------------------------------------------------------------------"
 
 printf "%b\n" "Cleaning up old mounts if any"
 umount "${INSTALL_DIR}/log" 2>/dev/null || true
 umount "${INSTALL_DIR}/api" 2>/dev/null || true
 
-printf "%b\n" "Creating log and api folders if they don't exist"
+printf "%b\n" "Creating log api folders if they don't exist"
 mkdir -p "${INSTALL_DIR}/log" "${INSTALL_DIR}/api"
+mkdir -p "${INSTALL_DIR}"/log/plugins
 
-printf "%b\n" "Mounting log and api folders as tmpfs"
+printf "%b\n" "--------------------------------------------------------------------------"
+printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}Mounting log and api folders as tmpfs"
+printf "%b\n" "--------------------------------------------------------------------------"
 mount -t tmpfs -o noexec,nosuid,nodev tmpfs "${INSTALL_DIR}/log"
 mount -t tmpfs -o noexec,nosuid,nodev tmpfs "${INSTALL_DIR}/api"
 
 # Create the execution_queue.log file if it doesn't exist
 touch "${INSTALL_DIR}"/log/{app.log,execution_queue.log,app_front.log,app.php_errors.log,stderr.log,stdout.log,db_is_locked.log}
 touch "${INSTALL_DIR}"/api/user_notifications.json
-# Create plugins sub-directory if it doesn't exist in case a custom log folder is used
-mkdir -p "${INSTALL_DIR}"/log/plugins
-
-# Fixing file permissions
- printf "%b\n" "--------------------------------------------------------------------------"
- printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}Fixing file permissions"
- printf "%b\n" "--------------------------------------------------------------------------"
 chown root:www-data "${INSTALL_DIR}"/api/user_notifications.json
 
- printf "%b\n" "--------------------------------------------------------------------------"
- printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}Fixing WEB_UI_DIR: ${WEB_UI_DIR}"
- printf "%b\n" "--------------------------------------------------------------------------"
-chmod -R a+rwx "$WEB_UI_DIR"
+printf "%b\n" "--------------------------------------------------------------------------"
+printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}Setting up DB and CONF files"
+printf "%b\n" "--------------------------------------------------------------------------"
 
- printf "%b\n" "--------------------------------------------------------------------------"
- printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}Fixing INSTALL_DIR: ${INSTALL_DIR}"
- printf "%b\n" "--------------------------------------------------------------------------"
-
-chmod -R a+rw "$INSTALL_DIR/log"
-chmod -R a+rwx "$INSTALL_DIR"
-
- printf "%b\n" "--------------------------------------------------------------------------"
- printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}Copy starter $DB_FILE and $CONF_FILE if they don't exist"
- printf "%b\n" "--------------------------------------------------------------------------"
-
-# DANGER ZONE: ALWAYS_FRESH_INSTALL 
-if [ "${ALWAYS_FRESH_INSTALL:-false}" = true ]; then
-     printf "%b\n" "--------------------------------------------------------------------------"
-     printf "%b\n" "${GREEN}[INSTALLING]  ${RESET}❗ ALERT /db and /config folders are cleared because the"
-     printf "%b\n" "                    ALWAYS_FRESH_INSTALL is set to: ${ALWAYS_FRESH_INSTALL}❗"
-     printf "%b\n" "--------------------------------------------------------------------------"
-    # Delete content of "/config/"
-    rm -rf "${INSTALL_DIR}/config/"*
-  
-    # Delete content of "/db/"
-    rm -rf "${INSTALL_DIR}/db/"*
-fi
-
-
-# Copy starter $DB_FILE and $CONF_FILE if they don't exist
+# Copy starter $DB_FILE and $CONF_FILE
 mkdir -p "${INSTALL_DIR}/config" "${INSTALL_DIR}/db"
 cp -u "${INSTALL_DIR}/back/${CONF_FILE}" "${INSTALL_DIR}/config/${CONF_FILE}"
-cp -u "${INSTALL_DIR}/back/${DB_FILE}"  "${FILEDB}"
+cp -u "${INSTALL_DIR}/back/${DB_FILE}" "${FILEDB}"
 
- printf "%b\n" "--------------------------------------------------------------------------"
- printf "%b\n" "${GREEN}[INSTALLING]                ${RESET}Fixing permissions after copied starter config & DB"
- printf "%b\n" "--------------------------------------------------------------------------"
-
-if [ -f "$FILEDB" ]; then
-    chown -R www-data:www-data "$FILEDB"
-fi
-# Change Nginx User
-sed -i '2s/.*/user  www-data;/' /etc/nginx/nginx.conf
-
-# Change Nginx User
-sed -i '2s/.*/user  www-data;/' /etc/nginx/nginx.conf
-
-chmod -R a+rwx "$INSTALL_DIR" # second time after we copied the files
+printf "%b\n" "--------------------------------------------------------------------------"
+printf "%b\n" "${GREEN}[CONFIGURING]                          ${RESET}Setting File Permissions"
+printf "%b\n" "--------------------------------------------------------------------------"
+chmod -R a+rwx "$INSTALL_DIR"
+chmod -R a+rw "$INSTALL_DIR/log"
 chmod -R a+rw "$INSTALL_DIR/config"
 chgrp -R www-data  "$INSTALL_DIR"
-
-# Check if buildtimestamp.txt doesn't exist
-if [ ! -f "${INSTALL_DIR}/front/buildtimestamp.txt" ]; then
-    # Create buildtimestamp.txt
-    date +%s > "${INSTALL_DIR}/front/buildtimestamp.txt"
-fi
-
-# start PHP
-/etc/init.d/php8.4-fpm start
-nginx -t || { printf "%b\n" "${RED}[INSTALLING]              ${RESET}NGINX config test failed"; exit 1; }
-/etc/init.d/nginx start
-
+chmod -R a+rwx "$WEB_UI_DIR"
+chown -R www-data:www-data "$FILEDB"
 # Add nginx to www-data
 usermod -aG www-data nginx || true
+
+# start PHP
+printf "%b\n" "--------------------------------------------------------------------------"
+printf "%b\n" "${GREEN}[STARTING]                          ${RESET}Starting PHP and NGINX"
+printf "%b\n" "--------------------------------------------------------------------------"
+/etc/init.d/php8.4-fpm start
+nginx -t || {  
+  printf "%b\n" "--------------------------------------------------------------------------"
+  printf "%b\n" "${RED}[ERROR]                         ${RESET}NGINX config test failed!"
+  printf "%b\n" "--------------------------------------------------------------------------"; exit 1; }
+/etc/init.d/nginx start
 
 # Make a start script
 cat > "$INSTALL_DIR/start.netalertx.sh" << 'EOF'
@@ -481,16 +411,20 @@ StandardError=journal
 WantedBy=multi-user.target
 EOF
 
-  # Reload systemd and enable/start service
-  systemctl daemon-reload
-  systemctl enable netalertx.service
-  systemctl start netalertx.service
+# Reload systemd and enable/start service
+systemctl daemon-reload
+systemctl enable netalertx.service
+systemctl start netalertx.service
   
   # Verify service is running
   if systemctl is-active --quiet netalertx.service; then
+    printf "%b\n" "--------------------------------------------------------------------------"
     printf "%b\n" "${GREEN}[SUCCESS]                 ${RESET}NetAlertX service started successfully"
+    printf "%b\n" "--------------------------------------------------------------------------"
   else
+    printf "%b\n" "--------------------------------------------------------------------------"
     printf "%b\n" "${RED}[WARNING]                 ${RESET}NetAlertX service may not have started properly"
+    printf "%b\n" "--------------------------------------------------------------------------"
     systemctl status netalertx.service --no-pager -l
   fi
 else
