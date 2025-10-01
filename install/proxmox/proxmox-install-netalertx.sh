@@ -107,6 +107,8 @@ if [ -z "${SERVER_IP}" ]; then
   SERVER_IP="127.0.0.1"
 fi
 export SERVER_IP
+# Ensure tmpfs mounts are cleaned up on exit/failure
+trap 'umount "${INSTALL_DIR}/log" 2>/dev/null || true; umount "${INSTALL_DIR}/api" 2>/dev/null || true' EXIT
 
 # Making sure the system is clean
 if [ -d "$INSTALL_DIR" ]; then
@@ -122,7 +124,7 @@ export DEBIAN_FRONTEND=noninteractive
 apt-get update -y
 # software-properties-common is not available and not needed
 apt-get install -y --no-install-recommends \
-    ca-certificates apt-transport-https lsb-release curl gnupg
+    ca-certificates lsb-release curl gnupg
 
 # Detect OS
 . /etc/os-release
@@ -182,7 +184,7 @@ printf "%b\n" "-----------------------------------------------------------------
 python3 -m venv /opt/myenv
 source /opt/myenv/bin/activate
 
-update-alternatives --install /usr/bin/python python /usr/bin/python3 10
+# Use python3 explicitly; avoid changing global python alternative
 
 # Create requirements.txt on-the-fly
 cat > /tmp/requirements.txt << EOF
@@ -236,8 +238,8 @@ printf "%b\n" "-----------------------------------------------------------------
 printf "%b\n" "${GREEN}[CONFIGURATION]                       ${RESET}Configuring the web server"
 printf "%b\n" "--------------------------------------------------------------------------"
 
-service nginx stop 2>/dev/null || true
-pkill -f "python ${INSTALL_DIR}/server" 2>/dev/null || true
+# Stop any existing NetAlertX python server process (narrow pattern)
+pkill -f "^python(3)?\s+.*${INSTALL_DIR}/server/?$" 2>/dev/null || true
 
 # Backup default NGINX site just in case  
 if [ -L /etc/nginx/sites-enabled/default ] ; then
@@ -275,6 +277,10 @@ if [ -n "${PORT-}" ]; then
    printf "%b\n" "--------------------------------------------------------------------------"
    # Update the template to reflect the right port
     sed -i "s/listen 20211;/listen ${PORT};/g" "${INSTALLER_DIR}/${NGINX_CONF_FILE}"
+   # Warn if port is already in use
+   if ss -ltn | awk '{print $4}' | grep -q ":${PORT}$"; then
+     printf "%b\n" "${RED}[WARNING]                         ${RESET}Port ${PORT} appears in use. NGINX may fail to bind."
+   fi
 fi
 
 # Change web interface address if set
@@ -283,7 +289,7 @@ fi
 #    printf "%b\n" "Setting webserver to user-supplied address (${LISTEN_ADDR})"
 #    printf "%b\n" "--------------------------------------------------------------------------"
 #    sed -i "s/listen /listen ${LISTEN_ADDR}:/g" "${NGINX_CONFIG}"
-#    sed -i "s/listen /listen ${LISTEN_ADDR}:/g" "${INSTALLER_DIR}/${NGINX_CONF_NAME}"
+#    sed -i "s/listen /listen ${LISTEN_ADDR}:/g" "${INSTALLER_DIR}/${NGINX_CONF_FILE}"
 # fi
 
 # Run the hardware vendors update at least once
@@ -327,8 +333,8 @@ mkdir -p "${INSTALL_DIR}"/log/plugins
 printf "%b\n" "--------------------------------------------------------------------------"
 printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}Mounting log and api folders as tmpfs"
 printf "%b\n" "--------------------------------------------------------------------------"
-mount -t tmpfs -o noexec,nosuid,nodev tmpfs "${INSTALL_DIR}/log"
-mount -t tmpfs -o noexec,nosuid,nodev tmpfs "${INSTALL_DIR}/api"
+mountpoint -q "${INSTALL_DIR}/log" || mount -t tmpfs -o noexec,nosuid,nodev tmpfs "${INSTALL_DIR}/log"
+mountpoint -q "${INSTALL_DIR}/api" || mount -t tmpfs -o noexec,nosuid,nodev tmpfs "${INSTALL_DIR}/api"
 
 # Create the execution_queue.log file if it doesn't exist
 touch "${INSTALL_DIR}"/log/{app.log,execution_queue.log,app_front.log,app.php_errors.log,stderr.log,stdout.log,db_is_locked.log}
@@ -347,12 +353,12 @@ cp -u "${INSTALL_DIR}/back/${DB_FILE}" "${FILEDB}"
 printf "%b\n" "--------------------------------------------------------------------------"
 printf "%b\n" "${GREEN}[CONFIGURING]                          ${RESET}Setting File Permissions"
 printf "%b\n" "--------------------------------------------------------------------------"
-chmod -R a+rwx "$INSTALL_DIR"
-chmod -R a+rw "$INSTALL_DIR/log"
-chmod -R a+rw "$INSTALL_DIR/config"
-chgrp -R www-data  "$INSTALL_DIR"
-chmod -R a+rwx "$WEB_UI_DIR"
-chown -R www-data:www-data "$FILEDB"
+# Restrict wide permissions; allow owner/group access
+chgrp -R www-data "$INSTALL_DIR"
+chmod -R ug+rwX,o-rwx "$INSTALL_DIR"
+chmod -R ug+rwX,o-rwx "$WEB_UI_DIR"
+chmod -R ug+rwX "$INSTALL_DIR/log" "$INSTALL_DIR/config"
+chown -R www-data:www-data "$FILEDB" 2>/dev/null || true
 # Add nginx to www-data
 usermod -aG www-data nginx || true
 
