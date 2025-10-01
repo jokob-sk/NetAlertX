@@ -266,7 +266,6 @@ mkdir -p /var/www/html
 ln -sfn "${INSTALL_DIR}/front" "$WEB_UI_DIR"
 # create symbolic link to NGINX configuration coming with NetAlertX
 ln -sfn "${INSTALLER_DIR}/${NGINX_CONF_NAME}" "${NGINX_CONFIG_FILE}"
-ln -sfn "${INSTALLER_DIR}/$NGINX_CONF_FILE" $NGINX_CONFIG_FILE 
 
 # Use selected port (may be default 20211)
 if [ -n "${PORT-}" ]; then
