@@ -36,7 +36,7 @@ CONF_FILE=app.conf
 DB_FILE=app.db
 NGINX_CONF_FILE=netalertx.conf
 WEB_UI_DIR=/var/www/html/netalertx
-NGINX_CONFIG_FILE=/etc/nginx/conf.d/$NGINX_CONF_FILE
+NGINX_CONFIG=/etc/nginx/conf.d/$NGINX_CONF_FILE
 OUI_FILE="/usr/share/arp-scan/ieee-oui.txt" 
 FILEDB=$INSTALL_DIR/db/$DB_FILE
 # DO NOT CHANGE ANYTHING ABOVE THIS LINE! 
@@ -257,24 +257,24 @@ fi
 printf "%b\n" "--------------------------------------------------------------------------"
 printf "%b\n" "${GREEN}[CHECKING]                          ${RESET}Removing existing NetAlertX NGINX config"
 printf "%b\n" "--------------------------------------------------------------------------"
-rm "$NGINX_CONFIG_FILE" 2>/dev/null || true
+rm "$NGINX_CONFIG" 2>/dev/null || true
 
 # Create web directory if it doesn't exist
 mkdir -p /var/www/html
 
 # create symbolic link to the installer directory
 ln -sfn "${INSTALL_DIR}/front" "$WEB_UI_DIR"
+
 # create symbolic link to NGINX configuration coming with NetAlertX
-ln -sfn "${INSTALLER_DIR}/${NGINX_CONF_NAME}" "${NGINX_CONFIG_FILE}"
+ln -sfn "${INSTALLER_DIR}/${NGINX_CONF_FILE}" "${NGINX_CONFIG}"
 
 # Use selected port (may be default 20211)
 if [ -n "${PORT-}" ]; then
    printf "%b\n" "--------------------------------------------------------------------------"
    printf "%b\n" "Setting webserver to port ($PORT)"
    printf "%b\n" "--------------------------------------------------------------------------"
-   sed -i "s/listen 20211;/listen ${PORT};/g" "${NGINX_CONFIG_FILE}"
    # Update the template to reflect the right port
-   sed -i "s/listen 20211;/listen ${PORT};/g" "${INSTALLER_DIR}/${NGINX_CONF_NAME}"
+    sed -i "s/listen 20211;/listen ${PORT};/g" "${INSTALLER_DIR}/${NGINX_CONF_FILE}"
 fi
 
 # Change web interface address if set
@@ -282,7 +282,7 @@ fi
 #    printf "%b\n" "--------------------------------------------------------------------------"
 #    printf "%b\n" "Setting webserver to user-supplied address (${LISTEN_ADDR})"
 #    printf "%b\n" "--------------------------------------------------------------------------"
-#    sed -i "s/listen /listen ${LISTEN_ADDR}:/g" "${NGINX_CONFIG_FILE}"
+#    sed -i "s/listen /listen ${LISTEN_ADDR}:/g" "${NGINX_CONFIG}"
 #    sed -i "s/listen /listen ${LISTEN_ADDR}:/g" "${INSTALLER_DIR}/${NGINX_CONF_NAME}"
 # fi
 
