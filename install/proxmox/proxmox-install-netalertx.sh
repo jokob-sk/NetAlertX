@@ -364,8 +364,15 @@ chmod -R ug+rwX,o-rwx "$INSTALL_DIR"
 chmod -R ug+rwX,o-rwx "$WEB_UI_DIR"
 chmod -R ug+rwX "$INSTALL_DIR/log" "$INSTALL_DIR/config"
 chown -R www-data:www-data "$FILEDB" 2>/dev/null || true
-# Add nginx to www-data
-# usermod -aG www-data nginx || true
+
+mkdir -p "$INSTALL_DIR/log" "$INSTALL_DIR/api"
+mountpoint -q "$INSTALL_DIR/log" || mount -t tmpfs -o noexec,nosuid,nodev tmpfs "$INSTALL_DIR/log"
+mountpoint -q "$INSTALL_DIR/api" || mount -t tmpfs -o noexec,nosuid,nodev tmpfs "$INSTALL_DIR/api"
+mkdir -p "$INSTALL_DIR/log/plugins"
+touch "$INSTALL_DIR"/log/{app.log,execution_queue.log,app_front.log,app.php_errors.log,stderr.log,stdout.log,db_is_locked.log}
+touch "$INSTALL_DIR"/api/user_notifications.json
+chown -R www-data:www-data "$INSTALL_DIR/log" "$INSTALL_DIR/api"
+chmod -R ug+rwX "$INSTALL_DIR/log" "$INSTALL_DIR/api"
 
 # start PHP
 printf "%b\n" "--------------------------------------------------------------------------"
