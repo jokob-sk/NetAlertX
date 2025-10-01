@@ -23,10 +23,6 @@ printf "%b\n" "-----------------------------------------------------------------
 printf "%b\n" "${GREEN}[UPDATING]                          ${RESET}Making sure the system is up to date"
 printf "%b\n" "--------------------------------------------------------------------------"
 
-# Getting up to date
-apt-get update -y
-apt-get upgrade -y
-
 printf "%b\n" "--------------------------------------------------------------------------"
 printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}Running proxmox-install-netalertx.sh"
 printf "%b\n" "--------------------------------------------------------------------------"
@@ -55,11 +51,12 @@ fi
 if [ -z "${NETALERTX_ASSUME_YES:-}" ] && [ -z "${ASSUME_YES:-}" ] && [ -z "${NETALERTX_FORCE:-}" ]; then
     printf "%b\n" "------------------------------------------------------------------------"
     printf "%b\n" "${RED}[WARNING]              ${RESET}This script should be run on a fresh server"
-    printf "%b\n" "${RED}[WARNING]              ${RESET}This script will install NetAlertX and will:      " 
+    printf "%b\n" "${RED}[WARNING]              ${RESET}This script will install NetAlertX and will:" 
+    printf "%b\n" "${RED}[WARNING]              ${RESET}• Update OS with apt-get update/upgrade"
     printf "%b\n" "${RED}[WARNING]              ${RESET}• Overwrite existing files under ${INSTALL_DIR}  "
-    printf "%b\n" "${RED}[WARNING]              ${RESET}• Wipe any existing database                      "
+    printf "%b\n" "${RED}[WARNING]              ${RESET}• Wipe any existing database"
     printf "%b\n" "${RED}[WARNING]              ${RESET}• Wipe/Set up NGINX configuration under /etc/nginx"
-    printf "%b\n" "${RED}[WARNING]              ${RESET}• Set up systemd services.                        "
+    printf "%b\n" "${RED}[WARNING]              ${RESET}• Set up systemd services."
     read -r -p "Proceed with installation? [y/N]: " _reply
     case "${_reply}" in
         y|Y|yes|YES) ;;
@@ -70,6 +67,10 @@ else
      printf "%b\n" "${GREEN}[INSTALLING]       ${RESET}Non-interactive mode detected; proceeding without confirmation."
      printf "%b\n" "--------------------------------------------------------------------------"
 fi
+
+# Getting up to date
+apt-get update -y
+apt-get upgrade -y
 
 # Prompt for HTTP port (default 20211) with countdown fallback
 DEFAULT_PORT=20211
