@@ -387,6 +387,7 @@ EOF
 systemctl daemon-reload
 systemctl enable netalertx.service
 systemctl start netalertx.service
+systemctl restart nginx
   
   # Verify service is running
   if systemctl is-active --quiet netalertx.service; then
