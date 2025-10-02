@@ -339,7 +339,7 @@ nginx -t || {
 /etc/init.d/nginx start
 
 # Make a start script
-cat > "$INSTALL_DIR/start.netalertx.sh" << 'EOF'
+cat > "$INSTALL_DIR/start.netalertx.sh" << EOF
 #!/usr/bin/env bash
 
 # Activate the virtual python environment
@@ -371,7 +371,7 @@ Wants=network-online.target
 Type=simple
 User=www-data
 Group=www-data
-ExecStart=/bin/bash -lc '/app/start.netalertx.sh'
+ExecStart=/app/start.netalertx.sh
 WorkingDirectory=/app
 Restart=on-failure
 RestartSec=5
