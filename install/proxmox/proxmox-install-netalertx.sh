@@ -192,7 +192,7 @@ printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}Cloning app
 printf "%b\n" "--------------------------------------------------------------------------"
 
 mkdir -p "$INSTALL_DIR"
-git clone -b proxmox-baremetal-installer https://github.com/JVKeller/NetAlertX.git "$INSTALL_DIR/" #change after testing
+git clone -b baremetal-installer https://github.com/JVKeller/NetAlertX.git "$INSTALL_DIR/" #change after testing
 
 if [ ! -f "$INSTALL_DIR/front/buildtimestamp.txt" ]; then
   date +%s > "$INSTALL_DIR/front/buildtimestamp.txt"
