@@ -1,11 +1,11 @@
 # NetAlertX Proxmox Installer
 
-A comprehensive installer script for deploying NetAlertX on Proxmox VE (Debian-based) systems. This installer automates the complete setup including dependencies, NGINX configuration, systemd service, and security hardening.
+An  installer script for deploying NetAlertX on Proxmox VE (Debian-based) systems. This installer automates the complete setup including dependencies, NGINX configuration, systemd service, and security hardening.
 
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Proxmox VE (Debian-based)
+- Fresh LXC or VM of Debian 13 or Ubuntu 24
 - Root access
 - Internet connection
 
@@ -13,16 +13,7 @@ A comprehensive installer script for deploying NetAlertX on Proxmox VE (Debian-b
 
 ```bash
 # Download and run the installer
-curl -fsSL https://raw.githubusercontent.com/JVKeller/NetAlertX/main/install/proxmox/proxmox-install-netalertx.sh | bash
-```
-
-### Non-Interactive Installation
-```bash
-# Skip all prompts and use defaults
-NETALERTX_ASSUME_YES=1 curl -fsSL https://raw.githubusercontent.com/JVKeller/NetAlertX/main/install/proxmox/proxmox-install-netalertx.sh | bash
-
-# Custom port
-PORT=8080 NETALERTX_ASSUME_YES=1 curl -fsSL https://raw.githubusercontent.com/JVKeller/NetAlertX/main/install/proxmox/proxmox-install-netalertx.sh | bash
+wget https://raw.githubusercontent.com/jokob-sk/NetAlertX/refs/heads/main/install/proxmox/proxmox-install-netalertx.sh -O proxmox-install-netalertx.sh && chmod +x proxmox-install-netalertx.sh && ./proxmox-install-netalertx.sh
 ```
 
 ## 📋 What This Installer Does
@@ -37,8 +28,6 @@ PORT=8080 NETALERTX_ASSUME_YES=1 curl -fsSL https://raw.githubusercontent.com/JV
 ### Security Features
 - **Hardened permissions**: Proper user/group ownership
 - **TMPFS mounts**: Log and API directories mounted as tmpfs for security
-- **NGINX user**: Configured to run as www-data
-- **Strict bash options**: Error handling and security
 
 ### Service Management
 - **Systemd service**: Auto-start on boot with restart policies
@@ -48,20 +37,11 @@ PORT=8080 NETALERTX_ASSUME_YES=1 curl -fsSL https://raw.githubusercontent.com/JV
 ## 🔧 Configuration
 
 ### Port Configuration
-The installer prompts for a custom port (default: 20211) with a 10-second countdown:
+The installer will prompt for a custom port, or defaultto 20211 after 10-seconds:
 
 ```
 Enter HTTP port for NetAlertX [20211] (auto-continue in 10s): 
 ```
-
-### Environment Variables
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `NETALERTX_ASSUME_YES` | Skip all prompts | `false` |
-| `NETALERTX_FORCE` | Force installation | `false` |
-| `PORT` | Custom HTTP port | `20211` |
-| `LISTEN_ADDR` | Bind address | `0.0.0.0` |
-| `ALWAYS_FRESH_INSTALL` | Clear existing data | `false` |
 
 ### Service Management
 ```bash

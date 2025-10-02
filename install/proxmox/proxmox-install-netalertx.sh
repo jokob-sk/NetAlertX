@@ -267,8 +267,8 @@ mkdir -p /var/www/html
 # create symbolic link to the installer directory
 ln -sfn "${INSTALL_DIR}/front" "$WEB_UI_DIR"
 
-# create symbolic link to NGINX configuration coming with NetAlertX
-ln -sfn "${INSTALLER_DIR}/${NGINX_CONF_FILE}" "${NGINX_CONFIG}"
+# Copy NGINX configuration to NetAlertX config directory
+cp "${INSTALLER_DIR}/${NGINX_CONF_FILE}" "${INSTALL_DIR}/config/${NGINX_CONF_FILE}"
 
 # Use selected port (may be default 20211)
 if [ -n "${PORT-}" ]; then
@@ -276,21 +276,15 @@ if [ -n "${PORT-}" ]; then
    printf "%b\n" "Setting webserver to port ($PORT)"
    printf "%b\n" "--------------------------------------------------------------------------"
    # Update the template to reflect the right port
-    sed -i "s/listen 20211;/listen ${PORT};/g" "${INSTALLER_DIR}/${NGINX_CONF_FILE}"
+   sed -i "s/listen 20211;/listen ${PORT};/g" "${INSTALL_DIR}/config/${NGINX_CONF_FILE}"
+   sed -i "s/listen /listen ${LISTEN_ADDR}:/g" "${INSTALL_DIR}/config/${NGINX_CONF_FILE}"
    # Warn if port is already in use
    if ss -ltn | awk '{print $4}' | grep -q ":${PORT}$"; then
+     printf "%b\n" "--------------------------------------------------------------------------"
      printf "%b\n" "${RED}[WARNING]                         ${RESET}Port ${PORT} appears in use. NGINX may fail to bind."
+     printf "%b\n" "--------------------------------------------------------------------------"
    fi
 fi
-
-# Change web interface address if set
-# if [ -n "${LISTEN_ADDR-}" ]; then
-#    printf "%b\n" "--------------------------------------------------------------------------"
-#    printf "%b\n" "Setting webserver to user-supplied address (${LISTEN_ADDR})"
-#    printf "%b\n" "--------------------------------------------------------------------------"
-#    sed -i "s/listen /listen ${LISTEN_ADDR}:/g" "${NGINX_CONFIG}"
-#    sed -i "s/listen /listen ${LISTEN_ADDR}:/g" "${INSTALLER_DIR}/${NGINX_CONF_FILE}"
-# fi
 
 # Run the hardware vendors update at least once
 printf "%b\n" "--------------------------------------------------------------------------"
@@ -362,17 +356,8 @@ printf "%b\n" "-----------------------------------------------------------------
 chgrp -R www-data "$INSTALL_DIR"
 chmod -R ug+rwX,o-rwx "$INSTALL_DIR"
 chmod -R ug+rwX,o-rwx "$WEB_UI_DIR"
-chmod -R ug+rwX "$INSTALL_DIR/log" "$INSTALL_DIR/config"
+# chmod -R ug+rwX "$INSTALL_DIR/log" "$INSTALL_DIR/config"
 chown -R www-data:www-data "$FILEDB" 2>/dev/null || true
-
-mkdir -p "$INSTALL_DIR/log" "$INSTALL_DIR/api"
-mountpoint -q "$INSTALL_DIR/log" || mount -t tmpfs -o noexec,nosuid,nodev tmpfs "$INSTALL_DIR/log"
-mountpoint -q "$INSTALL_DIR/api" || mount -t tmpfs -o noexec,nosuid,nodev tmpfs "$INSTALL_DIR/api"
-mkdir -p "$INSTALL_DIR/log/plugins"
-touch "$INSTALL_DIR"/log/{app.log,execution_queue.log,app_front.log,app.php_errors.log,stderr.log,stdout.log,db_is_locked.log}
-touch "$INSTALL_DIR"/api/user_notifications.json
-chown -R www-data:www-data "$INSTALL_DIR/log" "$INSTALL_DIR/api"
-chmod -R ug+rwX "$INSTALL_DIR/log" "$INSTALL_DIR/api"
 
 # start PHP
 printf "%b\n" "--------------------------------------------------------------------------"
