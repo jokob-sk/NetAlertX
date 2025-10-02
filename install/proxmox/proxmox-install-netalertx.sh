@@ -177,22 +177,13 @@ if command -v systemctl >/dev/null 2>&1; then
     systemctl restart nginx || true
 fi
 
-# 3. SET UP PYTHON VIRTUAL ENVIRONMENT & DEPENDENCIES
-printf "%b\n" "--------------------------------------------------------------------------"
-printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}Setting up Python environment"
-printf "%b\n" "--------------------------------------------------------------------------"
-python3 -m venv /opt/myenv
-source /opt/myenv/bin/activate
-python -m pip install --upgrade pip
-python -m pip install -r "${INSTALLER_DIR}/requirements.txt"
-
-# 4. CLONE OR UPDATE APPLICATION REPOSITORY
+# 3. CLONE OR UPDATE APPLICATION REPOSITORY
 printf "%b\n" "--------------------------------------------------------------------------"
 printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}Cloning application repository and setup"
 printf "%b\n" "--------------------------------------------------------------------------"
 
 mkdir -p "$INSTALL_DIR"
-git clone -b baremetal-installer https://github.com/JVKeller/NetAlertX.git "$INSTALL_DIR/" #change after testing
+git clone -b baremetal-installer https://github.com/jokob-sk/NetAlertX.git "$INSTALL_DIR/" #change after testing
 
 if [ ! -f "$INSTALL_DIR/front/buildtimestamp.txt" ]; then
   date +%s > "$INSTALL_DIR/front/buildtimestamp.txt"
@@ -206,6 +197,15 @@ printf "%b\n" "-----------------------------------------------------------------
 
 # Stop any existing NetAlertX python server process (narrow pattern)
 pkill -f "^python(3)?\s+.*${INSTALL_DIR}/server/?$" 2>/dev/null || true
+
+# 4. SET UP PYTHON VIRTUAL ENVIRONMENT & DEPENDENCIES
+printf "%b\n" "--------------------------------------------------------------------------"
+printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}Setting up Python environment"
+printf "%b\n" "--------------------------------------------------------------------------"
+python3 -m venv /opt/myenv
+source /opt/myenv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r "${INSTALLER_DIR}/requirements.txt"
 
 # Backup default NGINX site just in case  
 if [ -L /etc/nginx/sites-enabled/default ] ; then
