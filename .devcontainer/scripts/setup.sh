@@ -109,10 +109,10 @@ configure_php() {
 start_services() {
     echo "[4/4] Starting services..."
 
-    echo "      -> Starting CronD"
+    echo "      -> Starting CronD (${SYSTEM_SERVICES_CROND}...)"
     setsid nohup /services/start-crond.sh &>/dev/null &
 
-    echo "      -> Starting PHP-FPM"
+    echo "      -> Starting PHP-FPM (${SYSTEM_SERVICES_PHP_FOLDER}...)"
     setsid nohup /services/start-php-fpm.sh &>/dev/null &
 
     # Wait for the previous nginx processes to exit and for the port to free up
@@ -123,10 +123,10 @@ start_services() {
         tries=$((tries+1))
     done
     sleep 1
-    echo "      -> Starting Nginx"
-    /services/start-nginx.sh 
-    echo "      -> Starting Backend ${APP_DIR}/server..."
-    setsid nohup /services/start-backend.sh &
+    echo "      -> Starting Nginx (${NETALERTX_FRONT}...)"
+    setsid nohup /services/start-nginx.sh &>/dev/null &
+    echo "      -> Starting Backend (${NETALERTX_SERVER}...)"
+    setsid nohup /services/start-backend.sh >/dev/null 2>&1 &
     sleep 2
 }
 

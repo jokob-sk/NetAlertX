@@ -153,7 +153,7 @@ RUN rm -Rf /etc/sudoers.d/* /etc/shadow /etc/gshadow /etc/sudoers \
 USER netalertx
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD /usr/local/bin/healthcheck.sh
+    CMD /services/healthcheck.sh
 
 #ENTRYPOINT [ "/bin/sh" ]
 ENTRYPOINT [ "/bin/sh", "/entrypoint.sh" ]

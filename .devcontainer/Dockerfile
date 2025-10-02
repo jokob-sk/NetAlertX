@@ -67,13 +67,13 @@ ENV SYSTEM_SERVICES_RUN_LOG=${SYSTEM_SERVICES_RUN}/logs
 ENV PHP_FPM_CONFIG_FILE=${SYSTEM_SERVICES_PHP_FOLDER}/php-fpm.conf
 
 ENV PYTHONPATH=${NETALERTX_SERVER}
-
+ENV PYTHONUNBUFFERED=1 
 
 
 RUN apk add --no-cache bash mtr libbsd zip lsblk sudo tzdata curl arp-scan iproute2 \
-        iproute2-ss nmap nmap-scripts traceroute nbtscan net-tools net-snmp-tools bind-tools awake \
-        ca-certificates sqlite php83 php83-fpm php83-cgi php83-curl php83-sqlite3 php83-session python3 \
-        nginx sudo shadow && \
+    iproute2-ss nmap nmap-scripts traceroute nbtscan net-tools net-snmp-tools bind-tools awake \
+    ca-certificates sqlite php83 php83-fpm php83-cgi php83-curl php83-sqlite3 php83-session python3 \
+    nginx sudo shadow && \
     rm -Rf /var/cache/apk/*  && \
     rm -Rf /etc/nginx && \
     addgroup -g 20211 netalertx && \
@@ -105,6 +105,7 @@ RUN apk add libcap && \
     /bin/sh /build/init-php-fpm.sh && \
     /bin/sh /build/init-crond.sh && \
     /bin/sh /build/init-backend.sh && \
+    chmod 755 ${NETALERTX_BACK}/update_vendors.sh ${NETALERTX_BACK}/cron_script.sh ${NETALERTX_BACK}/speedtest-cli && \
     rm -rf /build && \
     apk del libcap
 # set netalertx to allow sudoers for any command, no password
@@ -135,7 +136,7 @@ RUN chown -R readonly:readonly ${NETALERTX_BACK} ${NETALERTX_FRONT} ${NETALERTX_
     chmod 700 ${NETALERTX_CONFIG} ${NETALERTX_DB} ${NETALERTX_API} ${NETALERTX_LOG} ${NETALERTX_PLUGINS_LOG} ${SYSTEM_SERVICES_RUN_TMP} && \
     chown readonly:readonly /entrypoint.sh && \
     install -d -o netalertx -g netalertx -m 700 ${SYSTEM_SERVICES_RUN} ${SYSTEM_SERVICES_RUN_TMP} ${SYSTEM_SERVICES_RUN_LOG} && \
-    chmod 005 /entrypoint.sh
+    chmod 005 /entrypoint.sh ${NETALERTX_BACK}/update_vendors.sh ${NETALERTX_BACK}/cron_script.sh ${NETALERTX_BACK}/speedtest-cli 
 
 #
 # remove sudo and alpine installers pacakges
@@ -155,7 +156,7 @@ RUN rm -Rf /etc/sudoers.d/* /etc/shadow /etc/gshadow /etc/sudoers \
 USER netalertx
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD /usr/local/bin/healthcheck.sh
+    CMD /services/healthcheck.sh
 
 #ENTRYPOINT [ "/bin/sh" ]
 ENTRYPOINT [ "/bin/sh", "/entrypoint.sh" ]
@@ -172,10 +173,13 @@ FROM runner AS netalertx-devcontainer
 ENV INSTALL_DIR=/app 
 ENV PYTHONPATH=/workspaces/NetAlertX/test:/workspaces/NetAlertX/server:/app:/app/server:/opt/venv/lib/python3.12/site-packages
 ENV PATH=/services:${PATH}
+ENV PHP_INI_SCAN_DIR=/services/config/php/conf.d:/etc/php83/conf.d
 COPY .devcontainer/resources/devcontainer-overlay/ /
 
 # Install common tools, create user, and set up sudo
 RUN apk add --no-cache git nano vim jq php83-pecl-xdebug py3-pip nodejs sudo gpgconf pytest pytest-cov 
+RUN install -d -o netalertx -g netalertx -m 755 /services/php/modules && \
+    cp -a /usr/lib/php83/modules/. /services/php/modules/
 # Install debugpy in the virtualenv if present, otherwise into system python3
 RUN /bin/sh -c '(/opt/venv/bin/python3 -m pip install --no-cache-dir debugpy) || (python3 -m pip install --no-cache-dir debugpy) || true' && \
     mkdir /workspaces && \

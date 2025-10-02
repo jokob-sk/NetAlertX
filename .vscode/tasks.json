@@ -110,7 +110,7 @@
     {
       "label": "[Dev Container] Start Frontend (nginx and PHP-FPM)",
       "type": "shell",
-      "command": "./isDevContainer.sh || exit 1; killall php-fpm83 nginx 2>/dev/nulltrue; sleep 1; /services/start-php-fpm.sh & /sevices/start-nginx.sh  &",
+      "command": "./isDevContainer.sh || exit 1; killall php-fpm83 nginx 2>/dev/null||true; sleep 1; /services/start-php-fpm.sh & /services/start-nginx.sh  &",
       "options": {
         "cwd": "${workspaceFolder:NetAlertX}/.devcontainer/scripts"
 
