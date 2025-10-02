@@ -192,4 +192,4 @@ This installer will need a maintainer
 
 ---
 
-**Note**: This installer was designed for a Proxmox LXC Debian 13 container. For other systems, please use the appropriate installer or manual installation instructions.
+**Note**: This installer was designed for a Proxmox LXC Debian 13 or Ubuntu 24 containers. For other systems, please use the appropriate installer or manual installation instructions.

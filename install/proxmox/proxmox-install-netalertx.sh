@@ -183,42 +183,8 @@ printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}Setting up 
 printf "%b\n" "--------------------------------------------------------------------------"
 python3 -m venv /opt/myenv
 source /opt/myenv/bin/activate
-
-# Use python3 explicitly; avoid changing global python alternative
-
-# Create requirements.txt on-the-fly
-cat > /tmp/requirements.txt << EOF
-openwrt-luci-rpc
-asusrouter
-asyncio
-aiohttp
-graphene
-flask
-flask-cors
-unifi-sm-api
-tplink-omada-client
-wakeonlan
-pycryptodome
-requests
-paho-mqtt
-scapy
-cron-converter
-pytz
-json2table
-dhcp-leases
-pyunifi
-speedtest-cli
-chardet
-python-nmap
-dnspython
-librouteros
-yattag
-git+https://github.com/foreign-sub/aiofreepybox.git
-EOF
-
 python -m pip install --upgrade pip
-python -m pip install -r /tmp/requirements.txt
-rm /tmp/requirements.txt
+python -m pip install -r "${INSTALLER_DIR}/requirements.txt"
 
 # 4. CLONE OR UPDATE APPLICATION REPOSITORY
 printf "%b\n" "--------------------------------------------------------------------------"
@@ -226,7 +192,7 @@ printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}Cloning app
 printf "%b\n" "--------------------------------------------------------------------------"
 
 mkdir -p "$INSTALL_DIR"
-git clone -b proxmox-baremetal-installer https://github.com/jokob-sk/NetAlertX.git "$INSTALL_DIR/" #change after testing
+git clone -b proxmox-baremetal-installer https://github.com/JVKeller/NetAlertX.git "$INSTALL_DIR/" #change after testing
 
 if [ ! -f "$INSTALL_DIR/front/buildtimestamp.txt" ]; then
   date +%s > "$INSTALL_DIR/front/buildtimestamp.txt"
@@ -277,7 +243,6 @@ if [ -n "${PORT-}" ]; then
    printf "%b\n" "--------------------------------------------------------------------------"
    # Update the template to reflect the right port
    sed -i "s/listen 20211;/listen ${PORT};/g" "${INSTALL_DIR}/config/${NGINX_CONF_FILE}"
-   sed -i "s/listen /listen ${LISTEN_ADDR}:/g" "${INSTALL_DIR}/config/${NGINX_CONF_FILE}"
    # Warn if port is already in use
    if ss -ltn | awk '{print $4}' | grep -q ":${PORT}$"; then
      printf "%b\n" "--------------------------------------------------------------------------"
@@ -285,6 +250,9 @@ if [ -n "${PORT-}" ]; then
      printf "%b\n" "--------------------------------------------------------------------------"
    fi
 fi
+
+# Create symbolic link to NGINX configuration coming with NetAlertX
+ln -sfn "${INSTALL_DIR}/config/${NGINX_CONF_FILE}" "${NGINX_CONFIG}"
 
 # Run the hardware vendors update at least once
 printf "%b\n" "--------------------------------------------------------------------------"
