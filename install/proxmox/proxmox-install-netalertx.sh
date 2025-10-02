@@ -308,6 +308,20 @@ touch ${INSTALL_DIR}/api/user_notifications.json
 chown -R www-data:www-data "${INSTALL_DIR}"/log "${INSTALL_DIR}"/api
 chmod -R ug+rwX "${INSTALL_DIR}"/log "${INSTALL_DIR}"/api
 
+# Set ownership of the tmpfs mountpoints first.
+chown www-data:www-data "${INSTALL_DIR}/log" "${INSTALL_DIR}/api"
+
+# Ensure plugins directory exists within the tmpfs mount
+mkdir -p "${INSTALL_DIR}/log/plugins"
+
+# Create log and api files directly as the www-data user to ensure correct ownership from the start.
+sudo -u www-data touch ${INSTALL_DIR}/log/{app.log,execution_queue.log,app_front.log,app.php_errors.log,stderr.log,stdout.log,db_is_locked.log}
+sudo -u www-data touch ${INSTALL_DIR}/api/user_notifications.json
+
+# Set final permissions for all created files and directories.
+chown -R www-data:www-data "${INSTALL_DIR}/log" "${INSTALL_DIR}/api"
+chmod -R ug+rwX "${INSTALL_DIR}/log" "${INSTALL_DIR}/api"
+
 printf "%b\n" "--------------------------------------------------------------------------"
 printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}Setting up DB and CONF files"
 printf "%b\n" "--------------------------------------------------------------------------"
