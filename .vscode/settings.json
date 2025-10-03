@@ -11,6 +11,10 @@
     // Let the Python extension invoke pytest via the interpreter; avoid hardcoded paths
     // Removed python.testing.pytestPath and legacy pytest.command overrides
     
-    "terminal.integrated.defaultProfile.linux": "bash",
-    "terminal.integrated.profiles.linux": { "bash": { "path": "/bin/fish" } }
+    "terminal.integrated.defaultProfile.linux": null,
+    "terminal.integrated.profiles.linux": {
+      "ash": {
+        "path": "/bin/fish"
+      }
+    }
 }

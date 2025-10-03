@@ -37,7 +37,12 @@
         "jeff-hykin.better-dockerfile-syntax",
         "GitHub.codespaces",
         "ms-azuretools.vscode-containers",
-        "ms-python.vscode-python-envs"
+        "ms-python.vscode-python-envs",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "eamodio.gitlens",
+        "alexcvzz.vscode-sqlite",
+        "yzhang.markdown-all-in-one"
       ]
       ,
       "settings": {

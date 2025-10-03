@@ -4,7 +4,7 @@ import os
 import pathlib
 import sys
 import json
-import sqlite3
+
 import subprocess
 
 # Define the installation path and extend the system path for plugin imports
@@ -43,8 +43,18 @@ plugin_objects = Plugin_Objects(RESULT_FILE)
 def main():
     mylog('verbose', [f'[{pluginName}] In script']) 
 
-    # timeout = get_setting_value('AVAHI_RUN_TIMEOUT')
-    timeout = 20
+    # Retrieve timeout from settings (use AVAHISCAN_RUN_TIMEOUT), fall back to 20
+    try:
+        _timeout_val = get_setting_value('AVAHISCAN_RUN_TIMEOUT')
+        if _timeout_val is None or _timeout_val == '':
+            timeout = 20
+        else:
+            try:
+                timeout = int(_timeout_val)
+            except (ValueError, TypeError):
+                timeout = 20
+    except Exception:
+        timeout = 20
     
     # Create a database connection
     db = DB()  # instance of class DB
@@ -139,8 +149,11 @@ def execute_name_lookup(ip, timeout):
     except subprocess.CalledProcessError as e:
         mylog('none', [f'[{pluginName}] ⚠ ERROR - {e.output}'])                    
 
-    except subprocess.TimeoutExpired:
-        mylog('none', [f'[{pluginName}] TIMEOUT - the process forcefully terminated as timeout reached']) 
+    except subprocess.TimeoutExpired as e:
+        # Return a distinct value that main() checks for when a timeout occurs
+        # Keep logging for telemetry/debugging
+        mylog('none', [f'[{pluginName}] TIMEOUT - the process forcefully terminated as timeout reached{": " + str(getattr(e, "output", "")) if getattr(e, "output", None) else ""}'])
+        return 'to'
 
     if output == "":
         mylog('none', [f'[{pluginName}] Scan: FAIL - check logs']) 
@@ -163,8 +176,12 @@ def ensure_avahi_running(attempt=1, max_retries=2):
         mylog('none', [f'[{pluginName}] ⚠ ERROR - Failed to check rc-status: {e.output}'])
         return
 
-    # Create OpenRC soft level
-    subprocess.run(['touch', '/run/openrc/softlevel'], check=True)
+    # Create OpenRC soft level (wrap in try/except to keep error handling consistent)
+    try:
+        subprocess.run(['touch', '/run/openrc/softlevel'], check=True, capture_output=True, text=True)
+    except subprocess.CalledProcessError as e:
+        mylog('none', [f'[{pluginName}] ⚠ ERROR - Failed to create OpenRC soft level: {e.stderr if e.stderr else str(e)}'])
+        return
 
     # Add Avahi daemon to runlevel
     try:

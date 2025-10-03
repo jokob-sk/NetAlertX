@@ -2,7 +2,7 @@
 .dotnet
 .vscode-server
 .gitconfig
-\.*CommandMarker
+.*CommandMarker
 deviceid
 .DS_Store
 .cache

@@ -4,7 +4,6 @@ import os
 import pathlib
 import sys
 import json
-import time
 import dns.resolver
 
 # Define the installation path and extend the system path for plugin imports
@@ -52,8 +51,8 @@ def resolve_ips_with_zeroconf(ips, timeout):
             # Construct the reverse IP for PTR query (e.g., 8.1.168.192.in-addr.arpa.)
             reverse_ip = '.'.join(reversed(ip.split('.'))) + '.in-addr.arpa.'
             
-            # Query PTR record with timeout
-            answers = dns.resolver.resolve(reverse_ip, 'PTR', lifetime=max(1, min(timeout, 5)))
+            # Query PTR record with timeout; respect the passed timeout per query
+            answers = dns.resolver.resolve(reverse_ip, 'PTR', lifetime=max(1, timeout))
             
             if answers:
                 # For PTR records, the hostname is in the target field
