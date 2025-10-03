@@ -2,7 +2,6 @@
 .env
 .git
 .github
-.gitignore
 docker-compose.yml
 Dockerfile
 Dockerfile.debian
