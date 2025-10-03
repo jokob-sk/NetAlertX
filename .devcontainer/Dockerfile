@@ -14,7 +14,7 @@ RUN apk add --no-cache bash shadow python3 python3-dev gcc musl-dev libffi-dev o
 # Enable venv
 ENV PATH="/opt/venv/bin:$PATH"
 
-RUN pip install openwrt-luci-rpc asusrouter asyncio aiohttp graphene flask flask-cors unifi-sm-api tplink-omada-client wakeonlan pycryptodome requests paho-mqtt scapy cron-converter pytz json2table dhcp-leases pyunifi speedtest-cli chardet python-nmap dnspython librouteros yattag zeroconf git+https://github.com/foreign-sub/aiofreepybox.git
+RUN pip install openwrt-luci-rpc asusrouter asyncio aiohttp graphene flask flask-cors unifi-sm-api tplink-omada-client wakeonlan pycryptodome requests paho-mqtt scapy cron-converter pytz json2table dhcp-leases pyunifi speedtest-cli chardet python-nmap dnspython librouteros yattag zeroconf simplejson future six urllib3 httplib2 git+https://github.com/foreign-sub/aiofreepybox.git
 
 RUN chmod -R u-rwx,g-rwx /opt
 

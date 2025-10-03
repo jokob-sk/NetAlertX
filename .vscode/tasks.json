@@ -146,6 +146,25 @@
         "id": "debug-stop",
         "color": "terminal.ansiRed"
       }
+    },
+    {
+      "label": "[Dev Container] List NetAlertX Ports",
+      "type": "shell",
+      "command": "./scripts/list-ports.sh",
+      "options": {
+        "cwd": "${workspaceFolder:NetAlertX}"
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "panel": "shared",
+        "showReuseMessage": false
+      },
+      "problemMatcher": [],
+      "icon": {
+        "id": "output",
+        "color": "terminal.ansiBlue"
+      }
     }
   ]
 }
