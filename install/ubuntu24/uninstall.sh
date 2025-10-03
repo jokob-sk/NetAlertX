@@ -197,12 +197,8 @@ echo "---------------------------------------------------------"
 PACKAGES_TO_PURGE=(
   git
   tini
-  ca-certificates
-  curl
   libwww-perl
   perl
-  apt-utils
-  cron
   build-essential
   sqlite3
   net-tools
@@ -216,7 +212,6 @@ PACKAGES_TO_PURGE=(
   snmp
   iproute2
   nmap
-  zip
   usbutils
   traceroute
   nbtscan
