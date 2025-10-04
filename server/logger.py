@@ -84,8 +84,11 @@ class Logger:
         root_logger.setLevel(custom_to_logging_levels.get(currentLevel, logging.NOTSET))
 
     def mylog(self, requestedDebugLevel, *args):
+        
         self.reqLvl = self._to_num(requestedDebugLevel)
-        if self.reqLvl is not None and self.reqLvl <= self.setLvl:
+        self.setLvl = self._to_num(currentLevel)
+        
+        if self.isAbove(requestedDebugLevel):
             file_print(*args)
 
     def isAbove(self, requestedDebugLevel):
