@@ -6,6 +6,7 @@
 deviceid
 .DS_Store
 .cache
+nohup.out
 config/*
 .ash_history
 .VERSION
