@@ -65,11 +65,11 @@ wget https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/install/debian12/
 
 ### Installation via curl
 ```bash
-curl -o install.ubuntu24.sh https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/install/ubuntu24/install.ubuntu24.sh && sudo chmod +x install.ubuntu24.sh && sudo ./install.ubuntu24.sh
+curl -o install.sh https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/install/ubuntu24/install.sh && sudo chmod +x install.sh && sudo ./install.sh
 ```
 
 ### Installation via wget
 
 ```bash
-wget https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/install/ubuntu24/install.ubuntu24.sh -O install.ubuntu24.sh && sudo chmod +x install.ubuntu24.sh && sudo ./install.ubuntu24.sh
+wget https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/install/ubuntu24/install.sh -O install.sh && sudo chmod +x install.sh && sudo ./install.sh
 ```
