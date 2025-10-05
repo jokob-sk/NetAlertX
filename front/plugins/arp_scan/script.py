@@ -47,7 +47,7 @@ def main():
     plugin_objects = Plugin_Objects(RESULT_FILE)
 
     # Print a message to indicate that the script is starting.
-    mylog('verbose', ['[ARP Scan] In script ']) 
+    mylog('verbose', [f'[{pluginName}] In script ']) 
 
     #  holds a list of user-submitted subnets.    
     # mylog('verbose', ['[ARP Scan] values.userSubnets: ', values.userSubnets]) 
