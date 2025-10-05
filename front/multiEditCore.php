@@ -354,22 +354,23 @@
 function executeAction(action, whereColumnName, key, targetColumns, newTargetColumnValue )
 {
   $.get(`php/server/dbHelper.php?action=${action}&dbtable=Devices&columnName=${whereColumnName}&id=${key}&columns=${targetColumns}&values=${newTargetColumnValue}`, function(data) {
-        // console.log(data);
+      // console.log(data);
 
-        if (sanitize(data) == 'OK') {
-            showMessage(getString('Gen_DataUpdatedUITakesTime'));
-            // Remove navigation prompt "Are you sure you want to leave..."
-            window.onbeforeunload = null;
+      if (sanitize(data) == 'OK') {
+        showMessage(getString('Gen_DataUpdatedUITakesTime'));
+        // Remove navigation prompt "Are you sure you want to leave..."
+        window.onbeforeunload = null;
 
-            // update API endpoints to refresh the UI
-            updateApi("devices,appevents")
+        // update API endpoints to refresh the UI
+        updateApi("devices,appevents")
 
-            write_notification(`[Multi edit] Executed "${action}" on Columns "${targetColumns}" matching "${key}"`, 'info')
+        write_notification(`[Multi edit] Executed "${action}" on Columns "${targetColumns}" matching "${key}"`, 'info')
 
-        } else {
-            showMessage(getString('Gen_LockedDB'));
-        }
-    });
+      } else {
+        console.error(data);
+        showMessage(getString('Gen_LockedDB'));
+      }
+  });
 }
 
 
