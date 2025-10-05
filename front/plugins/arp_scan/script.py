@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os
+import time
 import pathlib
 import argparse
 import sys
@@ -150,16 +151,28 @@ def execute_arpscan_on_interface(interface):
     # Prepare command arguments
     arpscan_args = get_setting_value('ARPSCAN_ARGS').split() + interface.split()
 
-    # Execute command
+    # Optional duration in seconds (0 = run once)
     try:
-        # try running a subprocess safely
-        result = subprocess.check_output(arpscan_args, universal_newlines=True)
-    except subprocess.CalledProcessError as e:
-        # An error occurred, handle it
-        error_type = type(e).__name__  # Capture the error type
-        result = ""
+        scan_duration = int(get_setting_value('ARPSCAN_DURATION'))
+    except Exception:
+        scan_duration = 0  # default: single run
 
-    return result
+    results = []
+    start_time = time.time()
+
+    while True:
+        try:
+            result = subprocess.check_output(arpscan_args, universal_newlines=True)
+            results.append(result)
+        except subprocess.CalledProcessError as e:
+            result = ""
+        # stop looping if duration not set or expired
+        if scan_duration == 0 or (time.time() - start_time) > scan_duration:
+            break
+        time.sleep(2)  # short delay between scans
+
+    # concatenate all outputs (for regex parsing)
+    return "\n".join(results)
 
 
 
