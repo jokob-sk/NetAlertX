@@ -93,7 +93,7 @@ class Logger:
 
     def isAbove(self, requestedDebugLevel):
         reqLvl = self._to_num(requestedDebugLevel)
-        return reqLvl is not None and self.setLvl >= reqLvl
+        return reqLvl is not None and self.setLvl  is not None and self.setLvl >= reqLvl
 
 #-------------------------------------------------------------------------------
 # Dedicated thread for writing logs
