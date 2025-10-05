@@ -178,7 +178,7 @@ def main():
             if file_name != 'last_result.log':
                 mylog('verbose', [f'[{pluginName}] Processing: "{file_name}"'])
                 
-                # make sure the file has teh correct name (e.g last_result.encoded.Node_1.1.log) to skip any otehr plugin files
+                # make sure the file has the correct name (e.g last_result.encoded.Node_1.1.log) to skip any otehr plugin files
                 if len(file_name.split('.')) > 2:
                     # Store e.g. Node_1 from last_result.encoded.Node_1.1.log
                     syncHubNodeName = file_name.split('.')[1]   
@@ -210,9 +210,10 @@ def main():
             existing_mac_addresses = set(row[0] for row in cursor.fetchall())
             
 
-            # insert devices into the lats_result.log to manage state
+            # insert devices into the last_result.log and thus CurrentScan table to manage state
             for device in device_data:
-                if device['devPresentLastScan'] == 1:
+                # only insert devices taht were online and skip the root node to prevent IP flipping on the hub
+                if device['devPresentLastScan'] == 1 and str(device['devMac']).lower() != 'internet':
                     plugin_objects.add_object(
                         primaryId   = device['devMac'],
                         secondaryId = device['devLastIP'],
