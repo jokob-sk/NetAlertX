@@ -87,7 +87,7 @@ class Logger:
         
         self.reqLvl = self._to_num(requestedDebugLevel)
         self.setLvl = self._to_num(currentLevel)
-        
+
         if self.isAbove(requestedDebugLevel):
             file_print(*args)
 
@@ -125,6 +125,8 @@ def start_log_writer_thread():
 def file_print(*args):
     result = timeNowTZ().strftime('%H:%M:%S') + ' '
     for arg in args:
+        if isinstance(arg, list):
+            arg = ' '.join(str(a) for a in arg) # so taht new lines are handled correctly also when passing a list
         result += str(arg)
 
     logging.log(custom_to_logging_levels.get(currentLevel, logging.NOTSET), result)
