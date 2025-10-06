@@ -73,3 +73,14 @@ curl -o install.sh https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/ins
 ```bash
 wget https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/install/ubuntu24/install.sh -O install.sh && sudo chmod +x install.sh && sudo ./install.sh
 ```
+
+## 📥 Bare Metal - Proxmox
+
+> [!NOTE]
+> Use this on a clean LXC/VM for Debian 13 OR Ubuntu 24.
+> The Scipt will detect OS and build acordingly.
+
+### Installation via wget
+```bash
+wget https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/install/proxmox/proxmox-install-netalertx.sh -O proxmox-install-netalertx.sh && chmod +x proxmox-install-netalertx.sh && ./proxmox-install-netalertx.sh
+```
