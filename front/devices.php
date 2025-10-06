@@ -123,7 +123,7 @@
 <!-- page script ----------------------------------------------------------- -->
 <script>
   var deviceStatus    = 'all';
-  var tableRows       = getCache ("nax_parTableRows") == "" ? 20 : getCache ("nax_parTableRows") ;
+  var tableRows       = getCache ("nax_parTableRows") == "" ? parseInt(getSetting("UI_DEFAULT_PAGE_SIZE")) : getCache ("nax_parTableRows") ;
   var tableOrder      = getCache ("nax_parTableOrder") == "" ? [[3,'desc'], [0,'asc']] : JSON.parse(getCache ("nax_parTableOrder")) ;
   
   var tableColumnHide = [];

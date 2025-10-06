@@ -74,6 +74,7 @@ require 'php/templates/header.php';
 
   $(document).ready(function() {
     const table = $('#notificationsTable').DataTable({
+      "pageLength": parseInt(getSetting("UI_DEFAULT_PAGE_SIZE")) ,
       "columns": [
         { "data": "timestamp" , 
           "render": function(data, type, row) {

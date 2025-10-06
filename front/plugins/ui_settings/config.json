@@ -214,6 +214,33 @@
       ]
     },
     {
+      "function": "DEFAULT_PAGE_SIZE",
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "number" }],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 50,
+      "default_value": 20,
+      "options": [],
+      "localized": [],
+      "name": [
+        {
+          "string": "Default page size"
+        }
+      ],
+      "description": [
+        {
+          "string": "Default number of items shown in tables per page, for example in teh Devices lists."
+        }
+      ]
+    },
+    {
       "function": "DEV_SECTIONS",
       "type": {
         "dataType": "array",
