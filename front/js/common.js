@@ -11,8 +11,8 @@
 var timerRefreshData = ''
 
 var   emptyArr      = ['undefined', "", undefined, null, 'null'];
-var   UI_LANG       = "English";
-const allLanguages  = ["en_us", "es_es", "de_de", "fr_fr", "it_it", "ru_ru", "nb_no", "pl_pl", "pt_br", "pt_pt", "tr_tr", "zh_cn", "cs_cz", "ar_ar", "ca_ca", "uk_ua"]; // needs to be same as in lang.php
+var   UI_LANG       = "English (en_us)";
+const allLanguages  = ["ar_ar","ca_ca","cs_cz","de_de","en_us","es_es","fa_fa","fr_fr","it_it","nb_no","pl_pl","pt_br","pt_pt","ru_ru","tr_tr","uk_ua","zh_cn"]; // needs to be same as in lang.php
 var   settingsJSON  = {}
 
 
@@ -299,7 +299,7 @@ function getString(key) {
 
 // -----------------------------------------------------------------------------
 // Get current language ISO code
-// below has to match exactly teh values in /front/php/templates/language/lang.php & /front/js/common.js
+// below has to match exactly the values in /front/php/templates/language/lang.php & /front/js/common.js
 function getLangCode() {
 
     UI_LANG = getSetting("UI_LANG");
@@ -307,19 +307,22 @@ function getLangCode() {
     let lang_code = 'en_us';
 
     switch (UI_LANG) {
-      case 'English':
+      case 'English (en_us)':
         lang_code = 'en_us';
         break;
-      case 'Spanish':
+      case 'Spanish (es_es)':
         lang_code = 'es_es';
         break;
-      case 'German':
+      case 'German (de_de)':
         lang_code = 'de_de';
         break;
-      case 'French':
+      case 'Farsi (fa_fa)':
+        lang_code = 'fa_fa';
+        break;
+      case 'French (fr_fr)':
         lang_code = 'fr_fr';
         break;
-      case 'Norwegian':
+      case 'Norwegian (nb_no)':
         lang_code = 'nb_no';
         break;
       case 'Polish (pl_pl)':
@@ -337,7 +340,7 @@ function getLangCode() {
       case 'Italian (it_it)':
         lang_code = 'it_it';
         break;
-      case 'Russian':
+      case 'Russian (ru_ru)':
         lang_code = 'ru_ru';
         break;
       case 'Chinese (zh_cn)':
