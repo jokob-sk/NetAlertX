@@ -743,7 +743,7 @@ function initializeDatatable (status) {
     },
     'paging'       : true,
     'lengthChange' : true,
-    'lengthMenu'   : [[10, 20, 25, 50, 100, 500, 100000], [10, 20, 25, 50, 100, 500, getString('Device_Tablelenght_all')]],
+    'lengthMenu'   : getLengthMenu(parseInt(getSetting("UI_DEFAULT_PAGE_SIZE"))),
     'searching'    : true,
 
     'ordering'     : true,

@@ -952,5 +952,41 @@ function initHoverNodeInfo() {
   });
 }
 
+/**
+ * Generates a DataTables-style `lengthMenu` array with an optional custom entry inserted
+ * in the correct numeric order.
+ *
+ * Example output:
+ *   [[10, 20, 25, 50, 100, 500, 100000], [10, 20, 25, 50, 100, 500, 'All']]
+ *
+ * @param {number} newEntry - A numeric entry to insert into the list (e.g. 30).
+ *                            If it already exists or equals -1, it will be ignored.
+ * @returns {Array[]} A two-dimensional array where:
+ *                    - The first array is the numeric page lengths.
+ *                    - The second array is the display labels (same values, but 'All' for -1).
+ *
+ * @example
+ * getLengthMenu(30);
+ * // → [[10, 20, 25, 30, 50, 100, 500, 100000], [10, 20, 25, 30, 50, 100, 500, 'All']]
+ */
+function getLengthMenu(newEntry) {
+  const values = [10, 20, 25, 50, 100, 500, 100000];
+  const labels = [10, 20, 25, 50, 100, 500, getString('Device_Tablelenght_all')];
+
+  // Insert newEntry in sorted order, skipping duplicates and -1/'All'
+  const insertSorted = (arr, val) => {
+    if (val === -1 || arr.includes(val)) return arr;
+    const idx = arr.findIndex(v => v > val || v === -1);
+    if (idx === -1) arr.push(val);
+    else arr.splice(idx, 0, val);
+    return arr;
+  };
+
+  insertSorted(values, newEntry);
+  insertSorted(labels, newEntry);
+
+  return [values, labels];
+}
+
 
 console.log("init ui_components.js")
