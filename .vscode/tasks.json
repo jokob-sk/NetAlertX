@@ -2,9 +2,9 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "[Any POSIX] Generate Dockerfile",
+      "label": "[Any POSIX] Generate Devcontiner Configs",
       "type": "shell",
-      "command": "${workspaceFolder:NetAlertX}/.devcontainer/scripts/generate-dockerfile.sh",
+      "command": ".devcontainer/scripts/generate-configs.sh",
       "presentation": {
         "echo": true,
         "reveal": "always",
@@ -15,9 +15,6 @@
       "group": {
         "kind": "build",
         "isDefault": false
-      },
-      "options": {
-        "cwd": "${workspaceFolder:NetAlertX}"
       },
       "icon": {
         "id": "tools",
@@ -39,9 +36,6 @@
         "kind": "build",
         "isDefault": false
       },
-      "options": {
-        "cwd": "${workspaceFolder:NetAlertX}"
-      },
       "icon": {
         "id": "trash",
         "color": "terminal.ansiRed"
@@ -50,9 +44,9 @@
     {
       "label": "[Dev Container] Re-Run Startup Script",
       "type": "shell",
-      "command": "./isDevContainer.sh || exit 1;${workspaceFolder:NetAlertX}/.devcontainer/scripts/setup.sh",
+      "command": "./isDevContainer.sh || exit 1;/workspaces/NetAlertX/.devcontainer/scripts/setup.sh",
       "options": {
-        "cwd": "${workspaceFolder:NetAlertX}/.devcontainer/scripts"
+        "cwd": "/workspaces/NetAlertX/.devcontainer/scripts"
       },
       "presentation": {
         "echo": true,
@@ -70,9 +64,9 @@
     {
       "label": "[Dev Container] Start Backend (Python)",
       "type": "shell",
-      "command": "./isDevContainer.sh || exit 1; killall python2>/dev/null; /services/start-backend.sh",
+      "command": "./isDevContainer.sh || exit 1; /services/start-backend.sh",
       "options": {
-        "cwd": "${workspaceFolder:NetAlertX}/.devcontainer/scripts"
+        "cwd": "/workspaces/NetAlertX/.devcontainer/scripts"
       },
       "presentation": {
         "echo": true,
@@ -90,9 +84,9 @@
     {
       "label": "[Dev Container] Start CronD (Scheduler)",
       "type": "shell",
-      "command": "./isDevContainer.sh || exit 1; killall crond>/dev/null; /services/start-crond.sh",
+      "command": "./isDevContainer.sh || exit 1; /services/start-crond.sh",
       "options": {
-        "cwd": "${workspaceFolder:NetAlertX}/.devcontainer/scripts"
+        "cwd": "/workspaces/NetAlertX/.devcontainer/scripts"
       },
       "presentation": {
         "echo": true,
@@ -110,9 +104,9 @@
     {
       "label": "[Dev Container] Start Frontend (nginx and PHP-FPM)",
       "type": "shell",
-      "command": "./isDevContainer.sh || exit 1; killall php-fpm83 nginx 2>/dev/null||true; sleep 1; /services/start-php-fpm.sh & /services/start-nginx.sh  &",
+      "command": "./isDevContainer.sh || exit 1; /services/start-php-fpm.sh & /services/start-nginx.sh  &",
       "options": {
-        "cwd": "${workspaceFolder:NetAlertX}/.devcontainer/scripts"
+        "cwd": "/workspaces/NetAlertX/.devcontainer/scripts"
 
       },
       "presentation": {
@@ -133,7 +127,7 @@
       "type": "shell",
       "command": "./isDevContainer.sh || exit 1; pkill -f 'php-fpm83|nginx|crond|python3' || true",
       "options": {
-        "cwd": "${workspaceFolder:NetAlertX}/.devcontainer/scripts"
+        "cwd": "/workspaces/NetAlertX/.devcontainer/scripts"
       },
       "presentation": {
         "echo": true,
@@ -150,9 +144,9 @@
     {
       "label": "[Dev Container] List NetAlertX Ports",
       "type": "shell",
-      "command": "./scripts/list-ports.sh",
+      "command": "list-ports.sh",
       "options": {
-        "cwd": "${workspaceFolder:NetAlertX}"
+        "cwd": "/workspaces/NetAlertX/.devcontainer/scripts"
       },
       "presentation": {
         "echo": true,

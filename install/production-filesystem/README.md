@@ -6,7 +6,7 @@ This is the default filesystem for NetAlertX. it contains
 - `/opt/venv/lib/python3.12/site-packages/aiofreebox` - this holds a certificate used by aiofreebox package, which interacts with freebox OS.
 - `/services` - a directory where all scripts which control system executions are held
     - `/services/config` - a directory which holds all configuration files and `conf.d` folders used in the production image.
-        - `/services/config/cond` - `crond` daemon config.
+        - `/services/config/crond` - `crond` daemon config.
         - `/services/config/nginx` - `nginx` conf files.
         - `/services/config/php` - php conf file.
             - `/services/config/php/php-fpm.d` - a `.d` style directory, debugger parameters or other configurations can be dropped in here.

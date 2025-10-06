@@ -70,6 +70,16 @@ add_service "/services/start-php-fpm.sh" "php-fpm"
 add_service "/services/start-nginx.sh" "nginx"
 add_service "/services/start-backend.sh" "backend"
 
+
+# if NETALERTX_DEBUG=1 then we will not kill any services if one fails. We will just wait for all to exit.
+if [ "${NETALERTX_DEBUG:-0}" -eq 1 ]; then
+	echo "NETALERTX_DEBUG is set to 1, will not shut down other services if one fails."
+	wait
+	exit $?
+fi
+
+
+# This is the default action
 while [ -n "${SERVICES}" ]; do
     for entry in ${SERVICES}; do
         pid="${entry%%:*}"

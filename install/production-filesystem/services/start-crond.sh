@@ -16,11 +16,19 @@ forward_signal() {
 	fi
 }
 
+while $(ps ax | grep -v -e grep -e '.sh' | grep crond >/dev/null); do
+	killall crond &>/dev/null
+	sleep 0.2
+done
+
 trap cleanup EXIT
 trap forward_signal INT TERM
 
-/usr/sbin/crond -c "${SYSTEM_SERVICES_CROND}" -f -L "${LOG_CROND}" >> "${LOG_CROND}" 2>&1 &
+echo "/usr/sbin/crond -c \"${SYSTEM_SERVICES_CROND}\" -f -L \"${LOG_CROND}\" >>\"${LOG_CROND}\" 2>&1 &"
+
+/usr/sbin/crond -c "${SYSTEM_SERVICES_CROND}" -f -L "${LOG_CROND}" >>"${LOG_CROND}" 2>&1 &
 crond_pid=$!
 
 wait "${crond_pid}"
+echo -ne " done"
 exit $?

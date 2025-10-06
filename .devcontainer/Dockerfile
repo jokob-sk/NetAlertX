@@ -73,7 +73,7 @@ ENV PYTHONUNBUFFERED=1
 RUN apk add --no-cache bash mtr libbsd zip lsblk sudo tzdata curl arp-scan iproute2 \
     iproute2-ss nmap nmap-scripts traceroute nbtscan net-tools net-snmp-tools bind-tools awake \
     ca-certificates sqlite php83 php83-fpm php83-cgi php83-curl php83-sqlite3 php83-session python3 \
-    nginx sudo shadow && \
+    envsubst nginx sudo shadow && \
     rm -Rf /var/cache/apk/*  && \
     rm -Rf /etc/nginx && \
     addgroup -g 20211 netalertx && \
@@ -165,7 +165,7 @@ ENTRYPOINT [ "/bin/sh", "/entrypoint.sh" ]
 
 # Devcontainer build stage (do not build directly)
 # This file is combined with the root /Dockerfile by
-#   .devcontainer/scripts/generate-dockerfile.sh
+#   .devcontainer/scripts/generate-configs.sh
 # The generator appends this stage to produce .devcontainer/Dockerfile.
 # Prefer to place dev-only setup here; use setup.sh only for runtime fixes.
 
@@ -174,10 +174,14 @@ ENV INSTALL_DIR=/app
 ENV PYTHONPATH=/workspaces/NetAlertX/test:/workspaces/NetAlertX/server:/app:/app/server:/opt/venv/lib/python3.12/site-packages
 ENV PATH=/services:${PATH}
 ENV PHP_INI_SCAN_DIR=/services/config/php/conf.d:/etc/php83/conf.d
+ENV LISTEN_ADDR=0.0.0.0
+ENV PORT=20211
+ENV NETALERTX_DEBUG=1
 COPY .devcontainer/resources/devcontainer-overlay/ /
 
 # Install common tools, create user, and set up sudo
-RUN apk add --no-cache git nano vim jq php83-pecl-xdebug py3-pip nodejs sudo gpgconf pytest pytest-cov 
+RUN apk add --no-cache git nano vim jq php83-pecl-xdebug py3-pip nodejs sudo gpgconf pytest pytest-cov fish shfmt
+
 RUN install -d -o netalertx -g netalertx -m 755 /services/php/modules && \
     cp -a /usr/lib/php83/modules/. /services/php/modules/
 # Install debugpy in the virtualenv if present, otherwise into system python3
@@ -189,4 +193,3 @@ RUN /bin/sh -c '(/opt/venv/bin/python3 -m pip install --no-cache-dir debugpy) ||
     python -m pip install -U pytest pytest-cov
 
 ENTRYPOINT  ["/bin/sh","-c","sleep infinity"]
-    

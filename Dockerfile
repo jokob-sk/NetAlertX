@@ -70,7 +70,7 @@ ENV PYTHONUNBUFFERED=1
 RUN apk add --no-cache bash mtr libbsd zip lsblk sudo tzdata curl arp-scan iproute2 \
     iproute2-ss nmap nmap-scripts traceroute nbtscan net-tools net-snmp-tools bind-tools awake \
     ca-certificates sqlite php83 php83-fpm php83-cgi php83-curl php83-sqlite3 php83-session python3 \
-    nginx sudo shadow && \
+    envsubst nginx sudo shadow && \
     rm -Rf /var/cache/apk/*  && \
     rm -Rf /etc/nginx && \
     addgroup -g 20211 netalertx && \

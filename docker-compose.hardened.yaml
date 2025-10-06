@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  netalertx:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: netalertx:latest
+    container_name: netalertx_internal
+    read_only: true
+    tmpfs:
+      - /etc/nginx/conf.d
+      - /var/cache/nginx
+      - /var/run
+      - /app/log
+      - /tmp
+    networks:
+      - netalertx_net
+    environment:
+      - NETALERTX_MODE=hardened
+      - GRAPHQL_PORT=25378
+    restart: unless-stopped
+
+  proxy:
+    image: nginx:alpine
+    container_name: netalertx_proxy
+   
+    ports:
+      - "20211:25377"
+      - "20212:25378"
+    networks:
+      - netalertx_net
+    depends_on:
+      - netalertx
+    restart: unless-stopped
+
+networks:
+  netalertx_net:
+ 
