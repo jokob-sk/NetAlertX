@@ -61,7 +61,7 @@ def update_vendor_database():
 
     # Update vendors DB (iab oui)
     mylog('verbose', ['    Updating vendors DB (iab & oui)'])    
-    update_args = ['sh', applicationPath + '/back/update_vendors.sh']
+    update_args = ['sh', applicationPath + '/services/update_vendors.sh']
 
     # Execute command     
     try:

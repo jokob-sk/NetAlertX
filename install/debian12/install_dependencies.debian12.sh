@@ -14,7 +14,7 @@ fi
 
 # Install dependencies
 apt-get install -y \
-    tini snmp ca-certificates curl libwww-perl arp-scan perl apt-utils cron sudo \
+    tini snmp ca-certificates curl libwww-perl arp-scan perl apt-utils cron sudo gettext-base \
     nginx-light php php-cgi php-fpm php-sqlite3 php-curl sqlite3 dnsutils net-tools \
     python3 python3-dev iproute2 nmap python3-pip zip usbutils traceroute nbtscan avahi-daemon avahi-utils openrc build-essential git
 
@@ -24,8 +24,8 @@ sudo phpenmod -v 8.2 sqlite3
 
 # setup virtual python environment so we can use pip3 to install packages
 apt-get install python3-venv -y
-python3 -m venv myenv
-source myenv/bin/activate
+python3 -m venv /opt/venv
+source /opt/venv/bin/activate
 
 update-alternatives --install /usr/bin/python python /usr/bin/python3 10
 

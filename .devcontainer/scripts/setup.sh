@@ -116,8 +116,8 @@ configure_php() {
 start_services() {
     echo "[4/4] Starting services"
 
-    chmod +x /entrypoint.sh
-    setsid  bash /entrypoint.sh&
+    sudo chmod +x /entrypoint.sh
+    setsid bash /entrypoint.sh&
     sleep 1
 }
 

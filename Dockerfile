@@ -3,13 +3,12 @@ FROM alpine:3.22 AS builder
 ARG INSTALL_DIR=/app
 
 ENV PYTHONUNBUFFERED=1
+ENV PATH="/opt/venv/bin:$PATH"
 
 # Install build dependencies
 RUN apk add --no-cache bash shadow python3 python3-dev gcc musl-dev libffi-dev openssl-dev git \
     && python -m venv /opt/venv
 
-# Enable venv
-ENV PATH="/opt/venv/bin:$PATH"
 
 RUN pip install openwrt-luci-rpc asusrouter asyncio aiohttp graphene flask flask-cors unifi-sm-api tplink-omada-client wakeonlan pycryptodome requests paho-mqtt scapy cron-converter pytz json2table dhcp-leases pyunifi speedtest-cli chardet python-nmap dnspython librouteros yattag zeroconf simplejson future six urllib3 httplib2 git+https://github.com/foreign-sub/aiofreepybox.git
 
@@ -63,9 +62,20 @@ ENV SYSTEM_SERVICES_RUN_TMP=${SYSTEM_SERVICES_RUN}/tmp
 ENV SYSTEM_SERVICES_RUN_LOG=${SYSTEM_SERVICES_RUN}/logs
 ENV PHP_FPM_CONFIG_FILE=${SYSTEM_SERVICES_PHP_FOLDER}/php-fpm.conf
 
+#Python environment
 ENV PYTHONPATH=${NETALERTX_SERVER}
 ENV PYTHONUNBUFFERED=1 
+ENV VIRTUAL_ENV=/opt/venv
+ENV VIRTUAL_ENV_BIN=/opt/venv/bin
 
+# App Environment
+ENV LISTEN_ADDR=0.0.0.0
+ENV PORT=20211
+ENV NETALERTX_DEBUG=0
+ENV VENDORSPATH=/app/back/ieee-oui.txt
+ENV VENDORSPATH_NEWEST=/services/run/tmp/ieee-oui.txt
+ENV PATH="${VIRTUAL_ENV}/bin:${PATH}"
+ENV ENVIRONMENT=alpine
 
 RUN apk add --no-cache bash mtr libbsd zip lsblk sudo tzdata curl arp-scan iproute2 \
     iproute2-ss nmap nmap-scripts traceroute nbtscan net-tools net-snmp-tools bind-tools awake \
@@ -80,7 +90,7 @@ RUN apk add --no-cache bash mtr libbsd zip lsblk sudo tzdata curl arp-scan iprou
 
 
 # Install application, copy files, set permissions
-COPY --from=builder --chown=20212:20212 /opt/venv /opt/venv
+COPY --from=builder --chown=20212:20212 ${VIRTUAL_ENV} ${VIRTUAL_ENV}}
 COPY --from=builder /usr/sbin/usermod /usr/sbin/groupmod /usr/sbin/
 COPY --chown=netalertx:netalertx install/production-filesystem/ /
 COPY --chown=netalertx:netalertx --chmod=755 back ${NETALERTX_BACK}
@@ -97,12 +107,12 @@ RUN apk add libcap && \
     setcap cap_net_raw,cap_net_admin+eip /usr/bin/nmap && \
     setcap cap_net_raw,cap_net_admin+eip /usr/bin/arp-scan && \
     setcap cap_net_raw,cap_net_admin+eip /usr/bin/traceroute && \
-    setcap cap_net_raw,cap_net_admin+eip /opt/venv/bin/scapy && \
+    setcap cap_net_raw,cap_net_admin+eip ${VIRTUAL_ENV_BIN}scapy && \
     /bin/sh /build/init-nginx.sh && \
     /bin/sh /build/init-php-fpm.sh && \
     /bin/sh /build/init-crond.sh && \
     /bin/sh /build/init-backend.sh && \
-    chmod 755 ${NETALERTX_BACK}/update_vendors.sh ${NETALERTX_BACK}/cron_script.sh ${NETALERTX_BACK}/speedtest-cli && \
+    chmod 755 ${SYSTEM_SERVICES}/update_vendors.sh ${SYSTEM_SERVICES}/cron_script.sh && \
     rm -rf /build && \
     apk del libcap
 # set netalertx to allow sudoers for any command, no password
@@ -133,7 +143,7 @@ RUN chown -R readonly:readonly ${NETALERTX_BACK} ${NETALERTX_FRONT} ${NETALERTX_
     chmod 700 ${NETALERTX_CONFIG} ${NETALERTX_DB} ${NETALERTX_API} ${NETALERTX_LOG} ${NETALERTX_PLUGINS_LOG} ${SYSTEM_SERVICES_RUN_TMP} && \
     chown readonly:readonly /entrypoint.sh && \
     install -d -o netalertx -g netalertx -m 700 ${SYSTEM_SERVICES_RUN} ${SYSTEM_SERVICES_RUN_TMP} ${SYSTEM_SERVICES_RUN_LOG} && \
-    chmod 005 /entrypoint.sh ${NETALERTX_BACK}/update_vendors.sh ${NETALERTX_BACK}/cron_script.sh ${NETALERTX_BACK}/speedtest-cli 
+    chmod 005 /entrypoint.sh ${SYSTEM_SERVICES}/update_vendors.sh ${SYSTEM_SERVICES}/cron_script.sh ${SYSTEM_SERVICES}/speedtest-cli 
 
 #
 # remove sudo and alpine installers pacakges

@@ -243,10 +243,10 @@ else
   echo "[INSTALL] The file ieee-oui.txt does not exist. Running update_vendors..."
 
   # Run the update_vendors.sh script
-  if [ -f "${INSTALL_DIR}/back/update_vendors.sh" ]; then
-    "${INSTALL_DIR}/back/update_vendors.sh"
+  if [ -f "${SYSTEM_SERVICES}/update_vendors.sh" ]; then
+    "${SYSTEM_SERVICES}/update_vendors.sh"
   else
-    echo "[INSTALL] update_vendors.sh script not found in ${INSTALL_DIR}."    
+    echo "[INSTALL] update_vendors.sh script not found in ${SYSTEM_SERVICES}."    
   fi
 fi
 

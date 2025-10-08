@@ -32,8 +32,12 @@ while $(ps ax | grep -v -e "grep" -e "nginx.sh" | grep nginx >/dev/null); do
 	sleep 0.2
 done
 
-if ! envsubst '${LISTEN_ADDR} ${PORT}'< "${SYSTEM_NGINX_CONFIG_TEMPLATE}" > "${SYSTEM_NGINX_CONFIG_FILE}" 2>/dev/null; then
-    echo "Note: Unable to write to ${SYSTEM_NGINX_CONFIG_FILE}. Using default configuration."
+TEMP_CONFIG_FILE=$(mktemp "${TMP_DIR}/netalertx.conf.XXXXXX")
+if envsubst '${LISTEN_ADDR} ${PORT}' < "${SYSTEM_NGINX_CONFIG_TEMPLATE}" > "${TEMP_CONFIG_FILE}" 2>/dev/null; then
+	mv "${TEMP_CONFIG_FILE}" "${SYSTEM_NGINX_CONFIG_FILE}"
+else
+	echo "Note: Unable to write to ${SYSTEM_NGINX_CONFIG_FILE}. Using default configuration."
+	rm -f "${TEMP_CONFIG_FILE}"
 fi
 
 trap cleanup EXIT

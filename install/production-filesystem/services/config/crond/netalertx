@@ -1,2 +1,4 @@
-# Schedule cron jobs
-* * * * * /app/back/cron_script.sh
+# Every minute check for cron jobs
+* * * * * /services/cron_script.sh
+# Update vendors 4x/d
+0 */6 * * * /services/update_vendors.sh

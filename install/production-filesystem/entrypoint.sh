@@ -2,7 +2,7 @@
 
 set -u
 
-/services/capcheck.sh
+bash /services/capcheck.sh
 
 SERVICES=""
 FAILED_NAME=""
@@ -59,13 +59,17 @@ on_signal() {
     handle_exit
 }
 
+/services/update_vendors.sh &
+
 trap on_signal INT TERM
 
 [ ! -d "${NETALERTX_PLUGINS_LOG}" ] && mkdir -p "${NETALERTX_PLUGINS_LOG}"
 [ ! -f "${LOG_DB_IS_LOCKED}" ] && touch "${LOG_DB_IS_LOCKED}"
 [ ! -f "${LOG_EXECUTION_QUEUE}" ] && touch "${LOG_EXECUTION_QUEUE}"
 
-add_service "/services/start-crond.sh" "crond"
+if [ "${ENVIRONMENT:-}" ] && [ "${ENVIRONMENT:-}" != "debian" ]; then
+    add_service "/services/start-crond.sh" "crond"
+fi
 add_service "/services/start-php-fpm.sh" "php-fpm"
 add_service "/services/start-nginx.sh" "nginx"
 add_service "/services/start-backend.sh" "backend"
@@ -79,7 +83,8 @@ if [ "${NETALERTX_DEBUG:-0}" -eq 1 ]; then
 fi
 
 
-# This is the default action
+# If any service fails, we will shut down all others and exit with the same status.
+# This improves reliability in production environments by reinitializing the entire stack if one service fails.
 while [ -n "${SERVICES}" ]; do
     for entry in ${SERVICES}; do
         pid="${entry%%:*}"
