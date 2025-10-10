@@ -1,7 +1,7 @@
 FROM debian:bookworm-slim
 
-# default UID and GID
-ENV USER=pi USER_ID=1000 USER_GID=1000 PORT=20211 
+
+
 #TZ=Europe/London
 
 # NetAlertX app directories
@@ -62,6 +62,9 @@ ENV NETALERTX_DEBUG=0
 
 #Container environment
 ENV ENVIRONMENT=debian
+ENV USER=netalertx 
+ENV USER_ID=1000
+ENV USER_GID=1000 
 
 # Todo, figure out why using a workdir instead of full paths don't work
 # Todo, do we still need all these packages? I can already see sudo which isn't needed
@@ -97,30 +100,28 @@ RUN apt-get install -y --no-install-recommends \
        apt-transport-https \
        ca-certificates \
        lsb-release \
-       wget \
+       wget && \
     wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg && \
     echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list && \
     apt-get update && \
-    apt-get install -y php8.3-fpm php8.3-cli php8.3-sqlite3 php8.3-common && \
+    apt-get install -y php8.3-fpm php8.3-cli php8.3-sqlite3 php8.3-common php8.3-curl php8.3-cgi && \
     ln -s /usr/sbin/php-fpm8.3 /usr/sbin/php-fpm83 # make it compatible with alpine version
+
+# Setup virtual python environment and use pip3 to install packages
+RUN python3 -m venv ${VIRTUAL_ENV} && \
+     /bin/bash -c "source ${VIRTUAL_ENV_BIN}/activate && update-alternatives --install /usr/bin/python python /usr/bin/python3 10 && pip3 install openwrt-luci-rpc asusrouter asyncio aiohttp graphene flask flask-cors unifi-sm-api tplink-omada-client wakeonlan pycryptodome requests paho-mqtt scapy cron-converter pytz json2table dhcp-leases pyunifi speedtest-cli chardet python-nmap dnspython librouteros yattag "
 
 # Configure php-fpm
 RUN chmod -R 755 /services && \
-    adduser netalertx && \
+    chown -R ${USER}:${USER_GID} /services  && \
     sed -i 's/^;listen.mode = .*/listen.mode = 0666/' ${SYSTEM_SERVICES_PHP_FPM_D}/www.conf && \
-    echo "user = netalertx\ngroup = netalertx" >> /services/config/php/php-fpm.d/www.conf
+    echo "user = ${USER}\ngroup = ${USER_GID}" >> /services/config/php/php-fpm.d/www.conf
 
 
-    # Setup virtual python environment and use pip3 to install packages
-RUN python3 -m venv ${VIRTUAL_ENV} 
-    
-
-RUN /bin/bash -c "source ${VIRTUAL_ENV_BIN}/activate && update-alternatives --install /usr/bin/python python /usr/bin/python3 10 && pip3 install openwrt-luci-rpc asusrouter asyncio aiohttp graphene flask flask-cors unifi-sm-api tplink-omada-client wakeonlan pycryptodome requests paho-mqtt scapy cron-converter pytz json2table dhcp-leases pyunifi speedtest-cli chardet python-nmap dnspython librouteros yattag "
 
 # Create a buildtimestamp.txt to later check if a new version was released
 RUN date +%s > ${INSTALL_DIR}/front/buildtimestamp.txt
-
-CMD ["/bin/bash"]
-#, "/entrypoint.sh"]
+USER netalertx:netalertx
+ENTRYPOINT ["/bin/bash","/entrypoint.sh"]
 
 
