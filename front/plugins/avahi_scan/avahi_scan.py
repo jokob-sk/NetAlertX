@@ -89,16 +89,25 @@ def resolve_mdns_name(ip: str, timeout: int = 5) -> str:
 def main():
     mylog("verbose", [f"[{pluginName}] Script started"])
 
-    timeout = 10
-    db = DB()
-    db.open()
-
-    device_handler = DeviceInstance(db)
-    devices = (
-        device_handler.getAll()
-        if get_setting_value("REFRESH_FQDN")
-        else device_handler.getUnknown()
-    )
+    timeout = get_setting_value("AVAHISCAN_RUN_TIMEOUT")
+    use_mock = "--mockdata" in sys.argv
+    
+    if use_mock:
+        mylog("verbose", [f"[{pluginName}] Running in MOCK mode"])
+        devices = [
+            {"devMac": "00:11:22:33:44:55", "devLastIP": "192.168.1.121"},
+            {"devMac": "00:11:22:33:44:56", "devLastIP": "192.168.1.9"},
+            {"devMac": "00:11:22:33:44:57", "devLastIP": "192.168.1.82"},
+        ]
+    else:
+        db = DB()
+        db.open()
+        device_handler = DeviceInstance(db)
+        devices = (
+            device_handler.getAll()
+            if get_setting_value("REFRESH_FQDN")
+            else device_handler.getUnknown()
+        )
 
     mylog("verbose", [f"[{pluginName}] Devices count: {len(devices)}"])
 
