@@ -1,13 +1,14 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 # 🛑 Important: This is only used for the bare-metal install 🛑 
 
-# DO NOT CHANGE ANYTHING BELOW THIS LINE!
-INSTALL_DIR=/app
-INSTALL_SYSTEM_NAME=ubuntu24
-INSTALLER_DIR=${INSTALL_DIR}/install/$INSTALL_SYSTEM_NAME
-SCRIPT_DIR="$(cd -- "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-# DO NOT CHANGE ANYTHING ABOVE THIS LINE!
+source /etc/default/netalertx
+
+if [ -z "${INSTALL_DIR}" ]; then
+  echo "[NetAlertX Pre-Start] INSTALL_DIR Variable is not defined or is empty."
+  exit 1
+fi
+
 
 # unmounting in case already mounted
 umount "${INSTALL_DIR}/log" 2>/dev/null
