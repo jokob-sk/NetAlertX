@@ -33,7 +33,7 @@ COPY --chmod=775 --chown=${USER_ID}:${USER_GID} . ${INSTALL_DIR}/
 RUN apt-get install -y \
     tini snmp ca-certificates curl libwww-perl arp-scan perl apt-utils cron sudo \
     nginx-light php php-cgi php-fpm php-sqlite3 php-curl sqlite3 dnsutils net-tools php-openssl \
-    python3 python3-dev iproute2 nmap python3-pip zip systemctl usbutils traceroute nbtscan avahi avahi-tools openrc dbus
+    python3 python3-dev iproute2 nmap python3-pip zip systemctl usbutils traceroute nbtscan
 
 # Alternate dependencies
 RUN apt-get install nginx nginx-core mtr php-fpm php8.2-fpm php-cli php8.2 php8.2-sqlite3 -y
@@ -43,7 +43,7 @@ RUN phpenmod -v 8.2 sqlite3
 RUN apt-get install -y python3-venv
 RUN python3 -m venv myenv
 
-RUN /bin/bash -c "source myenv/bin/activate && update-alternatives --install /usr/bin/python python /usr/bin/python3 10 && pip3 install openwrt-luci-rpc asusrouter asyncio aiohttp graphene flask flask-cors unifi-sm-api tplink-omada-client wakeonlan pycryptodome requests paho-mqtt scapy cron-converter pytz json2table dhcp-leases pyunifi speedtest-cli chardet python-nmap dnspython librouteros yattag "
+RUN /bin/bash -c "source myenv/bin/activate && update-alternatives --install /usr/bin/python python /usr/bin/python3 10 && pip3 install openwrt-luci-rpc asusrouter asyncio aiohttp graphene flask flask-cors unifi-sm-api tplink-omada-client wakeonlan pycryptodome requests paho-mqtt scapy cron-converter pytz json2table dhcp-leases pyunifi speedtest-cli chardet python-nmap dnspython librouteros yattag zeroconf "
 
 # Create a buildtimestamp.txt to later check if a new version was released
 RUN date +%s > ${INSTALL_DIR}/front/buildtimestamp.txt

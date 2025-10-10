@@ -13,7 +13,7 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 COPY . ${INSTALL_DIR}/
 
-RUN pip install openwrt-luci-rpc asusrouter asyncio aiohttp graphene flask flask-cors unifi-sm-api tplink-omada-client wakeonlan pycryptodome requests paho-mqtt scapy cron-converter pytz json2table dhcp-leases pyunifi speedtest-cli chardet python-nmap dnspython librouteros yattag git+https://github.com/foreign-sub/aiofreepybox.git \
+RUN pip install openwrt-luci-rpc asusrouter asyncio aiohttp graphene flask flask-cors unifi-sm-api tplink-omada-client wakeonlan pycryptodome requests paho-mqtt scapy cron-converter pytz json2table dhcp-leases pyunifi speedtest-cli chardet python-nmap dnspython librouteros yattag zeroconf git+https://github.com/foreign-sub/aiofreepybox.git \
     && bash -c "find ${INSTALL_DIR} -type d -exec chmod 750 {} \;" \
     && bash -c "find ${INSTALL_DIR} -type f -exec chmod 640 {} \;" \
     && bash -c "find ${INSTALL_DIR} -type f \( -name '*.sh' -o -name '*.py'  -o -name 'speedtest-cli' \) -exec chmod 750 {} \;"
@@ -42,7 +42,7 @@ ENV S6_CMD_WAIT_FOR_SERVICES_MAXTIME=0
 
 RUN apk update --no-cache \
     && apk add --no-cache bash libbsd zip lsblk gettext-envsubst sudo mtr tzdata s6-overlay \
-    && apk add --no-cache curl arp-scan iproute2 iproute2-ss nmap nmap-scripts traceroute nbtscan avahi avahi-tools openrc dbus net-tools net-snmp-tools bind-tools awake ca-certificates \
+    && apk add --no-cache curl arp-scan iproute2 iproute2-ss nmap nmap-scripts traceroute nbtscan net-tools net-snmp-tools bind-tools awake ca-certificates \
     && apk add --no-cache sqlite php83 php83-fpm php83-cgi php83-curl php83-sqlite3 php83-session \
     && apk add --no-cache python3 nginx \
     && ln -s /usr/bin/awake /usr/bin/wakeonlan \
