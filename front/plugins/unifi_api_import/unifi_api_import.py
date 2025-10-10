@@ -112,7 +112,12 @@ def get_device_data(site, api):
     mylog('verbose', [f'[{pluginName}] Site: {site_name} clients: {json.dumps(clients_resp, indent=2)}'])
 
     # Build a lookup for devices by their 'id' to find parent MAC easily
-    device_id_to_mac = {dev['id']: dev.get('macAddress', '') for dev in unifi_devices}
+    device_id_to_mac = {}
+    for dev in unifi_devices:
+        if "id" not in dev:
+            mylog("verbose", [f"[{pluginName}] Skipping device without 'id': {json.dumps(dev)}"])
+            continue
+        device_id_to_mac[dev["id"]] = dev.get("macAddress", "")
 
     # Helper to resolve uplinkDeviceId to parent MAC, or "Internet" if no uplink
     def resolve_parent_mac(uplink_id):
