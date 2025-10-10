@@ -199,7 +199,7 @@
     "Device_MultiEdit_Backup": "Attento, l'inserimento di valori errati di seguito interromperà la configurazione. Effettua prima il backup del database o della configurazione dei dispositivi (<a href=\"php/server/devices.php?action=ExportCSV\">fai clic per scaricare <i class=\"fa-solid fa-download fa-bounce\"></i> </a>). Leggi come ripristinare i dispositivi da questo file nella <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/BACKUPS.md#scenario-2-corrupted-database\" target=\" _blank\">Documentazione di backup</a>. Per applicare le modifiche, fai clic sull'icona <b>Salva<i class=\"fa-solid fa-save\"></i></b> su ogni campo che desideri aggiornare.",
     "Device_MultiEdit_Fields": "Modifica campi:",
     "Device_MultiEdit_MassActions": "Azioni di massa:",
-    "Device_MultiEdit_No_Devices": "",
+    "Device_MultiEdit_No_Devices": "Nessun dispositivo selezionato.",
     "Device_MultiEdit_Tooltip": "Attento. Facendo clic verrà applicato il valore sulla sinistra a tutti i dispositivi selezionati sopra.",
     "Device_Searchbox": "Cerca",
     "Device_Shortcut_AllDevices": "I miei dispositivi",
