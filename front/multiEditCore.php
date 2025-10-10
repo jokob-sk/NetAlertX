@@ -340,9 +340,14 @@
     console.log(columnValue);
 
     // update selected
-    executeAction('update', 'devMac', selectorMacs(), targetColumns, columnValue )
-
-    
+    if(selectorMacs() != "")
+    { 
+      executeAction('update', 'devMac', selectorMacs(), targetColumns, columnValue )
+    }
+    else
+    {
+      showModalWarning(getString("Gen_Error"), getString('Device_MultiEdit_No_Devices')); 
+    }    
 }
 
 // -----------------------------------------------------------------------------
