@@ -199,6 +199,7 @@
     "Device_MultiEdit_Backup": "Cuidado, inserir valores errados abaixo interromperá sua configuração. Faça backup do seu banco de dados ou da configuração dos dispositivos primeiro (<a href=\"php/server/devices.php?action=ExportCSV\">clique para baixar <i class=\"fa-solid fa-download fa-bounce\"></i> </a>). Leia como recuperar dispositivos deste arquivo no <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/BACKUPS.md#scenario-2-corrupted-database\" target=\" _blank\">Documentação de backups</a>.",
     "Device_MultiEdit_Fields": "Editar campos:",
     "Device_MultiEdit_MassActions": "Ações em massa:",
+    "Device_MultiEdit_No_Devices": "",
     "Device_MultiEdit_Tooltip": "Cuidadoso. Clicar aqui aplicará o valor à esquerda a todos os dispositivos selecionados acima.",
     "Device_Searchbox": "Procurar",
     "Device_Shortcut_AllDevices": "Meus dispositivos",

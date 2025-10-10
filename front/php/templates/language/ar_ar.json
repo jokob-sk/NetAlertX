@@ -199,6 +199,7 @@
     "Device_MultiEdit_Backup": "نسخة احتياطية",
     "Device_MultiEdit_Fields": "الحقول",
     "Device_MultiEdit_MassActions": "إجراءات جماعية",
+    "Device_MultiEdit_No_Devices": "",
     "Device_MultiEdit_Tooltip": "تعديل الأجهزة المحددة",
     "Device_Searchbox": "بحث",
     "Device_Shortcut_AllDevices": "جميع الأجهزة",

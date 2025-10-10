@@ -199,6 +199,7 @@
     "Device_MultiEdit_Backup": "Dikkat, aşağıya yanlış değerler girmeniz yapılandırmanızı bozabilir. Lütfen önce veritabanınızı veya Cihazlar yapılandırmanızı yedekleyin (<a href=\"php/server/devices.php?action=ExportCSV\">İndirmeniz için tıklayın <i class=\"fa-solid fa-download fa-bounce\"></i></a>). Bu dosyadan Cihazları nasıl geri yükleyeceğinizi öğrenmek için <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/BACKUPS.md#scenario-2-corrupted-database\" target=\"_blank\">Yedekleme dökümantasyonunu</a> okuyun.",
     "Device_MultiEdit_Fields": "Alanları Düzenle:",
     "Device_MultiEdit_MassActions": "Toplu komutlar:",
+    "Device_MultiEdit_No_Devices": "",
     "Device_MultiEdit_Tooltip": "Dikkat. Buna tıklamak, soldaki değeri yukarıda seçilen tüm cihazlara uygulayacaktır.",
     "Device_Searchbox": "Arama",
     "Device_Shortcut_AllDevices": "Cihazlarım",

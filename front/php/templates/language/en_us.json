@@ -199,6 +199,7 @@
     "Device_MultiEdit_Backup": "Careful, entering wrong values below will break your setup. Please backup your database or Devices configuration first (<a href=\"php/server/devices.php?action=ExportCSV\">click to download <i class=\"fa-solid fa-download fa-bounce\"></i></a>). Read how to recover Devices from this file in the <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/BACKUPS.md#scenario-2-corrupted-database\" target=\"_blank\">Backups documentation</a>. In order to apply your changes click the  <b>Save<i class=\"fa-solid fa-save\"></i></b> icon on each field you want to update.",
     "Device_MultiEdit_Fields": "Edit fields:",
     "Device_MultiEdit_MassActions": "Mass actions:",
+    "Device_MultiEdit_No_Devices": "No devices selected.",
     "Device_MultiEdit_Tooltip": "Careful. Clicking this will apply the value on the left to all devices selected above.",
     "Device_Searchbox": "Search",
     "Device_Shortcut_AllDevices": "My devices",

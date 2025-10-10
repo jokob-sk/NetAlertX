@@ -199,6 +199,7 @@
     "Device_MultiEdit_Backup": "Attention, renseigner des valeurs non cohérentes ci-dessous peut bloquer votre paramétrage. Veillez à faire une sauvegarde de votre base de données ou de la configuration de vos appareils en premier lieu (<a href=\"php/server/devices.php?action=ExportCSV\">clisuer ici pour la télécharger <i class=\"fa-solid fa-download fa-bounce\"></i></a>). Renseignez-vous sur comment remettre les appareils depuis ce fichier via la <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/BACKUPS.md#scenario-2-corrupted-database\" target=\"_blank\">documentation des sauvegardes</a>. Afin d'enregistrer les changements, cliquer sur l'icône <b>Sauvegarder<i class=\"fa-solid fa-save\"></i></b> sur chaque champ que vous voulez mettre à jour.",
     "Device_MultiEdit_Fields": "Champs modifiables :",
     "Device_MultiEdit_MassActions": "Actions en masse :",
+    "Device_MultiEdit_No_Devices": "",
     "Device_MultiEdit_Tooltip": "Attention. Ceci va appliquer la valeur de gauche à tous les appareils sélectionnés au-dessus.",
     "Device_Searchbox": "Rechercher",
     "Device_Shortcut_AllDevices": "Mes appareils",

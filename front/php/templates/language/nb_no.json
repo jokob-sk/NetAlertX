@@ -199,6 +199,7 @@
     "Device_MultiEdit_Backup": "Forsiktig, hvis du legger inn feil verdier nedenfor, vil oppsettet ditt ødelegges. Ta sikkerhetskopi av databasen eller enhetskonfigurasjonen først (<a href=\"php/server/devices.php?action=ExportCSV\">klikk for å laste ned <i class=\"fa-solid fa-download fa-bounce\"></i> </a>). Les hvordan du gjenoppretter enheter fra denne filen i <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/BACKUPS.md#scenario-2-corrupted-database\" target=\"_blank\">Sikkerhetskopierings dokumentasjon</a>.",
     "Device_MultiEdit_Fields": "Rediger felt:",
     "Device_MultiEdit_MassActions": "Flerhandlinger:",
+    "Device_MultiEdit_No_Devices": "",
     "Device_MultiEdit_Tooltip": "Forsiktig. Ved å klikke på denne vil verdien til venstre brukes på alle enhetene som er valgt ovenfor.",
     "Device_Searchbox": "Søk",
     "Device_Shortcut_AllDevices": "Mine Enheter",
