@@ -1,6 +1,19 @@
 import threading
+import sys
+
 from flask import Flask, request, jsonify, Response
 from flask_cors import CORS
+
+# Register NetAlertX directories
+INSTALL_PATH = "/app"
+sys.path.extend([f"{INSTALL_PATH}/server"])
+
+from logger import mylog
+from helper import get_setting_value, timeNowTZ
+from db.db_helper import get_date_from_period
+from app_state import updateState
+
+
 from .graphql_endpoint import devicesSchema
 from .device_endpoint import get_device_data, set_device_data, delete_device, delete_device_events, reset_device_props, copy_device, update_device_column
 from .devices_endpoint import get_all_devices, delete_unknown_devices, delete_all_with_empty_macs, delete_devices, export_devices, import_csv, devices_totals, devices_by_status
@@ -11,17 +24,7 @@ from .sessions_endpoint import get_sessions, delete_session, create_session, get
 from .nettools_endpoint import wakeonlan, traceroute, speedtest, nslookup, nmap_scan, internet_info
 from .dbquery_endpoint import read_query, write_query, update_query, delete_query
 from .sync_endpoint import handle_sync_post, handle_sync_get
-import sys
-
-# Register NetAlertX directories
-INSTALL_PATH = "/app"
-sys.path.extend([f"{INSTALL_PATH}/server"])
-
-from logger import mylog
-from helper import get_setting_value, timeNowTZ
-from db.db_helper import get_date_from_period
-from app_state import updateState
-from messaging.in_app import write_notification
+from messaging.in_app import write_notification, mark_all_notifications_read, delete_notifications, get_unread_notifications, delete_notification, mark_notification_as_read
 
 # Flask application
 app = Flask(__name__)
@@ -36,6 +39,7 @@ CORS(
         r"/sessions/*": {"origins": "*"},
         r"/settings/*": {"origins": "*"},
         r"/dbquery/*": {"origins": "*"},
+        r"/messaging/*": {"origins": "*"},
         r"/events/*": {"origins": "*"}
     },
     supports_credentials=True,
@@ -500,6 +504,69 @@ def metrics():
 
     # Return Prometheus metrics as plain text
     return  Response(get_metric_stats(), mimetype="text/plain")
+
+# --------------------------
+# In-app notifications
+# --------------------------
+@app.route("/messaging/in-app/write", methods=["POST"])
+def api_write_notification():
+    if not is_authorized():
+        return jsonify({"error": "Forbidden"}), 403
+
+    data = request.json or {}
+    content = data.get("content")
+    level = data.get("level", "alert")
+
+    if not content:
+        return jsonify({"success": False, "error": "Missing content"}), 400
+    
+    write_notification(content, level)
+    return jsonify({"success": True})
+
+@app.route("/messaging/in-app/unread", methods=["GET"])
+def api_get_unread_notifications():
+    if not is_authorized():
+        return jsonify({"error": "Forbidden"}), 403
+
+    return get_unread_notifications()
+
+@app.route("/messaging/in-app/read/all", methods=["POST"])
+def api_mark_all_notifications_read():
+    if not is_authorized():
+        return jsonify({"error": "Forbidden"}), 403
+
+    return jsonify(mark_all_notifications_read())
+
+@app.route("/messaging/in-app/delete", methods=["DELETE"])
+def api_delete_all_notifications():
+    if not is_authorized():
+        return jsonify({"error": "Forbidden"}), 403
+
+    return delete_notifications()
+
+@app.route("/messaging/in-app/delete/<guid>", methods=["DELETE"])
+def api_delete_notification(guid):
+    """Delete a single notification by GUID."""
+    if not is_authorized():
+        return jsonify({"error": "Forbidden"}), 403
+
+    result = delete_notification(guid)
+    if result.get("success"):
+        return jsonify({"success": True})
+    else:
+        return jsonify({"success": False, "error": result.get("error")}), 500
+
+@app.route("/messaging/in-app/read/<guid>", methods=["POST"])
+def api_mark_notification_read(guid):
+    """Mark a single notification as read by GUID."""
+    if not is_authorized():
+        return jsonify({"error": "Forbidden"}), 403
+
+    result = mark_notification_as_read(guid)
+    if result.get("success"):
+        return jsonify({"success": True})
+    else:
+        return jsonify({"success": False, "error": result.get("error")}), 500
     
 # --------------------------
 # SYNC endpoint
