@@ -14,7 +14,7 @@ fi
 umount "${INSTALL_DIR}/log" 2>/dev/null
 umount "${INSTALL_DIR}/api" 2>/dev/null
 
-rm -R "${INSTALL_DIR}/log/*" "${INSTALL_DIR}/api/*" 2>/dev/null
+rm -rf "${INSTALL_DIR}"/log/* "${INSTALL_DIR}"/api/* 2>/dev/null
 
 mkdir -p "${INSTALL_DIR}/log" "${INSTALL_DIR}/api"
 
