@@ -252,7 +252,7 @@ fi
 
 # We moved the log and api folder creation to the pre-start script
 # Ref pre-start.sh
-# Otherwise the system does not work as the tmp mount moints are not there yet
+# Otherwise the system does not work as the tmp mount points are not there yet
 
 
 # DANGER ZONE: ALWAYS_FRESH_INSTALL 
