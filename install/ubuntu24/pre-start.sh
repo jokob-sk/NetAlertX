@@ -18,8 +18,14 @@ rm -rf "${INSTALL_DIR}"/log/* "${INSTALL_DIR}"/api/* 2>/dev/null
 
 mkdir -p "${INSTALL_DIR}/log" "${INSTALL_DIR}/api"
 
-mount -t tmpfs -o noexec,nosuid,nodev tmpfs "${INSTALL_DIR}/log"
-mount -t tmpfs -o noexec,nosuid,nodev tmpfs "${INSTALL_DIR}/api"
+mount -t tmpfs -o noexec,nosuid,nodev tmpfs "${INSTALL_DIR}/log" || {
+  echo "[NetAlertX Pre-Start] Failed to mount tmpfs at ${INSTALL_DIR}/log"
+  exit 1
+}
+mount -t tmpfs -o noexec,nosuid,nodev tmpfs "${INSTALL_DIR}/api" || {
+  echo "[NetAlertX Pre-Start] Failed to mount tmpfs at ${INSTALL_DIR}/api"
+  exit 1
+}
 
 
 # Create log files if they don't exist
