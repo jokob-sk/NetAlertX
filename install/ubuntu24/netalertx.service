@@ -4,7 +4,7 @@ Description=NetAlertX - Network, presence scanner and alert framework
 [Service]
 EnvironmentFile=/etc/default/netalertx
 PassEnvironment=INSTALL_SYSTEM_NAME INSTALLER_DIR INSTALL_DIR PHPVERSION VIRTUAL_ENV PATH
-ExecStartPre=/usr/bin/bash -c "${INSTALLER_DIR}/pre-start.sh"
+ExecStartPre=/usr/bin/bash "${INSTALLER_DIR}/pre-start.sh"
 ExecStart=/usr/bin/python3 "${INSTALL_DIR}/server"
 Restart=on-failure
 Type=simple
