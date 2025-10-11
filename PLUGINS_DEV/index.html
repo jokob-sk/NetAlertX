@@ -1,0 +1,4551 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="The main documentation resource for NetAlertX - a network scanner and presence detector">
+      
+      
+      
+        <link rel="canonical" href="https://jokob-sk.github.io/NetAlertX/PLUGINS_DEV/">
+      
+      
+        <link rel="prev" href="../DEV_DEVCONTAINER/">
+      
+      
+        <link rel="next" href="../PLUGINS_DEV_CONFIG/">
+      
+      
+      <link rel="icon" href="../img/netalertx_docs.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.21">
+    
+    
+      
+        <title>Custom Plugins - NetAlertX Docs</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.2a3383ac.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+    <!-- Google Tag Manager -->
+
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-KCRSGLP8J2"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-KCRSGLP8J2');
+        </script>
+
+    <!-- End Google Tag Manager -->
+
+    
+      
+
+    
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="deep-purple">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#creating-a-custom-plugin" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KCRSGLP8J2"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="NetAlertX Docs" class="md-header__button md-logo" aria-label="NetAlertX Docs" data-md-component="logo">
+      
+  <img src="../img/netalertx_docs.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            NetAlertX Docs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Custom Plugins
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="deep-purple"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="deep-purple"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7M9 21v-1h6v1a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1m3-17a5 5 0 0 0-5 5c0 2.05 1.23 3.81 3 4.58V16h4v-2.42c1.77-.77 3-2.53 3-4.58a5 5 0 0 0-5-5"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/jokob-sk/NetAlertX/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../INSTALLATION/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Installation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../SUBNETS/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Setup
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../DEVICE_MANAGEMENT/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Device guides
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../LOGGING/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Troubleshooting
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../DEV_ENV_SETUP/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Development
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="NetAlertX Docs" class="md-nav__button md-logo" aria-label="NetAlertX Docs" data-md-component="logo">
+      
+  <img src="../img/netalertx_docs.png" alt="logo">
+
+    </a>
+    NetAlertX Docs
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/jokob-sk/NetAlertX/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Installation
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Installation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../INSTALLATION/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Installation options
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../INITIAL_SETUP/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Quick setup
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Docker
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            Docker
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Docker Guide
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../DOCKER_COMPOSE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Docker Compose
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../FILE_PERMISSIONS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Docker File Permissions
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../UPDATES/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Docker Updates
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Other
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            Other
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../SYNOLOGY_GUIDE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Synology Guide
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../DOCKER_PORTAINER/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Portainer Stacks
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../COMMUNITY_GUIDES/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Community Guides
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../HW_INSTALL/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Bare-metal (Experimental)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../MIGRATION/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Migration Guide
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Help
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            Help
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../COMMON_ISSUES/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Common issues
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Setup
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Setup
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_1" id="__nav_3_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Getting started
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_1">
+            <span class="md-nav__icon md-icon"></span>
+            Getting started
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../SUBNETS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Subnets
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PLUGINS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Enable Plugins
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PIHOLE_GUIDE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Pi-hole Guide
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../HOME_ASSISTANT/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home Assistant
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../SMTP/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Emails
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../BACKUPS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Backups
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../SECURITY/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Security
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Advanced guides
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            Advanced guides
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../REMOTE_NETWORKS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Remote Networks
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../NOTIFICATIONS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Notifications Guide
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../NAME_RESOLUTION/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Name Resolution
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../AUTHELIA/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Authelia
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PERFORMANCE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Performance
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../REVERSE_DNS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Reverse DNS
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../REVERSE_PROXY/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Reverse Proxy
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../WEBHOOK_N8N/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Webhooks (n8n)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../WORKFLOWS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Workflows
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../WORKFLOW_EXAMPLES/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Workflow Examples
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../DOCKER_SWARM/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Docker Swarm
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Help
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            Help
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../COMMON_ISSUES/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Common issues
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../RANDOM_MAC/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Random MAC
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../FIX_OFFLINE_DETECTION/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Incorrect Offline Detection
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Device guides
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Device guides
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_1" id="__nav_4_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Editing Devices
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            Editing Devices
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../DEVICE_MANAGEMENT/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Management
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../DEVICES_BULK_EDITING/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Bulk Editing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CUSTOM_PROPERTIES/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Custom Properties
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../DEVICE_DISPLAY_SETTINGS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Device Display Settings
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../SESSION_INFO/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Session Info
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Icons and Topology
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            Icons and Topology
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ICONS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Icons
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../NETWORK_TREE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Network Topology
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Troubleshooting
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../LOGGING/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Inspecting Logs
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../DEBUG_TIPS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Debugging Tips
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../DEBUG_GRAPHQL/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Debugging GraphQL
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../DEBUG_INVALID_JSON/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Debugging Invalid JSON
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../DEBUG_PHP/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Debugging PHP
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../DEBUG_PLUGINS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Debugging Plugins
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../WEB_UI_PORT_DEBUG/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Debugging Web UI Port
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../WORKFLOWS_DEBUGGING/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Debugging Workflows
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Development
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            Development
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_1" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_6_1" id="__nav_6_1_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Plugin and app development
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6_1">
+            <span class="md-nav__icon md-icon"></span>
+            Plugin and app development
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../DEV_ENV_SETUP/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Environment Setup
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../DEV_DEVCONTAINER/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Devcontainer
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Custom Plugins
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Custom Plugins
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#watch-the-video" class="md-nav__link">
+    <span class="md-ellipsis">
+      🎥 Watch the video:
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#screenshots" class="md-nav__link">
+    <span class="md-ellipsis">
+      📸 Screenshots
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#use-cases" class="md-nav__link">
+    <span class="md-ellipsis">
+      Use cases
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#disclaimer" class="md-nav__link">
+    <span class="md-ellipsis">
+      ⚠ Disclaimer
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#plugin-file-structure-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Plugin file structure overview
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Plugin file structure overview">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#column-order-and-values-plugins-interface-contract" class="md-nav__link">
+    <span class="md-ellipsis">
+      Column order and values (plugins interface contract)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PLUGINS_DEV_CONFIG/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Plugin Config
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../FRONTEND_DEVELOPMENT/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Frontend Development
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../DATABASE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Database
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../SETTINGS_SYSTEM/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Settings
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../VERSIONS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Versions
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../DEVICE_HEURISTICS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Icon and Type guessing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_6_2" id="__nav_6_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    API
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_2">
+            <span class="md-nav__icon md-icon"></span>
+            API
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../API/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../API_DEVICES/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Devices Collection
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../API_DEVICE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Device
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../API_SESSIONS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Sessions
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../API_SETTINGS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Settings
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../API_EVENTS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Events
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../API_METRICS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Metrics
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../API_NETTOOLS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Net Tools
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../API_ONLINEHISTORY/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Online History
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../API_SYNC/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Sync
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../API_GRAPHQL/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    GraphQL
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../API_DBQUERY/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    DB query
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../API_TESTS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Tests
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../API_OLD/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    SUPERSEDED OLD API Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_6_3" id="__nav_6_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Integrations
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_3">
+            <span class="md-nav__icon md-icon"></span>
+            Integrations
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../WEBHOOK_SECRET/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Webhook Secret
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../HELPER_SCRIPTS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Helper scripts
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#watch-the-video" class="md-nav__link">
+    <span class="md-ellipsis">
+      🎥 Watch the video:
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#screenshots" class="md-nav__link">
+    <span class="md-ellipsis">
+      📸 Screenshots
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#use-cases" class="md-nav__link">
+    <span class="md-ellipsis">
+      Use cases
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#disclaimer" class="md-nav__link">
+    <span class="md-ellipsis">
+      ⚠ Disclaimer
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#plugin-file-structure-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Plugin file structure overview
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Plugin file structure overview">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#column-order-and-values-plugins-interface-contract" class="md-nav__link">
+    <span class="md-ellipsis">
+      Column order and values (plugins interface contract)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://github.com/jokob-sk/NetAlertX/blob/main/docs/PLUGINS_DEV.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/jokob-sk/NetAlertX/raw/main/docs/PLUGINS_DEV.md" title="View source of this page" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg>
+    </a>
+  
+
+
+<h1 id="creating-a-custom-plugin">Creating a custom plugin</h1>
+<p>NetAlertX comes with a plugin system to feed events from third-party scripts into the UI and then send notifications, if desired. The highlighted core functionality this plugin system supports, is:</p>
+<ul>
+<li>dynamic creation of a simple UI to interact with the discovered objects,</li>
+<li>filtering of displayed values in the Devices UI</li>
+<li>surface settings of plugins in the UI, </li>
+<li>different column types for reported values to e.g. link back to a device</li>
+<li>import objects into existing NetAlertX database tables </li>
+</ul>
+<blockquote>
+<p>(Currently, update/overwriting of existing objects is only supported for devices via the <code>CurrentScan</code> table.)</p>
+</blockquote>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For a high-level overview of how the <code>config.json</code> is used and it's lifecycle check the <a href="../PLUGINS_DEV_CONFIG/">config.json Lifecycle in NetAlertX Guide</a>.</p>
+</div>
+<h3 id="watch-the-video">🎥 Watch the video:</h3>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Read this guide <a href="../DEV_ENV_SETUP/">Development environment setup guide</a> to set up your local environment for development. 👩‍💻</p>
+</div>
+<p><a href="https://youtu.be/cdbxlwiWhv8"><img alt="Watch the video" src="../img/YouTube_thumbnail.png" /></a></p>
+<h3 id="screenshots">📸 Screenshots</h3>
+<table>
+<thead>
+<tr>
+<th><img alt="Screen 1" src="https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/plugins.png" title="Screen 1" /></th>
+<th><img alt="Screen 2" src="https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/plugins_settings.png" title="Screen 2" /></th>
+<th><img alt="Screen 3" src="https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/plugins_json_settings.png" title="Screen 3" /></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><img alt="Screen 4" src="https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/plugins_json_ui.png" title="Screen 4" /></td>
+<td><img alt="Screen 5" src="https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/plugins_device_details.png" title="Screen 5" /></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="use-cases">Use cases</h2>
+<p>Example use cases for plugins could be:</p>
+<ul>
+<li>Monitor a web service and alert me if it's down</li>
+<li>Import devices from dhcp.leases files instead/complementary to using PiHole or arp-scans</li>
+<li>Creating ad-hoc UI tables from existing data in the NetAlertX database, e.g. to show all open ports on devices, to list devices that disconnected in the last hour, etc.</li>
+<li>Using other device discovery methods on the network and importing the data as new devices</li>
+<li>Creating a script to create FAKE devices based on user input via custom settings</li>
+<li>...at this point the limitation is mostly the creativity rather than the capability (there might be edge cases and a need to support more form controls for user input off custom settings, but you probably get the idea)</li>
+</ul>
+<p>If you wish to develop a plugin, please check the existing plugin structure. Once the settings are saved by the user they need to be removed from the <code>app.conf</code> file manually if you want to re-initialize them from the <code>config.json</code> of the plugin. </p>
+<h2 id="disclaimer">⚠ Disclaimer</h2>
+<p>Please read the below carefully if you'd like to contribute with a plugin yourself. This documentation file might be outdated, so double-check the sample plugins as well. </p>
+<h2 id="plugin-file-structure-overview">Plugin file structure overview</h2>
+<blockquote>
+<p>⚠️Folder name must be the same as the code name value in: <code>"code_name": "&lt;value&gt;"</code>
+Unique prefix needs to be unique compared to the other settings prefixes, e.g.: the prefix <code>APPRISE</code> is already in use. </p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Required (plugin type)</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>config.json</code></td>
+<td>yes</td>
+<td>Contains the plugin configuration (manifest) including the settings available to the user.</td>
+</tr>
+<tr>
+<td><code>script.py</code></td>
+<td>no</td>
+<td>The Python script itself. You may call any valid linux command.</td>
+</tr>
+<tr>
+<td><code>last_result.&lt;prefix&gt;.log</code></td>
+<td>no</td>
+<td>The file used to interface between NetAlertX and the plugin. Required for a script plugin if you want to feed data into the app. Stored in the <code>/api/log/plugins/</code></td>
+</tr>
+<tr>
+<td><code>script.log</code></td>
+<td>no</td>
+<td>Logging output (recommended)</td>
+</tr>
+<tr>
+<td><code>README.md</code></td>
+<td>yes</td>
+<td>Any setup considerations or overview</td>
+</tr>
+</tbody>
+</table>
+<p>More on specifics below.</p>
+<h3 id="column-order-and-values-plugins-interface-contract">Column order and values (plugins interface contract)</h3>
+<div class="admonition warning">
+<p class="admonition-title">Important</p>
+<p>Spend some time reading and trying to understand the below table. This is the interface between the Plugins and the core application. The application expets 9 or 13 values The first 9 values are mandatory. The next 4 values (<code>HelpVal1</code> to <code>HelpVal4</code>) are optional. However, if you use any of these optional values (e.g., <code>HelpVal1</code>), you need to supply all optional values (e.g., <code>HelpVal2</code>, <code>HelpVal3</code>, and <code>HelpVal4</code>). If a value is not used, it should be padded with <code>null</code>.</p>
+</div>
+<table>
+<thead>
+<tr>
+<th>Order</th>
+<th>Represented Column</th>
+<th>Value Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td><code>Object_PrimaryID</code></td>
+<td>yes</td>
+<td>The primary ID used to group Events under.</td>
+</tr>
+<tr>
+<td>1</td>
+<td><code>Object_SecondaryID</code></td>
+<td>no</td>
+<td>Optional secondary ID to create a relationship beween other entities, such as a MAC address</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>DateTime</code></td>
+<td>yes</td>
+<td>When the event occured in the format <code>2023-01-02 15:56:30</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>Watched_Value1</code></td>
+<td>yes</td>
+<td>A value that is watched and users can receive notifications if it changed compared to the previously saved entry. For example IP address</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>Watched_Value2</code></td>
+<td>no</td>
+<td>As above</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>Watched_Value3</code></td>
+<td>no</td>
+<td>As above</td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>Watched_Value4</code></td>
+<td>no</td>
+<td>As above</td>
+</tr>
+<tr>
+<td>7</td>
+<td><code>Extra</code></td>
+<td>no</td>
+<td>Any other data you want to pass and display in NetAlertX and the notifications</td>
+</tr>
+<tr>
+<td>8</td>
+<td><code>ForeignKey</code></td>
+<td>no</td>
+<td>A foreign key that can be used to link to the parent object (usually a MAC address)</td>
+</tr>
+<tr>
+<td>9</td>
+<td><code>HelpVal1</code></td>
+<td>no</td>
+<td>(optional) A helper value</td>
+</tr>
+<tr>
+<td>10</td>
+<td><code>HelpVal2</code></td>
+<td>no</td>
+<td>(optional) A helper value</td>
+</tr>
+<tr>
+<td>11</td>
+<td><code>HelpVal3</code></td>
+<td>no</td>
+<td>(optional) A helper value</td>
+</tr>
+<tr>
+<td>12</td>
+<td><code>HelpVal4</code></td>
+<td>no</td>
+<td>(optional) A helper value</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>De-duplication is run once an hour on the <code>Plugins_Objects</code> database table and duplicate entries with the same value in columns <code>Object_PrimaryID</code>, <code>Object_SecondaryID</code>, <code>Plugin</code> (auto-filled based on <code>unique_prefix</code> of the plugin), <code>UserData</code> (can be populated with the <code>"type": "textbox_save"</code> column type) are removed.</p>
+</div>
+<h1 id="configjson-structure">config.json structure</h1>
+<p>The <code>config.json</code> file is the manifest of the plugin. It contains mainly settings definitions and the mapping of Plugin objects to NetAlertX objects. </p>
+<h2 id="execution-order">Execution order</h2>
+<p>The execution order is used to specify when a plugin is executed. This is useful if a plugin has access and surfaces more information than others. If a device is detected by 2 plugins and inserted into the <code>CurrentScan</code> table, the plugin with the higher priority (e.g.: <code>Level_0</code> is a higher priority than <code>Level_1</code>) will insert it's values first. These values (devices) will be then prioritized over any values inserted later.</p>
+<pre><code class="language-json">{
+    &quot;execution_order&quot; : &quot;Layer_0&quot;
+}
+</code></pre>
+<h2 id="supported-data-sources">Supported data sources</h2>
+<p>Currently, these data sources are supported (valid <code>data_source</code> value). </p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th><code>data_source</code> value</th>
+<th>Needs to return a "table"*</th>
+<th>Overview (more details on this page below)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Script</td>
+<td><code>script</code></td>
+<td>no</td>
+<td>Executes any linux command in the <code>CMD</code> setting.</td>
+</tr>
+<tr>
+<td>NetAlertX DB query</td>
+<td><code>app-db-query</code></td>
+<td>yes</td>
+<td>Executes a SQL query on the NetAlertX database in the <code>CMD</code> setting.</td>
+</tr>
+<tr>
+<td>Template</td>
+<td><code>template</code></td>
+<td>no</td>
+<td>Used to generate internal settings, such as default values.</td>
+</tr>
+<tr>
+<td>External SQLite DB query</td>
+<td><code>sqlite-db-query</code></td>
+<td>yes</td>
+<td>Executes a SQL query from the <code>CMD</code> setting on an external SQLite database mapped in the <code>DB_PATH</code> setting.</td>
+</tr>
+<tr>
+<td>Plugin type</td>
+<td><code>plugin_type</code></td>
+<td>no</td>
+<td>Specifies the type of the plugin and in which section the Plugin settings are displayed ( one of <code>general/system/scanner/other/publisher</code> ).</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<ul>
+<li>"Needs to return a "table" means that the application expects a <code>last_result.&lt;prefix&gt;.log</code> file with some results. It's not a blocker, however warnings in the <code>app.log</code> might be logged.</li>
+</ul>
+<p>🔎Example
+<code>json
+"data_source":  "app-db-query"</code>
+If you want to display plugin objects or import devices into the app, data sources have to return a "table" of the exact structure as outlined above.</p>
+</blockquote>
+<p>You can show or hide the UI on the "Plugins" page and "Plugins" tab for a plugin on devices via the <code>show_ui</code> property:</p>
+<blockquote>
+<p>🔎Example
+<code>json
+"show_ui": true,</code></p>
+</blockquote>
+<h3 id="data_source-script">"data_source":  "script"</h3>
+<p>If the <code>data_source</code> is set to <code>script</code> the <code>CMD</code> setting (that you specify in the <code>settings</code> array section in the <code>config.json</code>) contains an executable Linux command, that usually generates a <code>last_result.&lt;prefix&gt;.log</code> file (not required if you don't import any data into the app). The <code>last_result.&lt;prefix&gt;.log</code> file needs to be saved in <code>/api/log/plugins</code>. </p>
+<div class="admonition warning">
+<p class="admonition-title">Important</p>
+<p>A lot of the work is taken care of by the <a href="/front/plugins/plugin_helper.py"><code>plugin_helper.py</code> library</a>. You don't need to manage the <code>last_result.&lt;prefix&gt;.log</code> file if using the helper objects. Check other <code>script.py</code> of other plugins for details.</p>
+</div>
+<p>The content of the <code>last_result.&lt;prefix&gt;.log</code> file needs to contain the columns as defined in the "Column order and values" section above. The order of columns can't be changed. After every scan it should contain only the results from the latest scan/execution. </p>
+<ul>
+<li>The format of the <code>last_result.&lt;prefix&gt;.log</code> is a <code>csv</code>-like file with the pipe <code>|</code> as a separator. </li>
+<li>9 (nine) values need to be supplied, so every line needs to contain 8 pipe separators. Empty values are represented by <code>null</code>.  </li>
+<li>Don't render "headers" for these "columns".
+Every scan result/event entry needs to be on a new line.</li>
+<li>You can find which "columns" need to be present, and if the value is required or optional, in the "Column order and values" section. </li>
+<li>The order of these "columns" can't be changed.</li>
+</ul>
+<h4 id="last_resultprefixlog-examples">🔎 last_result.prefix.log examples</h4>
+<p>Valid CSV:</p>
+<pre><code class="language-csv">
+https://www.google.com|null|2023-01-02 15:56:30|200|0.7898|null|null|null|null
+https://www.duckduckgo.com|192.168.0.1|2023-01-02 15:56:30|200|0.9898|null|null|Best search engine|ff:ee:ff:11:ff:11
+
+</code></pre>
+<p>Invalid CSV with different errors on each line:</p>
+<pre><code class="language-csv">
+https://www.google.com|null|2023-01-02 15:56:30|200|0.7898||null|null|null
+https://www.duckduckgo.com|null|2023-01-02 15:56:30|200|0.9898|null|null|Best search engine|
+|https://www.duckduckgo.com|null|2023-01-02 15:56:30|200|0.9898|null|null|Best search engine|null
+null|192.168.1.1|2023-01-02 15:56:30|200|0.9898|null|null|Best search engine
+https://www.duckduckgo.com|192.168.1.1|2023-01-02 15:56:30|null|0.9898|null|null|Best search engine
+https://www.google.com|null|2023-01-02 15:56:30|200|0.7898|||
+https://www.google.com|null|2023-01-02 15:56:30|200|0.7898|
+
+</code></pre>
+<h3 id="data_source-app-db-query">"data_source":  "app-db-query"</h3>
+<p>If the <code>data_source</code> is set to <code>app-db-query</code>, the <code>CMD</code> setting needs to contain a SQL query rendering the columns as defined in the "Column order and values" section above. The order of columns is important. </p>
+<p>This SQL query is executed on the <code>app.db</code> SQLite database file. </p>
+<blockquote>
+<p>🔎Example</p>
+<p>SQL query example:</p>
+<p><code>SQL
+SELECT  dv.devName as Object_PrimaryID, 
+    cast(dv.devLastIP as VARCHAR(100)) || ':' || cast( SUBSTR(ns.Port ,0, INSTR(ns.Port , '/')) as VARCHAR(100)) as Object_SecondaryID,  
+    datetime() as DateTime,  
+    ns.Service as Watched_Value1,        
+    ns.State as Watched_Value2,
+    'null' as Watched_Value3,
+    'null' as Watched_Value4,
+    ns.Extra as Extra,
+    dv.devMac as ForeignKey 
+FROM 
+    (SELECT * FROM Nmap_Scan) ns 
+LEFT JOIN 
+    (SELECT devName, devMac, devLastIP FROM Devices) dv 
+ON ns.MAC = dv.devMac</code></p>
+<p>Required <code>CMD</code> setting example with above query (you can set <code>"type": "label"</code> if you want it to make uneditable in the UI):</p>
+<p><code>json
+{
+            "function": "CMD",
+           "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
+           "default_value":"SELECT  dv.devName as Object_PrimaryID, cast(dv.devLastIP as VARCHAR(100)) || ':' || cast( SUBSTR(ns.Port ,0, INSTR(ns.Port , '/')) as VARCHAR(100)) as Object_SecondaryID,  datetime() as DateTime,  ns.Service as Watched_Value1,        ns.State as Watched_Value2,        'null' as Watched_Value3,        'null' as Watched_Value4,        ns.Extra as Extra        FROM (SELECT * FROM Nmap_Scan) ns LEFT JOIN (SELECT devName, devMac, devLastIP FROM Devices) dv   ON ns.MAC = dv.devMac",
+           "options": [],
+           "localized": ["name", "description"],
+           "name" : [{
+               "language_code":"en_us",
+               "string" : "SQL to run"
+           }],
+            "description": [{
+                "language_code":"en_us",
+                "string" : "This SQL query is used to populate the coresponding UI tables under the Plugins section."
+            }]
+        }</code></p>
+</blockquote>
+<h3 id="data_source-template">"data_source":  "template"</h3>
+<p>In most cases, it is used to initialize settings. Check the <code>newdev_template</code> plugin for details.</p>
+<h3 id="data_source-sqlite-db-query">"data_source":  "sqlite-db-query"</h3>
+<p>You can execute a SQL query on an external database connected to the current NetAlertX database via a temporary <code>EXTERNAL_&lt;unique prefix&gt;.</code> prefix. </p>
+<p>For example for <code>PIHOLE</code> (<code>"unique_prefix": "PIHOLE"</code>) it is <code>EXTERNAL_PIHOLE.</code>. The external SQLite database file has to be mapped in the container to the path specified in the <code>DB_PATH</code> setting:</p>
+<blockquote>
+<p>🔎Example</p>
+<p><code>json
+ ...
+{
+       "function": "DB_PATH",
+       "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{"readonly": "true"}] ,"transformers": []}]},
+       "default_value":"/etc/pihole/pihole-FTL.db",
+       "options": [],
+       "localized": ["name", "description"],
+       "name" : [{
+           "language_code":"en_us",
+           "string" : "DB Path"
+       }],
+       "description": [{
+           "language_code":"en_us",
+           "string" : "Required setting for the &lt;code&gt;sqlite-db-query&lt;/code&gt; plugin type. Is used to mount an external SQLite database and execute the SQL query stored in the &lt;code&gt;CMD&lt;/code&gt; setting."
+       }]    
+   }
+ ...</code></p>
+</blockquote>
+<p>The actual SQL query you want to execute is then stored as a <code>CMD</code> setting, similar to a Plugin of the <code>app-db-query</code> plugin type. The format has to adhere to the format outlined in the "Column order and values" section above. </p>
+<blockquote>
+<p>🔎Example</p>
+<p>Notice the <code>EXTERNAL_PIHOLE.</code> prefix.</p>
+<p><code>json
+{
+     "function": "CMD",
+     "type": {"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]},
+     "default_value":"SELECT hwaddr as Object_PrimaryID, cast('http://' || (SELECT ip FROM EXTERNAL_PIHOLE.network_addresses WHERE network_id = id ORDER BY lastseen DESC, ip LIMIT 1) as VARCHAR(100)) || ':' || cast( SUBSTR((SELECT name FROM EXTERNAL_PIHOLE.network_addresses WHERE network_id = id ORDER BY lastseen DESC, ip LIMIT 1), 0, INSTR((SELECT name FROM EXTERNAL_PIHOLE.network_addresses WHERE network_id = id ORDER BY lastseen DESC, ip LIMIT 1), '/')) as VARCHAR(100)) as Object_SecondaryID, datetime() as DateTime, macVendor as Watched_Value1, lastQuery as Watched_Value2, (SELECT name FROM EXTERNAL_PIHOLE.network_addresses WHERE network_id = id ORDER BY lastseen DESC, ip LIMIT 1) as Watched_Value3, 'null' as Watched_Value4, '' as Extra, hwaddr as ForeignKey FROM EXTERNAL_PIHOLE.network WHERE hwaddr NOT LIKE 'ip-%' AND hwaddr &lt;&gt; '00:00:00:00:00:00';            ",
+     "options": [],
+     "localized": ["name", "description"],
+     "name" : [{
+         "language_code":"en_us",
+         "string" : "SQL to run"
+     }],
+     "description": [{
+         "language_code":"en_us",
+         "string" : "This SQL query is used to populate the coresponding UI tables under the Plugins section. This particular one selects data from a mapped PiHole SQLite database and maps it to the corresponding Plugin columns."
+     }]
+ }</code></p>
+</blockquote>
+<h2 id="filters">🕳 Filters</h2>
+<p>Plugin entries can be filtered in the UI based on values entered into filter fields. The <code>txtMacFilter</code> textbox/field contains the Mac address of the currently viewed device, or simply a Mac address that's available in the <code>mac</code> query string (<code>&lt;url&gt;?mac=aa:22:aa:22:aa:22:aa</code>).</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>compare_column</code></td>
+<td>yes</td>
+<td>Plugin column name that's value is used for comparison (<strong>Left</strong> side of the equation)</td>
+</tr>
+<tr>
+<td><code>compare_operator</code></td>
+<td>yes</td>
+<td>JavaScript comparison operator</td>
+</tr>
+<tr>
+<td><code>compare_field_id</code></td>
+<td>yes</td>
+<td>The <code>id</code> of a input text field containing a value is used for comparison (<strong>Right</strong> side of the equation)</td>
+</tr>
+<tr>
+<td><code>compare_js_template</code></td>
+<td>yes</td>
+<td>JavaScript code used to convert left and right side of the equation. <code>{value}</code> is replaced with input values.</td>
+</tr>
+<tr>
+<td><code>compare_use_quotes</code></td>
+<td>yes</td>
+<td>If <code>true</code> then the end result of the <code>compare_js_template</code> i swrapped in <code>"</code> quotes. Use to compare strings.</td>
+</tr>
+</tbody>
+</table>
+<p>Filters are only applied if a filter is specified, and the <code>txtMacFilter</code> is not <code>undefined</code>, or empty (<code>--</code>).</p>
+<blockquote>
+<p>🔎Example:</p>
+<p><code>json
+    "data_filters": [
+        {
+            "compare_column" : "Object_PrimaryID",
+            "compare_operator" : "==",
+            "compare_field_id": "txtMacFilter",
+            "compare_js_template": "'{value}'.toString()", 
+            "compare_use_quotes": true 
+        }
+    ],</code></p>
+<ol>
+<li>On the <code>pluginsCore.php</code> page is an input field with the id <code>txtMacFilter</code>:</li>
+</ol>
+<p><code>html
+&lt;input class="form-control" id="txtMacFilter" type="text" value="--"&gt;</code></p>
+<ol>
+<li>
+<p>This input field is initialized via the <code>&amp;mac=</code> query string.</p>
+</li>
+<li>
+<p>The app then proceeds to use this Mac value from this field and compares it to the value of the <code>Object_PrimaryID</code> database field. The <code>compare_operator</code> is <code>==</code>.</p>
+</li>
+<li>
+<p>Both values, from the database field <code>Object_PrimaryID</code> and from the <code>txtMacFilter</code> are wrapped and evaluated with the <code>compare_js_template</code>, that is <code>'{value}.toString()'</code>.</p>
+</li>
+<li>
+<p><code>compare_use_quotes</code> is set to <code>true</code> so <code>'{value}'.toString()</code> is wrappe dinto <code>"</code> quotes.</p>
+</li>
+<li>
+<p>This results in for example this code: </p>
+</li>
+</ol>
+<p><code>javascript
+   // left part of the expression coming from compare_column and right from the input field
+   // notice the added quotes ()") around the left and right part of teh expression
+   "eval('ac:82:ac:82:ac:82".toString()')" == "eval('ac:82:ac:82:ac:82".toString()')"</code>
+</p>
+</blockquote>
+<h3 id="mapping-the-plugin-results-into-a-database-table">🗺 Mapping the plugin results into a database table</h3>
+<p>Plugin results are always inserted into the standard <code>Plugin_Objects</code> database table. Optionally, NetAlertX can take the results of the plugin execution, and insert these results into an additional database table. This is enabled by with the property <code>"mapped_to_table"</code> in the <code>config.json</code> file. The mapping of the columns is defined in the <code>database_column_definitions</code> array.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If results are mapped to the <code>CurrentScan</code> table, the data is then included into the regular scan loop, so for example notification for devices are sent out.</p>
+</div>
+<blockquote>
+<p>🔍 Example:</p>
+<p>For example, this approach is used to implement the <code>DHCPLSS</code> plugin. The script parses all supplied "dhcp.leases" files, gets the results in the generic table format outlined in the "Column order and values" section above, takes individual values, and inserts them into the <code>CurrentScan</code> database table in the NetAlertX database. All this is achieved by:</p>
+<ol>
+<li>Specifying the database table into which the results are inserted by defining <code>"mapped_to_table": "CurrentScan"</code> in the root of the <code>config.json</code> file as shown below:</li>
+</ol>
+<p><code>json
+{
+   "code_name": "dhcp_leases",
+   "unique_prefix": "DHCPLSS",
+   ...
+   "data_source":  "script",
+   "localized": ["display_name", "description", "icon"],
+   "mapped_to_table": "CurrentScan",    
+   ...
+}</code>
+2. Defining the target column with the <code>mapped_to_column</code> property for individual columns in the <code>database_column_definitions</code> array of the <code>config.json</code> file. For example in the <code>DHCPLSS</code> plugin, I needed to map the value of the <code>Object_PrimaryID</code> column returned by the plugin, to the <code>cur_MAC</code> column in the NetAlertX database table <code>CurrentScan</code>. Notice the  <code>"mapped_to_column": "cur_MAC"</code> key-value pair in the sample below.</p>
+<p><code>json
+{
+           "column": "Object_PrimaryID",
+           "mapped_to_column": "cur_MAC", 
+           "css_classes": "col-sm-2",
+           "show": true,
+           "type": "device_mac",            
+           "default_value":"",
+           "options": [],
+           "localized": ["name"],
+           "name":[{
+               "language_code":"en_us",
+               "string" : "MAC address"
+               }]
+       }</code></p>
+<ol>
+<li>That's it. The app takes care of the rest. It loops thru the objects discovered by the plugin, takes the results line-by-line, and inserts them into the database table specified in <code>"mapped_to_table"</code>. The columns are translated from the generic plugin columns to the target table columns via the <code>"mapped_to_column"</code> property in the column definitions.</li>
+</ol>
+</blockquote>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You can create a column mapping with a default value via the <code>mapped_to_column_data</code> property. This means that the value of the given column will always be this value. That also means that the <code>"column": "NameDoesntMatter"</code> is not important as there is no database source column.</p>
+</div>
+<blockquote>
+<p>🔍 Example:</p>
+<p><code>json
+{
+           "column": "NameDoesntMatter",
+           "mapped_to_column": "cur_ScanMethod",
+           "mapped_to_column_data": {
+               "value": "DHCPLSS"                
+           },  
+           "css_classes": "col-sm-2",
+           "show": true,
+           "type": "device_mac",            
+           "default_value":"",
+           "options": [],
+           "localized": ["name"],
+           "name":[{
+               "language_code":"en_us",
+               "string" : "MAC address"
+               }]
+       }</code></p>
+</blockquote>
+<h4 id="params">params</h4>
+<div class="admonition warning">
+<p class="admonition-title">Important</p>
+<p>An esier way to access settings in scripts is the <code>get_setting_value</code> method.
+```python
+from helper import get_setting_value</p>
+<p>...
+  NTFY_TOPIC = get_setting_value('NTFY_TOPIC')
+  ...</p>
+<p>```</p>
+</div>
+<p>The <code>params</code> array in the <code>config.json</code> is used to enable the user to change the parameters of the executed script. For example, the user wants to monitor a specific URL. </p>
+<blockquote>
+<p>🔎 Example:
+Passing user-defined settings to a command. Let's say, you want to have a script, that is called with a user-defined parameter called <code>urls</code>: </p>
+<p><code>bash
+root@server# python3 /app/front/plugins/website_monitor/script.py urls=https://google.com,https://duck.com</code></p>
+</blockquote>
+<ul>
+<li>You can allow the user to add URLs to a setting with the <code>function</code> property set to a custom name, such as <code>urls_to_check</code> (this is not a reserved name from the section "Supported settings <code>function</code> values" below). </li>
+<li>You specify the parameter <code>urls</code> in the <code>params</code> section of the <code>config.json</code> the following way (<code>WEBMON_</code> is the plugin prefix automatically added to all the settings):</li>
+</ul>
+<pre><code class="language-json">{
+    &quot;params&quot; : [
+        {
+            &quot;name&quot;  : &quot;urls&quot;,
+            &quot;type&quot;  : &quot;setting&quot;,
+            &quot;value&quot; : &quot;WEBMON_urls_to_check&quot;
+        }]
+}
+</code></pre>
+<ul>
+<li>Then you use this setting as an input parameter for your command in the <code>CMD</code> setting. Notice <code>urls={urls}</code> in the below json:</li>
+</ul>
+<pre><code class="language-json"> {
+            &quot;function&quot;: &quot;CMD&quot;,
+            &quot;type&quot;: {&quot;dataType&quot;:&quot;string&quot;, &quot;elements&quot;: [{&quot;elementType&quot; : &quot;input&quot;, &quot;elementOptions&quot; : [] ,&quot;transformers&quot;: []}]},
+            &quot;default_value&quot;:&quot;python3 /app/front/plugins/website_monitor/script.py urls={urls}&quot;,
+            &quot;options&quot;: [],
+            &quot;localized&quot;: [&quot;name&quot;, &quot;description&quot;],
+            &quot;name&quot; : [{
+                &quot;language_code&quot;:&quot;en_us&quot;,
+                &quot;string&quot; : &quot;Command&quot;
+            }],
+            &quot;description&quot;: [{
+                &quot;language_code&quot;:&quot;en_us&quot;,
+                &quot;string&quot; : &quot;Command to run&quot;
+            }]
+        }
+</code></pre>
+<p>During script execution, the app will take the command <code>"python3 /app/front/plugins/website_monitor/script.py urls={urls}"</code>, take the <code>{urls}</code> wildcard and replace it with the value from the <code>WEBMON_urls_to_check</code> setting. This is because:</p>
+<ol>
+<li>The app checks the <code>params</code> entries</li>
+<li>It finds <code>"name"  : "urls"</code></li>
+<li>Checks the type of the <code>urls</code> params and finds <code>"type"  : "setting"</code></li>
+<li>Gets the setting name from  <code>"value" : "WEBMON_urls_to_check"</code> </li>
+<li>IMPORTANT: in the <code>config.json</code> this setting is identified by <code>"function":"urls_to_check"</code>, not <code>"function":"WEBMON_urls_to_check"</code></li>
+<li>You can also use a global setting, or a setting from a different plugin  </li>
+<li>The app gets the user defined value from the setting with the code name <code>WEBMON_urls_to_check</code></li>
+<li>let's say the setting with the code name  <code>WEBMON_urls_to_check</code> contains 2 values entered by the user: </li>
+<li><code>WEBMON_urls_to_check=['https://google.com','https://duck.com']</code></li>
+<li>The app takes the value from <code>WEBMON_urls_to_check</code> and replaces the <code>{urls}</code> wildcard in the setting where <code>"function":"CMD"</code>, so you go from:</li>
+<li><code>python3 /app/front/plugins/website_monitor/script.py urls={urls}</code></li>
+<li>to</li>
+<li><code>python3 /app/front/plugins/website_monitor/script.py urls=https://google.com,https://duck.com</code> </li>
+</ol>
+<p>Below are some general additional notes, when defining <code>params</code>: </p>
+<ul>
+<li><code>"name":"name_value"</code> - is used as a wildcard replacement in the <code>CMD</code> setting value by using curly brackets <code>{name_value}</code>. The wildcard is replaced by the result of the <code>"value" : "param_value"</code> and <code>"type":"type_value"</code> combo configuration below.</li>
+<li><code>"type":"&lt;sql|setting&gt;"</code> - is used to specify the type of the params, currently only 2 supported (<code>sql</code>,<code>setting</code>).</li>
+<li><code>"type":"sql"</code> - will execute the SQL query specified in the <code>value</code> property. The sql query needs to return only one column. The column is flattened and separated by commas (<code>,</code>), e.g: <code>SELECT devMac from DEVICES</code> -&gt; <code>Internet,74:ac:74:ac:74:ac,44:44:74:ac:74:ac</code>. This is then used to replace the wildcards in the <code>CMD</code> setting.  </li>
+<li><code>"type":"setting"</code> - The setting code name. A combination of the value from <code>unique_prefix</code> + <code>_</code> + <code>function</code> value, or otherwise the code name you can find in the Settings page under the Setting display name, e.g. <code>PIHOLE_RUN</code>. </li>
+<li><code>"value": "param_value"</code> - Needs to contain a setting code name or SQL query without wildcards.</li>
+<li><code>"timeoutMultiplier" : true</code> - used to indicate if the value should multiply the max timeout for the whole script run by the number of values in the given parameter.</li>
+<li><code>"base64": true</code> - use base64 encoding to pass the value to the script (e.g. if there are spaces)</li>
+</ul>
+<blockquote>
+<p>🔎Example:</p>
+<p><code>json
+{
+    "params" : [{
+           "name"              : "ips",
+           "type"              : "sql",
+           "value"             : "SELECT devLastIP from DEVICES",
+           "timeoutMultiplier" : true
+       },
+       {
+           "name"              : "macs",
+           "type"              : "sql",
+           "value"             : "SELECT devMac from DEVICES"            
+       },
+       {
+           "name"              : "timeout",
+           "type"              : "setting",
+           "value"             : "NMAP_RUN_TIMEOUT"
+       },
+       {
+           "name"              : "args",
+           "type"              : "setting",
+           "value"             : "NMAP_ARGS",
+           "base64"            : true
+       }]
+}</code></p>
+</blockquote>
+<h4 id="setting-object-structure">⚙ Setting object structure</h4>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The settings flow and when Plugin specific settings are applied is described under the <a href="../SETTINGS_SYSTEM/">Settings system</a>.</p>
+</div>
+<p>Required attributes are:</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>"function"</code></td>
+<td>Specifies the function the setting drives or a simple unique code name. See Supported settings function values for options.</td>
+</tr>
+<tr>
+<td><code>"type"</code></td>
+<td>Specifies the form control used for the setting displayed in the Settings page and what values are accepted. Supported options include:</td>
+</tr>
+<tr>
+<td></td>
+<td>- <code>{"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{"type":"password"}] ,"transformers": ["sha256"]}]}</code></td>
+</tr>
+<tr>
+<td><code>"localized"</code></td>
+<td>A list of properties on the current JSON level that need to be localized.</td>
+</tr>
+<tr>
+<td><code>"name"</code></td>
+<td>Displayed on the Settings page. An array of localized strings. See Localized strings below.</td>
+</tr>
+<tr>
+<td><code>"description"</code></td>
+<td>Displayed on the Settings page. An array of localized strings. See Localized strings below.</td>
+</tr>
+<tr>
+<td>(optional) <code>"events"</code></td>
+<td>Specifies whether to generate an execution button next to the input field of the setting. Supported values:</td>
+</tr>
+<tr>
+<td></td>
+<td>- <code>"test"</code> - For notification plugins testing</td>
+</tr>
+<tr>
+<td></td>
+<td>- <code>"run"</code> - Regular plugins testing</td>
+</tr>
+<tr>
+<td>(optional) <code>"override_value"</code></td>
+<td>Used to determine a user-defined override for the setting. Useful for template-based plugins, where you can choose to leave the current value or override it with the value defined in the setting. (Work in progress)</td>
+</tr>
+<tr>
+<td>(optional) <code>"events"</code></td>
+<td>Used to trigger the plugin. Usually used on the <code>RUN</code> setting. Not fully tested in all scenarios. Will show a play button next to the setting. After clicking, an event is generated for the backend in the <code>Parameters</code> database table to process the front-end event on the next run.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="ui-component-types-documentation">UI Component Types Documentation</h3>
+<p>This section outlines the structure and types of UI components, primarily used to build HTML forms or interactive elements dynamically. Each UI component has a <code>"type"</code> which defines its structure, behavior, and rendering options.</p>
+<h4 id="ui-component-json-structure">UI Component JSON Structure</h4>
+<p>The UI component is defined as a JSON object containing a list of <code>elements</code>. Each element specifies how it should behave, with properties like <code>elementType</code>, <code>elementOptions</code>, and any associated <code>transformers</code> to modify the data. The example below demonstrates how a component with two elements (<code>span</code> and <code>select</code>) is structured:</p>
+<pre><code class="language-json">{
+      &quot;function&quot;: &quot;devIcon&quot;,
+      &quot;type&quot;: {
+        &quot;dataType&quot;: &quot;string&quot;,
+        &quot;elements&quot;: [
+          {
+            &quot;elementType&quot;: &quot;span&quot;,
+            &quot;elementOptions&quot;: [
+              { &quot;cssClasses&quot;: &quot;input-group-addon iconPreview&quot; },
+              { &quot;getStringKey&quot;: &quot;Gen_SelectToPreview&quot; },
+              { &quot;customId&quot;: &quot;NEWDEV_devIcon_preview&quot; }
+            ],
+            &quot;transformers&quot;: []
+          },
+          {
+            &quot;elementType&quot;: &quot;select&quot;,
+            &quot;elementHasInputValue&quot;: 1,
+            &quot;elementOptions&quot;: [
+              { &quot;cssClasses&quot;: &quot;col-xs-12&quot; },
+              {
+                &quot;onChange&quot;: &quot;updateIconPreview(this)&quot;
+              },
+              { &quot;customParams&quot;: &quot;NEWDEV_devIcon,NEWDEV_devIcon_preview&quot; }
+            ],
+            &quot;transformers&quot;: []
+          }          
+        ]
+      }
+}
+
+</code></pre>
+<h3 id="rendering-logic">Rendering Logic</h3>
+<p>The code snippet provided demonstrates how the elements are iterated over to generate their corresponding HTML. Depending on the <code>elementType</code>, different HTML tags (like <code>&lt;select&gt;</code>, <code>&lt;input&gt;</code>, <code>&lt;textarea&gt;</code>, <code>&lt;button&gt;</code>, etc.) are created with the respective attributes such as <code>onChange</code>, <code>my-data-type</code>, and <code>class</code> based on the provided <code>elementOptions</code>. Events can also be attached to elements like buttons or select inputs.</p>
+<h3 id="key-element-types">Key Element Types</h3>
+<ul>
+<li><strong><code>select</code></strong>: Renders a dropdown list. Additional options like <code>isMultiSelect</code> and event handlers (e.g., <code>onChange</code>) can be attached.</li>
+<li><strong><code>input</code></strong>: Handles various types of input fields, including checkboxes, text, and others, with customizable attributes like <code>readOnly</code>, <code>placeholder</code>, etc.</li>
+<li><strong><code>button</code></strong>: Generates clickable buttons with custom event handlers (<code>onClick</code>), icons, or labels.</li>
+<li><strong><code>textarea</code></strong>: Creates a multi-line input box for text input.</li>
+<li><strong><code>span</code></strong>: Used for inline text or content with customizable classes and data attributes.</li>
+</ul>
+<p>Each element may also have associated events (e.g., running a scan or triggering a notification) defined under <code>Events</code>.</p>
+<h5 id="supported-settings-function-values">Supported settings <code>function</code> values</h5>
+<p>You can have any <code>"function": "my_custom_name"</code> custom name, however, the ones listed below have a specific functionality attached to them. </p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>RUN</code></td>
+<td>(required) Specifies when the service is executed.</td>
+</tr>
+<tr>
+<td></td>
+<td>Supported Options:</td>
+</tr>
+<tr>
+<td></td>
+<td>- "disabled" - do not run</td>
+</tr>
+<tr>
+<td></td>
+<td>- "once" - run on app start or on settings saved</td>
+</tr>
+<tr>
+<td></td>
+<td>- "schedule" - if included, then a <code>RUN_SCHD</code> setting needs to be specified to determine the schedule</td>
+</tr>
+<tr>
+<td></td>
+<td>- "always_after_scan" - run always after a scan is finished</td>
+</tr>
+<tr>
+<td></td>
+<td>- "before_name_updates" - run before device names are updated (for name discovery plugins)</td>
+</tr>
+<tr>
+<td></td>
+<td>- "on_new_device" - run when a new device is detected</td>
+</tr>
+<tr>
+<td></td>
+<td>- "before_config_save" - run before the config is marked as saved. Useful if your plugin needs to modify the <code>app.conf</code> file.</td>
+</tr>
+<tr>
+<td><code>RUN_SCHD</code></td>
+<td>(required if you include "schedule" in the above <code>RUN</code> function) Cron-like scheduling is used if the <code>RUN</code> setting is set to <code>schedule</code>.</td>
+</tr>
+<tr>
+<td><code>CMD</code></td>
+<td>(required) Specifies the command that should be executed.</td>
+</tr>
+<tr>
+<td><code>API_SQL</code></td>
+<td>(not implemented) Generates a <code>table_</code> + <code>code_name</code> + <code>.json</code> file as per <a href="../API/">API docs</a>.</td>
+</tr>
+<tr>
+<td><code>RUN_TIMEOUT</code></td>
+<td>(optional) Specifies the maximum execution time of the script. If not specified, a default value of 10 seconds is used to prevent hanging.</td>
+</tr>
+<tr>
+<td><code>WATCH</code></td>
+<td>(optional) Specifies which database columns are watched for changes for this particular plugin. If not specified, no notifications are sent.</td>
+</tr>
+<tr>
+<td><code>REPORT_ON</code></td>
+<td>(optional) Specifies when to send a notification. Supported options are:</td>
+</tr>
+<tr>
+<td></td>
+<td>- <code>new</code> means a new unique (unique combination of PrimaryId and SecondaryId) object was discovered.</td>
+</tr>
+<tr>
+<td></td>
+<td>- <code>watched-changed</code> - means that selected <code>Watched_ValueN</code> columns changed</td>
+</tr>
+<tr>
+<td></td>
+<td>- <code>watched-not-changed</code> - reports even on events where selected <code>Watched_ValueN</code> did not change</td>
+</tr>
+<tr>
+<td></td>
+<td>- <code>missing-in-last-scan</code> - if the object is missing compared to previous scans</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>🔎 Example:</p>
+<p><code>json
+{
+    "function": "RUN",            
+    "type": {"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]},            
+    "default_value":"disabled",
+    "options": ["disabled", "once", "schedule", "always_after_scan", "on_new_device"],
+    "localized": ["name", "description"],
+    "name" :[{
+        "language_code":"en_us",
+        "string" : "When to run"
+    }],
+    "description": [{
+        "language_code":"en_us",
+        "string" : "Enable a regular scan of your services. If you select &lt;code&gt;schedule&lt;/code&gt; the scheduling settings from below are applied. If you select &lt;code&gt;once&lt;/code&gt; the scan is run only once on start of the application (container) for the time specified in &lt;a href=\"#WEBMON_RUN_TIMEOUT\"&gt;&lt;code&gt;WEBMON_RUN_TIMEOUT&lt;/code&gt; setting&lt;/a&gt;."
+    }]
+}</code></p>
+</blockquote>
+<h5 id="localized-strings">🌍Localized strings</h5>
+<ul>
+<li><code>"language_code":"&lt;en_us|es_es|de_de&gt;"</code>  - code name of the language string. Only these three are currently supported. At least the <code>"language_code":"en_us"</code> variant has to be defined. </li>
+<li><code>"string"</code>  - The string to be displayed in the given language.</li>
+</ul>
+<blockquote>
+<p>🔎 Example:</p>
+<p>```json</p>
+<pre><code>{
+    "language_code":"en_us",
+    "string" : "When to run"
+}
+</code></pre>
+<p>```</p>
+</blockquote>
+<h5 id="ui-settings-in-database_column_definitions">UI settings in database_column_definitions</h5>
+<p>The UI will adjust how columns are displayed in the UI based on the resolvers definition of the <code>database_column_definitions</code> object. These are the supported form controls and related functionality:</p>
+<ul>
+<li>Only columns with <code>"show": true</code> and also with at least an English translation will be shown in the UI.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Supported Types</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>label</code></td>
+<td>Displays a column only.</td>
+</tr>
+<tr>
+<td><code>textarea_readonly</code></td>
+<td>Generates a read only text area and cleans up the text to display it somewhat formatted with new lines preserved.</td>
+</tr>
+<tr>
+<td>See below for information on <code>threshold</code>, <code>replace</code>.</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>options</code> Property</td>
+<td>Used in conjunction with types like <code>threshold</code>, <code>replace</code>, <code>regex</code>.</td>
+</tr>
+<tr>
+<td><code>options_params</code> Property</td>
+<td>Used in conjunction with a <code>"options": "[{value}]"</code> template and <code>text.select</code>/<code>list.select</code>. Can specify SQL query (needs to return 2 columns <code>SELECT devName as name, devMac as id</code>) or Setting (not tested) to populate the dropdown. Check example below or have a look at the <code>NEWDEV</code> plugin <code>config.json</code> file.</td>
+</tr>
+<tr>
+<td><code>threshold</code></td>
+<td>The <code>options</code> array contains objects ordered from the lowest <code>maximum</code> to the highest. The corresponding <code>hexColor</code> is used for the value background color if it's less than the specified <code>maximum</code> but more than the previous one in the <code>options</code> array.</td>
+</tr>
+<tr>
+<td><code>replace</code></td>
+<td>The <code>options</code> array contains objects with an <code>equals</code> property, which is compared to the "value." If the values are the same, the string in <code>replacement</code> is displayed in the UI instead of the actual "value".</td>
+</tr>
+<tr>
+<td><code>regex</code></td>
+<td>Applies a regex to the value.  The <code>options</code> array contains objects with an <code>type</code> (must be set to <code>regex</code>) and <code>param</code> (must contain the regex itself) property.</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Type Definitions</td>
+<td></td>
+</tr>
+<tr>
+<td><code>device_mac</code></td>
+<td>The value is considered to be a MAC address, and a link pointing to the device with the given MAC address is generated.</td>
+</tr>
+<tr>
+<td><code>device_ip</code></td>
+<td>The value is considered to be an IP address. A link pointing to the device with the given IP is generated. The IP is checked against the last detected IP address and translated into a MAC address, which is then used for the link itself.</td>
+</tr>
+<tr>
+<td><code>device_name_mac</code></td>
+<td>The value is considered to be a MAC address, and a link pointing to the device with the given MAC is generated. The link label is resolved as the target device name.</td>
+</tr>
+<tr>
+<td><code>url</code></td>
+<td>The value is considered to be a URL, so a link is generated.</td>
+</tr>
+<tr>
+<td><code>textbox_save</code></td>
+<td>Generates an editable and saveable text box that saves values in the database. Primarily intended for the <code>UserData</code> database column in the <code>Plugins_Objects</code> table.</td>
+</tr>
+<tr>
+<td><code>url_http_https</code></td>
+<td>Generates two links with the <code>https</code> and <code>http</code> prefix as lock icons.</td>
+</tr>
+<tr>
+<td><code>eval</code></td>
+<td>Evaluates as JavaScript. Use the variable <code>value</code> to use the given column value as input (e.g. <code>'&lt;b&gt;${value}&lt;b&gt;'</code> (replace ' with ` in your code) )</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Supports chaining. You can chain multiple resolvers with <code>.</code>. For example <code>regex.url_http_https</code>. This will apply the <code>regex</code> resolver and then the <code>url_http_https</code> resolver.</p>
+</div>
+<pre><code class="language-json">        &quot;function&quot;: &quot;devType&quot;,
+        &quot;type&quot;: {&quot;dataType&quot;:&quot;string&quot;, &quot;elements&quot;: [{&quot;elementType&quot; : &quot;select&quot;, &quot;elementOptions&quot; : [] ,&quot;transformers&quot;: []}]},
+        &quot;maxLength&quot;: 30,
+        &quot;default_value&quot;: &quot;&quot;,
+        &quot;options&quot;: [&quot;{value}&quot;],
+        &quot;options_params&quot; : [
+            {
+                &quot;name&quot;  : &quot;value&quot;,
+                &quot;type&quot;  : &quot;sql&quot;,
+                &quot;value&quot; : &quot;SELECT '' as id, '' as name UNION SELECT devType as id, devType as name FROM (SELECT devType FROM Devices UNION SELECT 'Smartphone' UNION SELECT 'Tablet' UNION SELECT 'Laptop' UNION SELECT 'PC' UNION SELECT 'Printer' UNION SELECT 'Server' UNION SELECT 'NAS' UNION SELECT 'Domotic' UNION SELECT 'Game Console' UNION SELECT 'SmartTV' UNION SELECT 'Clock' UNION SELECT 'House Appliance' UNION SELECT 'Phone' UNION SELECT 'AP' UNION SELECT 'Gateway' UNION SELECT 'Firewall' UNION SELECT 'Switch' UNION SELECT 'WLAN' UNION SELECT 'Router' UNION SELECT 'Other') AS all_devices ORDER BY id;&quot;
+            },
+            {
+                &quot;name&quot;  : &quot;uilang&quot;,
+                &quot;type&quot;  : &quot;setting&quot;,
+                &quot;value&quot; : &quot;UI_LANG&quot;
+            }
+        ]
+</code></pre>
+<pre><code class="language-json">{
+            &quot;column&quot;: &quot;Watched_Value1&quot;,
+            &quot;css_classes&quot;: &quot;col-sm-2&quot;,
+            &quot;show&quot;: true,
+            &quot;type&quot;: &quot;threshold&quot;,            
+            &quot;default_value&quot;:&quot;&quot;,
+            &quot;options&quot;: [
+                {
+                    &quot;maximum&quot;: 199,
+                    &quot;hexColor&quot;: &quot;#792D86&quot;                
+                },
+                {
+                    &quot;maximum&quot;: 299,
+                    &quot;hexColor&quot;: &quot;#5B862D&quot;
+                },
+                {
+                    &quot;maximum&quot;: 399,
+                    &quot;hexColor&quot;: &quot;#7D862D&quot;
+                },
+                {
+                    &quot;maximum&quot;: 499,
+                    &quot;hexColor&quot;: &quot;#BF6440&quot;
+                },
+                {
+                    &quot;maximum&quot;: 599,
+                    &quot;hexColor&quot;: &quot;#D33115&quot;
+                }
+            ],
+            &quot;localized&quot;: [&quot;name&quot;],
+            &quot;name&quot;:[{
+                &quot;language_code&quot;:&quot;en_us&quot;,
+                &quot;string&quot; : &quot;Status code&quot;
+                }]
+        },        
+        {
+            &quot;column&quot;: &quot;Status&quot;,
+            &quot;show&quot;: true,
+            &quot;type&quot;: &quot;replace&quot;,            
+            &quot;default_value&quot;:&quot;&quot;,
+            &quot;options&quot;: [
+                {
+                    &quot;equals&quot;: &quot;watched-not-changed&quot;,
+                    &quot;replacement&quot;: &quot;&lt;i class='fa-solid fa-square-check'&gt;&lt;/i&gt;&quot;
+                },
+                {
+                    &quot;equals&quot;: &quot;watched-changed&quot;,
+                    &quot;replacement&quot;: &quot;&lt;i class='fa-solid fa-triangle-exclamation'&gt;&lt;/i&gt;&quot;
+                },
+                {
+                    &quot;equals&quot;: &quot;new&quot;,
+                    &quot;replacement&quot;: &quot;&lt;i class='fa-solid fa-circle-plus'&gt;&lt;/i&gt;&quot;
+                }
+            ],
+            &quot;localized&quot;: [&quot;name&quot;],
+            &quot;name&quot;:[{
+                &quot;language_code&quot;:&quot;en_us&quot;,
+                &quot;string&quot; : &quot;Status&quot;
+                }]
+        },
+        {
+            &quot;column&quot;: &quot;Watched_Value3&quot;,
+            &quot;css_classes&quot;: &quot;col-sm-1&quot;,
+            &quot;show&quot;: true,
+            &quot;type&quot;: &quot;regex.url_http_https&quot;,            
+            &quot;default_value&quot;:&quot;&quot;,
+            &quot;options&quot;: [
+                {
+                    &quot;type&quot;: &quot;regex&quot;,
+                    &quot;param&quot;: &quot;([\\d.:]+)&quot;
+                }          
+            ],
+            &quot;localized&quot;: [&quot;name&quot;],
+            &quot;name&quot;:[{
+                &quot;language_code&quot;:&quot;en_us&quot;,
+                &quot;string&quot; : &quot;HTTP/s links&quot;
+                },
+                {
+                &quot;language_code&quot;:&quot;es_es&quot;,
+                &quot;string&quot; : &quot;N/A&quot;
+                }]
+        }
+</code></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../DEV_DEVCONTAINER/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Devcontainer">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Devcontainer
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../PLUGINS_DEV_CONFIG/" class="md-footer__link md-footer__link--next" aria-label="Next: Plugin Config">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Plugin Config
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tooltips", "navigation.footer", "navigation.indexes", "navigation.sections", "navigation.tabs", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+    
+  </body>
+</html>
