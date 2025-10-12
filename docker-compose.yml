@@ -1,82 +1,43 @@
 services:
   netalertx:
-    privileged: true
+    network_mode: host                   # Use host networking for ARP scanning and other services
     build:
-      dockerfile: Dockerfile
-      context: .
-      cache_from:
-        - type=registry,ref=docker.io/jokob-sk/netalertx:buildcache
-    container_name: netalertx
-    network_mode: host
-    # restart: unless-stopped
+      context: .                         # Build context is the current directory   
+      dockerfile: Dockerfile             # Specify the Dockerfile to use    
+    image: netalertx:latest
+    container_name: netalertx            # The name when you docker contiainer ls
+    read_only: true                      # Make the container filesystem read-only
+    cap_drop:                            # Drop all capabilities for enhanced security
+      - ALL
+    cap_add:                             # Add only the necessary capabilities
+      - NET_ADMIN                        # Required for ARP scanning
+      - NET_RAW                          # Required for raw socket operations
+    security_opt:                        # Security options for the container
+      - no-new-privileges:true           # Prevent privilege escalation
+      - seccomp:unconfined               # Use unconfined seccomp profile (adjust as needed)
     volumes:
-      # - ${APP_DATA_LOCATION}/netalertx_dev/config:/app/config
-      - ${APP_DATA_LOCATION}/netalertx/config:/app/config
-      # - ${APP_DATA_LOCATION}/netalertx_dev/db:/app/db      
-      - ${APP_DATA_LOCATION}/netalertx/db:/app/db           
-      # (optional) useful for debugging if you have issues setting up the container
-      - ${APP_DATA_LOCATION}/netalertx/log:/app/log      
-      # (API: OPTION 1) use for performance
-      - type: tmpfs
-        target: /app/api
-      # (API: OPTION 2) use when debugging issues 
-      # - ${DEV_LOCATION}/api:/app/api
-      # ---------------------------------------------------------------------------
-      # DELETE START anyone trying to use this file: comment out / delete BELOW lines, they are only for development purposes
-      - ${APP_DATA_LOCATION}/netalertx/dhcp_samples/dhcp1.leases:/mnt/dhcp1.leases      # test data for DCPLSS plugin
-      - ${APP_DATA_LOCATION}/netalertx/dhcp_samples/dhcp2.leases:/mnt/dhcp2.leases      # test data for DCPLSS plugin
-      - ${APP_DATA_LOCATION}/netalertx/dhcp_samples/pihole_dhcp_full.leases:/etc/pihole/dhcp.leases      # test data for DCPLSS plugin
-      - ${APP_DATA_LOCATION}/netalertx/dhcp_samples/pihole_dhcp_2.leases:/etc/pihole/dhcp2.leases        # test data for DCPLSS plugin
-      - ${APP_DATA_LOCATION}/pihole/etc-pihole/pihole-FTL.db:/etc/pihole/pihole-FTL.db    # test data for PIHOLE plugin
-      - ${DEV_LOCATION}/mkdocs.yml:/app/mkdocs.yml
-      - ${DEV_LOCATION}/docs:/app/docs
-      - ${DEV_LOCATION}/server:/app/server            
-      - ${DEV_LOCATION}/test:/app/test            
-      - ${DEV_LOCATION}/dockerfiles:/app/dockerfiles
-      # - ${APP_DATA_LOCATION}/netalertx/php.ini:/etc/php/8.2/fpm/php.ini      
-      - ${DEV_LOCATION}/install:/app/install
-      - ${DEV_LOCATION}/front/css:/app/front/css
-      - ${DEV_LOCATION}/front/img:/app/front/img
-      - ${DEV_LOCATION}/back/update_vendors.sh:/app/back/update_vendors.sh
-      - ${DEV_LOCATION}/front/lib:/app/front/lib
-      - ${DEV_LOCATION}/front/js:/app/front/js
-      - ${DEV_LOCATION}/front/php:/app/front/php      
-      - ${DEV_LOCATION}/front/deviceDetails.php:/app/front/deviceDetails.php
-      - ${DEV_LOCATION}/front/deviceDetailsEdit.php:/app/front/deviceDetailsEdit.php
-      - ${DEV_LOCATION}/front/userNotifications.php:/app/front/userNotifications.php
-      - ${DEV_LOCATION}/front/deviceDetailsTools.php:/app/front/deviceDetailsTools.php
-      - ${DEV_LOCATION}/front/deviceDetailsPresence.php:/app/front/deviceDetailsPresence.php
-      - ${DEV_LOCATION}/front/deviceDetailsSessions.php:/app/front/deviceDetailsSessions.php
-      - ${DEV_LOCATION}/front/deviceDetailsEvents.php:/app/front/deviceDetailsEvents.php
-      - ${DEV_LOCATION}/front/devices.php:/app/front/devices.php
-      - ${DEV_LOCATION}/front/events.php:/app/front/events.php
-      - ${DEV_LOCATION}/front/plugins.php:/app/front/plugins.php
-      - ${DEV_LOCATION}/front/pluginsCore.php:/app/front/pluginsCore.php
-      - ${DEV_LOCATION}/front/index.php:/app/front/index.php
-      - ${DEV_LOCATION}/front/initCheck.php:/app/front/initCheck.php
-      - ${DEV_LOCATION}/front/maintenance.php:/app/front/maintenance.php
-      - ${DEV_LOCATION}/front/network.php:/app/front/network.php
-      - ${DEV_LOCATION}/front/presence.php:/app/front/presence.php
-      - ${DEV_LOCATION}/front/settings.php:/app/front/settings.php      
-      - ${DEV_LOCATION}/front/systeminfo.php:/app/front/systeminfo.php      
-      - ${DEV_LOCATION}/front/systeminfoNetwork.php:/app/front/systeminfoNetwork.php      
-      - ${DEV_LOCATION}/front/systeminfoServer.php:/app/front/systeminfoServer.php      
-      - ${DEV_LOCATION}/front/systeminfoStorage.php:/app/front/systeminfoStorage.php      
-      - ${DEV_LOCATION}/front/cloud_services.php:/app/front/cloud_services.php      
-      - ${DEV_LOCATION}/front/report.php:/app/front/report.php      
-      - ${DEV_LOCATION}/front/workflows.php:/app/front/workflows.php      
-      - ${DEV_LOCATION}/front/workflowsCore.php:/app/front/workflowsCore.php      
-      - ${DEV_LOCATION}/front/appEvents.php:/app/front/appEvents.php      
-      - ${DEV_LOCATION}/front/appEventsCore.php:/app/front/appEventsCore.php      
-      - ${DEV_LOCATION}/front/multiEditCore.php:/app/front/multiEditCore.php      
-      - ${DEV_LOCATION}/front/plugins:/app/front/plugins    
-      # DELETE END anyone trying to use this file: comment out / delete ABOVE lines, they are only for development purposes
-      # ---------------------------------------------------------------------------
-    environment:      
-      # - APP_CONF_OVERRIDE={"SCAN_SUBNETS":"['192.168.1.0/24 --interface=eth1']","GRAPHQL_PORT":"20223","UI_theme":"Light"}
-      - TZ=${TZ}
-      - PORT=${PORT}      
-      # ❗ DANGER ZONE BELOW - Setting ALWAYS_FRESH_INSTALL=true will delete the content of the /db & /config folders
-      - ALWAYS_FRESH_INSTALL=${ALWAYS_FRESH_INSTALL}
-      # - LOADED_PLUGINS=["DHCPLSS","PIHOLE","ASUSWRT","FREEBOX"]
-      
+      - netalertx_config:/app/config            # Store your NetAlertX config
+      - netalertx_db:/app/db                    # Store your NetAlertX devices and settings
+      - /etc/localtime:/etc/localtime:ro        # Use your system clock inside the container (read-only)
+     #- /path/on/host:/app/front/plugins/custom # Test your plugin on the production container
+    
+    # Tempfs mounts for writable directories in a read-only container and improve system performance
+    # by providing a clean R/W filesystem each container start and reducing disk I/O.
+    tmpfs:
+      - "/app/api:uid=20211,gid=20211,mode=700"
+      - "/app/log:uid=20211,gid=20211,mode=700"
+      - "/services/config/nginx/conf.active:uid=20211,gid=20211,mode=700"
+      - "/services/run:uid=20211,gid=20211,mode=700"
+    environment:
+      LISTEN_ADDR: 0.0.0.0
+      PORT: 20211
+      GRAPHQL_PORT: 20212
+      NETALERTX_MODE: hardened
+      ALWAYS_FRESH_INSTALL: false
+      NETALERTX_DEBUG: 0
+    restart: unless-stopped
+
+volumes:
+  netalertx_config:
+  netalertx_db:
+ 

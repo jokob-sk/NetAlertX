@@ -24,7 +24,7 @@
     {
       "label": "[Any] Docker system and build Prune",
       "type": "shell",
-      "command": "docker system prune -af && docker builder prune -af",
+  "command": ".devcontainer/scripts/confirm-docker-prune.sh",
       "presentation": {
         "echo": true,
         "reveal": "always",

@@ -3,6 +3,9 @@
 set -u
 
 bash /services/capcheck.sh
+bash /services/ramdisk-check.sh
+
+
 
 SERVICES=""
 FAILED_NAME=""

@@ -15,6 +15,7 @@ echo "---------------------------------------------------------"
 INSTALL_DIR=/app
 INSTALL_SYSTEM_NAME=ubuntu24
 INSTALLER_DIR=${INSTALL_DIR}/install/$INSTALL_SYSTEM_NAME
+REQUIREMENTS_FILE=${INSTALL_DIR}/requirements.txt
 CONF_FILE=app.conf
 DB_FILE=app.db
 NGINX_CONF_FILE=netalertx.conf
@@ -153,7 +154,12 @@ echo
 python3 -m venv "${VENV_DIR}"
 source "${VENV_DIR}/bin/activate"
 
-pip3 install -r "${INSTALLER_DIR}/requirements.txt" || {  
+if [[ ! -f "${REQUIREMENTS_FILE}" ]]; then
+  echo "[INSTALL] requirements.txt not found at ${REQUIREMENTS_FILE}"  
+  exit 1  
+fi
+
+pip3 install -r "${REQUIREMENTS_FILE}" || {  
   echo "[INSTALL] Failed to install Python dependencies"  
   exit 1  
 }  

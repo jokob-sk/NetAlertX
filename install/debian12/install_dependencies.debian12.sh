@@ -6,6 +6,15 @@ echo "---------------------------------------------------------"
 
 # ❗ IMPORTANT - if you modify this file modify the root Dockerfile as well ❗
 
+SCRIPT_DIR="$(cd -- "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
+REQUIREMENTS_FILE="${REPO_ROOT}/requirements.txt"
+
+if [[ ! -f "${REQUIREMENTS_FILE}" ]]; then
+    echo "requirements.txt not found at ${REQUIREMENTS_FILE}. Please ensure the repository root is available." >&2
+    exit 1
+fi
+
 # Check if script is run as root
 if [[ $EUID -ne 0 ]]; then
     echo "This script must be run as root. Please use 'sudo'." 
@@ -30,4 +39,4 @@ source /opt/venv/bin/activate
 update-alternatives --install /usr/bin/python python /usr/bin/python3 10
 
 #  install packages thru pip3
-pip3 install openwrt-luci-rpc asusrouter asyncio aiohttp graphene flask flask-cors unifi-sm-api tplink-omada-client wakeonlan pycryptodome requests paho-mqtt scapy cron-converter pytz json2table dhcp-leases pyunifi speedtest-cli chardet python-nmap dnspython librouteros yattag git+https://github.com/foreign-sub/aiofreepybox.git 
+pip3 install -r "${REQUIREMENTS_FILE}"

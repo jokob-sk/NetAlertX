@@ -1,4 +1,5 @@
-#!/bin/bash
+#! /bin/sh
+
 set -euo pipefail
 
 LOG_DIR=${NETALERTX_APP}
@@ -34,10 +35,10 @@ done
 
 TEMP_CONFIG_FILE=$(mktemp "${TMP_DIR}/netalertx.conf.XXXXXX")
 if envsubst '${LISTEN_ADDR} ${PORT}' < "${SYSTEM_NGINX_CONFIG_TEMPLATE}" > "${TEMP_CONFIG_FILE}" 2>/dev/null; then
-	mv "${TEMP_CONFIG_FILE}" "${SYSTEM_NGINX_CONFIG_FILE}"
+	mv "${TEMP_CONFIG_FILE}" "${SYSTEM_NGINX_CONFIG_FILE}" 2>/dev/null || true
 else
 	echo "Note: Unable to write to ${SYSTEM_NGINX_CONFIG_FILE}. Using default configuration."
-	rm -f "${TEMP_CONFIG_FILE}"
+	rm -f "${TEMP_CONFIG_FILE}" 2>/dev/null || true
 fi
 
 trap cleanup EXIT

@@ -1,6 +1,45 @@
+# Warning - use of this unhardened image is not recommended for production use.
+# This image is provided for backward compatibility, development and testing purposes only.
+# For production use, please use the hardened image built with Alpine. This image attempts to
+# treat a container as an operating system, which is an anti-pattern and a common source of
+# security issues.
+#
+# The default Dockerfile/docker-compose image contains the following security improvements 
+# over the Debian image:
+# - read-only filesystem
+# - no sudo access
+# - least possible permissions on all files and folders
+# - no shell access for non-privileged users
+# - no unnecessary packages or services
+# - reduced capabilities
+# - tmpfs for writable folders
+# - healthcheck
+# - no package managers
+# - no compilers or build tools
+# - no systemd, uses lightweight init system
+# - no persistent storage except for config and db volumes
+# - minimal image size due to segmented build stages
+# - minimal base image (Alpine Linux)
+# - minimal python environment (venv, no pip)
+# - minimal stripped web server
+# - minimal stripped php environment 
+# - minimal services (nginx, php-fpm, crond, no unnecessary services or service managers)
+# - minimal users and groups (netalertx and readonly only, no others)
+# - minimal permissions (read-only for most files and folders, write-only for necessary folders)
+# - minimal capabilities (NET_ADMIN and NET_RAW only, no others)
+# - minimal environment variables (only necessary ones, no others)
+# - minimal entrypoint (only necessary commands, no others)
+# - Uses the same base image as the development environmnment (Alpine Linux)
+# - Uses the same services as the development environment (nginx, php-fpm, crond)
+# - Uses the same environment variables as the development environment (only necessary ones, no others)
+# - Uses the same file and folder structure as the development environment (only necessary ones, no others)
+# NetAlertX is designed to be run as an unattended network security monitoring appliance, which means it 
+# should be able to operate without human intervention. Overall, the hardened image is designed to be as 
+# secure as possible while still being functional and is recommended because you cannot attack a surface
+# that isn't there.
+
+
 FROM debian:bookworm-slim
-
-
 
 #TZ=Europe/London
 
@@ -74,11 +113,11 @@ ENV USER_GID=1000
 # add root and www-data to pi group so they can r/w files and db
 RUN groupadd --gid "${USER_GID}" "${USER}" && \
     useradd \
-        --uid ${USER_ID} \
-        --gid ${USER_GID} \
-        --create-home \
-        --shell /bin/bash \
-        ${USER} && \
+    --uid ${USER_ID} \
+    --gid ${USER_GID} \
+    --create-home \
+    --shell /bin/bash \
+    ${USER} && \
     usermod -a -G ${USER_GID} root && \
     usermod -a -G ${USER_GID} www-data
 
@@ -97,10 +136,10 @@ RUN apt update && apt-get install -y \
 # (Ondřej Surý maintains php packages for debian. This is temp until debian includes php-fpm in their
 # repos. Likely it will be in Debian Trixie.).  This keeps the image up-to-date with the alpine version.
 RUN apt-get install -y --no-install-recommends \
-       apt-transport-https \
-       ca-certificates \
-       lsb-release \
-       wget && \
+    apt-transport-https \
+    ca-certificates \
+    lsb-release \
+    wget && \
     wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg && \
     echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list && \
     apt-get update && \
@@ -109,7 +148,7 @@ RUN apt-get install -y --no-install-recommends \
 
 # Setup virtual python environment and use pip3 to install packages
 RUN python3 -m venv ${VIRTUAL_ENV} && \
-     /bin/bash -c "source ${VIRTUAL_ENV_BIN}/activate && update-alternatives --install /usr/bin/python python /usr/bin/python3 10 && pip3 install openwrt-luci-rpc asusrouter asyncio aiohttp graphene flask flask-cors unifi-sm-api tplink-omada-client wakeonlan pycryptodome requests paho-mqtt scapy cron-converter pytz json2table dhcp-leases pyunifi speedtest-cli chardet python-nmap dnspython librouteros yattag "
+    /bin/bash -c "source ${VIRTUAL_ENV_BIN}/activate && update-alternatives --install /usr/bin/python python /usr/bin/python3 10 && pip3 install -r ${INSTALL_DIR}/requirements.txt"
 
 # Configure php-fpm
 RUN chmod -R 755 /services && \

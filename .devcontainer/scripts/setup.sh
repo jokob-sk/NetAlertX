@@ -78,7 +78,7 @@ configure_source() {
     sudo mount -o uid=$(id -u netalertx),gid=$(id -g netalertx),mode=775 -t tmpfs -o size=256M tmpfs "${NETALERTX_LOG}"
     sudo mount -o uid=$(id -u netalertx),gid=$(id -g netalertx),mode=775 -t tmpfs -o size=256M tmpfs "${NETALERTX_API}"
     mkdir -p ${NETALERTX_PLUGINS_LOG}
-    touch ${NETALERTX_PLUGINS_LOG}/.git-placeholder ${NETALERTX_API}/.git-placeholder
+    touch ${NETALERTX_PLUGINS_LOG}/.dockerignore ${NETALERTX_API}/.dockerignore
     # tmpfs mounts configured with netalertx ownership and 775 permissions above
 
     touch /app/log/nginx_error.log
