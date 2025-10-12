@@ -199,7 +199,7 @@
     "Device_MultiEdit_Backup": "小心，输入错误的值将破坏您的设置。请先备份您的数据库或设备配置（<a href=\"php/server/devices.php?action=ExportCSV\">点击下载<i class=\"fa-solid fa-download fa-bounce\"></i></a>）。在<a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/BACKUPS.md#scenario-2-corrupted-database\" target=\"_blank\">备份文档</a>中了解如何从此文件恢复设备。要应用更改，请在每个需要更新的字段点击<b>保存<i class='fa-solid fa-save'></i></b>图标。",
     "Device_MultiEdit_Fields": "编辑:",
     "Device_MultiEdit_MassActions": "谨慎操作:",
-    "Device_MultiEdit_No_Devices": "",
+    "Device_MultiEdit_No_Devices": "未选择设备。",
     "Device_MultiEdit_Tooltip": "小心。 单击此按钮会将左侧的值应用到上面选择的所有设备。",
     "Device_Searchbox": "搜索",
     "Device_Shortcut_AllDevices": "我的设备",
