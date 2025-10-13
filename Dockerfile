@@ -83,13 +83,13 @@ ENV PYTHONPATHPATH="${NETALERTX_APP}:${VIRTUAL_ENV}/bin:${PATH}"
 ENV ENVIRONMENT=alpine
 ENV READ_ONLY_USER=readonly READ_ONLY_GROUP=readonly
 ENV NETALERTX_USER=netalertx NETALERTX_GROUP=netalertx
+ENV LANG=C.UTF-8 
 
 
-
-RUN apk add --no-cache bash mtr libbsd zip lsblk sudo tzdata curl arp-scan iproute2 \
-    iproute2-ss nmap nmap-scripts traceroute nbtscan net-tools net-snmp-tools bind-tools awake \
-    ca-certificates sqlite php83 php83-fpm php83-cgi php83-curl php83-sqlite3 php83-session python3 \
-    envsubst nginx sudo shadow && \
+RUN apk add --no-cache bash mtr libbsd zip lsblk tzdata curl arp-scan iproute2 iproute2-ss nmap \
+    nmap-scripts traceroute nbtscan net-tools net-snmp-tools bind-tools awake ca-certificates \
+    sqlite php83 php83-fpm php83-cgi php83-curl php83-sqlite3 php83-session python3 envsubst \
+    nginx shadow && \
     rm -Rf /var/cache/apk/*  && \
     rm -Rf /etc/nginx && \
     addgroup -g 20211 ${NETALERTX_GROUP} && \
@@ -124,18 +124,16 @@ RUN apk add libcap && \
     /bin/sh /build/init-backend.sh && \
     rm -rf /build && \
     apk del libcap
-    
-# set netalertx to allow sudoers for any command, no password
-RUN echo "${NETALERTX_USER} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
-    
 
 
-ENTRYPOINT ["/bin/sh","-c","sleep infinity"]
+ENTRYPOINT ["/bin/sh","/entrypoint.sh"]
 
 # Final hardened stage to improve security by setting least possible permissions and removing sudo access.
 # When complete, if the image is compromised, there's not much that can be done with it.
 # This stage is separate from Runner stage so that devcontainer can use the Runner stage.
 FROM runner AS hardened
+
+ENV UMASK=0077
 
 # Create readonly user and group with no shell access.
 # Readonly user marks folders that are created by NetAlertX, but should not be modified.
@@ -159,9 +157,9 @@ RUN chown -R ${READ_ONLY_USER}:${READ_ONLY_GROUP} ${READ_ONLY_FOLDERS} && \
     chmod 005 /entrypoint.sh ${SYSTEM_SERVICES}/*.sh 
     
 
-# remove sudoers, sudo, alpine installers pacakges, and all users and groups except
+# remove sudoers,  alpine installers pacakges, and all users and groups except
 # readonly and netalertx
-RUN apk del sudo apk-tools && \
+RUN apk del apk-tools && \
     rm -rf /var/cache/apk/* && \
     rm -Rf /etc/sudoers.d/* /etc/shadow /etc/gshadow /etc/sudoers \
     /lib/apk /lib/firmware /lib/modules-load.d /lib/sysctl.d /mnt /home/ /root \
@@ -175,4 +173,3 @@ USER netalertx
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
     CMD /services/healthcheck.sh
 
-ENTRYPOINT [ "/bin/sh", "/entrypoint.sh" ]

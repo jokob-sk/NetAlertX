@@ -1,40 +1,62 @@
 services:
   netalertx:
-    network_mode: host                   # Use host networking for ARP scanning and other services
+    network_mode: host                          # Use host networking for ARP scanning and other services
     build:
-      context: .                         # Build context is the current directory   
-      dockerfile: Dockerfile             # Specify the Dockerfile to use    
+      context: .                                # Build context is the current directory   
+      dockerfile: Dockerfile                    # Specify the Dockerfile to use    
     image: netalertx:latest
-    container_name: netalertx            # The name when you docker contiainer ls
-    read_only: true                      # Make the container filesystem read-only
-    cap_drop:                            # Drop all capabilities for enhanced security
+    container_name: netalertx                   # The name when you docker contiainer ls
+    read_only: true                             # Make the container filesystem read-only
+    cap_drop:                                   # Drop all capabilities for enhanced security
       - ALL
-    cap_add:                             # Add only the necessary capabilities
-      - NET_ADMIN                        # Required for ARP scanning
-      - NET_RAW                          # Required for raw socket operations
-    security_opt:                        # Security options for the container
-      - no-new-privileges:true           # Prevent privilege escalation
-      - seccomp:unconfined               # Use unconfined seccomp profile (adjust as needed)
+    cap_add:                                    # Add only the necessary capabilities
+      - NET_ADMIN                               # Required for ARP scanning
+      - NET_RAW                                 # Required for raw socket operations
+    security_opt:                               # Security options for the container
+      - no-new-privileges:true                  # Prevent privilege escalation
     volumes:
       - netalertx_config:/app/config            # Store your NetAlertX config
       - netalertx_db:/app/db                    # Store your NetAlertX devices and settings
       - /etc/localtime:/etc/localtime:ro        # Use your system clock inside the container (read-only)
-     #- /path/on/host:/app/front/plugins/custom # Test your plugin on the production container
-    
+      
+      # Additional Volume Examples below
+
+      # Use a custom Enterprise-configured nginx config for ldap or other settings
+      # - /custom-enterprise.conf:/services/config/nginx/conf.active/netalertx.conf:ro
+
+      # Test your plugin on the production container
+      # - /path/on/host:/app/front/plugins/custom
+
+      # Retain logs - comment out tmpfs /app/log if you want to retain logs between container restarts
+      # - /path/on/host/log:/app/log
+
+      
+
     # Tempfs mounts for writable directories in a read-only container and improve system performance
     # by providing a clean R/W filesystem each container start and reducing disk I/O.
+    # Temp mounts are noexec, nosuid, and nodev for security.
     tmpfs:
-      - "/app/api:uid=20211,gid=20211,mode=700"
-      - "/app/log:uid=20211,gid=20211,mode=700"
-      - "/services/config/nginx/conf.active:uid=20211,gid=20211,mode=700"
-      - "/services/run:uid=20211,gid=20211,mode=700"
+      - "/app/api:uid=20211,gid=20211,mode=700,noexec,nosuid,nodev"
+      - "/app/log:uid=20211,gid=20211,mode=700,noexec,nosuid,nodev"
+      - "/services/config/nginx/conf.active:uid=20211,gid=20211,mode=700,noexec,nosuid,nodev"
+      - "/services/run:uid=20211,gid=20211,mode=700,noexec,nosuid,nodev"
     environment:
-      LISTEN_ADDR: 0.0.0.0
-      PORT: 20211
-      GRAPHQL_PORT: 20212
-      NETALERTX_MODE: hardened
-      ALWAYS_FRESH_INSTALL: false
-      NETALERTX_DEBUG: 0
+      LISTEN_ADDR: 0.0.0.0                      # Listen for connections on all interfaces
+      PORT: 20211                               # Application port
+      GRAPHQL_PORT: 20212                       # GraphQL API port
+      ALWAYS_FRESH_INSTALL: false               # Set to true to reset your config and database on each container start
+      NETALERTX_DEBUG: 0                        # 0=kill all services and restart if any dies. 1 keeps running dead services.
+
+    # Resource limits to prevent resource exhaustion
+    mem_limit: 2048m
+    mem_reservation: 1024m
+    cpus: 4
+    pids_limit: 512
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
     restart: unless-stopped
 
 volumes:

@@ -9,6 +9,9 @@
 # - read-only filesystem
 # - no sudo access
 # - least possible permissions on all files and folders
+# - Root user has all permissions revoked and is unused
+# - Secure umask applied so files are owner-only by default
+# - non-privileged user runs the application
 # - no shell access for non-privileged users
 # - no unnecessary packages or services
 # - reduced capabilities

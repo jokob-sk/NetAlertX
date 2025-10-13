@@ -6,6 +6,8 @@
 
 FROM runner AS netalertx-devcontainer
 ENV INSTALL_DIR=/app 
+ 
+
 ENV PYTHONPATH=/workspaces/NetAlertX/test:/workspaces/NetAlertX/server:/app:/app/server:/opt/venv/lib/python3.12/site-packages
 ENV PATH=/services:${PATH}
 ENV PHP_INI_SCAN_DIR=/services/config/php/conf.d:/etc/php83/conf.d
@@ -15,10 +17,11 @@ ENV NETALERTX_DEBUG=1
 COPY .devcontainer/resources/devcontainer-overlay/ /
 
 # Install common tools, create user, and set up sudo
-RUN apk add --no-cache git nano vim jq php83-pecl-xdebug py3-pip nodejs sudo gpgconf pytest pytest-cov fish shfmt
+RUN apk add --no-cache git nano vim jq php83-pecl-xdebug py3-pip nodejs sudo gpgconf pytest pytest-cov fish shfmt sudo
 
 RUN install -d -o netalertx -g netalertx -m 755 /services/php/modules && \
-    cp -a /usr/lib/php83/modules/. /services/php/modules/
+    cp -a /usr/lib/php83/modules/. /services/php/modules/ && \
+    echo "${NETALERTX_USER} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 # Install debugpy in the virtualenv if present, otherwise into system python3
 RUN /bin/sh -c '(/opt/venv/bin/python3 -m pip install --no-cache-dir debugpy) || (python3 -m pip install --no-cache-dir debugpy) || true' && \
     mkdir /workspaces && \
