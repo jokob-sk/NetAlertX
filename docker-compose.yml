@@ -15,10 +15,10 @@ services:
     security_opt:                               # Security options for the container
       - no-new-privileges:true                  # Prevent privilege escalation
     volumes:
-      - netalertx_config:/app/config            # Store your NetAlertX config
-      - netalertx_db:/app/db                    # Store your NetAlertX devices and settings
-      - /etc/localtime:/etc/localtime:ro        # Use your system clock inside the container (read-only)
-      
+      - netalertx_config:/app/config:rw           # Store your NetAlertX config
+      - netalertx_db:/app/db:rw                    # Store your NetAlertX devices and settings
+      - /etc/localtime:/etc/localtime:ro          # Use your system clock inside the container (read-only)
+
       # Additional Volume Examples below
 
       # Use a custom Enterprise-configured nginx config for ldap or other settings

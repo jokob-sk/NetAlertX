@@ -1,9 +1,22 @@
 #!/bin/sh
+echo '
+ _   _      _    ___  _           _  __   __
+| \ | |    | |  / _ \| |         | | \ \ / /
+|  \| | ___| |_/ /_\ \ | ___ _ __| |_ \ V / 
+| .   |/ _ \ __|  _  | |/ _ \  __| __|/   \ 
+| |\  |  __/ |_| | | | |  __/ |  | |_/ /^\ \
+\_| \_/\___|\__\_| |_/_|\___|_|   \__\/   \/
+   Network intruder and presence detector. 
+   https://netalertx.com
+'
 
 set -u
 
-bash /services/capcheck.sh
-bash /services/ramdisk-check.sh
+bash /services/check-cap.sh
+bash /services/check-ramdisk.sh
+bash /services/check-first-run-config.sh
+bash /services/check-first-run-db.sh
+bash /services/check-app.sh
 
 
 
@@ -67,15 +80,17 @@ on_signal() {
 trap on_signal INT TERM
 
 [ ! -d "${NETALERTX_PLUGINS_LOG}" ] && mkdir -p "${NETALERTX_PLUGINS_LOG}"
+[ ! -d "${SYSTEM_SERVICES_RUN_LOG}" ] && mkdir -p "${SYSTEM_SERVICES_RUN_LOG}"
+[ ! -d "${SYSTEM_SERVICES_RUN_TMP}" ] && mkdir -p "${SYSTEM_SERVICES_RUN_TMP}"
 [ ! -f "${LOG_DB_IS_LOCKED}" ] && touch "${LOG_DB_IS_LOCKED}"
 [ ! -f "${LOG_EXECUTION_QUEUE}" ] && touch "${LOG_EXECUTION_QUEUE}"
 
 if [ "${ENVIRONMENT:-}" ] && [ "${ENVIRONMENT:-}" != "debian" ]; then
     add_service "/services/start-crond.sh" "crond"
 fi
-add_service "/services/start-php-fpm.sh" "php-fpm"
+add_service "/services/start-php-fpm.sh" "php-fpm83"
 add_service "/services/start-nginx.sh" "nginx"
-add_service "/services/start-backend.sh" "backend"
+add_service "/services/start-backend.sh" "python3"
 
 
 # if NETALERTX_DEBUG=1 then we will not kill any services if one fails. We will just wait for all to exit.
@@ -101,6 +116,9 @@ while [ -n "${SERVICES}" ]; do
             remove_service "${pid}"
             handle_exit
         fi
+
     done
-    sleep 1
+    sleep 10
+    ps -a
 done
+

@@ -10,3 +10,5 @@ else
   echo "Aborted."
   exit 1
 fi
+
+echo "Done."

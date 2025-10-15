@@ -145,7 +145,8 @@ RUN addgroup -g 20212 ${READ_ONLY_GROUP} && \
 
 
 # reduce permissions to minimum necessary for all NetAlertX files and folders
-# Permissions 005 and 004 are not typos, they enable read-only.
+# Permissions 005 and 004 are not typos, they enable read-only. Everyone can
+# read the read-only files, and nobody can write to them, even the readonly user.
 RUN chown -R ${READ_ONLY_USER}:${READ_ONLY_GROUP} ${READ_ONLY_FOLDERS} && \
     chmod -R 004 ${READ_ONLY_FOLDERS} && \
     find ${READ_ONLY_FOLDERS} -type d -exec chmod 005 {} + && \
@@ -154,14 +155,13 @@ RUN chown -R ${READ_ONLY_USER}:${READ_ONLY_GROUP} ${READ_ONLY_FOLDERS} && \
     chmod -R 600 ${READ_WRITE_FOLDERS} && \
     find ${READ_WRITE_FOLDERS} -type d -exec chmod 700 {} + && \
     chown ${READ_ONLY_USER}:${READ_ONLY_GROUP} /entrypoint.sh && \
-    chmod 005 /entrypoint.sh ${SYSTEM_SERVICES}/*.sh 
+    chmod 005 /entrypoint.sh ${SYSTEM_SERVICES}/*.sh /app
     
 
 # remove sudoers,  alpine installers pacakges, and all users and groups except
 # readonly and netalertx
 RUN apk del apk-tools && \
-    rm -rf /var/cache/apk/* && \
-    rm -Rf /etc/sudoers.d/* /etc/shadow /etc/gshadow /etc/sudoers \
+    rm -Rf /var /etc/sudoers.d/* /etc/shadow /etc/gshadow /etc/sudoers \
     /lib/apk /lib/firmware /lib/modules-load.d /lib/sysctl.d /mnt /home/ /root \
     /srv /media && \
     sed -i "/^\(${READ_ONLY_USER}\|${NETALERTX_USER}\):/!d" /etc/passwd && \
