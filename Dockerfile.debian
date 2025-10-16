@@ -132,7 +132,7 @@ COPY --chmod=775 --chown=${USER_ID}:${USER_GID} . ${INSTALL_DIR}/
 RUN apt update && apt-get install -y \
     tini snmp ca-certificates curl libwww-perl arp-scan sudo gettext-base \
     nginx-light php php-cgi php-fpm php-sqlite3 php-curl sqlite3 dnsutils net-tools  \
-    python3 python3-dev iproute2 nmap python3-pip zip systemctl usbutils traceroute nbtscan openrc \
+    python3 python3-dev iproute2 nmap python3-pip zip git systemctl usbutils traceroute nbtscan openrc \
     busybox nginx nginx-core mtr python3-venv
 
 # While php8.3 is in debian bookworm repos, php-fpm is not included so we need to add sury.org repo
