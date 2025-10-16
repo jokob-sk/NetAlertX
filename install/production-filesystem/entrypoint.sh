@@ -142,3 +142,6 @@ while [ -n "${SERVICES}" ]; do
     ps -a
 done
 
+if [ "${FAILED_STATUS}" -eq 0 ] && [ "${FAILED_NAME}" != "signal" ]; then
+    FAILED_STATUS=1
+fi
