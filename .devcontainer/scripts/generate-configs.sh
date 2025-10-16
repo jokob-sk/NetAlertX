@@ -62,3 +62,5 @@ awk '
 ' >> "$NGINX_OUT"
 
 echo "Generated $NGINX_OUT from $NGINX_TEMPLATE" >&2
+
+echo "Done."

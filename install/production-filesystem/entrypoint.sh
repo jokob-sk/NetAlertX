@@ -24,6 +24,26 @@ SERVICES=""
 FAILED_NAME=""
 FAILED_STATUS=0
 
+is_pid_active() {
+    pid="$1"
+    [ -z "${pid}" ] && return 1
+
+    if ! kill -0 "${pid}" 2>/dev/null; then
+        return 1
+    fi
+
+    if [ -r "/proc/${pid}/status" ]; then
+        state_line=$(grep '^State:' "/proc/${pid}/status" 2>/dev/null || true)
+        case "${state_line}" in
+            *"(zombie)"*|*"(dead)"*)
+                return 1
+                ;;
+        esac
+    fi
+
+    return 0
+}
+
 add_service() {
     script="$1"
     name="$2"
@@ -48,7 +68,7 @@ shutdown_services() {
     for entry in ${SERVICES}; do
         pid="${entry%%:*}"
         [ -z "${pid}" ] && continue
-        if kill -0 "${pid}" 2>/dev/null; then
+        if is_pid_active "${pid}"; then
             kill "${pid}" 2>/dev/null || true
         fi
     done
@@ -108,7 +128,7 @@ while [ -n "${SERVICES}" ]; do
         pid="${entry%%:*}"
         name="${entry#*:}"
         [ -z "${pid}" ] && continue
-        if ! kill -0 "${pid}" 2>/dev/null; then
+        if ! is_pid_active "${pid}"; then
             wait "${pid}" 2>/dev/null
             status=$?
             FAILED_STATUS=$status
