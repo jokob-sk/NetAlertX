@@ -12,6 +12,7 @@ echo '
 
 set -u
 
+bash /services/check-root.sh
 bash /services/check-cap.sh
 bash /services/check-ramdisk.sh
 bash /services/check-first-run-config.sh

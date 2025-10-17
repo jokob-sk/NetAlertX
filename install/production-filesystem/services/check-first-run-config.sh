@@ -5,6 +5,17 @@
 if [ ! -f /app/config/app.conf ]; then
     mkdir -p /app/config
     cp /app/back/app.conf /app/config/app.conf
-    echo "🆕 First run detected: Default configuration initialized." >&2
+    CYAN='\033[1;36m'
+    RESET='\033[0m'
+    >&2 printf "%s" "${CYAN}"
+    >&2 cat <<'EOF'
+══════════════════════════════════════════════════════════════════════════════
+🆕  First run detected. Default configuration written to /app/config/app.conf.
+
+    Review your settings in the UI or edit the file directly before trusting
+    this instance in production.
+══════════════════════════════════════════════════════════════════════════════
+EOF
+    >&2 printf "%s" "${RESET}"
 fi
 

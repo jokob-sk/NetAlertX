@@ -137,8 +137,10 @@ COPY --from=builder --chown=20212:20212 ${VIRTUAL_ENV} ${VIRTUAL_ENV}
 # although it may be quicker to do it before the copy, it keeps the image
 # layers smaller to do it after.
 RUN apk add libcap && \
+    setcap cap_net_raw+ep /bin/busybox && \
     setcap cap_net_raw,cap_net_admin+eip /usr/bin/nmap && \
     setcap cap_net_raw,cap_net_admin+eip /usr/bin/arp-scan && \
+    setcap cap_net_raw,cap_net_admin,cap_net_bind_service+eip /usr/bin/nbtscan && \
     setcap cap_net_raw,cap_net_admin+eip /usr/bin/traceroute && \
     setcap cap_net_raw,cap_net_admin+eip ${VIRTUAL_ENV_BIN}/scapy && \
     /bin/sh /build/init-nginx.sh && \

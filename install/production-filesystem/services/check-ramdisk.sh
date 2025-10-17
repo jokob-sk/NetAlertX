@@ -1,31 +1,43 @@
 #!/bin/sh
-# ramdisk-check.sh - Verify critical paths are backed by ramdisk and warn on fallback storage.
+# storage-check.sh - Verify critical paths use dedicated mounts.
 
-warn_if_not_ramdisk() {
+warn_if_not_dedicated_mount() {
     path="$1"
-
-    if cat /proc/mounts| grep ${path} | grep -qE 'tmpfs|ramfs'; then
+    if awk -v target="${path}" '$5 == target {found=1} END {exit found ? 0 : 1}' /proc/self/mountinfo; then
         return 0
     fi
 
-    cat >&2 <<EOF
-⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️
-  ATTENTION: ${path} is not on a ramdisk.
-             Mount this folder inside the container as tmpfs or ramfs.
+    failures=1
+    YELLOW=$(printf '\033[1;33m')
+    RESET=$(printf '\033[0m')
+    >&2 printf "%s" "${YELLOW}"
+    >&2 cat <<EOF
+══════════════════════════════════════════════════════════════════════════════
+⚠️  ATTENTION: ${path} is not mounted separately inside this container.
 
-  NetAlertX expects this location to live in memory for fast reads and writes.
-  Running it on disk will severely degrade performance for every user.
+    NetAlertX runs as a single unprivileged process and pounds this directory
+    with writes. Leaving it on the container overlay will thrash storage and
+    slow the stack.
 
-  Fix: Please mount ${path} as tmpfs/ramfs.
-       eg.  --mount type=tmpfs,destination=${path}
-  Restart the container after adding the ramdisk mount.
-⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️
+    Fix: mount ${path} explicitly — tmpfs for ephemeral data, or bind/volume if
+    you want to preserve history:
+        --mount type=tmpfs,destination=${path}
+        # or
+        --mount type=bind,src=/path/on/host,dst=${path}
+
+    Apply the mount and restart the container.
+══════════════════════════════════════════════════════════════════════════════
 EOF
-    exit 1
+    >&2 printf "%s" "${RESET}"
 }
 
-warn_if_not_ramdisk "${NETALERTX_API}"
-warn_if_not_ramdisk "${NETALERTX_LOG}"
+failures=0
+warn_if_not_dedicated_mount "${NETALERTX_API}"
+warn_if_not_dedicated_mount "${NETALERTX_LOG}"
+
+if [ "${failures}" -ne 0 ]; then
+    exit 1
+fi
 
 if [ ! -f "${SYSTEM_NGINIX_CONFIG}/conf.active" ]; then
     echo "Note: Using default listen address ${LISTEN_ADDR}:${PORT} (no ${SYSTEM_NGINIX_CONFIG}/conf.active override)."

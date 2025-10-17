@@ -12,8 +12,8 @@ services:
     cap_add:                                    # Add only the necessary capabilities
       - NET_ADMIN                               # Required for ARP scanning
       - NET_RAW                                 # Required for raw socket operations
-    security_opt:                               # Security options for the container
-      - no-new-privileges:true                  # Prevent privilege escalation
+      - NET_BIND_SERVICE                        # Required to bind to privileged ports (nbtscan)
+
     volumes:
       - type: volume
         source: netalertx_config

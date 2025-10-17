@@ -5,7 +5,18 @@
 # if the db exists, exit
 test -f "${NETALERTX_DB_FILE}" && exit 0
 
-echo "First run detected, creating initial database schema in ${NETALERTX_DB_FILE}"
+CYAN='\033[1;36m'
+RESET='\033[0m'
+>&2 printf "%s" "${CYAN}"
+>&2 cat <<EOF
+══════════════════════════════════════════════════════════════════════════════
+🆕  First run detected. Building initial database schema in ${NETALERTX_DB_FILE}.
+
+    Do not interrupt this step. Once complete, consider backing up the fresh
+    database before onboarding sensitive networks.
+══════════════════════════════════════════════════════════════════════════════
+EOF
+>&2 printf "%s" "${RESET}"
 
 # Write all text to db file until we see "end-of-database-schema"
 cat << end-of-database-schema > ${NETALERTX_DB_FILE}
