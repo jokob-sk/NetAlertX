@@ -15,11 +15,20 @@ services:
     security_opt:                               # Security options for the container
       - no-new-privileges:true                  # Prevent privilege escalation
     volumes:
-      - netalertx_config:/app/config:rw         # Store your NetAlertX config
-      - netalertx_db:/app/db:rw                 # Store your NetAlertX devices and settings
-      - /etc/localtime:/etc/localtime:ro        # Use your system clock inside the container (read-only)
+      - type: volume
+        source: netalertx_config
+        target: /app/config
+        read_only: false
 
-      # Additional Volume Examples below
+      - type: volume
+        source: netalertx_db
+        target: /app/db
+        read_only: false
+
+      - type: bind
+        source: /etc/localtime
+        target: /etc/localtime
+        read_only: true
 
       # Use a custom Enterprise-configured nginx config for ldap or other settings
       # - /custom-enterprise.conf:/services/config/nginx/conf.active/netalertx.conf:ro
@@ -30,16 +39,18 @@ services:
       # Retain logs - comment out tmpfs /app/log if you want to retain logs between container restarts
       # - /path/on/host/log:/app/log
 
-      
-
     # Tempfs mounts for writable directories in a read-only container and improve system performance
-    # by providing a clean R/W filesystem each container start and reducing disk I/O.
-    # Temp mounts are noexec, nosuid, and nodev for security.
     tmpfs:
-      - "/app/api:uid=20211,gid=20211,mode=700,noexec,nosuid,nodev"
-      - "/app/log:uid=20211,gid=20211,mode=700,noexec,nosuid,nodev"
-      - "/services/config/nginx/conf.active:uid=20211,gid=20211,mode=700,noexec,nosuid,nodev"
-      - "/services/run:uid=20211,gid=20211,mode=700,noexec,nosuid,nodev"
+      # Speed up logging. This can be commented out to retain logs between container restarts
+      - "/app/log:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      # Speed up API access as frontend/backend API is very chatty
+      - "/app/api:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,sync,noatime,nodiratime"  
+      # Required for customization of the nginx listen addr/port without rebuilding the container
+      - "/services/config/nginx/conf.active:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      # /services/config/nginx/conf.d is required for nginx and php to start
+      - "/services/run:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      # /tmp is required by php for session save this should be reworked to /services/run/tmp
+      - "/tmp:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
     environment:
       LISTEN_ADDR: 0.0.0.0                      # Listen for connections on all interfaces
       PORT: 20211                               # Application port

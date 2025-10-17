@@ -1,3 +1,22 @@
+# The NetAlertX Dockerfile has 3 stages:
+#
+# Stage 1. Builder - NetAlertX Requires special tools and packages to build our virtual environment, but
+# which are not needed in future stages.  We build the builder and extract the venv for runner to use as 
+# a base.
+#
+# Stage 2. Runner builds the bare minimum requirements to create an operational NetAlertX. The primary
+# reason for breaking at this stage is it leaves the system in a proper state for devcontainer operation
+# This image also provides a break-out point for uses who wish to execute the anti-pattern of using a 
+# docker container as a VM for experimentation and various development patterns.
+#
+# Stage 3. Hardened removes root, sudoers, folders, permissions, and locks the system down into a read-only
+# compatible image. While NetAlertX does require some read-write operations, this image can guarantee the 
+# code pushed out by the project is the only code which will run on the system after each container restart.
+# It reduces the chance of system hijacking and operates with all modern security protocols in place as is
+# expected from a security appliance.
+#
+# This file can be built with `docker compose -f docker-compose.yml up --build --force-recreate`
+
 FROM alpine:3.22 AS builder
 
 ARG INSTALL_DIR=/app
@@ -9,11 +28,12 @@ ENV PATH="/opt/venv/bin:$PATH"
 COPY requirements.txt /tmp/requirements.txt
 RUN apk add --no-cache bash shadow python3 python3-dev gcc musl-dev libffi-dev openssl-dev git \
     && python -m venv /opt/venv
-RUN pip install -r /tmp/requirements.txt
 
-# From this point on the Venv is owned by root without any read/write/execute permissions for root or group.
-# This makes it easy to copy into hardened stage without worrying about permissions and keeps image size small
-RUN chmod -R u-rwx,g-rwx /opt
+# Create virtual environment owned by root, but readable by everyone else. This makes it easy to copy 
+# into hardened stage without worrying about permissions and keeps image size small. Keeping the commands
+# together makes for a slightly smaller image size.
+RUN pip install -r /tmp/requirements.txt && \
+    chmod -R u-rwx,g-rwx /opt
 
 # second stage is the main runtime stage with just the minimum required to run the application
 # The runner is used for both devcontainer, and as a base for the hardened stage.
@@ -61,7 +81,7 @@ ENV SYSTEM_SERVICES_RUN_TMP=${SYSTEM_SERVICES_RUN}/tmp
 ENV SYSTEM_SERVICES_RUN_LOG=${SYSTEM_SERVICES_RUN}/logs
 ENV PHP_FPM_CONFIG_FILE=${SYSTEM_SERVICES_PHP_FOLDER}/php-fpm.conf
 ENV READ_ONLY_FOLDERS="${NETALERTX_BACK} ${NETALERTX_FRONT} ${NETALERTX_SERVER} ${SYSTEM_SERVICES} \
-                       ${SYSTEM_SERVICES_CONFIG} /opt /opt/venv"
+                       ${SYSTEM_SERVICES_CONFIG}"
 ENV READ_WRITE_FOLDERS="${NETALERTX_CONFIG} ${NETALERTX_DB} ${NETALERTX_API} ${NETALERTX_LOG} \
                        ${NETALERTX_PLUGINS_LOG} ${SYSTEM_SERVICES_RUN} ${SYSTEM_SERVICES_RUN_TMP} \
                        ${SYSTEM_SERVICES_RUN_LOG}"
@@ -112,7 +132,10 @@ RUN install -d -o ${NETALERTX_USER} -g ${NETALERTX_GROUP} -m 755 ${NETALERTX_API
 COPY --from=builder --chown=20212:20212 ${VIRTUAL_ENV} ${VIRTUAL_ENV}
 
 
-#initialize each service with the dockerfiles/init-*.sh scripts, once.
+# Initialize each service with the dockerfiles/init-*.sh scripts, once.
+# This is done after the copy of the venv to ensure the venv is in place
+# although it may be quicker to do it before the copy, it keeps the image
+# layers smaller to do it after.
 RUN apk add libcap && \
     setcap cap_net_raw,cap_net_admin+eip /usr/bin/nmap && \
     setcap cap_net_raw,cap_net_admin+eip /usr/bin/arp-scan && \
@@ -154,13 +177,9 @@ RUN chown -R ${READ_ONLY_USER}:${READ_ONLY_GROUP} ${READ_ONLY_FOLDERS} && \
     chown -R ${NETALERTX_USER}:${NETALERTX_GROUP} ${READ_WRITE_FOLDERS} && \
     chmod -R 600 ${READ_WRITE_FOLDERS} && \
     find ${READ_WRITE_FOLDERS} -type d -exec chmod 700 {} + && \
-    chown ${READ_ONLY_USER}:${READ_ONLY_GROUP} /entrypoint.sh && \
-    chmod 005 /entrypoint.sh ${SYSTEM_SERVICES}/*.sh /app
-    
-
-# remove sudoers,  alpine installers pacakges, and all users and groups except
-# readonly and netalertx
-RUN apk del apk-tools && \
+    chown ${READ_ONLY_USER}:${READ_ONLY_GROUP} /entrypoint.sh /opt && \
+    chmod 005 /entrypoint.sh ${SYSTEM_SERVICES}/*.sh /app && \
+    apk del apk-tools && \
     rm -Rf /var /etc/sudoers.d/* /etc/shadow /etc/gshadow /etc/sudoers \
     /lib/apk /lib/firmware /lib/modules-load.d /lib/sysctl.d /mnt /home/ /root \
     /srv /media && \
