@@ -87,6 +87,7 @@ nav:
         - Sessions: API_SESSIONS.md
         - Settings: API_SETTINGS.md
         - Events: API_EVENTS.md
+        - Messaging in-app: API_MESSAGING_IN_APP.md
         - Metrics: API_METRICS.md
         - Net Tools: API_NETTOOLS.md
         - Online History: API_ONLINEHISTORY.md

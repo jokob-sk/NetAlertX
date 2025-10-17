@@ -63,6 +63,9 @@ wget https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/install/debian12/
 
 ## 📥 Ubuntu 24 (Noble Numbat)
 
+> [!NOTE]
+> Maintained by [ingoratsdorf](https://github.com/ingoratsdorf)
+
 ### Installation via curl
 ```bash
 curl -o install.sh https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/install/ubuntu24/install.sh && sudo chmod +x install.sh && sudo ./install.sh
@@ -78,7 +81,8 @@ wget https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/install/ubuntu24/
 
 > [!NOTE]
 > Use this on a clean LXC/VM for Debian 13 OR Ubuntu 24.
-> The Scipt will detect OS and build acordingly.
+> The Scipt will detect OS and build acordingly. 
+> Maintained by [JVKeller](https://github.com/JVKeller)
 
 ### Installation via wget
 ```bash
