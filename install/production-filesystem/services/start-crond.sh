@@ -16,7 +16,7 @@ forward_signal() {
 	fi
 }
 
-while $(ps ax | grep -v -e grep -e '.sh' | grep crond >/dev/null); do
+while ps ax | grep -v -e grep -e '.sh' | grep crond >/dev/null 2>&1; do
 	killall crond &>/dev/null
 	sleep 0.2
 done

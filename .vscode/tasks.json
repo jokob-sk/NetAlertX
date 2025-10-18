@@ -2,7 +2,7 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "[Any POSIX] Generate Devcontiner Configs",
+      "label": "[Any POSIX] Generate Devcontainer Configs",
       "type": "shell",
       "command": ".devcontainer/scripts/generate-configs.sh",
       "presentation": {

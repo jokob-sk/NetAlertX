@@ -157,7 +157,7 @@ RUN python3 -m venv ${VIRTUAL_ENV} && \
 RUN chmod -R 755 /services && \
     chown -R ${USER}:${USER_GID} /services  && \
     sed -i 's/^;listen.mode = .*/listen.mode = 0666/' ${SYSTEM_SERVICES_PHP_FPM_D}/www.conf && \
-    echo "user = ${USER}\ngroup = ${USER_GID}" >> /services/config/php/php-fpm.d/www.conf
+    printf "user = %s\ngroup = %s\n" "${USER}" "${USER_GID}" >> /services/config/php/php-fpm.d/www.conf
 
 
 

@@ -1,5 +1,5 @@
 
-This is the default filesystem for NetAlertX. it contains
+This is the default filesystem for NetAlertX. It contains
 
 - `/app` - The main application location.  This structure is where the source code (back, front and server directories) is copied and executed in read-only form. It also provides default structures for the working directories, such as: config, db, and log. All other directories are not required in the production image and are not tracked.
 - `/build` - a place where services can be initialized during docker container build. This folder is copied in, executed near the end of the build before the system is locked down, and then deleted.  It is only available during build time.

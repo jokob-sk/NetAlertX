@@ -16,7 +16,7 @@ forward_signal() {
 	fi
 }
 
-while $(ps ax | grep -v grep | grep php-fpm83 >/dev/null); do
+while ps ax | grep -v grep | grep php-fpm83 >/dev/null; do
 	killall php-fpm83 &>/dev/null
 	sleep 0.2
 done

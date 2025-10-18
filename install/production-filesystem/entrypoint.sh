@@ -21,7 +21,7 @@ set -u
 
 # Run all checks at container startup.
 for script in /services/check-*.sh; do
-	bash "$script"
+	sh "$script"
 done
 
 
