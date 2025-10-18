@@ -179,8 +179,8 @@ RUN chown -R ${READ_ONLY_USER}:${READ_ONLY_GROUP} ${READ_ONLY_FOLDERS} && \
     chown -R ${NETALERTX_USER}:${NETALERTX_GROUP} ${READ_WRITE_FOLDERS} && \
     chmod -R 600 ${READ_WRITE_FOLDERS} && \
     find ${READ_WRITE_FOLDERS} -type d -exec chmod 700 {} + && \
-    chown ${READ_ONLY_USER}:${READ_ONLY_GROUP} /entrypoint.sh /opt && \
-    chmod 005 /entrypoint.sh ${SYSTEM_SERVICES}/*.sh /app && \
+    chown ${READ_ONLY_USER}:${READ_ONLY_GROUP} /entrypoint.sh /opt /opt/venv && \
+    chmod 005 /entrypoint.sh ${SYSTEM_SERVICES}/*.sh /app /opt /opt/venv && \
     apk del apk-tools && \
     rm -Rf /var /etc/sudoers.d/* /etc/shadow /etc/gshadow /etc/sudoers \
     /lib/apk /lib/firmware /lib/modules-load.d /lib/sysctl.d /mnt /home/ /root \

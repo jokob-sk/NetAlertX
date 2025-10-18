@@ -1,23 +1,28 @@
 #!/bin/sh
-echo '
+
+# entrypoint.sh - Main container entrypoint script for NetAlertX
+
+#make this red
+
+printf '
+\033[1;31m
  _   _      _    ___  _           _  __   __
 | \ | |    | |  / _ \| |         | | \ \ / /
 |  \| | ___| |_/ /_\ \ | ___ _ __| |_ \ V / 
 | .   |/ _ \ __|  _  | |/ _ \  __| __|/   \ 
 | |\  |  __/ |_| | | | |  __/ |  | |_/ /^\ \
 \_| \_/\___|\__\_| |_/_|\___|_|   \__\/   \/
+\033[0m
    Network intruder and presence detector. 
    https://netalertx.com
 '
 
 set -u
 
-bash /services/check-root.sh
-bash /services/check-cap.sh
-bash /services/check-ramdisk.sh
-bash /services/check-first-run-config.sh
-bash /services/check-first-run-db.sh
-bash /services/check-app.sh
+# Run all checks at container startup.
+for script in /services/check-*.sh; do
+	bash "$script"
+done
 
 
 
@@ -140,7 +145,6 @@ while [ -n "${SERVICES}" ]; do
 
     done
     sleep 10
-    ps -a
 done
 
 if [ "${FAILED_STATUS}" -eq 0 ] && [ "${FAILED_NAME}" != "signal" ]; then
