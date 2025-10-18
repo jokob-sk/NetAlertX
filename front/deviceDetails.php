@@ -512,21 +512,29 @@ function updateDevicePageName(mac) {
   }
 
   // Page title - Name
-  if (mac == "new") {
-    $('#pageTitle').html(
-      `<i title="${getString("Gen_create_new_device")}" class="fa fa-square-plus"></i> ` + getString("Gen_create_new_device")
-    );
-    $('#devicePageInfoPlc .inner').html(
-      `<i class="fa fa-circle-info"></i> ` + getString("Gen_create_new_device_info")
-    );
-    $('#devicePageInfoPlc').show();
-  } else if (!owner || (name.toString()).indexOf(owner) !== -1) {
-    $('#pageTitle').html(name);
-    $('#devicePageInfoPlc').hide();
+  let pageTitleText;
+
+  if (mac === "new") {
+      pageTitleText = getString("Gen_create_new_device");
+      $('#pageTitle').html(
+          `<i title="${pageTitleText}" class="fa fa-square-plus"></i> ` + pageTitleText
+      );
+      $('#devicePageInfoPlc .inner').html(
+          `<i class="fa fa-circle-info"></i> ` + getString("Gen_create_new_device_info")
+      );
+      $('#devicePageInfoPlc').show();
+  } else if (!owner || name.toString().includes(owner)) {
+      pageTitleText = name;
+      $('#pageTitle').html(pageTitleText);
+      $('#devicePageInfoPlc').hide();
   } else {
-    $('#pageTitle').html(name + ' (' + owner + ')');
-    $('#devicePageInfoPlc').hide();
+      pageTitleText = `${name} (${owner})`;
+      $('#pageTitle').html(pageTitleText);
+      $('#devicePageInfoPlc').hide();
   }
+
+  // Prepend to the <title> tag
+  $('title').html(pageTitleText + ' - ' + $('title').html());
 }
 
 

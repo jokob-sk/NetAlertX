@@ -123,7 +123,7 @@
 <!-- page script ----------------------------------------------------------- -->
 <script>
   var deviceStatus    = 'all';
-  var tableRows       = getCache ("nax_parTableRows") == "" ? 20 : getCache ("nax_parTableRows") ;
+  var tableRows       = getCache ("nax_parTableRows") == "" ? parseInt(getSetting("UI_DEFAULT_PAGE_SIZE")) : getCache ("nax_parTableRows") ;
   var tableOrder      = getCache ("nax_parTableOrder") == "" ? [[3,'desc'], [0,'asc']] : JSON.parse(getCache ("nax_parTableOrder")) ;
   
   var tableColumnHide = [];
@@ -743,7 +743,7 @@ function initializeDatatable (status) {
     },
     'paging'       : true,
     'lengthChange' : true,
-    'lengthMenu'   : [[10, 20, 25, 50, 100, 500, 100000], [10, 20, 25, 50, 100, 500, getString('Device_Tablelenght_all')]],
+    'lengthMenu'   : getLengthMenu(parseInt(getSetting("UI_DEFAULT_PAGE_SIZE"))),
     'searching'    : true,
 
     'ordering'     : true,

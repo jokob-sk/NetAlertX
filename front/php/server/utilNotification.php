@@ -1,5 +1,10 @@
 <?php
 
+// 🔺----- API ENDPOINTS SUPERSEDED -----🔺
+// check server/api_server/api_server_start.py for equivalents
+// equivalent: /messaging/in-app
+// 🔺----- API ENDPOINTS SUPERSEDED -----🔺
+
 require dirname(__FILE__).'/../templates/globals.php';
 
 //------------------------------------------------------------------------------

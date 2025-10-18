@@ -59,6 +59,8 @@ http://<server>:<GRAPHQL_PORT>/
 * [Events](API_EVENTS.md) – Device event logging and management
 * [Sessions](API_SESSIONS.md) – Connection sessions and history
 * [Settings](API_SETTINGS.md) – Settings
+* Messaging:
+    * [In app messaging](API_MESSAGING_IN_APP.md) - In-app messaging
 * [Metrics](API_METRICS.md) – Prometheus metrics and per-device status
 * [Network Tools](API_NETTOOLS.md) – Utilities like Wake-on-LAN, traceroute, nslookup, nmap, and internet info
 * [Online History](API_ONLINEHISTORY.md) – Online/offline device records

@@ -84,13 +84,16 @@ class Logger:
         root_logger.setLevel(custom_to_logging_levels.get(currentLevel, logging.NOTSET))
 
     def mylog(self, requestedDebugLevel, *args):
+        
         self.reqLvl = self._to_num(requestedDebugLevel)
-        if self.reqLvl is not None and self.reqLvl <= self.setLvl:
+        self.setLvl = self._to_num(currentLevel)
+
+        if self.isAbove(requestedDebugLevel):
             file_print(*args)
 
     def isAbove(self, requestedDebugLevel):
         reqLvl = self._to_num(requestedDebugLevel)
-        return reqLvl is not None and self.setLvl >= reqLvl
+        return reqLvl is not None and self.setLvl  is not None and self.setLvl >= reqLvl
 
 #-------------------------------------------------------------------------------
 # Dedicated thread for writing logs
@@ -122,6 +125,8 @@ def start_log_writer_thread():
 def file_print(*args):
     result = timeNowTZ().strftime('%H:%M:%S') + ' '
     for arg in args:
+        if isinstance(arg, list):
+            arg = ' '.join(str(a) for a in arg) # so taht new lines are handled correctly also when passing a list
         result += str(arg)
 
     logging.log(custom_to_logging_levels.get(currentLevel, logging.NOTSET), result)

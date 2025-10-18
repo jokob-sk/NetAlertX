@@ -1,127 +1,142 @@
-#!/usr/bin/env python
-
+#!/usr/bin/env python3
 import os
-import pathlib
 import sys
 import json
-import dns.resolver
+import socket
+import ipaddress
+from zeroconf import Zeroconf, ServiceBrowser, ServiceInfo, InterfaceChoice, IPVersion
+from zeroconf.asyncio import AsyncZeroconf
 
-# Define the installation path and extend the system path for plugin imports
 INSTALL_PATH = "/app"
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64
-from plugin_utils import get_plugins_configs
-from logger import mylog as write_log, Logger
-from const import pluginsPath, fullDbPath, logPath
-from helper import timeNowTZ, get_setting_value
-from messaging.in_app import write_notification
+from plugin_helper import Plugin_Objects
+from logger import mylog, Logger
+from const import logPath
+from helper import get_setting_value
 from database import DB
 from models.device_instance import DeviceInstance
 import conf
 from pytz import timezone
 
-# Make sure the TIMEZONE for logging is correct
-conf.tz = timezone(get_setting_value('TIMEZONE'))
+# Configure timezone and logging
+conf.tz = timezone(get_setting_value("TIMEZONE"))
+Logger(get_setting_value("LOG_LEVEL"))
 
-# Make sure log level is initialized correctly
-Logger(get_setting_value('LOG_LEVEL'))
+pluginName = "AVAHISCAN"
 
-pluginName = 'AVAHISCAN'
+# Define log paths
+LOG_PATH = os.path.join(logPath, "plugins")
+LOG_FILE = os.path.join(LOG_PATH, f"script.{pluginName}.log")
+RESULT_FILE = os.path.join(LOG_PATH, f"last_result.{pluginName}.log")
 
-# Define the current path and log file paths
-LOG_PATH = logPath + '/plugins'
-LOG_FILE = os.path.join(LOG_PATH, f'script.{pluginName}.log')
-RESULT_FILE = os.path.join(LOG_PATH, f'last_result.{pluginName}.log')
-
-# Initialize the Plugin obj output file
+# Initialize plugin results
 plugin_objects = Plugin_Objects(RESULT_FILE)
 
-#===============================================================================
-# Execute scan using DNS resolver
-#===============================================================================
-def resolve_ips_with_zeroconf(ips, timeout):
+
+# =============================================================================
+# Helper functions
+# =============================================================================
+
+def resolve_mdns_name(ip: str, timeout: int = 5) -> str:
     """
-    Uses DNS resolver to actively query PTR records for reverse DNS lookups on given IP addresses.
+    Attempts to resolve a hostname via multicast DNS using the Zeroconf library.
+
+    Args:
+        ip (str): The IP address to resolve.
+        timeout (int): Timeout in seconds for mDNS resolution.
+
+    Returns:
+        str: Resolved hostname (or empty string if not found).
     """
-    resolved_hosts = {}
-    
-    for ip in ips:
+    mylog("debug", [f"[{pluginName}] Resolving mDNS for {ip}"])
+
+    # Convert string IP to an address object
+    try:
+        addr = ipaddress.ip_address(ip)
+    except ValueError:
+        mylog("none", [f"[{pluginName}] Invalid IP: {ip}"])
+        return ""
+
+    # Reverse lookup name, e.g. "121.1.168.192.in-addr.arpa"
+    if addr.version == 4:
+        rev_name = ipaddress.ip_address(ip).reverse_pointer
+    else:
+        rev_name = ipaddress.ip_address(ip).reverse_pointer
+
+    try:
+        zeroconf = Zeroconf()
+        hostname = socket.getnameinfo((ip, 0), socket.NI_NAMEREQD)[0]
+        zeroconf.close()
+        if hostname and hostname != ip:
+            mylog("debug", [f"[{pluginName}] Found mDNS name: {hostname}"])
+            return hostname
+    except Exception as e:
+        mylog("debug", [f"[{pluginName}] Zeroconf lookup failed for {ip}: {e}"])
+    finally:
         try:
-            # Construct the reverse IP for PTR query (e.g., 8.1.168.192.in-addr.arpa.)
-            reverse_ip = '.'.join(reversed(ip.split('.'))) + '.in-addr.arpa.'
-            
-            # Query PTR record with timeout; respect the passed timeout per query
-            answers = dns.resolver.resolve(reverse_ip, 'PTR', lifetime=max(1, timeout))
-            
-            if answers:
-                # For PTR records, the hostname is in the target field
-                hostname = str(answers[0].target).rstrip('.')
-                resolved_hosts[ip] = hostname
-                write_log('verbose', [f'[{pluginName}] Resolved {ip} -> {hostname}'])
-        except Exception as e:
-            write_log('verbose', [f'[{pluginName}] Error resolving {ip}: {e}'])
-    
-    write_log('verbose', [f'[{pluginName}] Active resolution finished. Found {len(resolved_hosts)} hosts.'])
-    return resolved_hosts
+            zeroconf.close()
+        except Exception:
+            pass
+
+    return ""
+
+
+# =============================================================================
+# Main logic
+# =============================================================================
 
 def main():
-    write_log('verbose', [f'[{pluginName}] In script'])
+    mylog("verbose", [f"[{pluginName}] Script started"])
 
-    # Get timeout from settings, default to 20s, and subtract a buffer
-    try:
-        timeout_setting = int(get_setting_value('AVAHISCAN_RUN_TIMEOUT'))
-    except (ValueError, TypeError):
-        timeout_setting = 30 # Default to 30s as a safe value
+    timeout = get_setting_value("AVAHISCAN_RUN_TIMEOUT")
+    use_mock = "--mockdata" in sys.argv
     
-    # Use a timeout 5 seconds less than the plugin's configured timeout to allow for cleanup
-    scan_duration = max(5, timeout_setting - 5)
-    
-    db = DB()
-    db.open()
-
-    plugin_objects = Plugin_Objects(RESULT_FILE)
-    device_handler = DeviceInstance(db)
-
-    # Retrieve devices based on REFRESH_FQDN setting to match original script's logic
-    if get_setting_value("REFRESH_FQDN"):
-        devices = device_handler.getAll()
-        write_log('verbose', [f'[{pluginName}] REFRESH_FQDN is true, getting all devices.'])
+    if use_mock:
+        mylog("verbose", [f"[{pluginName}] Running in MOCK mode"])
+        devices = [
+            {"devMac": "00:11:22:33:44:55", "devLastIP": "192.168.1.121"},
+            {"devMac": "00:11:22:33:44:56", "devLastIP": "192.168.1.9"},
+            {"devMac": "00:11:22:33:44:57", "devLastIP": "192.168.1.82"},
+        ]
     else:
-        devices = device_handler.getUnknown()
-        write_log('verbose', [f'[{pluginName}] REFRESH_FQDN is false, getting devices with unknown hostnames.'])
+        db = DB()
+        db.open()
+        device_handler = DeviceInstance(db)
+        devices = (
+            device_handler.getAll()
+            if get_setting_value("REFRESH_FQDN")
+            else device_handler.getUnknown()
+        )
 
-    # db.close() # This was causing the crash, DB object doesn't have a close method.
+    mylog("verbose", [f"[{pluginName}] Devices count: {len(devices)}"])
 
-    write_log('verbose', [f'[{pluginName}] Devices to scan: {len(devices)}'])
+    for device in devices:
+        ip = device["devLastIP"]
+        mac = device["devMac"]
 
-    if len(devices) > 0:
-        ips_to_find = [device['devLastIP'] for device in devices if device['devLastIP']]
-        if ips_to_find:
-            write_log('verbose', [f'[{pluginName}] IPs to be scanned: {ips_to_find}'])
-            resolved_hosts = resolve_ips_with_zeroconf(ips_to_find, scan_duration)
+        hostname = resolve_mdns_name(ip, timeout)
 
-            for device in devices:
-                domain_name = resolved_hosts.get(device['devLastIP'])
-                if domain_name:
-                    plugin_objects.add_object(
-                        primaryId   = device['devMac'],
-                        secondaryId = device['devLastIP'],
-                        watched1    = '',
-                        watched2    = domain_name,
-                        watched3    = '',
-                        watched4    = '',
-                        extra       = '',
-                        foreignKey  = device['devMac']
-                    )
-        else:
-            write_log('verbose', [f'[{pluginName}] No devices with IP addresses to scan.'])
+        if hostname:
+            plugin_objects.add_object(
+                primaryId=mac,
+                secondaryId=ip,
+                watched1="",
+                watched2=hostname,
+                watched3="",
+                watched4="",
+                extra="",
+                foreignKey=mac,
+            )
 
     plugin_objects.write_result_file()
-    
-    write_log('verbose', [f'[{pluginName}] Script finished'])
-    
+
+    mylog("verbose", [f"[{pluginName}] Script finished"])
     return 0
 
-if __name__ == '__main__':
+
+# =============================================================================
+# Entrypoint
+# =============================================================================
+if __name__ == "__main__":
     main()

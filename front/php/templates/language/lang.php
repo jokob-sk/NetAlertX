@@ -5,7 +5,7 @@
 // ###################################
 
 $defaultLang = "en_us";
-$allLanguages = ["en_us", "es_es", "de_de", "fr_fr", "it_it", "ru_ru", "nb_no", "pl_pl", "pt_br", "pt_pt", "tr_tr", "zh_cn", "cs_cz", "ar_ar", "ca_ca", "uk_ua"];
+$allLanguages = [ "ar_ar", "ca_ca", "cs_cz", "de_de", "en_us", "es_es", "fa_fa", "fr_fr", "it_it", "nb_no", "pl_pl", "pt_br", "pt_pt", "ru_ru", "tr_tr", "uk_ua", "zh_cn"];
 
 
 global $db;
@@ -14,22 +14,24 @@ $result = $db->querySingle("SELECT setValue FROM Settings WHERE setKey = 'UI_LAN
 
 // below has to match exactly the values in /front/php/templates/language/lang.php & /front/js/common.js
 switch($result){    
-  case 'Spanish': $pia_lang_selected = 'es_es'; break;
-  case 'German': $pia_lang_selected = 'de_de'; break;
-  case 'Norwegian': $pia_lang_selected = 'nb_no'; break;
-  case 'Polish (pl_pl)': $pia_lang_selected = 'pl_pl'; break;
-  case 'Portuguese (pt_br)': $pia_lang_selected = 'pt_br'; break;
-  case 'Portuguese (pt_pt)': $pia_lang_selected = 'pt_pt'; break;
-  case 'Italian (it_it)': $pia_lang_selected = 'it_it'; break;
-  case 'Russian': $pia_lang_selected = 'ru_ru'; break;
-  case 'Turkish (tr_tr)': $pia_lang_selected = 'tr_tr'; break;
-  case 'French': $pia_lang_selected = 'fr_fr'; break;
-  case 'Chinese (zh_cn)': $pia_lang_selected = 'zh_cn'; break;
-  case 'Czech (cs_cz)': $pia_lang_selected = 'cs_cz'; break;
-  case 'Arabic (ar_ar)': $pia_lang_selected = 'ar_ar'; break;
-  case 'Catalan (ca_ca)': $pia_lang_selected = 'ca_ca'; break;
-  case 'Ukrainian (uk_ua)': $pia_lang_selected = 'uk_ua'; break;
-  default: $pia_lang_selected = 'en_us'; break;
+    case 'Arabic (ar_ar)': $pia_lang_selected = 'ar_ar'; break;
+    case 'Catalan (ca_ca)': $pia_lang_selected = 'ca_ca'; break;
+    case 'Czech (cs_cz)': $pia_lang_selected = 'cs_cz'; break;
+    case 'German (de_de)': $pia_lang_selected = 'de_de'; break;
+    case 'English (en_us)': $pia_lang_selected = 'en_us'; break;
+    case 'Spanish (es_es)': $pia_lang_selected = 'es_es'; break;
+    case 'Farsi (fa_fa)': $pia_lang_selected = 'fa_fa'; break;
+    case 'French (fr_fr)': $pia_lang_selected = 'fr_fr'; break;
+    case 'Italian (it_it)': $pia_lang_selected = 'it_it'; break;
+    case 'Norwegian (nb_no)': $pia_lang_selected = 'nb_no'; break;
+    case 'Polish (pl_pl)': $pia_lang_selected = 'pl_pl'; break;
+    case 'Portuguese (pt_br)': $pia_lang_selected = 'pt_br'; break;
+    case 'Portuguese (pt_pt)': $pia_lang_selected = 'pt_pt'; break;
+    case 'Russian (ru_ru)': $pia_lang_selected = 'ru_ru'; break;
+    case 'Turkish (tr_tr)': $pia_lang_selected = 'tr_tr'; break;
+    case 'Ukrainian (uk_ua)': $pia_lang_selected = 'uk_ua'; break;
+    case 'Chinese (zh_cn)': $pia_lang_selected = 'zh_cn'; break;
+    default: $pia_lang_selected = 'en_us'; break;
 }
 
 if (isset($pia_lang_selected) == FALSE or (strlen($pia_lang_selected) == 0)) {$pia_lang_selected = $defaultLang;}

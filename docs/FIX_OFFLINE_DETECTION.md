@@ -31,10 +31,11 @@ To improve presence accuracy and reduce false offline states:
 
 ### ✅ Increase ARP Scan Timeout
 
-Extend the ARP scanner timeout to ensure full subnet coverage:
+Extend the ARP scanner timeout and DURATION to ensure full subnet coverage:
 
 ```env
 ARPSCAN_RUN_TIMEOUT=360
+ARPSCAN_DURATION=30
 ```
 
 > Adjust based on your network size and device count.

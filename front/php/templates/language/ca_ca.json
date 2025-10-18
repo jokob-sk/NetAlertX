@@ -199,6 +199,7 @@
     "Device_MultiEdit_Backup": "Atenció, entrar valors incorrectes a continuació trencarà la configuració. Si us plau, abans feu còpia de seguretat la vostra base de dades o configuració de Dispositius (<a href=\"php/server/devices.php?action=ExportCSV\">clic per descarregar <i class=\"fa-solid fa-download fa-bounce\"></i></a>). Llegiu com per recuperar Dispositius des d'aquest fitxer al <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/BACKUPS.md#scenario-2-corrupted-database\" target=\"_blank\">documentació de Còpies de seguretat</a>. Per aplicar els canvis, feu click a la  <b>Save<i class=\"fa-solid fa-save\"></i></b> icona de cada camp que volgueu actualitzar.",
     "Device_MultiEdit_Fields": "Editar camps:",
     "Device_MultiEdit_MassActions": "Accions massives:",
+    "Device_MultiEdit_No_Devices": "Cap dispositiu seleccionat.",
     "Device_MultiEdit_Tooltip": "Atenció. Si feu clic a això s'aplicarà el valor de l'esquerra a tots els dispositius seleccionats a dalt.",
     "Device_Searchbox": "Cerca",
     "Device_Shortcut_AllDevices": "Els meus dispositius",

@@ -497,26 +497,78 @@ function checkNotification() {
   });
 }
 
-// Handling unread notifications favicon + bell floating number bublbe
+/**
+ * Handles unread notification indicators:
+ * - Updates the floating bell count bubble.
+ * - Changes the favicon to indicate unread notifications.
+ * - Updates the page title with a numeric prefix like "(3)".
+ *
+ * The function expects that the favicon element has the ID `#favicon`
+ * and that the bell count element has the ID `#unread-notifications-bell-count`.
+ *
+ * @param {number} count - The number of unread notifications.
+ *
+ * @example
+ * handleUnreadNotifications(3);
+ * // → shows "(3)" in the title, notification icon, and bell bubble
+ *
+ * handleUnreadNotifications(0);
+ * // → restores original favicon and hides bubble
+ */
 function handleUnreadNotifications(count) {
-  $('#unread-notifications-bell-count').html(count);
+  const $countBubble = $('#unread-notifications-bell-count');
+  const $favicon = $('#favicon');
+
+  // Capture current title — ideally cache the original globally if calling repeatedly
+  const originalTitle = document.title;
+
+  // Update notification bubble and favicon
+  $countBubble.html(count);
   if (count > 0) {
-    $('#unread-notifications-bell-count').show();
-    // Change the favicon to show there are notifications
-    $('#favicon').attr('href', 'img/NetAlertX_logo_notification.png');
-    // Update the title to include the count
-    document.title = `(${count}) ` + originalTitle;
+    $countBubble.show();
+    $favicon.attr('href', 'img/NetAlertX_logo_notification.png');
   } else {
-    $('#unread-notifications-bell-count').hide();
-    // Change the favicon back to the original
-    $('#favicon').attr('href', 'img/NetAlertX_logo.png');
-    // Revert the title to the original title
-    document.title = originalTitle;
+    $countBubble.hide();
+    $favicon.attr('href', 'img/NetAlertX_logo.png');
   }
+
+  // Update the document title with "(count)" prefix
+  document.title = addOrUpdateNumberBrackets(originalTitle, count);
 }
 
-// Store the original title of the document
-var originalTitle = document.title;
+/**
+ * Adds, updates, or removes a numeric prefix in parentheses before a given string.
+ *
+ * Behavior:
+ * - If `count` is 0 → removes any existing "(...)" prefix.
+ * - If string already starts with "(...)" → replaces it with the new count.
+ * - Otherwise → adds "(count)" as a prefix before the input text.
+ *
+ * Examples:
+ *   addOrUpdateNumberBrackets("Device", 3)       → "(3) Device"
+ *   addOrUpdateNumberBrackets("(1) Device", 4)   → "(4) Device"
+ *   addOrUpdateNumberBrackets("(5) Device", 0)   → "Device"
+ *
+ * @param {string} input - The input string (e.g., a device name).
+ * @param {number} count - The number to place inside the parentheses.
+ * @returns {string} The updated string with the correct "(count)" prefix.
+ */
+function addOrUpdateNumberBrackets(input, count) {
+  let result = input.trim();
+
+  if (count === 0) {
+    // Remove any existing "(...)" prefix
+    result = result.replace(/^\(.*?\)\s*/, '');
+  } else if (/^\(.*?\)/.test(result)) {
+    // Replace existing "(...)" prefix
+    result = result.replace(/^\(.*?\)/, `(${count})`);
+  } else {
+    // Add new "(count)" prefix
+    result = `(${count}) ${result}`;
+  }
+
+  return result.trim();
+}
 
 
 // Start checking for notifications periodically

@@ -153,47 +153,259 @@ class SafeConditionBuilder:
     def _parse_condition(self, condition: str) -> Tuple[str, Dict[str, Any]]:
         """
         Parse a condition string into safe SQL with parameters.
-        
-        This method handles basic patterns like:
-        - AND devName = 'value'
-        - AND devComments LIKE '%value%'
-        - AND eve_EventType IN ('type1', 'type2')
-        
+
+        This method handles both single and compound conditions:
+        - Single: AND devName = 'value'
+        - Compound: AND devName = 'value' AND devVendor = 'Apple'
+        - Multiple clauses with AND/OR operators
+
         Args:
             condition: Condition string to parse
-            
+
         Returns:
             Tuple of (safe_sql_snippet, parameters_dict)
         """
         condition = condition.strip()
-        
+
+        # Handle empty conditions
+        if not condition:
+            return "", {}
+
+        # Check if this is a compound condition (multiple clauses)
+        if self._is_compound_condition(condition):
+            return self._parse_compound_condition(condition)
+
+        # Single condition: extract leading logical operator if present
+        logical_op = None
+        clause_text = condition
+
+        # Check for leading AND
+        if condition.upper().startswith('AND ') or condition.upper().startswith('AND\t'):
+            logical_op = 'AND'
+            clause_text = condition[3:].strip()
+        # Check for leading OR
+        elif condition.upper().startswith('OR ') or condition.upper().startswith('OR\t'):
+            logical_op = 'OR'
+            clause_text = condition[2:].strip()
+
+        # Parse the single condition
+        return self._parse_single_condition(clause_text, logical_op)
+
+    def _is_compound_condition(self, condition: str) -> bool:
+        """
+        Determine if a condition contains multiple clauses (compound condition).
+
+        A compound condition has multiple logical operators (AND/OR) connecting
+        separate comparison clauses.
+
+        Args:
+            condition: Condition string to check
+
+        Returns:
+            True if compound (multiple clauses), False if single clause
+        """
+        # Track if we're inside quotes to avoid counting operators in quoted strings
+        in_quotes = False
+        logical_op_count = 0
+        i = 0
+
+        while i < len(condition):
+            char = condition[i]
+
+            # Toggle quote state
+            if char == "'":
+                in_quotes = not in_quotes
+                i += 1
+                continue
+
+            # Only count logical operators outside of quotes
+            if not in_quotes:
+                # Look for AND or OR as whole words
+                remaining = condition[i:].upper()
+
+                # Check for AND (must be word boundary)
+                if remaining.startswith('AND ') or remaining.startswith('AND\t'):
+                    logical_op_count += 1
+                    i += 3
+                    continue
+
+                # Check for OR (must be word boundary)
+                if remaining.startswith('OR ') or remaining.startswith('OR\t'):
+                    logical_op_count += 1
+                    i += 2
+                    continue
+
+            i += 1
+
+        # A compound condition has more than one logical operator
+        # (first AND/OR starts the condition, subsequent ones connect clauses)
+        return logical_op_count > 1
+
+    def _parse_compound_condition(self, condition: str) -> Tuple[str, Dict[str, Any]]:
+        """
+        Parse a compound condition with multiple clauses.
+
+        Splits the condition into individual clauses, parses each one,
+        and reconstructs the full condition with all parameters.
+
+        Args:
+            condition: Compound condition string
+
+        Returns:
+            Tuple of (safe_sql_snippet, parameters_dict)
+        """
+        # Split the condition into individual clauses while preserving logical operators
+        clauses = self._split_by_logical_operators(condition)
+
+        # Parse each clause individually
+        parsed_parts = []
+        all_params = {}
+
+        for clause_text, logical_op in clauses:
+            # Parse this single clause
+            sql_part, params = self._parse_single_condition(clause_text, logical_op)
+
+            if sql_part:
+                parsed_parts.append(sql_part)
+                all_params.update(params)
+
+        if not parsed_parts:
+            raise ValueError("No valid clauses found in compound condition")
+
+        # Join all parsed parts
+        final_sql = " ".join(parsed_parts)
+
+        return final_sql, all_params
+
+    def _split_by_logical_operators(self, condition: str) -> List[Tuple[str, Optional[str]]]:
+        """
+        Split a compound condition into individual clauses.
+
+        Returns a list of tuples: (clause_text, logical_operator)
+        The logical operator is the AND/OR that precedes the clause.
+
+        Args:
+            condition: Compound condition string
+
+        Returns:
+            List of (clause_text, logical_op) tuples
+        """
+        clauses = []
+        current_clause = []
+        current_logical_op = None
+        in_quotes = False
+        i = 0
+
+        while i < len(condition):
+            char = condition[i]
+
+            # Toggle quote state
+            if char == "'":
+                in_quotes = not in_quotes
+                current_clause.append(char)
+                i += 1
+                continue
+
+            # Only look for logical operators outside of quotes
+            if not in_quotes:
+                remaining = condition[i:].upper()
+
+                # Check if we're at a word boundary (start of string or after whitespace)
+                at_word_boundary = (i == 0 or condition[i-1] in ' \t')
+
+                # Check for AND (must be at word boundary)
+                if at_word_boundary and (remaining.startswith('AND ') or remaining.startswith('AND\t')):
+                    # Save current clause if we have one
+                    if current_clause:
+                        clause_text = ''.join(current_clause).strip()
+                        if clause_text:
+                            clauses.append((clause_text, current_logical_op))
+                        current_clause = []
+
+                    # Set the logical operator for the next clause
+                    current_logical_op = 'AND'
+                    i += 3  # Skip 'AND'
+
+                    # Skip whitespace after AND
+                    while i < len(condition) and condition[i] in ' \t':
+                        i += 1
+                    continue
+
+                # Check for OR (must be at word boundary)
+                if at_word_boundary and (remaining.startswith('OR ') or remaining.startswith('OR\t')):
+                    # Save current clause if we have one
+                    if current_clause:
+                        clause_text = ''.join(current_clause).strip()
+                        if clause_text:
+                            clauses.append((clause_text, current_logical_op))
+                        current_clause = []
+
+                    # Set the logical operator for the next clause
+                    current_logical_op = 'OR'
+                    i += 2  # Skip 'OR'
+
+                    # Skip whitespace after OR
+                    while i < len(condition) and condition[i] in ' \t':
+                        i += 1
+                    continue
+
+            # Add character to current clause
+            current_clause.append(char)
+            i += 1
+
+        # Don't forget the last clause
+        if current_clause:
+            clause_text = ''.join(current_clause).strip()
+            if clause_text:
+                clauses.append((clause_text, current_logical_op))
+
+        return clauses
+
+    def _parse_single_condition(self, condition: str, logical_op: Optional[str] = None) -> Tuple[str, Dict[str, Any]]:
+        """
+        Parse a single condition clause into safe SQL with parameters.
+
+        This method handles basic patterns like:
+        - devName = 'value' (with optional AND/OR prefix)
+        - devComments LIKE '%value%'
+        - eve_EventType IN ('type1', 'type2')
+
+        Args:
+            condition: Single condition string to parse
+            logical_op: Optional logical operator (AND/OR) to prepend
+
+        Returns:
+            Tuple of (safe_sql_snippet, parameters_dict)
+        """
+        condition = condition.strip()
+
         # Handle empty conditions
         if not condition:
             return "", {}
 
         # Simple pattern matching for common conditions
-        # Pattern 1: AND/OR column operator value (supporting Unicode in quoted strings)
-        pattern1 = r'^\s*(AND|OR)?\s+(\w+)\s+(=|!=|<>|<|>|<=|>=|LIKE|NOT\s+LIKE)\s+\'([^\']*)\'\s*$'
+        # Pattern 1: [AND/OR] column operator value (supporting Unicode in quoted strings)
+        pattern1 = r'^\s*(\w+)\s+(=|!=|<>|<|>|<=|>=|LIKE|NOT\s+LIKE)\s+\'([^\']*)\'\s*$'
         match1 = re.match(pattern1, condition, re.IGNORECASE | re.UNICODE)
-        
+
         if match1:
-            logical_op, column, operator, value = match1.groups()
+            column, operator, value = match1.groups()
             return self._build_simple_condition(logical_op, column, operator, value)
 
-        # Pattern 2: AND/OR column IN ('val1', 'val2', ...)
-        pattern2 = r'^\s*(AND|OR)?\s+(\w+)\s+(IN|NOT\s+IN)\s+\(([^)]+)\)\s*$'
+        # Pattern 2: [AND/OR] column IN ('val1', 'val2', ...)
+        pattern2 = r'^\s*(\w+)\s+(IN|NOT\s+IN)\s+\(([^)]+)\)\s*$'
         match2 = re.match(pattern2, condition, re.IGNORECASE)
-        
+
         if match2:
-            logical_op, column, operator, values_str = match2.groups()
+            column, operator, values_str = match2.groups()
             return self._build_in_condition(logical_op, column, operator, values_str)
 
-        # Pattern 3: AND/OR column IS NULL/IS NOT NULL
-        pattern3 = r'^\s*(AND|OR)?\s+(\w+)\s+(IS\s+NULL|IS\s+NOT\s+NULL)\s*$'
+        # Pattern 3: [AND/OR] column IS NULL/IS NOT NULL
+        pattern3 = r'^\s*(\w+)\s+(IS\s+NULL|IS\s+NOT\s+NULL)\s*$'
         match3 = re.match(pattern3, condition, re.IGNORECASE)
-        
+
         if match3:
-            logical_op, column, operator = match3.groups()
+            column, operator = match3.groups()
             return self._build_null_condition(logical_op, column, operator)
 
         # If no patterns match, reject the condition for security

@@ -199,6 +199,7 @@
     "Device_MultiEdit_Backup": "",
     "Device_MultiEdit_Fields": "Editar campos:",
     "Device_MultiEdit_MassActions": "Ações em massa:",
+    "Device_MultiEdit_No_Devices": "",
     "Device_MultiEdit_Tooltip": "Cuidadoso. Clicar aqui aplicará o valor à esquerda a todos os dispositivos selecionados acima.",
     "Device_Searchbox": "Procurar",
     "Device_Shortcut_AllDevices": "",

@@ -169,7 +169,7 @@
 
   var eventsType      = 'all';
   var period          = '1 day';
-  var tableRows       = 25;
+  var tableRows       = parseInt(getSetting("UI_DEFAULT_PAGE_SIZE"));
   
   // Read parameters & Initialize components
   main();
@@ -181,7 +181,7 @@ function main() {
   period = getCookie(parPeriod) === "" ? "1 day" : getCookie(parPeriod);
   $('#period').val(period);
 
-  tableRows = getCookie(parTableRows) === "" ? 50 : parseInt(getCookie(parTableRows), 10);
+  tableRows = getCookie(parTableRows) === "" ? parseInt(getSetting("UI_DEFAULT_PAGE_SIZE")) : parseInt(getCookie(parTableRows), 10);
 
   // Initialize components
   initializeDatatable();
@@ -197,7 +197,7 @@ function initializeDatatable () {
   $('#tableEvents').DataTable({
     'paging'       : true,
     'lengthChange' : true,
-    'lengthMenu'   : [[10, 25, 50, 100, 500, -1], [10, 25, 50, 100, 500, 'All']],
+    'lengthMenu'   : getLengthMenu(parseInt(getSetting("UI_DEFAULT_PAGE_SIZE"))),
     'searching'    : true,
     'ordering'     : true,
     'info'         : true,

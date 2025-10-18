@@ -64,7 +64,8 @@
       "name": "subnets",
       "type": "setting",
       "value": "SCAN_SUBNETS",
-      "base64": true
+      "base64": true,
+      "timeoutMultiplier": true
     }
   ],
   "settings": [
@@ -385,6 +386,34 @@
         {
           "language_code": "en_us",
           "string": "Arguments to run arps-scan with. Recommended and tested only with the setting: <br/> <code>sudo arp-scan --ignoredups --retry=6</code>."
+        }
+      ]
+    },
+    {
+      "function": "DURATION",
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "number" }],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": 0,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Discovery duration"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "If <code>DURATION</code> is not <code>0</code>, the scan runs repeatedly per interface for that many seconds. <strong>Important:</strong> <code>RUN_TIMEOUT</code> must be greater than <code>DURATION</code>, otherwise the scan will fail."
         }
       ]
     }

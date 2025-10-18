@@ -199,6 +199,7 @@
     "Device_MultiEdit_Backup": "Будьте осторожны: ввод неправильных значений ниже приведет к поломке вашей настройки. Сначала сделайте резервную копию базы данных или конфигурации устройств (<a href=\"php/server/devices.php?action=ExportCSV\">нажмите для загрузки <i class=\"fa-solid fa-download fa-bounce\"></i></a>). О том, как восстановить Устройства из этого файла, читайте в разделе <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/BACKUPS.md#scenario-2-corrupted-database\" target=\"_blank\">Документация о резервном копировании</a>. Чтобы применить свои изменения, нажмите на значок <b> Сохранить <i class = \"fa-solid fa-save\"> </i> </b> в каждом поле, которое вы хотите обновить.",
     "Device_MultiEdit_Fields": "Редактировать поля:",
     "Device_MultiEdit_MassActions": "Массовые действия:",
+    "Device_MultiEdit_No_Devices": "Устройства не выбраны.",
     "Device_MultiEdit_Tooltip": "Осторожно. При нажатии на эту кнопку значение слева будет применено ко всем устройствам, выбранным выше.",
     "Device_Searchbox": "Поиск",
     "Device_Shortcut_AllDevices": "Мои устройства",

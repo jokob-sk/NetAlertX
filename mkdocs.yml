@@ -74,6 +74,7 @@ nav:
         - Environment Setup: DEV_ENV_SETUP.md
         - Devcontainer: DEV_DEVCONTAINER.md
         - Custom Plugins: PLUGINS_DEV.md
+        - Plugin Config: PLUGINS_DEV_CONFIG.md
         - Frontend Development: FRONTEND_DEVELOPMENT.md
         - Database: DATABASE.md
         - Settings: SETTINGS_SYSTEM.md
@@ -86,6 +87,7 @@ nav:
         - Sessions: API_SESSIONS.md
         - Settings: API_SETTINGS.md
         - Events: API_EVENTS.md
+        - Messaging in-app: API_MESSAGING_IN_APP.md
         - Metrics: API_METRICS.md
         - Net Tools: API_NETTOOLS.md
         - Online History: API_ONLINEHISTORY.md

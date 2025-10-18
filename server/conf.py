@@ -31,7 +31,7 @@ arpscan_devices = []
 SCAN_SUBNETS    = ['192.168.1.0/24 --interface=eth1', '192.168.1.0/24 --interface=eth0']   
 LOG_LEVEL       = 'verbose' 
 TIMEZONE        = 'Europe/Berlin'
-UI_LANG         = 'English' 
+UI_LANG         = 'English (en_us)' 
 UI_PRESENCE       = ['online', 'offline', 'archived']  
 UI_MY_DEVICES     = ['online', 'offline', 'archived', 'new', 'down']  
 UI_NOT_RANDOM_MAC = []
