@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-LOG_DIR=${NETALERTX_APP}
+LOG_DIR=${NETALERTX_LOG}
 RUN_DIR=${SYSTEM_SERVICES_RUN}
 TMP_DIR=${SYSTEM_SERVICES_RUN_TMP}
 SYSTEM_NGINX_CONFIG_TEMPLATE="/services/config/nginx/netalertx.conf.template"
@@ -28,17 +28,17 @@ forward_signal() {
 
 
 # When in devcontainer we must kill any existing nginx processes
-while $(ps ax | grep -v -e "grep" -e "nginx.sh" | grep nginx >/dev/null); do
+while ps ax | grep -v -e "grep" -e "nginx.sh" | grep nginx >/dev/null 2>&1; do
 	killall nginx &>/dev/null || true
 	sleep 0.2
 done
 
 TEMP_CONFIG_FILE=$(mktemp "${TMP_DIR}/netalertx.conf.XXXXXX")
 if envsubst '${LISTEN_ADDR} ${PORT}' < "${SYSTEM_NGINX_CONFIG_TEMPLATE}" > "${TEMP_CONFIG_FILE}" 2>/dev/null; then
-	mv "${TEMP_CONFIG_FILE}" "${SYSTEM_NGINX_CONFIG_FILE}" 2>/dev/null || true
+	mv "${TEMP_CONFIG_FILE}" "${SYSTEM_NGINX_CONFIG_FILE}" 
 else
 	echo "Note: Unable to write to ${SYSTEM_NGINX_CONFIG_FILE}. Using default configuration."
-	rm -f "${TEMP_CONFIG_FILE}" 2>/dev/null || true
+	rm -f "${TEMP_CONFIG_FILE}" 
 fi
 
 trap cleanup EXIT

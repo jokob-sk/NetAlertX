@@ -15,7 +15,7 @@
 # ----------------------------------------------------------------------
 
 # Download the file using wget to stdout and process it
-wget -q "http://standards-oui.ieee.org/oui/oui.txt" -O /dev/stdout | \
+wget -q "https://standards-oui.ieee.org/oui/oui.txt" -O /dev/stdout | \
     sed -E 's/ *\(base 16\)//' | \
     awk -F' ' '{printf "%s\t%s\n", $1, substr($0, index($0, $2))}' | \
     sort | \

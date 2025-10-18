@@ -1,9 +1,9 @@
 #!/bin/sh
-# check_nmap_caps.sh - Uses a real nmap command to detect missing container
+# check-cap.sh - Uses a real nmap command to detect missing container
 # privileges and warns the user. It is silent on success.
 
 # Run a fast nmap command that requires raw sockets, capturing only stderr.
-ERROR_OUTPUT=$(nmap --privileged -sS -p 20211 127.0.0.1 2>&1 >/dev/null)
+ERROR_OUTPUT=$(nmap --privileged -sS -p 20211 127.0.0.1 2>&1)
 EXIT_CODE=$?
 
 # Flag common capability errors regardless of exact exit code.

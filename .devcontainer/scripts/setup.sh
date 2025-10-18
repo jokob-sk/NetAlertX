@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/bin/bash
 # Runtime setup for devcontainer (executed after container starts).
 # Prefer building setup into resources/devcontainer-Dockerfile when possible.
 # Use this script for runtime-only adjustments (permissions, sockets, ownership,
@@ -31,7 +31,7 @@ main() {
     sleep 1
     echo "Setting up ${SOURCE_DIR}..."
     sudo chown $(id -u):$(id -g) /workspaces
-    sudo chown 755 /workspaces
+    sudo chmod 755 /workspaces
     configure_source
     
     echo "--- Starting Development Services ---"
@@ -50,7 +50,7 @@ isRamDisk() {
   local fstype
   fstype=$(df -T "$1" | awk 'NR==2 {print $2}')
 
-  if [[ "$fstype" == "tmpfs" || "$fstype" == "ramfs" ]]; then
+  if [ "$fstype" = "tmpfs" ] || [ "$fstype" = "ramfs" ]; then
     return 0 # Success (is a ramdisk)
   else
     return 1 # Failure (is not a ramdisk)
@@ -108,7 +108,7 @@ configure_source() {
 # configure_php: configure PHP-FPM and enable dev debug options
 configure_php() {
     echo "[3/4] Configuring PHP-FPM..."
-    sudo chown netalertx:netalertx  ${SYSTEM_SERVICES_PHP_RUN} 2>/dev/null || true
+    sudo chown -R netalertx:netalertx  ${SYSTEM_SERVICES_RUN} 2>/dev/null || true
 
 }
 

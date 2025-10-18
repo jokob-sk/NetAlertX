@@ -5,8 +5,7 @@
 # Prefer to place dev-only setup here; use setup.sh only for runtime fixes.
 
 FROM runner AS netalertx-devcontainer
-ENV INSTALL_DIR=/app 
- 
+ENV INSTALL_DIR=/app
 
 ENV PYTHONPATH=/workspaces/NetAlertX/test:/workspaces/NetAlertX/server:/app:/app/server:/opt/venv/lib/python3.12/site-packages
 ENV PATH=/services:${PATH}
@@ -30,4 +29,4 @@ RUN /bin/sh -c '(/opt/venv/bin/python3 -m pip install --no-cache-dir debugpy) ||
     sed -i -e 's|:/app:|:/workspaces:|' /etc/passwd && \
     python -m pip install -U pytest pytest-cov
 
-ENTRYPOINT  ["/bin/sh","-c","sleep infinity"]
+ENTRYPOINT ["/bin/sh","-c","sleep infinity"]
