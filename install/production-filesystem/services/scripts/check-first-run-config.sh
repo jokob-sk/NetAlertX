@@ -16,7 +16,7 @@ if [ ! -f ${NETALERTX_CONFIG}/app.conf ]; then
     >&2 printf "%s" "${CYAN}"
     >&2 cat <<'EOF'
 ══════════════════════════════════════════════════════════════════════════════
-🆕  First run detected. Default configuration written to /app/config/app.conf.
+🆕  First run detected. Default configuration written to ${NETALERTX_CONFIG}/app.conf.
 
     Review your settings in the UI or edit the file directly before trusting
     this instance in production.
