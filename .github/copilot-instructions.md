@@ -1,7 +1,7 @@
 # NetAlertX AI Assistant Instructions
-This is NetAlertX — network monitoring & alerting. NetAlertX provides Network inventory, awareness, insight, categorization, intruder and presence detection. This is a heavily community driven project, welcoming of all contributions. 
+This is NetAlertX — network monitoring & alerting. NetAlertX provides Network inventory, awareness, insight, categorization, intruder and presence detection. This is a heavily community-driven project, welcoming of all contributions.
 
-You are to expected to be concise, opinionated, and biased toward security and simplicity.
+You are expected to be concise, opinionated, and biased toward security and simplicity.
 
 ## Architecture (what runs where)
 - Backend (Python): main loop + GraphQL/REST endpoints orchestrate scans, plugins, workflows, notifications, and JSON export.

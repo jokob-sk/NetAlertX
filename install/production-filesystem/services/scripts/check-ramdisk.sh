@@ -33,7 +33,7 @@ EOF
 
 
 # If NETALERTX_DEBUG=1 then we will exit
-if [ "${NETALERTX_DEBUG}" -eq 1 ]; then
+if [ "${NETALERTX_DEBUG}" = "1" ]; then
 	exit 0
 fi
 
@@ -45,6 +45,6 @@ if [ "${failures}" -ne 0 ]; then
     exit 1
 fi
 
-if [ ! -f "${SYSTEM_NGINIX_CONFIG}/conf.active" ]; then
-    echo "Note: Using default listen address ${LISTEN_ADDR}:${PORT} (no ${SYSTEM_NGINIX_CONFIG}/conf.active override)."
+if [ ! -f "${SYSTEM_NGINX_CONFIG}/conf.active" ]; then
+    echo "Note: Using default listen address ${LISTEN_ADDR}:${PORT} (no ${SYSTEM_NGINX_CONFIG}/conf.active override)."
 fi

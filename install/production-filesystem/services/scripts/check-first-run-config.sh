@@ -3,8 +3,14 @@
 
 # Check for app.conf and deploy if required
 if [ ! -f ${NETALERTX_CONFIG}/app.conf ]; then
-    mkdir -p ${NETALERTX_CONFIG}
-    cp /app/back/app.conf ${NETALERTX_CONFIG}/app.conf
+    mkdir -p "${NETALERTX_CONFIG}" || {
+        >&2 echo "ERROR: Failed to create config directory ${NETALERTX_CONFIG}"
+        exit 1
+    }
+    cp /app/back/app.conf "${NETALERTX_CONFIG}/app.conf" || {
+        >&2 echo "ERROR: Failed to copy default config to ${NETALERTX_CONFIG}/app.conf"
+        exit 1
+    }
     CYAN='\033[1;36m'
     RESET='\033[0m'
     >&2 printf "%s" "${CYAN}"

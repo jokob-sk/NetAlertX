@@ -98,7 +98,7 @@ configure_source() {
     sudo chown -R netalertx:www-data ${INSTALL_DIR}
 
     
-    while `ps ax | grep -v grep | grep python3 > /dev/null`; do
+    while ps ax | grep -v grep | grep python3 > /dev/null; do
         killall python3 &>/dev/null
         sleep 0.2
     done

@@ -5,11 +5,12 @@ export INSTALL_DIR=/app
 
 # Check if there are any entries with cron_restart_backend
 if grep -q "cron_restart_backend" "${LOG_EXECUTION_QUEUE}"; then
-  # Restart python application using s6
   killall python3
   sleep 2
   /services/start-backend.sh &
 
   # Remove all lines containing cron_restart_backend from the log file
-  sed -i '/cron_restart_backend/d' "${LOG_EXECUTION_QUEUE}"
+  # Atomic replacement with temp file
+  grep -v "cron_restart_backend" "${LOG_EXECUTION_QUEUE}" > "${LOG_EXECUTION_QUEUE}.tmp" && \
+    mv "${LOG_EXECUTION_QUEUE}.tmp" "${LOG_EXECUTION_QUEUE}"
 fi
