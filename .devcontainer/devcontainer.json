@@ -24,7 +24,7 @@
     // "--network=host",
   ],
   // ATTENTION: If running with --network=host, COMMENT `forwardPorts` OR ELSE THERE WILL BE NO WEBUI!
-  "forwardPorts": [20211, 20212,  5678],
+  "forwardPorts": [20211, 20212, 5678],
   "portsAttributes": { // the ports we care about
     "20211": {
       "label": "Frontend:Nginx+PHP"

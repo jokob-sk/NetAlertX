@@ -56,5 +56,6 @@ nginx \
 nginx_pid=$!
 
 wait "${nginx_pid}"
+nginx_exit=$?
 echo -ne " done"
-exit $?
+exit ${nginx_exit}

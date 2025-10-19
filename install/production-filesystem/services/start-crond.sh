@@ -29,6 +29,6 @@ echo "/usr/sbin/crond -c \"${SYSTEM_SERVICES_CROND}\" -f -L \"${LOG_CROND}\" >>\
 /usr/sbin/crond -c "${SYSTEM_SERVICES_CROND}" -f -L "${LOG_CROND}" >>"${LOG_CROND}" 2>&1 &
 crond_pid=$!
 
-wait "${crond_pid}"
+wait "${crond_pid}"; status=$?
 echo -ne " done"
-exit $?
+exit ${status}

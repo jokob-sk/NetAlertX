@@ -17,7 +17,7 @@ ENV PYDEVD_DISABLE_FILE_VALIDATION=1
 COPY .devcontainer/resources/devcontainer-overlay/ /
 
 # Install common tools, create user, and set up sudo
-RUN apk add --no-cache git nano vim jq php83-pecl-xdebug py3-pip nodejs sudo gpgconf pytest pytest-cov fish shfmt sudo
+RUN apk add --no-cache git nano vim jq php83-pecl-xdebug py3-pip nodejs sudo gpgconf pytest pytest-cov fish shfmt github-cli
 
 RUN install -d -o netalertx -g netalertx -m 755 /services/php/modules && \
     cp -a /usr/lib/php83/modules/. /services/php/modules/ && \

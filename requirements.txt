@@ -1,6 +1,5 @@
 openwrt-luci-rpc
 asusrouter
-asyncio
 aiohttp
 graphene
 flask
