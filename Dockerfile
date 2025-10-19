@@ -142,7 +142,7 @@ RUN apk add libcap && \
     setcap cap_net_raw,cap_net_admin+eip /usr/bin/arp-scan && \
     setcap cap_net_raw,cap_net_admin,cap_net_bind_service+eip /usr/bin/nbtscan && \
     setcap cap_net_raw,cap_net_admin+eip /usr/bin/traceroute && \
-    setcap cap_net_raw,cap_net_admin+eip ${VIRTUAL_ENV_BIN}/python3 && \
+    setcap cap_net_raw,cap_net_admin+eip $(readlink -f ${VIRTUAL_ENV_BIN}/python) && \
     /bin/sh /build/init-nginx.sh && \
     /bin/sh /build/init-php-fpm.sh && \
     /bin/sh /build/init-crond.sh && \
