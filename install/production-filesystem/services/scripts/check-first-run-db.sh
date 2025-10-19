@@ -19,8 +19,7 @@ EOF
 >&2 printf "%s" "${RESET}"
 
 # Write all text to db file until we see "end-of-database-schema"
-cat << end-of-database-schema > "${NETALERTX_DB_FILE}.sql"
-CREATE TABLE sqlite_stat1(tbl,idx,stat);
+sqlite3 "${NETALERTX_DB_FILE}" <<'end-of-database-schema'
 CREATE TABLE Events (eve_MAC STRING (50) NOT NULL COLLATE NOCASE, eve_IP STRING (50) NOT NULL COLLATE NOCASE, eve_DateTime DATETIME NOT NULL, eve_EventType STRING (30) NOT NULL COLLATE NOCASE, eve_AdditionalInfo STRING (250) DEFAULT (''), eve_PendingAlertEmail BOOLEAN NOT NULL CHECK (eve_PendingAlertEmail IN (0, 1)) DEFAULT (1), eve_PairEventRowid INTEGER);
 CREATE TABLE Sessions (ses_MAC STRING (50) COLLATE NOCASE, ses_IP STRING (50) COLLATE NOCASE, ses_EventTypeConnection STRING (30) COLLATE NOCASE, ses_DateTimeConnection DATETIME, ses_EventTypeDisconnection STRING (30) COLLATE NOCASE, ses_DateTimeDisconnection DATETIME, ses_StillConnected BOOLEAN, ses_AdditionalInfo STRING (250));
 CREATE TABLE IF NOT EXISTS "Online_History" (
@@ -434,9 +433,24 @@ CREATE TRIGGER "trg_delete_devices"
 end-of-database-schema
 
 if [ $? -ne 0 ]; then
-  >&2 echo "Error: Failed to write database schema to ${NETALERTX_DB_FILE}"
+  RED='\033[1;31m'
+  RESET='\033[0m'
+  >&2 printf "%s" "${RED}"
+  >&2 cat <<EOF
+══════════════════════════════════════════════════════════════════════════════
+❌  CRITICAL: Database schema creation failed for ${NETALERTX_DB_FILE}.
+
+    NetAlertX cannot start without a properly initialized database. This
+    failure typically indicates:
+
+    * Insufficient disk space or write permissions in the database directory
+    * Corrupted or inaccessible SQLite installation
+    * File system issues preventing database file creation
+
+    Check the logs for detailed SQLite error messages. Ensure the container
+    has write access to the database path and adequate storage space.
+══════════════════════════════════════════════════════════════════════════════
+EOF
+  >&2 printf "%s" "${RESET}"
   exit 1
 fi
-
-# Import the database schema into the new database file
-sqlite3 "${NETALERTX_DB_FILE}" < "${NETALERTX_DB}/db.sql"
