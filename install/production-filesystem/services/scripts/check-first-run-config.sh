@@ -14,7 +14,7 @@ if [ ! -f ${NETALERTX_CONFIG}/app.conf ]; then
     CYAN='\033[1;36m'
     RESET='\033[0m'
     >&2 printf "%s" "${CYAN}"
-    >&2 cat <<'EOF'
+    >&2 cat <<EOF
 ══════════════════════════════════════════════════════════════════════════════
 🆕  First run detected. Default configuration written to ${NETALERTX_CONFIG}/app.conf.
 
