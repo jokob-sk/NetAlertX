@@ -149,7 +149,7 @@ RUN apk add libcap && \
     /bin/sh /build/init-crond.sh && \
     /bin/sh /build/init-backend.sh && \
     rm -rf /build && \
-    apk del libcap &&
+    apk del libcap && \
     date +%s > ${NETALERTX_FRONT}/buildtimestamp.txt
 
 
