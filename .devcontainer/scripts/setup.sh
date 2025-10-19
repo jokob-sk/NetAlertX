@@ -87,7 +87,7 @@ configure_source() {
         ${INSTALL_DIR}/log/stdout.log
     touch ${INSTALL_DIR}/log/stderr.log \
         ${INSTALL_DIR}/log/execution_queue.log
-    echo 0>${INSTALL_DIR}/log/db_is_locked.log
+    echo 0 > ${INSTALL_DIR}/log/db_is_locked.log
     for f in ${INSTALL_DIR}/log/*.log; do
         sudo chown netalertx:www-data $f
         sudo chmod 664 $f
