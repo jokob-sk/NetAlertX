@@ -1,4 +1,4 @@
 # Every minute check for cron jobs
-* * * * * /services/cron_script.sh
+* * * * * /services/scripts/cron_script.sh
 # Update vendors 4x/d
-0 */6 * * * /services/update_vendors.sh
+0 */6 * * * /services/scripts/update_vendors.sh

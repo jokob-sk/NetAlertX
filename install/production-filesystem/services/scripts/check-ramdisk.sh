@@ -31,6 +31,12 @@ EOF
     >&2 printf "%s" "${RESET}"
 }
 
+
+# If NETALERTX_DEBUG=1 then we will exit
+if [ "${NETALERTX_DEBUG}" -eq 1 ]; then
+	exit 0
+fi
+
 failures=0
 warn_if_not_dedicated_mount "${NETALERTX_API}"
 warn_if_not_dedicated_mount "${NETALERTX_LOG}"

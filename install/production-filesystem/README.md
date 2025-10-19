@@ -1,20 +1,94 @@
 
-This is the default filesystem for NetAlertX. It contains
+# NetAlertX Production Container Filesystem
 
-- `/app` - The main application location.  This structure is where the source code (back, front and server directories) is copied and executed in read-only form. It also provides default structures for the working directories, such as: config, db, and log. All other directories are not required in the production image and are not tracked.
-- `/build` - a place where services can be initialized during docker container build. This folder is copied in, executed near the end of the build before the system is locked down, and then deleted.  It is only available during build time.
-- `/opt/venv/lib/python3.12/site-packages/aiofreebox` - this holds a certificate used by aiofreebox package, which interacts with freebox OS.
-- `/services` - a directory where all scripts which control system executions are held
-    - `/services/config` - a directory which holds all configuration files and `conf.d` folders used in the production image.
-        - `/services/config/crond` - `crond` daemon config.
-        - `/services/config/nginx` - `nginx` conf files.
-        - `/services/config/php` - php conf file.
-            - `/services/config/php/php-fpm.d` - a `.d` style directory, debugger parameters or other configurations can be dropped in here.
-        - `/services/config/python-backend-extra-launch-parameters` - the contents of this file are added to launch params. It can be used to add debugging capabilities.
-    - `/services/capcheck.sh` - This is run at startup to warn the user if the container does not hold required permissions to operate certain raw-packet tools.
-    - `/services/healthcheck.sh` - The system healthcheck. This script tests the services and reports if something fails.
-    - `/services/start-backend.sh` - The launcher for python services. This is called at startup by `entrypoint.sh`.
-    - `/services/start-crond.sh` - The launcher for crond task scheduler. This is called at startup by `entrypoint.sh`.
-    - `/services/start-nginx.sh` - The launcher for nginx frontend/website services. This is called at startup by `entrypoint.sh`.
-    - `/services/start-php-fpm.sh` - The launcher for php-fpm, used to interpret php for the frontend website. This is called at startup by `entrypoint.sh`.
-- `/entrypoint.sh` - Called at system startup to launch all services and servers required by NetAlertX.
+This document describes the filesystem structure of the NetAlertX production Docker container. This setup focuses on security by separating application code, configuration, and runtime data.
+
+## Directory Structure
+
+### `/app` - Main Application Directory
+The core application location where NetAlertX runs. This directory contains the main application code and working data, with source code directories mounted in read-only mode for security. It provides the runtime environment for all NetAlertX operations including device scanning, web interface, and data processing.
+
+The core application location. Contains:
+- Source code directories (`back`, `front`, `server`) copied in read-only mode
+- Working directories for runtime data (`config`, `db`, `log`)
+- Other directories are not needed in production and are excluded
+
+### `/build` - Build-Time Scripts
+Temporary directory used during Docker image building to prepare the container environment. Scripts in this directory run during the build process to set up the system before it's locked down for production use. This ensures the container is properly configured before runtime.
+
+Temporary directory used during Docker image building:
+- Scripts run at the end of the build process
+- Deleted after build to reduce image size
+- Only exists during container creation
+
+### `/opt/venv/lib/python3.12/site-packages/aiofreebox` - Certificate Storage
+Contains SSL certificates required for secure communication with Freebox OS devices. The aiofreebox Python package uses these certificates to authenticate and establish encrypted connections when integrating with Freebox routers for network device discovery.
+
+Contains certificates for the aiofreebox package, which communicates with Freebox OS devices.
+
+### `/services` - Service Management
+Contains all scripts and configurations for running NetAlertX services. This directory holds the complete service orchestration layer that manages the container's runtime behavior, including startup scripts, configuration files, and utility tools for system maintenance and monitoring.
+
+Contains all scripts and configurations for running NetAlertX services:
+
+#### `/services/config` - Service Configurations
+Configuration files for each service that runs in the container. These files define how services like the web server, task scheduler, and Python backend operate, including security settings, resource limits, and integration parameters.
+
+Configuration files for each service:
+- `crond/` - Task scheduler settings
+- `nginx/` - Web server configuration
+- `php/` - PHP interpreter settings
+  - `php-fpm.d/` - Additional PHP configurations
+- `python/` - Python backend launch parameters
+
+#### `/services/scripts` - System Scripts and Utilities
+Pre-startup checks and specialized maintenance tools. Files named `check-*` are intended to verify system functions at startup and correct issues or warn users as needed. Additional scripts perform various update tasks and provide integration capabilities with external systems.
+
+Pre-startup checks and specialized maintenance tools:
+- `check-cap.sh` - Verifies container permissions for network tools
+- `check-first-run-config.sh` - Sets up initial configuration
+- `check-first-run-db.sh` - Prepares database on first run
+- `check-permissions.sh` - Validates file and directory permissions
+- `check-ramdisk.sh` - Checks temporary storage setup
+- `check-root.sh` - Confirms proper user privileges
+- `check-storage.sh` - Ensures storage directories exist
+- `update_vendors.sh` - Updates MAC address vendor database
+- `checkmk/` - Checkmk monitoring integration scripts
+- `db_cleanup/` - Database maintenance and cleanup tools
+- `db_empty/` - Database reset utilities
+- `list-ports.sh` - Network port enumeration script
+- `opnsense_leases/` - OPNsense DHCP lease integration tools
+
+#### `/services/run` - Runtime Data
+Directory for storing runtime data and logs generated by services during container operation. This provides a centralized location for monitoring service activity and troubleshooting issues that occur during normal operation.
+
+- `logs/` - Service runtime log files
+
+#### Service Control Scripts
+Scripts that start and manage the core services required for NetAlertX operation. These scripts handle the initialization of the web server, application server, task scheduler, and backend processing components that work together to provide network monitoring functionality.
+
+- `start-backend.sh` - Launches Python backend service
+- `start-crond.sh` - Starts task scheduler
+- `start-nginx.sh` - Starts web server
+- `start-php-fpm.sh` - Starts PHP processor
+- `healthcheck.sh` - Container health verification
+- `cron_script.sh` - Scheduled task definitions
+
+### `/entrypoint.sh` - Container Startup Script
+The main orchestration script that runs when the container starts. It coordinates the entire container initialization process, from pre-startup validation through service startup and ongoing monitoring, ensuring NetAlertX operates reliably in production environments.
+
+The main script that runs when the container starts:
+- Runs all pre-startup checks from `/services/scripts`
+- Creates necessary directories and files
+- Starts all required services (crond, PHP-FPM, nginx, Python backend)
+- Monitors services and handles failures
+- Ensures clean shutdown on container stop
+
+## Security Considerations
+
+- Application code is read-only to prevent modifications
+- Services run with minimal required permissions
+- Configurations are separated from code
+- Pre-startup checks verify system integrity
+- Runtime data is isolated in dedicated directories
+- Container exits immediately if any service fails (enables restart policies)

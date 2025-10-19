@@ -29,7 +29,6 @@
             "pathMappings": {
                 "/app": "${workspaceFolder}"
             }
-     
         }
     ]
 }

@@ -2,9 +2,9 @@
 # first-run-check.sh - Checks and initializes configuration files on first run
 
 # Check for app.conf and deploy if required
-if [ ! -f /app/config/app.conf ]; then
-    mkdir -p /app/config
-    cp /app/back/app.conf /app/config/app.conf
+if [ ! -f ${NETALERTX_CONFIG}/app.conf ]; then
+    mkdir -p ${NETALERTX_CONFIG}
+    cp /app/back/app.conf ${NETALERTX_CONFIG}/app.conf
     CYAN='\033[1;36m'
     RESET='\033[0m'
     >&2 printf "%s" "${CYAN}"

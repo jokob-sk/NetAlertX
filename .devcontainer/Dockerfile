@@ -135,10 +135,15 @@ RUN install -d -o ${NETALERTX_USER} -g ${NETALERTX_GROUP} -m 755 ${NETALERTX_API
 COPY --from=builder --chown=20212:20212 ${VIRTUAL_ENV} ${VIRTUAL_ENV}
 
 
-#initialize each service with the dockerfiles/init-*.sh scripts, once.
+# Initialize each service with the dockerfiles/init-*.sh scripts, once.
+# This is done after the copy of the venv to ensure the venv is in place
+# although it may be quicker to do it before the copy, it keeps the image
+# layers smaller to do it after.
 RUN apk add libcap && \
+    setcap cap_net_raw+ep /bin/busybox && \
     setcap cap_net_raw,cap_net_admin+eip /usr/bin/nmap && \
     setcap cap_net_raw,cap_net_admin+eip /usr/bin/arp-scan && \
+    setcap cap_net_raw,cap_net_admin,cap_net_bind_service+eip /usr/bin/nbtscan && \
     setcap cap_net_raw,cap_net_admin+eip /usr/bin/traceroute && \
     setcap cap_net_raw,cap_net_admin+eip ${VIRTUAL_ENV_BIN}/scapy && \
     /bin/sh /build/init-nginx.sh && \
@@ -177,15 +182,9 @@ RUN chown -R ${READ_ONLY_USER}:${READ_ONLY_GROUP} ${READ_ONLY_FOLDERS} && \
     chown -R ${NETALERTX_USER}:${NETALERTX_GROUP} ${READ_WRITE_FOLDERS} && \
     chmod -R 600 ${READ_WRITE_FOLDERS} && \
     find ${READ_WRITE_FOLDERS} -type d -exec chmod 700 {} + && \
-    chown ${READ_ONLY_USER}:${READ_ONLY_GROUP} /entrypoint.sh && \
-    chmod 005 /entrypoint.sh ${SYSTEM_SERVICES}/*.sh /app
-    
-# Copy the virtualenv from the builder stage
-COPY --from=builder --chown=20212:20212 ${VIRTUAL_ENV} ${VIRTUAL_ENV}
-
-# remove sudoers,  alpine installers pacakges, and all users and groups except
-# readonly and netalertx
-RUN apk del apk-tools && \
+    chown ${READ_ONLY_USER}:${READ_ONLY_GROUP} /entrypoint.sh /opt /opt/venv && \
+    chmod 005 /entrypoint.sh ${SYSTEM_SERVICES}/*.sh /app /opt /opt/venv && \
+    apk del apk-tools && \
     rm -Rf /var /etc/sudoers.d/* /etc/shadow /etc/gshadow /etc/sudoers \
     /lib/apk /lib/firmware /lib/modules-load.d /lib/sysctl.d /mnt /home/ /root \
     /srv /media && \
@@ -208,8 +207,7 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
 # Prefer to place dev-only setup here; use setup.sh only for runtime fixes.
 
 FROM runner AS netalertx-devcontainer
-ENV INSTALL_DIR=/app 
- 
+ENV INSTALL_DIR=/app
 
 ENV PYTHONPATH=/workspaces/NetAlertX/test:/workspaces/NetAlertX/server:/app:/app/server:/opt/venv/lib/python3.12/site-packages
 ENV PATH=/services:${PATH}
@@ -217,6 +215,7 @@ ENV PHP_INI_SCAN_DIR=/services/config/php/conf.d:/etc/php83/conf.d
 ENV LISTEN_ADDR=0.0.0.0
 ENV PORT=20211
 ENV NETALERTX_DEBUG=1
+ENV PYDEVD_DISABLE_FILE_VALIDATION=1
 COPY .devcontainer/resources/devcontainer-overlay/ /
 
 # Install common tools, create user, and set up sudo
@@ -233,4 +232,4 @@ RUN /bin/sh -c '(/opt/venv/bin/python3 -m pip install --no-cache-dir debugpy) ||
     sed -i -e 's|:/app:|:/workspaces:|' /etc/passwd && \
     python -m pip install -U pytest pytest-cov
 
-ENTRYPOINT  ["/bin/sh","-c","sleep infinity"]
+ENTRYPOINT ["/bin/sh","-c","sleep infinity"]

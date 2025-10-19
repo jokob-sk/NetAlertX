@@ -77,7 +77,7 @@ http {
 
 
 	# Enable gzipping of responses.
-	#gzip on;
+	gzip on;
 
 	# Set the Vary HTTP header as defined in the RFC 2616. Default is 'off'.
 	gzip_vary on;
@@ -99,7 +99,7 @@ http {
         root /app/front;
         index index.php;
         add_header X-Forwarded-Prefix "/app" always;
-    	proxy_set_header X-Forwarded-Prefix "/app";
+
 
         location ~* \.php$ {
             # Set Cache-Control header to prevent caching on the first load

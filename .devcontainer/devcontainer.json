@@ -14,7 +14,8 @@
   ],
   "runArgs": [
     "--security-opt",
-    "apparmor=unconfined" // for allowing ramdisk mounts
+    "apparmor=unconfined", // for allowing ramdisk mounts
+    "--add-host=host.docker.internal:host-gateway"
 
     // Uncomment --network=host to run full NetAlertX scanning capabilities of network scanning in
     // container. This runs too slowly in a large network to be practical for development purposes.
@@ -23,7 +24,7 @@
     // "--network=host",
   ],
   // ATTENTION: If running with --network=host, COMMENT `forwardPorts` OR ELSE THERE WILL BE NO WEBUI!
-  "forwardPorts": [20211, 20212, 9003,5678],
+  "forwardPorts": [20211, 20212,  5678],
   "portsAttributes": { // the ports we care about
     "20211": {
       "label": "Frontend:Nginx+PHP"
