@@ -18,9 +18,6 @@ set -euo pipefail
 TEMP_FILE="/services/run/tmp/ieee-oui.txt.tmp"
 OUTPUT_FILE="/services/run/tmp/ieee-oui.txt"
 
-TEMP_FILE="/services/run/tmp/ieee-oui.txt.tmp"
-OUTPUT_FILE="/services/run/tmp/ieee-oui.txt"
-
 # Download the file using wget to stdout and process it
 if ! wget --timeout=30 --tries=3 "https://standards-oui.ieee.org/oui/oui.txt" -O /dev/stdout | \
 	sed -E 's/ *\(base 16\)//' | \
@@ -45,7 +42,3 @@ fi
 # Atomic replacement
 mv "${TEMP_FILE}" "${OUTPUT_FILE}"
 echo "Successfully updated IEEE OUI database ($(wc -l < "${OUTPUT_FILE}") entries)"
-# Atomic replacement
-mv "${TEMP_FILE}" "${OUTPUT_FILE}"
-echo "Successfully updated IEEE OUI database ($(wc -l < "${OUTPUT_FILE}") entries)"
-
