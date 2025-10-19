@@ -15,8 +15,8 @@ set -euo pipefail
 #    /usr/share/arp-scan
 # ----------------------------------------------------------------------
 
-#!/usr/bin/env bash
-set -euo pipefail
+TEMP_FILE="/services/run/tmp/ieee-oui.txt.tmp"
+OUTPUT_FILE="/services/run/tmp/ieee-oui.txt"
 
 TEMP_FILE="/services/run/tmp/ieee-oui.txt.tmp"
 OUTPUT_FILE="/services/run/tmp/ieee-oui.txt"
