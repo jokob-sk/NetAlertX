@@ -45,5 +45,7 @@ fi
 # Atomic replacement
 mv "${TEMP_FILE}" "${OUTPUT_FILE}"
 echo "Successfully updated IEEE OUI database ($(wc -l < "${OUTPUT_FILE}") entries)"
-    > /services/run/tmp/ieee-oui.txt
+# Atomic replacement
+mv "${TEMP_FILE}" "${OUTPUT_FILE}"
+echo "Successfully updated IEEE OUI database ($(wc -l < "${OUTPUT_FILE}") entries)"
 
