@@ -102,6 +102,7 @@ configure_source() {
         killall python3 &>/dev/null
         sleep 0.2
     done
+	date +%s > ${NETALERTX_FRONT}/buildtimestamp.txt
     
 }
 
