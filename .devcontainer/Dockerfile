@@ -18,7 +18,7 @@
 # It reduces the chance of system hijacking and operates with all modern security protocols in place as is
 # expected from a security appliance.
 #
-# This file can be built with `docker compose -f docker-compose.yml up --build --force-recreate`
+# This file can be built with `docker-compose -f docker-compose.yml up --build --force-recreate`
 
 FROM alpine:3.22 AS builder
 
