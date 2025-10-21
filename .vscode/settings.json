@@ -10,4 +10,14 @@
     "python.defaultInterpreterPath": "/opt/venv/bin/python",
     // Let the Python extension invoke pytest via the interpreter; avoid hardcoded paths
     // Removed python.testing.pytestPath and legacy pytest.command overrides
+    
+    "terminal.integrated.defaultProfile.linux": "fish",
+    "terminal.integrated.profiles.linux": {
+      "fish": {
+        "path": "/usr/bin/fish"
+      }
+    }
+    ,
+    // Fallback for older VS Code versions or schema validators that don't accept custom profiles
+    "terminal.integrated.shell.linux": "/usr/bin/fish"
 }

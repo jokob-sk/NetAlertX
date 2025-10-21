@@ -102,10 +102,10 @@ else
   echo "The file ieee-oui.txt does not exist. Running update_vendors..."
 
   # Run the update_vendors.sh script
-  if [ -f "${INSTALL_PATH}/back/update_vendors.sh" ]; then
-    "${INSTALL_PATH}/back/update_vendors.sh"
+  if [ -f "${SYSTEM_SERVICES}/update_vendors.sh" ]; then
+    "${SYSTEM_SERVICES}/update_vendors.sh"
   else
-    echo "update_vendors.sh script not found in $INSTALL_DIR."    
+    echo "update_vendors.sh script not found in $SYSTEM_SERVICES."    
   fi
 fi
 
@@ -175,7 +175,7 @@ nginx -t || { echo "[INSTALL] nginx config test failed"; exit 1; }
 # sudo systemctl restart nginx
 
 #  Activate the virtual python environment
-source myenv/bin/activate
+source /opt/venv/bin/activate
 
 echo "[INSTALL] 🚀 Starting app - navigate to your <server IP>:${PORT}"
 

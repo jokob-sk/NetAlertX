@@ -1,8 +1,11 @@
 """ CONSTANTS for NetAlertX """
+import os
 
 #===============================================================================
 # PATHS
 #===============================================================================
+
+
 applicationPath = '/app'
 dbFileName      = 'app.db'
 confFileName    = 'app.conf'
@@ -17,8 +20,8 @@ reportTemplatesPath = applicationPath + '/front/report_templates/'
 fullConfFolder      = applicationPath + '/config'
 fullConfPath        = applicationPath + confPath
 fullDbPath          = applicationPath + dbPath
-vendorsPath         = '/usr/share/arp-scan/ieee-oui.txt'
-vendorsPathNewest   = '/usr/share/arp-scan/ieee-oui_all_filtered.txt'
+vendorsPath         = os.getenv('VENDORSPATH', '/usr/share/arp-scan/ieee-oui.txt')
+vendorsPathNewest   = os.getenv('VENDORSPATH_NEWEST', '/usr/share/arp-scan/ieee-oui_all_filtered.txt')
 
 default_tz          = 'Europe/Berlin'
 

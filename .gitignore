@@ -1,6 +1,15 @@
 .vscode
+.dotnet
+.vscode-server
+.gitconfig
+.*CommandMarker
+deviceid
 .DS_Store
+.cache
+nohup.out
 config/*
+.ash_history
+.VERSION
 config/pialert.conf
 config/app.conf
 db/*
@@ -8,6 +17,7 @@ db/pialert.db
 db/app.db
 front/log/*
 /log/*
+/log/plugins/*
 front/api/*
 /api/*
 **/plugins/**/*.log

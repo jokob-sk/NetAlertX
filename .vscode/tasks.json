@@ -2,9 +2,9 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Generate Dockerfile",
+      "label": "[Any POSIX] Generate Devcontainer Configs",
       "type": "shell",
-      "command": "${workspaceFolder:NetAlertX}/.devcontainer/scripts/generate-dockerfile.sh",
+      "command": ".devcontainer/scripts/generate-configs.sh",
       "presentation": {
         "echo": true,
         "reveal": "always",
@@ -16,18 +16,15 @@
         "kind": "build",
         "isDefault": false
       },
-      "options": {
-        "cwd": "${workspaceFolder:NetAlertX}"
-      },
       "icon": {
         "id": "tools",
         "color": "terminal.ansiYellow"
       }
     },
     {
-      "label": "Re-Run Startup Script",
+      "label": "[Any] Docker system and build Prune",
       "type": "shell",
-      "command": "${workspaceFolder:NetAlertX}/.devcontainer/scripts/setup.sh",
+  "command": ".devcontainer/scripts/confirm-docker-prune.sh",
       "presentation": {
         "echo": true,
         "reveal": "always",
@@ -35,15 +32,42 @@
         "showReuseMessage": false
       },
       "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "icon": {
+        "id": "trash",
+        "color": "terminal.ansiRed"
+      }
+    },
+    {
+      "label": "[Dev Container] Re-Run Startup Script",
+      "type": "shell",
+      "command": "./isDevContainer.sh || exit 1;/workspaces/NetAlertX/.devcontainer/scripts/setup.sh",
+      "options": {
+        "cwd": "/workspaces/NetAlertX/.devcontainer/scripts"
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "panel": "shared",
+        "showReuseMessage": false
+      },
+
+      "problemMatcher": [],
       "icon": {
         "id": "beaker",
         "color": "terminal.ansiBlue"
       }
     },
     {
-      "label": "Start Backend (Python)",
+      "label": "[Dev Container] Start Backend (Python)",
       "type": "shell",
-      "command": "/workspaces/NetAlertX/.devcontainer/scripts/restart-backend.sh",
+      "command": "./isDevContainer.sh || exit 1; /services/start-backend.sh",
+      "options": {
+        "cwd": "/workspaces/NetAlertX/.devcontainer/scripts"
+      },
       "presentation": {
         "echo": true,
         "reveal": "always",
@@ -58,9 +82,12 @@
       }
     },
     {
-      "label": "Start Frontend (nginx and PHP-FPM)",
+      "label": "[Dev Container] Start CronD (Scheduler)",
       "type": "shell",
-      "command": "killall php-fpm83 nginx 2>/dev/null || true; sleep 1; php-fpm83 & nginx",
+      "command": "./isDevContainer.sh || exit 1; /services/start-crond.sh",
+      "options": {
+        "cwd": "/workspaces/NetAlertX/.devcontainer/scripts"
+      },
       "presentation": {
         "echo": true,
         "reveal": "always",
@@ -75,9 +102,33 @@
       }
     },
     {
-      "label": "Stop Frontend & Backend Services",
+      "label": "[Dev Container] Start Frontend (nginx and PHP-FPM)",
       "type": "shell",
-      "command": "pkill -f 'php-fpm83|nginx|crond|python3' || true",
+      "command": "./isDevContainer.sh || exit 1; /services/start-php-fpm.sh & /services/start-nginx.sh  &",
+      "options": {
+        "cwd": "/workspaces/NetAlertX/.devcontainer/scripts"
+
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "panel": "shared",
+        "showReuseMessage": false,
+        "clear": false
+      },
+      "problemMatcher": [],
+      "icon": {
+        "id": "debug-restart",
+        "color": "terminal.ansiGreen"
+      }
+    },
+    {
+      "label": "[Dev Container] Stop Frontend & Backend Services",
+      "type": "shell",
+      "command": "./isDevContainer.sh || exit 1; pkill -f 'php-fpm83|nginx|crond|python3' || true",
+      "options": {
+        "cwd": "/workspaces/NetAlertX/.devcontainer/scripts"
+      },
       "presentation": {
         "echo": true,
         "reveal": "always",
@@ -88,6 +139,25 @@
       "icon": {
         "id": "debug-stop",
         "color": "terminal.ansiRed"
+      }
+    },
+    {
+      "label": "[Dev Container] List NetAlertX Ports",
+      "type": "shell",
+      "command": "list-ports.sh",
+      "options": {
+        "cwd": "/workspaces/NetAlertX/.devcontainer/scripts"
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "panel": "shared",
+        "showReuseMessage": false
+      },
+      "problemMatcher": [],
+      "icon": {
+        "id": "output",
+        "color": "terminal.ansiBlue"
       }
     }
   ]
