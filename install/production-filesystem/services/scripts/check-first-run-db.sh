@@ -2,8 +2,17 @@
 # This script checks if the database file exists, and if not, creates it with the initial schema.
 # It is intended to be run at the first start of the application.
 
-# if the db exists, exit
-test -f "${NETALERTX_DB_FILE}" && exit 0
+# If ALWAYS_FRESH_INSTALL is true, remove the database to force a rebuild.
+if [ "${ALWAYS_FRESH_INSTALL}" = "true" ]; then
+    if [ -f "${NETALERTX_DB_FILE}" ]; then
+        # Provide feedback to the user.
+        >&2 echo "INFO: ALWAYS_FRESH_INSTALL is true. Removing existing database to force a fresh installation."
+        rm -f "${NETALERTX_DB_FILE}" "${NETALERTX_DB_FILE}-shm" "${NETALERTX_DB_FILE}-wal"
+    fi
+# Otherwise, if the db exists, exit.
+elif [ -f "${NETALERTX_DB_FILE}" ]; then
+    exit 0
+fi
 
 CYAN='\033[1;36m'
 RESET='\033[0m'
