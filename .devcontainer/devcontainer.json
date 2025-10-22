@@ -23,6 +23,9 @@
     // even within this container and connect to them as needed.
     // "--network=host",
   ],
+  "mounts": [ 
+    "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind" //used for testing various conditions in docker
+  ],
   // ATTENTION: If running with --network=host, COMMENT `forwardPorts` OR ELSE THERE WILL BE NO WEBUI!
   "forwardPorts": [20211, 20212, 5678],
   "portsAttributes": { // the ports we care about

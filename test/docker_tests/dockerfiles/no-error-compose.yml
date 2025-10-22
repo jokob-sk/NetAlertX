@@ -1,0 +1,76 @@
+services:
+  netalertx:
+    network_mode: host                          # Use host networking for ARP scanning and other services
+    build:
+      context: .                                # Build context is the current directory   
+      dockerfile: Dockerfile                    # Specify the Dockerfile to use    
+    image: netalertx:latest
+    container_name: netalertx                   # The name when you docker contiainer ls
+    read_only: true                             # Make the container filesystem read-only
+    cap_drop:                                   # Drop all capabilities for enhanced security
+      - ALL
+    cap_add:                                    # Add only the necessary capabilities
+      - NET_ADMIN                               # Required for ARP scanning
+      - NET_RAW                                 # Required for raw socket operations
+      - NET_BIND_SERVICE                        # Required to bind to privileged ports (nbtscan)
+
+    volumes:
+      - type: volume
+        source: netalertx_config
+        target: /app/config
+        read_only: false
+
+      - type: volume
+        source: netalertx_db
+        target: /app/db
+        read_only: false
+
+      - type: bind
+        source: /etc/localtime
+        target: /etc/localtime
+        read_only: true
+
+      # Use a custom Enterprise-configured nginx config for ldap or other settings
+      # - /custom-enterprise.conf:/services/config/nginx/conf.active/netalertx.conf:ro
+
+      # Test your plugin on the production container
+      # - /path/on/host:/app/front/plugins/custom
+
+      # Retain logs - comment out tmpfs /app/log if you want to retain logs between container restarts
+      # - /path/on/host/log:/app/log
+
+    # Tempfs mounts for writable directories in a read-only container and improve system performance
+    tmpfs:
+      # Speed up logging. This can be commented out to retain logs between container restarts
+      - "/app/log:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      # Speed up API access as frontend/backend API is very chatty
+      - "/app/api:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,sync,noatime,nodiratime"  
+      # Required for customization of the nginx listen addr/port without rebuilding the container
+      - "/services/config/nginx/conf.active:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      # /services/config/nginx/conf.d is required for nginx and php to start
+      - "/services/run:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      # /tmp is required by php for session save this should be reworked to /services/run/tmp
+      - "/tmp:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+    environment:
+      LISTEN_ADDR: 0.0.0.0                      # Listen for connections on all interfaces
+      PORT: 20211                               # Application port
+      GRAPHQL_PORT: 20212                       # GraphQL API port
+      ALWAYS_FRESH_INSTALL: false               # Set to true to reset your config and database on each container start
+      NETALERTX_DEBUG: 0                        # 0=kill all services and restart if any dies. 1 keeps running dead services.
+
+    # Resource limits to prevent resource exhaustion
+    mem_limit: 2048m
+    mem_reservation: 1024m
+    cpus: 4
+    pids_limit: 512
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    restart: unless-stopped
+
+volumes:
+  netalertx_config_test:
+  netalertx_db_test:
+ 
