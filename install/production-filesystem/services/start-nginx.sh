@@ -48,11 +48,11 @@ trap forward_signal INT TERM
 
 # Execute nginx with overrides
 # echo the full nginx command then run it
-echo "nginx	-p \"${RUN_DIR}/\" -c \"${SYSTEM_NGINX_CONFIG_FILE}\" -g \"error_log ${NETALERTX_LOG}/nginx-error.log; pid ${RUN_DIR}/nginx.pid; daemon off;\" &"
+echo "nginx	-p \"${RUN_DIR}/\" -c \"${SYSTEM_NGINX_CONFIG_FILE}\" -g \"error_log /dev/stderr; error_log ${NETALERTX_LOG}/nginx-error.log; pid ${RUN_DIR}/nginx.pid; daemon off;\" &"
 nginx \
 	-p "${RUN_DIR}/" \
 	-c "${SYSTEM_NGINX_CONFIG_FILE}" \
-	-g "error_log ${NETALERTX_LOG}/nginx-error.log; pid ${RUN_DIR}/nginx.pid; daemon off;" &
+	-g "error_log /dev/stderr; error_log ${NETALERTX_LOG}/nginx-error.log; pid ${RUN_DIR}/nginx.pid; daemon off;" &
 nginx_pid=$!
 
 wait "${nginx_pid}"
