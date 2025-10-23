@@ -220,7 +220,8 @@ ENV PYDEVD_DISABLE_FILE_VALIDATION=1
 COPY .devcontainer/resources/devcontainer-overlay/ /
 USER root
 # Install common tools, create user, and set up sudo
-RUN apk add --no-cache git nano vim jq php83-pecl-xdebug py3-pip nodejs sudo gpgconf pytest pytest-cov fish shfmt github-cli py3-yaml py3-docker-py 
+RUN apk add --no-cache git nano vim jq php83-pecl-xdebug py3-pip nodejs sudo gpgconf pytest \
+    pytest-cov fish shfmt github-cli py3-yaml py3-docker-py docker-cli
 
 
 RUN install -d -o netalertx -g netalertx -m 755 /services/php/modules && \
@@ -229,6 +230,8 @@ RUN install -d -o netalertx -g netalertx -m 755 /services/php/modules && \
 RUN mkdir /workspaces && \
     install -d -o netalertx -g netalertx -m 777 /services/run/logs && \
     install -d -o netalertx -g netalertx -m 777 /app/run/tmp/client_body && \
-    sed -i -e 's|:/app:|:/workspaces:|' /etc/passwd
+    sed -i -e 's|:/app:|:/workspaces:|' /etc/passwd && \
+    find /opt/venv -type d -exec chmod o+rw {} \;
+    
 USER netalertx
 ENTRYPOINT ["/bin/sh","-c","sleep infinity"]

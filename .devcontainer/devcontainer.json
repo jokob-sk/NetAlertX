@@ -43,6 +43,7 @@
     }
   },
 
+  "postCreateCommand": "pip install pytest docker",
   "postStartCommand": "${containerWorkspaceFolder}/.devcontainer/scripts/setup.sh",
 
   "customizations": {
