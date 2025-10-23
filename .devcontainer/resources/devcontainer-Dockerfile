@@ -7,7 +7,7 @@
 FROM runner AS netalertx-devcontainer
 ENV INSTALL_DIR=/app
 
-ENV PYTHONPATH=/workspaces/NetAlertX/test:/workspaces/NetAlertX/server:/app:/app/server:/opt/venv/lib/python3.12/site-packages
+ENV PYTHONPATH=/workspaces/NetAlertX/test:/workspaces/NetAlertX/server:/app:/app/server:/opt/venv/lib/python3.12/site-packages:/usr/lib/python3.12/site-packages
 ENV PATH=/services:${PATH}
 ENV PHP_INI_SCAN_DIR=/services/config/php/conf.d:/etc/php83/conf.d
 ENV LISTEN_ADDR=0.0.0.0
@@ -28,7 +28,7 @@ RUN mkdir /workspaces && \
     install -d -o netalertx -g netalertx -m 777 /services/run/logs && \
     install -d -o netalertx -g netalertx -m 777 /app/run/tmp/client_body && \
     sed -i -e 's|:/app:|:/workspaces:|' /etc/passwd && \
-    find /opt/venv -type d -exec chmod o+rw {} \;
+    find /opt/venv -type d -exec chmod o+rwx {} \;
     
 USER netalertx
 ENTRYPOINT ["/bin/sh","-c","sleep infinity"]

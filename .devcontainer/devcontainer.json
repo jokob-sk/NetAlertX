@@ -43,7 +43,7 @@
     }
   },
 
-  "postCreateCommand": "pip install pytest docker",
+  "postCreateCommand": "/opt/venv/bin/pip3 install pytest docker debugpy",
   "postStartCommand": "${containerWorkspaceFolder}/.devcontainer/scripts/setup.sh",
 
   "customizations": {
