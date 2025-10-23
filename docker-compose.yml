@@ -59,15 +59,17 @@ services:
       NETALERTX_DEBUG: 0                        # 0=kill all services and restart if any dies. 1 keeps running dead services.
 
     # Resource limits to prevent resource exhaustion
-    mem_limit: 2048m
-    mem_reservation: 1024m
-    cpus: 4
-    pids_limit: 512
+    mem_limit: 2048m            # Maximum memory usage
+    mem_reservation: 1024m      # Soft memory limit
+    cpu_shares: 512             # Relative CPU weight for CPU contention scenarios
+    pids_limit: 512             # Limit the number of processes/threads to prevent fork bombs
     logging:
-      driver: "json-file"
+      driver: "json-file"       # Use JSON file logging driver
       options:
-        max-size: "10m"
-        max-file: "3"
+        max-size: "10m"         # Rotate log files after they reach 10MB
+        max-file: "3"           # Keep a maximum of 3 log files
+
+    # Always restart the container unless explicitly stopped
     restart: unless-stopped
 
 volumes:
