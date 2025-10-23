@@ -144,7 +144,6 @@ configure_source() {
         sleep 0.2
     done
 	sudo chmod 777 /opt/venv/lib/python3.12/site-packages/ && \
-    pip install --no-cache-dir debugpy docker && \
     sudo chmod 005 /opt/venv/lib/python3.12/site-packages/
 	sudo chmod 666 /var/run/docker.sock
 

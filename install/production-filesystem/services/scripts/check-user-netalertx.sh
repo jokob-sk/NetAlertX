@@ -39,4 +39,5 @@ RESET=$(printf '\033[0m')
 ══════════════════════════════════════════════════════════════════════════════
 EOF
 >&2 printf "%s" "${RESET}"
-exit 1
+sleep 5 # Give user time to read the message
+exit 0

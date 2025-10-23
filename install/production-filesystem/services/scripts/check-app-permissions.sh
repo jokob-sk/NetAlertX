@@ -105,6 +105,5 @@ if [ "$failures" -ne 0 ]; then
     exit 1
 fi
 
-echo "Permission checks passed successfully."
 
 

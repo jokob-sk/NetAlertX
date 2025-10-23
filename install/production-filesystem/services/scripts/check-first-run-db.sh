@@ -41,7 +41,6 @@ CREATE TABLE IF NOT EXISTS "Online_History" (
             "Offline_Devices" INTEGER,
             PRIMARY KEY("Index" AUTOINCREMENT)
           );
-CREATE TABLE sqlite_sequence(name,seq);
 CREATE TABLE Devices (
               devMac STRING (50) PRIMARY KEY NOT NULL COLLATE NOCASE,
               devName STRING (50) NOT NULL DEFAULT "(unknown)",

@@ -2,4 +2,8 @@
 python_classes = ["Test", "Describe"]
 python_functions = ["test_", "it_", "and_", "but_", "they_"]
 python_files = ["test_*.py",]
-testpaths = ["test",]
+testpaths = ["test", "tests/docker_tests"]
+markers = [
+	"docker: requires docker socket and elevated container permissions",
+	"feature_complete: extended coverage suite not run by default",
+]

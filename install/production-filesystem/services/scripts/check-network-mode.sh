@@ -1,11 +1,18 @@
 #!/bin/sh
 # check-network-mode.sh - detect when the container is not using host networking.
 
+# Exit if NETALERTX_DEBUG=1
+if [ "${NETALERTX_DEBUG}" = "1" ]; then
+    exit 0
+fi
+
+# Get the default network interface
 DEFAULT_IF="$(ip route show default 0.0.0.0/0 2>/dev/null | awk 'NR==1 {print $5}')"
 if [ -z "${DEFAULT_IF}" ]; then
     # No default route; nothing to validate.
     exit 0
 fi
+
 
 IF_LINK_INFO="$(ip link show "${DEFAULT_IF}" 2>/dev/null)"
 IF_IP="$(ip -4 addr show "${DEFAULT_IF}" 2>/dev/null | awk '/inet / {print $2}' | head -n1)"
@@ -16,12 +23,14 @@ fi
 
 looks_like_bridge="0"
 
+# Check for common bridge MAC and IP patterns
 case "${IF_MAC}" in
     02:42:*) looks_like_bridge="1" ;;
     00:00:00:00:00:00) looks_like_bridge="1" ;;
     "") ;; # leave as is
 esac
 
+# Check for common bridge IP ranges
 case "${IF_IP}" in
     172.1[6-9].*|172.2[0-9].*|172.3[0-1].*) looks_like_bridge="1" ;;
     192.168.65.*) looks_like_bridge="1" ;;
@@ -52,4 +61,4 @@ RESET=$(printf '\033[0m')
 ══════════════════════════════════════════════════════════════════════════════
 EOF
 >&2 printf "%s" "${RESET}"
-exit 1
+exit 0

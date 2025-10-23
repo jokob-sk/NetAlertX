@@ -42,7 +42,7 @@ warn_if_not_dedicated_mount "${NETALERTX_API}"
 warn_if_not_dedicated_mount "${NETALERTX_LOG}"
 
 if [ "${failures}" -ne 0 ]; then
-    exit 1
+    exit 0
 fi
 
 if [ ! -f "${SYSTEM_NGINX_CONFIG}/conf.active" ]; then
