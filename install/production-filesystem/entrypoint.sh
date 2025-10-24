@@ -49,6 +49,7 @@ printf '
 \033[0m
    Network intruder and presence detector. 
    https://netalertx.com
+
 '
 
 set -u
@@ -57,7 +58,7 @@ NETALERTX_DOCKER_ERROR_CHECK=0
 
 
 # Run all pre-startup checks to validate container environment and dependencies
-if [ ${NETALERTX_DEBUG != 1} ]; then
+if [ "${NETALERTX_DEBUG:-0}" != "1" ]; then
 	echo "Startup pre-checks"
 	for script in ${SYSTEM_SERVICES_SCRIPTS}/check-*.sh; do
 		script_name=$(basename "$script" | sed 's/^check-//;s/\.sh$//;s/-/ /g')
