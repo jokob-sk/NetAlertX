@@ -2,6 +2,7 @@ import subprocess
 import re
 import sys
 import ipaddress
+import speedtest as speedtest_cli
 from flask import jsonify
 
 # Register NetAlertX directories
@@ -80,7 +81,7 @@ def speedtest():
     try:
         # Run speedtest-cli command
         result = subprocess.run(
-            [f"{INSTALL_PATH}/back/speedtest-cli", "--secure", "--simple"],
+            ["speedtest-cli", "--secure", "--simple"],
             capture_output=True,
             text=True,
             check=True

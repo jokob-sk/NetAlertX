@@ -49,18 +49,40 @@ printf '
 \033[0m
    Network intruder and presence detector. 
    https://netalertx.com
+
 '
 
 set -u
 
+NETALERTX_DOCKER_ERROR_CHECK=0
+
+
 # Run all pre-startup checks to validate container environment and dependencies
-for script in ${SYSTEM_SERVICES_SCRIPTS}/check-*.sh; do
-	sh "$script"
-done
+if [ "${NETALERTX_DEBUG:-0}" != "1" ]; then
+	echo "Startup pre-checks"
+	for script in ${SYSTEM_SERVICES_SCRIPTS}/check-*.sh; do
+		script_name=$(basename "$script" | sed 's/^check-//;s/\.sh$//;s/-/ /g')
+		echo " --> ${script_name}"
+		
+		sh "$script"
+		NETALERTX_DOCKER_ERROR_CHECK=$?
+		
+		if [ ${NETALERTX_DOCKER_ERROR_CHECK} -ne 0 ]; then
+			
+			echo exit code ${NETALERTX_DOCKER_ERROR_CHECK} from ${script}
+			exit ${NETALERTX_DOCKER_ERROR_CHECK}
+		fi
+	done
+fi
+
+# Exit after checks if in check-only mode (for testing)
+if [ "${NETALERTX_CHECK_ONLY:-0}" -eq 1 ]; then
+	exit 0
+fi
 
 # Update vendor data (MAC address OUI database) in the background
 # This happens concurrently with service startup to avoid blocking container readiness
-${SYSTEM_SERVICES_SCRIPTS}/update_vendors.sh &
+bash ${SYSTEM_SERVICES_SCRIPTS}/update_vendors.sh &
 
 
 

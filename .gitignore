@@ -1,3 +1,4 @@
+.coverage
 .vscode
 .dotnet
 .vscode-server
