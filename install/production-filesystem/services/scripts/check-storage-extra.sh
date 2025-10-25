@@ -25,12 +25,13 @@ warn_if_not_persistent_mount() {
 ══════════════════════════════════════════════════════════════════════════════
 EOF
     >&2 printf "%s" "${RESET}"
+    return 1
 }
 
 failures=0
-warn_if_not_persistent_mount "${NETALERTX_LOG}" "Logs"
-warn_if_not_persistent_mount "${NETALERTX_API}" "API JSON cache"
-warn_if_not_persistent_mount "${SYSTEM_SERVICES_RUN}" "Runtime work directory"
+warn_if_not_persistent_mount "${NETALERTX_LOG}" "Logs" || failures=$((failures + 1))  
+warn_if_not_persistent_mount "${NETALERTX_API}" "API JSON cache" || failures=$((failures + 1))  
+warn_if_not_persistent_mount "${SYSTEM_SERVICES_RUN}" "Runtime work directory" || failures=$((failures + 1))  
 
 if [ "${failures}" -ne 0 ]; then
     sleep 5

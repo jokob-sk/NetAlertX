@@ -5,14 +5,14 @@
 if [ ! -f ${NETALERTX_CONFIG}/app.conf ]; then
     mkdir -p "${NETALERTX_CONFIG}" || {
         >&2 echo "ERROR: Failed to create config directory ${NETALERTX_CONFIG}"
-        exit 0
+        exit 1
     }
     cp /app/back/app.conf "${NETALERTX_CONFIG}/app.conf" || {
         >&2 echo "ERROR: Failed to copy default config to ${NETALERTX_CONFIG}/app.conf"
-        exit 0
+        exit 2
     }
     RESET='\033[0m'
-    >&2 cat <<'EOF'
+    >&2 cat <<EOF
 ══════════════════════════════════════════════════════════════════════════════
 🆕  First run detected. Default configuration written to ${NETALERTX_CONFIG}/app.conf.
 

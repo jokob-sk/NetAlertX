@@ -12,7 +12,8 @@ from unittest.mock import MagicMock
 sys.modules['logger'] = MagicMock()
 
 # Add parent directory to path for imports
-sys.path.insert(0, '/workspaces/NetAlertX')
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 from server.db.sql_safe_builder import SafeConditionBuilder
 

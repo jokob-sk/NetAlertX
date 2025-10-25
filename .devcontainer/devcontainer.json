@@ -43,9 +43,12 @@
     }
   },
 
-  "postCreateCommand": "/opt/venv/bin/pip3 install pytest docker debugpy",
-  "postStartCommand": "${containerWorkspaceFolder}/.devcontainer/scripts/setup.sh",
-
+  "postCreateCommand": {
+      "Install Pip Requriements": "/opt/venv/bin/pip3 install pytest docker debugpy"
+  },
+  "postStartCommand": {
+      "Start Environment":"${containerWorkspaceFolder}/.devcontainer/scripts/setup.sh"
+  },
   "customizations": {
     "vscode": {
       "extensions": [

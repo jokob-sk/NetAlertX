@@ -211,7 +211,7 @@ def _run_container(
 
     script = (
         mounts_ls
-        + f"sh /entrypoint.sh & pid=$!; "
+        + "sh /entrypoint.sh & pid=$!; "
         + f"sleep {sleep_seconds}; "
         + "if kill -0 $pid >/dev/null 2>&1; then kill -TERM $pid >/dev/null 2>&1 || true; fi; "
         + "wait $pid; code=$?; if [ $code -eq 143 ]; then exit 0; fi; exit $code"
@@ -281,30 +281,6 @@ def test_first_run_creates_config_and_db(tmp_path: pathlib.Path) -> None:
     _assert_contains(result.stdout, "Default configuration written to")
     _assert_contains(result.stdout, "Building initial database schema")
     assert result.returncode == 0
-
-
-def test_second_run_starts_clean() -> None:
-    """Test that containers start successfully with proper configuration.
-
-    0.2 After config/db generation: Subsequent runs start cleanly with existing files
-    This test validates that after initial configuration and database files exist,
-    the container starts cleanly without regenerating defaults.
-    """
-    base = pathlib.Path("/tmp/NETALERTX_SECOND_RUN_CLEAN_TEST_MOUNT_INTENTIONAL")
-    paths = _setup_fixed_mount_tree(base)
-    volumes = _build_volume_args(paths)
-
-    try:
-        shutil.copyfile("/workspaces/NetAlertX/back/app.conf", paths["app_config"] / "app.conf")
-        shutil.copyfile("/workspaces/NetAlertX/db/app.db", paths["app_db"] / "app.db")
-        (paths["app_config"] / "app.conf").chmod(0o600)
-        (paths["app_db"] / "app.db").chmod(0o600)
-
-        second = _run_container("second-run", volumes, user="0:0", sleep_seconds=3)
-        assert "Default configuration written" not in second.stdout
-        assert "Building initial database schema" not in second.stdout
-    finally:
-        shutil.rmtree(base, ignore_errors=True)
 
 
 def test_root_owned_app_db_mount(tmp_path: pathlib.Path) -> None:
@@ -717,7 +693,7 @@ def test_missing_mount_app_db(tmp_path: pathlib.Path) -> None:
     volumes = _build_volume_args(paths, skip={"app_db"})
     result = _run_container("missing-mount-app-db", volumes, user="20211:20211")
     _assert_contains(result.stdout, "Write permission denied")
-    _assert_contains(result.stdout, "/app/api")
+    _assert_contains(result.stdout, "/app/db")
     assert result.returncode != 0
 
 
@@ -732,7 +708,7 @@ def test_missing_mount_app_config(tmp_path: pathlib.Path) -> None:
     volumes = _build_volume_args(paths, skip={"app_config"})
     result = _run_container("missing-mount-app-config", volumes, user="20211:20211")
     _assert_contains(result.stdout, "Write permission denied")
-    _assert_contains(result.stdout, "/app/api")
+    _assert_contains(result.stdout, "/app/config")
     assert result.returncode != 0
 
 

@@ -27,6 +27,5 @@ then
 ══════════════════════════════════════════════════════════════════════════════
 EOF
     >&2 printf "%s" "${RESET}"
-    exit 0
 fi
-exit 0
+exit 0  # Always exit success even after warnings

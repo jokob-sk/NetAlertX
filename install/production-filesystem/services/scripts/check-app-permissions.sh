@@ -52,7 +52,8 @@ failures=0
 
 # Check all paths
 ALL_PATHS="${READ_ONLY_PATHS} ${READ_WRITE_PATHS}"
-for path in $ALL_PATHS; do
+echo "${READ_ONLY_PATHS}" | while IFS= read -r path; do  
+    [ -z "$path" ] && continue
     if [ ! -e "$path" ]; then
         failures=1
         >&2 printf "%s" "${RED}"

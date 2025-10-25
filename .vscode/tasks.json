@@ -160,5 +160,26 @@
         "color": "terminal.ansiBlue"
       }
     }
+    ,
+    {
+      "label": "[Any] Build Unit Test Docker image",
+      "type": "shell",
+      "command": "docker build -t netalertx-test .",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "panel": "shared",
+        "showReuseMessage": false
+      },
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "icon": {
+        "id": "beaker",
+        "color": "terminal.ansiBlue"
+      }
+    }
   ]
 }
