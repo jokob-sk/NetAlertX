@@ -25,7 +25,7 @@ Get visibility of what's going on on your WIFI/LAN network and enable presence d
 
 ## 🚀 Quick Start
 
-Start NetAlertX in seconds with Docker:
+To launch NetAlertX in seconds, replace `local_path` with the absolute path on your system that contains your `config` and `db` folders, then run::
 
 ```bash
 docker run -d --rm --network=host \
