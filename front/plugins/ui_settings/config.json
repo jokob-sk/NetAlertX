@@ -308,7 +308,7 @@
       },
       "maxLength": 50,
       "default_value": ["online", "offline", "archived", "new", "down"],
-      "options": ["online", "offline", "archived", "new", "down"],
+      "options": ["online", "offline", "archived", "new", "down", "all"],
       "localized": [],
       "name": [
         {
