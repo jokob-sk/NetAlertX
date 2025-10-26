@@ -71,7 +71,7 @@ for script in ${SYSTEM_SERVICES_SCRIPTS}/check-*.sh; do
 done
 
 
-if [ ${FAILED_STATUS} ]; then
+if [ -n "${FAILED_STATUS}" ]; then
     echo "Container startup checks failed with exit code ${FAILED_STATUS}."
     exit ${FAILED_STATUS}
 fi

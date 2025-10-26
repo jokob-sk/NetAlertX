@@ -47,7 +47,8 @@
       "Install Pip Requriements": "/opt/venv/bin/pip3 install pytest docker debugpy"
   },
   "postStartCommand": {
-      "Start Environment":"${containerWorkspaceFolder}/.devcontainer/scripts/setup.sh"
+      "Start Environment":"${containerWorkspaceFolder}/.devcontainer/scripts/setup.sh",
+      "Build test-container":"nohup screen docker buildx build --platform linux/amd64 --tag netalertx-test . & disown"
   },
   "customizations": {
     "vscode": {

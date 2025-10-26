@@ -723,7 +723,7 @@ def test_missing_mount_app_log(tmp_path: pathlib.Path) -> None:
     volumes = _build_volume_args(paths, skip={"app_log"})
     result = _run_container("missing-mount-app-log", volumes, user="20211:20211")
     _assert_contains(result, "Write permission denied", result.args)
-    _assert_contains(result, "/app/api", result.args)
+    _assert_contains(result, "/app/log", result.args)
 
 
 def test_missing_mount_app_api(tmp_path: pathlib.Path) -> None:
@@ -737,7 +737,7 @@ def test_missing_mount_app_api(tmp_path: pathlib.Path) -> None:
     volumes = _build_volume_args(paths, skip={"app_api"})
     result = _run_container("missing-mount-app-api", volumes, user="20211:20211")
     _assert_contains(result, "Write permission denied", result.args)
-    _assert_contains(result, "/app/config", result.args)
+    _assert_contains(result, "/app/api", result.args)
 
 
 def test_missing_mount_nginx_conf(tmp_path: pathlib.Path) -> None:
@@ -751,7 +751,7 @@ def test_missing_mount_nginx_conf(tmp_path: pathlib.Path) -> None:
     volumes = _build_volume_args(paths, skip={"nginx_conf"})
     result = _run_container("missing-mount-nginx-conf", volumes, user="20211:20211")
     _assert_contains(result, "Write permission denied", result.args)
-    _assert_contains(result, "/app/api", result.args)
+    _assert_contains(result, "/services/config/nginx/conf.active", result.args)
     assert result.returncode != 0
 
 
@@ -766,7 +766,7 @@ def test_missing_mount_services_run(tmp_path: pathlib.Path) -> None:
     volumes = _build_volume_args(paths, skip={"services_run"})
     result = _run_container("missing-mount-services-run", volumes, user="20211:20211")
     _assert_contains(result, "Write permission denied", result.args)
-    _assert_contains(result, "/app/api", result.args)
+    _assert_contains(result, "/services/run", result.args)
     _assert_contains(result, "Container startup checks failed with exit code", result.args)
 
 
