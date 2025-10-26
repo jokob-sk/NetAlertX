@@ -856,6 +856,7 @@ def test_running_as_uid_1000_warns(tmp_path: pathlib.Path) -> None:
         volumes,
         user="1000:1000",
     )
+    _assert_contains(result, "NetAlertX is running as UID", result.args)
     assert result.returncode != 0
 
 
@@ -877,6 +878,7 @@ def test_missing_host_network_warns(tmp_path: pathlib.Path) -> None:
         volumes,
         network_mode=None,
     )
+    _assert_contains(result, "not running with --network=host", result.args)
     assert result.returncode != 0
 
 
