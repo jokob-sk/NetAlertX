@@ -655,15 +655,11 @@ def test_readonly_nginx_conf_mount(tmp_path: pathlib.Path) -> None:
     Expected: "Write permission denied" error with path, guidance to add volume mounts.
     """
     paths = _setup_mount_tree(tmp_path, "readonly_nginx_conf")
-    _setup_zero_perm_dir(paths, "nginx_conf")
-    volumes = _build_volume_args(paths)
-    try:
-        result = _run_container("readonly-nginx-conf", volumes)
-        _assert_contains(result, "Write permission denied", result.args)
-        _assert_contains(result, "/services/config/nginx/conf.active", result.args)
-        assert result.returncode != 0
-    finally:
-        _restore_zero_perm_dir(paths, "nginx_conf")
+    volumes = _build_volume_args(paths, read_only={"nginx_conf"})
+    result = _run_container("readonly-nginx-conf", volumes)
+    _assert_contains(result, "Write permission denied", result.args)
+    _assert_contains(result, "/services/config/nginx/conf.active", result.args)
+    assert result.returncode != 0
 
 
 def test_readonly_services_run_mount(tmp_path: pathlib.Path) -> None:
