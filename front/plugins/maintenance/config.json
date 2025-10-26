@@ -243,6 +243,34 @@
           "string": "How many last <code>app.log</code> lines to keep. If <code>LOG_LEVEL</code> is set to <code>debug</code> the app generates about 10000 lines per hour, so when debugging an issue the recommended setting should cover the bug occurence timeframe. For example for a bug with a 3 day periodical appearence the value <code>1000000</code> should be sufficient. Setting this value to <code>1000000</code> generates approximatelly a 50MB <code>app.log</code> file. Set to <code>0</code> to disable log purging."
         }
       ]
+    },
+    {
+      "function": "NOTI_LENGTH",
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "number" }],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": 0,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Notifications history"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "How many latest in-app Notification entries to keep. Set to <code>0</code> to disable."
+        }
+      ]
     }
   ],
 

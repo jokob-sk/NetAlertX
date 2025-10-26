@@ -202,18 +202,25 @@ def get_plugins_configs(loadAll):
                 # Construct the path to the config.json file within the plugin folder
                 config_path = os.path.join(pluginsPath, d, "config.json")
 
-                plugJson = json.loads(get_file_content(config_path))
+                try:
+                    plugJson = json.loads(get_file_content(config_path))
 
-                # Only load plugin if needed
-                # Fetch the list of enabled plugins from the config, default to an empty list if not set
-                enabledPlugins = getattr(conf, "LOADED_PLUGINS", [])
+                    # Only load plugin if needed
+                    # Fetch the list of enabled plugins from the config, default to an empty list if not set
+                    enabledPlugins = getattr(conf, "LOADED_PLUGINS", [])
 
-                # Load all plugins if `loadAll` is True, the plugin is in the enabled list, 
-                # or no specific plugins are enabled (enabledPlugins is empty)
-                if loadAll or plugJson["unique_prefix"] in enabledPlugins or enabledPlugins == []:
-                
-                    # Load the contents of the config.json file as a JSON object and append it to pluginsList
-                    pluginsList.append(plugJson)
+                    # Load all plugins if `loadAll` is True, the plugin is in the enabled list, 
+                    # or no specific plugins are enabled (enabledPlugins is empty)
+                    if loadAll or plugJson["unique_prefix"] in enabledPlugins or enabledPlugins == []:
+                    
+                        # Load the contents of the config.json file as a JSON object and append it to pluginsList
+                        pluginsList.append(plugJson)
+
+                except (FileNotFoundError, json.JSONDecodeError) as e:
+                    # Handle the case when the file is not found or JSON decoding fails
+                    mylog('none', [f'[{module_name}] ⚠ ERROR - JSONDecodeError or FileNotFoundError for file {config_path}'])
+                except Exception as e:
+                    mylog('none', [f'[{module_name}] ⚠ ERROR - Exception for file {config_path}: {str(e)}'])
     
     # Sort pluginsList based on "execution_order"
     pluginsListSorted = sorted(pluginsList, key=get_layer)

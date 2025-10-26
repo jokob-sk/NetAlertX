@@ -45,7 +45,8 @@
     {
       "name": "urls",
       "type": "setting",
-      "value": "WEBMON_urls_to_check"
+      "value": "WEBMON_urls_to_check",
+      "timeoutMultiplier": true
     }
   ],
   "database_column_definitions": [

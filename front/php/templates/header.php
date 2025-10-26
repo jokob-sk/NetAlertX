@@ -50,8 +50,6 @@
   <script src="js/settings_utils.js?v=<?php include 'php/templates/version.php'; ?>"></script>
   <script src="js/device.js?v=<?php include 'php/templates/version.php'; ?>"></script>
 
-
-  
   <!-- iCheck -->
 
   <link rel="stylesheet" href="lib/iCheck/all.css">
@@ -59,10 +57,7 @@
 
 
   <!-- Font Awesome -->
-  <link rel="stylesheet" href="lib/font-awesome/fontawesome.min.css">
-  <link rel="stylesheet" href="lib/font-awesome/solid.css">
-  <link rel="stylesheet" href="lib/font-awesome/brands.css">
-  <link rel="stylesheet" href="lib/font-awesome/v5-font-face.css">
+  <link rel="stylesheet" href="lib/font-awesome/all.min.css">
 
   <!-- Ionicons -->
   <link rel="stylesheet" href="lib/Ionicons/ionicons.min.css">
@@ -107,7 +102,7 @@
   // -------------------------------------------------------------
   // Updates the backend application state/status in the header
   function updateState(){
-    $.get('/php/server/query_json.php', { file: 'app_state.json', nocache: Date.now() }, function(appState) {    
+    $.get('php/server/query_json.php', { file: 'app_state.json', nocache: Date.now() }, function(appState) {    
 
       document.getElementById('state').innerHTML = appState["currentState"].replaceAll('"', '');
 
@@ -123,34 +118,8 @@
     let timeZone = "<?php echo $timeZone ?>";
     let now = new Date();
 
-    // Convert to the specified time zone
-    let formatter = new Intl.DateTimeFormat("en-UK", {
-      timeZone: timeZone,
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: false, // Use 24-hour format
-    });
-    let parts = formatter.formatToParts(now);
-
-    // Extract date components
-    let day = parts.find(p => p.type === "day").value;
-    let month = parts.find(p => p.type === "month").value;
-    let year = parts.find(p => p.type === "year").value;
-
-    // Extract time components
-    let hour = parts.find(p => p.type === "hour").value;
-    let minute = parts.find(p => p.type === "minute").value;
-    let second = parts.find(p => p.type === "second").value;
-
-    // Construct the date and time in DD-MMM-YYYY HH:MM:SS format
-    let formattedDateTime = `${day}-${month}-${year} ${hour}:${minute}:${second}`;
-
     if (document.getElementById) {
-      document.getElementById("NAX_Servertime_plc").innerHTML = '(' + formattedDateTime + ')';
+      document.getElementById("NAX_Servertime_plc").innerHTML = '(' + localizeTimestamp(now) + ')';
       document.getElementById("NAX_TZ").innerHTML = timeZone;
     }
 
@@ -164,7 +133,21 @@
 <!-- ----------------------------------------------------------------------- -->
 <!-- Layout Boxed Yellow -->
 
-<body class="hold-transition fixed <?php echo $pia_skin_selected;?> sidebar-mini" onLoad="update_servertime();" >
+<!-- spinner -->
+
+
+<body class="hold-transition fixed <?php echo $pia_skin_selected;?>  theme-<?php echo $UI_THEME;?>  sidebar-mini" onLoad="update_servertime();" >
+
+<div id="loadingSpinner">
+  <div class="nax_semitransparent-panel"></div>
+  <div class="panel panel-default nax_spinner">
+    <table>
+      <td id="loadingSpinnerText" width="130px" ></td>
+      <td><i class="fa-solid fa-spinner fa-spin-pulse"></i></td>
+    </table>
+  </div>
+</div>
+
 <!-- Site wrapper -->
 <div class="wrapper">
 
@@ -177,7 +160,7 @@
     <a href="devices.php" class="logo">
       <!-- mini logo for sidebar mini 50x50 pixels -->
       <span class="logo-mini">
-        <img src="img/NetAlertX_logo.png" class="pia-top-left-logo" alt="NetAlertX Logo"/>        
+        <img src="img/NetAlertX_logo.png" class="top-left-logo" alt="NetAlertX Logo"/>        
       </span>
       <!-- logo for regular state and mobile devices -->
       <span class="logo-lg">Net<b>Alert</b><sup>x</sup>
@@ -325,6 +308,12 @@
             <li>
               <a href="devices.php#archived" onclick="forceLoadUrl('devices.php#archived')" >  <?= lang("Device_Shortcut_Archived");?> </a>
             </li>
+            <li>
+              <a href="devices.php#all_devices" onclick="forceLoadUrl('devices.php#all_devices')" >  <?= lang("Gen_All_Devices");?> </a>
+            </li>
+            <li>
+              <a href="devices.php#network_devices" onclick="forceLoadUrl('devices.php#network_devices')" >  <?= lang("Network_Devices");?> </a>
+            </li>
           </ul>
 
         </li>
@@ -357,7 +346,7 @@
 
 	      <!-- Network menu item -->
         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('network.php') ) ){ echo 'active'; } ?>">
-          <a href="network.php"><i class="fa fa-fw fa-network-wired"></i> <span><?= lang('Navigation_Network');?></span></a>
+          <a href="network.php"><i class="fa fa-fw fa-sitemap fa-rotate-270"></i> <span><?= lang('Navigation_Network');?></span></a>
         </li>
 
         <!-- Maintenance menu item -->
@@ -384,6 +373,9 @@
             </li>
             <li>
               <a href="maintenance.php#tab_multiEdit" onclick="initializeTabs()">  <?= lang("Device_MultiEdit");?> </a>
+            </li>
+            <li>
+              <a href="maintenance.php#tab_initCheck" onclick="initializeTabs()">  <?= lang("Maintenance_InitCheck");?> </a>
             </li>
             
           </ul>
@@ -421,20 +413,15 @@
         </li>
 
         <!-- Integrations menu item -->
-        <li class=" treeview <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('plugins.php', 'workflows.php', 'appEvents.php' ) ) ){ echo 'active menu-open'; } ?>">
+        <li class=" treeview <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('plugins.php', 'appEvents.php' ) ) ){ echo 'active menu-open'; } ?>">
           <a href="#">
           <i class="fa fa-fw fa-plug"></i> <span><?= lang('Navigation_Integrations');?></span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>
           </a>
-          <ul class="treeview-menu " style="display: <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('plugins.php', 'workflows.php', 'appEvents.php' ) ) ){ echo 'block'; } else {echo 'none';} ?>;">                    
+          <ul class="treeview-menu " style="display: <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('plugins.php', 'appEvents.php' ) ) ){ echo 'block'; } else {echo 'none';} ?>;">                    
             <li>
-              <div class="info-icon-nav">  </div>
-              <a href="workflows.php"><?= lang('Navigation_Workflows');?></a>
-            </li>
-            <li>
-              <div class="info-icon-nav">  </div>
               <a href="appEvents.php"><?= lang('Navigation_AppEvents');?></a>
             </li>
             <li>
@@ -443,9 +430,30 @@
           </ul>
         </li>
 
+         <!-- workflows menu item -->
+         <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('workflows.php') ) ){ echo 'active'; } ?>">
+          <a href="workflows.php"><i class="fa fa-fw  fa-shuffle"></i> <span><?= lang('Navigation_Workflows');?></span></a>
+        </li>
+
         <!-- system info menu item -->
-        <li class=" <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('systeminfo.php') ) ){ echo 'active'; } ?>">
-          <a href="systeminfo.php"><i class="fa fa-fw fa-info-circle"></i> <span><?= lang('Navigation_SystemInfo');?></span></a>
+        <li class=" treeview <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('systeminfo.php') ) ){ echo 'active menu-open'; } ?>">
+          <a href="#">
+          <i class="fa fa-fw fa-info-circle"></i> <span><?= lang('Navigation_SystemInfo');?></span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu " style="display: <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('systeminfo.php') ) ){ echo 'block'; } else {echo 'none';} ?>;">                    
+            <li>
+              <a href="systeminfo.php#panServer" onclick="setCache('activeSysinfoTab','tabServer');initializeTabs()"><?= lang('Systeminfo_System');?></a>
+            </li>           
+            <li>
+              <a href="systeminfo.php#panNetwork"  onclick="setCache('activeSysinfoTab','tabNetwork');initializeTabs()"><?= lang('Systeminfo_Network');?></a>
+            </li>           
+            <li>
+              <a href="systeminfo.php#panStorage" onclick="setCache('activeSysinfoTab','tabStorage');initializeTabs()"><?= lang('Systeminfo_Storage');?></a>
+            </li>           
+          </ul>
         </li>
 
       </ul>
@@ -457,24 +465,6 @@
 
 
 <script defer>
-
-// Generate work-in-progress icons
-function workInProgress() {
-
-  if($(".work-in-progress").length > 0 && $(".work-in-progress").html().trim() == "")
-  {
-    $(".work-in-progress").append(`
-              <a href="https://github.com/jokob-sk/NetAlertX/issues" target="_blank">
-                <b class="pointer" title="${getString("Gen_Work_In_Progress")}">🦺</b>
-              </a>
-            `)
-  }
-}
-
-//--------------------------------------------------------------
-
-
-  //--------------------------------------------------------------
 
   function toggleFullscreen() {
 
@@ -493,6 +483,5 @@ function workInProgress() {
 
   // Update server state in the header
   updateState()
-  workInProgress() 
   
 </script>

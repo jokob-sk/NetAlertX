@@ -4,6 +4,10 @@
   require_once  $_SERVER['DOCUMENT_ROOT'] . '/php/templates/security.php';
 ?>
 
+<script>
+  showSpinner();
+</script>
+
 
 <section class="content workflows col-sm-12 col-xs-12">
   <div id="workflowContainerWrap" class="bg-grey-dark color-palette  col-sm-12 col-xs-12 box-default box-info ">
@@ -11,19 +15,24 @@
     
   </div>
   <div id="buttons" class="bottom-buttons col-sm-12 col-xs-12">
-    <div class="add-workflow col-sm-12 col-xs-12">
-      <button type="button" class="btn btn-primary add-workflow-btn col-sm-12 col-xs-12" id="save">
-        <?= lang('Gen_Add');?>
+    <div class="add-workflow col-sm-4 col-xs-12">
+      <button type="button" class="btn btn-primary add-workflow-btn col-sm-12 col-xs-12" id="add">
+      <i class="fa fa-fw  fa-plus"></i> <?= lang('WF_Add');?>
       </button>
     </div>
-    <div class="save-workflows col-sm-12 col-xs-12">
-      <button type="button" class="btn btn-primary col-sm-12 col-xs-12" id="save" onclick="saveWorkflows()">
-        <?= lang('DevDetail_button_Save');?>
+    <div class="import-wf  col-sm-4 col-xs-12">
+      <button type="button" class="btn btn-primary  col-sm-12 col-xs-12" id="import">
+      <i class="fa fa-fw  fa-file-import"></i> <?= lang('WF_Import');?>
       </button>
     </div>
-    <div class="restart-app col-sm-12 col-xs-12">
+    <div class="restart-app col-sm-4 col-xs-12">
       <button type="button" class="btn btn-primary col-sm-12 col-xs-12" id="save" onclick="askRestartBackend()">
-        <?= lang('Maint_RestartServer');?>
+      <i class="fa fa-fw  fa-arrow-rotate-right"></i> <?= lang('Maint_RestartServer');?>
+      </button>
+    </div>
+    <div class="save-workflows  col-xs-12">
+      <button type="button" class="btn btn-primary bg-green col-sm-12 col-xs-12" id="save" onclick="saveWorkflows()">
+      <i class="fa fa-fw  fa-floppy-disk"></i> <?= lang('WF_Save');?>
       </button>
     </div>
   </div>
@@ -34,16 +43,24 @@
 let workflows = [];
 
 let fieldOptions = [
-        "devMac", "devName", "devOwner", "devType", "devVendor", "devFavorite",
+        "devName", "devMac", "devOwner", "devType", "devVendor", "devFavorite",
         "devGroup", "devComments", "devFirstConnection", "devLastConnection",
         "devLastIP", "devStaticIP", "devScan", "devLogEvents", "devAlertEvents",
         "devAlertDown", "devSkipRepeated", "devLastNotification", "devPresentLastScan",
         "devIsNew", "devLocation", "devIsArchived", "devParentMAC", "devParentPort",
-        "devIcon", "devGUID", "devSite", "devSSID", "devSyncHubNode", "devSourcePlugin"
+        "devIcon", "devSite", "devSSID", "devSyncHubNode", "devSourcePlugin", "devFQDN", 
+        "devParentRelType", "devReqNicsOnline"
       ];
       
 let triggerTypes = [
   "Devices"
+];
+let triggerEvents = [
+  "update", "insert", "delete"
+];
+
+let wfEnabledOptions = [
+  "Yes", "No"
 ];
 
 let operatorTypes = [
@@ -54,18 +71,27 @@ let actionTypes = [
   "update_field", "delete_device"
 ];
 
+let emptyWorkflow = {
+      "name": "New Workflow",
+      "trigger": {
+        "object_type": "Devices",
+        "event_type": "insert"
+      },
+      "conditions": [
+      ],
+      "actions": [     
+      ]
+    };
+
 // --------------------------------------
 // Retrieve and process the data
 function getData() {
-
-  showSpinner();
 
   getSetting()
 
   $.get('php/server/query_json.php?file=workflows.json')
   .done(function (res) {
     workflows = res;
-    console.log("here workflows");
     console.log(workflows);
 
     updateWorkflowsJson(workflows);
@@ -105,6 +131,8 @@ function renderWorkflows() {
 // Generate UI for a single workflow
 function generateWorkflowUI(wf, wfIndex) {
 
+  let wfEnabled = (wf?.enabled ?? "No") == "Yes"; 
+
   let $wfContainer = $("<div>", { 
     class: "workflow-card panel col-sm-12 col-sx-12", 
     id: `wf-${wfIndex}-container` 
@@ -117,6 +145,11 @@ function generateWorkflowUI(wf, wfIndex) {
       id: `wf-${wfIndex}-header` 
     }
   )
+
+  let $wfEnabledIcon = $("<i>", { 
+      class: `alignRight fa ${wfEnabled ? "fa-dot-circle" : "fa-circle" }`
+    });
+  
 
   let $wfHeaderLink = $("<a>",
     {
@@ -134,7 +167,7 @@ function generateWorkflowUI(wf, wfIndex) {
     }
   ).text(wf.name)
 
-  $wfContainer.append($wfHeaderLink.append($wfLinkWrap.append($wfHeaderHeading)));
+  $wfContainer.append($wfHeaderLink.append($wfLinkWrap.append($wfHeaderHeading.append($wfEnabledIcon))));
 
   // Collapsible panel start
 
@@ -150,9 +183,19 @@ function generateWorkflowUI(wf, wfIndex) {
     id: `wf-${wfIndex}-collapsible-panel` 
   });
 
+  let $wfEnabled = createEditableDropdown(
+    `[${wfIndex}].enabled`, 
+    getString("WF_Enabled"),
+    wfEnabledOptions, 
+    wfEnabled ? "Yes" :"No", 
+    `wf-${wfIndex}-enabled`
+  );
+
+  $wfCollapsiblePanel.append($wfEnabled)
+
   let $wfNameInput = createEditableInput(
     `[${wfIndex}].name`, 
-    "Workflow name", 
+    getString("WF_Name"), 
     wf.name, 
     `wf-${wfIndex}-name`, 
     "workflow-name-input"
@@ -160,11 +203,15 @@ function generateWorkflowUI(wf, wfIndex) {
 
   $wfCollapsiblePanel.append($wfNameInput)
 
+  let $triggersIcon = $("<i>", { 
+      class: "fa-solid fa-bolt"
+    });
+
   let $triggerTitle = $("<div>",
     {
       class:"section-title"
     }
-  ).text("Trigger:")
+  ).append($triggersIcon).append(` ${getString("WF_Trigger")}:`)
 
   // Trigger Section with dropdowns
   let $triggerSection = $("<div>",
@@ -175,7 +222,7 @@ function generateWorkflowUI(wf, wfIndex) {
 
   let $triggerTypeDropdown = createEditableDropdown(
     `[${wfIndex}].trigger.object_type`, 
-    "Trigger Type", 
+    getString("WF_Trigger_type"),
     triggerTypes, 
     wf.trigger.object_type, 
     `wf-${wfIndex}-trigger-object-type`
@@ -183,38 +230,50 @@ function generateWorkflowUI(wf, wfIndex) {
 
   let $eventTypeDropdown = createEditableDropdown(
     `[${wfIndex}].trigger.event_type`, 
-    "Event Type", 
-    ["update", "create", "delete"], 
+    getString("WF_Trigger_event_type"), 
+    triggerEvents, 
     wf.trigger.event_type, 
     `wf-${wfIndex}-trigger-event-type`
   );
 
+  let $triggerIcon = $("<i>", { 
+      class: "fa-solid fa-bolt bckg-icon-2-line"
+    });
+
+  $triggerSection.append($triggerIcon);
   $triggerSection.append($triggerTypeDropdown);
   $triggerSection.append($eventTypeDropdown);
+  
   $wfCollapsiblePanel.append($triggerSection);
 
   // Conditions
-  let $conditionsTitle = $("<div>",
-    {
-      class:"section-title"
-    }
-  ).text("Conditions:")
 
-  let $conditionsContainer = $("<div>",
-    {
-      class: "col-sm-12 col-sx-12"
-    }
-  ).append($conditionsTitle);
+  let $conditionsIcon = $("<i>", { 
+    class: "fa-solid  fa-arrows-split-up-and-left fa-rotate-270"
+  });
+
+  let $conditionsTitle = $("<div>", {
+    class: "section-title"
+  }).append($conditionsIcon).append(` ${getString("WF_Conditions")}:`);
+
+  let $conditionsContainer = $("<div>", {
+    class: "col-sm-12 col-sx-12"
+  }).append($conditionsTitle);
+
 
   $conditionsContainer.append(renderConditions(wfIndex, `[${wfIndex}]`, 0, wf.conditions));
   
   $wfCollapsiblePanel.append($conditionsContainer);
 
+  let $actionsIcon = $("<i>", { 
+      class: "fa-solid fa-person-running fa-flip-horizontal"
+    });
+
   let $actionsTitle = $("<div>",
     {
       class:"section-title"
     }
-  ).text("Actions:")
+  ).append($actionsIcon).append(` ${getString("WF_Actions")}:`)
 
   // Actions with action.field as dropdown
   let $actionsContainer = $("<div>",
@@ -233,23 +292,30 @@ function generateWorkflowUI(wf, wfIndex) {
       class: "panel col-sm-12 col-sx-12"
     });
 
+
     // Dropdown for action.type
     let $actionDropdown= createEditableDropdown(
       `[${wfIndex}].actions[${actionIndex}].type`, 
-      "Type", 
+      getString("WF_Action_type"),  
       actionTypes, 
       action.type, 
       `wf-${wfIndex}-actionIndex-${actionIndex}-type`
     );
 
+
     $actionEl.append($actionDropdown);
+
+    // how big should the background icon be
+    let numberOfLines = 1
 
     if(action.type == "update_field")
     {
+      numberOfLines = 3
+
       // Dropdown for action.field
       let $fieldDropdown = createEditableDropdown(
         `[${wfIndex}].actions[${actionIndex}].field`, 
-        "Field", 
+        getString("WF_Action_field"),  
         fieldOptions, 
         action.field, 
         `wf-${wfIndex}-actionIndex-${actionIndex}-field`
@@ -258,7 +324,7 @@ function generateWorkflowUI(wf, wfIndex) {
       // Textbox for  action.value
       let $actionValueInput = createEditableInput(
         `[${wfIndex}].actions[${actionIndex}].value`, 
-        "Value", 
+        getString("WF_Action_value"), 
         action.value, 
         `wf-${wfIndex}-actionIndex-${actionIndex}-value`, 
         "action-value-input"
@@ -279,7 +345,7 @@ function generateWorkflowUI(wf, wfIndex) {
     });
 
     let $actionRemoveButton = $("<div>", {
-      class: "pointer remove-action ",
+      class: "pointer remove-action red-hover-text",
       actionIndex: actionIndex,
       wfIndex: wfIndex
     })
@@ -287,7 +353,14 @@ function generateWorkflowUI(wf, wfIndex) {
 
     $actionRemoveButtonWrap.append($actionRemoveButton);
 
+    let $actionIcon = $("<i>", { 
+      class: `fa-solid  fa-person-running fa-flip-horizontal bckg-icon-${numberOfLines}-line `
+    });
+
+    $actionEl.prepend($actionIcon)
+
     $actionElWrap.append($actionEl)
+    
     $actionElWrap.append($actionRemoveButtonWrap)
 
     $actionsContainer.append($actionElWrap);
@@ -301,31 +374,61 @@ function generateWorkflowUI(wf, wfIndex) {
       class: "fa-solid fa-plus"
     });
   let $actionAddButton = $("<div>", {
-      class : "pointer add-action",
+      class : "pointer add-action green-hover-text",
       lastActionIndex : lastActionIndex,
       wfIndex: wfIndex
-    }).append($actionAddIcon).append("Add Action")
+    }).append($actionAddIcon).append(` ${getString("WF_Action_Add")}`)
 
   $actionAddButtonWrap.append($actionAddButton)
   $actionsContainer.append($actionAddButtonWrap)
 
   
-  let $wfRemoveButtonWrap = $("<div>", { class: "button-container col-sm-12 col-sx-12" });
+  let $wfRemoveButtonWrap = $("<div>", { class: "button-container col-sm-4 col-sx-12" });
 
   let $wfRemoveIcon = $("<i>", { 
     class: "fa-solid fa-trash"
   });
 
   let $wfRemoveButton = $("<div>", {
-    class: "pointer remove-wf",
+    class: "pointer remove-wf red-hover-text",
     wfIndex: wfIndex
   })
   .append($wfRemoveIcon) // Add icon
-  .append("Remove Workflow"); // Add text
+  .append(` ${getString("WF_Remove")}`); // Add text
+
+
+  let $wfDuplicateButtonWrap = $("<div>", { class: "button-container col-sm-4 col-sx-12" });
+
+  let $wfDuplicateIcon = $("<i>", { 
+    class: "fa-solid fa-copy"
+  });
+
+  let $wfDuplicateButton = $("<div>", {
+    class: "pointer duplicate-wf green-hover-text",
+    wfIndex: wfIndex
+  })
+  .append($wfDuplicateIcon) // Add icon
+  .append(` ${getString("WF_Duplicate")}`); // Add text
+
+  let $wfExportButtonWrap = $("<div>", { class: "button-container col-sm-4 col-sx-12" });
+
+  let $wfExportIcon = $("<i>", { 
+    class: "fa-solid fa-file-export"
+  });
+
+  let $wfExportButton = $("<div>", {
+    class: "pointer export-wf green-hover-text",
+    wfIndex: wfIndex
+  })
+  .append($wfExportIcon) // Add icon
+  .append(` ${getString("WF_Export")}`); // Add text
  
   $wfCollapsiblePanel.append($actionsContainer);
 
+  $wfCollapsiblePanel.append($wfDuplicateButtonWrap.append($wfDuplicateButton))
+  $wfCollapsiblePanel.append($wfExportButtonWrap.append($wfExportButton))
   $wfCollapsiblePanel.append($wfRemoveButtonWrap.append($wfRemoveButton))
+  
 
   $wfContainer.append($wfCollapsiblePanel)
 
@@ -337,7 +440,7 @@ function generateWorkflowUI(wf, wfIndex) {
 // Render conditions recursively
 function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, conditions) {
   let $conditionList = $("<div>", { 
-    class: "condition-list panel panel-secondary col-sm-12 col-sx-12",
+    class: "condition-list panel  col-sm-12 col-sx-12",
     parentIndexPath: parentIndexPath 
   });
 
@@ -365,7 +468,7 @@ function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, condit
 
       let $logicDropdown = createEditableDropdown(
         `${currentPath}.logic`, 
-        "Logic Rules", 
+        getString("WF_Conditions_logic_rules"), 
         ["AND", "OR"], 
         condition.logic, 
         `wf-${wfIndex}-${currentPath.replace(/\./g, "-")}-logic` // id
@@ -381,12 +484,18 @@ function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, condit
 
     } else {
       // INDIVIDUAL CONDITIONS
+      let $conditionIcon = $("<i>", { 
+        class: "fa-solid  fa-arrows-split-up-and-left fa-rotate-270 bckg-icon-3-line "
+      });
+
       let $conditionItem = $("<div>",
       {
         class: "panel col-sm-12 col-sx-12",
         conditionIndex: conditionIndex,
         wfIndex: wfIndex
       });
+
+      $conditionItem.append($conditionIcon); // Append background icon
 
       let $conditionItemsWrap = $("<div>",
       {
@@ -395,7 +504,8 @@ function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, condit
 
       // Create dropdown for condition field
       let $fieldDropdown = createEditableDropdown(
-        `${currentPath}.field`,"Field", 
+        `${currentPath}.field`,
+        getString("WF_Condition_field"), 
         fieldOptions, 
         condition.field, 
         `wf-${wfIndex}-${currentPath.replace(/\./g, "-")}-field`
@@ -404,7 +514,7 @@ function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, condit
       // Create dropdown for operator
       let $operatorDropdown = createEditableDropdown(
         `${currentPath}.operator`, 
-        "Operator", 
+        getString("WF_Condition_operator"), 
         operatorTypes, 
         condition.operator, 
         `wf-${wfIndex}-${currentPath.replace(/\./g, "-")}-operator`
@@ -413,11 +523,12 @@ function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, condit
       // Editable input for condition value
       let $editableInput = createEditableInput(
           `${currentPath}.value`, 
-          "Condition Value", 
+          getString("WF_Condition_value"), 
           condition.value, 
           `wf-${wfIndex}-${currentPath.replace(/\./g, "-")}-value`, 
           "condition-value-input"
        );
+
 
       $conditionItemsWrap.append($fieldDropdown); // Append field dropdown
       $conditionItemsWrap.append($operatorDropdown); // Append operator dropdown
@@ -428,7 +539,7 @@ function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, condit
         class: "fa-solid fa-trash"
       });
       let $conditionRemoveButton = $("<div>", {
-        class : "pointer remove-condition ",
+        class : "pointer remove-condition red-hover-text",
         conditionIndex : conditionIndex,
         wfIndex: wfIndex,
         parentIndexPath: parentIndexPath
@@ -455,10 +566,10 @@ function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, condit
       class: "fa-solid fa-plus"
     });
     let $conditionAddButton = $("<div>", {
-      class: "pointer add-condition col-sx-12",
+      class: "pointer add-condition green-hover-text col-sx-12",
       wfIndex: wfIndex,
       parentIndexPath: parentIndexPath
-    }).append($conditionAddIcon).append("Add Condition");
+    }).append($conditionAddIcon).append(` ${getString("WF_Add_Condition")}`);
     $conditionAddWrap.append($conditionAddButton);
 
     // Remove Condition Group button
@@ -467,7 +578,7 @@ function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, condit
       class: "fa-solid fa-trash"
     });
     let $conditionGroupRemoveButton = $("<div>", {
-      class: "pointer remove-condition-group col-sx-12",
+      class: "pointer remove-condition-group red-hover-text col-sx-12",
       lastConditionIndex: lastConditionIndex,
       wfIndex: wfIndex,
       parentIndexPath: parentIndexPath
@@ -485,10 +596,10 @@ function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, condit
       class: "fa-solid fa-plus"
     });
   let $conditionsGroupAddButton = $("<div>", {
-    class: "pointer add-condition-group col-sx-12",
+    class: "pointer add-condition-group green-hover-text col-sx-12",
     wfIndex: wfIndex,
     parentIndexPath: parentIndexPath
-  }).append($conditionsGroupAddIcon).append("Add Group");
+  }).append($conditionsGroupAddIcon).append(` ${getString("WF_Add_Group")}`);
   $conditionsGroupAddWrap.append($conditionsGroupAddButton);
 
   $addButtonWrap.append($conditionsGroupAddWrap);
@@ -707,7 +818,62 @@ function addWorkflow(workflows) {
 // Function to remove a Workflow
 function removeWorkflow(workflows, wfIndex) {
   
-  workflows.splice(wfIndex, 1);
+  showModalWarning ('<?= lang('WF_Remove');?>', '<?= lang('WF_Remove_Copy');?>',
+            '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Delete');?>', `executeRemoveWorkflow`, wfIndex);
+}
+
+// ---------------------------------------------------
+// Function to execute the remove of a Workflow
+function executeRemoveWorkflow() {
+  
+  workflows = getWorkflowsJson()
+
+  workflows.splice($('#modal-warning').attr("data-myparam-triggered-by"), 1);
+
+  updateWorkflowsJson(workflows)
+
+  // Re-render the UI
+  renderWorkflows();
+}
+
+// ---------------------------------------------------
+// Function to duplicate a Workflow
+function duplicateWorkflow(workflows, wfIndex) {
+  
+  workflows.push(workflows[wfIndex])
+
+  updateWorkflowsJson(workflows)
+
+  // Re-render the UI
+  renderWorkflows();
+}
+
+// ---------------------------------------------------
+// Function to export a Workflow
+function exportWorkflow(workflows, wfIndex) {
+
+// Add new icon as base64 string 
+showModalInput ('<i class="fa  fa-file-export pointer"></i> <?= lang('WF_Export');?>', '<?= lang('WF_Export_Copy');?>',
+    '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Okay');?>', null, null,  JSON.stringify(workflows[wfIndex], null, 2));
+}
+
+// ---------------------------------------------------
+// Function to import a Workflow
+function importWorkflow(workflows, wfIndex) {
+
+// Add new icon as base64 string 
+showModalInput ('<i class="fa  fa-file-import pointer"></i> <?= lang('WF_Import');?>', '<?= lang('WF_Import_Copy');?>',
+    '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Okay');?>', 'importWorkflowExecute', null, "" );
+
+}
+
+function importWorkflowExecute()
+{   
+  var json = JSON.parse($('#modal-input-textarea').val());
+  
+  workflows = getWorkflowsJson()
+  
+  workflows.push(json);
 
   updateWorkflowsJson(workflows)
 
@@ -922,17 +1088,7 @@ function updateWorkflowsJson(workflows)
 // Get empty workflow JSON
 function getEmptyWorkflowJson()
 {
-  return {
-      "name": "New Workflow",
-      "trigger": {
-        "object_type": "Devices",
-        "event_type": "create"
-      },
-      "conditions": [
-      ],
-      "actions": [     
-      ]
-    }
+  return emptyWorkflow;
 } 
 
 // ---------------------------------------------------
@@ -959,6 +1115,21 @@ $(document).on("click", ".add-workflow-btn", function () {
 $(document).on("click", ".remove-wf", function () {
   let wfIndex = $(this).attr("wfindex");
   removeWorkflow(getWorkflowsJson(), wfIndex);
+});
+
+$(document).on("click", ".duplicate-wf", function () {
+  let wfIndex = $(this).attr("wfindex");
+  duplicateWorkflow(getWorkflowsJson(), wfIndex);
+});
+
+$(document).on("click", ".export-wf", function () {
+  let wfIndex = $(this).attr("wfindex");
+  exportWorkflow(getWorkflowsJson(), wfIndex);
+});
+
+$(document).on("click", ".import-wf", function () {
+  let wfIndex = $(this).attr("wfindex");
+  importWorkflow(getWorkflowsJson(), wfIndex);
 });
 
 $(document).on("click", ".add-condition", function () {

@@ -16,7 +16,7 @@ from plugin_utils import get_plugins_configs
 from logger import mylog, Logger
 from const import pluginsPath, fullDbPath, logPath
 from helper import timeNowTZ, get_setting_value 
-from notification import write_notification
+from messaging.in_app import write_notification
 from database import DB
 from models.device_instance import DeviceInstance
 import conf
@@ -57,14 +57,17 @@ def main():
     device_handler = DeviceInstance(db)
 
     # Retrieve devices
-    unknown_devices = device_handler.getUnknown()
+    if get_setting_value("REFRESH_FQDN"): 
+        devices = device_handler.getAll()
+    else:        
+        devices = device_handler.getUnknown()
 
-    mylog('verbose', [f'[{pluginName}] Unknown devices count: {len(unknown_devices)}'])   
+    mylog('verbose', [f'[{pluginName}] Devices count: {len(devices)}'])   
     
     # TEST - below is a WINDOWS host IP
     # execute_name_lookup('192.168.1.121', timeout)
 
-    for device in unknown_devices:
+    for device in devices:
         domain_name, dns_server = execute_name_lookup(device['devLastIP'], timeout)
 
         if domain_name != '':

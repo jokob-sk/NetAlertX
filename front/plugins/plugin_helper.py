@@ -4,6 +4,7 @@ from pytz import timezone, all_timezones, UnknownTimeZoneError
 import sys
 import re
 import base64
+import json
 from datetime import datetime
 
 INSTALL_PATH = "/app"
@@ -115,6 +116,51 @@ def decodeBase64(inputParamBase64):
     mylog('debug', ['[Plugins] Helper base64 result: ', result]) 
 
     return result
+
+# -------------------------------------------------------------------
+def decode_settings_base64(encoded_str, convert_types=True):
+    """
+    Decodes a base64-encoded JSON list of settings into a dict.
+
+    Each setting entry format:
+        [group, key, type, value]
+
+    Example:
+        [
+            ["group", "name", "string", "Home - local"],
+            ["group", "base_url", "string", "https://..."],
+            ["group", "api_version", "integer", "2"],
+            ["group", "verify_ssl", "boolean", "False"]
+        ]
+
+    Returns:
+        {
+            "name": "Home - local",
+            "base_url": "https://...",
+            "api_version": 2,
+            "verify_ssl": False
+        }
+    """
+    decoded_json = base64.b64decode(encoded_str).decode("utf-8")
+    settings_list = json.loads(decoded_json)
+
+    settings_dict = {}
+    for _, key, _type, value in settings_list:
+        if convert_types:
+            _type_lower = _type.lower()
+            if _type_lower == "boolean":
+                settings_dict[key] = value.lower() == "true"
+            elif _type_lower == "integer":
+                settings_dict[key] = int(value)
+            elif _type_lower == "float":
+                settings_dict[key] = float(value)
+            else:
+                settings_dict[key] = value
+        else:
+            settings_dict[key] = value
+
+    return settings_dict
+
 
 # -------------------------------------------------------------------
 def normalize_mac(mac):

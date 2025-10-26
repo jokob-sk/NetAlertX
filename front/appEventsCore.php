@@ -1,3 +1,8 @@
+<span class="helpIcon"> 
+    <a target="_blank" href="https://github.com/jokob-sk/NetAlertX/blob/main/docs/WORKFLOWS_DEBUGGING.md">
+      <i class="fa fa-circle-question"></i>
+    </a>
+  </span>
 <section class="content">
   <div class="nav-tabs-custom app-event-content" style="margin-bottom: 0px;">
     <ul id="tabs-location" class="nav nav-tabs col-sm-2 hidden">
@@ -19,7 +24,7 @@ showSpinner()
 $(document).ready(function() {
 
   // Load JSON data from the provided URL
-  $.getJSON('/php/server/query_json.php?file=table_appevents.json', function(data) {
+  $.getJSON('php/server/query_json.php?file=table_appevents.json', function(data) {
     // Process the JSON data and generate UI dynamically    
     processData(data)
 

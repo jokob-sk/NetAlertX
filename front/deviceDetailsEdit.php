@@ -5,7 +5,7 @@
 ?>
 
 
-<div class="row">
+<div class="row" id="deviceDetailsEdit">
   <div class="box-body form-horizontal">
     <form id="edit-form">
     <!-- Form fields will be appended here -->
@@ -39,7 +39,7 @@
   
   // -------------------------------------------------------------------  
   // Get plugin and settings data from API endpoints
-  function getDeviceData(readAllData){
+  function getDeviceData(){
 
     mac = getMac()
 
@@ -53,24 +53,20 @@
 
       var deviceData = JSON.parse(data);
 
-      // Deactivate next previous buttons
-      if (readAllData) {
-        $('#btnPrevious').attr    ('disabled','');
-        $('#btnPrevious').addClass  ('text-gray50');
-        $('#btnNext').attr      ('disabled','');
-        $('#btnNext').addClass    ('text-gray50');
-      }
-
       // some race condition, need to implement delay
       setTimeout(() => {
-        $.get('/php/server/query_json.php', { file: 'table_settings.json', nocache: Date.now() }, function(res) {  
+        $.get('php/server/query_json.php', { 
+          file: 'table_settings.json', 
+          // nocache: Date.now() 
+        }, 
+          function(res) {  
         
         settingsData = res["data"];
 
         // columns to hide
         hiddenFields = ["NEWDEV_devScan", "NEWDEV_devPresentLastScan" ]
-        // columns to disable - conditional depending if a new dummy device is created
-        disabledFields =  mac == "new" ? ["NEWDEV_devLastNotification", "NEWDEV_devFirstConnection", "NEWDEV_devLastConnection"] : ["NEWDEV_devLastNotification", "NEWDEV_devFirstConnection", "NEWDEV_devLastConnection", "NEWDEV_devMac", "NEWDEV_devLastIP", "NEWDEV_devSyncHubNode" ];
+        // columns to disable/readonly - conditional depending if a new dummy device is created
+        disabledFields =  mac == "new" ? ["NEWDEV_devLastNotification", "NEWDEV_devFirstConnection", "NEWDEV_devLastConnection"] : ["NEWDEV_devLastNotification", "NEWDEV_devFirstConnection", "NEWDEV_devLastConnection", "NEWDEV_devMac", "NEWDEV_devLastIP", "NEWDEV_devSyncHubNode", "NEWDEV_devFQDN" ];
         
         // Grouping of fields into categories with associated documentation links
         const fieldGroups = {
@@ -82,19 +78,10 @@
                 inputGroupClasses: "field-group main-group col-lg-4 col-sm-6 col-xs-12",
                 labelClasses: "col-sm-4 col-xs-12 control-label",
                 inputClasses: "col-sm-8 col-xs-12 input-group"
-            },
-            // Group for session information
-            DevDetail_SessionInfo_Title: {
-                data: ["devStatus", "devLastConnection", "devFirstConnection"],
-                docs: "https://github.com/jokob-sk/NetAlertX/blob/main/docs/SESSION_INFO.md",
-                iconClass: "fa fa-calendar",
-                inputGroupClasses: "field-group session-group col-lg-4 col-sm-6 col-xs-12",
-                labelClasses: "col-sm-4 col-xs-12 control-label",
-                inputClasses: "col-sm-8 col-xs-12 input-group"
-            },
+            },            
              // Group for event and alert settings
              DevDetail_EveandAl_Title: {
-                data: ["devAlertEvents", "devAlertDown", "devSkipRepeated"],
+                data: ["devAlertEvents", "devAlertDown", "devSkipRepeated", "devReqNicsOnline", "devChildrenNicsDynamic"],
                 docs: "https://github.com/jokob-sk/NetAlertX/blob/main/docs/NOTIFICATIONS.md",
                 iconClass: "fa fa-bell",
                 inputGroupClasses: "field-group alert-group col-lg-4 col-sm-6 col-xs-12",
@@ -103,9 +90,9 @@
             },
             // Group for network details
             DevDetail_MainInfo_Network_Title: {
-                data: ["devParentMAC", "devParentPort", "devSSID", "devSite", "devSyncHubNode"],
+                data: ["devParentMAC", "devParentRelType", "devParentPort", "devSSID", "devSite", "devSyncHubNode"],
                 docs: "https://github.com/jokob-sk/NetAlertX/blob/main/docs/NETWORK_TREE.md",
-                iconClass: "fa fa-network-wired",
+                iconClass: "fa fa-sitemap fa-rotate-270",
                 inputGroupClasses: "field-group network-group col-lg-4 col-sm-6 col-xs-12",
                 labelClasses: "col-sm-4 col-xs-12 control-label",
                 inputClasses: "col-sm-8 col-xs-12 input-group"
@@ -119,12 +106,30 @@
                 labelClasses: "col-sm-4 col-xs-12 control-label",
                 inputClasses: "col-sm-8 col-xs-12 input-group"
             },
+            // Group for session information
+            DevDetail_SessionInfo_Title: {
+                data: ["devStatus", "devLastConnection", "devFirstConnection", "devFQDN"],
+                docs: "https://github.com/jokob-sk/NetAlertX/blob/main/docs/SESSION_INFO.md",
+                iconClass: "fa fa-calendar",
+                inputGroupClasses: "field-group session-group col-lg-4 col-sm-6 col-xs-12",
+                labelClasses: "col-sm-4 col-xs-12 control-label",
+                inputClasses: "col-sm-8 col-xs-12 input-group"
+            },
+            // Group for Children.
+            DevDetail_Children_Title: {
+                data: ["devChildrenDynamic"],
+                docs: "https://github.com/jokob-sk/NetAlertX/blob/main/docs/NETWORK_TREE.md",
+                iconClass: "fa fa-list",
+                inputGroupClasses: "field-group cutprop-group col-lg-6 col-sm-12 col-xs-12",
+                labelClasses: "col-sm-12 col-xs-12 control-label",
+                inputClasses: "col-sm-12 col-xs-12 input-group"
+            },
             // Group for Custom properties.
             DevDetail_CustomProperties_Title: {
                 data: ["devCustomProps"],
                 docs: "https://github.com/jokob-sk/NetAlertX/blob/main/docs/CUSTOM_PROPERTIES.md",
                 iconClass: "fa fa-list",
-                inputGroupClasses: "field-group cutprop-group col-lg-12 col-sm-12 col-xs-12",
+                inputGroupClasses: "field-group cutprop-group col-lg-6 col-sm-12 col-xs-12",
                 labelClasses: "col-sm-12 col-xs-12 control-label",
                 inputClasses: "col-sm-12 col-xs-12 input-group"
             }
@@ -167,13 +172,14 @@
                     // Get the field data (replace 'NEWDEV_' prefix from the key)
                     fieldData = deviceData[setting.setKey.replace('NEWDEV_', '')]
                     fieldData = fieldData == null ? "" : fieldData;
+                    fieldOptionsOverride = null;
 
                     // console.log(setting.setKey);                    
                     // console.log(fieldData);                    
 
                     // Additional form elements like the random MAC address button for devMac
                     let inlineControl = "";
-                    // handle rendom mac
+                    // handle random mac
                     if (setting.setKey == "NEWDEV_devMac" && deviceData["devIsRandomMAC"] == true) {
                       inlineControl += `<span class="input-group-addon pointer"
                                               title="${getString("RandomMAC_hover")}">
@@ -198,16 +204,21 @@
                                               <i class="fa-solid fa-dice" ></i>
                                           </span>`;
                     }
-
-                    // handle generate IP for new device
-                    if (setting.setKey == "NEWDEV_devIcon") {
-                      inlineControl += `<span class="input-group-addon pointer"
-                                              onclick="showIconSelection()"
-                                              title="${getString("Gen_Select")}">
-                                              <i class="fa-solid fa-chevron-down" ></i>
-                                          </span>`;
-                    }
                     
+                    // handle devChildrenDynamic or NEWDEV_devChildrenNicsDynamic - selected values and options are the same
+                    if ( 
+                        Array.isArray(fieldData) && 
+                        (setting.setKey == "NEWDEV_devChildrenDynamic" || 
+                        setting.setKey == "NEWDEV_devChildrenNicsDynamic" )                  
+                        ) 
+                      {  
+                      fieldDataNew = []                    
+                      fieldData.forEach(child => {
+                        fieldDataNew.push(child.devMac)
+                      })
+                      fieldData = fieldDataNew;
+                      fieldOptionsOverride = fieldDataNew;
+                    }
 
                     // Generate the input field HTML
                     const inputFormHtml = `<div class="form-group col-xs-12">
@@ -219,7 +230,7 @@
                                                   </i>
                                               </label>
                                               <div class="${obj.inputClasses}">
-                                                  ${generateFormHtml(settingsData, setting, fieldData.toString(), null, null)}
+                                                  ${generateFormHtml(settingsData, setting, fieldData.toString(), fieldOptionsOverride, null)}
                                                   ${inlineControl}
                                               </div>
                                           </div>`;
@@ -236,81 +247,29 @@
             updateAllIconPreviews();
 
             // update readonly fields
-            handleReadOnly(settingsData, disabledFields);
+            handleReadOnly(settingsData, disabledFields);           
+          };
 
-            // Page title - Name
-            if (mac == "new") {
-                $('#pageTitle').html(`<i title="${getString("Gen_create_new_device")}" class="fa fa-square-plus"></i> ` +  getString("Gen_create_new_device"));
-                $('#devicePageInfoPlc .inner').html(`<i class="fa fa-circle-info"></i> ` +  getString("Gen_create_new_device_info"));
-                $('#devicePageInfoPlc').show();
-            } else if (deviceData['devOwner'] == null || deviceData['devOwner'] == '' ||
-                (deviceData['devName'].toString()).indexOf(deviceData['devOwner']) != -1) {
-                $('#pageTitle').html(deviceData['devName']);
-                $('#devicePageInfoPlc').hide();
-            } else {
-                $('#pageTitle').html(deviceData['devName'] + ' (' + deviceData['devOwner'] + ')');
-                $('#devicePageInfoPlc').hide();
-            }
-        };
+          // console.log(relevantSettings)
 
-        // console.log(relevantSettings)
+          generateSimpleForm(relevantSettings);
 
-        generateSimpleForm(relevantSettings);
+          toggleNetworkConfiguration(mac == 'Internet') 
 
-        // <> chevrons
-        updateChevrons(deviceData)
+          initSelect2();
+          initHoverNodeInfo();
 
-        toggleNetworkConfiguration(mac == 'Internet') 
-
-        hideSpinner();
+          hideSpinner();
+        
+        })
       
-      })
+        }, 100);
+      });
     
-      }, 1);
-    });
+    }
+
+
   
-  }
-  
-
-  // ----------------------------------------
-  // Handle previous/next arrows/chevrons
-  function updateChevrons(deviceData) {
-
-    devicesList = getDevicesList();    
-
-    // console.log(devicesList);
-
-    // Check if device is part of the devicesList      
-    pos = devicesList.findIndex(item => item.rowid == deviceData['rowid']);        
-    
-    // console.log(pos);    
-
-    if (pos == -1) {
-      devicesList.push({"rowid" : deviceData['rowid'], "mac" : deviceData['devMac'], "name": deviceData['devName'], "type": deviceData['devType']});
-      pos=0;
-    }
-
-    // Record number
-    $('#txtRecord').html (pos+1 +' / '+ devicesList.length);
-
-    // Deactivate previous button
-    if (pos <= 0) {
-      $('#btnPrevious').attr        ('disabled','');
-      $('#btnPrevious').addClass    ('text-gray50');
-    } else {
-      $('#btnPrevious').removeAttr  ('disabled');
-      $('#btnPrevious').removeClass ('text-gray50');
-    }
-
-    // Deactivate next button
-    if (pos >= (devicesList.length-1)) {
-      $('#btnNext').attr        ('disabled','');
-      $('#btnNext').addClass    ('text-gray50');
-    } else {
-      $('#btnNext').removeAttr  ('disabled');
-      $('#btnNext').removeClass ('text-gray50');
-    }
-  }
 
   // ----------------------------------------
   // Handle the read-only fields
@@ -325,19 +284,8 @@
   });
   }
 
-
-  // ----------------------------------------
-  // Show the description of a setting
-  function showDescriptionPopup(e) {
-
-    console.log($(e).attr("my-set-key"));    
-
-    showModalOK("Info", getString($(e).attr("my-set-key") + '_description'))
-  }
-
-
-
   // -----------------------------------------------------------------------------
+  // Save device data to DB
   function setDeviceData(direction = '', refreshCallback = '') {
     // Check MAC
     if (mac === '') {
@@ -363,7 +311,7 @@
         mac: $('#NEWDEV_devMac').val(),
         name: encodeURIComponent($('#NEWDEV_devName').val().replace(/'/g, "’")),
         owner: encodeURIComponent($('#NEWDEV_devOwner').val().replace(/'/g, "’")),
-        type: $('#NEWDEV_devType').val().replace(/'/g, ""),
+        type: $('#NEWDEV_devType').val().replace(/'/g, ""),        
         vendor: encodeURIComponent($('#NEWDEV_devVendor').val().replace(/'/g, "’")),
         icon: encodeURIComponent($('#NEWDEV_devIcon').val()),
         favorite: ($('#NEWDEV_devFavorite')[0].checked * 1),
@@ -379,6 +327,8 @@
         alertevents: ($('#NEWDEV_devAlertEvents')[0].checked * 1),
         alertdown: ($('#NEWDEV_devAlertDown')[0].checked * 1),
         skiprepeated: $('#NEWDEV_devSkipRepeated').val().split(' ')[0],
+        relType: $('#NEWDEV_devParentRelType').val().replace(/'/g, ""),
+        reqNics: ($('#NEWDEV_devReqNicsOnline')[0].checked * 1),
         newdevice: ($('#NEWDEV_devIsNew')[0].checked * 1),
         archived: ($('#NEWDEV_devIsArchived')[0].checked * 1),
         devFirstConnection: ($('#NEWDEV_devFirstConnection').val()),
@@ -426,9 +376,47 @@
     }
   }
 
+// -----------------------------------------------
+// INIT with polling for panel element visibility
+// -----------------------------------------------
 
-  // -------------------- INIT ------------------------
-  getDeviceData(true);
+var deviceDetailsPageInitialized = false; 
+
+function initdeviceDetailsPage()
+{
+  // Only proceed if .plugin-content is visible
+  if (!$('#panDetails:visible').length) {
+    return; // exit early if nothing is visible
+  }
+
+  // init page once
+  if (deviceDetailsPageInitialized) return; //  ENSURE ONCE
+  deviceDetailsPageInitialized = true;
+
+  showSpinner();
+
+  getDeviceData();
+
+}
+
+// -----------------------------------------------------------------------------
+// Recurring function to monitor the URL and reinitialize if needed
+function deviceDetailsPageUpdater() {
+  initdeviceDetailsPage();
+
+  // Run updater again after delay
+  setTimeout(deviceDetailsPageUpdater, 200);
+}
+
+// if visible, load immediately, if not start updater
+if (!$('#panDetails:visible').length) {
+  deviceDetailsPageUpdater();
+}
+else
+{
+  getDeviceData();
+}
+
 
 
 </script>

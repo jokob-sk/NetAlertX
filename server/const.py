@@ -1,8 +1,11 @@
 """ CONSTANTS for NetAlertX """
+import os
 
 #===============================================================================
 # PATHS
 #===============================================================================
+
+
 applicationPath = '/app'
 dbFileName      = 'app.db'
 confFileName    = 'app.conf'
@@ -17,8 +20,8 @@ reportTemplatesPath = applicationPath + '/front/report_templates/'
 fullConfFolder      = applicationPath + '/config'
 fullConfPath        = applicationPath + confPath
 fullDbPath          = applicationPath + dbPath
-vendorsPath         = '/usr/share/arp-scan/ieee-oui.txt'
-vendorsPathNewest   = '/usr/share/arp-scan/ieee-oui_all_filtered.txt'
+vendorsPath         = os.getenv('VENDORSPATH', '/usr/share/arp-scan/ieee-oui.txt')
+vendorsPathNewest   = os.getenv('VENDORSPATH_NEWEST', '/usr/share/arp-scan/ieee-oui_all_filtered.txt')
 
 default_tz          = 'Europe/Berlin'
 
@@ -47,7 +50,7 @@ sql_devices_all = """
                         IFNULL(devAlertDown, '') AS devAlertDown,
                         IFNULL(devSkipRepeated, '') AS devSkipRepeated,
                         IFNULL(devLastNotification, '') AS devLastNotification,
-                        IFNULL(devPresentLastScan, '') AS devPresentLastScan,
+                        IFNULL(devPresentLastScan, 0) AS devPresentLastScan,
                         IFNULL(devIsNew, '') AS devIsNew,
                         IFNULL(devLocation, '') AS devLocation,
                         IFNULL(devIsArchived, '') AS devIsArchived,
@@ -60,6 +63,9 @@ sql_devices_all = """
                         IFNULL(devSyncHubNode, '') AS devSyncHubNode,
                         IFNULL(devSourcePlugin, '') AS devSourcePlugin,
                         IFNULL(devCustomProps, '') AS devCustomProps,
+                        IFNULL(devFQDN, '') AS devFQDN,
+                        IFNULL(devParentRelType, '') AS devParentRelType,
+                        IFNULL(devReqNicsOnline, '') AS devReqNicsOnline,
                         CASE 
                             WHEN devIsNew = 1 THEN 'New'
                             WHEN devPresentLastScan = 1 THEN 'On-line'
@@ -101,6 +107,8 @@ sql_devices_tiles = """
                             (SELECT COUNT(*) FROM Devices WHERE devIsNew = 1) AS new,
                             (SELECT COUNT(*) FROM Devices WHERE devIsArchived = 1) AS archived,
                             (SELECT COUNT(*) FROM Devices WHERE devFavorite = 1) AS favorites,
+                            (SELECT COUNT(*) FROM Devices) AS all,
+                            (SELECT COUNT(*) FROM Devices) AS all_devices,
                             -- My Devices count
                             (SELECT COUNT(*) FROM MyDevicesFilter) AS my_devices
                         FROM Statuses; 

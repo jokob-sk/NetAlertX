@@ -20,7 +20,7 @@ from logger import mylog, Logger
 from const import pluginsPath, fullDbPath, logPath
 from helper import timeNowTZ, get_setting_value 
 from crypto_utils import encrypt_data
-from notification import write_notification
+from messaging.in_app import write_notification
 import conf
 from pytz import timezone
 
@@ -28,7 +28,7 @@ from pytz import timezone
 conf.tz = timezone(get_setting_value('TIMEZONE'))
 
 # Make sure log level is initialized correctly
-Logger(get_setting_value('LOG_LEVEL'))
+lggr = Logger(get_setting_value('LOG_LEVEL'))
 
 pluginName = 'SYNC'
 
@@ -148,7 +148,8 @@ def main():
 
             message = f'[{pluginName}] Device data from node "{node_name}" written to {log_file_name}'
             mylog('verbose', [message])
-            write_notification(message, 'info', timeNowTZ())           
+            if lggr.isAbove('verbose'):
+                write_notification(message, 'info', timeNowTZ())           
         
 
     # Process any received data for the Device DB table (ONLY JSON)
@@ -176,32 +177,31 @@ def main():
             # only process received .log files, skipping the one logging the progress of this plugin
             if file_name != 'last_result.log':
                 mylog('verbose', [f'[{pluginName}] Processing: "{file_name}"'])
-
-                # Store e.g. Node_1 from last_result.encoded.Node_1.1.log
-                tmp_SyncHubNodeName = ''
-                if len(file_name.split('.')) > 2:
-                    tmp_SyncHubNodeName = file_name.split('.')[1]   
-
-
-                file_path = f"{LOG_PATH}/{file_name}"
                 
-                with open(file_path, 'r') as f:
-                    data = json.load(f)
-                    for device in data['data']:
-                        if device['devMac'] not in unique_mac_addresses:
-                            device['devSyncHubNode'] = tmp_SyncHubNodeName
-                            unique_mac_addresses.add(device['devMac'])
-                            device_data.append(device)    
-                            
-                # Rename the file to "processed_" + current name
-                new_file_name = f"processed_{file_name}"
-                new_file_path = os.path.join(LOG_PATH, new_file_name)
+                # make sure the file has the correct name (e.g last_result.encoded.Node_1.1.log) to skip any otehr plugin files
+                if len(file_name.split('.')) > 2:
+                    # Store e.g. Node_1 from last_result.encoded.Node_1.1.log
+                    syncHubNodeName = file_name.split('.')[1]   
 
-                # Overwrite if the new file already exists
-                if os.path.exists(new_file_path):
-                    os.remove(new_file_path)
+                    file_path = f"{LOG_PATH}/{file_name}"
+                    
+                    with open(file_path, 'r') as f:
+                        data = json.load(f)
+                        for device in data['data']:
+                            if device['devMac'] not in unique_mac_addresses:
+                                device['devSyncHubNode'] = syncHubNodeName
+                                unique_mac_addresses.add(device['devMac'])
+                                device_data.append(device)    
+                                
+                    # Rename the file to "processed_" + current name
+                    new_file_name = f"processed_{file_name}"
+                    new_file_path = os.path.join(LOG_PATH, new_file_name)
 
-                os.rename(file_path, new_file_path)
+                    # Overwrite if the new file already exists
+                    if os.path.exists(new_file_path):
+                        os.remove(new_file_path)
+
+                    os.rename(file_path, new_file_path)
 
         if len(device_data) > 0:
             # Retrieve existing devMac values from the Devices table
@@ -210,9 +210,10 @@ def main():
             existing_mac_addresses = set(row[0] for row in cursor.fetchall())
             
 
-            # insert devices into the lats_result.log to manage state
+            # insert devices into the last_result.log and thus CurrentScan table to manage state
             for device in device_data:
-                if device['devPresentLastScan'] == 1:
+                # only insert devices taht were online and skip the root node to prevent IP flipping on the hub
+                if device['devPresentLastScan'] == 1 and str(device['devMac']).lower() != 'internet':
                     plugin_objects.add_object(
                         primaryId   = device['devMac'],
                         secondaryId = device['devLastIP'],
@@ -266,66 +267,81 @@ def main():
 
     return 0
 
+# ------------------------------------------------------------------
+# Data retrieval methods
+api_endpoints = [
+    f"/sync",  # New Python-based endpoint
+    f"/plugins/sync/hub.php"  # Legacy PHP endpoint
+]
 
 # send data to the HUB
 def send_data(api_token, file_content, encryption_key, file_path, node_name, pref, hub_url):
-    # Encrypt the log data using the encryption_key
+    """Send encrypted data to HUB, preferring /sync endpoint and falling back to PHP version."""
     encrypted_data = encrypt_data(file_content, encryption_key)
-
     mylog('verbose', [f'[{pluginName}] Sending encrypted_data: "{encrypted_data}"'])
 
-    # Prepare the data payload for the POST request
     data = {
         'data': encrypted_data,
         'file_path': file_path,
         'plugin': pref,
         'node_name': node_name
     }
-    # Set the authorization header with the API token
     headers = {'Authorization': f'Bearer {api_token}'}
-    api_endpoint = f"{hub_url}/plugins/sync/hub.php"
-    response = requests.post(api_endpoint, data=data, headers=headers)
 
-    mylog('verbose', [f'[{pluginName}] response: "{response}"'])
+    for endpoint in api_endpoints:
 
-    if response.status_code == 200:
-        message = f'[{pluginName}] Data for "{file_path}" sent successfully'
-        mylog('verbose', [message])
-        write_notification(message, 'info', timeNowTZ())
-    else:
-        message = f'[{pluginName}] Failed to send data for "{file_path}" (Status code: {response.status_code})'
-        mylog('verbose', [message])
-        write_notification(message, 'alert', timeNowTZ())
-        
+        final_endpoint = hub_url + endpoint
+
+        try:
+            response = requests.post(final_endpoint, data=data, headers=headers, timeout=5)
+            mylog('verbose', [f'[{pluginName}] Tried endpoint: {final_endpoint}, status: {response.status_code}'])
+
+            if response.status_code == 200:
+                message = f'[{pluginName}] Data for "{file_path}" sent successfully via {final_endpoint}'
+                mylog('verbose', [message])
+                write_notification(message, 'info', timeNowTZ())
+                return True
+
+        except requests.RequestException as e:
+            mylog('verbose', [f'[{pluginName}] Error calling {final_endpoint}: {e}'])
+
+    # If all endpoints fail
+    message = f'[{pluginName}] Failed to send data for "{file_path}" via all endpoints'
+    mylog('verbose', [message])
+    write_notification(message, 'alert', timeNowTZ())
+    return False
+
+
 # get data from the nodes to the HUB
 def get_data(api_token, node_url):
+    """Get data from NODE, preferring /sync endpoint and falling back to PHP version."""
     mylog('verbose', [f'[{pluginName}] Getting data from node: "{node_url}"'])
-    
-    # Set the authorization header with the API token
     headers = {'Authorization': f'Bearer {api_token}'}
-    api_endpoint = f"{node_url}/plugins/sync/hub.php"
-    response = requests.get(api_endpoint, headers=headers)
 
-    # mylog('verbose', [f'[{pluginName}] response: "{response.text}"'])
+    for endpoint in api_endpoints:
 
-    if response.status_code == 200:
+        final_endpoint = node_url + endpoint
+
         try:
-            # Parse JSON response
-            response_json = response.json()
-            
-            return response_json
+            response = requests.get(final_endpoint, headers=headers, timeout=5)
+            mylog('verbose', [f'[{pluginName}] Tried endpoint: {final_endpoint}, status: {response.status_code}'])
 
-        except json.JSONDecodeError:
-            message = f'[{pluginName}] Failed to parse JSON response from "{node_url}"'
-            mylog('verbose', [message])
-            write_notification(message, 'alert', timeNowTZ())
-            return ""
+            if response.status_code == 200:
+                try:
+                    return response.json()
+                except json.JSONDecodeError:
+                    message = f'[{pluginName}] Failed to parse JSON from {final_endpoint}'
+                    mylog('verbose', [message])
+                    write_notification(message, 'alert', timeNowTZ())
+                    return ""
+        except requests.RequestException as e:
+            mylog('verbose', [f'[{pluginName}] Error calling {final_endpoint}: {e}'])
 
-    else:
-        message = f'[{pluginName}] Failed to send data for "{node_url}" (Status code: {response.status_code})'
-        mylog('verbose', [message])
-        write_notification(message, 'alert', timeNowTZ())
-        return ""
+    # If all endpoints fail
+    message = f'[{pluginName}] Failed to get data from "{node_url}" via all endpoints'
+    mylog('verbose', [message])
+    write_notification(message, 'alert', timeNowTZ())
+    return ""
 
 
 

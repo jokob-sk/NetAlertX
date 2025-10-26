@@ -2,10 +2,13 @@
 <link rel="stylesheet" href="css/app.css">
 
 <?php
-require dirname(__FILE__).'/php/server/init.php';
+
 //------------------------------------------------------------------------------
 // check if authenticated
-require_once  $_SERVER['DOCUMENT_ROOT'] . '/php/templates/security.php';
+// Be CAREFUL WHEN INCLUDING NEW PHP FILES
+require_once $_SERVER['DOCUMENT_ROOT'] . '/php/server/db.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/php/templates/language/lang.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/php/templates/security.php';
 
 $CookieSaveLoginName = 'NetAlertX_SaveLogin';
 
@@ -26,7 +29,7 @@ if (isset ($_GET["action"]) && $_GET["action"] == 'logout')
 }
 
 // Password without Cookie check -> pass and set initial cookie
-if (isset ($_POST["loginpassword"]) && $nax_Password == hash('sha256',$_POST["loginpassword"]))
+if (isset ($_POST["loginpassword"]) && $nax_Password === hash('sha256',$_POST["loginpassword"]))
 {
     header('Location: devices.php');
     $_SESSION["login"] = 1;
@@ -34,7 +37,7 @@ if (isset ($_POST["loginpassword"]) && $nax_Password == hash('sha256',$_POST["lo
 }
 
 // active Session or valid cookie (cookie not extends)
-if (( isset ($_SESSION["login"]) && ($_SESSION["login"] == 1)) || (isset ($_COOKIE[$CookieSaveLoginName]) && $nax_Password == $_COOKIE[$CookieSaveLoginName]))
+if (( isset ($_SESSION["login"]) && ($_SESSION["login"] == 1)) || (isset ($_COOKIE[$CookieSaveLoginName]) && $nax_Password === $_COOKIE[$CookieSaveLoginName]))
 {
     header('Location: devices.php');
     $_SESSION["login"] = 1;
@@ -50,7 +53,7 @@ $login_icon = 'fa-info';
 // no active session, cookie not checked
 if (isset ($_SESSION["login"]) == FALSE || $_SESSION["login"] != 1)
 {
-  if ($nax_Password == '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92') 
+  if ($nax_Password === '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92') 
   {
     $login_info = lang('Login_Default_PWD');
     $login_mode = 'danger';
@@ -92,27 +95,13 @@ if (isset ($_SESSION["login"]) == FALSE || $_SESSION["login"] != 1)
   <!-- iCheck -->
   <link rel="stylesheet" href="lib/iCheck/square/blue.css">
   <!-- Font Awesome -->
-  <link rel="stylesheet" href="lib/font-awesome/fontawesome.min.css">
-  <link rel="stylesheet" href="lib/font-awesome/solid.css">
-  <link rel="stylesheet" href="lib/font-awesome/brands.css">
-  <link rel="stylesheet" href="lib/font-awesome/v5-font-face.css">
+  <link rel="stylesheet" href="lib/font-awesome/all.min.css">
+
   <!-- Favicon -->
   <link id="favicon" rel="icon" type="image/x-icon" href="img/NetAlertX_logo.png">
-
-  <!-- Dark-Mode Patch -->
-<?php
-switch ($UI_THEME) {
-  case "Dark":
-    echo '<link rel="stylesheet" href="css/dark-patch.css">';
-    break;
-  case "System":
-    echo '<link rel="stylesheet" href="css/system-dark-patch.css">';
-    break;
-}
-?>
   <link rel="stylesheet" href="/css/offline-font.css">
 </head>
-<body class="hold-transition login-page">
+<body class="hold-transition login-page col-sm-12 col-sx-12">
 <div class="login-box login-custom">
   <div class="login-logo">
     <a href="/index2.php">Net<b>Alert</b><sup>x</sup></a>

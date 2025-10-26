@@ -11,16 +11,16 @@ Specify the following settings in the Settings section of NetAlertX:
 - `UNFIMP_host` - Host URL or IP address where the UNIFI controller is hosted (excluding `http://`)
 - `UNFIMP_sites` - Name of the sites (usually 'default', check the URL in your UniFi controller UI if unsure. The site id is in the following part of the URL: `https://192.168.1.1:8443/manage/site/this-is-the-site-id/settings/`). 
 - `UNFIMP_protocol` - https:// or http://
-- `UNFIMP_port` - Usually `8443` or `8843` 
+- `UNFIMP_port` - Usually `8443`, `8843`, or `443` 
 - `UNFIMP_version` - see below table for details
 
 
-#### Version table
+#### Config overview
 
-|   Controller                                           |      `UNFIMP_version`     |
-| ------------------------------------------------------ | ------------------------- |
-| Cloud Gateway Ultra / UCK cloudkey V2 plus (v4.0.18)   |      `UDMP-unifiOS`       |
-| Docker hosted                                          |      `v5`                 |
+|   Controller                                           |      `UNFIMP_version`     | `UNFIMP_port`    |
+| ------------------------------------------------------ | ------------------------- | ---------------- |
+| Cloud Gateway Ultra / UCK cloudkey V2 plus (v4.0.18)   |      `UDMP-unifiOS`       | `443`            | 
+| Docker hosted                                          |      `v5`                 | `8443` (usually) |
 
 ### Notes
 

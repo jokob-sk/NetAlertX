@@ -8,6 +8,10 @@
 #  Puche 2021 / 2022+ jokob             jokob@duck.com                GNU GPLv3
 //------------------------------------------------------------------------------
 
+// 🔺----- API ENDPOINTS SUPERSEDED -----🔺
+// check server/api_server/api_server_start.py for equivalents
+// 🔺----- API ENDPOINTS SUPERSEDED -----🔺
+
   // External files
   require dirname(__FILE__).'/init.php';
 
@@ -26,37 +30,31 @@
   if (isset ($_REQUEST['action']) && !empty ($_REQUEST['action'])) {
     $action = $_REQUEST['action'];
     switch ($action) {
-      case 'getServerDeviceData':           getServerDeviceData();                         break;
-      case 'setDeviceData':           setDeviceData();                         break;
-      case 'deleteDevice':            deleteDevice();                          break;
-      case 'deleteAllWithEmptyMACs':  deleteAllWithEmptyMACs();                break;      
+                                                                                      // check server/api_server/api_server_start.py for equivalents
+      case 'getServerDeviceData':     getServerDeviceData();                   break; // equivalent: get_device_data  
+      case 'setDeviceData':           setDeviceData();                         break; // equivalent: set_device_data
+      case 'deleteDevice':            deleteDevice();                          break; // equivalent: delete_device(mac)
+      case 'deleteAllWithEmptyMACs':  deleteAllWithEmptyMACs();                break; // equivalent: delete_all_with_empty_macs      
       
-      case 'deleteAllDevices':        deleteAllDevices();                      break;
-      case 'deleteUnknownDevices':    deleteUnknownDevices();                  break;
-      case 'deleteEvents':            deleteEvents();                          break;
-      case 'deleteEvents30':          deleteEvents30();                        break;
-      case 'deleteActHistory':        deleteActHistory();                      break;
-      case 'deleteDeviceEvents':      deleteDeviceEvents();                    break;
-      case 'resetDeviceProps':        resetDeviceProps();                      break;
-      case 'PiaBackupDBtoArchive':    PiaBackupDBtoArchive();                  break;
-      case 'PiaRestoreDBfromArchive': PiaRestoreDBfromArchive();               break;
-      case 'PiaPurgeDBBackups':       PiaPurgeDBBackups();                     break;             
-      case 'ExportCSV':               ExportCSV();                             break;    
-      case 'ImportCSV':               ImportCSV();                             break;     
+      case 'deleteAllDevices':        deleteAllDevices();                      break; // equivalent: delete_devices(macs)
+      case 'deleteUnknownDevices':    deleteUnknownDevices();                  break; // equivalent: delete_unknown_devices
+      case 'deleteEvents':            deleteEvents();                          break; // equivalent: delete_events
+      case 'deleteEvents30':          deleteEvents30();                        break; // equivalent: delete_events_30
+      case 'deleteActHistory':        deleteActHistory();                      break; // equivalent: delete_online_history
+      case 'deleteDeviceEvents':      deleteDeviceEvents();                    break; // equivalent: delete_device_events(mac)
+      case 'resetDeviceProps':        resetDeviceProps();                      break; // equivalent: reset_device_props        
+      case 'ExportCSV':               ExportCSV();                             break; // equivalent: export_devices
+      case 'ImportCSV':               ImportCSV();                             break; // equivalent: import_csv
 
-      case 'getDevicesTotals':        getDevicesTotals();                      break;
-      case 'getDevicesList':          getDevicesList();                        break;
-      case 'getDevicesListCalendar':  getDevicesListCalendar();                break;
+      case 'getDevicesTotals':        getDevicesTotals();                      break; // equivalent: devices_totals
+      case 'getDevicesListCalendar':  getDevicesListCalendar();                break; // equivalent: devices_by_status
 
-      case 'updateNetworkLeaf':       updateNetworkLeaf();                     break;
-      case 'overwriteIconType':       overwriteIconType();                     break;
-      case 'getIcons':                getIcons();                              break;
-      case 'getActions':              getActions();                            break;
-      case 'getDevices':              getDevices();                            break;
-      case 'copyFromDevice':          copyFromDevice();                        break;
-      case 'wakeonlan':               wakeonlan();                             break;
+      case 'updateNetworkLeaf':       updateNetworkLeaf();                     break; // equivalent: update_device_column(mac, column_name, column_value)
 
-      default:                        logServerConsole ('Action: '. $action);  break;
+      case 'copyFromDevice':          copyFromDevice();                        break; // equivalent: copy_device(mac_from, mac_to)
+      case 'wakeonlan':               wakeonlan();                             break; // equivalent: wakeonlan
+
+      default:                        logServerConsole ('Action: '. $action);  break; // equivalent: 
     }
   }
 
@@ -92,6 +90,8 @@ function getServerDeviceData() {
       "devLogEvents" => 0,
       "devAlertEvents" => 0,
       "devAlertDown" => 0,
+      "devParentRelType" => "default",
+      "devReqNicsOnline" => 0,
       "devSkipRepeated" => 0,
       "devLastNotification" => "",
       "devPresentLastScan" => 0,
@@ -112,76 +112,95 @@ function getServerDeviceData() {
       "devSessions" => 0,
       "devEvents" => 0,
       "devDownAlerts" => 0,
-      "devPresenceHours" => 0
+      "devPresenceHours" => 0,
+      "devFQDN"  => ""
     ];
     echo json_encode($deviceData);
     return;
   }
 
 
-  // Device Data
-  $sql = 'SELECT rowid, *,
-            CASE WHEN devAlertDown !=0 AND devPresentLastScan=0 THEN "Down"
-                 WHEN devPresentLastScan=1 THEN "On-line"
-                 ELSE "Off-line" END as devStatus
-          FROM Devices
-          WHERE devMac="'. $mac .'" or cast(rowid as text)="'. $mac. '"';
-  $result = $db->query($sql);
-  $row = $result -> fetchArray (SQLITE3_ASSOC);
+  // Get current date (used in presence calc)
+  $currentdate = date("Y-m-d H:i:s");
+
+  // Fetch Device Info + Children + Events Stats
+  $sql =<<<SQL
+    SELECT 
+      d.rowid,
+      d.*,
+      CASE 
+        WHEN d.devAlertDown != 0 AND d.devPresentLastScan = 0 THEN "Down"
+        WHEN d.devPresentLastScan = 1 THEN "On-line"
+        ELSE "Off-line"
+      END AS devStatus,
+
+      -- Event counters
+      (SELECT COUNT(*) FROM Sessions 
+      WHERE ses_MAC = d.devMac AND (
+        ses_DateTimeConnection >= $periodDate OR 
+        ses_DateTimeDisconnection >= $periodDate OR 
+        ses_StillConnected = 1
+      )
+      ) AS devSessions,
+
+      (SELECT COUNT(*) FROM Events 
+      WHERE eve_MAC = d.devMac AND 
+            eve_DateTime >= $periodDate AND 
+            eve_EventType NOT IN ("Connected", "Disconnected")
+      ) AS devEvents,
+
+      (SELECT COUNT(*) FROM Events 
+      WHERE eve_MAC = d.devMac AND 
+            eve_DateTime >= $periodDate AND 
+            eve_EventType = "Device Down"
+      ) AS devDownAlerts,
+
+      (SELECT CAST(( MAX (0, SUM (julianday (IFNULL (ses_DateTimeDisconnection,'$currentdate'))
+                      - julianday (CASE WHEN ses_DateTimeConnection < $periodDate 
+                                        THEN $periodDate 
+                                        ELSE ses_DateTimeConnection END)) *24 )) AS INT)
+      FROM Sessions
+      WHERE ses_MAC = d.devMac AND 
+            ses_DateTimeConnection IS NOT NULL AND 
+            (ses_DateTimeDisconnection IS NOT NULL OR ses_StillConnected = 1) AND 
+            (
+              ses_DateTimeConnection >= $periodDate OR 
+              ses_DateTimeDisconnection >= $periodDate OR 
+              ses_StillConnected = 1
+            )
+      ) AS devPresenceHours
+
+    FROM Devices d
+    WHERE d.devMac = "$mac" OR CAST(d.rowid AS TEXT) = "$mac"
+  SQL;
+
+  $row = $db->query($sql)->fetchArray(SQLITE3_ASSOC);
   $deviceData = $row;
   $mac = $deviceData['devMac'];
 
-  $deviceData['devParentMAC'] = $row['devParentMAC'];
-  $deviceData['devParentPort'] = $row['devParentPort'];
-  $deviceData['devFirstConnection'] = formatDate ($row['devFirstConnection']); // Date formated
-  $deviceData['devLastConnection'] =  formatDate ($row['devLastConnection']);  // Date formated
+  $deviceData['devFirstConnection'] = formatDate($deviceData['devFirstConnection']);
+  $deviceData['devLastConnection']  = formatDate($deviceData['devLastConnection']);
+  $deviceData['devIsRandomMAC']     = isRandomMAC($mac);
 
-  $deviceData['devIsRandomMAC'] = isRandomMAC($mac);
-
-  // Count Totals
-  $condition = ' WHERE eve_MAC="'. $mac .'" AND eve_DateTime >= '. $periodDate;
-
-  // Connections
-  $sql = 'SELECT COUNT(*) FROM Sessions
-          WHERE ses_MAC="'. $mac .'"
-          AND (   ses_DateTimeConnection    >= '. $periodDate .'
-               OR ses_DateTimeDisconnection >= '. $periodDate .'
-               OR ses_StillConnected = 1 )';
+  // Fetch children once and split in PHP
+  $sql = 'SELECT rowid, * FROM Devices WHERE devParentMAC = "' . $mac . '" ORDER BY devPresentLastScan DESC';
   $result = $db->query($sql);
-  $row = $result -> fetchArray (SQLITE3_NUM);
-  $deviceData['devSessions'] = $row[0];
-  
-  // Events
-  $sql = 'SELECT COUNT(*) FROM Events '. $condition .' AND eve_EventType <> "Connected" AND eve_EventType <> "Disconnected" ';
-  $result = $db->query($sql);
-  $row = $result -> fetchArray (SQLITE3_NUM);
-  $deviceData['devEvents'] = $row[0];
+  $children = [];
+  $childrenNics = [];
 
-  // Down Alerts
-  $sql = 'SELECT COUNT(*) FROM Events '. $condition .' AND eve_EventType = "Device Down"';
-  $result = $db->query($sql);
-  $row = $result -> fetchArray (SQLITE3_NUM);
-  $deviceData['devDownAlerts'] = $row[0];
+  while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+      $children[] = $row;
+      if ($row['devParentRelType'] === 'nic') {
+          $childrenNics[] = $row;
+      }
+  }
 
-  // Get current date using php, sql datetime does not return time respective to timezone.
-  $currentdate = date("Y-m-d H:i:s");
-  // Presence hours
-  $sql = 'SELECT CAST(( MAX (0, SUM (julianday (IFNULL (ses_DateTimeDisconnection,"'. $currentdate .'" ))
-                                     - julianday (CASE WHEN ses_DateTimeConnection < '. $periodDate .' THEN '. $periodDate .'
-                                                       ELSE ses_DateTimeConnection END)) *24 )) AS INT)
-          FROM Sessions
-          WHERE ses_MAC="'. $mac .'"
-            AND ses_DateTimeConnection IS NOT NULL
-            AND (ses_DateTimeDisconnection IS NOT NULL OR ses_StillConnected = 1 )
-            AND (   ses_DateTimeConnection    >= '. $periodDate .'
-                 OR ses_DateTimeDisconnection >= '. $periodDate .'
-                 OR ses_StillConnected = 1 )';
-  $result = $db->query($sql);
-  $row = $result -> fetchArray (SQLITE3_NUM);
-  $deviceData['devPresenceHours'] = round ($row[0]);
+  $deviceData['devChildrenDynamic']     = $children;
+  $deviceData['devChildrenNicsDynamic'] = $childrenNics;
 
-  // Return json
-  echo (json_encode ($deviceData));
+  // Return JSON
+  echo json_encode($deviceData);
+
 }
 
 
@@ -210,6 +229,8 @@ function setDeviceData() {
   $scancycle = quotes($_POST['scancycle']);
   $alertevents = quotes($_POST['alertevents']);
   $alertdown = quotes($_POST['alertdown']);
+  $relType = quotes($_POST['relType']);
+  $reqNics = quotes($_POST['reqNics']);
   $skiprepeated = quotes($_POST['skiprepeated']);
   $newdevice = quotes($_POST['newdevice']);
   $archived = quotes($_POST['archived']);
@@ -241,6 +262,8 @@ function setDeviceData() {
                         devScan = '$scancycle',
                         devAlertEvents = '$alertevents',
                         devAlertDown = '$alertdown',
+                        devParentRelType = '$relType',
+                        devReqNicsOnline = '$reqNics',
                         devSkipRepeated = '$skiprepeated',
                         devIsNew = '$newdevice',
                         devIsArchived = '$archived',
@@ -266,6 +289,8 @@ function setDeviceData() {
                             devScan, 
                             devAlertEvents, 
                             devAlertDown, 
+                            devParentRelType,
+                            devReqNicsOnline,
                             devSkipRepeated, 
                             devIsNew, 
                             devIsArchived, 
@@ -294,6 +319,8 @@ function setDeviceData() {
                           '$scancycle',
                           '$alertevents',
                           '$alertdown',
+                          '$relType',
+                          '$reqNics',
                           '$skiprepeated',
                           '$newdevice',
                           '$archived',
@@ -491,92 +518,6 @@ function deleteActHistory() {
 }
 
 //------------------------------------------------------------------------------
-//  Backup DB to Archiv
-//------------------------------------------------------------------------------
-function PiaBackupDBtoArchive() {
-  // prepare fast Backup
-  $dbfilename = 'app.db';
-  $file = '../../../db/'.$dbfilename;
-  $newfile = '../../../db/'.$dbfilename.'.latestbackup';
-  
-  // copy files as a fast Backup
-  if (!copy($file, $newfile)) {
-      echo lang('BackDevices_Backup_CopError');
-  } else {
-    // Create archive with actual date
-    $Pia_Archive_Name = 'appdb_'.date("Ymd_His").'.zip';
-    $Pia_Archive_Path = '../../../db/';
-    exec('zip -j '.$Pia_Archive_Path.$Pia_Archive_Name.' ../../../db/'.$dbfilename, $output);
-    // chheck if archive exists
-    if (file_exists($Pia_Archive_Path.$Pia_Archive_Name) && filesize($Pia_Archive_Path.$Pia_Archive_Name) > 0) {
-      echo lang('BackDevices_Backup_okay').': ('.$Pia_Archive_Name.')';
-      unlink($newfile);
-      echo("<meta http-equiv='refresh' content='1'>");
-    } else {
-      echo lang('BackDevices_Backup_Failed').' ('.$dbfilename.'.latestbackup)';
-    }
-  }
-
-}
-
-//------------------------------------------------------------------------------
-//  Restore DB from Archiv
-//------------------------------------------------------------------------------
-function PiaRestoreDBfromArchive() {
-  // prepare fast Backup
-  $file = '../../../db/'.$dbfilename;
-  $oldfile = '../../../db/'.$dbfilename.'.prerestore';  
-
-  // copy files as a fast Backup
-  if (!copy($file, $oldfile)) {
-      echo lang('BackDevices_Restore_CopError');
-  } else {
-    // extract latest archive and overwrite the actual .db
-    $Pia_Archive_Path = '../../../db/';
-    exec('/bin/ls -Art '.$Pia_Archive_Path.'*.zip | /bin/tail -n 1 | /usr/bin/xargs -n1 /bin/unzip -o -d ../../../db/', $output);
-    // check if the .db exists
-    if (file_exists($file)) {
-       echo lang('BackDevices_Restore_okay');
-       unlink($oldfile);
-       echo("<meta http-equiv='refresh' content='1'>");
-     } else {
-       echo lang('BackDevices_Restore_Failed');
-     }
-  }
-
-}
-
-//------------------------------------------------------------------------------
-//  Purge Backups
-//------------------------------------------------------------------------------
-function PiaPurgeDBBackups() {  
-
-  $Pia_Archive_Path = '../../../db';
-  $Pia_Backupfiles = array();
-  $files = array_diff(scandir($Pia_Archive_Path, SCANDIR_SORT_DESCENDING), array('.', '..', $dbfilename, 'netalertxdb-reset.zip'));
-
-  foreach ($files as &$item) 
-    {
-      $item = $Pia_Archive_Path.'/'.$item;
-      if (stristr($item, 'setting_') == '') {array_push($Pia_Backupfiles, $item);}
-    }
-
-  if (sizeof($Pia_Backupfiles) > 3) 
-    {
-      rsort($Pia_Backupfiles);
-      unset($Pia_Backupfiles[0], $Pia_Backupfiles[1], $Pia_Backupfiles[2]);
-      $Pia_Backupfiles_Purge = array_values($Pia_Backupfiles);
-      for ($i = 0; $i < sizeof($Pia_Backupfiles_Purge); $i++) 
-        {
-          unlink($Pia_Backupfiles_Purge[$i]);
-        }
-  }
-  echo lang('BackDevices_DBTools_Purge');
-  echo("<meta http-equiv='refresh' content='1'>");
-    
-}
-
-//------------------------------------------------------------------------------
 //  Export CSV of devices
 //------------------------------------------------------------------------------
 function ExportCSV() {
@@ -743,143 +684,6 @@ function getDevicesTotals() {
   echo ($resultJSON);
 }
 
-
-//------------------------------------------------------------------------------
-//  Query the List of devices in a determined Status
-//------------------------------------------------------------------------------
-function getDevicesList() {
-  global $db;
-
-  $forceDefaultOrder = FALSE;
-
-  if (isset ($_REQUEST['forceDefaultOrder']) )
-  {
-    $forceDefaultOrder = TRUE;
-  }
-
-  // This object is used to map from the old order ( second parameter, first number) to the new mapping, that is represented by the 3rd parameter (Second number)
-  $columnOrderMapping = array(
-    array("devName", 0, 0),               
-    array("devOwner", 1, 1),              
-    array("devType", 2, 2),         
-    array("devIcon", 3, 3),               
-    array("devFavorite", 4, 4),           
-    array("devGroup", 5, 5),              
-    array("devFirstConnection", 6, 6),    
-    array("devLastConnection", 7, 7),     
-    array("devLastIP", 8, 8),             
-    array("devMac", 9, 9),                
-    array("devStatus", 10, 10),            
-    array("devMac_full", 11, 11),          
-    array("devLastIP_orderable", 12, 12),  
-    array("rowid", 13, 13),            
-    array("devParentMAC", 14, 14),
-    array("connected_devices", 15, 15),
-    array("devLocation", 16, 16),
-    array("devVendor", 17, 17),           
-    array("devParentPort", 18, 18),           
-    array("devGUID", 19, 19),           
-    array("devSyncHubNode", 20, 20),           
-    array("devSite", 21, 21),           
-    array("devSSID", 22, 22),           
-    array("devSourcePlugin", 23, 23)           
-  );
-
-  if($forceDefaultOrder == FALSE) 
-  {
-    // get device columns order
-    $sql = 'SELECT par_Value FROM Parameters  where par_ID = "Front_Devices_Columns_Order"';
-    $result = $db->query($sql);
-    $row = $result -> fetchArray (SQLITE3_NUM);  
-
-    if($row != NULL && count($row) == 1)
-    {
-      // ordered columns setting from the maintenance page
-      $orderedColumns = createArray($row[0]);
-
-      // init ordered columns    
-      for($i = 0; $i < count($orderedColumns); $i++) { 
-
-        $columnOrderMapping[$i][2] = $orderedColumns[$i];        
-      }
-
-    }
-  }
-
-  // SQL
-  $condition = getDeviceCondition ($_REQUEST['status']);
-
-  $sql = 'SELECT * FROM (
-              SELECT rowid, *, CASE
-                      WHEN t1.devAlertDown !=0 AND t1.devPresentLastScan=0 THEN "Down"
-                      WHEN t1.devIsNew=1 THEN "New"
-                      WHEN t1.devPresentLastScan=1 THEN "On-line"
-                      ELSE "Off-line"  END AS devStatus
-                      FROM Devices t1 '.$condition.') t3  
-                    LEFT JOIN
-                              (
-                                    SELECT devParentMAC as devParentMAC_t2, devMac as devMac_t2,
-                                          count() as connected_devices 
-                                    FROM Devices b 
-                                    WHERE b.devParentMAC NOT NULL group by b.devParentMAC
-                              ) t2
-                              ON (t3.devMac = t2.devParentMAC_t2);';
-
-  $result = $db->query($sql);
-  
-  // arrays of rows
-  $tableData = array();
-  while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
-
-    $defaultOrder = array (
-                            $row['devName'],
-                            $row['devOwner'],
-                            handleNull($row['devType']),
-                            handleNull($row['devIcon'], "PGkgY2xhc3M9J2ZhIGZhLWxhcHRvcCc+PC9pPg=="), // laptop icon
-                            $row['devFavorite'],
-                            $row['devGroup'],
-                            // ----
-                            formatDate ($row['devFirstConnection']),
-                            formatDate ($row['devLastConnection']),
-                            $row['devLastIP'],
-                            ( isRandomMAC($row['devMac']) ),
-                            $row['devStatus'],
-                            $row['devMac'], // MAC (hidden)
-                            formatIPlong ($row['devLastIP']), // IP orderable
-                            $row['rowid'], // Rowid (hidden)      
-                            handleNull($row['devParentMAC']),
-                            handleNull($row['connected_devices']),
-                            handleNull($row['devLocation']), 
-                            handleNull($row['devVendor']),                            
-                            handleNull($row['devParentPort']),                            
-                            handleNull($row['devGUID']),                            
-                            handleNull($row['devSyncHubNode']),                            
-                            handleNull($row['devSite']),                            
-                            handleNull($row['devSSID']),                            
-                            handleNull($row['devSourcePlugin'])                            
-                          );
-
-    $newOrder = array();
-
-    // reorder columns based on user settings
-    for($index = 0; $index  < count($columnOrderMapping); $index++)
-    {
-      array_push($newOrder, $defaultOrder[$columnOrderMapping[$index][2]]);      
-    }
-
-    $tableData['data'][] = $newOrder;
-  }
-
-  // Control no rows
-  if (empty($tableData['data'])) {
-    $tableData['data'] = '';
-  }
-
-  // Return json
-  echo (json_encode ($tableData));
-}
-
-
 //------------------------------------------------------------------------------
 //  Determine if Random MAC
 //------------------------------------------------------------------------------
@@ -937,75 +741,6 @@ function getDevicesListCalendar() {
 //  Query Device Data
 //------------------------------------------------------------------------------
 
-//------------------------------------------------------------------------------
-function getIcons() {
-  global $db;
-
-  // Device Data
-  $sql = 'select devIcon from Devices group by devIcon';
-
-  $result = $db->query($sql);
-
-  // arrays of rows
-  $tableData = array();
-  while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {  
-    $icon = handleNull($row['devIcon'], "<i class='fa fa-laptop'></i>"); 
-    // Push row data
-    $tableData[] = array('id'    => $icon, 
-                         'name'  => $icon );                          
-  }
-  
-  // Control no rows
-  if (empty($tableData)) {
-    $tableData = [];
-  }
-  
-    // Return json
-  echo (json_encode ($tableData));
-}
-
-//------------------------------------------------------------------------------
-function getActions() {
-  
-  $tableData = array(
-    array('id'    => 'wake-on-lan', 
-          'name'  =>  lang('DevDetail_WOL_Title'))
-  );
-
-  // Return json
-  echo (json_encode ($tableData));
-}
-
-//------------------------------------------------------------------------------
-function getDevices() {
-  
-  global $db;
-
-  // Device Data
-  $sql = 'select devMac, devName from Devices';
-
-  $result = $db->query($sql);
-
-  // arrays of rows
-  $tableData = array();
-
-  while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {  
-    $name = handleNull($row['devName'], "(unknown)"); 
-    $mac = handleNull($row['devMac'], "(unknown)"); 
-    // Push row data
-    $tableData[] = array('id'    => $mac, 
-                         'name'  => $name  );                          
-  }
-  
-  // Control no rows
-  if (empty($tableData)) {
-    $tableData = [];
-  }
-  
-    // Return json
-  echo (json_encode ($tableData));
-}
-
 // ----------------------------------------------------------------------------------------
 function updateNetworkLeaf()
 {
@@ -1028,33 +763,6 @@ function updateNetworkLeaf()
       echo 'OK';
     } else {
       echo 'KO';
-    }
-  }
-
-}
-
-// ----------------------------------------------------------------------------------------
-function overwriteIconType()
-{
-  $mac = $_REQUEST['mac'];
-  $icon = $_REQUEST['icon'];
-
-  if ((false === filter_var($mac , FILTER_VALIDATE_MAC) && $mac != "Internet" && $mac != "")  ) {
-    throw new Exception('Invalid mac address');
-  }
-  else
-  {
-    global $db;
-    // sql    
-    $sql = 'UPDATE Devices SET "devIcon" = "'. $icon .'" where devType in (select devType from Devices where devMac = "' . $mac.'")' ;
-    // update Data
-    $result = $db->query($sql);
-
-    // check result
-    if ($result == TRUE) {
-      echo 'OK';
-    } else {
-      echo lang('BackDevices_Device_UpdDevError');
     }
   }
 

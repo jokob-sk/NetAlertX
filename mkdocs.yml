@@ -13,12 +13,13 @@ nav:
       - Installation options: INSTALLATION.md
       - Quick setup: INITIAL_SETUP.md      
       - Docker:
-        - Docker Guide: https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md    
+        - Docker Guide: INSTALLATION_DOCKER.md   
         - Docker Compose: DOCKER_COMPOSE.md
         - Docker File Permissions: FILE_PERMISSIONS.md
         - Docker Updates: UPDATES.md
       - Other:
         - Synology Guide: SYNOLOGY_GUIDE.md
+        - Portainer Stacks: DOCKER_PORTAINER.md
         - Community Guides: COMMUNITY_GUIDES.md
         - Bare-metal (Experimental): HW_INSTALL.md
         - Migration Guide: MIGRATION.md
@@ -35,16 +36,20 @@ nav:
         - Security: SECURITY.md
       - Advanced guides:
         - Remote Networks: REMOTE_NETWORKS.md      
-        - Notifications Guide: NOTIFICATIONS.md        
+        - Notifications Guide: NOTIFICATIONS.md      
+        - Name Resolution: NAME_RESOLUTION.md  
         - Authelia: AUTHELIA.md   
         - Performance: PERFORMANCE.md      
         - Reverse DNS: REVERSE_DNS.md  
         - Reverse Proxy: REVERSE_PROXY.md
         - Webhooks (n8n): WEBHOOK_N8N.md
+        - Workflows: WORKFLOWS.md
+        - Workflow Examples: WORKFLOW_EXAMPLES.md
+        - Docker Swarm: DOCKER_SWARM.md
       - Help:
         - Common issues: COMMON_ISSUES.md
-        - Random MAC: RANDOM_MAC.md       
-      
+        - Random MAC: RANDOM_MAC.md
+        - Incorrect Offline Detection: FIX_OFFLINE_DETECTION.md
   - Device guides:
       - Editing Devices:
         - Management: DEVICE_MANAGEMENT.md
@@ -56,21 +61,43 @@ nav:
         - Icons: ICONS.md
         - Network Topology: NETWORK_TREE.md
   - Troubleshooting:
+      - Inspecting Logs: LOGGING.md
       - Debugging Tips: DEBUG_TIPS.md
+      - Debugging GraphQL: DEBUG_GRAPHQL.md
       - Debugging Invalid JSON: DEBUG_INVALID_JSON.md
+      - Debugging PHP: DEBUG_PHP.md
       - Debugging Plugins: DEBUG_PLUGINS.md
       - Debugging Web UI Port: WEB_UI_PORT_DEBUG.md
+      - Debugging Workflows: WORKFLOWS_DEBUGGING.md
   - Development:
       - Plugin and app development:
         - Environment Setup: DEV_ENV_SETUP.md
+        - Devcontainer: DEV_DEVCONTAINER.md
         - Custom Plugins: PLUGINS_DEV.md
+        - Plugin Config: PLUGINS_DEV_CONFIG.md
         - Frontend Development: FRONTEND_DEVELOPMENT.md
         - Database: DATABASE.md
         - Settings: SETTINGS_SYSTEM.md
         - Versions: VERSIONS.md
+        - Icon and Type guessing: DEVICE_HEURISTICS.md
+      - API: 
+        - Overview: API.md   
+        - Devices Collection: API_DEVICES.md
+        - Device: API_DEVICE.md
+        - Sessions: API_SESSIONS.md
+        - Settings: API_SETTINGS.md
+        - Events: API_EVENTS.md
+        - Messaging in-app: API_MESSAGING_IN_APP.md
+        - Metrics: API_METRICS.md
+        - Net Tools: API_NETTOOLS.md
+        - Online History: API_ONLINEHISTORY.md
+        - Sync: API_SYNC.md
+        - GraphQL: API_GRAPHQL.md
+        - DB query: API_DBQUERY.md
+        - Tests: API_TESTS.md
+        - SUPERSEDED OLD API Overview: API_OLD.md   
       - Integrations:
-        - Webhook Secret: WEBHOOK_SECRET.md
-        - API: API.md     
+        - Webhook Secret: WEBHOOK_SECRET.md            
         - Helper scripts: HELPER_SCRIPTS.md
 
 

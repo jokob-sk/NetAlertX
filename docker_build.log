@@ -1,0 +1,534 @@
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 5.29kB done
+#1 DONE 0.1s
+
+#2 [auth] library/alpine:pull token for registry-1.docker.io
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/alpine:3.22
+#3 DONE 0.4s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 216B done
+#4 DONE 0.1s
+
+#5 [builder  1/15] FROM docker.io/library/alpine:3.22@sha256:4bcff63911fcb4448bd4fdacec207030997caf25e9bea4045fa6c8c44de311d1
+#5 CACHED
+
+#6 [internal] load build context
+#6 transferring context: 36.76kB 0.0s done
+#6 DONE 0.1s
+
+#7 [builder  2/15] RUN apk add --no-cache bash shadow python3 python3-dev gcc musl-dev libffi-dev openssl-dev git     && python -m venv /opt/venv
+#7 0.443 fetch https://dl-cdn.alpinelinux.org/alpine/v3.22/main/x86_64/APKINDEX.tar.gz
+#7 0.688 fetch https://dl-cdn.alpinelinux.org/alpine/v3.22/community/x86_64/APKINDEX.tar.gz
+#7 1.107 (1/52) Upgrading libcrypto3 (3.5.1-r0 -> 3.5.3-r0)
+#7 1.358 (2/52) Upgrading libssl3 (3.5.1-r0 -> 3.5.3-r0)
+#7 1.400 (3/52) Installing ncurses-terminfo-base (6.5_p20250503-r0)
+#7 1.413 (4/52) Installing libncursesw (6.5_p20250503-r0)
+#7 1.444 (5/52) Installing readline (8.2.13-r1)
+#7 1.471 (6/52) Installing bash (5.2.37-r0)
+#7 1.570 Executing bash-5.2.37-r0.post-install
+#7 1.593 (7/52) Installing libgcc (14.2.0-r6)
+#7 1.605 (8/52) Installing jansson (2.14.1-r0)
+#7 1.613 (9/52) Installing libstdc++ (14.2.0-r6)
+#7 1.705 (10/52) Installing zstd-libs (1.5.7-r0)
+#7 1.751 (11/52) Installing binutils (2.44-r3)
+#7 2.041 (12/52) Installing libgomp (14.2.0-r6)
+#7 2.064 (13/52) Installing libatomic (14.2.0-r6)
+#7 2.071 (14/52) Installing gmp (6.3.0-r3)
+#7 2.097 (15/52) Installing isl26 (0.26-r1)
+#7 2.183 (16/52) Installing mpfr4 (4.2.1_p1-r0)
+#7 2.219 (17/52) Installing mpc1 (1.3.1-r1)
+#7 2.231 (18/52) Installing gcc (14.2.0-r6)
+#7 6.782 (19/52) Installing brotli-libs (1.1.0-r2)
+#7 6.828 (20/52) Installing c-ares (1.34.5-r0)
+#7 6.846 (21/52) Installing libunistring (1.3-r0)
+#7 6.919 (22/52) Installing libidn2 (2.3.7-r0)
+#7 6.937 (23/52) Installing nghttp2-libs (1.65.0-r0)
+#7 6.950 (24/52) Installing libpsl (0.21.5-r3)
+#7 6.960 (25/52) Installing libcurl (8.14.1-r1)
+#7 7.015 (26/52) Installing libexpat (2.7.2-r0)
+#7 7.029 (27/52) Installing pcre2 (10.43-r1)
+#7 7.069 (28/52) Installing git (2.49.1-r0)
+#7 7.397 (29/52) Installing git-init-template (2.49.1-r0)
+#7 7.404 (30/52) Installing linux-headers (6.14.2-r0)
+#7 7.572 (31/52) Installing libffi (3.4.8-r0)
+#7 7.578 (32/52) Installing pkgconf (2.4.3-r0)
+#7 7.593 (33/52) Installing libffi-dev (3.4.8-r0)
+#7 7.607 (34/52) Installing musl-dev (1.2.5-r10)
+#7 7.961 (35/52) Installing openssl-dev (3.5.3-r0)
+#7 8.021 (36/52) Installing libbz2 (1.0.8-r6)
+#7 8.045 (37/52) Installing gdbm (1.24-r0)
+#7 8.055 (38/52) Installing xz-libs (5.8.1-r0)
+#7 8.071 (39/52) Installing mpdecimal (4.0.1-r0)
+#7 8.090 (40/52) Installing libpanelw (6.5_p20250503-r0)
+#7 8.098 (41/52) Installing sqlite-libs (3.49.2-r1)
+#7 8.185 (42/52) Installing python3 (3.12.11-r0)
+#7 8.904 (43/52) Installing python3-pycache-pyc0 (3.12.11-r0)
+#7 9.292 (44/52) Installing pyc (3.12.11-r0)
+#7 9.292 (45/52) Installing python3-pyc (3.12.11-r0)
+#7 9.292 (46/52) Installing python3-dev (3.12.11-r0)
+#7 10.71 (47/52) Installing libmd (1.1.0-r0)
+#7 10.72 (48/52) Installing libbsd (0.12.2-r0)
+#7 10.73 (49/52) Installing skalibs-libs (2.14.4.0-r0)
+#7 10.75 (50/52) Installing utmps-libs (0.1.3.1-r0)
+#7 10.76 (51/52) Installing linux-pam (1.7.0-r4)
+#7 10.82 (52/52) Installing shadow (4.17.3-r0)
+#7 10.88 Executing busybox-1.37.0-r18.trigger
+#7 10.90 OK: 274 MiB in 66 packages
+#7 DONE 14.4s
+
+#8 [builder  3/15] RUN mkdir -p /app
+#8 DONE 0.5s
+
+#9 [builder  4/15] COPY api /app/api
+#9 DONE 0.3s
+
+#10 [builder  5/15] COPY back /app/back
+#10 DONE 0.3s
+
+#11 [builder  6/15] COPY config /app/config
+#11 DONE 0.3s
+
+#12 [builder  7/15] COPY db /app/db
+#12 DONE 0.3s
+
+#13 [builder  8/15] COPY dockerfiles /app/dockerfiles
+#13 DONE 0.3s
+
+#14 [builder  9/15] COPY front /app/front
+#14 DONE 0.4s
+
+#15 [builder 10/15] COPY server /app/server
+#15 DONE 0.3s
+
+#16 [builder 11/15] COPY install/crontab /etc/crontabs/root
+#16 DONE 0.3s
+
+#17 [builder 12/15] COPY dockerfiles/start* /start*.sh
+#17 DONE 0.3s
+
+#18 [builder 13/15] RUN pip install openwrt-luci-rpc asusrouter asyncio aiohttp graphene flask flask-cors unifi-sm-api tplink-omada-client wakeonlan pycryptodome requests paho-mqtt scapy cron-converter pytz json2table dhcp-leases pyunifi speedtest-cli chardet python-nmap dnspython librouteros yattag git+https://github.com/foreign-sub/aiofreepybox.git
+#18 0.737 Collecting git+https://github.com/foreign-sub/aiofreepybox.git
+#18 0.737   Cloning https://github.com/foreign-sub/aiofreepybox.git to /tmp/pip-req-build-waf5_npl
+#18 0.738   Running command git clone --filter=blob:none --quiet https://github.com/foreign-sub/aiofreepybox.git /tmp/pip-req-build-waf5_npl
+#18 1.617   Resolved https://github.com/foreign-sub/aiofreepybox.git to commit 4ee18ea0f3e76edc839c48eb8df1da59c1baee3d
+#18 1.620   Installing build dependencies: started
+#18 3.337   Installing build dependencies: finished with status 'done'
+#18 3.337   Getting requirements to build wheel: started
+#18 3.491   Getting requirements to build wheel: finished with status 'done'
+#18 3.492   Preparing metadata (pyproject.toml): started
+#18 3.650   Preparing metadata (pyproject.toml): finished with status 'done'
+#18 3.724 Collecting openwrt-luci-rpc
+#18 3.753   Downloading openwrt_luci_rpc-1.1.17-py2.py3-none-any.whl.metadata (4.9 kB)
+#18 3.892 Collecting asusrouter
+#18 3.900   Downloading asusrouter-1.21.0-py3-none-any.whl.metadata (33 kB)
+#18 3.999 Collecting asyncio
+#18 4.007   Downloading asyncio-4.0.0-py3-none-any.whl.metadata (994 bytes)
+#18 4.576 Collecting aiohttp
+#18 4.582   Downloading aiohttp-3.12.15-cp312-cp312-musllinux_1_2_x86_64.whl.metadata (7.7 kB)
+#18 4.729 Collecting graphene
+#18 4.735   Downloading graphene-3.4.3-py2.py3-none-any.whl.metadata (6.9 kB)
+#18 4.858 Collecting flask
+#18 4.866   Downloading flask-3.1.2-py3-none-any.whl.metadata (3.2 kB)
+#18 4.963 Collecting flask-cors
+#18 4.972   Downloading flask_cors-6.0.1-py3-none-any.whl.metadata (5.3 kB)
+#18 5.055 Collecting unifi-sm-api
+#18 5.065   Downloading unifi_sm_api-0.2.1-py3-none-any.whl.metadata (2.3 kB)
+#18 5.155 Collecting tplink-omada-client
+#18 5.166   Downloading tplink_omada_client-1.4.4-py3-none-any.whl.metadata (3.5 kB)
+#18 5.262 Collecting wakeonlan
+#18 5.274   Downloading wakeonlan-3.1.0-py3-none-any.whl.metadata (4.3 kB)
+#18 5.500 Collecting pycryptodome
+#18 5.505   Downloading pycryptodome-3.23.0-cp37-abi3-musllinux_1_2_x86_64.whl.metadata (3.4 kB)
+#18 5.653 Collecting requests
+#18 5.660   Downloading requests-2.32.5-py3-none-any.whl.metadata (4.9 kB)
+#18 5.764 Collecting paho-mqtt
+#18 5.775   Downloading paho_mqtt-2.1.0-py3-none-any.whl.metadata (23 kB)
+#18 5.890 Collecting scapy
+#18 5.902   Downloading scapy-2.6.1-py3-none-any.whl.metadata (5.6 kB)
+#18 6.002 Collecting cron-converter
+#18 6.013   Downloading cron_converter-1.2.2-py3-none-any.whl.metadata (8.1 kB)
+#18 6.187 Collecting pytz
+#18 6.193   Downloading pytz-2025.2-py2.py3-none-any.whl.metadata (22 kB)
+#18 6.285 Collecting json2table
+#18 6.294   Downloading json2table-1.1.5-py2.py3-none-any.whl.metadata (6.0 kB)
+#18 6.381 Collecting dhcp-leases
+#18 6.387   Downloading dhcp_leases-0.1.6-py3-none-any.whl.metadata (5.9 kB)
+#18 6.461 Collecting pyunifi
+#18 6.471   Downloading pyunifi-2.21-py3-none-any.whl.metadata (274 bytes)
+#18 6.582 Collecting speedtest-cli
+#18 6.596   Downloading speedtest_cli-2.1.3-py2.py3-none-any.whl.metadata (6.8 kB)
+#18 6.767 Collecting chardet
+#18 6.780   Downloading chardet-5.2.0-py3-none-any.whl.metadata (3.4 kB)
+#18 6.878 Collecting python-nmap
+#18 6.886   Downloading python-nmap-0.7.1.tar.gz (44 kB)
+#18 6.937   Installing build dependencies: started
+#18 8.245   Installing build dependencies: finished with status 'done'
+#18 8.246   Getting requirements to build wheel: started
+#18 8.411   Getting requirements to build wheel: finished with status 'done'
+#18 8.412   Preparing metadata (pyproject.toml): started
+#18 8.575   Preparing metadata (pyproject.toml): finished with status 'done'
+#18 8.648 Collecting dnspython
+#18 8.654   Downloading dnspython-2.8.0-py3-none-any.whl.metadata (5.7 kB)
+#18 8.741 Collecting librouteros
+#18 8.752   Downloading librouteros-3.4.1-py3-none-any.whl.metadata (1.6 kB)
+#18 8.869 Collecting yattag
+#18 8.881   Downloading yattag-1.16.1.tar.gz (29 kB)
+#18 8.925   Installing build dependencies: started
+#18 10.23   Installing build dependencies: finished with status 'done'
+#18 10.23   Getting requirements to build wheel: started
+#18 10.38   Getting requirements to build wheel: finished with status 'done'
+#18 10.39   Preparing metadata (pyproject.toml): started
+#18 10.55   Preparing metadata (pyproject.toml): finished with status 'done'
+#18 10.60 Collecting Click>=6.0 (from openwrt-luci-rpc)
+#18 10.60   Downloading click-8.3.0-py3-none-any.whl.metadata (2.6 kB)
+#18 10.70 Collecting packaging>=19.1 (from openwrt-luci-rpc)
+#18 10.71   Downloading packaging-25.0-py3-none-any.whl.metadata (3.3 kB)
+#18 10.87 Collecting urllib3>=1.26.14 (from asusrouter)
+#18 10.88   Downloading urllib3-2.5.0-py3-none-any.whl.metadata (6.5 kB)
+#18 10.98 Collecting xmltodict>=0.12.0 (from asusrouter)
+#18 10.98   Downloading xmltodict-1.0.2-py3-none-any.whl.metadata (15 kB)
+#18 11.09 Collecting aiohappyeyeballs>=2.5.0 (from aiohttp)
+#18 11.10   Downloading aiohappyeyeballs-2.6.1-py3-none-any.whl.metadata (5.9 kB)
+#18 11.19 Collecting aiosignal>=1.4.0 (from aiohttp)
+#18 11.20   Downloading aiosignal-1.4.0-py3-none-any.whl.metadata (3.7 kB)
+#18 11.32 Collecting attrs>=17.3.0 (from aiohttp)
+#18 11.33   Downloading attrs-25.3.0-py3-none-any.whl.metadata (10 kB)
+#18 11.47 Collecting frozenlist>=1.1.1 (from aiohttp)
+#18 11.47   Downloading frozenlist-1.7.0-cp312-cp312-musllinux_1_2_x86_64.whl.metadata (18 kB)
+#18 11.76 Collecting multidict<7.0,>=4.5 (from aiohttp)
+#18 11.77   Downloading multidict-6.6.4-cp312-cp312-musllinux_1_2_x86_64.whl.metadata (5.3 kB)
+#18 11.87 Collecting propcache>=0.2.0 (from aiohttp)
+#18 11.88   Downloading propcache-0.3.2-cp312-cp312-musllinux_1_2_x86_64.whl.metadata (12 kB)
+#18 12.19 Collecting yarl<2.0,>=1.17.0 (from aiohttp)
+#18 12.20   Downloading yarl-1.20.1-cp312-cp312-musllinux_1_2_x86_64.whl.metadata (73 kB)
+#18 12.31 Collecting graphql-core<3.3,>=3.1 (from graphene)
+#18 12.32   Downloading graphql_core-3.2.6-py3-none-any.whl.metadata (11 kB)
+#18 12.41 Collecting graphql-relay<3.3,>=3.1 (from graphene)
+#18 12.42   Downloading graphql_relay-3.2.0-py3-none-any.whl.metadata (12 kB)
+#18 12.50 Collecting python-dateutil<3,>=2.7.0 (from graphene)
+#18 12.51   Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl.metadata (8.4 kB)
+#18 12.61 Collecting typing-extensions<5,>=4.7.1 (from graphene)
+#18 12.61   Downloading typing_extensions-4.15.0-py3-none-any.whl.metadata (3.3 kB)
+#18 12.71 Collecting blinker>=1.9.0 (from flask)
+#18 12.72   Downloading blinker-1.9.0-py3-none-any.whl.metadata (1.6 kB)
+#18 12.84 Collecting itsdangerous>=2.2.0 (from flask)
+#18 12.85   Downloading itsdangerous-2.2.0-py3-none-any.whl.metadata (1.9 kB)
+#18 12.97 Collecting jinja2>=3.1.2 (from flask)
+#18 12.98   Downloading jinja2-3.1.6-py3-none-any.whl.metadata (2.9 kB)
+#18 13.15 Collecting markupsafe>=2.1.1 (from flask)
+#18 13.15   Downloading MarkupSafe-3.0.2-cp312-cp312-musllinux_1_2_x86_64.whl.metadata (4.0 kB)
+#18 13.28 Collecting werkzeug>=3.1.0 (from flask)
+#18 13.29   Downloading werkzeug-3.1.3-py3-none-any.whl.metadata (3.7 kB)
+#18 13.42 Collecting awesomeversion>=22.9.0 (from tplink-omada-client)
+#18 13.42   Downloading awesomeversion-25.8.0-py3-none-any.whl.metadata (9.8 kB)
+#18 13.59 Collecting charset_normalizer<4,>=2 (from requests)
+#18 13.59   Downloading charset_normalizer-3.4.3-cp312-cp312-musllinux_1_2_x86_64.whl.metadata (36 kB)
+#18 13.77 Collecting idna<4,>=2.5 (from requests)
+#18 13.78   Downloading idna-3.10-py3-none-any.whl.metadata (10 kB)
+#18 13.94 Collecting certifi>=2017.4.17 (from requests)
+#18 13.94   Downloading certifi-2025.8.3-py3-none-any.whl.metadata (2.4 kB)
+#18 14.06 Collecting toml<0.11.0,>=0.10.2 (from librouteros)
+#18 14.07   Downloading toml-0.10.2-py2.py3-none-any.whl.metadata (7.1 kB)
+#18 14.25 Collecting six>=1.5 (from python-dateutil<3,>=2.7.0->graphene)
+#18 14.26   Downloading six-1.17.0-py2.py3-none-any.whl.metadata (1.7 kB)
+#18 14.33 Downloading openwrt_luci_rpc-1.1.17-py2.py3-none-any.whl (9.5 kB)
+#18 14.37 Downloading asusrouter-1.21.0-py3-none-any.whl (131 kB)
+#18 14.43 Downloading asyncio-4.0.0-py3-none-any.whl (5.6 kB)
+#18 14.47 Downloading aiohttp-3.12.15-cp312-cp312-musllinux_1_2_x86_64.whl (1.7 MB)
+#18 14.67    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.7/1.7 MB 8.3 MB/s eta 0:00:00
+#18 14.68 Downloading graphene-3.4.3-py2.py3-none-any.whl (114 kB)
+#18 14.73 Downloading flask-3.1.2-py3-none-any.whl (103 kB)
+#18 14.78 Downloading flask_cors-6.0.1-py3-none-any.whl (13 kB)
+#18 14.84 Downloading unifi_sm_api-0.2.1-py3-none-any.whl (16 kB)
+#18 14.88 Downloading tplink_omada_client-1.4.4-py3-none-any.whl (46 kB)
+#18 14.93 Downloading wakeonlan-3.1.0-py3-none-any.whl (5.0 kB)
+#18 14.99 Downloading pycryptodome-3.23.0-cp37-abi3-musllinux_1_2_x86_64.whl (2.3 MB)
+#18 15.23    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.3/2.3 MB 8.9 MB/s eta 0:00:00
+#18 15.24 Downloading requests-2.32.5-py3-none-any.whl (64 kB)
+#18 15.30 Downloading paho_mqtt-2.1.0-py3-none-any.whl (67 kB)
+#18 15.34 Downloading scapy-2.6.1-py3-none-any.whl (2.4 MB)
+#18 15.62    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.4/2.4 MB 8.5 MB/s eta 0:00:00
+#18 15.63 Downloading cron_converter-1.2.2-py3-none-any.whl (13 kB)
+#18 15.67 Downloading pytz-2025.2-py2.py3-none-any.whl (509 kB)
+#18 15.76 Downloading json2table-1.1.5-py2.py3-none-any.whl (8.7 kB)
+#18 15.81 Downloading dhcp_leases-0.1.6-py3-none-any.whl (11 kB)
+#18 15.86 Downloading pyunifi-2.21-py3-none-any.whl (11 kB)
+#18 15.90 Downloading speedtest_cli-2.1.3-py2.py3-none-any.whl (23 kB)
+#18 15.95 Downloading chardet-5.2.0-py3-none-any.whl (199 kB)
+#18 16.01 Downloading dnspython-2.8.0-py3-none-any.whl (331 kB)
+#18 16.10 Downloading librouteros-3.4.1-py3-none-any.whl (16 kB)
+#18 16.14 Downloading aiohappyeyeballs-2.6.1-py3-none-any.whl (15 kB)
+#18 16.20 Downloading aiosignal-1.4.0-py3-none-any.whl (7.5 kB)
+#18 16.24 Downloading attrs-25.3.0-py3-none-any.whl (63 kB)
+#18 16.30 Downloading awesomeversion-25.8.0-py3-none-any.whl (15 kB)
+#18 16.34 Downloading blinker-1.9.0-py3-none-any.whl (8.5 kB)
+#18 16.39 Downloading certifi-2025.8.3-py3-none-any.whl (161 kB)
+#18 16.45 Downloading charset_normalizer-3.4.3-cp312-cp312-musllinux_1_2_x86_64.whl (153 kB)
+#18 16.50 Downloading click-8.3.0-py3-none-any.whl (107 kB)
+#18 16.55 Downloading frozenlist-1.7.0-cp312-cp312-musllinux_1_2_x86_64.whl (237 kB)
+#18 16.62 Downloading graphql_core-3.2.6-py3-none-any.whl (203 kB)
+#18 16.69 Downloading graphql_relay-3.2.0-py3-none-any.whl (16 kB)
+#18 16.73 Downloading idna-3.10-py3-none-any.whl (70 kB)
+#18 16.79 Downloading itsdangerous-2.2.0-py3-none-any.whl (16 kB)
+#18 16.84 Downloading jinja2-3.1.6-py3-none-any.whl (134 kB)
+#18 16.96 Downloading MarkupSafe-3.0.2-cp312-cp312-musllinux_1_2_x86_64.whl (23 kB)
+#18 17.02 Downloading multidict-6.6.4-cp312-cp312-musllinux_1_2_x86_64.whl (251 kB)
+#18 17.09 Downloading packaging-25.0-py3-none-any.whl (66 kB)
+#18 17.14 Downloading propcache-0.3.2-cp312-cp312-musllinux_1_2_x86_64.whl (222 kB)
+#18 17.21 Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl (229 kB)
+#18 17.28 Downloading toml-0.10.2-py2.py3-none-any.whl (16 kB)
+#18 17.33 Downloading typing_extensions-4.15.0-py3-none-any.whl (44 kB)
+#18 17.39 Downloading urllib3-2.5.0-py3-none-any.whl (129 kB)
+#18 17.44 Downloading werkzeug-3.1.3-py3-none-any.whl (224 kB)
+#18 17.51 Downloading xmltodict-1.0.2-py3-none-any.whl (13 kB)
+#18 17.56 Downloading yarl-1.20.1-cp312-cp312-musllinux_1_2_x86_64.whl (374 kB)
+#18 17.65 Downloading six-1.17.0-py2.py3-none-any.whl (11 kB)
+#18 17.77 Building wheels for collected packages: python-nmap, yattag, aiofreepybox
+#18 17.77   Building wheel for python-nmap (pyproject.toml): started
+#18 17.95   Building wheel for python-nmap (pyproject.toml): finished with status 'done'
+#18 17.96   Created wheel for python-nmap: filename=python_nmap-0.7.1-py2.py3-none-any.whl size=20679 sha256=ecd9b14109651cfaa5bf035f90076b9442985cc254fa5f8a49868fc896e86edb
+#18 17.96   Stored in directory: /root/.cache/pip/wheels/06/fc/d4/0957e1d9942e696188208772ea0abf909fe6eb3d9dff6e5a9e
+#18 17.96   Building wheel for yattag (pyproject.toml): started
+#18 18.14   Building wheel for yattag (pyproject.toml): finished with status 'done'
+#18 18.14   Created wheel for yattag: filename=yattag-1.16.1-py3-none-any.whl size=15930 sha256=2135fc2034a3847c81eb6a0d7b85608e8272339fa5c1961f87b02dfe6d74d0ad
+#18 18.14   Stored in directory: /root/.cache/pip/wheels/d2/2f/52/049ff4f7c8c9c932b2ece7ec800d7facf2a141ac5ab0ce7e51
+#18 18.15   Building wheel for aiofreepybox (pyproject.toml): started
+#18 18.36   Building wheel for aiofreepybox (pyproject.toml): finished with status 'done'
+#18 18.36   Created wheel for aiofreepybox: filename=aiofreepybox-6.0.0-py3-none-any.whl size=60051 sha256=dbdee5350b10b6550ede50bc779381b7f39f1e5d5da889f2ee98cb5a869d3425
+#18 18.36   Stored in directory: /tmp/pip-ephem-wheel-cache-93bgc4e2/wheels/3c/d3/ae/fb97a84a29a5fbe8517de58d67e66586505440af35981e0dd3
+#18 18.36 Successfully built python-nmap yattag aiofreepybox
+#18 18.45 Installing collected packages: yattag, speedtest-cli, pytz, python-nmap, json2table, dhcp-leases, xmltodict, wakeonlan, urllib3, typing-extensions, toml, six, scapy, pycryptodome, propcache, paho-mqtt, packaging, multidict, markupsafe, itsdangerous, idna, graphql-core, frozenlist, dnspython, Click, charset_normalizer, chardet, certifi, blinker, awesomeversion, attrs, asyncio, aiohappyeyeballs, yarl, werkzeug, requests, python-dateutil, librouteros, jinja2, graphql-relay, aiosignal, unifi-sm-api, pyunifi, openwrt-luci-rpc, graphene, flask, cron-converter, aiohttp, tplink-omada-client, flask-cors, asusrouter, aiofreepybox
+#18 24.35 Successfully installed Click-8.3.0 aiofreepybox-6.0.0 aiohappyeyeballs-2.6.1 aiohttp-3.12.15 aiosignal-1.4.0 asusrouter-1.21.0 asyncio-4.0.0 attrs-25.3.0 awesomeversion-25.8.0 blinker-1.9.0 certifi-2025.8.3 chardet-5.2.0 charset_normalizer-3.4.3 cron-converter-1.2.2 dhcp-leases-0.1.6 dnspython-2.8.0 flask-3.1.2 flask-cors-6.0.1 frozenlist-1.7.0 graphene-3.4.3 graphql-core-3.2.6 graphql-relay-3.2.0 idna-3.10 itsdangerous-2.2.0 jinja2-3.1.6 json2table-1.1.5 librouteros-3.4.1 markupsafe-3.0.2 multidict-6.6.4 openwrt-luci-rpc-1.1.17 packaging-25.0 paho-mqtt-2.1.0 propcache-0.3.2 pycryptodome-3.23.0 python-dateutil-2.9.0.post0 python-nmap-0.7.1 pytz-2025.2 pyunifi-2.21 requests-2.32.5 scapy-2.6.1 six-1.17.0 speedtest-cli-2.1.3 toml-0.10.2 tplink-omada-client-1.4.4 typing-extensions-4.15.0 unifi-sm-api-0.2.1 urllib3-2.5.0 wakeonlan-3.1.0 werkzeug-3.1.3 xmltodict-1.0.2 yarl-1.20.1 yattag-1.16.1
+#18 24.47 
+#18 24.47 [notice] A new release of pip is available: 25.0.1 -> 25.2
+#18 24.47 [notice] To update, run: pip install --upgrade pip
+#18 DONE 25.1s
+
+#19 [builder 14/15] RUN bash -c "find /app -type d -exec chmod 750 {} \;"     && bash -c "find /app -type f -exec chmod 640 {} \;"     && bash -c "find /app -type f \( -name '*.sh' -o -name '*.py'  -o -name 'speedtest-cli' \) -exec chmod 750 {} \;"
+#19 DONE 11.9s
+
+#20 [builder 15/15] COPY install/freebox_certificate.pem /opt/venv/lib/python3.12/site-packages/aiofreepybox/freebox_certificates.pem
+#20 DONE 0.4s
+
+#21 [runner  2/14] COPY --from=builder /opt/venv /opt/venv
+#21 DONE 0.8s
+
+#22 [runner  3/14] COPY --from=builder /usr/sbin/usermod /usr/sbin/groupmod /usr/sbin/
+#22 DONE 0.4s
+
+#23 [runner  4/14] RUN apk update --no-cache     && apk add --no-cache bash libbsd zip lsblk gettext-envsubst sudo mtr tzdata s6-overlay     && apk add --no-cache curl arp-scan iproute2 iproute2-ss nmap nmap-scripts traceroute nbtscan avahi avahi-tools openrc dbus net-tools net-snmp-tools bind-tools awake ca-certificates     && apk add --no-cache sqlite php83 php83-fpm php83-cgi php83-curl php83-sqlite3 php83-session     && apk add --no-cache python3 nginx     && ln -s /usr/bin/awake /usr/bin/wakeonlan     && bash -c "install -d -m 750 -o nginx -g www-data /app /app"     && rm -f /etc/nginx/http.d/default.conf
+#23 0.487 fetch https://dl-cdn.alpinelinux.org/alpine/v3.22/main/x86_64/APKINDEX.tar.gz
+#23 0.696 fetch https://dl-cdn.alpinelinux.org/alpine/v3.22/community/x86_64/APKINDEX.tar.gz
+#23 1.156 v3.22.1-472-ga67443520d6 [https://dl-cdn.alpinelinux.org/alpine/v3.22/main]
+#23 1.156 v3.22.1-473-gcd551a4e006 [https://dl-cdn.alpinelinux.org/alpine/v3.22/community]
+#23 1.156 OK: 26326 distinct packages available
+#23 1.195 fetch https://dl-cdn.alpinelinux.org/alpine/v3.22/main/x86_64/APKINDEX.tar.gz
+#23 1.276 fetch https://dl-cdn.alpinelinux.org/alpine/v3.22/community/x86_64/APKINDEX.tar.gz
+#23 1.568 (1/38) Installing ncurses-terminfo-base (6.5_p20250503-r0)
+#23 1.580 (2/38) Installing libncursesw (6.5_p20250503-r0)
+#23 1.629 (3/38) Installing readline (8.2.13-r1)
+#23 1.659 (4/38) Installing bash (5.2.37-r0)
+#23 1.723 Executing bash-5.2.37-r0.post-install
+#23 1.740 (5/38) Installing libintl (0.24.1-r0)
+#23 1.749 (6/38) Installing gettext-envsubst (0.24.1-r0)
+#23 1.775 (7/38) Installing libmd (1.1.0-r0)
+#23 1.782 (8/38) Installing libbsd (0.12.2-r0)
+#23 1.807 (9/38) Installing libeconf (0.6.3-r0)
+#23 1.812 (10/38) Installing libblkid (2.41-r9)
+#23 1.831 (11/38) Installing libmount (2.41-r9)
+#23 1.857 (12/38) Installing libsmartcols (2.41-r9)
+#23 1.872 (13/38) Installing lsblk (2.41-r9)
+#23 1.886 (14/38) Installing libcap2 (2.76-r0)
+#23 1.897 (15/38) Installing jansson (2.14.1-r0)
+#23 1.910 (16/38) Installing mtr (0.96-r0)
+#23 1.948 (17/38) Installing skalibs-libs (2.14.4.0-r0)
+#23 1.966 (18/38) Installing execline-libs (2.9.7.0-r0)
+#23 1.974 (19/38) Installing execline (2.9.7.0-r0)
+#23 1.996 Executing execline-2.9.7.0-r0.post-install
+#23 2.004 (20/38) Installing s6-ipcserver (2.13.2.0-r0)
+#23 2.010 (21/38) Installing s6-libs (2.13.2.0-r0)
+#23 2.016 (22/38) Installing s6 (2.13.2.0-r0)
+#23 2.033 Executing s6-2.13.2.0-r0.pre-install
+#23 2.159 (23/38) Installing s6-rc-libs (0.5.6.0-r0)
+#23 2.164 (24/38) Installing s6-rc (0.5.6.0-r0)
+#23 2.175 (25/38) Installing s6-linux-init (1.1.3.0-r0)
+#23 2.185 (26/38) Installing s6-portable-utils (2.3.1.0-r0)
+#23 2.193 (27/38) Installing s6-linux-utils (2.6.3.0-r0)
+#23 2.200 (28/38) Installing s6-dns-libs (2.4.1.0-r0)
+#23 2.208 (29/38) Installing s6-dns (2.4.1.0-r0)
+#23 2.222 (30/38) Installing bearssl-libs (0.6_git20241009-r0)
+#23 2.254 (31/38) Installing s6-networking-libs (2.7.1.0-r0)
+#23 2.264 (32/38) Installing s6-networking (2.7.1.0-r0)
+#23 2.286 (33/38) Installing s6-overlay-helpers (0.1.2.0-r0)
+#23 2.355 (34/38) Installing s6-overlay (3.2.0.3-r0)
+#23 2.380 (35/38) Installing sudo (1.9.17_p2-r0)
+#23 2.511 (36/38) Installing tzdata (2025b-r0)
+#23 2.641 (37/38) Installing unzip (6.0-r15)
+#23 2.659 (38/38) Installing zip (3.0-r13)
+#23 2.694 Executing busybox-1.37.0-r18.trigger
+#23 2.725 OK: 16 MiB in 54 packages
+#23 2.778 fetch https://dl-cdn.alpinelinux.org/alpine/v3.22/main/x86_64/APKINDEX.tar.gz
+#23 2.918 fetch https://dl-cdn.alpinelinux.org/alpine/v3.22/community/x86_64/APKINDEX.tar.gz
+#23 3.218 (1/77) Installing libpcap (1.10.5-r1)
+#23 3.234 (2/77) Installing arp-scan (1.10.0-r2)
+#23 3.289 (3/77) Installing dbus-libs (1.16.2-r1)
+#23 3.307 (4/77) Installing avahi-libs (0.8-r21)
+#23 3.315 (5/77) Installing libdaemon (0.14-r6)
+#23 3.322 (6/77) Installing libevent (2.1.12-r8)
+#23 3.355 (7/77) Installing libexpat (2.7.2-r0)
+#23 3.368 (8/77) Installing avahi (0.8-r21)
+#23 3.387 Executing avahi-0.8-r21.pre-install
+#23 3.465 (9/77) Installing gdbm (1.24-r0)
+#23 3.477 (10/77) Installing avahi-tools (0.8-r21)
+#23 3.483 (11/77) Installing libbz2 (1.0.8-r6)
+#23 3.490 (12/77) Installing libffi (3.4.8-r0)
+#23 3.496 (13/77) Installing xz-libs (5.8.1-r0)
+#23 3.517 (14/77) Installing libgcc (14.2.0-r6)
+#23 3.529 (15/77) Installing libstdc++ (14.2.0-r6)
+#23 3.613 (16/77) Installing mpdecimal (4.0.1-r0)
+#23 3.628 (17/77) Installing libpanelw (6.5_p20250503-r0)
+#23 3.634 (18/77) Installing sqlite-libs (3.49.2-r1)
+#23 3.783 (19/77) Installing python3 (3.12.11-r0)
+#23 4.494 (20/77) Installing python3-pycache-pyc0 (3.12.11-r0)
+#23 4.915 (21/77) Installing pyc (3.12.11-r0)
+#23 4.915 (22/77) Installing py3-awake-pyc (1.0-r12)
+#23 4.922 (23/77) Installing python3-pyc (3.12.11-r0)
+#23 4.922 (24/77) Installing py3-awake (1.0-r12)
+#23 4.928 (25/77) Installing awake (1.0-r12)
+#23 4.932 (26/77) Installing fstrm (0.6.1-r4)
+#23 4.940 (27/77) Installing krb5-conf (1.0-r2)
+#23 5.017 (28/77) Installing libcom_err (1.47.2-r2)
+#23 5.026 (29/77) Installing keyutils-libs (1.6.3-r4)
+#23 5.033 (30/77) Installing libverto (0.3.2-r2)
+#23 5.039 (31/77) Installing krb5-libs (1.21.3-r0)
+#23 5.115 (32/77) Installing json-c (0.18-r1)
+#23 5.123 (33/77) Installing nghttp2-libs (1.65.0-r0)
+#23 5.136 (34/77) Installing protobuf-c (1.5.2-r0)
+#23 5.142 (35/77) Installing userspace-rcu (0.15.2-r0)
+#23 5.161 (36/77) Installing libuv (1.51.0-r0)
+#23 5.178 (37/77) Installing libxml2 (2.13.8-r0)
+#23 5.232 (38/77) Installing bind-libs (9.20.13-r0)
+#23 5.355 (39/77) Installing bind-tools (9.20.13-r0)
+#23 5.395 (40/77) Installing ca-certificates (20250619-r0)
+#23 5.518 (41/77) Installing brotli-libs (1.1.0-r2)
+#23 5.559 (42/77) Installing c-ares (1.34.5-r0)
+#23 5.573 (43/77) Installing libunistring (1.3-r0)
+#23 5.645 (44/77) Installing libidn2 (2.3.7-r0)
+#23 5.664 (45/77) Installing libpsl (0.21.5-r3)
+#23 5.676 (46/77) Installing zstd-libs (1.5.7-r0)
+#23 5.720 (47/77) Installing libcurl (8.14.1-r1)
+#23 5.753 (48/77) Installing curl (8.14.1-r1)
+#23 5.778 (49/77) Installing dbus (1.16.2-r1)
+#23 5.796 Executing dbus-1.16.2-r1.pre-install
+#23 5.869 Executing dbus-1.16.2-r1.post-install
+#23 5.887 (50/77) Installing dbus-daemon-launch-helper (1.16.2-r1)
+#23 5.896 (51/77) Installing libelf (0.193-r0)
+#23 5.908 (52/77) Installing libmnl (1.0.5-r2)
+#23 5.915 (53/77) Installing iproute2-minimal (6.15.0-r0)
+#23 5.954 (54/77) Installing libxtables (1.8.11-r1)
+#23 5.963 (55/77) Installing iproute2-tc (6.15.0-r0)
+#23 6.001 (56/77) Installing iproute2-ss (6.15.0-r0)
+#23 6.014 (57/77) Installing iproute2 (6.15.0-r0)
+#23 6.042 Executing iproute2-6.15.0-r0.post-install
+#23 6.047 (58/77) Installing nbtscan (1.7.2-r0)
+#23 6.053 (59/77) Installing net-snmp-libs (5.9.4-r1)
+#23 6.112 (60/77) Installing net-snmp-agent-libs (5.9.4-r1)
+#23 6.179 (61/77) Installing net-snmp-tools (5.9.4-r1)
+#23 6.205 (62/77) Installing mii-tool (2.10-r3)
+#23 6.211 (63/77) Installing net-tools (2.10-r3)
+#23 6.235 (64/77) Installing lua5.4-libs (5.4.7-r0)
+#23 6.258 (65/77) Installing libssh2 (1.11.1-r0)
+#23 6.279 (66/77) Installing nmap (7.97-r0)
+#23 6.524 (67/77) Installing nmap-nselibs (7.97-r0)
+#23 6.729 (68/77) Installing nmap-scripts (7.97-r0)
+#23 6.842 (69/77) Installing bridge (1.5-r5)
+#23 6.904 (70/77) Installing ifupdown-ng (0.12.1-r7)
+#23 6.915 (71/77) Installing ifupdown-ng-iproute2 (0.12.1-r7)
+#23 6.920 (72/77) Installing openrc-user (0.62.6-r0)
+#23 6.924 (73/77) Installing openrc (0.62.6-r0)
+#23 7.013 Executing openrc-0.62.6-r0.post-install
+#23 7.016 (74/77) Installing avahi-openrc (0.8-r21)
+#23 7.021 (75/77) Installing dbus-openrc (1.16.2-r1)
+#23 7.026 (76/77) Installing s6-openrc (2.13.2.0-r0)
+#23 7.032 (77/77) Installing traceroute (2.1.6-r0)
+#23 7.040 Executing busybox-1.37.0-r18.trigger
+#23 7.042 Executing ca-certificates-20250619-r0.trigger
+#23 7.101 Executing dbus-1.16.2-r1.trigger
+#23 7.104 OK: 102 MiB in 131 packages
+#23 7.156 fetch https://dl-cdn.alpinelinux.org/alpine/v3.22/main/x86_64/APKINDEX.tar.gz
+#23 7.243 fetch https://dl-cdn.alpinelinux.org/alpine/v3.22/community/x86_64/APKINDEX.tar.gz
+#23 7.543 (1/12) Installing php83-common (8.3.24-r0)
+#23 7.551 (2/12) Installing argon2-libs (20190702-r5)
+#23 7.557 (3/12) Installing libedit (20250104.3.1-r1)
+#23 7.568 (4/12) Installing pcre2 (10.43-r1)
+#23 7.600 (5/12) Installing php83 (8.3.24-r0)
+#23 7.777 (6/12) Installing php83-cgi (8.3.24-r0)
+#23 7.953 (7/12) Installing php83-curl (8.3.24-r0)
+#23 7.968 (8/12) Installing acl-libs (2.3.2-r1)
+#23 7.975 (9/12) Installing php83-fpm (8.3.24-r0)
+#23 8.193 (10/12) Installing php83-session (8.3.24-r0)
+#23 8.204 (11/12) Installing php83-sqlite3 (8.3.24-r0)
+#23 8.213 (12/12) Installing sqlite (3.49.2-r1)
+#23 8.309 Executing busybox-1.37.0-r18.trigger
+#23 8.317 OK: 129 MiB in 143 packages
+#23 8.369 fetch https://dl-cdn.alpinelinux.org/alpine/v3.22/main/x86_64/APKINDEX.tar.gz
+#23 8.449 fetch https://dl-cdn.alpinelinux.org/alpine/v3.22/community/x86_64/APKINDEX.tar.gz
+#23 8.747 (1/2) Installing nginx (1.28.0-r3)
+#23 8.766 Executing nginx-1.28.0-r3.pre-install
+#23 8.863 Executing nginx-1.28.0-r3.post-install
+#23 8.865 (2/2) Installing nginx-openrc (1.28.0-r3)
+#23 8.870 Executing busybox-1.37.0-r18.trigger
+#23 8.873 OK: 130 MiB in 145 packages
+#23 DONE 9.5s
+
+#24 [runner  5/14] COPY --from=builder --chown=nginx:www-data /app/ /app/
+#24 DONE 0.5s
+
+#25 [runner  6/14] RUN mkdir -p /app/config /app/db /app/log/plugins
+#25 DONE 0.5s
+
+#26 [runner  7/14] COPY --chmod=600 --chown=root:root install/crontab /etc/crontabs/root
+#26 DONE 0.3s
+
+#27 [runner  8/14] COPY --chmod=755 dockerfiles/healthcheck.sh /usr/local/bin/healthcheck.sh
+#27 DONE 0.3s
+
+#28 [runner  9/14] RUN touch /app/log/app.log     && touch /app/log/execution_queue.log     && touch /app/log/app_front.log     && touch /app/log/app.php_errors.log     && touch /app/log/stderr.log     && touch /app/log/stdout.log     && touch /app/log/db_is_locked.log     && touch /app/log/IP_changes.log     && touch /app/log/report_output.txt     && touch /app/log/report_output.html     && touch /app/log/report_output.json     && touch /app/api/user_notifications.json
+#28 DONE 0.6s
+
+#29 [runner 10/14] COPY dockerfiles /app/dockerfiles
+#29 DONE 0.3s
+
+#30 [runner 11/14] RUN chmod +x /app/dockerfiles/*.sh
+#30 DONE 0.8s
+
+#31 [runner 12/14] RUN /app/dockerfiles/init-nginx.sh     && /app/dockerfiles/init-php-fpm.sh     && /app/dockerfiles/init-crond.sh     && /app/dockerfiles/init-backend.sh
+#31 0.417 Initializing nginx...
+#31 0.417 Setting webserver to address (0.0.0.0) and port (20211)
+#31 0.418 /app/dockerfiles/init-nginx.sh: line 5: /app/install/netalertx.template.conf: No such file or directory
+#31 0.611 nginx initialized.
+#31 0.612 Initializing php-fpm...
+#31 0.654 php-fpm initialized.
+#31 0.655 Initializing crond...
+#31 0.689 crond initialized.
+#31 0.690 Initializing backend...
+#31 12.19 Backend initialized.
+#31 DONE 12.3s
+
+#32 [runner 13/14] RUN rm -rf /app/dockerfiles
+#32 DONE 0.6s
+
+#33 [runner 14/14] RUN date +%s > /app/front/buildtimestamp.txt
+#33 DONE 0.6s
+
+#34 exporting to image
+#34 exporting layers
+#34 exporting layers 2.4s done
+#34 writing image sha256:0afcbc41473de559eff0dd93250595494fe4d8ea620861e9e90d50a248fcefda 0.0s done
+#34 naming to docker.io/library/netalertx 0.0s done
+#34 DONE 2.5s

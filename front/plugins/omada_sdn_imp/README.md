@@ -1,5 +1,8 @@
 ## Overview
 
+> [!WARNING]
+> UNMAINTAINED - Looking for maintainers. If possible, use the `OMDSDNOPENAPI` instead.
+
 The OMADA SDN plugin aims at synchronizing data between NetAlertX and a TPLINK OMADA SND controler by leveraging a tplink omada python library.
 
 #### Features
@@ -41,8 +44,8 @@ The OMADA SDN plugin aims at synchronizing data between NetAlertX and a TPLINK O
 OMADA SDN limitation fixed by the plugin:
 0. OMADA SDN can't use DNS for names and keep using MAC ref: https://community.tp-link.com/en/business/forum/topic/503782
 - when you use an OMADA user Role =  Administrator, the plugin will attempt to fix OMADA's shortcoming and populat the NAME field from NetAlertX (from DNS/DHCP/...)
-![OMADA SDN account page](Oamadaomada_sdn_imp.png)
-- 
+![OMADA SDN account page](omada_account_sample.png)
+
 
 can not fix some of tplinks OMADA SDN own limitations/bugs:
 1. OMADA SDN switches uplinks/downlinks is broken if the default router is not an OMADA native device 

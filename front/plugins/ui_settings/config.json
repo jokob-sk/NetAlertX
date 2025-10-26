@@ -214,6 +214,33 @@
       ]
     },
     {
+      "function": "DEFAULT_PAGE_SIZE",
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "number" }],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 50,
+      "default_value": 20,
+      "options": [],
+      "localized": [],
+      "name": [
+        {
+          "string": "Default page size"
+        }
+      ],
+      "description": [
+        {
+          "string": "Default number of items shown in tables per page, for example in teh Devices lists."
+        }
+      ]
+    },
+    {
       "function": "DEV_SECTIONS",
       "type": {
         "dataType": "array",
@@ -281,7 +308,7 @@
       },
       "maxLength": 50,
       "default_value": ["online", "offline", "archived", "new", "down"],
-      "options": ["online", "offline", "archived", "new", "down"],
+      "options": ["online", "offline", "archived", "new", "down", "all"],
       "localized": [],
       "name": [
         {
@@ -377,7 +404,10 @@
         "Device_TableHead_SourcePlugin",
         "Device_TableHead_PresentLastScan",
         "Device_TableHead_AlertDown",
-        "Device_TableHead_CustomProps"
+        "Device_TableHead_CustomProps",
+        "Device_TableHead_FQDN",
+        "Device_TableHead_ParentRelType",
+        "Device_TableHead_ReqNicsOnline"
       ],
       "localized": ["name", "description"],
       "name": [
@@ -453,7 +483,8 @@
         "Device_TableHead_SyncHubNodeName",
         "Device_TableHead_NetworkSite",
         "Device_TableHead_SSID",
-        "Device_TableHead_SourcePlugin"
+        "Device_TableHead_SourcePlugin",
+        "Device_TableHead_ParentRelType"
       ],
       "localized": ["name", "description"],
       "name": [
@@ -511,6 +542,43 @@
         {
           "language_code": "en_us",
           "string": "Which tiles to show on the top of the Devices page."
+        }
+      ]
+    },
+    {
+      "function": "hide_rel_types",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [{ "multiple": "true", "ordeable": "true" }],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 50,
+      "default_value": [
+        "nic",
+        "virtual"
+      ],
+      "options": [
+        "child",
+        "logical",
+        "nic",
+        "virtual"
+      ],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Relationships to hide"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Specifies which device relationships to their parent node should be hidden from the devices lists. Devices with a matching <code>devParentRelType</code> will be excluded from most lists."
         }
       ]
     },

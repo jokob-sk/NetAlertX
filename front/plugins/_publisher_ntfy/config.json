@@ -96,7 +96,7 @@
     },
     {
       "column": "Watched_Value1",
-      "css_classes": "col-sm-3",
+      "css_classes": "col-sm-1",
       "show": true,
       "type": "eval",
       "default_value": "",
@@ -525,6 +525,34 @@
         {
           "language_code": "en_us",
           "string": "All NTFY messages have a priority, which defines how urgently your phone notifies you. On Android, you can set custom notification sounds and vibration patterns on your phone to map to these priorities (see <a href=\"https://docs.ntfy.sh/subscribe/phone/\">Android config</a>)."
+        }
+      ]
+    },
+    {
+      "function": "VERIFY_SSL",
+      "type": {
+        "dataType": "boolean",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "checkbox" }],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": true,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Verify SSL"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Enable TLS support. Disable if you are using a self-signed certificate."
         }
       ]
     }

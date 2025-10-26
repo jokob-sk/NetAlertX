@@ -9,10 +9,13 @@ require 'php/templates/header.php';
 
 <!-- ----------------------------------------------------------------------- -->
  
+<script>
+  showSpinner();
+</script>
 
 <div id="notifications" class="content-wrapper">
   <section class="content">
-    <div class="box box-gray col-xs-12" >
+    <div class="notification-box box box-gray col-xs-12" >
       <div class="box-header">
        <h3 class="box-title text-aqua"><?= lang('Notifications_All');?></h3>
       </div>
@@ -33,9 +36,10 @@ require 'php/templates/header.php';
           </tbody>
         </table> 
 
-        
-        <button id="clearNotificationsBtn" class="btn btn-danger"><?= lang("Gen_DeleteAll");?></button>
-        <button id="notificationsMarkAllRead" class="btn btn-default"><?= lang("Notifications_Mark_All_Read");?></button>
+        <div class="notification-buttons">
+          <button id="clearNotificationsBtn" class="btn btn-danger"><?= lang("Gen_DeleteAll");?></button>
+          <button id="notificationsMarkAllRead" class="btn btn-default"><?= lang("Notifications_Mark_All_Read");?></button>
+        </div>
       </div>
       
     </div>
@@ -70,6 +74,8 @@ require 'php/templates/header.php';
 
   $(document).ready(function() {
     const table = $('#notificationsTable').DataTable({
+      "pageLength": parseInt(getSetting("UI_DEFAULT_PAGE_SIZE")),
+      'lengthMenu'   : getLengthMenu(parseInt(getSetting("UI_DEFAULT_PAGE_SIZE"))),
       "columns": [
         { "data": "timestamp" , 
           "render": function(data, type, row) {
@@ -78,6 +84,9 @@ require 'php/templates/header.php';
             if (result.includes("+")) { // Check if timezone offset is present
                 result = result.split('+')[0]; // Remove timezone offset
             }
+
+            result = localizeTimestamp(result);
+
             return result;
           }
         },        
@@ -113,7 +122,8 @@ require 'php/templates/header.php';
                   var guid = data.split(":")[1].trim();
                   return `<a href="report.php?guid=${guid}">Go to Report</a>`;
                 } else {
-                  return data;
+                  // clear quotes (") if wrapped in them 
+                  return (data.startsWith('"') && data.endsWith('"')) ? data.slice(1, -1) : data;
                 }
           }
          },
@@ -155,7 +165,10 @@ require 'php/templates/header.php';
         
       ],
       "order": [[0, "desc"]]
-    });
+    ,
+    initComplete: function(settings, json) {
+        hideSpinner(); // Called after the DataTable is fully initialized
+    }});
 
     fetchData(function(data) {
       table.clear().rows.add(data).draw();
@@ -204,6 +217,7 @@ require 'php/templates/header.php';
 
    
   });
+  
 </script>
 
 <?php

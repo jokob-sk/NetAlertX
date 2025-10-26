@@ -2,6 +2,10 @@
   require 'php/templates/header.php';  
 ?>
 
+<script>
+  showSpinner();
+</script>
+
 <!-- ----------------------------------------------------------------------- -->
  
 <!-- Page ------------------------------------------------------------------ -->
@@ -67,7 +71,7 @@
               <div class="inner"> <h3 id="eventsNewDevices"> -- </h3>
                 <p class="infobox_label"><?= lang('Events_Shortcut_NewDevices');?></p>
               </div>
-              <div class="icon"> <i class="ion ion-plus-round text-yellow-40"></i> </div>
+              <div class="icon"> <i class="fa-solid fa-circle-plus text-yellow-40"></i> </div>
             </div>
           </a>
         </div>
@@ -165,7 +169,7 @@
 
   var eventsType      = 'all';
   var period          = '1 day';
-  var tableRows       = 25;
+  var tableRows       = parseInt(getSetting("UI_DEFAULT_PAGE_SIZE"));
   
   // Read parameters & Initialize components
   main();
@@ -177,7 +181,7 @@ function main() {
   period = getCookie(parPeriod) === "" ? "1 day" : getCookie(parPeriod);
   $('#period').val(period);
 
-  tableRows = getCookie(parTableRows) === "" ? 50 : parseInt(getCookie(parTableRows), 10);
+  tableRows = getCookie(parTableRows) === "" ? parseInt(getSetting("UI_DEFAULT_PAGE_SIZE")) : parseInt(getCookie(parTableRows), 10);
 
   // Initialize components
   initializeDatatable();
@@ -193,7 +197,7 @@ function initializeDatatable () {
   $('#tableEvents').DataTable({
     'paging'       : true,
     'lengthChange' : true,
-    'lengthMenu'   : [[10, 25, 50, 100, 500, -1], [10, 25, 50, 100, 500, 'All']],
+    'lengthMenu'   : getLengthMenu(parseInt(getSetting("UI_DEFAULT_PAGE_SIZE"))),
     'searching'    : true,
     'ordering'     : true,
     'info'         : true,
@@ -216,7 +220,7 @@ function initializeDatatable () {
       } },
 
       // Replace HTML codes
-      {targets: [3,4,5,6,7],
+      {targets: [4,5,6,7],
         "createdCell": function (td, cellData, rowData, row, col) {
           $(td).html (translateHTMLcodes (cellData));
       } },
@@ -226,13 +230,19 @@ function initializeDatatable () {
         "createdCell": function (td, cellData, rowData, row, col) {
           // console.log(cellData);
           $(td).html (cellData);
+      } },
+      // Date
+      {targets: [3],
+        "createdCell": function (td, cellData, rowData, row, col) {
+          // console.log(cellData);
+          $(td).html (localizeTimestamp(cellData));
       } }
     ],
 
     // Processing
     'processing'  : true,
     'language'    : {
-      processing: '<table><td width="130px" align="middle"><?= lang("Events_Loading");?></td><td><i class="ion ion-ios-loop-strong fa-spin fa-2x fa-fw"></td></table>',
+      processing: '<table><td width="130px" align="middle"><?= lang("Events_Loading");?></td><td><i class="fa-solid fa-spinner fa-spin-pulse"></i></td></table>',
       emptyTable: 'No data',
       "lengthMenu": "<?= lang('Events_Tablelenght');?>",
       "search":     "<?= lang('Events_Searchbox');?>: ",
@@ -241,6 +251,9 @@ function initializeDatatable () {
           "previous":   "<?= lang('Events_Table_nav_prev');?>"
       },
       "info":           "<?= lang('Events_Table_info');?>",
+    },
+    initComplete: function(settings, json) {
+        hideSpinner(); // Called after the DataTable is fully initialized
     }
   });
 

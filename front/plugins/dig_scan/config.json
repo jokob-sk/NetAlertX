@@ -1,0 +1,385 @@
+{
+  "code_name": "dig_scan",
+  "unique_prefix": "DIGSCAN",
+  "plugin_type": "other",
+  "enabled": true,
+  "data_source": "script",
+  "execution_order" : "Layer_7",
+  "show_ui": true,
+  "data_filters": [
+    {
+      "compare_column": "Object_PrimaryID",
+      "compare_operator": "==",
+      "compare_field_id": "txtMacFilter",
+      "compare_js_template": "'{value}'.toString()",
+      "compare_use_quotes": true
+    }
+  ],
+  "localized": ["display_name", "description", "icon"],
+  "display_name": [
+    {
+      "language_code": "en_us",
+      "string": "Dig (Name resolution)"
+    }
+  ],
+  "icon": [
+    {
+      "language_code": "en_us",
+      "string": "<i class=\"fa-solid fa-search\"></i>"
+    }
+  ],
+  "description": [
+    {
+      "language_code": "en_us",
+      "string": "A plugin to resolve device names via Dig."
+    }
+  ],
+  "params": [
+    {
+      "name": "ips",
+      "type": "sql",
+      "value": "SELECT devLastIP from DEVICES order by devMac",
+      "timeoutMultiplier": true
+    }
+  ],
+  "settings": [
+    {
+      "function": "RUN",
+      "events": ["run"],
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "select", "elementOptions": [], "transformers": [] }
+        ]
+      },
+      "default_value": "before_name_updates",
+      "options": [
+        "disabled",
+        "before_name_updates",
+        "on_new_device",
+        "once",
+        "schedule",
+        "always_after_scan"
+      ],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "When to run"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Cuándo ejecutar"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Wann laufen"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "When the plugin should be executed. If enabled this will execute the scan until there are no <code>(unknown)</code> or <code>(name not found)</code> devices. Setting this to <code>before_name_updates</code> is recommended.<br/><br/> Depends on the <a onclick=\"toggleAllSettings()\" href=\"#SCAN_SUBNETS\"><code>SCAN_SUBNETS</code> setting</a>."
+        }
+      ]
+    },
+    {
+      "function": "CMD",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "readonly": "true" }],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": "python3 /app/front/plugins/dig_scan/digscan.py",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Command"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Comando"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Befehl"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Command to run. This can not be changed"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Comando a ejecutar. Esto no se puede cambiar"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Befehl zum Ausführen. Dies kann nicht geändert werden"
+        }
+      ]
+    },
+    {
+      "function": "RUN_SCHD",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "span",
+            "elementOptions": [
+              {
+                "cssClasses": "input-group-addon validityCheck"
+              },
+              {
+                "getStringKey": "Gen_ValidIcon"
+              }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "onChange": "validateRegex(this)"
+              },
+              {
+                "base64Regex": "Xig/OlwqfCg/OlswLTldfFsxLTVdWzAtOV18WzAtOV0rLVswLTldK3xcKi9bMC05XSspKVxzKyg/OlwqfCg/OlswLTldfDFbMC05XXwyWzAtM118WzAtOV0rLVswLTldK3xcKi9bMC05XSspKVxzKyg/OlwqfCg/OlsxLTldfFsxMl1bMC05XXwzWzAxXXxbMC05XSstWzAtOV0rfFwqL1swLTldKykpXHMrKD86XCp8KD86WzEtOV18MVswLTJdfFswLTldKy1bMC05XSt8XCovWzAtOV0rKSlccysoPzpcKnwoPzpbMC02XXxbMC02XS1bMC02XXxcKi9bMC05XSspKSQ="
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": "*/30 * * * *",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Schedule"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Schedule"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Schedule"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Only enabled if you select <code>schedule</code> in the <a href=\"#DIGSCAN_RUN\"><code>DIGSCAN_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes."
+        },
+        {
+          "language_code": "es_es",
+          "string": "Solo está habilitado si selecciona <code>schedule</code> en la configuración <a href=\"#DIGSCAN_RUN\"><code>DIGSCAN_RUN</code></a>. Asegúrese de ingresar la programación en el formato similar a cron correcto (por ejemplo, valide en <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Por ejemplo, ingresar <code>0 4 * * *</code> ejecutará el escaneo después de las 4 a.m. en el <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</ código> que configuró arriba</a>. Se ejecutará la PRÓXIMA vez que pase el tiempo."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Nur aktiviert, wenn Sie <code>schedule</code> in der <a href=\"#DIGSCAN_RUN\"><code>DIGSCAN_RUN</code>-Einstellung</a> auswählen. Stellen Sie sicher, dass Sie den Zeitplan im richtigen Cron-ähnlichen Format eingeben (z. B. validieren unter <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Wenn Sie beispielsweise <code>0 4 * * *</code> eingeben, wird der Scan nach 4 Uhr morgens in der <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</ ausgeführt. Code> den Sie oben festgelegt haben</a>. Wird das NÄCHSTE Mal ausgeführt, wenn die Zeit vergeht."
+        }
+      ]
+    },
+    {
+      "function": "RUN_TIMEOUT",
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "number" }],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": 5,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Run timeout"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Tiempo límite de ejecución"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Zeitüberschreitung"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Maximum time in seconds to wait for the script to finish. If this time is exceeded the script is aborted."
+        },
+        {
+          "language_code": "es_es",
+          "string": "Tiempo máximo en segundos para esperar a que finalice el script. Si se supera este tiempo, el script se cancela."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Maximale Zeit in Sekunden, die auf den Abschluss des Skripts gewartet werden soll. Bei Überschreitung dieser Zeit wird das Skript abgebrochen."
+        }
+      ]
+    }
+  ],
+  "database_column_definitions": [
+    {
+      "column": "Index",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "none",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Index"
+        }
+      ]
+    },
+    {
+      "column": "Object_PrimaryID",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "device_name_mac",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "MAC (name)"
+        },
+        {
+          "language_code": "es_es",
+          "string": "MAC"
+        }
+      ]
+    },
+    {
+      "column": "Object_SecondaryID",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "IP"
+        },
+        {
+          "language_code": "es_es",
+          "string": "IP"
+        }
+      ]
+    },
+    {
+      "column": "Watched_Value1",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Server"
+        }
+      ]
+    },
+    {
+      "column": "Watched_Value2",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Name"
+        }
+      ]
+    },
+    {
+      "column": "DateTimeCreated",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Created"
+        }
+      ]
+    },
+    {
+      "column": "DateTimeChanged",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Changed"
+        }
+      ]
+    },
+    {
+      "column": "Status",
+      "css_classes": "col-sm-1",
+      "show": true,
+      "type": "replace",
+      "default_value": "",
+      "options": [
+        {
+          "equals": "watched-not-changed",
+          "replacement": "<div style='text-align:center'><i class='fa-solid fa-square-check'></i><div></div>"
+        },
+        {
+          "equals": "watched-changed",
+          "replacement": "<div style='text-align:center'><i class='fa-solid fa-triangle-exclamation'></i></div>"
+        },
+        {
+          "equals": "new",
+          "replacement": "<div style='text-align:center'><i class='fa-solid fa-circle-plus'></i></div>"
+        },
+        {
+          "equals": "missing-in-last-scan",
+          "replacement": "<div style='text-align:center'><i class='fa-solid fa-question'></i></div>"
+        }
+      ],
+      "localized": ["name"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Status"
+        }
+      ]
+    }
+  ]
+}

@@ -74,10 +74,10 @@
 
             <!-- box-header -->
             <div class="box-header">
-              <div class=" col-md-9 ">
+              <div class=" col-sm-8 ">
                 <h3 id="tableDevicesTitle" class="box-title text-gray "></h3>  
               </div>    
-              <div  class="dummyDevice col-md-3 ">
+              <div  class="dummyDevice col-sm-4 ">
                 <span id="multiEditPlc">
                   <!-- multi edit button placeholder -->
                 </span>
@@ -123,7 +123,7 @@
 <!-- page script ----------------------------------------------------------- -->
 <script>
   var deviceStatus    = 'all';
-  var tableRows       = getCache ("nax_parTableRows") == "" ? 20 : getCache ("nax_parTableRows") ;
+  var tableRows       = getCache ("nax_parTableRows") == "" ? parseInt(getSetting("UI_DEFAULT_PAGE_SIZE")) : getCache ("nax_parTableRows") ;
   var tableOrder      = getCache ("nax_parTableOrder") == "" ? [[3,'desc'], [0,'asc']] : JSON.parse(getCache ("nax_parTableOrder")) ;
   
   var tableColumnHide = [];
@@ -148,10 +148,7 @@ function main () {
 
   //initialize the table headers in the correct order
   var availableColumns = getSettingOptions("UI_device_columns").split(",");
-  headersDefaultOrder = availableColumns.map(val => getString(val));
-
-  console.log(headersDefaultOrder);
-  
+  headersDefaultOrder = availableColumns.map(val => getString(val));  
 
   var selectedColumns = JSON.parse(getSetting("UI_device_columns").replace(/'/g, '"'));
 
@@ -266,14 +263,16 @@ function getDevicesTotals() {
 function processDeviceTotals(devicesData) {
   // Define filter conditions and corresponding objects
   const filters = [
-    { status: 'my_devices', color: 'bg-aqua',   label: getString('Device_Shortcut_AllDevices'), icon: 'fa-laptop' },
-    { status: 'all',        color: 'bg-aqua',   label: getString('Gen_All_Devices'),            icon: 'fa-laptop' },
-    { status: 'connected',  color: 'bg-green',  label: getString('Device_Shortcut_Connected'),  icon: 'fa-plug' },
-    { status: 'favorites',  color: 'bg-yellow', label: getString('Device_Shortcut_Favorites'),  icon: 'fa-star' },
-    { status: 'new',        color: 'bg-yellow', label: getString('Device_Shortcut_NewDevices'), icon: 'fa-plus' },
-    { status: 'down',       color: 'bg-red',    label: getString('Device_Shortcut_DownOnly'),   icon: 'fa-warning' },
-    { status: 'archived',   color: 'bg-gray',   label: getString('Device_Shortcut_Archived'),   icon: 'fa-eye-slash' },
-    { status: 'offline',    color: 'bg-gray',   label: getString('Gen_Offline'),                icon: 'fa-xmark' }
+    { status: 'my_devices',         color: 'bg-aqua',   label: getString('Device_Shortcut_AllDevices'), icon: 'fa-laptop' },
+    { status: 'all',                color: 'bg-aqua',   label: getString('Gen_All_Devices'),            icon: 'fa-laptop' },
+    { status: 'connected',          color: 'bg-green',  label: getString('Device_Shortcut_Connected'),  icon: 'fa-plug' },
+    { status: 'favorites',          color: 'bg-yellow', label: getString('Device_Shortcut_Favorites'),  icon: 'fa-star' },
+    { status: 'new',                color: 'bg-yellow', label: getString('Device_Shortcut_NewDevices'), icon: 'fa-plus' },
+    { status: 'down',               color: 'bg-red',    label: getString('Device_Shortcut_DownOnly'),   icon: 'fa-warning' },
+    { status: 'archived',           color: 'bg-gray',   label: getString('Device_Shortcut_Archived'),   icon: 'fa-eye-slash' },
+    { status: 'offline',            color: 'bg-gray',   label: getString('Gen_Offline'),                icon: 'fa-xmark' },
+    { status: 'all_devices',        color: 'bg-gray',   label: getString('Gen_All_Devices'),            icon: 'fa-laptop' },
+    { status: 'network_devices',    color: 'bg-aqua',   label: getString('Network_Devices'),            icon: 'fa-sitemap fa-rotate-270' }
   ];
 
   // Initialize an empty array to store the final objects
@@ -299,13 +298,7 @@ function processDeviceTotals(devicesData) {
     }
   });
 
-  // Render info boxes/tile cards
-  console.log(getSetting('UI_hide_empty'));
-  
-  console.log(dataArray);
-  console.log(devicesData);
-  
-  
+  // Render info boxes/tile cards  
   renderInfoboxes(dataArray);
 }
 
@@ -356,8 +349,6 @@ function initFilters() {
 
                 // Clear any existing filters in the DOM
                 $('#columnFilters').empty();
-
-                console.log(displayedFilters);
 
                 // Ensure displayedFilters is an array and not empty
                 if (Array.isArray(displayedFilters) && displayedFilters.length > 0) {
@@ -512,33 +503,36 @@ function collectFilters() {
 function mapColumnIndexToFieldName(index, tableColumnVisible) {
   // the order is important, don't change it!
   const columnNames = [
-    "devName", 
-    "devOwner", 
-    "devType", 
-    "devIcon", 
-    "devFavorite", 
-    "devGroup", 
-    "devFirstConnection", 
-    "devLastConnection", 
-    "devLastIP", 
-    "devIsRandomMac",   // resolved on the fly
-    "devStatus", // resolved on the fly
-    "devMac", 
-    "devIpLong", //formatIPlong(device.devLastIP) || "",  // IP orderable
-    "rowid", 
-    "devParentMAC", 
-    "devParentChildrenCount",  // resolved on the fly
-    "devLocation",
-    "devVendor", 
-    "devParentPort", 
-    "devGUID", 
-    "devSyncHubNode", 
-    "devSite", 
-    "devSSID", 
-    "devSourcePlugin",
-    "devPresentLastScan",
-    "devAlertDown",
-    "devCustomProps"
+    "devName",                 // 0
+    "devOwner",                // 1
+    "devType",                 // 2
+    "devIcon",                 // 3
+    "devFavorite",             // 4
+    "devGroup",                // 5
+    "devFirstConnection",      // 6
+    "devLastConnection",       // 7
+    "devLastIP",               // 8
+    "devIsRandomMac",          // 9 resolved on the fly
+    "devStatus",               // 10 resolved on the fly
+    "devMac",                  // 11
+    "devIpLong",               // 12 formatIPlong(device.devLastIP) || "",  // IP orderable
+    "rowid",                   // 13
+    "devParentMAC",            // 14
+    "devParentChildrenCount",  // 15 resolved on the fly
+    "devLocation",             // 16
+    "devVendor",               // 17
+    "devParentPort",           // 18
+    "devGUID",                 // 19
+    "devSyncHubNode",          // 20
+    "devSite",                 // 21
+    "devSSID",                 // 22
+    "devSourcePlugin",         // 23
+    "devPresentLastScan",      // 24
+    "devAlertDown",            // 25
+    "devCustomProps",          // 26
+    "devFQDN",                 // 27
+    "devParentRelType",        // 28
+    "devReqNicsOnline"         // 29
   ];
 
   // console.log("OrderBy: " + columnNames[tableColumnOrder[index]]);  
@@ -561,15 +555,17 @@ function initializeDatatable (status) {
 
   // Define color & title for the status selected
   switch (deviceStatus) {
-    case 'my_devices': tableTitle = getString('Device_Shortcut_AllDevices');  color = 'aqua';    break;
-    case 'connected':  tableTitle = getString('Device_Shortcut_Connected');   color = 'green';   break;
-    case 'all':        tableTitle = getString('Gen_All_Devices');             color = 'aqua';    break;
-    case 'favorites':  tableTitle = getString('Device_Shortcut_Favorites');   color = 'yellow';  break;
-    case 'new':        tableTitle = getString('Device_Shortcut_NewDevices');  color = 'yellow';  break;
-    case 'down':       tableTitle = getString('Device_Shortcut_DownOnly');    color = 'red';     break;
-    case 'archived':   tableTitle = getString('Device_Shortcut_Archived');    color = 'gray';    break;
-    case 'offline':    tableTitle = getString('Gen_Offline');                 color = 'gray';    break;
-    default:           tableTitle = getString('Device_Shortcut_Devices');     color = 'gray';    break;
+    case 'my_devices':      tableTitle = getString('Device_Shortcut_AllDevices');  color = 'aqua';    break;
+    case 'connected':       tableTitle = getString('Device_Shortcut_Connected');   color = 'green';   break;
+    case 'all':             tableTitle = getString('Gen_All_Devices');             color = 'aqua';    break;
+    case 'favorites':       tableTitle = getString('Device_Shortcut_Favorites');   color = 'yellow';  break;
+    case 'new':             tableTitle = getString('Device_Shortcut_NewDevices');  color = 'yellow';  break;
+    case 'down':            tableTitle = getString('Device_Shortcut_DownOnly');    color = 'red';     break;
+    case 'archived':        tableTitle = getString('Device_Shortcut_Archived');    color = 'gray';    break;
+    case 'offline':         tableTitle = getString('Gen_Offline');                 color = 'gray';    break;
+    case 'all_devices':     tableTitle = getString('Gen_All_Devices');             color = 'gray';    break;
+    case 'network_devices': tableTitle = getString('Network_Devices');             color = 'aqua';    break;
+    default:                tableTitle = getString('Device_Shortcut_Devices');     color = 'gray';    break;
   } 
 
   // Set title and color
@@ -598,7 +594,6 @@ function initializeDatatable (status) {
     }    
   }
 
-  // todo: dynamically filter based on status
   var table = $('#tableDevices').DataTable({
     "serverSide": true,
     "processing": true,
@@ -648,6 +643,9 @@ function initializeDatatable (status) {
                 devParentChildrenCount
                 devIpLong
                 devCustomProps
+                devFQDN
+                devParentRelType
+                devReqNicsOnline
               }
               count
             }
@@ -685,13 +683,19 @@ function initializeDatatable (status) {
 
         return JSON.stringify(query);  // Send the JSON request
       },
-      "dataSrc": function (json) {
-        console.log(json);
+      "dataSrc": function (res) {
 
-        // Set the total number of records for pagination
-        json.recordsTotal = json.devices.count || 0;
-        json.recordsFiltered = json.devices.count || 0;
+        console.log("Raw response:", res);
+        const json = res["data"];
 
+        // Set the total number of records for pagination at the *root level* so DataTables sees them
+        res.recordsTotal = json.devices.count || 0;
+        res.recordsFiltered = json.devices.count || 0;
+
+        // console.log("recordsTotal:", res.recordsTotal, "recordsFiltered:", res.recordsFiltered);
+        // console.log("tableRows:", tableRows);
+
+        // Return only the array of rows for the table
         return json.devices.devices.map(device => {
             // Convert each device record into the required DataTable row format
             // Order has to be the same as in the UI_device_columns setting options
@@ -705,10 +709,10 @@ function initializeDatatable (status) {
                 device.devFirstConnection || "",
                 device.devLastConnection || "",
                 device.devLastIP || "",
-                device.devIsRandomMac || "",  // Custom logic for randomized MAC
+                device.devIsRandomMac || "",
                 device.devStatus || "",
-                device.devMac || "",  // hidden
-                device.devIpLong || "",  // IP orderable
+                device.devMac || "",
+                device.devIpLong || "",
                 device.rowid || "",
                 device.devParentMAC || "",
                 device.devParentChildrenCount || 0,
@@ -722,7 +726,10 @@ function initializeDatatable (status) {
                 device.devSourcePlugin || "",
                 device.devPresentLastScan || "",
                 device.devAlertDown || "",
-                device.devCustomProps || ""
+                device.devCustomProps || "",
+                device.devFQDN || "",
+                device.devParentRelType || "",
+                device.devReqNicsOnline || 0
             ];
 
             const newRow = [];
@@ -730,14 +737,13 @@ function initializeDatatable (status) {
             for (let index = 0; index < tableColumnOrder.length; index++) {
                 newRow.push(originalRow[tableColumnOrder[index]]);
             }
-
             return newRow;
         });
       }
     },
     'paging'       : true,
     'lengthChange' : true,
-    'lengthMenu'   : [[10, 20, 25, 50, 100, 500, 100000], [10, 20, 25, 50, 100, 500, getString('Device_Tablelenght_all')]],
+    'lengthMenu'   : getLengthMenu(parseInt(getSetting("UI_DEFAULT_PAGE_SIZE"))),
     'searching'    : true,
 
     'ordering'     : true,
@@ -760,24 +766,41 @@ function initializeDatatable (status) {
       {visible:   false,         targets: tableColumnHide },      
       {className: 'text-center', targets: [mapIndx(4), mapIndx(9), mapIndx(10), mapIndx(15), mapIndx(18)] },      
       {className: 'iconColumn text-center',  targets: [mapIndx(3)]},      
-      {width:     '80px',        targets: [mapIndx(6), mapIndx(7), mapIndx(15)] },      
+      {width:     '80px',        targets: [mapIndx(6), mapIndx(7), mapIndx(15), mapIndx(27)] },      
       {width:     '85px',        targets: [mapIndx(9)] },      
       {width:     '30px',        targets: [mapIndx(3), mapIndx(10), mapIndx(13), mapIndx(18)] },      
       {orderData: [mapIndx(12)],          targets: mapIndx(8) },
 
-      // Device Name
-      {targets: [mapIndx(0)],
-        'createdCell': function (td, cellData, rowData, row, col) {      
-            
+      // Device Name and FQDN
+      {targets: [mapIndx(0), mapIndx(27)],
+        'createdCell': function (td, cellData, rowData, row, col) {    
+                      
             // console.log(cellData)      
-            $(td).html ('<b class="anonymizeDev"><a href="deviceDetails.php?mac='+ rowData[mapIndx(11)] +'" class="">'+ cellData +'</a></b>');
+            $(td).html (
+              `<b class="anonymizeDev "
+              >
+                <a href="deviceDetails.php?mac=${rowData[mapIndx(11)]}" class="hover-node-info"
+                  data-name="${cellData}"
+                  data-ip="${rowData[mapIndx(8)]}"
+                  data-mac="${rowData[mapIndx(11)]}"
+                  data-vendor="${rowData[mapIndx(17)]}"
+                  data-type="${rowData[mapIndx(2)]}"
+                  data-firstseen="${rowData[mapIndx(6)]}"
+                  data-lastseen="${rowData[mapIndx(7)]}"
+                  data-relationship="${rowData[mapIndx(28)]}"
+                  data-status="${rowData[mapIndx(10)]}"
+                  data-present="${rowData[mapIndx(24)]}"
+                  data-alert="${rowData[mapIndx(25)]}"
+                  data-icon="${rowData[mapIndx(3)]}">
+                ${cellData}
+                </a>
+              </b>`
+            );
       } },
 
       // Connected Devices       
       {targets: [mapIndx(15)],
-        'createdCell': function (td, cellData, rowData, row, col) {   
-
-                
+        'createdCell': function (td, cellData, rowData, row, col) {                   
           // check if this is a network device
           if(getSetting("NETWORK_DEVICE_TYPES").includes(`'${rowData[mapIndx(2)]}'`)   )
           {
@@ -819,7 +842,7 @@ function initializeDatatable (status) {
                             <a href="http://${cellData}" class="pointer" target="_blank">
                                 ${cellData}
                             </a>
-                            <span class="alignRight">
+                            <span class="alignRight lockIcon">
                               <a href="https://${cellData}" class="pointer" target="_blank">
                                 <i class="fa fa-lock "></i>
                               </a>
@@ -845,7 +868,7 @@ function initializeDatatable (status) {
       {targets: [mapIndx(26)],
         'createdCell': function (td, cellData, rowData, row, col) {
             if (!emptyArr.includes(cellData)){
-              $(td).html (`<span>${renderCustomProps(cellData, rowData[mapIndx(11)])}<span>`);
+              $(td).html (`<span>${renderCustomProps(cellData, rowData[mapIndx(11)])}</span>`);
             } else {
               $(td).html ('');
             }
@@ -883,6 +906,28 @@ function initializeDatatable (status) {
           }
       } },
 
+      // Parent Mac      
+      {targets: [mapIndx(14)],
+        'createdCell': function (td, cellData, rowData, row, col) {
+          if (!isValidMac(cellData)) {
+            $(td).html('');
+            return;
+          }
+
+          const data = {
+            id: cellData,       // MAC address
+            text: cellData      // Optional display text (you could use a name or something else)
+          };
+
+          spanWrap = $(`<span class="custom-badge text-white"></span>`)
+
+          $(td).html(spanWrap);
+
+          const chipHtml = renderDeviceLink(data, spanWrap, true); // pass the td as container
+
+          $(spanWrap).append(chipHtml); 
+        } 
+      },
       // Status color      
       {targets: [mapIndx(10)],
         'createdCell': function (td, cellData, rowData, row, col) {
@@ -890,25 +935,14 @@ function initializeDatatable (status) {
           tmp_devPresentLastScan = rowData[mapIndx(24)]
           tmp_devAlertDown = rowData[mapIndx(25)]
 
-          if (tmp_devPresentLastScan == 1)
-          {
-            css = "green text-white statusOnline"
-            icon = '<i class="fa-solid fa-plug"></i>'
-          } else if (tmp_devPresentLastScan != 1 && tmp_devAlertDown == 1)
-          {
-            css = "red text-white statusDown"
-            icon = '<i class="fa-solid fa-triangle-exclamation"></i>'
-          } else if(tmp_devPresentLastScan != 1)
-          {
-            css = "gray text-white statusOffline"
-            icon = '<i class="fa-solid fa-xmark"></i>'
-          } else
-          {
-            css = "gray text-white statusUnknown"
-            icon = '<i class="fa-solid fa-question"></i>'
-          }
+          const badge = getStatusBadgeParts(
+            rowData[mapIndx(24)],   // tmp_devPresentLastScan
+            rowData[mapIndx(25)],   // tmp_devAlertDown
+            rowData[mapIndx(11)],  // MAC
+            cellData               // optional text
+          );
       
-          $(td).html (`<a href="deviceDetails.php?mac=${rowData[mapIndx(11)]}" class="badge bg-${css}">${icon} ${cellData.replace('-', '')}</a>`);
+          $(td).html (`<a href="${badge.url}" class="badge ${badge.cssClass}">${badge.iconHtml} ${badge.text}</a>`);
       } },
     ],
     
@@ -967,7 +1001,7 @@ function initializeDatatable (status) {
               }, debounceTime);
           });
 
-          
+          initHoverNodeInfo(); 
           hideSpinner();
           
     },
@@ -977,9 +1011,7 @@ function initializeDatatable (status) {
                 
     }
     
-  });
-
-  
+  });  
 }
 
 
@@ -1032,39 +1064,23 @@ function multiEditDevices()
 // -----------------------------------------------------------------------------
 // Function collects shown devices from the DataTable  
 function getMacsOfShownDevices() {
-  rows = $('#tableDevices')[0].rows;
-  macs = [];
+  var table = $('#tableDevices').DataTable();
 
-  // var devicesDataTableData = $('#tableDevices').dataTable().fnGetData();
-  var devicesDataTableData = $('#tableDevices').DataTable().rows({ selected: false, page: 'current' }).data().toArray();
+  var macs = [];
 
-  console.log(devicesDataTableData);
+  // Get all row indexes on current page, in display order
+  var allIndexes = table.rows({ page: 'current' }).indexes();
 
-  var selectedDevices = [];
-
-  // first row is the heading, skip
-  for (var i = 1; i < rows.length; i++) {
-    var rowIndex = rows[i]._DT_RowIndex;
-    
-    // Ensure the rowIndex is valid and within bounds of devicesDataTableData
-    if (rowIndex >= 0 && rowIndex < devicesDataTableData.length) {
-      selectedDevices.push(devicesDataTableData[rowIndex]);    
-    } else {
-      console.log(`Invalid rowIndex: ${rowIndex} at row ${i}`);
+  allIndexes.each(function(idx) {
+    var rowData = table.row(idx).data();
+    if (rowData) {
+      macs.push(rowData[mapIndx(11)]);  // mapIndx(11) == MAC column
     }
-  }
-
-  for (var j = 0; j < selectedDevices.length; j++) {
-    // Ensure that selectedDevices[j] is not undefined
-    if (selectedDevices[j]) {
-      macs.push(selectedDevices[j][mapIndx(11)]);  // mapIndx(11) == MAC
-    } else {
-      console.log(`selectedDevices[${j}] is undefined`);
-    }
-  }
+  });
 
   return macs;
 }
+
 
 // -----------------------------------------------------------------------------
 // Handle custom actions/properties on a device    

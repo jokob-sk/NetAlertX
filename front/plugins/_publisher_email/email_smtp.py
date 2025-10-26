@@ -24,9 +24,9 @@ sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 import conf
 from const import confFileName, logPath
 from plugin_helper import Plugin_Objects
-from logger import mylog, Logger, append_line_to_file, print_log
+from logger import mylog, Logger, append_line_to_file
 from helper import timeNowTZ, get_setting_value, hide_email
-from notification import Notification_obj
+from models.notification_instance import NotificationInstance
 from database import DB
 from pytz import timezone
 
@@ -59,21 +59,20 @@ def main():
     # Initialize the Plugin obj output file
     plugin_objects = Plugin_Objects(RESULT_FILE)
 
-    # Create a Notification_obj instance
-    notifications = Notification_obj(db)
+    # Create a NotificationInstance instance
+    notifications = NotificationInstance(db)
 
     # Retrieve new notifications
     new_notifications = notifications.getNew()
 
     # mylog('verbose', [f'[{pluginName}] new_notifications: ', new_notifications])  
-    # mylog('verbose', [f'[{pluginName}] SMTP_SERVER: ', get_setting_value("SMTP_SERVER")])  
-    # mylog('verbose', [f'[{pluginName}] SMTP_PORT: ', get_setting_value("SMTP_PORT")])  
-    # mylog('verbose', [f'[{pluginName}] SMTP_SKIP_LOGIN: ', get_setting_value("SMTP_SKIP_LOGIN")])  
+    mylog('verbose', [f'[{pluginName}] SMTP_SERVER: ', get_setting_value("SMTP_SERVER")])  
+    mylog('verbose', [f'[{pluginName}] SMTP_PORT: ', get_setting_value("SMTP_PORT")])  
+    mylog('verbose', [f'[{pluginName}] SMTP_SKIP_LOGIN: ', get_setting_value("SMTP_SKIP_LOGIN")])  
     # mylog('verbose', [f'[{pluginName}] SMTP_USER: ', get_setting_value("SMTP_USER")])  
-    # mylog('verbose', [f'[{pluginName}] SMTP_PASS: ', get_setting_value("SMTP_PASS")])  
-
-    # mylog('verbose', [f'[{pluginName}] SMTP_SKIP_TLS: ', get_setting_value("SMTP_SKIP_TLS")])  
-    # mylog('verbose', [f'[{pluginName}] SMTP_FORCE_SSL: ', get_setting_value("SMTP_FORCE_SSL")])  
+    # mylog('verbose', [f'[{pluginName}] SMTP_PASS: ', get_setting_value("SMTP_PASS")])
+    mylog('verbose', [f'[{pluginName}] SMTP_SKIP_TLS: ', get_setting_value("SMTP_SKIP_TLS")])  
+    mylog('verbose', [f'[{pluginName}] SMTP_FORCE_SSL: ', get_setting_value("SMTP_FORCE_SSL")])  
     # mylog('verbose', [f'[{pluginName}] SMTP_REPORT_TO: ', get_setting_value("SMTP_REPORT_TO")])  
     # mylog('verbose', [f'[{pluginName}] SMTP_REPORT_FROM: ', get_setting_value("SMTP_REPORT_FROM")])  
 
@@ -116,47 +115,60 @@ def send(pHTML, pText):
 
     mylog('debug', [f'[{pluginName}] SMTP_REPORT_TO: {hide_email(str(get_setting_value("SMTP_REPORT_TO")))} SMTP_USER: {hide_email(str(get_setting_value("SMTP_USER")))}'])
 
+    subject, from_email, to_email, message_html, message_text = sanitize_email_content(str(get_setting_value("SMTP_SUBJECT")), get_setting_value("SMTP_REPORT_FROM"), get_setting_value("SMTP_REPORT_TO"), pHTML, pText)
 
-    subject, from_email, to_email, message_html, message_text = sanitize_email_content('NetAlertX Report', get_setting_value("SMTP_REPORT_FROM"), get_setting_value("SMTP_REPORT_TO"), pHTML, pText)
+    emails = []
 
-    # Compose email
-    msg             = MIMEMultipart('alternative')
-    msg['Subject']  = subject
-    msg['From']     = from_email
-    msg['To']       = to_email
-    msg['Date']     = formatdate(localtime=True) 
-
-    msg.attach (MIMEText (message_text, 'plain'))
-    msg.attach (MIMEText (message_html, 'html'))
-
-    # Set a timeout for the SMTP connection (in seconds)
-    smtp_timeout = 30
-
-    mylog('debug', ['Trying to open connection to ' + str(get_setting_value('SMTP_SERVER')) + ':' + str(get_setting_value('SMTP_PORT'))])
-
-    if get_setting_value("LOG_LEVEL") == 'debug':
-
-        send_email(msg,smtp_timeout)
-
+    # handle multiple emails
+    if ',' in to_email:
+        emails = to_email.split(',')
     else:
+        emails.append(to_email)
 
-        try:
+    mylog('debug', [f'[{pluginName}] Sending emails to {emails}'])
+
+    for mail_addr in emails:
+
+        mail_addr = mail_addr.strip()
+
+        # Compose email
+        msg             = MIMEMultipart('alternative')
+        msg['Subject']  = subject
+        msg['From']     = from_email
+        msg['To']       = mail_addr
+        msg['Date']     = formatdate(localtime=True) 
+
+        msg.attach (MIMEText (message_text, 'plain'))
+        msg.attach (MIMEText (message_html, 'html'))
+
+        # Set a timeout for the SMTP connection (in seconds)
+        smtp_timeout = 30
+
+        mylog('debug', ['Trying to open connection to ' + str(get_setting_value('SMTP_SERVER')) + ':' + str(get_setting_value('SMTP_PORT'))])
+
+        if get_setting_value("LOG_LEVEL") == 'debug':
+
             send_email(msg,smtp_timeout)
-            
-        except smtplib.SMTPAuthenticationError as e:            
-            mylog('none', ['      ERROR: Couldn\'t connect to the SMTP server (SMTPAuthenticationError)'])
-            mylog('none', ['      ERROR: Double-check your SMTP_USER and SMTP_PASS settings.)'])
-            mylog('none', ['      ERROR: ', str(e)])
-        except smtplib.SMTPServerDisconnected as e:            
-            mylog('none', ['      ERROR: Couldn\'t connect to the SMTP server (SMTPServerDisconnected)'])
-            mylog('none', ['      ERROR: ', str(e)])
-        except socket.gaierror as e:            
-            mylog('none', ['      ERROR: Could not resolve hostname (socket.gaierror)'])
-            mylog('none', ['      ERROR: ', str(e)])      
-        except ssl.SSLError as e:                        
-            mylog('none', ['      ERROR: Could not establish SSL connection (ssl.SSLError)'])
-            mylog('none', ['      ERROR: Are you sure you need SMTP_FORCE_SSL enabled? Check your SMTP provider docs.'])
-            mylog('none', ['      ERROR: ', str(e)])      
+
+        else:
+
+            try:
+                send_email(msg,smtp_timeout)
+                
+            except smtplib.SMTPAuthenticationError as e:            
+                mylog('none', ['      ERROR: Couldn\'t connect to the SMTP server (SMTPAuthenticationError)'])
+                mylog('none', ['      ERROR: Double-check your SMTP_USER and SMTP_PASS settings.)'])
+                mylog('none', ['      ERROR: ', str(e)])
+            except smtplib.SMTPServerDisconnected as e:            
+                mylog('none', ['      ERROR: Couldn\'t connect to the SMTP server (SMTPServerDisconnected)'])
+                mylog('none', ['      ERROR: ', str(e)])
+            except socket.gaierror as e:            
+                mylog('none', ['      ERROR: Could not resolve hostname (socket.gaierror)'])
+                mylog('none', ['      ERROR: ', str(e)])      
+            except ssl.SSLError as e:                        
+                mylog('none', ['      ERROR: Could not establish SSL connection (ssl.SSLError)'])
+                mylog('none', ['      ERROR: Are you sure you need SMTP_FORCE_SSL enabled? Check your SMTP provider docs.'])
+                mylog('none', ['      ERROR: ', str(e)])      
 
 # ----------------------------------------------------------------------------------
 def send_email(msg,smtp_timeout):

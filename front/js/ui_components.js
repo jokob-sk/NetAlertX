@@ -8,64 +8,6 @@
 ----------------------------------------------------------------------------- */
 
 
-// -----------------------------------------------------------------------------
-// Initialize device selectors / pickers fields
-// -----------------------------------------------------------------------------
-function initDeviceSelectors(devicesListAll_JSON) {
-
-  // Check if both device list exists
-  if (devicesListAll_JSON) {
-      // Parse the JSON string to get the device list array
-      var devicesList = JSON.parse(devicesListAll_JSON);
-
-      var selectorFieldsHTML = ''
-
-      // Loop through the devices list
-      devicesList.forEach(function(device) {         
-
-          selectorFieldsHTML += `<option value="${device.devMac}">${device.devName}</option>`;
-      });
-
-      selector = `<div class="db_info_table_row  col-sm-12" > 
-                    <div class="form-group" > 
-                      <div class="input-group col-sm-12 " > 
-                        <select class="form-control select2 select2-hidden-accessible" multiple=""  style="width: 100%;"  tabindex="-1" aria-hidden="true">
-                        ${selectorFieldsHTML}
-                        </select>
-                      </div>
-                    </div>
-                  </div>`
-
-
-      // Find HTML elements with class "deviceSelector" and append selector field
-      $('.deviceSelector').append(selector);
-  }
-
-  // Initialize selected items after a delay so selected macs are available in the context
-  setTimeout(function(){
-        // Retrieve MAC addresses from query string or cache
-        var macs = getQueryString('macs') || getCache('selectedDevices');
-
-        if(macs)
-        {
-          // Split MAC addresses if they are comma-separated
-          macs = macs.split(',');
-  
-          console.log(macs)
-
-          // Loop through macs to be selected list
-          macs.forEach(function(mac) {
-
-            // Create the option and append to Select2
-            var option = new Option($('.deviceSelector select option[value="' + mac + '"]').html(), mac, true, true);
-
-            $('.deviceSelector select').append(option).trigger('change');
-          });       
-
-        }        
-    
-    }, 10);
-}
 
 // -------------------------------------------------------------------
 // Utility function to generate a random API token in the format t_<random string of specified length>
@@ -127,9 +69,6 @@ function getRandomBytes(elem, length) {
   // Set the formatted key value to the input field
   targetElement.val(formattedHex);
 }
-
-
-
 
 // ----------------------------------------------
 // Updates the icon preview  
@@ -200,9 +139,9 @@ function validateRegex(elem) {
 
       // Validate against regex
       if (regex.test(value)) {
-          iconSpan.html("<i class='fa-regular fa-check'></i>");
+          iconSpan.html("<i class='fa fa-check'></i>");
       } else {
-          iconSpan.html("<i class='fa-regular fa-xmark'></i>");
+          iconSpan.html("<i class='fa fa-xmark'></i>");
       }
   }
 
@@ -342,6 +281,7 @@ function execute_settingEvent(element) {
   feSetKey    = $(element).attr('data-myparam-setkey');
   feParam     = $(element).attr('data-myparam');
   feSourceId  = $(element).attr('id');
+  feValue     = $("#"+feSetKey).val();
 
   if (["test", "run"].includes(feEvent)) {
     // Calls a backend function to add a front-end event (specified by the attributes 'data-myevent' and 'data-myparam-plugin' on the passed  element) to an execution queue
@@ -383,8 +323,12 @@ function execute_settingEvent(element) {
       () => addIconAsBase64(element), // Wrap in an arrow function
       feSourceId // triggered by id
     );
-  } else if (["copy_icons"].includes(feEvent)) {
+  } else if (["select_icon"].includes(feEvent)) {
 
+    showIconSelection(feSetKey)
+    // myparam-setkey  
+
+  } else if (["copy_icons"].includes(feEvent)) {
 
     // Ask overwrite icon types 
     showModalWarning (
@@ -392,27 +336,77 @@ function execute_settingEvent(element) {
       getString('DevDetail_button_OverwriteIcons_Warning'),
       getString('Gen_Cancel'), 
       getString('Gen_Okay'), 
-      'overwriteIconType'
+      'overwriteIconType',
+      feSourceId // triggered by id
     );
-  } else if (["go_to_node"].includes(feEvent)) {
+  } else if (["go_to_device"].includes(feEvent)) {
 
-    goToNetworkNode('NEWDEV_devParentMAC');
+    goToDevice(feValue);
+  } else if (["go_to_node"].includes(feEvent)) {
+    
+    goToNetworkNode(feValue);
 
   } else {
     console.warn(`🔺Not implemented: ${feEvent}`)
-  }
-  
+  } 
   
 }
 
 
 // -----------------------------------------------------------------------------
 // Go to the correct network node in the Network section
-function goToNetworkNode(dropdownId)
-{  
-  setCache('activeNetworkTab', $('#'+dropdownId).val().replaceAll(":","_")+'_id');
+function overwriteIconType()
+{ 
+  const mac = getMac();
+
+  if (!isValidMac(mac)) {
+    showModalOK("Error", getString("Gen_InvalidMac")) 
+    return;
+  }
+
+  // Construct SQL query
+  const rawSql = `
+   UPDATE Devices 
+    SET devIcon = (
+      SELECT devIcon FROM Devices WHERE devMac = "${mac}"
+    )
+    WHERE devType IN (
+      SELECT devType FROM Devices WHERE devMac = "${mac}"
+    )
+  `;
+
+  const apiUrl = `php/server/dbHelper.php?action=write&rawSql=${btoa(encodeURIComponent(rawSql))}`;
+
+  $.get(apiUrl, function(response) {
+    if (response === 'OK') {
+      showMessage (response);
+      updateApi("devices")
+    } else {
+      showMessage (response, 3000, "modal_red");
+    }
+  });
+}
+
+
+// -----------------------------------------------------------------------------
+// Go to the correct network node in the Network section
+function goToNetworkNode(mac)
+{ 
+  setCache('activeNetworkTab', mac.replaceAll(":","_")+'_id');
   window.location.href = './network.php';
   
+}
+
+// -----------------------------------------------------------------------------
+// Go to the device 
+function goToDevice(mac, newtab = false) {
+  const url = './deviceDetails.php?mac=' + encodeURIComponent(mac);
+  
+  if (newtab) {
+    window.open(url, '_blank');
+  } else {
+    window.location.href = url;
+  }
 }
   
 
@@ -494,10 +488,11 @@ function addIconAsBase64 (el) {
 
 }
 
+// -----------------------------------------------
+// modal pop up for icon selection
+function showIconSelection(setKey) {
 
-
-function showIconSelection() {
-  const selectElement = document.getElementById('NEWDEV_devIcon');
+  const selectElement = document.getElementById(setKey);
   const modalId = 'dynamicIconModal';
 
   // Create modal HTML dynamically
@@ -574,19 +569,9 @@ function showIconSelection() {
   
 }
 
-// "Device_TableHead_Owner",
-// "Device_TableHead_Type",
-// "Device_TableHead_Group",
-// "Device_TableHead_Status",
-// "Device_TableHead_Location",
-// "Device_TableHead_Vendor",
-// "Device_TableHead_SyncHubNodeName",
-// "Device_TableHead_NetworkSite",
-// "Device_TableHead_SSID",
-// "Device_TableHead_SourcePlugin"
 
 // -----------------------------------------------------------------------------
-// Get teh correct db column code name based on table header title string
+// Get the correct db column code name based on table header title string
 function getColumnNameFromLangString(headStringKey) {
   columnNameMap = {
     "Device_TableHead_Name": "devName",
@@ -615,10 +600,94 @@ function getColumnNameFromLangString(headStringKey) {
     "Device_TableHead_SourcePlugin": "devSourcePlugin",
     "Device_TableHead_PresentLastScan": "devPresentLastScan",
     "Device_TableHead_AlertDown": "devAlertDown",
-    "Device_TableHead_CustomProps": "devCustomProps"
+    "Device_TableHead_CustomProps": "devCustomProps",
+    "Device_TableHead_FQDN": "devFQDN",
+    "Device_TableHead_ParentRelType": "devParentRelType",
+    "Device_TableHead_ReqNicsOnline": "devReqNicsOnline"
   };
 
   return columnNameMap[headStringKey] || "";
+}
+
+//--------------------------------------------------------------
+// Generating the device status chip
+function getStatusBadgeParts(devPresentLastScan, devAlertDown, devMac, statusText = '') {
+  let css = 'bg-gray text-white statusUnknown';
+  let icon = '<i class="fa-solid fa-question"></i>';
+  let status = 'unknown';
+  let cssText = '';
+
+  if (devPresentLastScan == 1) {
+    css = 'bg-green text-white statusOnline';
+    cssText = 'text-green';
+    icon = '<i class="fa-solid fa-plug"></i>';
+    status = 'online';
+  } else if (devAlertDown == 1) {
+    css = 'bg-red text-white statusDown';
+    cssText = 'text-red';
+    icon = '<i class="fa-solid fa-triangle-exclamation"></i>';
+    status = 'down';
+  } else if (devPresentLastScan != 1) {
+    css = 'bg-gray text-white statusOffline';
+    cssText = 'text-gray50';
+    icon = '<i class="fa-solid fa-xmark"></i>';
+    status = 'offline';
+  }
+
+  const cleanedText = statusText.replace(/-/g, '');
+  const url = `deviceDetails.php?mac=${encodeURIComponent(devMac)}`;
+
+  return {
+    cssClass: css,
+    cssText: cssText,
+    iconHtml: icon,
+    mac: devMac,
+    text: cleanedText,
+    status: status,
+    url: url
+  };
+}
+
+//--------------------------------------------------------------
+// Getting the color and css class for device relationships
+function getRelationshipConf(relType) {
+  let cssClass = '';
+  let color = '';
+
+  // --color-aqua: #00c0ef;
+  // --color-blue: #0060df;
+  // --color-green: #00a65a;
+  // --color-yellow: #f39c12;
+  // --color-red: #dd4b39;
+
+  switch (relType) {
+        
+    case "child":
+      color = "#f39c12"; // yellow
+      cssClass = "text-yellow";
+      break;
+    case "nic":
+      color = "#dd4b39"; // red
+      cssClass = "text-red";
+      break;
+    case "virtual":
+      color = "#0060df"; // blue
+      cssClass = "text-blue";
+      break;      
+    case "logical":
+      color = "#00a65a"; // green
+      cssClass = "text-green";
+      break;      
+    default:
+      color = "#5B5B66"; // grey
+      cssClass = "text-light-grey";
+      break;
+  }
+
+  return {
+    cssClass: cssClass,
+    color: color
+  };
 }
 
 
@@ -634,17 +703,52 @@ function initSelect2() {
   //  check if cache ready
   if(isValidJSON(devicesListAll_JSON))
   {
-    // prepare HTML DOM before initializing the frotend
-    initDeviceSelectors(devicesListAll_JSON)
-
     
     // --------------------------------------------------------
     //Initialize Select2 Elements and make them sortable
     
     $(function () {
       // Iterate over each Select2 dropdown
-      $('.select2').each(function() {
-          var selectEl = $(this).select2();
+      $('.select2').each(function() {          
+          // handle Device chips, if my-transformers="deviceChip"
+          if($(this).attr("my-transformers") == "deviceChip")
+          {
+            var selectEl = $(this).select2({
+              templateSelection: function (data, container) {
+                return $(renderDeviceLink(data, container));
+              },
+              escapeMarkup: function (m) {
+                return m; // Allow HTML
+              }
+            });
+            
+          } else if($(this).attr("my-transformers") == "deviceRelType") // handling dropdown for relationships
+          {
+            var selectEl = $(this).select2({
+              minimumResultsForSearch: Infinity,
+              templateSelection: function (data, container) {
+                if (!data.id) return data.text; // default for placeholder etc.
+
+                const relConf = getRelationshipConf(data.text);
+                                
+                // Custom HTML
+                const html = $(`                  
+                    <span class="custom-chip ${relConf.cssClass}" >                      
+                      ${data.text}                      
+                    </span>                  
+                `);
+          
+                return html;
+              },
+              escapeMarkup: function (m) {
+                return m; // Allow HTML
+              }
+            });
+            
+          } else // default handling - default template
+          {
+            var selectEl = $(this).select2();
+          }
     
           // Apply sortable functionality to the dropdown's dropdown-container
           selectEl.next().children().children().children().sortable({
@@ -675,14 +779,214 @@ function initSelect2() {
   }  
 }
 
-// init functions after dom loaded
-window.addEventListener("load", function() {
-  // try to initialize 
-  setTimeout(() => {
-    initSelect2()
-    // initializeiCheck();
-  }, 1000);
-});
+// ------------------------------------------
+// Render a device link with hover-over functionality
+function renderDeviceLink(data, container, useName = false) {
+  // If no valid MAC, return placeholder text
+  if (!data.id || !isValidMac(data.id)) {
+    return `<span>${data.text}<span/>`;
+  }
+
+  const device = getDevDataByMac(data.id);
+  if (!device) {
+    return data.text;
+  }
+
+  // Build and return badge parts
+  const badge = getStatusBadgeParts(
+    device.devPresentLastScan,
+    device.devAlertDown,
+    device.devMac
+  );
+
+  // badge class and hover-info class to container
+  $(container)
+    .addClass(`${badge.cssClass} hover-node-info`)
+    .attr({
+      'data-name': device.devName,
+      'data-ip': device.devLastIP,
+      'data-mac': device.devMac,
+      'data-vendor': device.devVendor,
+      'data-type': device.devType,
+      'data-lastseen': device.devLastConnection,
+      'data-firstseen': device.devFirstConnection,
+      'data-relationship': device.devParentRelType,
+      'data-status': device.devStatus,
+      'data-present': device.devPresentLastScan,
+      'data-alert': device.devAlertDown,
+      'data-icon': device.devIcon
+    });
+  
+  return `
+    <a href="${badge.url}" target="_blank">
+      <span class="custom-chip">
+        <span class="iconPreview">${atob(device.devIcon)}</span>
+        ${useName ? device.devName : data.text}
+        <span>
+          (${badge.iconHtml})
+        </span>
+      </span>
+    </a>
+  `;
+}
+
+// ------------------------------------------
+// Display device info on hover (attach only once)
+function initHoverNodeInfo() {
+  if ($('#hover-box').length === 0) {
+    $('<div id="hover-box"></div>').appendTo('body').hide().css({
+      position: 'absolute',
+      zIndex: 9999,
+      border: '1px solid #ccc',
+      borderRadius: '8px',
+      padding: '10px',
+      boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+      minWidth: '200px',
+      maxWidth: '300px',
+      fontSize: '14px',
+      pointerEvents: 'none',
+      backgroundColor: '#fff'
+    });
+  }
+
+  // check if handlers already attached to prevent flickering
+  if (initHoverNodeInfo._handlersAttached) return;
+  initHoverNodeInfo._handlersAttached = true;
+
+  let hoverTimeout = null;
+  let lastTarget = null;
+
+  // remove title as it's replaced by the hover-box
+  $(document).on('mouseover', '.hover-node-info', function () {
+    this.removeAttribute('title');
+
+    $(this).attr("title", ""); // remove title as it's replaced by the hover-box
+  });
+
+  $(document).on('mouseenter', '.hover-node-info', function (e) {
+    const $el = $(this);
+    lastTarget = this;
+    
+    // use timeout to prevent a quick hover and exit toi flash a card when navigating to a target node with your mouse
+    clearTimeout(hoverTimeout);
+
+    hoverTimeout = setTimeout(() => {
+      if (lastTarget !== this) return;
+
+      const icon = $el.data('icon');
+      const name = $el.data('name') || 'Unknown';
+      const ip = $el.data('ip') || 'N/A';
+      const mac = $el.data('mac') || 'N/A';
+      const vendor = $el.data('vendor') || 'Unknown';
+      const type = $el.data('type') || 'Unknown';
+      const lastseen = $el.data('lastseen') || 'Unknown';
+      const firstseen = $el.data('firstseen') || 'Unknown';
+      const relationship = $el.data('relationship') || 'Unknown';
+      const badge = getStatusBadgeParts( $el.data('present'),  $el.data('alert'), $el.data('mac'))
+      const status =`<span class="badge ${badge.cssClass}">${badge.iconHtml} ${badge.status}</span>`
+
+      const html = `
+        <div>
+          <b> <div class="iconPreview">${atob(icon)}</div> </b><b class="devName"> ${name}</b><br>
+        </div>
+        <hr/>
+        <div class="line">
+          <b>Status:</b> <span>${status}</span><br>
+        </div>
+        <div class="line">  
+          <b>IP:</b> <span>${ip}</span><br>
+        </div>
+        <div class="line">  
+          <b>MAC:</b> <span>${mac}</span><br>
+        </div>
+        <div class="line">  
+          <b>Vendor:</b> <span>${vendor}</span><br>
+        </div>
+        <div class="line">  
+          <b>Type:</b> <span>${type}</span><br>
+        </div>
+        <div class="line">  
+          <b>First seen:</b> <span>${firstseen}</span><br>
+        </div>
+        <div class="line">  
+          <b>Last seen:</b> <span>${lastseen}</span><br>
+        </div>
+        <div class="line">  
+          <b>Relationship:</b> <span class="${getRelationshipConf(relationship).cssClass}">${relationship}</span>
+        </div>
+      `;
+
+      $('#hover-box').html(html).fadeIn(150);
+    }, 300);
+  });
+
+  $(document).on('mousemove', '.hover-node-info', function (e) {
+    const hoverBox = $('#hover-box');
+    const boxWidth = hoverBox.outerWidth();
+    const boxHeight = hoverBox.outerHeight();
+    const padding = 15;
+
+    const winWidth = $(window).width();
+    const winHeight = $(window).height();
+
+    let left = e.pageX + padding;
+    let top = e.pageY + padding;
+
+    // Position leftward if close to right edge
+    if (e.pageX + boxWidth + padding > winWidth) {
+      left = e.pageX - boxWidth - padding;
+    }
+
+    // Position upward if close to bottom edge
+    if (e.pageY + boxHeight + padding > winHeight) {
+      top = e.pageY - boxHeight - padding;
+    }
+
+    hoverBox.css({ top: top + 'px', left: left + 'px' });
+  });
+
+  $(document).on('mouseleave', '.hover-node-info', function () {
+    clearTimeout(hoverTimeout);
+    lastTarget = null;
+    $('#hover-box').fadeOut(100);
+  });
+}
+
+/**
+ * Generates a DataTables-style `lengthMenu` array with an optional custom entry inserted
+ * in the correct numeric order.
+ *
+ * Example output:
+ *   [[10, 20, 25, 50, 100, 500, 100000], [10, 20, 25, 50, 100, 500, 'All']]
+ *
+ * @param {number} newEntry - A numeric entry to insert into the list (e.g. 30).
+ *                            If it already exists or equals -1, it will be ignored.
+ * @returns {Array[]} A two-dimensional array where:
+ *                    - The first array is the numeric page lengths.
+ *                    - The second array is the display labels (same values, but 'All' for -1).
+ *
+ * @example
+ * getLengthMenu(30);
+ * // → [[10, 20, 25, 30, 50, 100, 500, 100000], [10, 20, 25, 30, 50, 100, 500, 'All']]
+ */
+function getLengthMenu(newEntry) {
+  const values = [10, 20, 25, 50, 100, 500, 100000];
+  const labels = [10, 20, 25, 50, 100, 500, getString('Device_Tablelenght_all')];
+
+  // Insert newEntry in sorted order, skipping duplicates and -1/'All'
+  const insertSorted = (arr, val) => {
+    if (val === -1 || arr.includes(val)) return arr;
+    const idx = arr.findIndex(v => v > val || v === -1);
+    if (idx === -1) arr.push(val);
+    else arr.splice(idx, 0, val);
+    return arr;
+  };
+
+  insertSorted(values, newEntry);
+  insertSorted(labels, newEntry);
+
+  return [values, labels];
+}
 
 
 console.log("init ui_components.js")

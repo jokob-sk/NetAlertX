@@ -53,5 +53,6 @@ As address, you can either use the public IP of the Freebox, or the unique domai
 ## Other info
 
 - Version: 1.0
-- Author: [KayJay7](https://github.com/KayJay7) & [Lucide](https://github.com/Lucide)
+- Author: [KayJay7](https://github.com/KayJay7), [Lucide](https://github.com/Lucide)
+- Maintainers: [mathoudebine](https://github.com/mathoudebine)
 - Release Date: 2-Dec-2024

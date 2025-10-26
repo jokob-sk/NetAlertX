@@ -38,6 +38,24 @@ Run the script with the required parameters:
 
 ### Example Commands
 
+#### Install Requirements
+
+You will need to install dependencies in the container:
+
+```bash
+pip install paramiko
+```
+
+You could achieve this by mounting a custom cron file to `/etc/crontabs/root`:
+
+```bash
+# Schedule cron jobs
+* * * * * /app/back/cron_script.sh
+* * * * * /opt/venv/bin/python3 -c "import paramiko" || (/opt/venv/bin/pip install paramiko >/dev/null 2>&1 && sed -i '/pip install paramiko/d' /etc/crontabs/root)
+```
+
+Please double check the [default cron file](https://github.com/jokob-sk/NetAlertX/blob/main/install/crontab) hasn't changed. 
+
 #### Using Password Authentication
 ```sh
 ./script.py --host 192.168.1.1 --username admin --password mypassword --output /tmp/dnsmasq.leases

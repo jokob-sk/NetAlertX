@@ -1,7 +1,7 @@
 <?php
 
   require 'php/templates/header.php';  
-  require 'php/templates/notification.php'; 
+  require 'php/templates/modals.php'; 
 ?>
 <!-- ----------------------------------------------------------------------- -->
  

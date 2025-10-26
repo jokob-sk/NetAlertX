@@ -8,72 +8,19 @@ NetAlertX supports additional plugins to extend its functionality, each with its
 ## ⚡ Quick start
 
 > [!TIP]
-> You can load additional Plugins via the General -> `LOADED_PLUGINS` setting. 
+> You can load additional Plugins via the General -> `LOADED_PLUGINS` setting. You need to save the settings for the new plugins to load (cache/page reload may be necessary). 
+> ![Loaded plugins settings](./img/PLUGINS/enable_plugin.gif)
 
-1. Pick your `🔍 dev scanner` plugin (e.g. `ARPSCAN` or `NMAPDEV`), or import devices into the application with an `📥 importer` plugin. (See **✅Enabling plugins** below)
+1. Pick your `🔍 dev scanner` plugin (e.g. `ARPSCAN` or `NMAPDEV`), or import devices into the application with an `📥 importer` plugin. (See **Enabling plugins** below)
 2. Pick a `▶️ publisher` plugin, if you want to send notifications. If you don't see a publisher you'd like to use, look at the  [📚_publisher_apprise](/front/plugins/_publisher_apprise/) plugin which is a proxy for over 80 notification services. 
 3. Setup your [Network topology diagram](./NETWORK_TREE.md)
 4. Fine-tune [Notifications](./NOTIFICATIONS.md)
-5. [Backup your setup](./BACKUPS.md)
-6. Contribute and [Create custom plugins](./PLUGINS_DEV.md)
+5. Setup [Workflows](./WORKFLOWS.md)
+6. [Backup your setup](./BACKUPS.md)
+7. Contribute and [Create custom plugins](./PLUGINS_DEV.md)
 
-
-## 📑 Available Plugins
- 
-Device-detecting plugins insert values into the `CurrentScan` database table.  The plugins that are not required are safe to ignore, however, it makes sense to have at least some device-detecting plugins enabled, such as `ARPSCAN` or `NMAPDEV`. 
-
-
-| ID            | Type    | Description                                | Features | Required | Data source  | Detailed docs                                                       |
-|---------------|---------|--------------------------------------------|----------|----------|--------------|---------------------------------------------------------------------|
-| `APPRISE`     | ▶️      | Apprise notification proxy                |           |          | Script       | [_publisher_apprise](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/_publisher_apprise/)          |
-| `ARPSCAN`     | 🔍      | ARP-scan on current network               |           |          | Script       | [arp_scan](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/arp_scan/)                              |
-| `AVAHISCAN`   | 🆎      | Avahi (mDNS-based) name resolution        |           |          | Script       | [avahi_scan](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/avahi_scan/)                          |
-| `ASUSWRT`     | 🔍       | Import connected devices from AsusWRT    |           |          | Script       | [asuswrt_import](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/asuswrt_import/)                  |
-| `CSVBCKP`     | ⚙       | CSV devices backup                        |           |          | Script       | [csv_backup](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/csv_backup/)                          |
-| `CUSTPROP`    | ⚙       | Managing custom device properties values  |           |  Yes     | Template     | [custom_props](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/custom_props/)                      |
-| `DBCLNP`      | ⚙       | Database cleanup                          |           |  Yes*    | Script       | [db_cleanup](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/db_cleanup/)                          |
-| `DDNS`        | ⚙       | DDNS update                               |           |          | Script       | [ddns_update](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/ddns_update/)                        |
-| `DHCPLSS`     | 🔍/📥/🆎| Import devices from DHCP leases          |           |          | Script       | [dhcp_leases](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/dhcp_leases/)                        |
-| `DHCPSRVS`    | ♻       | DHCP servers                              |           |          | Script       | [dhcp_servers](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/dhcp_servers/)                      |
-| `FREEBOX`     | 🔍/♻/🆎| Pull data and names from Freebox/Iliadbox |          |          | Script       | [freebox](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/freebox/)                                 |
-| `ICMP`        | 🔍      | ICMP (ping) status checker                |           |          | Script       | [icmp_scan](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/icmp_scan/)                            |
-| `INTRNT`      | 🔍      | Internet IP scanner                       |           |          | Script       | [internet_ip](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/internet_ip/)                        |
-| `INTRSPD`     | ♻       | Internet speed test                       |           |          | Script       | [internet_speedtest](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/internet_speedtest/)          |
-| `IPNEIGH`     | 🔍       | Scan ARP (IPv4) and NDP (IPv6) tables    |           |          | Script       | [ipneigh](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/ipneigh/)                                |
-| `LUCIRPC`     | 🔍       | Import connected devices from OpenWRT    |           |          | Script       | [luci_import](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/luci_import/)                        |
-| `MAINT`       | ⚙       | Maintenance of logs, etc.                 |           |          | Script       | [maintenance](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/maintenance/)                        |
-| `MQTT`        | ▶️      | MQTT for synching to Home Assistant       |           |          | Script       | [_publisher_mqtt](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/_publisher_mqtt/)                |
-| `NBTSCAN`     | 🆎       | Nbtscan (NetBIOS-based) name resolution  |           |          | Script       | [nbtscan_scan](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/nbtscan_scan/)                      |
-| `NEWDEV`      | ⚙       | New device template                       |           |  Yes     | Template     | [newdev_template](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/newdev_template/)                |
-| `NMAP`        | ♻       | Nmap port scanning & discovery            |           |          | Script       | [nmap_scan](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/nmap_scan/)                            |
-| `NMAPDEV`     | 🔍      | Nmap dev scan on current network          |           |          | Script       | [nmap_dev_scan](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/nmap_dev_scan/)                    |
-| `NSLOOKUP`    | 🆎       | NSLookup (DNS-based) name resolution     |           |          | Script       | [nslookup_scan](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/nslookup_scan/)                    |
-| `NTFPRCS`     | ⚙       | Notification processing                   |           |  Yes     | Template     | [notification_processing](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/notification_processing/)|
-| `NTFY`        | ▶️      | NTFY notifications                        |           |          | Script       | [_publisher_ntfy](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/_publisher_ntfy/)                |
-| `OMDSDN`      | 📥/🆎   | OMADA TP-Link import                      |   🖧 🔄  |          | Script       | [omada_sdn_imp](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/omada_sdn_imp/)                    |
-| `OMDSDNOPENAPI`| 📥/🆎   | OMADA TP-Link import via OpenAPI        |   🖧      |          | Script       | [omada_sdn_openapi](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/omada_sdn_openapi/)                    |
-| `PIHOLE`      | 🔍/🆎/📥| Pi-hole device import & sync             |           |          | SQLite DB    | [pihole_scan](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/pihole_scan/)                        |
-| `PUSHSAFER`   | ▶️      | Pushsafer notifications                   |           |          | Script       | [_publisher_pushsafer](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/_publisher_pushsafer/)      |
-| `PUSHOVER`    | ▶️      | Pushover notifications                    |           |          | Script       | [_publisher_pushover](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/_publisher_pushover/)        |
-| `SETPWD`      | ⚙       | Set password                              |           |  Yes     | Template     | [set_password](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/set_password/)                      |
-| `SMTP`        | ▶️      | Email notifications                       |           |          | Script       | [_publisher_email](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/_publisher_email/)              |
-| `SNMPDSC`     | 🔍/📥   | SNMP device import & sync                 |           |          | Script       | [snmp_discovery](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/snmp_discovery/)                  |
-| `SYNC`        | 🔍/⚙/📥| Sync & import from NetAlertX instances    |   🖧 🔄   | Yes     | Script        | [sync](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/sync/)                                      |
-| `TELEGRAM`    | ▶️      | Telegram notifications                    |           |          | Script       | [_publisher_telegram](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/_publisher_telegram/)        |
-| `UI`          | ♻       | UI specific settings                      |           |  Yes     | Template     | [ui_settings](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/ui_settings/)                        |
-| `UNFIMP`      | 🔍/📥/🆎| UniFi device import & sync               |  🖧       |          | Script       | [unifi_import](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/unifi_import/)                      |
-| `VNDRPDT`     | ⚙       | Vendor database update                    |           |          | Script       | [vendor_update](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/vendor_update/)                    |
-| `WEBHOOK`     | ▶️      | Webhook notifications                     |           |          | Script       | [_publisher_webhook](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/_publisher_webhook/)          |
-| `WEBMON`      | ♻       | Website down monitoring                   |           |          | Script       | [website_monitor](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/website_monitor/)                |
-| `WOL`         | ♻       | Automatic wake-on-lan                     |           |          | Script       | [wake_on_lan](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/wake_on_lan/)                        |
-
-
-> \* The database cleanup plugin (`DBCLNP`) is not _required_ but the app will become unusable after a while if not executed.
-> ❌ marked for removal
-> ⌚It's recommended to use the same schedule interval for all plugins responsible for discovering new devices.
 
 ## Plugin types
-
 
 | Plugin type    | Icon | Description                                                      | When to run                         | Required | Data source [?](./PLUGINS_DEV.md) |
 | -------------- | ---- | ---------------------------------------------------------------- | ----------------------------------- | -------- | ------------------------------------- |
@@ -92,7 +39,64 @@ Device-detecting plugins insert values into the `CurrentScan` database table.  T
 | 🔄    | Has the option to sync some data back into the plugin source |
 
 
-## ✅Enabling plugins
+## Available Plugins
+ 
+Device-detecting plugins insert values into the `CurrentScan` database table.  The plugins that are not required are safe to ignore, however, it makes sense to have at least some device-detecting plugins enabled, such as `ARPSCAN` or `NMAPDEV`. 
+
+| ID              | Plugin docs                                                                                                      | Type     | Description                               | Features | Required |
+| --------------- | ------------------------------------------------------------------------------------------------------------------ | -------- | ----------------------------------------- | -------- | -------- |
+| `APPRISE`       | [_publisher_apprise](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/_publisher_apprise/)          | ▶️       | Apprise notification proxy                |          |          |
+| `ARPSCAN`       | [arp_scan](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/arp_scan/)                               | 🔍       | ARP-scan on current network               |          |          |
+| `AVAHISCAN`     | [avahi_scan](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/avahi_scan/)                           | 🆎       | Avahi (mDNS-based) name resolution        |          |          |
+| `ASUSWRT`       | [asuswrt_import](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/asuswrt_import/)                   | 🔍       | Import connected devices from AsusWRT     |          |          |
+| `CSVBCKP`       | [csv_backup](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/csv_backup/)                           | ⚙        | CSV devices backup                        |          |          |
+| `CUSTPROP`      | [custom_props](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/custom_props/)                       | ⚙        | Managing custom device properties values  |          | Yes      |
+| `DBCLNP`        | [db_cleanup](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/db_cleanup/)                           | ⚙        | Database cleanup                          |          | Yes\*    |
+| `DDNS`          | [ddns_update](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/ddns_update/)                         | ⚙        | DDNS update                               |          |          |
+| `DHCPLSS`       | [dhcp_leases](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/dhcp_leases/)                         | 🔍/📥/🆎 | Import devices from DHCP leases           |          |          |
+| `DHCPSRVS`      | [dhcp_servers](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/dhcp_servers/)                       | ♻        | DHCP servers                              |          |          |
+| `DIGSCAN`       | [dig_scan](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/dig_scan/)                               | 🆎       | Dig (DNS) Name resolution                 |          |          |
+| `FREEBOX`       | [freebox](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/freebox/)                                  | 🔍/♻/🆎  | Pull data and names from Freebox/Iliadbox |          |          |
+| `ICMP`          | [icmp_scan](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/icmp_scan/)                             | ♻        | ICMP (ping) status checker                |          |          |
+| `INTRNT`        | [internet_ip](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/internet_ip/)                         | 🔍       | Internet IP scanner                       |          |          |
+| `INTRSPD`       | [internet_speedtest](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/internet_speedtest/)           | ♻        | Internet speed test                       |          |          |
+| `IPNEIGH`       | [ipneigh](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/ipneigh/)                                  | 🔍       | Scan ARP (IPv4) and NDP (IPv6) tables     |          |          |
+| `LUCIRPC`       | [luci_import](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/luci_import/)                         | 🔍       | Import connected devices from OpenWRT     |          |          |
+| `MAINT`         | [maintenance](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/maintenance/)                          | ⚙        | Maintenance of logs, etc.                 |          |          |
+| `MQTT`          | [_publisher_mqtt](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/_publisher_mqtt/)                | ▶️       | MQTT for synching to Home Assistant       |          |          |
+| `NBTSCAN`       | [nbtscan_scan](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/nbtscan_scan/)                       | 🆎       | Nbtscan (NetBIOS-based) name resolution   |          |          |
+| `NEWDEV`        | [newdev_template](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/newdev_template/)                 | ⚙        | New device template                       |          | Yes      |
+| `NMAP`          | [nmap_scan](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/nmap_scan/)                             | ♻        | Nmap port scanning & discovery            |          |          |
+| `NMAPDEV`       | [nmap_dev_scan](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/nmap_dev_scan/)                    | 🔍       | Nmap dev scan on current network          |          |          |
+| `NSLOOKUP`      | [nslookup_scan](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/nslookup_scan/)                     | 🆎       | NSLookup (DNS-based) name resolution      |          |          |
+| `NTFPRCS`       | [notification_processing](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/notification_processing/) | ⚙        | Notification processing                   |          | Yes      |
+| `NTFY`          | [_publisher_ntfy](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/_publisher_ntfy/)                | ▶️       | NTFY notifications                        |          |          |
+| `OMDSDN`        | [omada_sdn_imp](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/omada_sdn_imp/)                    | 📥/🆎 ❌  | UNMAINTAINED use `OMDSDNOPENAPI`          | 🖧 🔄    |          |
+| `OMDSDNOPENAPI` | [omada_sdn_openapi](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/omada_sdn_openapi/)            | 📥/🆎    | OMADA TP-Link import via OpenAPI          | 🖧       |          |
+| `PIHOLE`        | [pihole_scan](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/pihole_scan/)                         | 🔍/🆎/📥 | Pi-hole device import & sync              |          |          |
+| `PUSHSAFER`     | [_publisher_pushsafer](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/_publisher_pushsafer/)      | ▶️       | Pushsafer notifications                   |          |          |
+| `PUSHOVER`      | [_publisher_pushover](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/_publisher_pushover/)        | ▶️       | Pushover notifications                    |          |          |
+| `SETPWD`        | [set_password](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/set_password/)                       | ⚙        | Set password                              |          | Yes      |
+| `SMTP`          | [_publisher_email](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/_publisher_email/)              | ▶️       | Email notifications                       |          |          |
+| `SNMPDSC`       | [snmp_discovery](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/snmp_discovery/)                   | 🔍/📥    | SNMP device import & sync                 |          |          |
+| `SYNC`          | [sync](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/sync/)                                      | 🔍/⚙/📥  | Sync & import from NetAlertX instances    | 🖧 🔄    | Yes      |
+| `TELEGRAM`      | [_publisher_telegram](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/_publisher_telegram/)        | ▶️       | Telegram notifications                    |          |          |
+| `UI`            | [ui_settings](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/ui_settings/)                         | ♻        | UI specific settings                      |          | Yes      |
+| `UNFIMP`        | [unifi_import](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/unifi_import/)                       | 🔍/📥/🆎 | UniFi device import & sync                | 🖧       |          |
+| `UNIFIAPI`      | [unifi_api_import](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/unifi_api_import/)               | 🔍/📥/🆎 | UniFi device import (SM API, multi-site) |           |         |
+| `VNDRPDT`       | [vendor_update](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/vendor_update/)                     | ⚙        | Vendor database update                    |          |          |
+| `WEBHOOK`       | [_publisher_webhook](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/_publisher_webhook/)          | ▶️       | Webhook notifications                     |          |          |
+| `WEBMON`        | [website_monitor](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/website_monitor/)                 | ♻        | Website down monitoring                   |          |          |
+| `WOL`           | [wake_on_lan](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/wake_on_lan/)                        | ♻        | Automatic wake-on-lan                     |          |          |
+
+
+> \* The database cleanup plugin (`DBCLNP`) is not _required_ but the app will become unusable after a while if not executed.
+> ❌ marked for removal/unmaintained - looking for help
+> ⌚It's recommended to use the same schedule interval for all plugins responsible for discovering new devices.
+
+
+
+## Enabling plugins
 
 Plugins can be enabled via Settings, and can be disabled as needed. 
 

@@ -8,6 +8,42 @@
 
 Get visibility of what's going on on your WIFI/LAN network and enable presence detection of important devices. Schedule scans for devices, port changes and get alerts if unknown devices or changes are found. Write your own [Plugin](https://github.com/jokob-sk/NetAlertX/tree/main/docs/PLUGINS.md#readme) with auto-generated UI and in-build notification system. Build out and easily maintain your network source of truth (NSoT).
 
+## 📋 Table of Contents
+
+- [Features](#-features)
+- [Documentation](#-documentation)
+- [Quick Start](#-quick-start)
+- [Alternative Apps](#-other-alternative-apps)
+- [Security & Privacy](#-security--privacy)
+- [FAQ](#-faq)
+- [Known Issues](#-known-issues)
+- [Donations](#-donations)
+- [Contributors](#-contributors)
+- [Translations](#-translations)
+- [License](#license)
+
+
+## 🚀 Quick Start
+
+To launch NetAlertX in seconds, replace `local_path` with the absolute path on your system that contains your `config` and `db` folders, then run::
+
+```bash
+docker run -d --rm --network=host \
+  -v local_path/config:/app/config \
+  -v local_path/db:/app/db \
+  --mount type=tmpfs,target=/app/api \
+  -e PUID=200 -e PGID=300 \
+  -e TZ=Europe/Berlin \
+  -e PORT=20211 \
+  ghcr.io/jokob-sk/netalertx:latest
+```
+
+Need help configuring it? Check the [usage guide](https://github.com/jokob-sk/NetAlertX/blob/main/docs/README.md) or [full documentation](https://jokob-sk.github.io/NetAlertX/).
+
+For Home Assistant users: [Click here to add NetAlertX](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Falexbelgium%2Fhassio-addons)
+
+For other install methods, check the [installation docs](#-documentation)
+
 
 | [📑 Docker guide](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md) | [🚀 Releases](https://github.com/jokob-sk/NetAlertX/releases) | [📚 Docs](https://jokob-sk.github.io/NetAlertX/) | [🔌 Plugins](https://github.com/jokob-sk/NetAlertX/blob/main/docs/PLUGINS.md) | [🤖 Ask AI](https://gurubase.io/g/netalertx)
 |----------------------| ----------------------|  ----------------------| ----------------------| ----------------------| 
@@ -30,7 +66,7 @@ Get visibility of what's going on on your WIFI/LAN network and enable presence d
 
 ### Scanners
 
-The app scans your network for **New devices**, **New connections** (re-connections), **Disconnections**, **"Always Connected" devices down**, Devices **IP changes** and **Internet IP address changes**. Discovery & scan methods include: **arp-scan**,  **Pi-hole - DB import**,  **Pi-hole - DHCP leases import**, **Generic DHCP leases import**, **UNIFI controller import**, **SNMP-enabled router import**. Check the [Plugins](https://github.com/jokob-sk/NetAlertX/tree/main/docs/PLUGINS.md#readme) docs for a full lits of avaliable plugins. 
+The app scans your network for **New devices**, **New connections** (re-connections), **Disconnections**, **"Always Connected" devices down**, Devices **IP changes** and **Internet IP address changes**. Discovery & scan methods include: **arp-scan**,  **Pi-hole - DB import**,  **Pi-hole - DHCP leases import**, **Generic DHCP leases import**, **UNIFI controller import**, **SNMP-enabled router import**. Check the [Plugins](https://github.com/jokob-sk/NetAlertX/tree/main/docs/PLUGINS.md#readme) docs for a full list of avaliable plugins. 
 
 ### Notification gateways
 
@@ -40,6 +76,10 @@ Send notifications to more than 80+ services, including Telegram via [Apprise](h
 
 Feed your data and device changes into [Home Assistant](https://github.com/jokob-sk/NetAlertX/blob/main/docs/HOME_ASSISTANT.md), read [API endpoints](https://github.com/jokob-sk/NetAlertX/blob/main/docs/API.md), or use [Webhooks](https://github.com/jokob-sk/NetAlertX/blob/main/docs/WEBHOOK_N8N.md) to setup custom automation flows. You can also 
 build your own scanners with the [Plugin system](https://github.com/jokob-sk/NetAlertX/tree/main/docs/PLUGINS.md#readme) in as little as [15 minutes](https://www.youtube.com/watch?v=cdbxlwiWhv8).
+
+### Workflows
+
+The [workflows module](https://github.com/jokob-sk/NetAlertX/blob/main/docs/WORKFLOWS.md) allows to automate repetitive tasks, making network management more efficient. Whether you need to assign newly discovered devices to a specific Network Node, auto-group devices from a given vendor, unarchive a device if detected online, or automatically delete devices, this module provides the flexibility to tailor the automations to your needs.
 
 
 ## 📚 Documentation
@@ -55,6 +95,46 @@ Supported browsers: Chrome, Firefox
 - [[Development] API docs](https://github.com/jokob-sk/NetAlertX/blob/main/docs/API.md)
 - [[Development] Custom Plugins](https://github.com/jokob-sk/NetAlertX/blob/main/docs/PLUGINS_DEV.md)
 
+...or explore all the [documentation here](https://jokob-sk.github.io/NetAlertX/).
+
+## 🔐 Security & Privacy
+
+NetAlertX scans your local network and can store metadata about connected devices. By default, all data is stored **locally**. No information is sent to external services unless you explicitly configure notifications or integrations.
+
+To further secure your installation:
+- Run it behind a reverse proxy with authentication
+- Use firewalls to restrict access to the web UI
+- Regularly update to the latest version for security patches
+
+See [Security Best Practices](https://github.com/jokob-sk/NetAlertX/security) for more details.
+
+
+## ❓ FAQ
+
+**Q: Why don’t I see any devices?**  
+A: Ensure the container has proper network access (e.g., use `--network host` on Linux). Also check that your scan method is properly configured in the UI.
+
+**Q: Does this work on Wi-Fi-only devices like Raspberry Pi?**  
+A: Yes, but some scanners (e.g. ARP) work best on Ethernet. For Wi-Fi, try SNMP, DHCP, or Pi-hole import.
+
+**Q: Will this send any data to the internet?**  
+A: No. All scans and data remain local, unless you set up cloud-based notifications.
+
+**Q: Can I use this without Docker?**  
+A: Yes! You can install it bare-metal. See the [bare metal installation guide](https://github.com/jokob-sk/NetAlertX/blob/main/docs/HW_INSTALL.md).
+
+**Q: Where is the data stored?**  
+A: In the `/config` and `/db` folders, mapped in Docker. Back up these folders regularly.
+
+
+## 🐞 Known Issues
+
+- Some scanners (e.g. ARP) may not detect devices on different subnets. See the [Remote networks guide](https://github.com/jokob-sk/NetAlertX/blob/main/docs/REMOTE_NETWORKS.md) for workarounds.
+- Wi-Fi-only networks may require alternate scanners for accurate detection.
+- Notification throttling may be needed for large networks to prevent spam.
+- On some systems, elevated permissions (like `CAP_NET_RAW`) may be needed for low-level scanning.
+
+Check the [GitHub Issues](https://github.com/jokob-sk/NetAlertX/issues) for the latest bug reports and solutions and consult [the official documentation](https://jokob-sk.github.io/NetAlertX/).
 
 ## 📃 Everything else
 <!--- --------------------------------------------------------------------- --->
@@ -107,7 +187,6 @@ Proudly using [Weblate](https://hosted.weblate.org/projects/pialert/). Help out 
 
 ### License
 >  GPL 3.0 | [Read more here](LICENSE.txt) | Source of the [animated GIF (Loading Animation)](https://commons.wikimedia.org/wiki/File:Loading_Animation.gif) | Source of the [selfhosted Fonts](https://github.com/adobe-fonts/source-sans)
-  
 
 
 <!--- --------------------------------------------------------------------- --->
@@ -127,4 +206,3 @@ Proudly using [Weblate](https://hosted.weblate.org/projects/pialert/). Help out 
 [main_dark]:                /docs/img/1_devices_dark.jpg                  "Main screen dark"
 [maintain_dark]:            /docs/img/5_maintain.jpg                      "Maintain screen dark"
 [follow_star]:              /docs/img/Follow_Releases_and_Star.gif        "Follow and Star"
-

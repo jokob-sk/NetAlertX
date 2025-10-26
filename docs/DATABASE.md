@@ -1,11 +1,56 @@
   
 # A high-level description of the database structure
 
-  ⚠ Disclaimer: As I'm not the original author, some of the information might be inaccurate. Feel free to submit a PR to correct anything within this page or documentation in general. 
+ An overview of the most important database tables as well as an detailed overview of the Devices table. The MAC address is used as a foreign key in most cases. 
 
-  The MAC address is used as a foreign key in most cases. 
+## Devices database table
 
-## 🔍Tables overview
+| Field Name              | Description | Sample Value |
+|-------------------------|-------------|--------------|
+| `devMac`               | MAC address of the device. | `00:1A:2B:3C:4D:5E` |
+| `devName`              | Name of the device. | `iPhone 12` |
+| `devOwner`             | Owner of the device. | `John Doe` |
+| `devType`              | Type of the device (e.g., phone, laptop, etc.). If set to a network type (e.g., switch), it will become selectable as a Network Parent Node. | `Laptop` |
+| `devVendor`            | Vendor/manufacturer of the device. | `Apple` |
+| `devFavorite`          | Whether the device is marked as a favorite. | `1` |
+| `devGroup`             | Group the device belongs to. | `Home Devices` |
+| `devComments`          | User comments or notes about the device. | `Used for work purposes` |
+| `devFirstConnection`   | Timestamp of the device's first connection. | `2025-03-22 12:07:26+11:00` |
+| `devLastConnection`    | Timestamp of the device's last connection. | `2025-03-22 12:07:26+11:00` |
+| `devLastIP`            | Last known IP address of the device. | `192.168.1.5` |
+| `devStaticIP`          | Whether the device has a static IP address. | `0` |
+| `devScan`              | Whether the device should be scanned. | `1` |
+| `devLogEvents`         | Whether events related to the device should be logged. | `0` |
+| `devAlertEvents`       | Whether alerts should be generated for events. | `1` |
+| `devAlertDown`         | Whether an alert should be sent when the device goes down. | `0` |
+| `devSkipRepeated`      | Whether to skip repeated alerts for this device. | `1` |
+| `devLastNotification`  | Timestamp of the last notification sent for this device. | `2025-03-22 12:07:26+11:00` |
+| `devPresentLastScan`   | Whether the device was present during the last scan. | `1` |
+| `devIsNew`             | Whether the device is marked as new. | `0` |
+| `devLocation`          | Physical or logical location of the device. | `Living Room` |
+| `devIsArchived`        | Whether the device is archived. | `0` |
+| `devParentMAC`         | MAC address of the parent device (if applicable) to build the [Network Tree](./NETWORK_TREE.md). | `00:1A:2B:3C:4D:5F` |
+| `devParentPort`        | Port of the parent device to which this device is connected. | `Port 3` |
+| `devIcon`              | [Icon](./ICONS.md) representing the device. The value is a base64-encoded SVG or Font Awesome HTML tag. | `PHN2ZyB...` |
+| `devGUID`              | Unique identifier for the device. | `a2f4b5d6-7a8c-9d10-11e1-f12345678901` |
+| `devSite`              | Site or location where the device is registered. | `Office` |
+| `devSSID`              | SSID of the Wi-Fi network the device is connected to. | `HomeNetwork` |
+| `devSyncHubNode`       | The NetAlertX node ID used for synchronization between NetAlertX instances. | `node_1` |
+| `devSourcePlugin`      | Source plugin that discovered the device. | `ARPSCAN` |
+| `devCustomProps`       | [Custom properties](./CUSTOM_PROPERTIES.md) related to the device. The value is a base64-encoded JSON object. | `PHN2ZyB...` |
+| `devFQDN`              | Fully qualified domain name. | `raspberrypi.local` |
+| `devParentRelType`     | The type of relationship between the current device and it's parent node. By default, selecting `nic` will hide it from lists. | `nic` |
+| `devReqNicsOnline`     | If all NICs are required to be online to mark teh current device online. | `0` |
+
+
+To understand how values of these fields influuence application behavior, such as Notifications or Network topology, see also: 
+
+- [Device Management](./DEVICE_MANAGEMENT.md)
+- [Network Tree Topology Setup](./NETWORK_TREE.md)
+- [Notifications](./NOTIFICATIONS.md)
+
+
+## Other Tables overview
   
   | Table name | Description  | Sample data |
   |----------------------|----------------------| ----------------------| 

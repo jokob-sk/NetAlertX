@@ -20,7 +20,7 @@ from const import confFileName, logPath
 from plugin_helper import Plugin_Objects, handleEmpty
 from logger import mylog, Logger, append_line_to_file
 from helper import timeNowTZ, get_setting_value
-from notification import Notification_obj
+from models.notification_instance import NotificationInstance
 from database import DB
 from pytz import timezone
 
@@ -53,8 +53,8 @@ def main():
     # Initialize the Plugin obj output file
     plugin_objects = Plugin_Objects(RESULT_FILE)
 
-    # Create a Notification_obj instance
-    notifications = Notification_obj(db)
+    # Create a NotificationInstance instance
+    notifications = NotificationInstance(db)
 
     # Retrieve new notifications
     new_notifications = notifications.getNew()
@@ -98,6 +98,7 @@ def send(html, text):
     token = get_setting_value('NTFY_TOKEN')
     user = get_setting_value('NTFY_USER')
     pwd = get_setting_value('NTFY_PASSWORD')
+    verify_ssl = get_setting_value('NTFY_VERIFY_SSL')
 
     # prepare request headers
     headers = {
@@ -121,7 +122,8 @@ def send(html, text):
         response = requests.post("{}/{}".format(   get_setting_value('NTFY_HOST'), 
                                         get_setting_value('NTFY_TOPIC')),
                                         data    = text,
-                                        headers = headers)
+                                        headers = headers,
+                                        verify  = verify_ssl)
 
         response_status_code = response.status_code
 

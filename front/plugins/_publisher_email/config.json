@@ -134,7 +134,7 @@
     },
     {
       "column": "Watched_Value1",
-      "css_classes": "col-sm-2",
+      "css_classes": "col-sm-1",
       "show": true,
       "type": "eval",
       "default_value": "",
@@ -642,7 +642,7 @@
           { "elementType": "input", "elementOptions": [], "transformers": [] }
         ]
       },
-      "default_value": "user@gmail.com",
+      "default_value": "to@email.com",
       "options": [],
       "localized": ["name", "description"],
       "name": [
@@ -658,7 +658,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Email address to which the notification will be send to."
+          "string": "Email address to which the notification will be send to. You can enter multiple emails separated by a comma (<code>,</code>)."
         },
         {
           "language_code": "es_es",
@@ -674,7 +674,31 @@
           { "elementType": "input", "elementOptions": [], "transformers": [] }
         ]
       },
-      "default_value": "NetAlertX <user@gmail.com>",
+      "default_value": "NetAlertX <from@email.com>",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "From email"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "From which email the notification is sent <code>Name &lt;email&gt;</code>. Some SMTP servers need this to be an email only."
+        }
+      ]
+    },
+    {
+      "function": "SUBJECT",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "input", "elementOptions": [], "transformers": [] }
+        ]
+      },
+      "default_value": "NetAlertX Report",
       "options": [],
       "localized": ["name", "description"],
       "name": [
@@ -690,7 +714,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Notification email subject line. Some SMTP servers need this to be an email."
+          "string": "Notification email subject line."
         },
         {
           "language_code": "es_es",

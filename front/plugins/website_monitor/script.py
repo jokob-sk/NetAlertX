@@ -3,6 +3,7 @@
 
 import argparse
 import requests
+from requests.exceptions import SSLError, Timeout, RequestException
 import pathlib
 import sys
 import os
@@ -50,17 +51,34 @@ def main():
         return
 
 def check_services_health(site):
+
+    mylog('verbose', [f'[{pluginName}] Checking {site}'])
+
     requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+    
     try:
-        resp = requests.get(site, verify=False, timeout=10)
+        resp = requests.get(site, verify=False, timeout=get_setting_value('WEBMON_RUN_TIMEOUT'), headers={"User-Agent": "NetAlertX"})
         latency = resp.elapsed.total_seconds()
         status = resp.status_code
-    except requests.exceptions.SSLError:
-        status = 503
+    except SSLError:
+        status = 495  # SSL Certificate Error (non-standard, but more meaningful than 503)
         latency = 99999
-    except:
-        status = 503
+        mylog('debug', [f'[{pluginName}] SSL error while checking {site}'])
+    except Timeout:
+        status = 504  # Gateway Timeout
         latency = 99999
+        mylog('debug', [f'[{pluginName}] Timeout while checking {site}'])
+    except RequestException as e:
+        status = 520  # Web server is returning an unknown error (Cloudflare-style)
+        latency = 99999
+        mylog('debug', [f'[{pluginName}] Request error while checking {site}: {e}'])
+    except Exception as e:
+        status = 500  # Internal Server Error (fallback)
+        latency = 99999
+        mylog('debug', [f'[{pluginName}] Unexpected error while checking {site}: {e}'])
+
+    mylog('verbose', [f'[{pluginName}] Result for {site} (status|latency) : {status}|{latency}'])
+
     return status, latency
 
 def service_monitoring(urls, plugin_objects):

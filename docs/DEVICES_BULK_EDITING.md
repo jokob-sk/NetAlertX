@@ -14,6 +14,8 @@ You can select devices in the _Devices_ view by selecting devices to edit and th
 
 ## CSV bulk edit
 
+The database and device structure may change with new releases. When using the CSV import functionality, ensure the format matches what the application expects. To avoid issues, you can first export the devices and review the column formats before importing any custom data.
+
 > [!NOTE] 
 > As always, backup everything, just in case.
 

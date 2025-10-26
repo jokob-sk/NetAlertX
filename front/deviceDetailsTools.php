@@ -14,7 +14,7 @@
         <?= lang("DevDetail_Tab_Tools_Internet_Info_Description") ?>
     </h5>
     <br>
-    <div style="width:100%; text-align: center; margin-bottom: 50px;">
+    <div style="width:100%; text-align: center;">
         <button type="button" id="internetinfo" class="btn btn-primary pa-btn" style="margin: auto;" onclick="internetinfo()">
             <?= lang("DevDetail_Tab_Tools_Internet_Info_Start") ?></button>
         <br>
@@ -33,13 +33,13 @@
         <?= lang("DevDetail_Copy_Device_Tooltip") ?>
     </h5>
     <br>
-    <div style="width:100%; text-align: center; margin-bottom: 50px;">
+    <div style="width:100%; text-align: center;">
         <select class="form-control" 
                 title="<?= lang('DevDetail_Copy_Device_Tooltip');?>" 
                 id="txtCopyFromDevice" >
                 <option value="lemp_loading" id="lemp_loading">Loading</option>
         </select>
-        <button type="button" id="internetinfo" class="btn btn-primary pa-btn" style="margin: auto;" onclick="()">
+        <button type="button" id="internetinfo" class="btn btn-primary pa-btn" style="margin: auto; margin-top:10px;" onclick="copyFromDevice()">
             <?= lang("BackDevDetail_Copy_Title") ?></button>
         <br>
     </div>
@@ -56,7 +56,7 @@
         <?= lang("DevDetail_Tools_WOL_noti_text") ?>
     </h5>
     <br>
-    <div style="width:100%; text-align: center; margin-bottom: 50px;">
+    <div style="width:100%; text-align: center;">
         <button type="button" id="internetinfo" class="btn btn-primary pa-btn" style="margin: auto;" onclick="wakeonlan()">
             <?= lang("DevDetail_Tools_WOL_noti") ?></button>
         <br>
@@ -74,7 +74,7 @@
         <?= lang("DevDetail_button_DeleteEvents_Warning") ?>
     </h5>
     <br>
-    <div style="width:100%; text-align: center; margin-bottom: 50px;">
+    <div style="width:100%; text-align: center;">
         <button type="button" 
                 class="btn btn-default pa-btn pa-btn-delete"  
                 style="margin-left:0px;" 
@@ -94,7 +94,7 @@
         <?= lang("DevDetail_CustomProps_reset_info") ?>
     </h5>
     <br>
-    <div style="width:100%; text-align: center; margin-bottom: 50px;">
+    <div style="width:100%; text-align: center;">
         <button type="button" 
                 class="btn btn-default pa-btn pa-btn-delete"  
                 style="margin-left:0px;" 
@@ -116,7 +116,7 @@
         <?= lang("DevDetail_Tab_Tools_Speedtest_Description") ?>
     </h5>
     <br>
-    <div style="width:100%; text-align: center; margin-bottom: 50px;">
+    <div style="width:100%; text-align: center;">
         <button type="button" id="speedtestcli" class="btn btn-primary pa-btn" style="margin: auto;" onclick="speedtestcli()">
             <?= lang("DevDetail_Tab_Tools_Speedtest_Start") ?></button>
         <br>
@@ -133,7 +133,7 @@
     <h5 class="">
         <?= lang("DevDetail_Tab_Tools_Traceroute_Description") ?>
     </h5>
-    <div style="width:100%; text-align: center; margin-bottom: 50px;">
+    <div style="width:100%; text-align: center;">
         <button type="button" id="traceroute" class="btn btn-primary pa-btn" style="margin: auto;" onclick="traceroute()">
             <?= lang("DevDetail_Tab_Tools_Traceroute_Start") ?>
         </button>
@@ -151,7 +151,7 @@
     <h5 class="">
         <?= lang("DevDetail_Tab_Tools_Nslookup_Description") ?>
     </h5>
-    <div style="width:100%; text-align: center; margin-bottom: 50px;">
+    <div style="width:100%; text-align: center;">
         <button type="button" id="nslookup" class="btn btn-primary pa-btn" style="margin: auto;" onclick="nslookup()">
             <?= lang("DevDetail_Tab_Tools_Nslookup_Start") ?>
         </button>
@@ -198,7 +198,7 @@
                 <?= lang("DevDetail_Nmap_buttonSkipDiscovery_text") ?>
             </li>
             <li>
-                <a onclick="setCache('activeMaintenanceTab', 'tab_Logging_id')" href="/maintenance.php#tab_Logging">
+                <a onclick="setCache('activeMaintenanceTab', 'tab_Logging_id')" href="maintenance.php#tab_Logging">
                     <?= lang("DevDetail_Nmap_resultsLink") ?>
                 </a>
             </li>
@@ -295,7 +295,7 @@
         function initCopyFromDevice() {
 
             const devices = getVisibleDevicesList()
-            console.log(devices);
+            // console.log(devices);
 
             const $select = $('#txtCopyFromDevice');
             $select.empty(); // Clear existing options
@@ -443,6 +443,37 @@
         }
 
         // init first time
-        initNmapButtons();
-        initCopyFromDevice();
+        // ----------------------------------------------------------- 
+        var toolsPageInitialized = false;
+
+        function initDeviceToolsPage()
+        {
+            // Only proceed if .panTools is visible
+            if (!$('#panTools:visible').length) {
+                return; // exit early if nothing is visible
+            }
+
+            // init page once
+            if (toolsPageInitialized) return;
+            toolsPageInitialized = true;
+
+            initNmapButtons();
+            initCopyFromDevice();
+
+            hideSpinner();
+
+        }
+
+        // -----------------------------------------------------------------------------
+        // Recurring function to monitor the URL and reinitialize if needed
+        function deviceToolsPageUpdater() {
+            initDeviceToolsPage();
+
+            // Run updater again after delay
+            setTimeout(deviceToolsPageUpdater, 200);
+        }
+
+        // start updater
+        deviceToolsPageUpdater();  
+
 </script>

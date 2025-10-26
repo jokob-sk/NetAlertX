@@ -58,6 +58,12 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
 
 <div id="settingsPage" class="content-wrapper">
 
+<a style="cursor:pointer">
+  <span>
+    <i id='toggleSettings' onclick="toggleAllSettings()" class="settings-expand-icon fa fa-angle-double-down"></i>
+  </span> 
+</a>
+
 <!-- Content header--------------------------------------------------------- -->
 
     <section class="content-header">
@@ -193,8 +199,8 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
           console.log("Response:", response);
 
           // Handle the successful response
-          if (response && response.settings) {
-              const settingsData = response.settings.settings;
+          if (response && response.data && response.data.settings && response.data.settings.settings) {
+              const settingsData = response.data.settings.settings;
               console.log("Settings:", settingsData);
 
               // Wrong number of settings processing
@@ -206,7 +212,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
                       }, 3000);
               } else
               {
-                $.get('/php/server/query_json.php', { file: 'plugins.json', nocache: Date.now() }, function(res) {
+                $.get('php/server/query_json.php', { file: 'plugins.json', nocache: Date.now() }, function(res) {
 
                   pluginsData = res["data"];  
 
@@ -354,7 +360,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
 
         enabledHtml = `
                       <div class="enabled-disabled-icon">
-                        <i class="fa-regular fa-${onOff}"></i>
+                        <i class="fa fa-${onOff}"></i>
                       </div>
                       `
       }      
@@ -365,7 +371,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
       let pluginHtml = `
         <div class="row table_row docs">
           <div class="table_cell bold">
-            <i class="fa-regular fa-book fa-sm"></i>
+            <i class="fa fa-book fa-sm"></i>
             ${getString(prefix+'_description')} 
             <a href="https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/${getPluginCodeName(pluginsData, prefix)}" target="_blank">
             ${getString('Gen_ReadDocs')}
@@ -514,10 +520,11 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
       initListInteractionOptions()  // init remove and edit listitem click gestures
     }, 50);
     
-    setupSmoothScrolling()
+    setupSmoothScrolling();
     // try to initialize select2
-    initSelect2()
-    hideSpinner()
+    initSelect2();
+    initHoverNodeInfo();
+    hideSpinner();
 
   }
 
@@ -546,11 +553,11 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
             }, 1500);
          
     } else {
-      var settingsArray = [];
+      let settingsArray = [];
 
       // collect values for each of the different input form controls
       // get settings to determine setting type to store values appropriately
-      $.get('/php/server/query_json.php', { file: 'table_settings.json', nocache: Date.now() }, function(res) { 
+      $.get('php/server/query_json.php', { file: 'table_settings.json', nocache: Date.now() }, function(res) { 
         // loop through the settings definitions from the json
         res["data"].forEach(set => {
 
@@ -558,120 +565,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
           setType     = set["setType"]
           setCodeName = set["setKey"]
 
-          // console.log(prefix);
-
-          const setTypeObject = JSON.parse(processQuotes(setType))      
-          // console.log(setTypeObject);
-
-          const dataType = setTypeObject.dataType;
-
-          // get the element with the input value(s)
-          let elements = setTypeObject.elements.filter(element => element.elementHasInputValue === 1);
-
-          //  if none found, take last
-          if(elements.length == 0)
-          {
-            elementWithInputValue = setTypeObject.elements[setTypeObject.elements.length - 1]
-          } else
-          {
-            elementWithInputValue = elements[0]
-          }
-
-          const { elementType, elementOptions = [], transformers = [] } = elementWithInputValue;
-          const { 
-            inputType,
-            readOnly,
-            isMultiSelect,
-            isOrdeable,
-            cssClasses,
-            placeholder,
-            suffix,
-            sourceIds,
-            separator,
-            editable,
-            valRes,
-            getStringKey,
-            onClick,
-            onChange,
-            customParams,
-            customId,
-            columns,
-            base64Regex
-          } = handleElementOptions('none', elementOptions, transformers, val = "");
-
-          let value;
-
-          if (dataType === "string" && elementWithInputValue.elementType === "datatable" ) {
-
-            value = collectTableData(`#${setCodeName}_table`)
-            settingsArray.push([prefix, setCodeName, dataType, btoa(JSON.stringify(value))]);
-
-          } else if (dataType === "string" || 
-              (dataType === "integer" && (inputType === "number" || inputType === "text"))) {
-           
-            value = $('#' + setCodeName).val();
-            value = applyTransformers(value, transformers);
-
-            settingsArray.push([prefix, setCodeName, dataType, value]);
-
-          } else if (inputType === 'checkbox') {
-            
-            value = $(`#${setCodeName}`).is(':checked') ? 1 : 0;            
-
-            if(dataType === "boolean")
-            {
-              value = value == 1 ? "True" : "False";
-            }
-
-            value = applyTransformers(value, transformers);
-            settingsArray.push([prefix, setCodeName, dataType, value]);
-
-          } else if (dataType === "array" ) {
-
-            let temps = [];
-
-            if(isOrdeable)
-            {
-              temps = $(`#${setCodeName}`).val()
-            } else
-            {            
-              // make sure to collect all if set as "editable" or selected only otherwise
-              $(`#${setCodeName}`).attr("my-editable") == "true" ? additionalSelector = "" : additionalSelector = ":selected"; 
-              
-              $(`#${setCodeName} option${additionalSelector}`).each(function() {
-                const vl = $(this).val();
-                if (vl !== '') {
-                  temps.push(applyTransformers(vl, transformers));
-                }
-              });
-            }
-
-            value = JSON.stringify(temps);
-
-            settingsArray.push([prefix, setCodeName, dataType, value]);
-
-          
-          } else if (dataType === "none") {
-            // no value to save
-            value = ""
-            settingsArray.push([prefix, setCodeName, dataType, value]);
-
-          } else if (dataType === "json") {
-            
-            value = $('#' + setCodeName).val();
-            value = applyTransformers(value, transformers);
-            value = JSON.stringify(value, null, 2)
-            settingsArray.push([prefix, setCodeName, dataType, value]);
-
-          } else {
-            
-            console.error(`[saveSettings] Couldn't determine how to handle (setCodeName|dataType|inputType):(${setCodeName}|${dataType}|${inputType})`);
-
-            value = $('#' + setCodeName).val();
-            value = applyTransformers(value, transformers);
-            console.error(`[saveSettings] Saving value "${value}"`);
-            settingsArray.push([prefix, setCodeName, dataType, value]);
-          }
+          settingsArray = collectSetting(prefix, setCodeName, setType, settingsArray)
         });
 
         // sanity check to make sure settings were loaded & collected correctly
@@ -740,7 +634,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
     } else
     {
       // check if config file has been updated
-      $.get('/php/server/query_json.php', { file: 'app_state.json', nocache: Date.now() }, function(appState) {   
+      $.get('php/server/query_json.php', { file: 'app_state.json', nocache: Date.now() }, function(appState) {   
 
         console.log("Settings: Got app_state.json");       
         

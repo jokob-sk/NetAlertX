@@ -1,4 +1,5 @@
 import sys
+import json
 
 # Register NetAlertX directories
 INSTALL_PATH="/app"
@@ -7,6 +8,7 @@ sys.path.extend([f"{INSTALL_PATH}/server"])
 import conf
 from logger import mylog, Logger
 from helper import get_setting_value, timeNowTZ
+from database import get_array_from_sql_rows
 
 # Make sure log level is initialized correctly
 Logger(get_setting_value('LOG_LEVEL'))
@@ -27,7 +29,8 @@ class Trigger:
         self.event = event  # Store the triggered event context, if provided
         self.triggered = self.object_type == event["ObjectType"] and self.event_type == event["AppEventType"]
 
-        mylog('verbose', [f"[WF] self.triggered '{self.triggered}'"])
+        mylog('debug', [f"""[WF] self.triggered '{self.triggered}' for event '{get_array_from_sql_rows(event)} and trigger {json.dumps(triggerJson)}' """])
+
 
         if self.triggered:
             # object type corresponds with the DB table name

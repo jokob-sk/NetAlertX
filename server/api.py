@@ -9,11 +9,11 @@ from const import (apiPath, sql_appevents, sql_devices_all, sql_events_pending_a
 from logger import mylog
 from helper import write_file, get_setting_value, timeNowTZ
 from app_state import updateState
-from user_events_queue import UserEventsQueue
-from notification import write_notification
+from models.user_events_queue_instance import UserEventsQueueInstance
+from messaging.in_app import write_notification
 
 # Import the start_server function
-from graphql_server.graphql_server_start import start_server 
+from api_server.api_server_start import start_server 
 
 apiEndpoints = []
 
@@ -147,7 +147,7 @@ class api_endpoint_class:
             # Update user event execution log
             # mylog('verbose', [f'[API] api_endpoint_class: is_ad_hoc_user_event {self.is_ad_hoc_user_event}'])
             if self.is_ad_hoc_user_event:
-                execution_log = UserEventsQueue()
+                execution_log = UserEventsQueueInstance()
                 execution_log.finalize_event("update_api")
                 self.is_ad_hoc_user_event = False
 

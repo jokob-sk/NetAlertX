@@ -50,19 +50,26 @@ class WorkflowManager:
     def process_event(self, event):
         """Process the events. Check if events match a workflow trigger"""
         
-        mylog('verbose', [f"[WF] Processing event with GUID {event["GUID"]}"])
+        evGuid = event["GUID"]
+        
+        mylog('verbose', [f"[WF] Processing event with GUID {evGuid}"])
 
         # Check if the trigger conditions match
         for workflow in self.workflows:
 
-            # construct trigger object which also evaluates if the current event triggers it
-            trigger = Trigger(workflow["trigger"], event, self.db)
+            # Ensure workflow is enabled before proceeding
+            if workflow.get("enabled", "No").lower() == "yes":
+                wfName = workflow["name"]
+                mylog('debug', [f"[WF] Checking if '{evGuid}' triggers the workflow '{wfName}'"])
+               
+                # construct trigger object which also evaluates if the current event triggers it
+                trigger = Trigger(workflow["trigger"], event, self.db)
 
-            if trigger.triggered:
+                if trigger.triggered:
 
-                mylog('verbose', [f"[WF] Event with GUID '{event["GUID"]}' triggered the workflow '{workflow["name"]}'"])
+                    mylog('verbose', [f"[WF] Event with GUID '{evGuid}' triggered the workflow '{wfName}'"])
 
-                self.execute_workflow(workflow, trigger)
+                    self.execute_workflow(workflow, trigger)
 
         # After processing the event, mark the event as processed (set AppEventProcessed to 1)
         self.db.sql.execute("""
@@ -77,6 +84,8 @@ class WorkflowManager:
     def execute_workflow(self, workflow, trigger):
         """Execute the actions in the given workflow if conditions are met."""
 
+        wfName = workflow["name"]
+
         # Ensure conditions exist
         if not isinstance(workflow.get("conditions"), list):
             m = f"[WF] workflow['conditions'] must be a list"
@@ -90,7 +99,7 @@ class WorkflowManager:
 
             if evaluator.evaluate(trigger):  # If any group evaluates to True
                 
-                mylog('none', [f"[WF] Workflow {workflow["name"]} will be executed - conditions were evaluated as TRUE"])
+                mylog('none', [f"[WF] Workflow {wfName} will be executed - conditions were evaluated as TRUE"])
                 mylog('debug', [f"[WF] Workflow condition_group: {condition_group}"])
 
                 self.execute_actions(workflow["actions"], trigger)

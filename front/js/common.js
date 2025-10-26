@@ -11,8 +11,8 @@
 var timerRefreshData = ''
 
 var   emptyArr      = ['undefined', "", undefined, null, 'null'];
-var   UI_LANG       = "English";
-const allLanguages  = ["en_us", "es_es", "de_de", "fr_fr", "it_it", "ru_ru", "nb_no", "pl_pl", "pt_br", "tr_tr", "zh_cn", "cs_cz", "ar_ar", "ca_ca", "uk_ua"]; // needs to be same as in lang.php
+var   UI_LANG       = "English (en_us)";
+const allLanguages  = ["ar_ar","ca_ca","cs_cz","de_de","en_us","es_es","fa_fa","fr_fr","it_it","nb_no","pl_pl","pt_br","pt_pt","ru_ru","tr_tr","uk_ua","zh_cn"]; // needs to be same as in lang.php
 var   settingsJSON  = {}
 
 
@@ -113,7 +113,7 @@ function deleteAllCookies() {
 function cacheSettings()
 {
   return new Promise((resolve, reject) => {
-    if(!getCache('completedCalls').includes('cacheSettings'))
+    if(!getCache('cacheSettings_completed') === true)
     {  
       $.get('php/server/query_json.php', { file: 'table_settings.json', nocache: Date.now() }, function(resSet) { 
 
@@ -211,8 +211,18 @@ function getSetting (key) {
 function cacheStrings() {
   return new Promise((resolve, reject) => {
     
-      // Create a promise for each language
-      languagesToLoad = ['en_us', getLangCode()]
+      // Create a promise for each language (include en_us by default as fallback)
+      languagesToLoad = ['en_us']
+
+      additionalLanguage = getLangCode()
+
+      if(additionalLanguage != 'en_us')
+      {
+        languagesToLoad.push(additionalLanguage)
+      }
+
+      console.log(languagesToLoad);
+      
       const languagePromises = languagesToLoad.map((language_code) => {
         return new Promise((resolveLang, rejectLang) => {
           // Fetch core strings and translations
@@ -235,7 +245,7 @@ function cacheStrings() {
                   });
 
                   // Handle successful completion of language processing
-                  handleSuccess(`cacheStrings[${language_code}]`, resolveLang);
+                  handleSuccess(`cacheStrings`, resolveLang);
                 })
                 .fail((pluginError) => {
                   // Handle failure in plugin strings fetching
@@ -289,7 +299,7 @@ function getString(key) {
 
 // -----------------------------------------------------------------------------
 // Get current language ISO code
-// below has to match exactly teh values in /front/php/templates/language/lang.php & /front/js/common.js
+// below has to match exactly the values in /front/php/templates/language/lang.php & /front/js/common.js
 function getLangCode() {
 
     UI_LANG = getSetting("UI_LANG");
@@ -297,19 +307,22 @@ function getLangCode() {
     let lang_code = 'en_us';
 
     switch (UI_LANG) {
-      case 'English':
+      case 'English (en_us)':
         lang_code = 'en_us';
         break;
-      case 'Spanish':
+      case 'Spanish (es_es)':
         lang_code = 'es_es';
         break;
-      case 'German':
+      case 'German (de_de)':
         lang_code = 'de_de';
         break;
-      case 'French':
+      case 'Farsi (fa_fa)':
+        lang_code = 'fa_fa';
+        break;
+      case 'French (fr_fr)':
         lang_code = 'fr_fr';
         break;
-      case 'Norwegian':
+      case 'Norwegian (nb_no)':
         lang_code = 'nb_no';
         break;
       case 'Polish (pl_pl)':
@@ -318,13 +331,16 @@ function getLangCode() {
       case 'Portuguese (pt_br)':
         lang_code = 'pt_br';
         break;
+      case 'Portuguese (pt_pt)':
+        lang_code = 'pt_pt';
+        break;
       case 'Turkish (tr_tr)':
         lang_code = 'tr_tr';
         break;
       case 'Italian (it_it)':
         lang_code = 'it_it';
         break;
-      case 'Russian':
+      case 'Russian (ru_ru)':
         lang_code = 'ru_ru';
         break;
       case 'Chinese (zh_cn)':
@@ -352,6 +368,71 @@ function getLangCode() {
 // -----------------------------------------------------------------------------
 // String utilities
 // -----------------------------------------------------------------------------
+function localizeTimestamp(input) {
+  let tz = getSetting("TIMEZONE") || 'Europe/Berlin';
+  input = String(input || '').trim();
+
+  // ✅ 1. Unix timestamps (10 or 13 digits)
+  if (/^\d+$/.test(input)) {
+    const ms = input.length === 10 ? parseInt(input, 10) * 1000 : parseInt(input, 10);
+    return new Intl.DateTimeFormat('default', {
+      timeZone: tz,
+      year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', second: '2-digit',
+      hour12: false
+    }).format(new Date(ms));
+  }
+
+  // ✅ 2. European DD/MM/YYYY
+  let match = input.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:[ ,]+(\d{1,2}:\d{2}(?::\d{2})?))?(.*)$/);
+  if (match) {
+    let [ , d, m, y, t = "00:00:00", tzPart = "" ] = match;
+    const iso = `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}T${t.length===5?t+":00":t}${tzPart}`;
+    return formatSafe(iso, tz);
+  }
+
+  // ✅ 3. US MM/DD/YYYY
+  match = input.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:[ ,]+(\d{1,2}:\d{2}(?::\d{2})?))?(.*)$/);
+  if (match) {
+    let [ , m, d, y, t = "00:00:00", tzPart = "" ] = match;
+    const iso = `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}T${t.length===5?t+":00":t}${tzPart}`;
+    return formatSafe(iso, tz);
+  }
+
+  // ✅ 4. ISO-style (with T, Z, offsets)
+  match = input.match(/^(\d{4}-\d{1,2}-\d{1,2})[ T](\d{1,2}:\d{2}(?::\d{2})?)(Z|[+-]\d{2}:?\d{2})?$/);
+  if (match) {
+    let [ , ymd, time, offset = "" ] = match;
+    // normalize to YYYY-MM-DD
+    let [y, m, d] = ymd.split('-').map(x => x.padStart(2,'0'));
+    const iso = `${y}-${m}-${d}T${time.length===5?time+":00":time}${offset}`;
+    return formatSafe(iso, tz);
+  }
+
+  // ✅ 5. RFC2822 / "25 Aug 2025 13:45:22 +0200"
+  match = input.match(/^\d{1,2} [A-Za-z]{3,} \d{4}/);
+  if (match) {
+    return formatSafe(input, tz);
+  }
+
+  // ✅ 6. Fallback (whatever Date() can parse)
+  return formatSafe(input, tz);
+
+  function formatSafe(str, tz) {
+    const date = new Date(str);
+    if (!isFinite(date)) {
+      console.error(`ERROR: Couldn't parse date: '${str}' with TIMEZONE ${tz}`);
+      return 'Failed conversion - Check browser console';
+    }
+    return new Intl.DateTimeFormat('default', {
+      timeZone: tz,
+      year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', second: '2-digit',
+      hour12: false
+    }).format(date);
+  }
+}
+
 
 // ----------------------------------------------------
 /**
@@ -529,7 +610,7 @@ function createDeviceLink(input)
 {
   if(checkMacOrInternet(input))
   {
-    return `<span class="anonymizeMac"><a href="/deviceDetails.php?mac=${input}" target="_blank">${getNameByMacAddress(input)}</a><span>`
+    return `<span class="anonymizeMac"><a href="/deviceDetails.php?mac=${input}" target="_blank">${getDevDataByMac(input, "devName")}</a><span>`
   }
 
   return input;
@@ -733,7 +814,6 @@ function forceLoadUrl(relativeUrl) {
   
 }
 
-
 // -----------------------------------------------------------------------------
 function navigateToDeviceWithIp (ip) {
 
@@ -754,11 +834,6 @@ function navigateToDeviceWithIp (ip) {
     });
     
   });
-}
-
-// -----------------------------------------------------------------------------
-function getNameByMacAddress(macAddress) {
-  return getDevDataByMac(macAddress, "devName")
 }
 
 // -----------------------------------------------------------------------------
@@ -933,7 +1008,7 @@ function getDevDataByMac(macAddress, dbColumn) {
 
   if (!devicesCache || devicesCache == "") {
       console.error(`Session variable "${sessionDataKey}" not found.`);
-      return "Unknown";
+      return null;
   }
 
   const devices = JSON.parse(devicesCache);
@@ -952,18 +1027,16 @@ function getDevDataByMac(macAddress, dbColumn) {
       }
   }
 
-  return "Unknown"; // Return a default value if MAC address is not found
+  console.error("⚠ Device with MAC not found:" + macAddress)
+  return null; // Return a default value if MAC address is not found
 }
 
 // -----------------------------------------------------------------------------
 // Cache the devices as one JSON
 function cacheDevices()
 { 
-
   return new Promise((resolve, reject) => {
 
-    // if(!getCache('completedCalls').includes('cacheDevices'))
-    // {
     $.get('php/server/query_json.php', { file: 'table_devices.json', nocache: Date.now() }, function(data) {    
         
         // console.log(data)
@@ -987,8 +1060,7 @@ function cacheDevices()
         // console.log(getCache('devicesListAll_JSON'))
       }).then(() => handleSuccess('cacheDevices', resolve())).catch(() => handleFailure('cacheDevices', reject("cacheDevices already completed"))); // handle AJAX synchronization
     } 
-  // }
-);
+  );
 }
 
 var devicesListAll_JSON      = [];   // this will contain a list off all devices 
@@ -1029,47 +1101,102 @@ function getGuid() {
 // -----------------------------------------------------------------------------
 //  Loading Spinner overlay
 // -----------------------------------------------------------------------------
-spinnerHtml = `
-    <!-- spinner -->
-    <div id="loadingSpinner" style="display: block">
-      <div class="pa_semitransparent-panel"></div>
-      <div class="panel panel-default pa_spinner">
-        <table>
-          <td width="130px" align="middle">_text_</td>
-          <td><i class="ion ion-ios-loop-strong fa-spin fa-2x fa-fw"></td>
-        </table>
-      </div>
-    </div>
-    `
 
-function showSpinner(stringKey='Loading')
-{
+let spinnerTimeout = null;
+let animationTime = 300
 
-  if(stringKey == "")
-  {
-    text = ''
-  } else
-  {
-    text = getString(stringKey)
+function showSpinner(stringKey = 'Loading') {
+  const text = isEmpty(stringKey) ? "Loading" : getString(stringKey || "Loading");
+  const spinner = $("#loadingSpinner");
+  const target = $(".spinnerTarget").first(); // Only use the first one if multiple exist
+
+  $("#loadingSpinnerText").text(text);
+
+  if (target.length) {
+    // Position relative to target
+    const offset = target.offset();
+    const width = target.outerWidth();
+    const height = target.outerHeight();
+
+    spinner.css({
+      position: "absolute",
+      top: offset.top,
+      left: offset.left,
+      width: width,
+      height: height,
+      zIndex: 800
+    });
+  } else {
+    // Fullscreen fallback
+    spinner.css({
+      position: "fixed",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      zIndex: 800
+    });
   }
 
-  text = isEmpty(text) ?  "Loading" : text;
-
-  if($("#loadingSpinner").length)
-  {    
-    $("#loadingSpinner").show();
-  }
-  else{    
-    $(".wrapper").append(spinnerHtml.replace('_text_',text))
-  }
+  requestAnimationFrame(() => {
+    spinner.addClass("visible");
+    spinner.fadeIn(animationTime);
+  });
 }
-// -----------------------------------------------------------------------------
-function hideSpinner()
-{
-  $("#loadingSpinner").hide()
+
+function hideSpinner() {
+  clearTimeout(spinnerTimeout);
+  const spinner = $("#loadingSpinner");
+
+  if (!spinner.length) return;
+
+  const target = $(".spinnerTarget").first();
+
+  if (target.length) {
+    // Lock position to target
+    const offset = target.offset();
+    const width = target.outerWidth();
+    const height = target.outerHeight();
+
+    spinner.css({
+      position: "absolute",
+      top: offset.top,
+      left: offset.left,
+      width: width,
+      height: height,
+      zIndex: 800
+    });
+  } else {
+    // Fullscreen fallback
+    spinner.css({
+      position: "fixed",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      zIndex: 800
+    });
+  }
+
+  // Trigger fade-out and only remove styles AFTER fade completes AND display is none
+  spinner.removeClass("visible").fadeOut(animationTime, () => {
+    // Ensure it's really hidden before resetting styles
+    spinner.css({
+      display: "none"
+    });
+
+    spinner.css({
+      position: "",
+      top: "",
+      left: "",
+      width: "",
+      height: "",
+      zIndex: ""
+    });
+  });
 }
 
-
+    
 // --------------------------------------------------------
 // Calls a backend function to add a front-end event to an execution queue
 function updateApi(apiEndpoints)
@@ -1344,8 +1471,8 @@ function restartBackend() {
 const sessionStorageKey = "myScriptExecuted_common_js";
 var completedCalls = []
 var completedCalls_final = ['cacheSettings', 'cacheStrings', 'cacheDevices'];
-var completedCallsCount  = 0; 
-var completedCallsCount_final;
+var lang_completedCalls = 0;
+
 
 // -----------------------------------------------------------------------------
 // Clearing all the caches
@@ -1431,12 +1558,27 @@ async function isGraphQLServerRunning() {
 // Check if the code has been executed before by checking sessionStorage
 function isAppInitialized() {
 
-  completedCalls = parseInt(getCache("completedCallsCount"));
-  shouldBeCompletedCalls = getLangCode() == 'en_us' ? 3 : 4;
+  lang_shouldBeCompletedCalls = getLangCode() == 'en_us' ? 1 : 2;
 
-  return (
-    completedCalls >= shouldBeCompletedCalls
-  );
+  // check if each ajax call completed succesfully 
+  $.each(completedCalls_final, function(index, call_name){
+
+    if(getCache(call_name + "_completed") != "true")
+    {
+      console.log(`[isAppInitialized] AJAX call ${call_name} unsuccesful: ${getCache(call_name + "_completed")}`)
+      return false;
+    }
+
+  });
+
+  // check if all required languages chached
+  if(parseInt(getCache("cacheStringsCountCompleted")) != lang_shouldBeCompletedCalls)
+  {
+    console.log(`[isAppInitialized] AJAX call cacheStrings unsuccesful: ${getCache("cacheStringsCountCompleted")} out of ${lang_shouldBeCompletedCalls}`)
+    return false;
+  }
+
+  return true;
 }
 
 // -----------------------------------------------------------------------------
@@ -1467,27 +1609,25 @@ async function executeOnce() {
 // Function to handle successful completion of an AJAX call
 const handleSuccess = (callName) => {
   console.log(`AJAX call successful: ${callName}`);
-  // completedCalls.push(callName);
-  // setCache('completedCalls', mergeUniqueArrays(getCache('completedCalls').split(','), [callName]));
 
-  val = getCache('completedCallsCount');
-
-  if(val == "")
+  if(callName.includes("cacheStrings"))
   {
-    val = 0;
-  } else
-  {
-    val = parseInt(val)
+    completed_tmp = getCache("cacheStringsCountCompleted");
+    completed_tmp == "" ? completed_tmp = 0 : completed_tmp = completed_tmp;
+    completed_tmp++;
+    setCache("cacheStringsCountCompleted", completed_tmp);
   }
 
-  setCache('completedCallsCount', val + 1)
+  setCache(callName + "_completed", true)
 };
 
 // -----------------------------------------------------------------------------
 // Function to handle failure of an AJAX call
 const handleFailure = (callName, callback) => {
-  console.error(`AJAX call ${callName} failed`);
+  msg = `AJAX call ${callName} failed`
+  console.error(msg);
   // Implement retry logic here if needed
+  // write_notification(msg, 'interrupt')
 };
 
 // -----------------------------------------------------------------------------

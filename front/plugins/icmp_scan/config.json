@@ -311,7 +311,7 @@
       "column": "Watched_Value2",
       "css_classes": "col-sm-2",
       "show": true,
-      "type": "label",
+      "type": "textarea_readonly",
       "default_value": "",
       "options": [],
       "localized": [
@@ -365,7 +365,7 @@
         "value": "ICMP"
       },
       "css_classes": "col-sm-2",
-      "show": true,
+      "show": false,
       "type": "label",
       "default_value": "",
       "options": [],

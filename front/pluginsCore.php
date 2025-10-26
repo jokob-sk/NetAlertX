@@ -4,12 +4,6 @@
   require_once  $_SERVER['DOCUMENT_ROOT'] . '/php/templates/security.php';
 ?>
 
-<!-- ----------------------------------------------------------------------- -->
-
-<!-- ----------------------------------------------------------------------- -->
- 
-
-
 <!-- Main content ---------------------------------------------------------- -->
 <section class="content">
   <div class="plugin-filters hidden" >
@@ -23,44 +17,70 @@
     <ul id="tabs-location" class="nav nav-tabs col-sm-2 ">
       <!-- PLACEHOLDER -->
     </ul>  
-    <div id="tabs-content-location" class="tab-content col-sm-10"> 
-      <!-- PLACEHOLDER -->
+    <div id="tabs-content-location-wrap" class="tab-content col-sm-10"> 
+      <div id="tabs-content-location" class="tab-content col-sm-12"> 
+        <!-- PLACEHOLDER -->
+      </div>   
     </div>   
   
 </section>
 
-
-
 <script>
 
-// -----------------------------------------------------------------------------
-// Initializes fields based on current MAC
-function initFields() {   
+// Global variable to track the last MAC we initialized with
+let lastMac = null;
+let keepUpdating = true;
 
-  var urlParams = new URLSearchParams(window.location.search);
-  mac = urlParams.get ('mac');  
+function initMacFilter() {
+  // Parse the MAC parameter from the URL (e.g., ?mac=00:11:22:33:44:55)
+  const urlParams = new URLSearchParams(window.location.search);
+  const mac = urlParams.get('mac');
 
-  // if the current mac has changed, reinitialize the data
-  if(mac != undefined && $("#txtMacFilter").val() != mac)
-  {    
-    
-    $("#txtMacFilter").val(mac);    
+  // Set the MAC in the input field
+  if(mac)
+  {
+    $("#txtMacFilter").val(mac);
+  }
+  else
+  {
+    $("#txtMacFilter").val("--");
+  }  
 
-    getData();
-  } 
-
+  return mac;  
 }
 
+// -----------------------------------------------
+// INIT with polling for panel element visibility
+// -----------------------------------------------
+
 // -----------------------------------------------------------------------------
-// Checking if current MAC has changed and triggering an updated if needed
-function updater() {   
+// Initializes the fields if the MAC in the URL is different or not yet set
+function initFields() {
 
-  initFields()
+  // Only proceed if .plugin-content is visible
+  if (!$('.plugin-content:visible').length) {
+    return; // exit early if nothing is visible
+  }
 
-  // loop
-  setTimeout(function() {
-    updater();
-  }, 500);   
+  // Get current value from the readonly text field
+  const currentVal = initMacFilter();
+
+  // If a MAC exists in the URL and it's either:
+  //  - the first time running (field shows default "--"), or
+  //  - different from what's already displayed
+  if (currentVal != "--" && currentVal !== lastMac) {
+
+    // Update the lastMac so we don't reload unnecessarily
+    lastMac = currentVal;
+
+    // Trigger data loading based on new MAC
+    getData();
+  } else if((currentVal === "--" || currentVal == null  ) && keepUpdating)
+  {
+    $("#txtMacFilter").val("--"); // need to set this as filters are using this later on
+    keepUpdating = false; // stop updates
+    getData();
+  }
 }
 
 // -----------------------------------------------------------------------------
@@ -241,35 +261,35 @@ pluginUnprocessedEvents = []
 pluginObjects = []
 pluginHistory = []
 
-function getData(){
+async function getData() {
+  try {
+    showSpinner();
+    console.log("Plugins getData called");
 
-  // Show the loading spinner while generating 
-  showSpinner();
+    const [plugins, events, objects, history] = await Promise.all([
+      fetchJson('plugins.json'),
+      fetchJson('table_plugins_events.json'),
+      fetchJson('table_plugins_objects.json'),
+      fetchJson('table_plugins_history.json')
+    ]);
 
-  $.get('php/server/query_json.php?file=plugins.json', function(res) {  
-    
-    pluginDefinitions = res["data"];
+    pluginDefinitions = plugins.data;
+    pluginUnprocessedEvents = events.data;
+    pluginObjects = objects.data;
+    pluginHistory = history.data;
 
-    $.get('php/server/query_json.php?file=table_plugins_events.json', function(res) {
-
-      pluginUnprocessedEvents = res["data"];
-
-      $.get('php/server/query_json.php?file=table_plugins_objects.json', function(res) {
-
-        pluginObjects = res["data"];
-        
-        $.get('php/server/query_json.php?file=table_plugins_history.json', function(res) {        
-
-          pluginHistory = res["data"];
-
-          generateTabs()
-
-        });
-      });
-    });
-
-  });
+    generateTabs();
+  } catch (err) {
+    console.error("Failed to load data", err);
+  }
 }
+
+async function fetchJson(filename) {
+  const response = await fetch(`php/server/query_json.php?file=${filename}`);
+  if (!response.ok) throw new Error(`Failed to load ${filename}`);
+  return await response.json();
+}
+
 
 function generateTabs() {
 
@@ -279,15 +299,24 @@ function generateTabs() {
   // Sort pluginDefinitions by unique_prefix alphabetically
   pluginDefinitions.sort((a, b) => a.unique_prefix.localeCompare(b.unique_prefix));
 
+  assignActive = true;
+
   // Iterate over the sorted pluginDefinitions to create tab headers and content
   pluginDefinitions.forEach(pluginObj => {
     if (pluginObj.show_ui) {
-      stats = createTabContent(pluginObj); // Create the content for each tab
-      createTabHeader(pluginObj, stats); // Create the header for each tab
-    }
-  });
+      stats = createTabContent(pluginObj, assignActive); // Create the content for each tab
 
-  hideSpinner()  
+      if(stats.objectDataCount > 0)
+      {        
+        createTabHeader(pluginObj, stats, assignActive); // Create the header for each tab
+        assignActive = false; // only mark first with content active
+      }
+    }
+  });  
+    
+
+  
+  hideSpinner()
 }
 
 function resetTabs() {
@@ -296,10 +325,13 @@ function resetTabs() {
   $('#tabs-content-location').empty();
 }
 
-function createTabHeader(pluginObj, stats) {
+// ---------------------------------------------------------------
+// left headers
+function createTabHeader(pluginObj, stats, assignActive) {
   const prefix = pluginObj.unique_prefix; // Get the unique prefix for the plugin
+  
   // Determine the active class for the first tab
-  const activeClass = pluginDefinitions.indexOf(pluginObj) === 0 ? 'active' : '';
+  assignActive ? activeClass = "active" : activeClass = "";
 
   // Append the tab header to the tabs location
   $('#tabs-location').append(`
@@ -311,20 +343,23 @@ function createTabHeader(pluginObj, stats) {
       ${stats.objectDataCount > 0 ? `<div class="pluginBadgeWrap"><span title="" class="badge pluginBadge" >${stats.objectDataCount}</span></div>` : ""}      
     </li>
   `);
+  
 }
 
-function createTabContent(pluginObj) {
+// ---------------------------------------------------------------
+// Content of selected plugin (header)
+function createTabContent(pluginObj, assignActive) {
   const prefix = pluginObj.unique_prefix; // Get the unique prefix for the plugin
   const colDefinitions = getColumnDefinitions(pluginObj); // Get column definitions for DataTables
   
   // Get data for events, objects, and history related to the plugin
   const objectData = getObjectData(prefix, colDefinitions, pluginObj);
-  const eventData = getEventData(prefix, colDefinitions);
+  const eventData = getEventData(prefix, colDefinitions, pluginObj);
   const historyData = getHistoryData(prefix, colDefinitions, pluginObj);
 
   // Append the content structure for the plugin's tab to the content location
   $('#tabs-content-location').append(`
-    <div id="${prefix}" class="tab-pane ${pluginDefinitions.indexOf(pluginObj) === 0 ? 'active' : ''}">
+    <div id="${prefix}" class="tab-pane ${objectData.length > 0 && assignActive? 'active' : ''}">
       ${generateTabNavigation(prefix, objectData.length, eventData.length, historyData.length)} <!-- Create tab navigation -->
       <div class="tab-content">
         ${generateDataTable(prefix, 'Objects', objectData, colDefinitions)} 
@@ -353,10 +388,10 @@ function getColumnDefinitions(pluginObj) {
   return pluginObj["database_column_definitions"].filter(colDef => colDef.show);
 }
 
-function getEventData(prefix, colDefinitions) {
+function getEventData(prefix, colDefinitions, pluginObj) {
   // Extract event data specific to the plugin and format it for DataTables
   return pluginUnprocessedEvents
-    .filter(event => event.Plugin === prefix) // Filter events for the specific plugin
+    .filter(event => event.Plugin === prefix && shouldBeShown(event, pluginObj)) // Filter events for the specific plugin
     .map(event => colDefinitions.map(colDef => event[colDef.column] || '')); // Map to the defined columns
 }
 
@@ -370,7 +405,7 @@ function getObjectData(prefix, colDefinitions, pluginObj) {
 function getHistoryData(prefix, colDefinitions, pluginObj) {
   
   return pluginHistory
-  .filter(history => history.Plugin === prefix) // First, filter based on the plugin prefix
+  .filter(history => history.Plugin === prefix && shouldBeShown(history, pluginObj)) // First, filter based on the plugin prefix
     .sort((a, b) => b.Index - a.Index) // Then, sort by the Index field in descending order
     .slice(0, 50) // Limit the result to the first 50 entries
     .map(object => 
@@ -410,7 +445,7 @@ function generateDataTable(prefix, tableType, data, colDefinitions) {
       </table>
       <div class="plugin-obj-purge">
         <button class="btn btn-primary" onclick="purgeAll('${prefix}', 'Plugins_${tableType}' )"><?= lang('Plugins_DeleteAll');?></button>
-        ${tableType !== 'Events' ? `<button class="btn btn-danger" onclick="deleteListed('${prefix}', 'Plugins_${tableType}' )"><?= lang('Plugins_Obj_DeleteListed');?></button>` : ''}
+        ${tableType !== 'Events' ? `<button class="btn btn-primary" onclick="deleteListed('${prefix}', 'Plugins_${tableType}' )"><?= lang('Plugins_Obj_DeleteListed');?></button>` : ''}
       </div>
     </div>
   `;
@@ -463,9 +498,13 @@ function shouldBeShown(entry, pluginObj)
       compare_operator = dataFilters[i].compare_operator;
       compare_js_template = dataFilters[i].compare_js_template;
       compare_use_quotes = dataFilters[i].compare_use_quotes;
-      compare_field_id_value = $(`#${compare_field_id}`).val();      
+      compare_field_id_value = $(`#${compare_field_id}`).val();
+      
+      // console.log(compare_field_id_value);
+      // console.log(compare_field_id);
+      
 
-      // apply filter i sthe filter field has a valid value
+      // apply filter if the filter field has a valid value
       if(compare_field_id_value != undefined && compare_field_id_value != '--') 
       {
         // valid value        
@@ -494,12 +533,14 @@ function shouldBeShown(entry, pluginObj)
 plugPrefix = ''
 dbTable  = ''
 
+// --------------------------------------------------------
 function purgeAll(callback) {
   plugPrefix = arguments[0];  // plugin prefix
   dbTable  = arguments[1];  // DB table
-  // Ask 
-  showModalWarning('<?= lang('Gen_Purge');?>' + ' ' + plugPrefix + ' ' + dbTable , '<?= lang('Gen_AreYouSure');?>',
-  '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Okay');?>', "purgeAllExecute");
+
+  // Ask for confirmation
+  showModalWarning(`${getString('Gen_Purge')} ${plugPrefix} ${dbTable}`, `${getString('Gen_AreYouSure')}`,
+    `${getString('Gen_Cancel')}`, `${getString('Gen_Okay')}`, "purgeAllExecute");
 }
 
 // --------------------------------------------------------
@@ -515,31 +556,59 @@ function purgeAllExecute() {
 }
 
 // --------------------------------------------------------
-function deleteListed(plugPrefix, dbTable) {
+function deleteListed(plugPrefixArg, dbTableArg) {
+  plugPrefix = plugPrefixArg;
+  dbTable = dbTableArg;
 
-  idArr = $(`#${plugPrefix} table[data-my-dbtable="${dbTable}"] tr[data-my-index]`).map(function(){return $(this).attr("data-my-index");}).get();
+  // Collect selected IDs
+  idArr = $(`#${plugPrefix} table[data-my-dbtable="${dbTable}"] tr[data-my-index]`)
+    .map(function() {
+      return $(this).attr("data-my-index");
+    }).get();
 
-  console.log(idArr);
+  if (idArr.length === 0) {
+    showModalOk('Nothing to delete', 'No items are selected for deletion.');
+    return;
+  }
 
+  // Ask for confirmation
+  showModalWarning(`${getString('Gen_Purge')} ${plugPrefix} ${dbTable}`, `${getString('Gen_AreYouSure')} (${idArr.length})`,
+    `${getString('Gen_Cancel')}`, `${getString('Gen_Okay')}`, "deleteListedExecute");
+}
+
+// --------------------------------------------------------
+function deleteListedExecute() {
   $.ajax({
     method: "POST",
     url: "php/server/dbHelper.php",
     data: { action: "delete", dbtable: dbTable, columnName: 'Index', id:idArr.toString() },
     success: function(data, textStatus) {
       updateApi("plugins_objects")
-      showModalOk ('Result', data );      
+      showModalOk('Result', data);      
     }
   })
-
 }
 
 
 // -----------------------------------------------------------------------------
 // Main sequence
 
-// show spinning icon
-showSpinner()
-getData()
-updater()
+// -----------------------------------------------------------------------------
+// Recurring function to monitor the URL and reinitialize if needed
+function updater() {
+  initFields();
+
+  // Run updater again after delay
+  setTimeout(updater, 200);
+}
+
+// if visible, load immediately, if not start updater
+if (!$('.plugin-content:visible').length) {
+  updater();
+}
+else
+{  
+  initFields();
+}
 
 </script>

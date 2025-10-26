@@ -33,7 +33,7 @@ function versionUpdateUI(){
 // Checks if a new version is available via the global app_state.json
 function checkIfNewVersionAvailable()
 {
-  $.get('/php/server/query_json.php', { file: 'app_state.json', nocache: Date.now() }, function(appState) {   
+  $.get('php/server/query_json.php', { file: 'app_state.json', nocache: Date.now() }, function(appState) {   
     
     // console.log(appState["isNewVersionChecked"])
     // console.log(appState["isNewVersion"])

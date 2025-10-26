@@ -1,15 +1,18 @@
 """ all things database to support NetAlertX """
 
 import sqlite3
-import base64
-import json
 
 # Register NetAlertX modules 
-from const import fullDbPath, sql_devices_stats, sql_devices_all, sql_generateGuid
+from const import fullDbPath, sql_devices_stats, sql_devices_all
 
 from logger import mylog
-from helper import json_obj, initOrSetParam, row_to_json, timeNowTZ
+from db.db_helper import get_table_json, json_obj
 from workflows.app_events import AppEvent_obj
+from db.db_upgrade import ensure_column, \
+    ensure_views, ensure_CurrentScan, \
+    ensure_plugins_tables, ensure_Parameters, \
+    ensure_Settings, ensure_Indexes
+
 
 class DB():
     """
@@ -18,870 +21,201 @@ class DB():
     """
 
     def __init__(self):
+        """
+        Initializes the class instance by setting up placeholders for the
+        SQL engine and SQL connection.
+
+        Attributes:
+            sql: Placeholder for the SQL engine or session object.
+            sql_connection: Placeholder for the SQL database connection.
+        """
         self.sql = None
         self.sql_connection = None
 
-    #-------------------------------------------------------------------------------
-    def open (self):
+    def open(self):
+        """
+        Opens a connection to the SQLite database if it is not already open.
+        This method initializes the database connection and cursor, and sets
+        several SQLite PRAGMA options to optimize performance and reliability:
+        - Enables Write-Ahead Logging (WAL) mode.
+        - Sets synchronous mode to NORMAL for a balance between
+          performance and safety.
+        - Stores temporary tables and indices in memory.
+        If the database is already open, the method logs a debug message
+        and returns.
+        If an error occurs during connection, it logs the error
+        with minimal verbosity.
+        Raises:
+            sqlite3.Error: If there is an error opening the database.
+        """
         # Check if DB is open
-        if self.sql_connection != None :
-            mylog('debug','openDB: database already open')
+        if self.sql_connection is not None:
+            mylog('debug', ['[Database] - open: DB already open'])
             return
 
-        mylog('verbose', '[Database] Opening DB' )
+        mylog('verbose', '[Database] Opening DB')
         # Open DB and Cursor
         try:
-            self.sql_connection = sqlite3.connect (fullDbPath, isolation_level=None)
-            self.sql_connection.execute('pragma journal_mode=wal') #
+            self.sql_connection = sqlite3.connect(fullDbPath,
+                                                  isolation_level=None)
+
+            # The WAL journaling mode uses a write-ahead log instead of a
+            # rollback journal to implement transactions.
+            self.sql_connection.execute('pragma journal_mode=WAL;')
+            # When synchronous is NORMAL (1), the SQLite database engine will
+            # still sync at the most critical moments,
+            # but less often than in FULL mode.
+            self.sql_connection.execute('PRAGMA synchronous=NORMAL;')
+            # When temp_store is MEMORY (2) temporary tables and indices
+            # are kept as if they were in pure in-memory databases.
+            self.sql_connection.execute('PRAGMA temp_store=MEMORY;')
+
             self.sql_connection.text_factory = str
             self.sql_connection.row_factory = sqlite3.Row
             self.sql = self.sql_connection.cursor()
         except sqlite3.Error as e:
-            mylog('verbose',[ '[Database] - Open DB Error: ', e])
+            mylog('minimal', ['[Database] - Open DB Error: ', e])
 
-
-    #-------------------------------------------------------------------------------
-    def commitDB (self):
-        if self.sql_connection == None :
-            mylog('debug','commitDB: database is not open')
+    def commitDB(self):
+        """
+        Commits the current transaction to the database.
+        Returns:
+            bool: True if the commit was successful, False if the database connection is not open.
+        """
+        if self.sql_connection is None:
+            mylog('debug', 'commitDB: database is not open')
             return False
 
         # Commit changes to DB
         self.sql_connection.commit()
         return True
 
-    #-------------------------------------------------------------------------------
     def rollbackDB(self):
+        """
+        Rolls back the current transaction in the database if a SQL connection exists.
+
+        This method checks if a SQL connection is active and, if so, undoes all changes made in the current transaction, reverting the database to its previous state.
+        """
         if self.sql_connection:
             self.sql_connection.rollback()
 
-    #-------------------------------------------------------------------------------    
     def get_sql_array(self, query):
-        if self.sql_connection == None :
-            mylog('debug','getQueryArray: database is not open')
+        """
+        Executes the given SQL query and returns the result as a list of lists.
+        Args:
+            query (str): The SQL query to execute.
+        Returns:
+            list[list]: A list of rows, where each row is represented as a list of column values.
+                        Returns None if the database connection is not open.
+        """
+        if self.sql_connection is None:
+            mylog('debug', 'getQueryArray: database is not open')
             return
 
         self.sql.execute(query)
         rows = self.sql.fetchall()
-        #self.commitDB()
+        # self.commitDB()
 
-        #  convert result into list of lists
-        arr = []
-        for row in rows:
-            r_temp = []
-            for column in row:
-                r_temp.append(column)
-            arr.append(r_temp)
+        # Convert result into list of lists
+        # Efficiently convert each row to a list
 
-        return arr
+        return [list(row) for row in rows]
 
-
-    #-------------------------------------------------------------------------------
-    def upgradeDB(self):
+    def initDB(self):
         """
-        Check the current tables in the DB and upgrade them if neccessary
+        Initializes and upgrades the database schema for the application.
+        This method performs the following actions within a transaction:
+            - Ensures required columns exist in the 'Devices' table, adding them if missing.
+            - Sets up or updates the 'Settings', 'Parameters', 'Plugins', and 'CurrentScan' tables.
+            - Ensures necessary database views and indexes are present.
+            - Commits the transaction if all operations succeed.
+            - Rolls back the transaction and logs an error if any operation fails.
+            - Initializes the AppEvent database table after schema setup.
+        Raises:
+            RuntimeError: If ensuring any required column fails.
+            Exception: For any other errors encountered during initialization.
         """
-  
-        self.sql.execute("""
-          CREATE TABLE IF NOT EXISTS "Online_History" (
-            "Index"	INTEGER,
-            "Scan_Date"	TEXT,
-            "Online_Devices"	INTEGER,
-            "Down_Devices"	INTEGER,
-            "All_Devices"	INTEGER,
-            "Archived_Devices" INTEGER,
-            "Offline_Devices" INTEGER,
-            PRIMARY KEY("Index" AUTOINCREMENT)
-          );
-          """)
 
-        # -------------------------------------------------------------------  
-        # DevicesNew - cleanup after 6/6/2025 - need to update also DB in the source code!
-        
-        # check if migration already done based on devMac
-        devMac_missing = self.sql.execute ("""
-            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='devMac'
-          """).fetchone()[0] == 0
-        
-        if devMac_missing:
+        try:
+            # Start transactional upgrade
+            self.sql_connection.execute('BEGIN IMMEDIATE;')
 
-          # -------------------------------------------------------------------------
-          # Alter Devices table       
-          # -------------------------------------------------------------------------
-          # dev_Network_Node_MAC_ADDR column
-          dev_Network_Node_MAC_ADDR_missing = self.sql.execute ("""
-              SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_Network_Node_MAC_ADDR'
-            """).fetchone()[0] == 0
+            # Add Devices fields if missing
+            if not ensure_column(self.sql, "Devices", "devFQDN", "TEXT"):
+                raise RuntimeError("ensure_column(devFQDN) failed")
+            if not ensure_column(self.sql, "Devices", "devParentRelType", "TEXT"):
+                raise RuntimeError("ensure_column(devParentRelType) failed")
+            if not ensure_column(self.sql, "Devices", "devReqNicsOnline", "INTEGER"):
+                raise RuntimeError("ensure_column(devReqNicsOnline) failed")
 
-          if dev_Network_Node_MAC_ADDR_missing :
-            mylog('verbose', ["[upgradeDB] Adding dev_Network_Node_MAC_ADDR to the Devices table"])
-            self.sql.execute("""
-              ALTER TABLE "Devices" ADD "dev_Network_Node_MAC_ADDR" TEXT
-            """)
+            # Settings table setup
+            ensure_Settings(self.sql)
 
-          # dev_Network_Node_port column
-          dev_Network_Node_port_missing = self.sql.execute ("""
-              SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_Network_Node_port'
-            """).fetchone()[0] == 0
+            # Parameters tables setup
+            ensure_Parameters(self.sql)
 
-          if dev_Network_Node_port_missing :
-            mylog('verbose', ["[upgradeDB] Adding dev_Network_Node_port to the Devices table"])
-            self.sql.execute("""
-              ALTER TABLE "Devices" ADD "dev_Network_Node_port" INTEGER
-            """)
+            # Plugins tables setup
+            ensure_plugins_tables(self.sql)
 
-          # dev_Icon column
-          dev_Icon_missing = self.sql.execute ("""
-              SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_Icon'
-            """).fetchone()[0] == 0
+            # CurrentScan table setup
+            ensure_CurrentScan(self.sql)
 
-          if dev_Icon_missing :
-            mylog('verbose', ["[upgradeDB] Adding dev_Icon to the Devices table"])
-            self.sql.execute("""
-              ALTER TABLE "Devices" ADD "dev_Icon" TEXT
-            """)
+            # Views
+            ensure_views(self.sql)
 
-          # dev_GUID column
-          dev_GUID_missing = self.sql.execute ("""
-              SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_GUID'
-            """).fetchone()[0] == 0
+            # Indexes
+            ensure_Indexes(self.sql)
 
-          if dev_GUID_missing :
-            mylog('verbose', ["[upgradeDB] Adding dev_GUID to the Devices table"])
-            self.sql.execute("""
-              ALTER TABLE "Devices" ADD "dev_GUID" TEXT
-            """)
+            # commit changes
+            self.commitDB()
+        except Exception as e:
+            mylog('minimal', ['[Database] - initDB ERROR:', e])
+            self.rollbackDB()  # rollback any changes on error
+            raise  # re-raise the exception
 
-          # dev_NetworkSite column
-          dev_NetworkSite_missing = self.sql.execute ("""
-              SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_NetworkSite'
-            """).fetchone()[0] == 0
-
-          if dev_NetworkSite_missing :
-            mylog('verbose', ["[upgradeDB] Adding dev_NetworkSite to the Devices table"])
-            self.sql.execute("""
-              ALTER TABLE "Devices" ADD "dev_NetworkSite" TEXT
-            """)
-
-          # dev_SSID column
-          dev_SSID_missing = self.sql.execute ("""
-              SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_SSID'
-            """).fetchone()[0] == 0
-
-          if dev_SSID_missing :
-            mylog('verbose', ["[upgradeDB] Adding dev_SSID to the Devices table"])
-            self.sql.execute("""
-              ALTER TABLE "Devices" ADD "dev_SSID" TEXT
-            """)
-
-          # SQL query to update missing dev_GUID
-          self.sql.execute(f'''
-              UPDATE Devices
-              SET dev_GUID = {sql_generateGuid}
-              WHERE dev_GUID IS NULL
-          ''')
-
-          # dev_SyncHubNodeName column
-          dev_SyncHubNodeName_missing = self.sql.execute ("""
-              SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_SyncHubNodeName'
-            """).fetchone()[0] == 0
-
-          if dev_SyncHubNodeName_missing :
-            mylog('verbose', ["[upgradeDB] Adding dev_SyncHubNodeName to the Devices table"])
-            self.sql.execute("""
-              ALTER TABLE "Devices" ADD "dev_SyncHubNodeName" TEXT
-            """)
-            
-          # dev_SourcePlugin column
-          dev_SourcePlugin_missing = self.sql.execute ("""
-              SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='dev_SourcePlugin'
-            """).fetchone()[0] == 0
-
-          if dev_SourcePlugin_missing :
-            mylog('verbose', ["[upgradeDB] Adding dev_SourcePlugin to the Devices table"])
-            self.sql.execute("""
-              ALTER TABLE "Devices" ADD "dev_SourcePlugin" TEXT
-            """)
-        
-          # SQL to create Devices table with indexes
-          sql_create_devices_new_tmp = """
-          CREATE TABLE IF NOT EXISTS Devices_tmp (
-              devMac STRING (50) PRIMARY KEY NOT NULL COLLATE NOCASE,
-              devName STRING (50) NOT NULL DEFAULT "(unknown)",
-              devOwner STRING (30) DEFAULT "(unknown)" NOT NULL,
-              devType STRING (30),
-              devVendor STRING (250),
-              devFavorite BOOLEAN CHECK (devFavorite IN (0, 1)) DEFAULT (0) NOT NULL,
-              devGroup STRING (10),
-              devComments TEXT,
-              devFirstConnection DATETIME NOT NULL,
-              devLastConnection DATETIME NOT NULL,
-              devLastIP STRING (50) NOT NULL COLLATE NOCASE,
-              devStaticIP BOOLEAN DEFAULT (0) NOT NULL CHECK (devStaticIP IN (0, 1)),
-              devScan INTEGER DEFAULT (1) NOT NULL,
-              devLogEvents BOOLEAN NOT NULL DEFAULT (1) CHECK (devLogEvents IN (0, 1)),
-              devAlertEvents BOOLEAN NOT NULL DEFAULT (1) CHECK (devAlertEvents IN (0, 1)),
-              devAlertDown BOOLEAN NOT NULL DEFAULT (0) CHECK (devAlertDown IN (0, 1)),
-              devSkipRepeated INTEGER DEFAULT 0 NOT NULL,
-              devLastNotification DATETIME,
-              devPresentLastScan BOOLEAN NOT NULL DEFAULT (0) CHECK (devPresentLastScan IN (0, 1)),
-              devIsNew BOOLEAN NOT NULL DEFAULT (1) CHECK (devIsNew IN (0, 1)),
-              devLocation STRING (250) COLLATE NOCASE,
-              devIsArchived BOOLEAN NOT NULL DEFAULT (0) CHECK (devIsArchived IN (0, 1)),
-              devParentMAC TEXT,
-              devParentPort INTEGER,
-              devIcon TEXT,
-              devGUID TEXT,
-              devSite TEXT,
-              devSSID TEXT,
-              devSyncHubNode TEXT,
-              devSourcePlugin TEXT
-          );
-
-          CREATE INDEX IF NOT EXISTS IDX_dev_PresentLastScan ON Devices_tmp (devPresentLastScan);
-          CREATE INDEX IF NOT EXISTS IDX_dev_FirstConnection ON Devices_tmp (devFirstConnection);
-          CREATE INDEX IF NOT EXISTS IDX_dev_AlertDeviceDown ON Devices_tmp (devAlertDown);
-          CREATE INDEX IF NOT EXISTS IDX_dev_StaticIP ON Devices_tmp (devStaticIP);
-          CREATE INDEX IF NOT EXISTS IDX_dev_ScanCycle ON Devices_tmp (devScan);
-          CREATE INDEX IF NOT EXISTS IDX_dev_Favorite ON Devices_tmp (devFavorite);
-          CREATE INDEX IF NOT EXISTS IDX_dev_LastIP ON Devices_tmp (devLastIP);
-          CREATE INDEX IF NOT EXISTS IDX_dev_NewDevice ON Devices_tmp (devIsNew);
-          CREATE INDEX IF NOT EXISTS IDX_dev_Archived ON Devices_tmp (devIsArchived);
-          """
-
-          # Execute the creation of the Devices table and indexes
-          self.sql.executescript(sql_create_devices_new_tmp)
-          
-          
-          # copy over data
-          sql_copy_from_devices = """
-            INSERT OR IGNORE INTO Devices_tmp (
-                devMac,
-                devName,
-                devOwner,
-                devType,
-                devVendor,
-                devFavorite,
-                devGroup,
-                devComments,
-                devFirstConnection,
-                devLastConnection,
-                devLastIP,
-                devStaticIP,
-                devScan,
-                devLogEvents,
-                devAlertEvents,
-                devAlertDown,
-                devSkipRepeated,
-                devLastNotification,
-                devPresentLastScan,
-                devIsNew,
-                devLocation,
-                devIsArchived,
-                devParentMAC,
-                devParentPort,
-                devIcon,
-                devGUID,
-                devSite,
-                devSSID,
-                devSyncHubNode,
-                devSourcePlugin
-            )
-            SELECT
-                dev_MAC AS devMac,
-                dev_Name AS devName,
-                dev_Owner AS devOwner,
-                dev_DeviceType AS devType,
-                dev_Vendor AS devVendor,
-                dev_Favorite AS devFavorite,
-                dev_Group AS devGroup,
-                dev_Comments AS devComments,
-                dev_FirstConnection AS devFirstConnection,
-                dev_LastConnection AS devLastConnection,
-                dev_LastIP AS devLastIP,
-                dev_StaticIP AS devStaticIP,
-                dev_ScanCycle AS devScan,
-                dev_LogEvents AS devLogEvents,
-                dev_AlertEvents AS devAlertEvents,
-                dev_AlertDeviceDown AS devAlertDown,
-                dev_SkipRepeated AS devSkipRepeated,
-                dev_LastNotification AS devLastNotification,
-                dev_PresentLastScan AS devPresentLastScan,
-                dev_NewDevice AS devIsNew,
-                dev_Location AS devLocation,
-                dev_Archived AS devIsArchived,
-                dev_Network_Node_MAC_ADDR AS devParentMAC,
-                dev_Network_Node_port AS devParentPort,
-                dev_Icon AS devIcon,
-                dev_GUID AS devGUID,
-                dev_NetworkSite AS devSite,
-                dev_SSID AS devSSID,
-                dev_SyncHubNodeName AS devSyncHubNode,
-                dev_SourcePlugin AS devSourcePlugin
-            FROM Devices;
-          """
-          
-          self.sql.execute(sql_copy_from_devices)
-          
-          
-          self.sql.execute(""" DROP TABLE Devices;""")
-          # SQL to create Devices table with indexes
-          sql_create_devices_new = """
-          CREATE TABLE IF NOT EXISTS Devices (
-              devMac STRING (50) PRIMARY KEY NOT NULL COLLATE NOCASE,
-              devName STRING (50) NOT NULL DEFAULT "(unknown)",
-              devOwner STRING (30) DEFAULT "(unknown)" NOT NULL,
-              devType STRING (30),
-              devVendor STRING (250),
-              devFavorite BOOLEAN CHECK (devFavorite IN (0, 1)) DEFAULT (0) NOT NULL,
-              devGroup STRING (10),
-              devComments TEXT,
-              devFirstConnection DATETIME NOT NULL,
-              devLastConnection DATETIME NOT NULL,
-              devLastIP STRING (50) NOT NULL COLLATE NOCASE,
-              devStaticIP BOOLEAN DEFAULT (0) NOT NULL CHECK (devStaticIP IN (0, 1)),
-              devScan INTEGER DEFAULT (1) NOT NULL,
-              devLogEvents BOOLEAN NOT NULL DEFAULT (1) CHECK (devLogEvents IN (0, 1)),
-              devAlertEvents BOOLEAN NOT NULL DEFAULT (1) CHECK (devAlertEvents IN (0, 1)),
-              devAlertDown BOOLEAN NOT NULL DEFAULT (0) CHECK (devAlertDown IN (0, 1)),
-              devSkipRepeated INTEGER DEFAULT 0 NOT NULL,
-              devLastNotification DATETIME,
-              devPresentLastScan BOOLEAN NOT NULL DEFAULT (0) CHECK (devPresentLastScan IN (0, 1)),
-              devIsNew BOOLEAN NOT NULL DEFAULT (1) CHECK (devIsNew IN (0, 1)),
-              devLocation STRING (250) COLLATE NOCASE,
-              devIsArchived BOOLEAN NOT NULL DEFAULT (0) CHECK (devIsArchived IN (0, 1)),
-              devParentMAC TEXT,
-              devParentPort INTEGER,
-              devIcon TEXT,
-              devGUID TEXT,
-              devSite TEXT,
-              devSSID TEXT,
-              devSyncHubNode TEXT,
-              devSourcePlugin TEXT
-          );
-
-          CREATE INDEX IF NOT EXISTS IDX_dev_PresentLastScan ON Devices (devPresentLastScan);
-          CREATE INDEX IF NOT EXISTS IDX_dev_FirstConnection ON Devices (devFirstConnection);
-          CREATE INDEX IF NOT EXISTS IDX_dev_AlertDeviceDown ON Devices (devAlertDown);
-          CREATE INDEX IF NOT EXISTS IDX_dev_StaticIP ON Devices (devStaticIP);
-          CREATE INDEX IF NOT EXISTS IDX_dev_ScanCycle ON Devices (devScan);
-          CREATE INDEX IF NOT EXISTS IDX_dev_Favorite ON Devices (devFavorite);
-          CREATE INDEX IF NOT EXISTS IDX_dev_LastIP ON Devices (devLastIP);
-          CREATE INDEX IF NOT EXISTS IDX_dev_NewDevice ON Devices (devIsNew);
-          CREATE INDEX IF NOT EXISTS IDX_dev_Archived ON Devices (devIsArchived);
-          """
-
-          # Execute the creation of the Devices table and indexes
-          self.sql.executescript(sql_create_devices_new)
-          
-          # copy over data
-          sql_copy_from_devices_tmp = """
-            INSERT OR IGNORE INTO Devices (
-                devMac,
-                devName,
-                devOwner,
-                devType,
-                devVendor,
-                devFavorite,
-                devGroup,
-                devComments,
-                devFirstConnection,
-                devLastConnection,
-                devLastIP,
-                devStaticIP,
-                devScan,
-                devLogEvents,
-                devAlertEvents,
-                devAlertDown,
-                devSkipRepeated,
-                devLastNotification,
-                devPresentLastScan,
-                devIsNew,
-                devLocation,
-                devIsArchived,
-                devParentMAC,
-                devParentPort,
-                devIcon,
-                devGUID,
-                devSite,
-                devSSID,
-                devSyncHubNode,
-                devSourcePlugin
-            )
-            SELECT
-                devMac,
-                devName,
-                devOwner,
-                devType,
-                devVendor,
-                devFavorite,
-                devGroup,
-                devComments,
-                devFirstConnection,
-                devLastConnection,
-                devLastIP,
-                devStaticIP,
-                devScan,
-                devLogEvents,
-                devAlertEvents,
-                devAlertDown,
-                devSkipRepeated,
-                devLastNotification,
-                devPresentLastScan,
-                devIsNew,
-                devLocation,
-                devIsArchived,
-                devParentMAC,
-                devParentPort,
-                devIcon,
-                devGUID,
-                devSite,
-                devSSID,
-                devSyncHubNode,
-                devSourcePlugin
-            FROM Devices_tmp;
-          """
-          
-          self.sql.execute(sql_copy_from_devices_tmp)
-          self.sql.execute(""" DROP TABLE Devices_tmp;""")
-        
-        
-        # VIEWS
-        
-        self.sql.execute(""" DROP VIEW IF EXISTS Events_Devices;""")
-        self.sql.execute(""" CREATE VIEW Events_Devices AS 
-                            SELECT * 
-                            FROM Events 
-                            LEFT JOIN Devices ON eve_MAC = devMac;
-                          """)
-        
-        
-        self.sql.execute(""" DROP VIEW IF EXISTS LatestEventsPerMAC;""")
-        self.sql.execute("""CREATE VIEW LatestEventsPerMAC AS
-                                WITH RankedEvents AS (
-                                    SELECT 
-                                        e.*,
-                                        ROW_NUMBER() OVER (PARTITION BY e.eve_MAC ORDER BY e.eve_DateTime DESC) AS row_num
-                                    FROM Events AS e
-                                )
-                                SELECT 
-                                    e.*, 
-                                    d.*, 
-                                    c.*
-                                FROM RankedEvents AS e
-                                LEFT JOIN Devices AS d ON e.eve_MAC = d.devMac
-                                INNER JOIN CurrentScan AS c ON e.eve_MAC = c.cur_MAC
-                                WHERE e.row_num = 1;""")
-        
-        self.sql.execute(""" DROP VIEW IF EXISTS Sessions_Devices;""")
-        self.sql.execute("""CREATE VIEW Sessions_Devices AS SELECT * FROM Sessions LEFT JOIN "Devices" ON ses_MAC = devMac;""")
-
-
-        # add fields if missing
-
-        # devCustomProps column
-        devCustomProps_missing = self.sql.execute ("""
-            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Devices') WHERE name='devCustomProps'
-          """).fetchone()[0] == 0
-
-        if devCustomProps_missing :
-          mylog('verbose', ["[upgradeDB] Adding devCustomProps to the Devices table"])
-          self.sql.execute("""
-            ALTER TABLE "Devices" ADD "devCustomProps" TEXT
-          """)
-        
-        # -------------------------------------------------------------------------
-        # Settings table setup
-        # -------------------------------------------------------------------------
-
-        
-        # Re-creating Settings table
-        mylog('verbose', ["[upgradeDB] Re-creating Settings table"])
-
-        self.sql.execute(""" DROP TABLE IF EXISTS Settings;""")
-        self.sql.execute("""
-            CREATE TABLE "Settings" (
-            "setKey"	        TEXT,
-            "setName"	        TEXT,
-            "setDescription"	TEXT,
-            "setType"         TEXT,
-            "setOptions"      TEXT,
-            "setGroup"	          TEXT,
-            "setValue"	      TEXT,
-            "setEvents"	        TEXT,
-            "setOverriddenByEnv" INTEGER
-            );
-            """)
-
-
-        # Create Pholus_Scan table if missing
-        mylog('verbose', ["[upgradeDB] Removing Pholus_Scan table"])
-        self.sql.execute("""DROP TABLE IF EXISTS Pholus_Scan""")
-
-
-        # -------------------------------------------------------------------------
-        # Parameters table setup
-        # -------------------------------------------------------------------------
-
-        # Re-creating Parameters table
-        mylog('verbose', ["[upgradeDB] Re-creating Parameters table"])
-        self.sql.execute("DROP TABLE Parameters;")
-
-        self.sql.execute("""
-          CREATE TABLE "Parameters" (
-            "par_ID" TEXT PRIMARY KEY,
-            "par_Value"	TEXT
-          );
-          """)        
-       
-
-        # -------------------------------------------------------------------------
-        # Plugins tables setup
-        # -------------------------------------------------------------------------
-
-        # Plugin state
-        sql_Plugins_Objects = """ CREATE TABLE IF NOT EXISTS Plugins_Objects(
-                                    "Index"	          INTEGER,
-                                    Plugin TEXT NOT NULL,
-                                    ObjectGUID TEXT,
-                                    Object_PrimaryID TEXT NOT NULL,
-                                    Object_SecondaryID TEXT NOT NULL,
-                                    DateTimeCreated TEXT NOT NULL,
-                                    DateTimeChanged TEXT NOT NULL,
-                                    Watched_Value1 TEXT NOT NULL,
-                                    Watched_Value2 TEXT NOT NULL,
-                                    Watched_Value3 TEXT NOT NULL,
-                                    Watched_Value4 TEXT NOT NULL,
-                                    Status TEXT NOT NULL,
-                                    Extra TEXT NOT NULL,
-                                    UserData TEXT NOT NULL,
-                                    ForeignKey TEXT NOT NULL,
-                                    SyncHubNodeName TEXT,
-                                    "HelpVal1" TEXT,
-                                    "HelpVal2" TEXT,
-                                    "HelpVal3" TEXT,
-                                    "HelpVal4" TEXT,
-                                    PRIMARY KEY("Index" AUTOINCREMENT)
-                        ); """
-        self.sql.execute(sql_Plugins_Objects)
-
-        # -----------------------------------------
-        # REMOVE after 6/6/2025 - START
-        # -----------------------------------------
-        # syncHubNodeName column
-        plug_SyncHubNodeName_missing = self.sql.execute ("""
-            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Plugins_Objects') WHERE name='SyncHubNodeName'
-          """).fetchone()[0] == 0
-
-        if plug_SyncHubNodeName_missing :
-          mylog('verbose', ["[upgradeDB] Adding SyncHubNodeName to the Plugins_Objects table"])
-          self.sql.execute("""
-            ALTER TABLE "Plugins_Objects" ADD "SyncHubNodeName" TEXT
-          """)
-          
-        # helper columns HelpVal1-4
-        plug_HelpValues_missing = self.sql.execute ("""
-            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Plugins_Objects') WHERE name='HelpVal1'
-          """).fetchone()[0] == 0
-
-        if plug_HelpValues_missing :
-          mylog('verbose', ["[upgradeDB] Adding HelpVal1-4 to the Plugins_Objects table"])
-          self.sql.execute('ALTER TABLE "Plugins_Objects" ADD COLUMN "HelpVal1" TEXT')
-          self.sql.execute('ALTER TABLE "Plugins_Objects" ADD COLUMN "HelpVal2" TEXT')
-          self.sql.execute('ALTER TABLE "Plugins_Objects" ADD COLUMN "HelpVal3" TEXT')
-          self.sql.execute('ALTER TABLE "Plugins_Objects" ADD COLUMN "HelpVal4" TEXT')
-
-        # plug_ObjectGUID_missing column
-        plug_ObjectGUID_missing = self.sql.execute ("""
-            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Plugins_Objects') WHERE name='ObjectGUID'
-          """).fetchone()[0] == 0
-
-        if plug_ObjectGUID_missing :
-          mylog('verbose', ["[upgradeDB] Adding ObjectGUID to the Plugins_Objects table"])
-          self.sql.execute("""
-            ALTER TABLE "Plugins_Objects" ADD "ObjectGUID" TEXT
-          """)
-          
-          
-        # -----------------------------------------
-        # REMOVE after 6/6/2025 - END
-        # -----------------------------------------
-
-        # Plugin execution results
-        sql_Plugins_Events = """ CREATE TABLE IF NOT EXISTS Plugins_Events(
-                                    "Index"	          INTEGER,
-                                    Plugin TEXT NOT NULL,
-                                    Object_PrimaryID TEXT NOT NULL,
-                                    Object_SecondaryID TEXT NOT NULL,
-                                    DateTimeCreated TEXT NOT NULL,
-                                    DateTimeChanged TEXT NOT NULL,
-                                    Watched_Value1 TEXT NOT NULL,
-                                    Watched_Value2 TEXT NOT NULL,
-                                    Watched_Value3 TEXT NOT NULL,
-                                    Watched_Value4 TEXT NOT NULL,
-                                    Status TEXT NOT NULL,
-                                    Extra TEXT NOT NULL,
-                                    UserData TEXT NOT NULL,
-                                    ForeignKey TEXT NOT NULL,
-                                    SyncHubNodeName TEXT,
-                                    "HelpVal1" TEXT,
-                                    "HelpVal2" TEXT,
-                                    "HelpVal3" TEXT,
-                                    "HelpVal4" TEXT,
-                                    PRIMARY KEY("Index" AUTOINCREMENT)
-                        ); """
-        self.sql.execute(sql_Plugins_Events)
-
-        # -----------------------------------------
-        # REMOVE after 6/6/2025 - START
-        # -----------------------------------------
-        
-        # syncHubNodeName column
-        plug_SyncHubNodeName_missing = self.sql.execute ("""
-            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Plugins_Events') WHERE name='SyncHubNodeName'
-          """).fetchone()[0] == 0
-
-        if plug_SyncHubNodeName_missing :
-          mylog('verbose', ["[upgradeDB] Adding SyncHubNodeName to the Plugins_Events table"])
-          self.sql.execute("""
-            ALTER TABLE "Plugins_Events" ADD "SyncHubNodeName" TEXT
-          """)
-          
-        # helper columns HelpVal1-4
-        plug_HelpValues_missing = self.sql.execute ("""
-            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Plugins_Events') WHERE name='HelpVal1'
-          """).fetchone()[0] == 0
-
-        if plug_HelpValues_missing :
-          mylog('verbose', ["[upgradeDB] Adding HelpVal1-4 to the Plugins_Events table"])
-          self.sql.execute('ALTER TABLE "Plugins_Events" ADD COLUMN "HelpVal1" TEXT')
-          self.sql.execute('ALTER TABLE "Plugins_Events" ADD COLUMN "HelpVal2" TEXT')
-          self.sql.execute('ALTER TABLE "Plugins_Events" ADD COLUMN "HelpVal3" TEXT')
-          self.sql.execute('ALTER TABLE "Plugins_Events" ADD COLUMN "HelpVal4" TEXT')
-
-        # plug_ObjectGUID_missing column
-        plug_ObjectGUID_missing = self.sql.execute ("""
-            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Plugins_Events') WHERE name='ObjectGUID'
-          """).fetchone()[0] == 0
-
-        if plug_ObjectGUID_missing :
-          mylog('verbose', ["[upgradeDB] Adding ObjectGUID to the Plugins_Events table"])
-          self.sql.execute("""
-            ALTER TABLE "Plugins_Events" ADD "ObjectGUID" TEXT
-          """)
-          
-        # -----------------------------------------
-        # REMOVE after 6/6/2025 - END
-        # -----------------------------------------
-
-
-        # Plugin execution history
-        sql_Plugins_History = """ CREATE TABLE IF NOT EXISTS Plugins_History(
-                                    "Index"	          INTEGER,
-                                    Plugin TEXT NOT NULL,
-                                    Object_PrimaryID TEXT NOT NULL,
-                                    Object_SecondaryID TEXT NOT NULL,
-                                    DateTimeCreated TEXT NOT NULL,
-                                    DateTimeChanged TEXT NOT NULL,
-                                    Watched_Value1 TEXT NOT NULL,
-                                    Watched_Value2 TEXT NOT NULL,
-                                    Watched_Value3 TEXT NOT NULL,
-                                    Watched_Value4 TEXT NOT NULL,
-                                    Status TEXT NOT NULL,
-                                    Extra TEXT NOT NULL,
-                                    UserData TEXT NOT NULL,
-                                    ForeignKey TEXT NOT NULL,
-                                    SyncHubNodeName TEXT,
-                                    "HelpVal1" TEXT,
-                                    "HelpVal2" TEXT,
-                                    "HelpVal3" TEXT,
-                                    "HelpVal4" TEXT,
-                                    PRIMARY KEY("Index" AUTOINCREMENT)
-                        ); """
-        self.sql.execute(sql_Plugins_History)
-        
-        # -----------------------------------------
-        # REMOVE after 6/6/2025 - START
-        # -----------------------------------------
-
-        # syncHubNodeName column
-        plug_SyncHubNodeName_missing = self.sql.execute ("""
-            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Plugins_History') WHERE name='SyncHubNodeName'
-          """).fetchone()[0] == 0
-
-        if plug_SyncHubNodeName_missing :
-          mylog('verbose', ["[upgradeDB] Adding SyncHubNodeName to the Plugins_History table"])
-          self.sql.execute("""
-            ALTER TABLE "Plugins_History" ADD "SyncHubNodeName" TEXT
-          """)
-          
-        # helper columns HelpVal1-4
-        plug_HelpValues_missing = self.sql.execute ("""
-            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Plugins_History') WHERE name='HelpVal1'
-          """).fetchone()[0] == 0
-
-        if plug_HelpValues_missing :
-          mylog('verbose', ["[upgradeDB] Adding HelpVal1-4 to the Plugins_History table"])
-          self.sql.execute('ALTER TABLE "Plugins_History" ADD COLUMN "HelpVal1" TEXT')
-          self.sql.execute('ALTER TABLE "Plugins_History" ADD COLUMN "HelpVal2" TEXT')
-          self.sql.execute('ALTER TABLE "Plugins_History" ADD COLUMN "HelpVal3" TEXT')
-          self.sql.execute('ALTER TABLE "Plugins_History" ADD COLUMN "HelpVal4" TEXT')
-
-
-        # plug_ObjectGUID_missing column
-        plug_ObjectGUID_missing = self.sql.execute ("""
-            SELECT COUNT(*) AS CNTREC FROM pragma_table_info('Plugins_History') WHERE name='ObjectGUID'
-          """).fetchone()[0] == 0
-
-        if plug_ObjectGUID_missing :
-          mylog('verbose', ["[upgradeDB] Adding ObjectGUID to the Plugins_History table"])
-          self.sql.execute("""
-            ALTER TABLE "Plugins_History" ADD "ObjectGUID" TEXT
-          """)
-
-        # -----------------------------------------
-        # REMOVE after 6/6/2025 - END
-        # -----------------------------------------
-
-        # -------------------------------------------------------------------------
-        # Plugins_Language_Strings table setup
-        # -------------------------------------------------------------------------
-
-        # Dynamically generated language strings
-        self.sql.execute("DROP TABLE IF EXISTS Plugins_Language_Strings;")
-        self.sql.execute(""" CREATE TABLE IF NOT EXISTS Plugins_Language_Strings(
-                                "Index"	          INTEGER,
-                                Language_Code TEXT NOT NULL,
-                                String_Key TEXT NOT NULL,
-                                String_Value TEXT NOT NULL,
-                                Extra TEXT NOT NULL,
-                                PRIMARY KEY("Index" AUTOINCREMENT)
-                        ); """)
-
-        self.commitDB()        
-
- 
-
-        # -------------------------------------------------------------------------
-        # CurrentScan table setup
-        # -------------------------------------------------------------------------
-
-        # indicates, if CurrentScan table is available
-        # 🐛 CurrentScan DEBUG: comment out below when debugging to keep the CurrentScan table after restarts/scan finishes
-        self.sql.execute("DROP TABLE IF EXISTS CurrentScan;")
-        self.sql.execute(""" CREATE TABLE IF NOT EXISTS CurrentScan (                                
-                                cur_MAC STRING(50) NOT NULL COLLATE NOCASE,
-                                cur_IP STRING(50) NOT NULL COLLATE NOCASE,
-                                cur_Vendor STRING(250),
-                                cur_ScanMethod STRING(10),
-                                cur_Name STRING(250),
-                                cur_LastQuery STRING(250),
-                                cur_DateTime STRING(250),
-                                cur_SyncHubNodeName STRING(50),
-                                cur_NetworkSite STRING(250),
-                                cur_SSID STRING(250),
-                                cur_NetworkNodeMAC STRING(250),
-                                cur_PORT STRING(250),
-                                cur_Type STRING(250),
-                                UNIQUE(cur_MAC)
-                            );
-                        """)
-
-        self.commitDB()        
-
-        # -------------------------------------------------------------------------
-        # Create the LatestEventsPerMAC view
-        # -------------------------------------------------------------------------
-
-        # Dynamically generated language strings
-        self.sql.execute(""" CREATE VIEW IF NOT EXISTS LatestEventsPerMAC AS
-                                WITH RankedEvents AS (
-                                    SELECT 
-                                        e.*,
-                                        ROW_NUMBER() OVER (PARTITION BY e.eve_MAC ORDER BY e.eve_DateTime DESC) AS row_num
-                                    FROM Events AS e
-                                )
-                                SELECT 
-                                    e.*, 
-                                    d.*, 
-                                    c.*
-                                FROM RankedEvents AS e
-                                LEFT JOIN Devices AS d ON e.eve_MAC = d.devMac
-                                INNER JOIN CurrentScan AS c ON e.eve_MAC = c.cur_MAC
-                                WHERE e.row_num = 1;
-                            """)
-
-        # handling the Convert_Events_to_Sessions / Sessions screens         
-        self.sql.execute("""DROP VIEW IF EXISTS Convert_Events_to_Sessions;""")
-        self.sql.execute("""CREATE VIEW Convert_Events_to_Sessions AS  SELECT EVE1.eve_MAC,
-                                      EVE1.eve_IP,
-                                      EVE1.eve_EventType AS eve_EventTypeConnection,
-                                      EVE1.eve_DateTime AS eve_DateTimeConnection,
-                                      CASE WHEN EVE2.eve_EventType IN ('Disconnected', 'Device Down') OR
-                                                EVE2.eve_EventType IS NULL THEN EVE2.eve_EventType ELSE '<missing event>' END AS eve_EventTypeDisconnection,
-                                      CASE WHEN EVE2.eve_EventType IN ('Disconnected', 'Device Down') THEN EVE2.eve_DateTime ELSE NULL END AS eve_DateTimeDisconnection,
-                                      CASE WHEN EVE2.eve_EventType IS NULL THEN 1 ELSE 0 END AS eve_StillConnected,
-                                      EVE1.eve_AdditionalInfo
-                                  FROM Events AS EVE1
-                                      LEFT JOIN
-                                      Events AS EVE2 ON EVE1.eve_PairEventRowID = EVE2.RowID
-                                WHERE EVE1.eve_EventType IN ('New Device', 'Connected','Down Reconnected')
-                            UNION
-                                SELECT eve_MAC,
-                                      eve_IP,
-                                      '<missing event>' AS eve_EventTypeConnection,
-                                      NULL AS eve_DateTimeConnection,
-                                      eve_EventType AS eve_EventTypeDisconnection,
-                                      eve_DateTime AS eve_DateTimeDisconnection,
-                                      0 AS eve_StillConnected,
-                                      eve_AdditionalInfo
-                                  FROM Events AS EVE1
-                                WHERE (eve_EventType = 'Device Down' OR
-                                        eve_EventType = 'Disconnected') AND
-                                      EVE1.eve_PairEventRowID IS NULL;
-                          """)
-
-        self.commitDB()     
-        
         # Init the AppEvent database table
         AppEvent_obj(self)
 
-        # -------------------------------------------------------------------------
-        #  DELETING OBSOLETE TABLES - to remove with updated db file after 9/9/2024
-        # -------------------------------------------------------------------------        
 
-        # Deletes obsolete ScanCycles
-        self.sql.execute(""" DROP TABLE IF EXISTS ScanCycles;""")
-        self.sql.execute(""" DROP TABLE IF EXISTS DHCP_Leases;""")
-        self.sql.execute(""" DROP TABLE IF EXISTS PiHole_Network;""")
+    # #-------------------------------------------------------------------------------
+    # def get_table_as_json(self, sqlQuery):
 
-        self.commitDB()
+    #     # mylog('debug',[ '[Database] - get_table_as_json - Query: ', sqlQuery])
+    #     try:
+    #         self.sql.execute(sqlQuery)
+    #         columnNames = list(map(lambda x: x[0], self.sql.description))
+    #         rows = self.sql.fetchall()
+    #     except sqlite3.Error as e:
+    #         mylog('verbose',[ '[Database] - SQL ERROR: ', e])
+    #         return json_obj({}, []) # return empty object
 
-        # -------------------------------------------------------------------------
-        #  DELETING OBSOLETE TABLES - to remove with updated db file after 9/9/2024
-        # -------------------------------------------------------------------------
+    #     result = {"data":[]}
+    #     for row in rows:
+    #         tmp = row_to_json(columnNames, row)
+    #         result["data"].append(tmp)
 
+    #     # mylog('debug',[ '[Database] - get_table_as_json - returning ', len(rows), " rows with columns: ", columnNames])
+    #     # mylog('debug',[ '[Database] - get_table_as_json - returning json ', json.dumps(result) ])
+    #     return json_obj(result, columnNames)
 
-    #-------------------------------------------------------------------------------
-    def get_table_as_json(self, sqlQuery):
-
-        # mylog('debug',[ '[Database] - get_table_as_json - Query: ', sqlQuery])
+    def get_table_as_json(self, sqlQuery, parameters=None):
+        """
+        Wrapper to use the central get_table_as_json helper.
+        
+        Args:
+            sqlQuery (str): The SQL query to execute.
+            parameters (dict, optional): Named parameters for the SQL query.
+        """
         try:
-            self.sql.execute(sqlQuery)
-            columnNames = list(map(lambda x: x[0], self.sql.description))
-            rows = self.sql.fetchall()
-        except sqlite3.Error as e:
-            mylog('verbose',[ '[Database] - SQL ERROR: ', e])
-            return json_obj({}, []) # return empty object
-
-        result = {"data":[]}
-        for row in rows:
-            tmp = row_to_json(columnNames, row)
-            result["data"].append(tmp)
+            result = get_table_json(self.sql, sqlQuery, parameters)
+        except Exception as e:
+            mylog('minimal', ['[Database] - get_table_as_json ERROR:', e])
+            return json_obj({}, [])  # return empty object on failure
 
         # mylog('debug',[ '[Database] - get_table_as_json - returning ', len(rows), " rows with columns: ", columnNames])
         # mylog('debug',[ '[Database] - get_table_as_json - returning json ', json.dumps(result) ])
-        return json_obj(result, columnNames)
+
+        return result
 
     #-------------------------------------------------------------------------------
     # referece from here: https://codereview.stackexchange.com/questions/241043/interface-class-for-sqlite-databases
@@ -896,37 +230,84 @@ class DB():
             rows = self.sql.fetchall()
             return rows
         except AssertionError:
-            mylog('verbose',[ '[Database] - ERROR: inconsistent query and/or arguments.', query, " params: ", args])
+            mylog('minimal', [ '[Database] - ERROR: inconsistent query and/or arguments.', query, " params: ", args])
         except sqlite3.Error as e:
-            mylog('verbose',[ '[Database] - SQL ERROR: ', e])
+            mylog('minimal', [ '[Database] - SQL ERROR: ', e])
         return None
 
     def read_one(self, query, *args):
-        """ 
+        """
         call read() with the same arguments but only returns the first row.
         should only be used when there is a single row result expected
         """
-
-        mylog('debug',[ '[Database] - Read One: ', query, " params: ", args])
+        mylog('debug', ['[Database] - Read One: ', query, " params: ", args])
         rows = self.read(query, *args)
+        if not rows:
+            return None
         if len(rows) == 1:
             return rows[0]
-                
-        if len(rows) > 1: 
-            mylog('verbose',[ '[Database] - Warning!: query returns multiple rows, only first row is passed on!', query, " params: ", args])
+        if len(rows) > 1:
+            mylog('verbose', ['[Database] - Warning!: query returns multiple rows, only first row is passed on!', query, " params: ", args])
             return rows[0]
         # empty result set
         return None
 
 
-
-#-------------------------------------------------------------------------------
 def get_device_stats(db):
+    """
+    Retrieve device statistics from the database.
+
+    Args:
+        db: A database connection or handler object that provides a `read_one` method.
+
+    Returns:
+        The result of the `read_one` method executed with the `sql_devices_stats` query,
+        typically containing statistics such as the number of devices online, down, all,
+        archived, new, or unknown.
+
+    Raises:
+        Any exceptions raised by the underlying database handler.
+    """
     # columns = ["online","down","all","archived","new","unknown"]
     return db.read_one(sql_devices_stats)
-#-------------------------------------------------------------------------------
+
+
 def get_all_devices(db):
+    """
+    Retrieve all devices from the database.
+
+    Args:
+        db: A database connection or handler object that provides a `read` method.
+
+    Returns:
+        The result of executing the `sql_devices_all` query using the database handler.
+    """
     return db.read(sql_devices_all)
 
-#-------------------------------------------------------------------------------
 
+def get_array_from_sql_rows(rows):
+    """
+    Converts a sequence of SQL query result rows into a list of lists.
+    Each row can be an instance of sqlite3.Row, a tuple, a list, or a single value.
+    - If the row is a sqlite3.Row, it is converted to a list.
+    - If the row is a tuple or list, it is converted to a list.
+    - If the row is a single value, it is wrapped in a list.
+    Args:
+        rows (Iterable): An iterable of rows returned from an SQL query.
+    Returns:
+        list: A list of lists, where each inner list represents a row of data.
+    """
+    # Convert result into list of lists
+    return [list(row) if isinstance(row, (sqlite3.Row, tuple, list)) else [row] for row in rows]
+
+
+def get_temp_db_connection():
+    """
+    Returns a new SQLite connection with Row factory.
+    Should be used per-thread/request to avoid cross-thread issues.
+    """
+    conn = sqlite3.connect(fullDbPath, timeout=5, isolation_level=None)
+    conn.execute("PRAGMA journal_mode=WAL;")
+    conn.execute("PRAGMA busy_timeout=5000;")  # 5s wait before giving up
+    conn.row_factory = sqlite3.Row
+    return conn

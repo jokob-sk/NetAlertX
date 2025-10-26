@@ -17,18 +17,21 @@
         <h3 class="box-title"><?= lang('Gen_Selected_Devices');?></h3>
 
       </div>
-    <div class="deviceSelector col-md-11 col-sm-11" style="z-index:5"></div> 
-
-    <div class="col-md-1"> 
-      <button type="button" class="btn btn-default col-md-12" onclick="markAllSelected()" title="<?= lang('Gen_Add_All');?>"> 
-        <i class="fa-solid fa-circle-check"></i>  
-      </button>
-      <button type="button" class="btn btn-default col-md-12"  onclick="markAllNotSelected()" title="<?= lang('Gen_Remove_All');?>"> 
-        <i class="fa-solid fa-circle-xmark"></i>  
-      </button>
+    <div class="deviceSelector col-md-11 col-sm-11" style="z-index:5">
+      <div class="db_info_table_row  col-sm-12" > 
+        <div class="form-group" > 
+          <div class="input-group col-sm-12 " > 
+            <select class="form-control select2 select2-hidden-accessible" multiple=""  style="width: 100%;"  tabindex="-1" aria-hidden="true">
+            
+            </select>
+          </div>
+        </div>
+      </div>
+    </div> 
+    <div class="col-md-1 hoverHighlight">       
+        <i class="fa-solid fa-circle-check hoverHighlight pointer" onclick="markAllSelected()" title="<?= lang('Gen_Add_All');?>"></i>        
+        <i class="fa-solid fa-circle-xmark hoverHighlight pointer" onclick="markAllNotSelected()" title="<?= lang('Gen_Remove_All');?>"></i>        
     </div>
-
-
   </div>
 
 
@@ -64,10 +67,6 @@
     </div>
   </div>
 
-</div>
-
-
-
 
 <script defer>
   
@@ -77,11 +76,11 @@
 
     // some race condition, need to implement delay
     setTimeout(() => {
-      $.get('/php/server/query_json.php', { file: 'table_settings.json', nocache: Date.now() }, function(res) {    
+      $.get('php/server/query_json.php', { file: 'table_settings.json', nocache: Date.now() }, function(res) {    
         
         settingsData = res["data"];
 
-        excludedColumns = ["NEWDEV_devMac", "NEWDEV_devFirstConnection", "NEWDEV_devLastConnection", "NEWDEV_devLastNotification", "NEWDEV_devScan", "NEWDEV_devPresentLastScan", "NEWDEV_devCustomProps" ]
+        excludedColumns = ["NEWDEV_devMac", "NEWDEV_devFirstConnection", "NEWDEV_devLastConnection", "NEWDEV_devLastNotification", "NEWDEV_devScan", "NEWDEV_devPresentLastScan", "NEWDEV_devCustomProps", "NEWDEV_devChildrenNicsDynamic", "NEWDEV_devChildrenDynamic" ]
         
         const relevantColumns = settingsData.filter(set =>
             set.setGroup === "NEWDEV" &&
@@ -137,7 +136,8 @@
                     customParams,
                     customId,
                     columns,
-                    base64Regex
+                    base64Regex,
+                    elementOptionsBase64
                   } = handleElementOptions('none', elementOptions, transformers, val = "");
 
                   //  render based on element type 
@@ -212,12 +212,63 @@
 
         generateSimpleForm(relevantColumns);
 
+        initSelect2();
+        initDeviceSelectors();
+
         
     })
       
-    }, 500);
+    }, 100);
     
   }
+
+  // -----------------------------------------------------------------------------
+  // Initialize device selectors / pickers fields
+  function initDeviceSelectors() {
+
+    // Parse device list
+    devicesList = JSON.parse(getCache('devicesListAll_JSON'));
+
+    // Check if the device list exists and is an array
+    if (Array.isArray(devicesList)) {
+        const $select = $(".deviceSelector select");
+
+        $select.append(
+            devicesList
+                .filter(d => d.devMac && d.devName)
+                .map(d => `<option value="${d.devMac}">${d.devName}</option>`)
+                .join('')
+        ).trigger('change');
+    }
+
+
+
+    // Initialize selected items after a delay so selected macs are available in the context
+    setTimeout(function(){
+          // Retrieve MAC addresses from query string or cache
+          var macs = getQueryString('macs') || getCache('selectedDevices');
+
+          if(macs)
+          {
+            // Split MAC addresses if they are comma-separated
+            macs = macs.split(',');
+
+            console.log(macs)
+
+            // Loop through macs to be selected list
+            macs.forEach(function(mac) {
+
+              // Create the option and append to Select2
+              var option = new Option($('.deviceSelector select option[value="' + mac + '"]').html(), mac, true, true);
+
+              $('.deviceSelector select').append(option).trigger('change');
+            });       
+
+          }        
+      
+      }, 10);
+  }
+
 
 
   // -----------------------------------------------------------------------------
@@ -289,9 +340,14 @@
     console.log(columnValue);
 
     // update selected
-    executeAction('update', 'devMac', selectorMacs(), targetColumns, columnValue )
-
-    
+    if(selectorMacs() != "")
+    { 
+      executeAction('update', 'devMac', selectorMacs(), targetColumns, columnValue )
+    }
+    else
+    {
+      showModalWarning(getString("Gen_Error"), getString('Device_MultiEdit_No_Devices')); 
+    }    
 }
 
 // -----------------------------------------------------------------------------
@@ -303,22 +359,23 @@
 function executeAction(action, whereColumnName, key, targetColumns, newTargetColumnValue )
 {
   $.get(`php/server/dbHelper.php?action=${action}&dbtable=Devices&columnName=${whereColumnName}&id=${key}&columns=${targetColumns}&values=${newTargetColumnValue}`, function(data) {
-        // console.log(data);
+      // console.log(data);
 
-        if (sanitize(data) == 'OK') {
-            showMessage(getString('Gen_DataUpdatedUITakesTime'));
-            // Remove navigation prompt "Are you sure you want to leave..."
-            window.onbeforeunload = null;
+      if (sanitize(data) == 'OK') {
+        showMessage(getString('Gen_DataUpdatedUITakesTime'));
+        // Remove navigation prompt "Are you sure you want to leave..."
+        window.onbeforeunload = null;
 
-            // update API endpoints to refresh the UI
-            updateApi("devices,appevents")
+        // update API endpoints to refresh the UI
+        updateApi("devices,appevents")
 
-            write_notification(`[Multi edit] Executed "${action}" on Columns "${targetColumns}" matching "${key}"`, 'info')
+        write_notification(`[Multi edit] Executed "${action}" on Columns "${targetColumns}" matching "${key}"`, 'info')
 
-        } else {
-            showMessage(getString('Gen_LockedDB'));
-        }
-    });
+      } else {
+        console.error(data);
+        showMessage(getString('Gen_LockedDB'));
+      }
+  });
 }
 
 

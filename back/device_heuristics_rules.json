@@ -1,0 +1,200 @@
+[
+  {
+    "dev_type": "Gateway",
+    "icon_html": "<i class=\"fa fa-globe\"></i>",
+    "matching_pattern": [
+      { "mac_prefix": "INTERNET", "vendor": "" }
+    ],
+    "name_pattern": []
+  },
+  {
+    "dev_type": "Access Point",
+    "icon_html": "<i class=\"fa fa-network-wired\"></i>",
+    "matching_pattern": [
+      { "mac_prefix": "74ACB9", "vendor": "Ubiquiti" },
+      { "mac_prefix": "002468", "vendor": "Cisco" },
+      { "mac_prefix": "F4F5D8", "vendor": "TP-Link" },
+      { "mac_prefix": "F88E85", "vendor": "Netgear" }
+    ],
+    "name_pattern": ["router", "gateway", "ap", "access point", "access-point", "switch"]
+  },
+  {
+    "dev_type": "Phone",
+    "icon_html": "<i class=\"fa-brands fa-apple\"></i>",
+    "matching_pattern": [
+      { "mac_prefix": "001A79", "vendor": "Apple" },
+      { "mac_prefix": "B0BE83", "vendor": "Samsung" },
+      { "mac_prefix": "BC926B", "vendor": "Motorola" }
+    ],
+    "name_pattern": ["iphone", "ipad", "pixel", "galaxy", "redmi"]
+  },
+  {
+    "dev_type": "Phone",
+    "icon_html": "<i class=\"fa-solid fa-mobile\"></i>",
+    "matching_pattern": [
+    ],
+    "name_pattern": ["android","samsung"]
+  },
+  {
+    "dev_type": "Tablet",
+    "icon_html": "<i class=\"fa fa-tablet\"></i>",
+    "matching_pattern": [
+      { "mac_prefix": "001B63", "vendor": "Apple" },
+      { "mac_prefix": "BC4C4C", "vendor": "Samsung" }
+    ],
+    "name_pattern": ["tablet", "pad"]
+  },  
+  {
+    "dev_type": "IoT",
+    "icon_html": "<i class=\"fa-brands fa-raspberry-pi\"></i>",
+    "matching_pattern": [
+      { "mac_prefix": "B827EB", "vendor": "Raspberry Pi" },
+      { "mac_prefix": "DCA632", "vendor": "Raspberry Pi" }
+    ],
+    "name_pattern": ["raspberry", "pi"]
+  },
+  {
+    "dev_type": "IoT",
+    "icon_html": "<i class=\"fa-solid fa-microchip\"></i>",
+    "matching_pattern": [
+      { "mac_prefix": "840D8E", "vendor": "Espressif" },
+      { "mac_prefix": "ECFABC", "vendor": "Espressif" },
+      { "mac_prefix": "7C9EBD", "vendor": "Espressif" }
+    ],
+    "name_pattern": ["raspberry", "pi"]
+  },
+  {
+    "dev_type": "Desktop",
+    "icon_html": "<i class=\"fa fa-desktop\"></i>",
+    "matching_pattern": [
+      { "mac_prefix": "001422", "vendor": "Dell" },
+      { "mac_prefix": "001874", "vendor": "Lenovo" },
+      { "mac_prefix": "00E04C", "vendor": "Hewlett Packard" }
+    ],
+    "name_pattern": ["desktop", "pc", "computer"]
+  },
+  {
+    "dev_type": "Laptop",
+    "icon_html": "<i class=\"fa fa-laptop\"></i>",
+    "matching_pattern": [
+      { "mac_prefix": "3C0754", "vendor": "HP" },
+      { "mac_prefix": "0017A4", "vendor": "Dell" },
+      { "mac_prefix": "F4CE46", "vendor": "Lenovo" },
+      { "mac_prefix": "409F38", "vendor": "Acer" }
+    ],
+    "name_pattern": ["macbook", "imac", "laptop", "notebook"]
+  },
+  {
+    "dev_type": "Server",
+    "icon_html": "<i class=\"fa fa-server\"></i>",
+    "matching_pattern": [
+      { "mac_prefix": "001CBF", "vendor": "Supermicro" },
+      { "mac_prefix": "002186", "vendor": "Dell" },
+      { "mac_prefix": "D02788", "vendor": "Hewlett Packard" },
+      { "mac_prefix": "002590", "vendor": "IBM" }
+    ],
+    "name_pattern": ["server", "nas"]
+  },
+  {
+    "dev_type": "VM",
+    "icon_html": "<i class=\"fa fa-server\"></i>",
+    "matching_pattern": [
+      { "mac_prefix": "525400", "vendor": "QEMU" },
+      { "mac_prefix": "005056", "vendor": "VMware" },
+      { "mac_prefix": "000C29", "vendor": "VMware" },
+      { "mac_prefix": "000569", "vendor": "VMware" },
+      { "mac_prefix": "00163E", "vendor": "Xen" },
+      { "mac_prefix": "080027", "vendor": "VirtualBox" }
+    ]
+  },
+  {
+    "dev_type": "TV",
+    "icon_html": "<i class=\"fa fa-tv\"></i>",
+    "matching_pattern": [
+      { "mac_prefix": "0013CE", "vendor": "Samsung" },
+      { "mac_prefix": "0017C8", "vendor": "LG" },
+      { "mac_prefix": "D46E0E", "vendor": "Sony" }
+    ],
+    "name_pattern": ["tv", "television", "smarttv"]
+  },
+  {
+    "dev_type": "Gaming Console",
+    "icon_html": "<i class=\"fa fa-gamepad\"></i>",
+    "matching_pattern": [
+      { "mac_prefix": "001FA7", "vendor": "Sony" },
+      { "mac_prefix": "7C04D0", "vendor": "Nintendo" },
+      { "mac_prefix": "EC26CA", "vendor": "Sony" }
+    ],
+    "name_pattern": ["playstation", "xbox"]
+  },
+  {
+    "dev_type": "Camera",
+    "icon_html": "<i class=\"fa fa-camera\"></i>",
+    "matching_pattern": [
+      { "mac_prefix": "A45E60", "vendor": "Hikvision" },
+      { "mac_prefix": "00408C", "vendor": "Axis" },
+      { "mac_prefix": "00156D", "vendor": "Amcrest" },
+      { "mac_prefix": "AC9E17", "vendor": "Reolink" }
+    ],
+    "name_pattern": ["camera", "cam", "webcam"]
+  },
+  {
+    "dev_type": "Smart Speaker",
+    "icon_html": "<i class=\"fa fa-volume-up\"></i>",
+    "matching_pattern": [
+      { "mac_prefix": "44650D", "vendor": "Amazon" },
+      { "mac_prefix": "74ACB9", "vendor": "Google" }
+    ],
+    "name_pattern": ["echo", "alexa", "dot"]
+  },
+  {
+    "dev_type": "Router",
+    "icon_html": "<i class=\"fa fa-random\"></i>",
+    "matching_pattern": [
+      { "mac_prefix": "000C29", "vendor": "Cisco" },
+      { "mac_prefix": "00155D", "vendor": "MikroTik" }
+    ],
+    "name_pattern": ["router", "gateway", "ap", "access point", "access-point"],
+    "ip_pattern": [
+      "^192\\.168\\.[0-1]\\.1$",
+      "^10\\.0\\.0\\.1$"
+    ]
+  },
+  {
+    "dev_type": "Smart Light",
+    "icon_html": "<i class=\"fa fa-lightbulb\"></i>",
+    "matching_pattern": [],
+    "name_pattern": ["hue", "lifx", "bulb"]
+  },
+  {
+    "dev_type": "Smart Home",
+    "icon_html": "<i class=\"fa fa-house\"></i>",
+    "matching_pattern": [],
+    "name_pattern": ["google", "chromecast", "nest"]
+  },
+  {
+    "dev_type": "Smartwatch",
+    "icon_html": "<i class=\"fa fa-watch\"></i>",
+    "matching_pattern": [],
+    "name_pattern": ["watch", "wear"]
+  },
+  {
+    "dev_type": "Printer",
+    "icon_html": "<i class=\"fa fa-print\"></i>",
+    "matching_pattern": [],
+    "name_pattern": ["printer", "print"]
+  },
+  {
+    "dev_type": "Security Device",
+    "icon_html": "<i class=\"fa fa-shield-alt\"></i>",
+    "matching_pattern": [],
+    "name_pattern": ["doorbell", "lock", "security"]
+  },
+  {
+    "dev_type": "Smart Light",
+    "icon_html": "<i class=\"fa-solid fa-lightbulb\"></i>",
+    "matching_pattern": [
+    ],
+    "name_pattern": ["light","bulb"]
+  }
+]

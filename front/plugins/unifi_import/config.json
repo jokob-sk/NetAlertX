@@ -355,7 +355,7 @@
         }
       ],
       "options": [],
-      "show": true,
+      "show": false,
       "type": "label"
     },
     {

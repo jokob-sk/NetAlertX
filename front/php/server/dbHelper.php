@@ -7,6 +7,10 @@
 #  Puche 2022+ jokob             jokob@duck.com                GNU GPLv3
 //------------------------------------------------------------------------------
 
+// 🔺----- API ENDPOINTS SUPERSEDED -----🔺
+// check server/api_server/api_server_start.py for equivalents
+// equivalent: /dbquery
+// 🔺----- API ENDPOINTS SUPERSEDED -----🔺
 
 //------------------------------------------------------------------------------
 // External files
@@ -63,7 +67,7 @@ require_once  $_SERVER['DOCUMENT_ROOT'] . '/php/templates/security.php';
   }
 
   if (isset ($_REQUEST['rawSql'])) {
-    $rawSql = urldecode(base64_decode($_REQUEST['rawSql']));    
+    $rawSql = urldecode(base64_decode($_REQUEST['rawSql']));    // base64 encoded SQL
   }
 
   if (isset ($_REQUEST['dbtable'])) {
@@ -76,6 +80,7 @@ require_once  $_SERVER['DOCUMENT_ROOT'] . '/php/templates/security.php';
     switch ($action) {
       case 'create':    create($defaultValue, $expireMinutes, $dbtable, $columns, $values ); break;
       case 'read'  :    read($rawSql);    break;
+      case 'write' :    write($rawSql);    break;
       case 'update':    update($columnName, $id, $defaultValue, $expireMinutes, $dbtable, $columns, $values);  break;
       case 'delete':    delete($columnName, $id, $dbtable);  break;
       case 'lockDatabase':     lockDatabase($delay);  break;
@@ -116,6 +121,31 @@ function read($rawSql) {
     // Outputting the JSON
     echo $json;
 
+    return;
+   }
+}
+
+//------------------------------------------------------------------------------
+//  write
+//------------------------------------------------------------------------------
+function write($rawSql) {
+  global $db;  
+
+  // Construct the SQL query to select values
+  $sql = $rawSql;
+
+  // Execute the SQL query
+  $result = $db->query($sql);
+
+  // Check if the query executed successfully
+  if (! $result == TRUE) {
+    // Output an error message if the query failed
+    echo "Error writing data\n\n " .$sql." \n\n". $db->lastErrorMsg();
+    return;
+  } else
+  {
+    // Output     
+    echo "OK";
     return;
    }
 }

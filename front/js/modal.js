@@ -68,11 +68,13 @@ function showModalWarning(
   callbackFunction = null,
   triggeredBy = null
 ) {
+  prefix = "modal-warning";
+
   // set captions
-  $("#modal-warning-title").html(title);
-  $("#modal-warning-message").html(message);
-  $("#modal-warning-cancel").html(btnCancel);
-  $("#modal-warning-OK").html(btnOK);
+  $(`#${prefix}-title`).html(title);
+  $(`#${prefix}-message`).html(message);
+  $(`#${prefix}-cancel`).html(btnCancel);
+  $(`#${prefix}-OK`).html(btnOK);
 
   if (callbackFunction != null) {
     modalCallbackFunction = callbackFunction;
@@ -83,7 +85,7 @@ function showModalWarning(
   }
 
   // Show modal
-  $("#modal-warning").modal("show");
+  $(`#${prefix}`).modal("show");
 }
 
 // -----------------------------------------------------------------------------
@@ -93,7 +95,8 @@ function showModalInput(
   btnCancel = getString("Gen_Cancel"),
   btnOK = getString("Gen_Okay"),
   callbackFunction = null,
-  triggeredBy = null  
+  triggeredBy = null,
+  defaultValue = ""  
 ) {
   prefix = "modal-input";
 
@@ -102,6 +105,7 @@ function showModalInput(
   $(`#${prefix}-message`).html(message);
   $(`#${prefix}-cancel`).html(btnCancel);
   $(`#${prefix}-OK`).html(btnOK);
+  $(`#${prefix}-textarea`).val(defaultValue);
 
   if (callbackFunction != null) {
     modalCallbackFunction = callbackFunction;
@@ -152,6 +156,139 @@ function showModalFieldInput(
   setTimeout(function () {
     $(`#${prefix}-field`).focus();
   }, 500);
+
+  // Show modal
+  $(`#${prefix}`).modal("show");
+}
+
+// -----------------------------------------------------------------------------
+function showModalPopupForm(
+  title,
+  message,
+  btnCancel = getString("Gen_Cancel"),
+  btnOK = getString("Gen_Okay"),
+  curValue = null,
+  popupFormJson = null,
+  parentSettingKey = null,
+  triggeredBy = null
+) {
+  // set captions
+  prefix = "modal-form";
+  console.log(popupFormJson);
+
+  $(`#${prefix}-title`).html(title);
+  $(`#${prefix}-message`).html(message);
+  $(`#${prefix}-cancel`).html(btnCancel);
+  $(`#${prefix}-OK`).html(btnOK);
+
+  // if curValue not null 
+
+  if (curValue)
+  {
+    initialValues = JSON.parse(atob(curValue));    
+  }
+
+  outputHtml = "";
+
+  if (Array.isArray(popupFormJson)) {
+    popupFormJson.forEach((field, index) => {
+        // You'll need to define these or map them from `field`
+        const setKey = field.function || `field_${index}`;        
+        const setName = getString(`${parentSettingKey}_popupform_${setKey}_name`);
+        const labelClasses = "col-sm-2"; // example, or from your obj.labelClasses
+        const inputClasses = "col-sm-10"; // example, or from your obj.inputClasses
+        let initialValue = '';
+        if (curValue && Array.isArray(initialValues)) {
+          const match = initialValues.find(
+            v => v[1] == setKey
+          );
+          if (match) {
+            initialValue = match[3];
+          }
+        }
+
+        const fieldOptionsOverride = field.type?.elements[0]?.elementOptions || [];        
+        const setValue = initialValue;
+        const setType = JSON.stringify(field.type); 
+        const setEvents = field.events || [];  // default to empty array if missing
+        const setObj = { setKey, setValue, setType, setEvents };
+
+        // Generate the input field HTML
+        const inputFormHtml = `
+                              <div class="form-group col-xs-12">
+                                  <label id="${setKey}_label" class="${labelClasses}"> ${setName}
+                                      <i my-set-key="${parentSettingKey}_popupform_${setKey}"
+                                          title="${getString("Settings_Show_Description")}" 
+                                          class="fa fa-circle-info pointer helpIconSmallTopRight" 
+                                          onclick="showDescriptionPopup(this)">
+                                      </i>
+                                  </label>
+                                  <div class="${inputClasses}">
+                                      ${generateFormHtml(
+                                        null, // settingsData only required for datatables
+                                        setObj, 
+                                        null, 
+                                        fieldOptionsOverride, 
+                                        null
+                                      )}
+                                  </div>
+                              </div>
+                  `;
+
+        // Append to result
+        outputHtml += inputFormHtml;
+    });
+  }
+  
+  $(`#modal-form-plc`).html(outputHtml);
+
+  // Bind OK button click event
+  $(`#${prefix}-OK`).off("click").on("click", function() {
+    let settingsArray = [];
+    if (Array.isArray(popupFormJson)) {
+        popupFormJson.forEach(field => {
+            collectSetting(
+                `${parentSettingKey}_popupform`, // prefix
+                field.function,                  // setCodeName
+                field.type,                      // setType (object)
+                settingsArray
+            );
+        });
+    }
+
+    // Encode settings
+    const jsonData = JSON.stringify(settingsArray);
+    const encodedValue = btoa(jsonData);
+
+    // Get label from the FIRST field (value in 4th column)
+    const label = settingsArray[0][3]
+
+    // Add new option to target select
+    const selectId = parentSettingKey;
+
+    // If triggered by an option, update it; otherwise append new
+    if (triggeredBy && $(triggeredBy).is("option")) {
+      // Update existing option
+      $(triggeredBy)
+        .attr("value", encodedValue)
+        .text(label);
+    } else {
+      const newOption = $("<option class='interactable-option'></option>")
+          .attr("value", encodedValue)
+          .text(label);
+  
+      $("#" + selectId).append(newOption);
+      initListInteractionOptions(newOption);
+    }
+
+    console.log("Collected popup form settings:", settingsArray);
+
+    if (typeof modalCallbackFunction === "function") {
+        modalCallbackFunction(settingsArray);
+    }
+
+    $(`#${prefix}`).modal("hide");
+  });
 
   // Show modal
   $(`#${prefix}`).modal("show");
@@ -220,7 +357,7 @@ function modalWarningOK() {
     } else if (typeof modalCallbackFunction === "string" && typeof window[modalCallbackFunction] === "function") {
       window[modalCallbackFunction](); // Call via window
     } else {
-      console.error("Invalid callback function");
+      console.error("Invalid callback function: " + modalCallbackFunction);
     }
   }, 100);
 }
@@ -360,26 +497,78 @@ function checkNotification() {
   });
 }
 
-// Handling unread notifications favicon + bell floating number bublbe
+/**
+ * Handles unread notification indicators:
+ * - Updates the floating bell count bubble.
+ * - Changes the favicon to indicate unread notifications.
+ * - Updates the page title with a numeric prefix like "(3)".
+ *
+ * The function expects that the favicon element has the ID `#favicon`
+ * and that the bell count element has the ID `#unread-notifications-bell-count`.
+ *
+ * @param {number} count - The number of unread notifications.
+ *
+ * @example
+ * handleUnreadNotifications(3);
+ * // → shows "(3)" in the title, notification icon, and bell bubble
+ *
+ * handleUnreadNotifications(0);
+ * // → restores original favicon and hides bubble
+ */
 function handleUnreadNotifications(count) {
-  $('#unread-notifications-bell-count').html(count);
+  const $countBubble = $('#unread-notifications-bell-count');
+  const $favicon = $('#favicon');
+
+  // Capture current title — ideally cache the original globally if calling repeatedly
+  const originalTitle = document.title;
+
+  // Update notification bubble and favicon
+  $countBubble.html(count);
   if (count > 0) {
-    $('#unread-notifications-bell-count').show();
-    // Change the favicon to show there are notifications
-    $('#favicon').attr('href', 'img/NetAlertX_logo_notification.png');
-    // Update the title to include the count
-    document.title = `(${count}) ` + originalTitle;
+    $countBubble.show();
+    $favicon.attr('href', 'img/NetAlertX_logo_notification.png');
   } else {
-    $('#unread-notifications-bell-count').hide();
-    // Change the favicon back to the original
-    $('#favicon').attr('href', 'img/NetAlertX_logo.png');
-    // Revert the title to the original title
-    document.title = originalTitle;
+    $countBubble.hide();
+    $favicon.attr('href', 'img/NetAlertX_logo.png');
   }
+
+  // Update the document title with "(count)" prefix
+  document.title = addOrUpdateNumberBrackets(originalTitle, count);
 }
 
-// Store the original title of the document
-var originalTitle = document.title;
+/**
+ * Adds, updates, or removes a numeric prefix in parentheses before a given string.
+ *
+ * Behavior:
+ * - If `count` is 0 → removes any existing "(...)" prefix.
+ * - If string already starts with "(...)" → replaces it with the new count.
+ * - Otherwise → adds "(count)" as a prefix before the input text.
+ *
+ * Examples:
+ *   addOrUpdateNumberBrackets("Device", 3)       → "(3) Device"
+ *   addOrUpdateNumberBrackets("(1) Device", 4)   → "(4) Device"
+ *   addOrUpdateNumberBrackets("(5) Device", 0)   → "Device"
+ *
+ * @param {string} input - The input string (e.g., a device name).
+ * @param {number} count - The number to place inside the parentheses.
+ * @returns {string} The updated string with the correct "(count)" prefix.
+ */
+function addOrUpdateNumberBrackets(input, count) {
+  let result = input.trim();
+
+  if (count === 0) {
+    // Remove any existing "(...)" prefix
+    result = result.replace(/^\(.*?\)\s*/, '');
+  } else if (/^\(.*?\)/.test(result)) {
+    // Replace existing "(...)" prefix
+    result = result.replace(/^\(.*?\)/, `(${count})`);
+  } else {
+    // Add new "(count)" prefix
+    result = `(${count}) ${result}`;
+  }
+
+  return result.trim();
+}
 
 
 // Start checking for notifications periodically

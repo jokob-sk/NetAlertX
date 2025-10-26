@@ -562,7 +562,8 @@
       "function": "devIcon",
       "events": [
         "copy_icons",
-        "add_icon"
+        "add_icon",
+        "select_icon"
       ],
       "type": {
         "dataType": "string",
@@ -587,7 +588,7 @@
             "elementHasInputValue": 1,
             "elementOptions": [
               {
-                "cssClasses": "iconInputVal"
+                "cssClasses": "iconInputVal myhidden"
               },
               {
                 "onChange": "updateIconPreview(this)"
@@ -933,7 +934,7 @@
       "name": [
         {
           "language_code": "en_us",
-          "string": "First Connection"
+          "string": "First Seen"
         }
       ],
       "description": [
@@ -969,13 +970,13 @@
       "name": [
         {
           "language_code": "en_us",
-          "string": "Last Connection"
+          "string": "Last Seen"
         }
       ],
       "description": [
         {
           "language_code": "en_us",
-          "string": "The date and time of the last connection with the device. Uneditable - Autodetected."
+          "string": "The date and time of the last seen connection with the device. Uneditable - Autodetected."
         }
       ]
     },
@@ -1150,7 +1151,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Indicates whether an alert should be triggered when the device goes down. The device has to be down for longet than the time set in the <b>Alert Down After</b> <code>NTFPRCS_alert_down_time</code> setting."
+          "string": "Indicates whether an alert should be triggered when the device goes down. The device has to be down for longer than the time set in the <b>Alert Down After</b> <code>NTFPRCS_alert_down_time</code> setting."
         }
       ]
     },
@@ -1338,7 +1339,8 @@
     {
       "function": "devParentMAC",
       "events": [
-        "go_to_node"
+        "go_to_node",
+        "go_to_device"
       ],
       "type": {
         "dataType": "string",
@@ -1373,13 +1375,47 @@
       "name": [
         {
           "language_code": "en_us",
-          "string": "Network Node"
+          "string": "Parent Node"
         }
       ],
       "description": [
         {
           "language_code": "en_us",
-          "string": "The MAC address of the network node."
+          "string": "The MAC address of the Parent network node."
+        }
+      ]
+    },
+    {
+      "function": "devParentRelType",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [{ "ordeable": "true"}],
+            "transformers": ["deviceRelType"]
+          }
+        ]
+      },
+      "default_value": "default",
+      "options": [
+        "default",
+        "child",
+        "logical",
+        "nic",
+        "virtual"
+      ],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Relationship Type"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Defines the relationship between this device and its parent. Selecting <code>nic</code> links it as a network interface, allowing the parent’s online status to be evaluated using its <code>devReqNicsOnline</code> (“Require NICs Online”) setting. Some relationship types may hide the device from lists; see the <code>UI_hide_rel_types</code> setting for details."
         }
       ]
     },
@@ -1404,13 +1440,41 @@
       "name": [
         {
           "language_code": "en_us",
-          "string": "Network Node Port"
+          "string": "Parent Node Port"
         }
       ],
       "description": [
         {
           "language_code": "en_us",
           "string": "The port number of the network node."
+        }
+      ]
+    },
+    {
+      "function": "devChildrenDynamic",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [{ "multiple": "true", "ordeable": "true", "readonly": "true" }],
+            "transformers": ["deviceChip"]
+          }
+        ]
+      },
+      "default_value": [],
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Children Nodes"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Children nodes assigned to this device. Navigate to the child device directly to edit the relationship and details."
         }
       ]
     },
@@ -1561,7 +1625,7 @@
                           "elementHasInputValue": 1,
                           "elementOptions": [
                             {
-                              "cssClasses": "iconInputVal"
+                              "cssClasses": "iconInputVal myhidden"
                             },
                             {
                               "onChange": "updateIconPreview(this)"
@@ -1627,6 +1691,105 @@
         {
           "language_code": "en_us",
           "string": "Custom device properties to store additional data or to perform an action on the device. Check the <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/CUSTOM_PROPERTIES.md\" target=\"_blank\">documentation on Custom Properties</a> for additional details."
+        }
+      ]
+    },
+    {
+      "function": "devFQDN",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "readonly": "true"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 50,
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "FQDN"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Fully Qualified Domain Name - Autodetected and Uneditable. Can be auto-refreshed by enabling the <code>REFRESH_FQDN</code> setting."
+        }
+      ]
+    },
+    {
+      "function": "devReqNicsOnline",
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "type": "checkbox"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": 0,
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Require NICs Online"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Indicates whether this device should be considered online only if all associated NICs (devices with the <code>nic</code> relationship type) are online. If disabled, the device is considered online if any NIC is online."
+        }
+      ]
+    },
+    {
+      "function": "devChildrenNicsDynamic",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [{ "multiple": "true", "ordeable": "true", "readonly": "true" }],
+            "transformers": ["deviceChip"]
+          }
+        ]
+      },
+      "default_value": [],
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "NICs"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Children nodes with the <code>nic</code> Relationship Type. Navigate to the child device directly to edit the relationship and details."
         }
       ]
     }

@@ -1,5 +1,10 @@
 <?php
 
+// 🔺----- API ENDPOINTS SUPERSEDED -----🔺
+// check server/api_server/api_server_start.py for equivalents
+// equivalent: /nettools
+// 🔺----- API ENDPOINTS SUPERSEDED -----🔺
+
 require 'util.php';
 
 //------------------------------------------------------------------------------

@@ -8,6 +8,12 @@
 #  Puche 2021 / 2022+ jokob             jokob@duck.com                GNU GPLv3
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
+
+// 🔺----- API ENDPOINTS SUPERSEDED -----🔺
+// check server/api_server/api_server_start.py for equivalents
+// equivalent: /sessions /events
+// 🔺----- API ENDPOINTS SUPERSEDED -----🔺
+
 // External files
 require dirname(__FILE__).'/init.php';
 
@@ -29,7 +35,6 @@ require_once  $_SERVER['DOCUMENT_ROOT'] . '/php/templates/security.php';
       case 'getEvents':          getEvents();                             break;                      
       case 'getDeviceSessions':  getDeviceSessions();                     break;
       case 'getDevicePresence':  getDevicePresence();                     break;
-      case 'getDeviceEvents':    getDeviceEvents();                       break;
       case 'getEventsCalendar':  getEventsCalendar();                     break;
       default:                   logServerConsole ('Action: '. $action);  break;
     }
@@ -408,43 +413,6 @@ function getEventsCalendar() {
 
   // Return json
   echo (json_encode($tableData));
-}
-
-
-//------------------------------------------------------------------------------
-//  Query Device events
-//------------------------------------------------------------------------------
-function getDeviceEvents() {
-  global $db;
-
-  // Request Parameters
-  $mac             = $_REQUEST['mac'];
-  $periodDate      = getDateFromPeriod();
-  $hideConnections = $_REQUEST ['hideConnections'];
-
-  // SQL 
-  $SQL = 'SELECT eve_DateTime, eve_EventType, eve_IP, eve_AdditionalInfo
-          FROM Events 
-          WHERE eve_MAC="'. $mac .'" AND eve_DateTime >= '. $periodDate .'
-            AND ( (eve_EventType <> "Connected" AND eve_EventType <> "Disconnected" AND
-                   eve_EventType <> "VOIDED - Connected" AND eve_EventType <> "VOIDED - Disconnected")
-                 OR "'. $hideConnections .'" = "false" ) ';
-  $result = $db->query($SQL);
-
-  // arrays of rows
-  $tableData = array();
-  while ($row = $result -> fetchArray (SQLITE3_NUM)) {
-    $row[0] = formatDate ($row[0]);
-    $tableData['data'][] = $row;
-  }
-
-  // Control no rows
-  if (empty($tableData['data'])) {
-    $tableData['data'] = '';
-  }
-
-  // Return json
-  echo (json_encode ($tableData));
 }
 
 ?>

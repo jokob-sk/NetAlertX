@@ -1,7 +1,7 @@
 """ class to manage schedules """
 import datetime
 
-from logger import mylog, print_log
+from logger import mylog
 import conf
 
 #-------------------------------------------------------------------------------

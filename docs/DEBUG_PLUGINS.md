@@ -2,7 +2,7 @@
 
 ## High-level overview
 
-If a Plugin supplies data to the main app it's doine either vie a SQL query or via a script that updates the `last_result.log` file in the plugin folder (`front/plugins/<plugin>`).
+If a Plugin supplies data to the main app it's done either vie a SQL query or via a script that updates the `last_result.log` file in the plugin log folder (`app/log/plugins/`).
 
 For a more in-depth overview on how plugins work check the [Plugins development docs](https://github.com/jokob-sk/NetAlertX/blob/main/docs/PLUGINS.md).
 

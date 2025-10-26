@@ -25,7 +25,7 @@ from plugin_utils import get_plugins_configs
 from logger import mylog, Logger
 from const import pluginsPath, fullDbPath, logPath
 from helper import timeNowTZ, get_setting_value
-from notification import write_notification
+from messaging.in_app import write_notification
 import conf
 
 # Make sure the TIMEZONE for logging is correct
@@ -66,13 +66,23 @@ device_type_map = {
     "networking_device": "Router",
     "multimedia_device": "TV Decoder",
     "car": "House Appliance",
+    "watch": "Clock",
+    "light": "Domotic",
+    "outlet": "Domotic",
+    "appliances": "House Appliance",
+    "thermostat": "Domotic",
+    "shutter": "Domotic",
     "other": "(Unknown)",
 }
 
 
 def map_device_type(type: str):
-    return device_type_map[type]
-
+    try:
+        return device_type_map[type]
+    except KeyError:
+        # This device type has not been mapped yet
+        mylog("minimal", [f"[{pluginName}] Unknown device type: {type}"])
+        return device_type_map["other"]
 
 async def get_device_data(api_version: int, api_address: str, api_port: int):
     # ensure existence of db path

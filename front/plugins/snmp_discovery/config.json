@@ -59,7 +59,8 @@
     {
       "name": "routers",
       "type": "setting",
-      "value": "SNMPDSC_routers"
+      "value": "SNMPDSC_routers",
+      "timeoutMultiplier": true
     }
   ],
   "database_column_definitions": [
@@ -279,7 +280,7 @@
         "value": "SNMPDSC"
       },
       "css_classes": "col-sm-2",
-      "show": true,
+      "show": false,
       "type": "label",
       "default_value": "",
       "options": [],

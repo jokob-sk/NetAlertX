@@ -10,6 +10,9 @@ NetAlertX comes with a plugin system to feed events from third-party scripts int
 
 > (Currently, update/overwriting of existing objects is only supported for devices via the `CurrentScan` table.)
 
+> [!NOTE]
+> For a high-level overview of how the `config.json` is used and it's lifecycle check the [config.json Lifecycle in NetAlertX Guide](PLUGINS_DEV_CONFIG.md).
+
 ### 🎥 Watch the video:
 
 > [!TIP]

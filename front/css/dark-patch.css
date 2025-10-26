@@ -11,6 +11,16 @@
 * Additional fixes For Pi.Alert UI by leiweibau */
 
 :root {
+  --color-aqua: #00c0ef;
+  --color-lightblue: #3c8dbc;
+  --color-blue: #0060df;
+  --color-green: #00a65a;
+  --color-yellow: #f39c12;
+  --color-red: #dd4b39;
+  --color-gray: #8c8c8c;
+}
+
+:root {
   --datatable-bgcolor: rgba(64, 76, 88, 0.8);
 }
 html {
@@ -409,6 +419,12 @@ td.highlight {
   border: 1px solid #353c42;
 }
 
+.btn-outline {
+  border: 1px solid var(--color-black);
+  background: transparent;
+  color: var(--color-white);
+}
+
 /* Used in debug log page */
 .log-red {
   color: #ff4038;
@@ -649,8 +665,14 @@ input[type="password"]::-webkit-caps-lock-indicator {
   border-color: #888888;
 }
 .table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
-  background-color: rgb(189,192,198);
-  color: #444;
+  background-color: var(--datatable-bgcolor);
+  color: var(--fbc-white);
+}
+
+table.dataTable tbody  tr.selected, table.dataTable tbody  tr  .selected
+{
+  background-color: var(--datatable-bgcolor);
+  color: var(--fbc-white);
 }
 
 .db_info_table_cell:nth-child(1) {background: #272c30}
@@ -722,14 +744,44 @@ input[type="password"]::-webkit-caps-lock-indicator {
   margin-left: 0px;
 }
 .small-box:hover .icon {
-  font-size: 3.74em;
+  font-size: 3em;
 }
 .small-box .icon { 
   top: 0.01em;
   font-size: 3.25em;
 }
-.pa_semitransparent-panel{
+.nax_semitransparent-panel{
   background-color: #000 !important;
+}
+
+
+.select2-container--default .select2-selection--single {
+  color: initial !important;
+  background-color: #353c42 !important;
+}
+
+/* Chevron color */
+.select2-container .select2-selection__arrow::after {
+  color: #bec5cb;
+}
+
+/* Chevron color */
+.select2-selection .select2-selection--single {
+  color: #bec5cb;
+}
+
+.select2-container--default .select2-selection--multiple, .select2-container--default .select2-selection--single {
+  border-color: #3d444b !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered  .custom-chip
+{
+  color: #bec5cb;
+}
+
+#hover-box
+{
+  background-color: #353c42 !important;
 }
 
 .callout code {
@@ -740,4 +792,9 @@ input[type="password"]::-webkit-caps-lock-indicator {
 .thresholdFormControl
 {
   color:#000;   
+}
+
+.btn:hover
+{
+  color: var(--color-gray);
 }

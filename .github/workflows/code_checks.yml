@@ -1,4 +1,4 @@
-name: URL Path Check
+name: Code checks
 on:
   push:
     branches:
@@ -17,12 +17,25 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Check for absolute path URLs
+      - name: Check for incorrect absolute '/php/' URLs in frontend code
         run: |
-          if grep -r -E "\burl:\s*['\"]\/php" --include=\*.{js,php} .; then
-            echo "❌ Found absolute path URLs starting with '/php/'. Please use relative paths."
+          echo "🔍 Checking for incorrect absolute '/php/' URLs (should be 'php/' or './php/')..."
+
+          MATCHES=$(grep -rE "['\"]\/php\/" --include=\*.{js,php,html} ./front | grep -E "\.get|\.post|\.ajax|fetch|url\s*:") || true
+
+          if [ -n "$MATCHES" ]; then
+            echo "$MATCHES"
+            echo "❌ Found incorrectly absolute '/php/' URLs. Use 'php/' or './php/' for relative paths."
             exit 1
           else
-            echo "✅ No absolute path URLs found."
+            echo "✅ No bad '/php/' URLs found."
           fi
+
+
+
+      - name: Check Python syntax
+        run: |
+          set -e
+          echo "🔍 Checking Python syntax..."
+          find . -name "*.py" -print0 | xargs -0 -n1 python3 -m py_compile
 

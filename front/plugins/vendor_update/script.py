@@ -19,7 +19,7 @@ from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64, handleEmp
 from logger import mylog, Logger, append_line_to_file
 from helper import timeNowTZ, get_setting_value 
 from const import logPath, applicationPath, fullDbPath
-from device import query_MAC_vendor
+from scan.device_handling import query_MAC_vendor
 import conf
 from pytz import timezone
 
@@ -61,7 +61,7 @@ def update_vendor_database():
 
     # Update vendors DB (iab oui)
     mylog('verbose', ['    Updating vendors DB (iab & oui)'])    
-    update_args = ['sh', applicationPath + '/back/update_vendors.sh']
+    update_args = ['sh', applicationPath + '/services/update_vendors.sh']
 
     # Execute command     
     try:

@@ -1,6 +1,6 @@
 <?php
   require 'php/templates/header.php';
-  require 'php/templates/notification.php';
+  require 'php/templates/modals.php';
 ?>
 
 <!-- Page ------------------------------------------------------------------ -->
@@ -8,7 +8,10 @@
 
 <!-- Main content ---------------------------------------------------------- -->
 <section class="content">
-
+  
+<script>
+  showSpinner();
+</script>
 
 <?php
 
@@ -51,7 +54,7 @@ $db->close();
           <div class="box" id="Maintain-Status">
               <div class="box-header with-border">
                 <h3 class="box-title">
-                  <i class="fa fa-display"></i></i>         
+                  <i class="fa fa-display"></i>         
                   <?= lang('Maintenance_Status');?>
                 </h3>
               </div>
@@ -59,7 +62,7 @@ $db->close();
                 <div class="db_info_table">
                     <div class="db_info_table_row">                      
                         <div class="db_info_table_cell" style="min-width: 140px"><?= lang('Maintenance_version');?>
-                          <a href="https://github.com/jokob-sk/NetAlertX/blob/main/docs/VERSIONS.md" target="_blank"> <span><i class="fa fa-circle-question"></i></a><span>
+                          <a href="https://github.com/jokob-sk/NetAlertX/blob/main/docs/VERSIONS.md" target="_blank"> <span><i class="fa fa-circle-question"></i></a></span>
                         </div>
                         <div class="db_info_table_cell">
                         <div class="version" id="version" data-build-time="<?php echo file_get_contents( "buildtimestamp.txt");?>">
@@ -111,7 +114,7 @@ $db->close();
       </div>
 
     <div class="nav-tabs-custom">
-    <ul class="nav nav-tabs">
+      <ul class="nav nav-tabs">
         <li class="active">
           <a id="tab_DBTools_id" href="#tab_DBTools" data-toggle="tab">
             <i class="fa fa-toolbox"></i> 
@@ -136,8 +139,14 @@ $db->close();
             <?= lang('Device_MultiEdit');?>
           </a>
         </li>
-    </ul>
-    <div class="tab-content">
+        <li>
+          <a id="tab_initCheck_id" href="#tab_initCheck" data-toggle="tab">
+            <i class="fa-solid fa-check"></i> 
+            <?= lang('Maintenance_InitCheck');?>
+          </a>
+        </li>
+      </ul>
+    <div class="tab-content spinnerTarget">
         <div class="tab-pane active" id="tab_DBTools">
                 <div class="db_info_table">
                     <div class="db_info_table_row">
@@ -176,8 +185,16 @@ $db->close();
                         </div>
                         <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_del_ActHistory_text');?></div>
                     </div>
+                    <div class="db_info_table_row">
+                        <div class="db_tools_table_cell_a" >
+                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnRestartServer" onclick="askRestartBackend()"><?= lang('Maint_RestartServer');?></button>
+                        </div>
+                        <div class="db_tools_table_cell_b"><?= lang('Maint_Restart_Server_noti_text');?></div>
+                    </div>
                 </div>
         </div>
+
+        <!-- ---------------------------Backup restore -------------------------------------------- -->
         <div class="tab-pane" id="tab_BackupRestore">
           <div class="db_info_table">
             <div class="db_info_table_row">
@@ -209,7 +226,13 @@ $db->close();
                     <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnImportPastedConfig" onclick="askImportPastedConfig()"><?= lang('Maintenance_Tool_ImportPastedConfig');?></button>
                 </div>
                 <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_ImportPastedConfig_text');?></div>
-            </div>                 
+            </div>
+            <div class="db_info_table_row">
+              <div class="db_tools_table_cell_a" >
+                  <button type="button" class="btn btn-default pa-btn bg-green dbtools-button" id="btnDownloadWorkflows" onclick="DownloadWorkflows()"><?= lang('Maintenance_Tool_DownloadWorkflows');?></button>
+              </div>
+              <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_DownloadWorkflows_text');?></div>
+            </div>                    
           </div>
         </div>
         <!-- ---------------------------Logging-------------------------------------------- -->
@@ -239,11 +262,11 @@ $db->close();
               </div>
             </div>
           </div>
-          <div class="db_info_table">
-            
+          <div class="db_info_table">            
             <div id="logsPlc"></div>                                
           </div>
         </div>
+        
         <!-- ---------------------------Bulk edit -------------------------------------------- -->
         <div class="tab-pane" id="tab_multiEdit">
             <div class="db_info_table">
@@ -254,35 +277,53 @@ $db->close();
 
                 </div>
             </div>
-          </div>
-
         </div>
+
+        <!-- ---------------------------Init check -------------------------------------------- -->
+        <div class="tab-pane" id="tab_initCheck">
+            <div class="db_info_table">
+                <div class="box box-solid">
+                  
+                    <?php
+                      require 'initCheck.php';
+                    ?>
+
+                </div>
+            </div>
+        </div>      
+
+        
         <!-- ------------------------------------------------------------------------------ -->
 
       </div>
+      </div>
 
-      <div class="box-body" style="text-align: center;">
+      <div class="box-body " style="text-align: center;">
         <h5 class="text-aqua" style="font-size: 16px;">
           <span id="lastCommit">
-           
+            
           </span>
           <span id="lastDockerUpdate">
-           
+            
           </span>          
-      </h5>
-  </div>
+        </h5>
+      </div>
       
       
+    </div>
+
+
+
+  </section>
+
+  
+
+  <!-- /.content -->
+  <?php
+    require 'php/templates/footer.php';
+  ?>
 </div>
-
-</section>
-
-    <!-- /.content -->
-    <?php
-      require 'php/templates/footer.php';
-    ?>
-  </div>
-  <!-- /.content-wrapper -->
+<!-- /.content-wrapper -->
 
 <!-- ----------------------------------------------------------------------- -->
 
@@ -427,6 +468,15 @@ function DownloadConfig()
 { 
   // Execute
   openInNewTab("php/server/query_config.php?file=app.conf&download=true")
+}
+
+// -----------------------------------------------------------
+// Download Workflows
+
+function DownloadWorkflows()
+{ 
+  // Execute
+  openInNewTab("php/server/query_config.php?file=workflows.json&download=true")
 }
 
 
@@ -668,6 +718,8 @@ window.onload = function asyncFooter() {
 
 </script>
 
-
+<script>
+  hideSpinner();
+</script>
 
 

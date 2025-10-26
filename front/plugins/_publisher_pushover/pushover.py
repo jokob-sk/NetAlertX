@@ -12,7 +12,7 @@ sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 from plugin_helper import Plugin_Objects, handleEmpty  # noqa: E402
 from logger import mylog, Logger  # noqa: E402
 from helper import timeNowTZ, get_setting_value, hide_string  # noqa: E402
-from notification import Notification_obj  # noqa: E402
+from models.notification_instance import NotificationInstance  # noqa: E402
 from database import DB  # noqa: E402
 import conf
 from const import confFileName, logPath
@@ -49,8 +49,8 @@ def main():
     # Initialize the Plugin obj output file
     plugin_objects = Plugin_Objects(RESULT_FILE)
 
-    # Create a Notification_obj instance
-    notifications = Notification_obj(db)
+    # Create a NotificationInstance instance
+    notifications = NotificationInstance(db)
 
     # Retrieve new notifications
     new_notifications = notifications.getNew()

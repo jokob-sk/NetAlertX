@@ -505,10 +505,10 @@
       "column": "Dummy",
       "mapped_to_column": "cur_ScanMethod",
       "mapped_to_column_data": {
-        "value": "nmap-dev-scan"
+        "value": "NMAPDEV"
       },
       "css_classes": "col-sm-2",
-      "show": true,
+      "show": false,
       "type": "label",
       "default_value": "",
       "options": [],

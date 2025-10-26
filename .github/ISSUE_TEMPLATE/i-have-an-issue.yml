@@ -59,12 +59,15 @@ body:
   validations:
     required: false
 - type: dropdown
+  id: installation_type
   attributes:
     label: What installation are you running?
     options:
       - Production (netalertx)
       - Dev (netalertx-dev)
       - Home Assistant (addon)
+      - Home Assistant fa (full-access addon)
+      - Bare-metal (community only support - Check Discord)
   validations:
     required: true
 - type: textarea

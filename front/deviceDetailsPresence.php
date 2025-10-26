@@ -23,8 +23,6 @@
 
 
 <script>
-  initializeCalendar();    
-  loadPresenceData();
 
   // Force re-render calendar on tab change
   // (bugfix for render error at left panel)
@@ -219,9 +217,8 @@ function initializeCalendar() {
     },
 
     eventRender: function (event, element) {
-      $(element).tooltip({container: 'body', placement: 'bottom',
-                          title: event.tooltip});
-      // element.attr ('title', event.tooltip);  // Alternative tooltip
+      // $(element).tooltip({container: 'body', placement: 'bottom',  title: event.tooltip});
+      element.attr ('title', event.tooltip);  // Alternative tooltip
     },
       
     loading: function( isLoading, view ) {
@@ -234,6 +231,37 @@ function initializeCalendar() {
 
   })
 }
+
+// -----------------------------------------------
+// INIT with polling for panel element visibility
+// -----------------------------------------------
+
+var presencePageInitialized = false;
+
+function initDevicePresencePage() {
+  // Only proceed if the Presence tab is visible
+  if (!$('#panPresence:visible').length) {
+    return; // Exit early if nothing is visible
+  }
+
+  // Ensure initialization only happens once
+  if (presencePageInitialized) return;
+  presencePageInitialized = true;
+
+  showSpinner();
+
+  initializeCalendar();    
+  loadPresenceData();
+}
+
+// Recurring check to initialize when visible
+function devicePresencePageUpdater() {
+  initDevicePresencePage();
+
+  setTimeout(devicePresencePageUpdater, 200);
+}
+
+devicePresencePageUpdater();
 
 
 

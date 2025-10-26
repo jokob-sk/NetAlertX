@@ -147,7 +147,7 @@
     {
       "column": "Watched_Value1",
       "css_classes": "col-sm-3",
-      "show": true,
+      "show": false,
       "type": "label",
       "default_value": "",
       "options": [],
@@ -177,7 +177,7 @@
     {
       "column": "Watched_Value3",
       "css_classes": "col-sm-2",
-      "show": true,
+      "show": false,
       "type": "label",
       "default_value": "",
       "options": [],
@@ -193,7 +193,7 @@
       "column": "Watched_Value4",
       "css_classes": "col-sm-2",
       "show": true,
-      "type": "device_mac",
+      "type": "device_name_mac",
       "default_value": "",
       "options": [],
       "localized": ["name"],

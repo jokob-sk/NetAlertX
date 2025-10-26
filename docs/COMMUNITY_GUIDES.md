@@ -2,6 +2,7 @@
 
 Use the official installation guides at first and use community content as supplementary material. Open an issue or PR if you'd like to add your link to the list 🙏 (Ordered by last update time)
 
+- ▶ [Discover & Monitor Your Network with This Self-Hosted Open Source Tool - Lawrence Systems](https://www.youtube.com/watch?v=R3b5cxLZMpo) (June 2025)
 - ▶ [Home Lab Network Monitoring - Scotti-BYTE Enterprise Consulting Services](https://www.youtube.com/watch?v=0DryhzrQSJA) (July 2024)
 - 📄 [How to Install NetAlertX on Your Synology NAS - Marius hosting](https://mariushosting.com/how-to-install-pi-alert-on-your-synology-nas/) (Updated frequently)
 - 📄 [Using the PiAlert Network Security Scanner on a Raspberry Pi - PiMyLifeUp](https://pimylifeup.com/raspberry-pi-pialert/)

@@ -20,6 +20,7 @@ import time
 import datetime
 import multiprocessing
 import subprocess
+from pathlib import Path
 
 # Register NetAlertX modules 
 import conf
@@ -29,11 +30,12 @@ from helper import  filePermissions, timeNowTZ, get_setting_value
 from app_state import updateState
 from api import update_api
 from scan.session_events import process_scan
-from initialise import importConfigs
+from initialise import importConfigs, renameSettings
 from database import DB
-from reporting import get_notifications
-from notification import Notification_obj
-from plugin import run_plugin_scripts, check_and_run_user_event 
+from messaging.reporting import get_notifications
+from models.notification_instance import NotificationInstance
+from models.user_events_queue_instance import UserEventsQueueInstance
+from plugin import plugin_manager 
 from scan.device_handling import update_devices_names
 from workflows.manager import WorkflowManager 
 
@@ -43,9 +45,10 @@ from workflows.manager import WorkflowManager
 #===============================================================================
 #===============================================================================
 """
-main structure of Pi Alert
+main structure of NetAlertX
 
     Initialise All
+    Rename old settings
     start Loop forever
         initialise loop 
             (re)import config
@@ -77,8 +80,8 @@ def main ():
     db.open()
     sql = db.sql  # To-Do replace with the db class
 
-    # Upgrade DB if needed
-    db.upgradeDB()
+    # Init DB 
+    db.initDB()
 
     # Initialize the WorkflowManager
     workflow_manager = WorkflowManager(db)
@@ -90,11 +93,17 @@ def main ():
     mylog('debug', '[MAIN] Starting loop')
 
     all_plugins = None
+    pm = None
+
+    # -- SETTINGS BACKWARD COMPATIBILITY START --
+    # rename settings that have changed names due to code cleanup or migration to plugins
+    renameSettings(Path(fullConfPath))
+    # -- SETTINGS BACKWARD COMPATIBILITY END --
 
     while True:
 
         # re-load user configuration and plugins   
-        all_plugins, imported = importConfigs(db, all_plugins)
+        pm, all_plugins, imported = importConfigs(pm, db, all_plugins)
 
         # update time started
         conf.loop_start_time = timeNowTZ()       
@@ -103,11 +112,11 @@ def main ():
 
         # Handle plugins executed ONCE
         if conf.plugins_once_run == False:
-            run_plugin_scripts(db, all_plugins, 'once')  
+            pm.run_plugin_scripts('once')  
             conf.plugins_once_run = True
         
         # check if user is waiting for api_update
-        check_and_run_user_event(db, all_plugins)
+        pm.check_and_run_user_event()
 
         # Update API endpoints              
         update_api(db, all_plugins, False)
@@ -126,13 +135,13 @@ def main ():
             startTime = startTime.replace (microsecond=0) 
 
             # Check if any plugins need to run on schedule
-            run_plugin_scripts(db, all_plugins, 'schedule') 
+            pm.run_plugin_scripts('schedule') 
 
             # determine run/scan type based on passed time
             # --------------------------------------------
            
             # Runs plugin scripts which are set to run every time after a scans finished            
-            run_plugin_scripts(db, all_plugins, 'always_after_scan')             
+            pm.run_plugin_scripts('always_after_scan')             
             
             # process all the scanned data into new devices
             processScan = updateState("Check scan").processScan
@@ -146,11 +155,11 @@ def main ():
             # --------
             # Reporting   
             # run plugins before notification processing (e.g. Plugins to discover device names)
-            run_plugin_scripts(db, all_plugins, 'before_name_updates')
+            pm.run_plugin_scripts('before_name_updates')
 
             # Resolve devices names
             mylog('debug','[Main] Resolve devices names')
-            update_devices_names(db)             
+            update_devices_names(db)     
             
             # Check if new devices found
             sql.execute (sql_new_devices)
@@ -160,7 +169,7 @@ def main ():
             #  new devices were found
             if len(newDevices) > 0:
                 #  run all plugins registered to be run when new devices are found                    
-                run_plugin_scripts(db, all_plugins, 'on_new_device')
+                pm.run_plugin_scripts('on_new_device')
 
             # Notification handling
             # ----------------------------------------
@@ -169,17 +178,23 @@ def main ():
             final_json = get_notifications(db)
 
             # Write the notifications into the DB
-            notification    = Notification_obj(db)
+            notification    = NotificationInstance(db)
             notificationObj = notification.create(final_json, "")
 
             # run all enabled publisher gateways 
             if notificationObj.HasNotifications:                
                 
-                run_plugin_scripts(db, all_plugins, 'on_notification') 
+                pm.run_plugin_scripts('on_notification') 
                 notification.setAllProcessed()
+                
+                # clear pending email flag
+                # and the plugin events
                 notification.clearPendingEmailFlag()
                 
             else:
+                # If there are no notifications to process,
+                # we still need to clear all plugin events
+                notification.clearPluginEvents()
                 mylog('verbose', ['[Notification] No changes to report'])
 
             # Commit SQL
@@ -217,6 +232,15 @@ def main ():
 
             updateState("Workflows: End")
            
+
+        # check if devices list needs updating
+        userUpdatedDevices = UserEventsQueueInstance().has_update_devices()
+
+        mylog('debug', [f'[Plugins] Should I update API (userUpdatedDevices): {userUpdatedDevices}']) 
+
+        if userUpdatedDevices:          
+
+            update_api(db, all_plugins, True, ["devices"], userUpdatedDevices) 
 
         #loop     
         time.sleep(5) # wait for N seconds      

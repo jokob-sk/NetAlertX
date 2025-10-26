@@ -7,6 +7,7 @@ import os
 import re
 import unicodedata
 import subprocess
+from typing import Union
 import pytz
 from pytz import timezone
 import json
@@ -16,6 +17,7 @@ import requests
 import base64
 import hashlib
 import random
+import email
 import string
 import ipaddress
 
@@ -53,20 +55,114 @@ def get_timezone_offset():
 
 
 #-------------------------------------------------------------------------------
-def updateSubnets(scan_subnets):
-    subnets = []
+#  Date and time methods
+#-------------------------------------------------------------------------------
 
-    # multiple interfaces
-    if type(scan_subnets) is list:
-        for interface in scan_subnets :
-            subnets.append(interface)
-    # one interface only
+# # -------------------------------------------------------------------------------------------
+# def format_date(date_str: str) -> str:
+#     """Format a date string as 'YYYY-MM-DD   HH:MM'"""
+#     dt = datetime.datetime.fromisoformat(date_str) if isinstance(date_str, str) else date_str
+#     return dt.strftime('%Y-%m-%d   %H:%M')
+
+# # -------------------------------------------------------------------------------------------
+# def format_date_diff(date1: str, date2: str) -> str:
+#     """Return difference between two dates formatted as 'Xd   HH:MM'"""
+#     dt1 = datetime.datetime.fromisoformat(date1) if isinstance(date1, str) else date1
+#     dt2 = datetime.datetime.fromisoformat(date2) if isinstance(date2, str) else date2
+#     delta = dt2 - dt1
+
+#     days = delta.days
+#     hours, remainder = divmod(delta.seconds, 3600)
+#     minutes = remainder // 60
+
+#     return f"{days}d   {hours:02}:{minutes:02}"
+
+# -------------------------------------------------------------------------------------------
+def format_date_iso(date1: str) -> str:
+    """Return ISO 8601 string for a date or None if empty"""
+    if date1 is None:
+        return None
+    dt = datetime.datetime.fromisoformat(date1) if isinstance(date1, str) else date1
+    return dt.isoformat()
+
+# -------------------------------------------------------------------------------------------
+def format_event_date(date_str: str, event_type: str) -> str:
+    """Format event date with fallback rules."""
+    if date_str:
+        return format_date(date_str)
+    elif event_type == "<missing event>":
+        return "<missing event>"
     else:
-        subnets.append(scan_subnets)
+        return "<still connected>"
 
-    return subnets
+# -------------------------------------------------------------------------------------------
+def ensure_datetime(dt: Union[str, datetime.datetime, None]) -> datetime.datetime:
+    if dt is None:
+        return timeNowTZ()
+    if isinstance(dt, str):
+        return datetime.datetime.fromisoformat(dt)
+    return dt
 
 
+def parse_datetime(dt_str):
+    if not dt_str:
+        return None
+    try:
+        # Try ISO8601 first
+        return datetime.datetime.fromisoformat(dt_str)
+    except ValueError:
+        # Try RFC1123 / HTTP format
+        try:
+            return datetime.datetime.strptime(dt_str, '%a, %d %b %Y %H:%M:%S GMT')
+        except ValueError:
+            return None
+
+def format_date(date_str: str) -> str:
+    dt = parse_datetime(date_str)
+    return dt.strftime('%Y-%m-%d   %H:%M') if dt else "invalid"
+
+def format_date_diff(date1, date2):
+    """
+    Return difference between two datetimes as 'Xd   HH:MM'.
+    Uses app timezone if datetime is naive.
+    date2 can be None (uses now).
+    """
+    # Get timezone from settings
+    tz_name = get_setting_value("TIMEZONE") or "UTC"
+    tz = pytz.timezone(tz_name)
+
+    def parse_dt(dt):
+        if dt is None:
+            return datetime.datetime.now(tz)
+        if isinstance(dt, str):
+            try:
+                dt_parsed = email.utils.parsedate_to_datetime(dt)
+            except Exception:
+                # fallback: parse ISO string
+                dt_parsed = datetime.datetime.fromisoformat(dt)
+            # convert naive GMT/UTC to app timezone
+            if dt_parsed.tzinfo is None:
+                dt_parsed = tz.localize(dt_parsed)
+            else:
+                dt_parsed = dt_parsed.astimezone(tz)
+            return dt_parsed
+        return dt if dt.tzinfo else tz.localize(dt)
+
+    dt1 = parse_dt(date1)
+    dt2 = parse_dt(date2)
+
+    delta = dt2 - dt1
+    total_minutes = int(delta.total_seconds() // 60)
+    days, rem_minutes = divmod(total_minutes, 1440)  # 1440 mins in a day
+    hours, minutes = divmod(rem_minutes, 60)
+
+    return {
+        "text": f"{days}d {hours:02}:{minutes:02}",
+        "days": days,
+        "hours": hours,
+        "minutes": minutes,
+        "total_minutes": total_minutes
+    }
 
 #-------------------------------------------------------------------------------
 # File system permission handling
@@ -98,20 +194,7 @@ def fixPermissions():
     # Try fixing access rights if needed
     chmodCommands = []
 
-    chmodCommands.append(['sudo', 'chmod', 'a+rw', '-R', fullDbPath])
-    chmodCommands.append(['sudo', 'chmod', 'a+rw', '-R', fullConfPath])
-
-    for com in chmodCommands:
-        # Execute command
-        mylog('none', ["[Setup] Attempting to fix permissions."])
-        try:
-            # try runnning a subprocess
-            result = subprocess.check_output (com, universal_newlines=True)
-        except subprocess.CalledProcessError as e:
-            # An error occured, handle it
-            mylog('none', ["[Setup] Fix Failed. Execute this command manually inside of the container: ", ' '.join(com)])
-            mylog('none', [e.output])
-
+  
 
 #-------------------------------------------------------------------------------
 def initialiseFile(pathToCheck, defaultFile):
@@ -191,64 +274,132 @@ def write_file(pPath, pText):
 #-------------------------------------------------------------------------------
 # Setting methods
 #-------------------------------------------------------------------------------
+
+SETTINGS_CACHE = {}
+SETTINGS_LASTCACHEDATE = 0
+SETTINGS_SECONDARYCACHE={}
+
 #-------------------------------------------------------------------------------
 #  Return whole setting touple
 def get_setting(key):
+    """
+    Retrieve the full setting tuple (dictionary) for a given key from the JSON settings file.
 
+    - Uses a cache to avoid re-reading the file if it hasn't changed.
+    - Loads settings from `table_settings.json` located at `apiPath`.
+    - Returns `None` if the key is not found or the file cannot be read.
+
+    Args:
+        key (str): The key of the setting to retrieve.
+
+    Returns:
+        dict | None: The setting dictionary for the key, or None if not found.
+    """
+    global SETTINGS_LASTCACHEDATE, SETTINGS_CACHE, SETTINGS_SECONDARYCACHE
+    
     settingsFile = apiPath + 'table_settings.json'
-
     try:
-        with open(settingsFile, 'r') as json_file:
-
-            data = json.load(json_file)
-
-            for item in data.get("data",[]):
-                if item.get("setKey") == key:
-                    return item
-
-            mylog('debug', [f'[Settings] ⚠ ERROR - setting_missing - Setting not found for key: {key} in file {settingsFile}'])  
-
-            return None
-
-    except (FileNotFoundError, json.JSONDecodeError, ValueError) as e:
-        # Handle the case when the file is not found, JSON decoding fails, or data is not in the expected format
-        mylog('none', [f'[Settings] ⚠ ERROR - JSONDecodeError or FileNotFoundError for file {settingsFile}'])                
-
+        fileModifiedTime = os.path.getmtime(settingsFile)
+    except FileNotFoundError:
+        mylog('none', [f'[Settings] ⚠ File not found: {settingsFile}'])
         return None
 
+    mylog('trace', [
+        '[Import table_settings.json] checking table_settings.json file',
+        f'SETTINGS_LASTCACHEDATE: {SETTINGS_LASTCACHEDATE}',
+        f'fileModifiedTime: {fileModifiedTime}'
+    ])
 
+    # Use cache if file hasn't changed
+    if fileModifiedTime == SETTINGS_LASTCACHEDATE and SETTINGS_CACHE:
+        mylog('trace', ['[Import table_settings.json] using cached version'])
+        return SETTINGS_CACHE.get(key)
 
-#-------------------------------------------------------------------------------
-# Settings
-#-------------------------------------------------------------------------------
+    # invalidate CACHE
+    SETTINGS_CACHE = {}
+    SETTINGS_SECONDARYCACHE={}
+
+    # Load JSON and populate cache
+    try:
+        with open(settingsFile, 'r') as json_file:
+            data = json.load(json_file)
+            SETTINGS_CACHE = {item["setKey"]: item for item in data.get("data", [])}
+    except json.JSONDecodeError:
+        mylog('none', [f'[Settings] ⚠ JSON decode error in file {settingsFile}'])
+        return None
+    except ValueError as e:
+        mylog('none', [f'[Settings] ⚠ Value error: {e} in file {settingsFile}'])
+        return None
+
+    # Only update file date when we successfully parsed the file
+    SETTINGS_LASTCACHEDATE = fileModifiedTime
+    
+    if key not in SETTINGS_CACHE:
+        mylog('none', [f'[Settings] ⚠ ERROR - setting_missing - {key} not in {settingsFile}'])
+        return None
+
+    return SETTINGS_CACHE[key]
 
 #-------------------------------------------------------------------------------
 #  Return setting value
 def get_setting_value(key):
+    """
+    Retrieve a setting value from configuration.
 
-    # Returns empty string if not set
-    value = ''
+    - First checks if `conf.mySettings` is populated and contains the key.
+    - Falls back to `get_setting(key)` if not found.
+    - Converts the raw stored value into the correct Python type
+      using `setting_value_to_python_type`.
+
+    Args:
+        key (str): The setting key to look up.
+
+    Returns:
+        Any: The Python-typed setting value, or an empty string if not found.
+    """
+
+    global SETTINGS_SECONDARYCACHE
     
+    # Returns empty string if not found
+    value = ''
+
+    # lookup key in secondary cache
+    if key in SETTINGS_SECONDARYCACHE:
+        return SETTINGS_SECONDARYCACHE[key]
+    # Prefer conf.mySettings if available
+    if hasattr(conf, "mySettings") and conf.mySettings:
+        # conf.mySettings is a list of tuples, find by key (tuple[0])
+        for item in conf.mySettings:
+            if item[0] == key:
+                set_type = item[3]   # type
+                set_value = item[5]  # value                
+                if isinstance(set_value, (list, dict)):
+                    value = setting_value_to_python_type(set_type, set_value)
+                else:
+                    value = setting_value_to_python_type(set_type, str(set_value))
+                SETTINGS_SECONDARYCACHE[key] = value
+                return value
+
+    # Otherwise fall back to retrive from json
     setting = get_setting(key)
 
     if setting is not None:
-
         # mylog('none', [f'[SETTINGS] setting json:{json.dumps(setting)}'])        
 
         set_type  = 'Error: Not handled'
         set_value = 'Error: Not handled'
 
         set_value = setting["setValue"]  # Setting value (Value (upper case) = user overridden default_value)
-        set_type = setting["setType"]  # Setting type  # lower case "type" - default json value vs uppper-case "setType" (= from user defined settings)
+        set_type  = setting["setType"]   # Setting type  # lower case "type" - default json value vs uppper-case "setType" (= from user defined settings)
 
         value = setting_value_to_python_type(set_type, set_value)
+        SETTINGS_SECONDARYCACHE[key] = value
 
     return value
 
+
 #-------------------------------------------------------------------------------
 #  Convert the setting value to the corresponding python type
-
-
 def setting_value_to_python_type(set_type, set_value):
     value = '----not processed----'
 
@@ -341,6 +492,30 @@ def setting_value_to_python_type(set_type, set_value):
     return value
 
 #-------------------------------------------------------------------------------
+def updateSubnets(scan_subnets):
+    """
+    Normalize scan subnet input into a list of subnets.
+
+    Parameters:
+        scan_subnets (str or list): A single subnet string or a list of subnet strings.
+
+    Returns:
+        list: A list containing all subnets. If a single subnet is provided, it is returned as a single-element list.
+    """
+    subnets = []
+
+    # multiple interfaces
+    if isinstance(scan_subnets, list):
+        for interface in scan_subnets:
+            subnets.append(interface)
+    # one interface only
+    else:
+        subnets.append(scan_subnets)
+
+    return subnets
+
+
+#-------------------------------------------------------------------------------
 # Reverse transformed values if needed
 def reverseTransformers(val, transformers):
     # Function to apply transformers to a single value
@@ -358,41 +533,6 @@ def reverseTransformers(val, transformers):
         return [reverse_transformers(item, transformers) for item in val]
     else:
         return reverse_transformers(val, transformers)
-
-#-------------------------------------------------------------------------------
-# Generate a WHERE condition for SQLite based on a list of values.
-def list_to_where(logical_operator, column_name, condition_operator, values_list):
-    """
-    Generate a WHERE condition for SQLite based on a list of values.
-
-    Parameters:
-    - logical_operator: The logical operator ('AND' or 'OR') to combine conditions.
-    - column_name: The name of the column to filter on.
-    - condition_operator: The condition operator ('LIKE', 'NOT LIKE', '=', '!=', etc.).
-    - values_list: A list of values to be included in the condition.
-
-    Returns:
-    - A string representing the WHERE condition.
-    """
-
-    # If the list is empty, return an empty string
-    if not values_list:
-        return ""
-
-    # Replace {s-quote} with single quote in values_list
-    values_list = [value.replace("{s-quote}", "'") for value in values_list]
-
-    # Build the WHERE condition for the first value
-    condition = f"{column_name} {condition_operator} '{values_list[0]}'"
-
-    # Add the rest of the values using the logical operator
-    for value in values_list[1:]:
-        condition += f" {logical_operator} {column_name} {condition_operator} '{value}'"
-
-    return f'({condition})'
-
-
-
 
 
 #-------------------------------------------------------------------------------
@@ -428,214 +568,22 @@ def check_IP_format (pIP):
     return IP.group(0)
 
 #-------------------------------------------------------------------------------
-def get_device_name_mdns(db, pMAC, pIP):
-    
-    nameNotFound = "(name not found)"
-
-    sql = db.sql
-
-    name = nameNotFound
-    
-    #  get names from the AVAHISCAN plugin entries vased on MAC
-    sql.execute(
-        f"""
-         SELECT Watched_Value2 FROM Plugins_Objects 
-         WHERE 
-            Plugin = 'AVAHISCAN' AND 
-            Object_PrimaryID = '{pMAC}'
-         """
-    )         
-    nameEntry = sql.fetchall() 
-    db.commitDB()
-
-    if len(nameEntry) != 0:
-        name = cleanDeviceName(nameEntry[0][0], False)
-
-        return name
-
-    #  get names from the AVAHISCAN plugin entries based on IP
-    sql.execute(
-        f"""
-         SELECT Watched_Value2 FROM Plugins_Objects 
-         WHERE 
-            Plugin = 'AVAHISCAN' AND             
-            Object_SecondaryID = '{pIP}'
-         """
-    )         
-    nameEntry = sql.fetchall() 
-    db.commitDB()
-
-    if len(nameEntry) != 0:
-        name = cleanDeviceName(nameEntry[0][0], True)
-
-        return name
-
-    return name
-
-#-------------------------------------------------------------------------------
-def get_device_name_nslookup(db, pMAC, pIP):
-    
-    nameNotFound = "(name not found)"
-
-    sql = db.sql
-
-    name = nameNotFound
-    
-    #  get names from the NSLOOKUP plugin entries vased on MAC
-    sql.execute(
-        f"""
-         SELECT Watched_Value2 FROM Plugins_Objects 
-         WHERE 
-            Plugin = 'NSLOOKUP' AND 
-            Object_PrimaryID = '{pMAC}'
-         """
-    )         
-    nameEntry = sql.fetchall() 
-    db.commitDB()
-
-    if len(nameEntry) != 0:
-        name = cleanDeviceName(nameEntry[0][0], False)
-
-        return name
-
-    #  get names from the NSLOOKUP plugin entries based on IP
-    sql.execute(
-        f"""
-         SELECT Watched_Value2 FROM Plugins_Objects 
-         WHERE 
-            Plugin = 'NSLOOKUP' AND             
-            Object_SecondaryID = '{pIP}'
-         """
-    )         
-    nameEntry = sql.fetchall() 
-    db.commitDB()
-
-    if len(nameEntry) != 0:
-        name = cleanDeviceName(nameEntry[0][0], True)
-
-        return name
-
-    return name
-
-#-------------------------------------------------------------------------------
-def get_device_name_nbtlookup(db, pMAC, pIP):
-    
-    nameNotFound = "(name not found)"
-
-    sql = db.sql
-
-    name = nameNotFound
-    
-    #  get names from the NBTSCAN plugin entries vased on MAC
-    sql.execute(
-        f"""
-         SELECT Watched_Value2 FROM Plugins_Objects 
-         WHERE 
-            Plugin = 'NBTSCAN' AND 
-            Object_PrimaryID = '{pMAC}'
-         """
-    )         
-    nameEntry = sql.fetchall() 
-    db.commitDB()
-
-    if len(nameEntry) != 0:
-        name = cleanDeviceName(nameEntry[0][0], False)
-
-        return name
-
-    #  get names from the NSLOOKUP plugin entries based on IP
-    sql.execute(
-        f"""
-         SELECT Watched_Value2 FROM Plugins_Objects 
-         WHERE 
-            Plugin = 'NBTSCAN' AND             
-            Object_SecondaryID = '{pIP}'
-         """
-    )         
-    nameEntry = sql.fetchall() 
-    db.commitDB()
-
-    if len(nameEntry) != 0:
-        name = cleanDeviceName(nameEntry[0][0], True)
-
-        return name
-
-    return name
-
-
-#-------------------------------------------------------------------------------
-def resolve_device_name_dig (pMAC, pIP):
-    
-    nameNotFound = "(name not found)"
-
-    dig_args = ['dig', '+short', '-x', pIP]
-
-    # Execute command
-    try:
-        # try runnning a subprocess
-        newName = subprocess.check_output (dig_args, universal_newlines=True)
-
-        # Check returns
-        newName = newName.strip()
-
-        if len(newName) == 0 :
-            return nameNotFound
-            
-        # Cleanup
-        newName = cleanDeviceName(newName, True)
-
-        if newName == "" or  len(newName) == 0 or newName == '-1' or newName == -1 or "communications error" in newName or 'malformed message packet' in newName : 
-            return nameNotFound
-
-        # all checks passed
-        mylog('debug', [f'[resolve_device_name_dig] Found a new name: "{newName}"'])  
-
-        return newName
-
-    except subprocess.CalledProcessError as e:
-        # An error occured, handle it
-        mylog('none', ['[resolve_device_name_dig] ⚠ ERROR: ', e.output])            
-        # newName = "Error - check logs"
-        return nameNotFound
-
-
-#-------------------------------------------------------------------------------
-# DNS record (Name resolution) cleanup methods
-#-------------------------------------------------------------------------------
-
-import dns.resolver
-
-def cleanDeviceName(str, match_IP):
-
-    mylog('debug', ["[cleanDeviceName] input: " + str])
-
-    # add matching info
-    if match_IP:
-        str = str + " (IP match)"
-
-    # Applying cleanup REGEXEs
-    mylog('debug', ["[Name cleanup] Using old cleanDeviceName(" + str + ")"])
-
-    regexes = get_setting_value('NEWDEV_NAME_CLEANUP_REGEX')
-
-    for rgx in regexes:
-        mylog('trace', ["[cleanDeviceName] applying regex    : " + rgx])
-        mylog('trace', ["[cleanDeviceName] name before regex : " + str])        
-        str = re.sub(rgx, "", str)
-        mylog('trace', ["[cleanDeviceName] name after regex  : " + str])
-
-    # str = re.sub(r'\.\b', '', str)  # trailing dot after words
-    str = re.sub(r'\.$', '', str)   # trailing dot at the end of the string
-    str = str.replace(". (IP match)", " (IP match)") # Remove dot if (IP match) is added
-    
-    mylog('debug', ["[cleanDeviceName] output: " + str])
-    
-    return str
-
-#-------------------------------------------------------------------------------
 # String manipulation methods
 #-------------------------------------------------------------------------------
 
+#-------------------------------------------------------------------------------
+def generate_random_string(length):
+    characters = string.ascii_letters + string.digits
+    return ''.join(random.choice(characters) for _ in range(length))
+
+#-------------------------------------------------------------------------------
+def extract_between_strings(text, start, end):
+    start_index = text.find(start)
+    end_index = text.find(end, start_index + len(start))
+    if start_index != -1 and end_index != -1:
+        return text[start_index + len(start):end_index]
+    else:
+        return ""
 
 #-------------------------------------------------------------------------------
 
@@ -678,7 +626,6 @@ def removeDuplicateNewLines(text):
         return text
 
 #-------------------------------------------------------------------------------
-
 def sanitize_string(input):
     if isinstance(input, bytes):
         input = input.decode('utf-8')
@@ -687,24 +634,38 @@ def sanitize_string(input):
 
 
 #-------------------------------------------------------------------------------
-def sanitize_SQL_input(val):
-    if val is None:
-        return ''
-    if isinstance(val, str):
-        return val.replace("'", "_")
-    return val  # Return non-string values as they are
-
-
-#-------------------------------------------------------------------------------
 # Function to normalize the string and remove diacritics
 def normalize_string(text):
     # Normalize the text to 'NFD' to separate base characters and diacritics
+    if not isinstance(text, str):
+        text = str(text)
     normalized_text = unicodedata.normalize('NFD', text)
     # Filter out diacritics and unwanted characters
     return ''.join(c for c in normalized_text if unicodedata.category(c) != 'Mn')
 
-
+# ------------------------------------------------------------------------------    
+# MAC and IP helper methods
 #-------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------------------    
+def is_random_mac(mac: str) -> bool:
+    """Determine if a MAC address is random, respecting user-defined prefixes not to mark as random."""
+
+    is_random = mac[1].upper() in ["2", "6", "A", "E"]
+
+    # Get prefixes from settings
+    prefixes = get_setting_value("UI_NOT_RANDOM_MAC")  
+
+    # If detected as random, make sure it doesn't start with a prefix the user wants to exclude
+    if is_random:
+        for prefix in prefixes:
+            if mac.upper().startswith(prefix.upper()):
+                is_random = False
+                break
+
+    return is_random
+
+# -------------------------------------------------------------------------------------------    
 def generate_mac_links (html, deviceUrl):
 
     p = re.compile(r'(?:[0-9a-fA-F]:?){12}')
@@ -715,15 +676,6 @@ def generate_mac_links (html, deviceUrl):
         html = html.replace('<td>' + mac + '</td>','<td><a href="' + deviceUrl + mac + '">' + mac + '</a></td>')
 
     return html
-
-#-------------------------------------------------------------------------------
-def extract_between_strings(text, start, end):
-    start_index = text.find(start)
-    end_index = text.find(end, start_index + len(start))
-    if start_index != -1 and end_index != -1:
-        return text[start_index + len(start):end_index]
-    else:
-        return ""
 
 #-------------------------------------------------------------------------------
 def extract_mac_addresses(text):
@@ -738,11 +690,6 @@ def extract_ip_addresses(text):
     return ip_addresses
 
 #-------------------------------------------------------------------------------
-def generate_random_string(length):
-    characters = string.ascii_letters + string.digits
-    return ''.join(random.choice(characters) for _ in range(length))
-
-
 # Helper function to determine if a MAC address is random
 def is_random_mac(mac):
     # Check if second character matches "2", "6", "A", "E" (case insensitive)
@@ -757,13 +704,14 @@ def is_random_mac(mac):
                 break
     return is_random
 
+#-------------------------------------------------------------------------------
 # Helper function to calculate number of children
 def get_number_of_children(mac, devices):
     # Count children by checking devParentMAC for each device
     return sum(1 for dev in devices if dev.get("devParentMAC", "").strip() == mac.strip())
 
 
-
+#-------------------------------------------------------------------------------
 # Function to convert IP to a long integer
 def format_ip_long(ip_address):
     try:
@@ -798,8 +746,6 @@ def add_json_list (row, list):
 
     return list
 
-
-
 #-------------------------------------------------------------------------------
 # Checks if the object has a __dict__ attribute. If it does, it assumes that it's an instance of a class and serializes its attributes dynamically. 
 class NotiStrucEncoder(json.JSONEncoder):
@@ -808,19 +754,6 @@ class NotiStrucEncoder(json.JSONEncoder):
             # If the object has a '__dict__', assume it's an instance of a class
             return obj.__dict__
         return super().default(obj)
-
-#-------------------------------------------------------------------------------
-#  Creates a JSON object from a DB row
-def row_to_json(names, row):
-
-    rowEntry = {}
-
-    index = 0
-    for name in names:
-        rowEntry[name]= if_byte_then_to_str(row[name])
-        index += 1
-
-    return rowEntry
 
 #-------------------------------------------------------------------------------
 # Get language strings from plugin JSON
@@ -835,10 +768,6 @@ def collect_lang_strings(json, pref, stringSqlParams):
     return stringSqlParams
 
 #-------------------------------------------------------------------------------
-#  Misc
-#-------------------------------------------------------------------------------
-
-#-------------------------------------------------------------------------------
 def checkNewVersion():
     mylog('debug', [f"[Version check] Checking if new version available"])
 
@@ -848,7 +777,10 @@ def checkNewVersion():
         buildTimestamp = int(f.read().strip())
 
     try:
-        response = requests.get("https://api.github.com/repos/jokob-sk/NetAlertX/releases")
+        response = requests.get(
+            "https://api.github.com/repos/jokob-sk/NetAlertX/releases",
+            timeout=5
+        )
         response.raise_for_status()  # Raise an exception for HTTP errors
         text = response.text
     except requests.exceptions.RequestException as e:
@@ -876,26 +808,9 @@ def checkNewVersion():
 
     return newVersion
 
-
-
-#-------------------------------------------------------------------------------
-def initOrSetParam(db, parID, parValue):
-    sql = db.sql
-
-    sql.execute ("INSERT INTO Parameters(par_ID, par_Value) VALUES('"+str(parID)+"', '"+str(parValue)+"') ON CONFLICT(par_ID) DO UPDATE SET par_Value='"+str(parValue)+"' where par_ID='"+str(parID)+"'")
-
-    db.commitDB()
-
-#-------------------------------------------------------------------------------
-class json_obj:
-    def __init__(self, jsn, columnNames):
-        self.json = jsn
-        self.columnNames = columnNames
-
 #-------------------------------------------------------------------------------
 class noti_obj:
     def __init__(self, json, text, html):
         self.json = json
         self.text = text
         self.html = html  
-

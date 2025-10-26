@@ -41,7 +41,7 @@ class Condition:
         if self.operator == "equals":
             result = str(obj_value) == str(self.value)
         elif self.operator == "contains":
-            result = str(self.value) in str(obj_value)
+            result = str(self.value).lower() in str(obj_value).lower()
         elif self.operator == "regex":
             result = bool(re.match(self.value, str(obj_value)))
         else:
@@ -57,9 +57,7 @@ class ConditionGroup:
 
     def __init__(self, group_json):
 
-        mylog('none', ["[WF] json.dumps(group_json)"])
-        mylog('none', [json.dumps(group_json)])
-        mylog('none', [group_json])
+        mylog('verbose', [f"[WF] ConditionGroup json.dumps(group_json): {json.dumps(group_json)}"])
 
         self.logic = group_json.get("logic", "AND").upper()
         self.conditions = []
@@ -78,6 +76,6 @@ class ConditionGroup:
         elif self.logic == "OR":
             return any(results)
         else:
-            m = f"[WF] Unsupported logic: {self.logic}"
-            mylog('none', [m])
+            m = f"[WF] ConditionGroup unsupported logic: {self.logic}"
+            mylog('verbose', [m])
             raise ValueError(m)

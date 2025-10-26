@@ -42,6 +42,8 @@ def main():
     parser.add_argument('routers',  action="store",  help="IP(s) of routers, separated by comma (,) if passing multiple")                        
     values = parser.parse_args()
 
+    timeoutSetting = get_setting_value("SNMPDSC_RUN_TIMEOUT")
+
     plugin_objects = Plugin_Objects(RESULT_FILE)
 
     if values.routers:        
@@ -55,16 +57,14 @@ def main():
     
         for cmd in commands:
             mylog('verbose', ['[SNMPDSC] Router snmpwalk command: ', cmd]) 
-            timeoutSec = 10
             # split the string, remove white spaces around each item, and exclude any empty strings
             snmpwalkArgs = [arg.strip() for arg in cmd.split(' ') if arg.strip()]
-
 
             # Execute N probes and insert in list
             probes = 1  # N probes
                 
             for _ in range(probes):
-                output = subprocess.check_output (snmpwalkArgs, universal_newlines=True, stderr=subprocess.STDOUT, timeout=(timeoutSec ))
+                output = subprocess.check_output (snmpwalkArgs, universal_newlines=True, stderr=subprocess.STDOUT, timeout=(timeoutSetting))
 
                 mylog('verbose', ['[SNMPDSC] output: ', output]) 
 

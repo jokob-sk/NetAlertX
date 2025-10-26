@@ -1,464 +1,69 @@
 <?php
-
   require 'php/templates/header.php';
-  require 'php/templates/notification.php';
-
-  // online / offline badges HTML snippets 
-  define('badge_online', '<div class="badge bg-green text-white" style="width: 60px;">Online</div>');
-  define('badge_offline', '<div class="badge bg-red text-white" style="width: 60px;">Offline</div>');
-  define('circle_online', '<div class="badge bg-green text-white" style="width: 10px; height: 10px; padding:2px; margin-top: -25px;">&nbsp;</div>');
-  define('circle_offline', '<div class="badge bg-red text-white" style="width: 10px;  height: 10px; padding:2px; margin-top: -25px;">&nbsp;</div>'); 
-  define('sortable_column', ' <span class="sort-btn" onclick="sortColumn(this)"><i class="fa-solid fa-arrow-up-short-wide"></i></span>'); 
-  
+  require 'php/templates/modals.php';  
 ?>
-
+    
 <script>
   // show spinning icon
   showSpinner()
-</script> 
- 
+</script>  
 
 <!-- Page ------------------------------------------------------------------ -->
 <div class="content-wrapper">
+  <span class="helpIcon"> 
+    <a target="_blank" href="https://github.com/jokob-sk/NetAlertX/blob/main/docs/NETWORK_TREE.md">
+      <i class="fa fa-circle-question"></i>
+    </a>
+  </span>
 
+  <div id="toggleFilters" class="">    
+      <div class="checkbox icheck col-xs-12">
+        <label>
+          <input type="checkbox" name="showOffline" checked>
+            <div style="margin-left: 10px; display: inline-block; vertical-align: top;"> 
+              <?= lang('Network_ShowOffline');?>
+              <span id="showOfflineNumber">
+                <!-- placeholder -->
+              </span>
+            </div>
+        </label>
+      </div>
+      <div class="checkbox icheck col-xs-12">
+        <label>
+          <input type="checkbox" name="showArchived">
+            <div style="margin-left: 10px; display: inline-block; vertical-align: top;"> 
+              <?= lang('Network_ShowArchived');?> 
+              <span id="showArchivedNumber">
+                <!-- placeholder -->
+              </span>
+            </div>
+        </label>      
+      </div>    
+  </div>
 
-  <span class="networkHelpIcon"> <a target="_blank" href="https://github.com/jokob-sk/NetAlertX/blob/main/docs/NETWORK_TREE.md"><i class="fa fa-circle-question"></i></a></span>
-
-  <div id="networkTree" class="drag"></div>
+  <div id="networkTree" class="drag">
+    <!-- Tree topology Placeholder -->
+  </div>
 
   <!-- Main content ---------------------------------------------------------- -->
   <section class="content networkTable">
-    <?php
-      // Create top-level node (network devices) tabs 
-      function createDeviceTabs($node_mac, $node_name, $node_status, $node_type, $node_ports_count, $icon, $activetab) {        
-
-        // prepare string with port number in brackets if available
-        $str_port = "";
-        if ($node_ports_count != "") {
-          $str_port = ' ('.$node_ports_count.')';
-        }
-
-        // online/offline status circle (red/green)
-        $node_badge = "";
-        if($node_status == 1) // 1 means online, 0 offline
-        {
-          $node_badge = circle_online; 
-        } else
-        {
-          $node_badge = circle_offline;
-        }
-
-        $decoded_icon = base64_decode($icon);
-        $idFromMac = str_replace(":", "_", $node_mac);
-        $str_tab_header = '<li class="networkNodeTabHeaders '.$activetab.' " >
-                              
-                              <a href="#'.$idFromMac.'" data-mytabmac="'.$node_mac.'" id="'.$idFromMac.'_id" data-toggle="tab" title="'.$node_name.' ">' // _id is added so it doesn't conflict with AdminLTE tab behavior
-                                .'<div class="icon">'.$decoded_icon.' </div> <span class="node-name">'.$node_name.'</span>' .$str_port.$node_badge.
-                              '</a>
-                          </li>';
-
-        echo $str_tab_header;
-
-      }
-
-      // Create pane content (displayed inside of the tabs)      
-      function createPane($node_mac, $node_name, $node_status, $node_type, $node_ports_count, $node_parent_mac, $activetab){        
-
-        // online/offline status circle (red/green)
-        $node_badge = "";
-        if($node_status == 1) // 1 means online, 0 offline
-        {
-          $node_badge = badge_online; 
-        } else
-        {
-          $node_badge = badge_offline;
-        }
-
-        $idFromMac = str_replace(":", "_", $node_mac);
-        $idParentMac = str_replace(":", "_", $node_parent_mac);
-        $str_tab_pane = '<div class="tab-pane '.$activetab.'" id="'.$idFromMac.'">
-                            <div>
-                              <h2 class="page-header"><i class="fa fa-server"></i> '.lang('Network_Node'). '</h2>
-                            </div>
-                            <table class="table table-striped" > 
-                              <tbody>
-                                <tr> 
-                                  <td class="col-sm-3">
-                                    <b>'.lang('Network_Node').'</b>
-                                  </td>
-                                  <td  class="anonymize">
-                                    <a href="./deviceDetails.php?mac='.$node_mac.'">
-                                    '.$node_name.'
-                                    </a>
-                                  </td>
-                                </tr>
-                                <tr> 
-                                  <td >
-                                    <b>MAC</b>
-                                  </td>
-                                  <td data-mynodemac="'.$node_mac.'" class="anonymize">'
-                                    .$node_mac.
-                                  '</td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <b>'.lang('Device_TableHead_Type').'</b>
-                                  </td>
-                                  <td>
-                                  ' .$node_type. '
-                                  </td>
-                                </tr>
-                                <tr> 
-                                  <td>
-                                    <b>'.lang('Network_Table_State').'</b> 
-                                  </td>
-                                  <td>  '
-                                    .$node_badge.
-                                  '</td>
-                                </tr>
-                                <tr> 
-                                  <td>
-                                    <b>'.lang('Network_Parent').'</b> 
-                                  </td>
-                                  <td>  
-                                    <a href="./network.php?mac='.$idParentMac.'">
-                                      <b class="anonymize">
-                                        <span class="mac-to-name" my-data-mac="'.$node_parent_mac.'">'.$node_parent_mac.' </span>
-                                        <i class="fa fa-square-up-right"></i>
-                                      </b>
-                                    </a>                                 
-                                  </td>
-                              </tr>
-                              </tbody>
-                            </table>
-                            <br>
-                             <div id="assignedDevices"  class="box-body no-padding">
-                              <div class="page-header">
-                                <h3>
-                                  <i class="fa fa-sitemap"></i> '.lang('Network_Connected').'
-                                </h3>
-                              </div>
-                             ';
-
-        $str_table =      '   <table class="table table-striped">
-                                <thead>
-                                  <tr>
-                                    <th  class="col-sm-1" >Port</th>
-                                    <th  class="col-sm-1" >'.lang('Network_Table_State').'</th>
-                                    <th  class="col-sm-2" >'.lang('Network_Table_Hostname').sortable_column.'</th>
-                                    <th  class="col-sm-1" >'.lang('Network_Table_IP').sortable_column.'</th>
-                                    <th  class="col-sm-3" >'.lang('Network_ManageLeaf').'</th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-
-                                </tr>';
-        
-        // Prepare Array for Devices with Port value
-        // If no Port is set, the Port number is set to 0
-        if ($node_ports_count == "") {
-          $node_ports_count = 0;
-        }
-
-        // Get all leafs connected to a node based on the node_mac        
-        $func_sql = 'SELECT devParentPort as port,
-                            devMac as mac,  
-                            devPresentLastScan as online, 
-                            devName as name,
-                            devType as type, 
-                            devLastIP as last_ip,
-                            (select devType from Devices a where devMac = "'.$node_mac.'") as node_type
-                        FROM Devices WHERE devParentMAC = "'.$node_mac.'" order by port, name asc';
-        
-        global $db;
-        $func_result = $db->query($func_sql);  
-        
-        // array 
-        $tableData = array();
-        while ($row = $func_result -> fetchArray (SQLITE3_ASSOC)) {   
-            // Push row data      
-            $tableData[] = array( 'port'            => $row['port'], 
-                                  'mac'             => $row['mac'],
-                                  'online'          => $row['online'],
-                                  'name'            => $row['name'],
-                                  'type'            => $row['type'],
-                                  'last_ip'         => $row['last_ip'],
-                                  'node_type'       => $row['node_type']); 
-        }
-    
-        // Control no rows
-        if (empty($tableData)) {
-          $tableData = [];
-        }
-
-        $str_table_rows = "";        
-
-        foreach ($tableData as $row) {                            
-         
-          if ($row['online'] == 1) {
-            $port_state = badge_online;
-          } else {
-            $port_state = badge_offline;
-          }
-                    
-          // prepare HTML for the port table column cell
-          $port_content = "N/A";
-  
-          if (($row['node_type'] == "WLAN" || $row['node_type'] == "AP" ) && ($row['port'] == NULL || $row['port'] == "") ){ 
-            $port_content = '<i class="fa fa-wifi"></i>';
-          } elseif ($row['node_type'] == "Powerline") 
-          {
-            $port_content = '<i class="fa fa-flash"></i>';
-          } elseif ($row['port'] != NULL && $row['port'] != "") 
-          {
-            $port_content = $row['port'];
-          }
-  
-          $str_table_rows = $str_table_rows.
-                            '<tr>
-                              <td style="text-align: center;">
-                                '.$port_content.'                  
-                              </td>
-                              <td>'
-                                .$port_state.
-                              '</td>
-                              <td style="padding-left: 10px;">
-                                <a href="./deviceDetails.php?mac='.$row['mac'].'">
-                                  <b class="anonymize">'.$row['name'].'</b>
-                                </a>
-                              </td>
-                              <td class="anonymize">'
-                                .$row['last_ip'].
-                              '</td>
-                              <td class="">
-                                <button class="btn btn-primary btn-danger btn-sm" data-myleafmac="'.$row['mac'].'" >'.lang('Network_ManageUnassign').'</button>
-                              </td>
-                            </tr>';
-          
-        }        
-
-        $str_table_close =    '</tbody>
-                            </table>';
-
-        // no connected device - don't render table, just display some info
-        if($str_table_rows == "")
-        {
-          $str_table = "<div>                        
-                          <div>
-                            ".lang("Network_NoAssignedDevices")."
-                          </div>
-                        </div>";
-          $str_table_close = "";
-        }
-         
-        $str_close_pane = '</div>       
-          </div>';  
-
-        // write the HTML
-        echo  ''.$str_tab_pane.
-                  $str_table.
-                  $str_table_rows.
-                  $str_table_close.
-                  $str_close_pane;
-      }     
-
-    
-    // Create Top level tabs   (List of network devices), explanation of the terminology below:
-    //
-    //             Switch 1 (node) 
-    //              /(p1)    \ (p2)     <----- port numbers
-    //             /          \
-    //   Smart TV (leaf)      Switch 2 (node (for the PC) and leaf (for Switch 1))
-    //                          \
-    //                          PC (leaf) <------- leafs are not included in this SQL query
-
-    $networkDeviceTypes = str_replace("]", "",(str_replace("[", "", getSettingValue("NETWORK_DEVICE_TYPES"))));
-    
-    $sql = "SELECT node_name, node_mac, online, node_type, node_ports_count, parent_mac, node_icon
-            FROM 
-            (
-                  SELECT  a.devName as  node_name,        
-                        a.devMac as node_mac,
-                        a.devPresentLastScan as online,
-                        a.devType as node_type,
-                        a.devParentMAC as parent_mac,
-                        a.devIcon as node_icon
-                  FROM Devices a 
-                  WHERE a.devType in (".$networkDeviceTypes.")					
-            ) t1
-            LEFT JOIN
-            (
-                  SELECT  b.devParentMAC as node_mac_2,
-                        count() as node_ports_count 
-                  FROM Devices b 
-                  WHERE b.devParentMAC NOT NULL group by b.devParentMAC
-            ) t2
-            ON (t1.node_mac = t2.node_mac_2);
-          ";
-
-    $result = $db->query($sql);    
-
-    // array 
-    $tableData = array();
-    while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {   
-        // Push row data      
-        $tableData[] = array( 'node_mac'                => $row['node_mac'], 
-                              'node_name'               => $row['node_name'],
-                              'online'                  => $row['online'],
-                              'node_type'               => $row['node_type'],
-                              'parent_mac'              => $row['parent_mac'],
-                              'node_icon'               => $row['node_icon'],
-                              'node_ports_count'        => $row['node_ports_count']);
-    }
-
-    // Control no rows
-    if (empty($tableData)) {
-      $tableData = [];
-    }
-
-    echo '<div class="nav-tabs-custom" style="margin-bottom: 0px;">
-    <ul class="nav nav-tabs">';
-
-    $activetab='active';
-    foreach ($tableData as $row) {                            
-        createDeviceTabs( $row['node_mac'], 
-                          $row['node_name'], 
-                          $row['online'],
-                          $row['node_type'], 
-                          $row['node_ports_count'],
-                          $row['node_icon'],
-                          $activetab);
-
-                          $activetab = ""; // reset active tab indicator, only the first tab is active
-      
-    }
-    echo ' </ul>  <div class="tab-content">';
-
-    $activetab='active';    
-
-    foreach ($tableData as $row) {                            
-      createPane($row['node_mac'], 
-                  $row['node_name'],
-                  $row['online'], 
-                  $row['node_type'], 
-                  $row['node_ports_count'],
-                  $row['parent_mac'],
-                  $activetab);
-
-                  $activetab = ""; // reset active tab indicator, only the first tab is active
-    
-    }
-
-    ?>
-    <!-- /.tab-pane -->
-    </div>         
-  </section>
-
-  <!-- Unassigned devices -->
-  <?php   
-
-    // Get all Unassigned / unconnected nodes 
-    $func_sql = 'SELECT 
-                  devMac AS mac,
-                  devPresentLastScan AS online,
-                  devName AS name,
-                  devLastIP AS last_ip,
-                  devParentMAC
-                FROM Devices
-                WHERE devParentMAC IS NULL 
-                  OR devParentMAC IN ("", " ", "undefined", "null")
-                  AND devMac NOT LIKE "%internet%"
-                ORDER BY name ASC;'; 
-
-    global $db;
-    $func_result = $db->query($func_sql);  
-
-    // array 
-    $tableData = array();
-    while ($row = $func_result -> fetchArray (SQLITE3_ASSOC)) {   
-      // Push row data      
-      $tableData[] = array( 'mac'             => $row['mac'],
-                            'online'          => $row['online'],
-                            'name'            => $row['name'],
-                            'last_ip'         => $row['last_ip']); 
-    }
-
-    // Don't do anything if empty
-    if (!(empty($tableData))) {
-      $str_table_header =  '
-                        <div class="content">
-                          <div id="unassignedDevices" class="box box-aqua box-body">
-                            <section> 
-                              <h3>
-                                <i class="fa fa-laptop"></i> '.lang('Network_UnassignedDevices').'
-                              </h3>
-                              <table class="table table-striped">
-                                <thead>
-                                  <tr>
-                                    <th  class="col-sm-1" ></th>
-                                    <th  class="col-sm-1" >'.lang('Network_Table_State').'</th>
-                                    <th  class="col-sm-2" >'.lang('Network_Table_Hostname').sortable_column.'</th>
-                                    <th  class="col-sm-1" >'.lang('Network_Table_IP').sortable_column.'</th>
-                                    <th  class="col-sm-3" >'.lang('Network_Assign').'</th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                <tr>                              
-
-                                </tr>';   
-
-      $str_table_rows = "";        
-
-      foreach ($tableData as $row) {  
-        
-        if ($row['online'] == 1) {
-          $state = badge_online;
-        } else {
-          $state = badge_offline;
-        }
-
-        $str_table_rows = $str_table_rows.
-                                          '
-                                          <tr>                  
-                                            <td> </td> 
-                                            <td>'
-                                              .$state.
-                                            '</td>
-                                            <td style="padding-left: 10px;">
-                                              <a href="./deviceDetails.php?mac='.$row['mac'].'">
-                                                <b class="anonymize">'.$row['name'].'</b>
-                                              </a>
-                                            </td>
-                                            <td>'
-                                              .$row['last_ip'].
-                                            '</td>                                            
-                                            <td>
-                                            <button class="btn btn-primary btn-sm" data-myleafmac="'.$row['mac'].'" >'.lang('Network_ManageAssign').'</button>
-                                          </td>
-                                          </tr>';
-      }        
-
-      $str_table_close =    '</tbody>
-                          </table>
-                        </section>
-                      </div>
-                    </div>';
-
-      // write the html
-      echo $str_table_header.$str_table_rows.$str_table_close;     
-    }
-
-
-  ?>
-    
     <!-- /.content -->
-  </div>
-  <!-- /.content-wrapper -->
-
+    <div class="nav-tabs-custom">
+      <ul class="nav nav-tabs">
+        <!-- Placeholder -->
+      </ul>
+    </div>
+    <div class="tab-content">
+      <!-- Placeholder -->
+    </div>    
+  </section>  
+  <section id="unassigned-devices-wrapper">
+      <!-- Placeholder -->
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
 <!-- ----------------------------------------------------------------------- -->
-
-
 
 <?php
   require 'php/templates/footer.php';
@@ -466,36 +71,390 @@
 
 <script src="lib/treeviz/bundle.js"></script> 
 
-
-
 <script defer>
-  $.get('php/server/devices.php?action=getDevicesList&status=all&forceDefaultOrder', function(data) {     
 
-    rawData = JSON.parse (data)      
+  // -----------------------------------------------------------------------
+  function loadNetworkNodes() {
 
-    if(rawData["data"] == "")
-    {
-      showModalOK (getString('Gen_Warning'), getString('Network_NoDevices'))      
+    // Create Top level tabs   (List of network devices), explanation of the terminology below:
+    //
+    //             Switch 1 (node) 
+    //              /(p1)    \ (p2)     <----- port numbers
+    //             /          \
+    //   Smart TV (leaf)      Switch 2 (node (for the PC) and leaf (for Switch 1))
+    //                          \
+    //                          PC (leaf) <------- leafs are not included in this SQL query 
+    const rawSql = `
+      SELECT node_name, node_mac, online, node_type, node_ports_count, parent_mac, node_icon, node_alert
+      FROM (
+        SELECT a.devName as node_name, a.devMac as node_mac, a.devPresentLastScan as online,
+              a.devType as node_type, a.devParentMAC as parent_mac, a.devIcon as node_icon, a.devAlertDown as node_alert
+        FROM Devices a
+        WHERE a.devType IN (${networkDeviceTypes}) and a.devIsArchived = 0
+      ) t1
+      LEFT JOIN (
+        SELECT b.devParentMAC as node_mac_2, count() as node_ports_count
+        FROM Devices b
+        WHERE b.devParentMAC NOT NULL
+        GROUP BY b.devParentMAC
+      ) t2
+      ON (t1.node_mac = t2.node_mac_2)
+    `;
+
+    const apiUrl = `php/server/dbHelper.php?action=read&rawSql=${btoa(encodeURIComponent(rawSql))}`;
+
+    $.get(apiUrl, function (data) {
+      const nodes = JSON.parse(data);
+      renderNetworkTabs(nodes);
+      loadUnassignedDevices();
+      checkTabsOverflow();
+    });
+  }
+
+  // -----------------------------------------------------------------------
+  function renderNetworkTabs(nodes) {
+    let html = '';
+    nodes.forEach((node, i) => {
+      const iconClass = node.online == 1 ? "text-green" :
+                        (node.node_alert == 1 ? "text-red" : "text-gray50");
+
+      const portLabel = node.node_ports_count ? ` (${node.node_ports_count})` : '';
+      const icon = atob(node.node_icon);
+      const id = node.node_mac.replace(/:/g, '_');      
+
+      html += `
+        <li class="networkNodeTabHeaders ${i === 0 ? 'active' : ''}">
+          <a href="#${id}" data-mytabmac="${node.node_mac}" id="${id}_id" data-toggle="tab" title="${node.node_name}">
+            <div class="icon ${iconClass}">${icon}</div>
+            <span class="node-name">${node.node_name}</span>${portLabel}
+          </a>
+        </li>`;
+    });
+
+    $('.nav-tabs').html(html);
+
+    // populate tabs
+    renderNetworkTabContent(nodes);
+
+    // init selected (first) tab
+    initTab();  
+
+    // init selected node highlighting 
+    initSelectedNodeHighlighting()
+
+    // Register events on tab change
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {   
+      initSelectedNodeHighlighting()
+    });
+  }
+
+  // -----------------------------------------------------------------------
+  function renderNetworkTabContent(nodes) {
+    $('.tab-content').empty();
+
+    nodes.forEach((node, i) => {
+      const id = node.node_mac.replace(/:/g, '_');
+
+      const badge = getStatusBadgeParts(
+        node.online,
+        node.node_alert,
+        node.node_mac
+      );
+
+      const badgeHtml = `<a href="${badge.url}" class="badge ${badge.cssClass}">${badge.iconHtml} ${badge.status}</a>`;
+      const parentId = node.parent_mac.replace(/:/g, '_');
+
+      isRootNode = node.parent_mac == "";
+
+      const paneHtml = `
+                <div class="tab-pane box box-aqua box-body ${i === 0 ? 'active' : ''}" id="${id}">
+                  <h5><i class="fa fa-server"></i> ${getString('Network_Node')}</h5>
+
+                  <div class="mb-3 row">
+                    <label class="col-sm-3 col-form-label fw-bold">${getString('DevDetail_Tab_Details')}</label>
+                    <div class="col-sm-9">
+                      <a href="./deviceDetails.php?mac=${node.node_mac}" target="_blank" class="anonymize">${node.node_name}</a>
+                    </div>
+                  </div>
+
+                  <div class="mb-3 row">
+                    <label class="col-sm-3 col-form-label fw-bold">MAC</label>
+                    <div class="col-sm-9 anonymize">${node.node_mac}</div>
+                  </div>
+
+                  <div class="mb-3 row">
+                    <label class="col-sm-3 col-form-label fw-bold">${getString('Device_TableHead_Type')}</label>
+                    <div class="col-sm-9">${node.node_type}</div>
+                  </div>
+
+                  <div class="mb-3 row">
+                    <label class="col-sm-3 col-form-label fw-bold">${getString('Device_TableHead_Status')}</label>
+                    <div class="col-sm-9">${badgeHtml}</div>
+                  </div>
+
+                  <div class="mb-3 row">
+                    <label class="col-sm-3 col-form-label fw-bold">${getString('Network_Parent')}</label>
+                    <div class="col-sm-9">
+                      ${isRootNode ? '' : `<a class="anonymize" href="#">`}
+                        <span my-data-mac="${node.parent_mac}" data-mac="${node.parent_mac}" data-devIsNetworkNodeDynamic="1" onclick="handleNodeClick(this)">
+                          ${isRootNode ? getString('Network_Root') : getDevDataByMac(node.parent_mac, "devName")}
+                        </span>
+                      ${isRootNode ? '' : `</a>`}
+                    </div>
+                  </div>
+                  <hr/>
+                  <div class="box box-aqua box-body" id="connected">
+                    <h5>
+                      <i class="fa fa-sitemap fa-rotate-270"></i> 
+                      ${getString('Network_Connected')}
+                    </h5>
+                    
+                    <div id="leafs_${id}" class="table-responsive"></div>
+                  </div>
+                </div>
+              `;
+
+
+      $('.tab-content').append(paneHtml);
+      loadConnectedDevices(node.node_mac);
+    });
+  }
+
+  // ----------------------------------------------------
+  function loadDeviceTable({ sql, containerSelector, tableId, wrapperHtml = null, assignMode = true }) {
+    const apiUrl = `php/server/dbHelper.php?action=read&rawSql=${btoa(encodeURIComponent(sql))}`;
+
+    $.get(apiUrl, function (data) {
+      const devices = JSON.parse(data);
+      const $container = $(containerSelector);
+
+      // end if nothing to show
+      if(devices.length == 0)
+      {
+        return;
+      }
+
       
+      $container.html(wrapperHtml);
+      
+      const $table = $(`#${tableId}`);
+
+      const columns = [
+        {
+          title: assignMode ? getString('Network_ManageAssign') : getString('Network_ManageUnassign'),
+          data: 'devMac',
+          orderable: false,
+          width: '5%',
+          render: function (mac) {
+            const label = assignMode ? 'assign' : 'unassign';
+            const btnClass = assignMode ? 'btn-primary' : 'btn-primary bg-red';
+            const btnText = assignMode ? getString('Network_ManageAssign') : getString('Network_ManageUnassign');
+            return `<button class="btn ${btnClass} btn-sm" data-myleafmac="${mac}" onclick="updateLeaf('${mac}','${label}')">
+                      ${btnText}
+                    </button>`;
+          }
+        },
+        {
+          title: getString('Device_TableHead_Name'),
+          data: 'devName',
+          width: '15%',
+          render: function (name, type, device) {
+            return `<a href="./deviceDetails.php?mac=${device.devMac}" target="_blank">
+                      <b class="anonymize">${name || '-'}</b>
+                    </a>`;
+          }
+        },
+        {
+          title: getString('Device_TableHead_Status'),
+          data: 'devStatus',
+          width: '15%',
+          render: function (_, type, device) {
+            const badge = getStatusBadgeParts(
+              device.devPresentLastScan,
+              device.devAlertDown,
+              device.devMac,
+              device.devStatus
+            );
+            return `<a href="${badge.url}" class="badge ${badge.cssClass}">${badge.iconHtml} ${badge.text}</a>`;
+          }
+        },
+        {
+          title: 'MAC',
+          data: 'devMac',
+          width: '5%',
+          render: (data) => `<span class="anonymize">${data}</span>`
+        },
+        {
+          title: getString('Network_Table_IP'),
+          data: 'devLastIP',
+          width: '5%'
+        },
+        {
+          title: getString('Device_TableHead_Port'),
+          data: 'devParentPort',
+          width: '5%'
+        },
+        {
+          title: getString('Device_TableHead_Vendor'),
+          data: 'devVendor',
+          width: '20%'
+        }        
+      ].filter(Boolean);
+
+
+      tableConfig = {
+          data: devices,
+          columns: columns,
+          pageLength: 10,
+          order: assignMode ? [[2, 'asc']] : [],
+          responsive: true,
+          autoWidth: false,
+          searching: true,
+          createdRow: function (row, data) {
+            $(row).attr('data-mac', data.devMac);
+          }
+        }
+
+      if ($.fn.DataTable.isDataTable($table)) {
+        $table.DataTable(tableConfig).clear().rows.add(devices).draw();
+      } else {
+        $table.DataTable(tableConfig);
+      }
+    });
+  }
+
+  // ----------------------------------------------------
+  function loadUnassignedDevices() {
+    const sql = `
+      SELECT devMac, devPresentLastScan, devName, devLastIP, devVendor, devAlertDown, devParentPort
+      FROM Devices
+      WHERE (devParentMAC IS NULL OR devParentMAC IN ("", " ", "undefined", "null"))
+        AND devMac NOT LIKE "%internet%"
+        AND devIsArchived = 0
+      ORDER BY devName ASC`;
+
+    const wrapperHtml = `
+      <div class="content">
+        <div id="unassignedDevices" class="box box-aqua box-body table-responsive">
+          <section>
+            <h5><i class="fa-solid fa-plug-circle-xmark"></i>  ${getString('Network_UnassignedDevices')}</h5>
+            <table id="unassignedDevicesTable" class="table table-striped" width="100%"></table>
+          </section>
+        </div>
+      </div>`;
+
+    loadDeviceTable({
+      sql,
+      containerSelector: '#unassigned-devices-wrapper',
+      tableId: 'unassignedDevicesTable',
+      wrapperHtml,
+      assignMode: true
+    });
+  }
+
+  // ----------------------------------------------------
+  function loadConnectedDevices(node_mac) {
+    const sql = `
+      SELECT devName, devMac, devLastIP, devVendor, devPresentLastScan, devAlertDown, devParentPort,
+        CASE 
+            WHEN devIsNew = 1 THEN 'New'
+            WHEN devPresentLastScan = 1 THEN 'On-line'
+            WHEN devPresentLastScan = 0 AND devAlertDown != 0 THEN 'Down'
+            WHEN devIsArchived = 1 THEN 'Archived'
+            WHEN devPresentLastScan = 0 THEN 'Off-line'
+            ELSE 'Unknown status'
+        END AS devStatus
+      FROM Devices
+      WHERE devParentMac = '${node_mac}'`;
+
+    const id = node_mac.replace(/:/g, '_');
+
+    const wrapperHtml = `
+      <table class="table table-bordered table-striped node-leafs-table " id="table_leafs_${id}" data-node-mac="${node_mac}">
+            
+      </table>`;
+
+    loadDeviceTable({
+      sql,
+      containerSelector: `#leafs_${id}`,
+      tableId: `table_leafs_${id}`,
+      wrapperHtml,
+      assignMode: false
+    });
+  }
+
+  // -----------------------------------------------------------
+  // INIT
+  // -----------------------------------------------------------
+
+  const networkDeviceTypes = getSetting("NETWORK_DEVICE_TYPES").replace("[", "").replace("]", "");
+  const showArchived = getCache('showArchived') === "true";
+  const showOffline = getCache('showOffline') === "true";
+
+  console.log('showArchived:', showArchived);
+  console.log('showOffline:', showOffline);
+
+  // Always get all devices
+  const rawSql = `
+    SELECT *,
+      CASE
+        WHEN devAlertDown != 0 AND devPresentLastScan = 0 THEN "Down"
+        WHEN devPresentLastScan = 1 THEN "On-line"
+        ELSE "Off-line"
+      END AS devStatus,
+      CASE
+        WHEN devType IN (${networkDeviceTypes}) THEN 1
+        ELSE 0
+      END AS devIsNetworkNodeDynamic
+    FROM Devices a
+  `;
+
+  const apiUrl = `php/server/dbHelper.php?action=read&rawSql=${btoa(encodeURIComponent(rawSql))}`;
+
+  $.get(apiUrl, function (data) {
+
+    console.log(data);
+    
+    const parsed = JSON.parse(data);
+    const allDevices = parsed;
+
+    console.log(allDevices);
+    
+
+    if (!allDevices || allDevices.length === 0) {
+      showModalOK(getString('Gen_Warning'), getString('Network_NoDevices'));
       return;
     }
 
-    orderTopologyBy = createArray(getSetting("UI_TOPOLOGY_ORDER"))
+    // Count totals for UI
+    let archivedCount = 0;
+    let offlineCount = 0;
 
-    devicesListnew = rawData["data"].map(item =>  { 
-      return {
-          "name": item[0], 
-          "type": item[2], 
-          "icon": item[3], 
-          "mac": item[11], 
-          "parentMac": item[14], 
-          "rowid": item[13], 
-          "status": item[10],
-          "childrenQty": item[15],
-          "port": item[18]
-        };
-    }).sort((a, b) => {
-      // Helper to safely parse port into an integer; invalid ports become Infinity for sorting
+    allDevices.forEach(device => {
+      if (parseInt(device.devIsArchived) === 1) archivedCount++;
+      if (parseInt(device.devPresentLastScan) === 0 && parseInt(device.devIsArchived) === 0) offlineCount++;
+    });
+
+    if(archivedCount > 0)
+    {
+      $('#showArchivedNumber').text(`(${archivedCount})`);
+    }
+    
+    if(offlineCount > 0)
+    {
+      $('#showOfflineNumber').text(`(${offlineCount})`);
+    }
+
+    // Now apply UI filter based on toggles
+    const filteredDevices = allDevices.filter(device => {
+      if (!showArchived && parseInt(device.devIsArchived) === 1) return false;
+      if (!showOffline && parseInt(device.devPresentLastScan) === 0) return false;
+      return true;
+    });
+
+    // Sort filtered devices
+    const orderTopologyBy = createArray(getSetting("UI_TOPOLOGY_ORDER"));
+    const devicesSorted = filteredDevices.sort((a, b) => {
       const parsePort = (port) => {
         const parsed = parseInt(port, 10);
         return isNaN(parsed) ? Infinity : parsed;
@@ -503,35 +462,24 @@
 
       switch (orderTopologyBy[0]) {
         case "Name":
-          // First sort by name alphabetically
-          const nameCompare = a.name.localeCompare(b.name);
-          if (nameCompare !== 0) {
-            return nameCompare;
-          }
-          // If names are the same, sort by port numerically
-          return parsePort(a.port) - parsePort(b.port);
-
+          const nameCompare = a.devName.localeCompare(b.devName);
+          return nameCompare !== 0 ? nameCompare : parsePort(a.devParentPort) - parsePort(b.devParentPort);
         case "Port":
-          // Sort by port numerically
-          return parsePort(a.port) - parsePort(b.port);
-
+          return parsePort(a.devParentPort) - parsePort(b.devParentPort);
         default:
-          // Default: Sort by rowid (as a fallback)
           return a.rowid - b.rowid;
       }
     });
 
-    setCache('devicesListNew', JSON.stringify(devicesListnew));
+    setCache('devicesListNew', JSON.stringify(devicesSorted));
+    deviceListGlobal = devicesSorted;
 
-    // Init global variable
-    deviceListGlobal = devicesListnew;
-    
-    // create tree
+    // Render filtered result
     initTree(getHierarchy());
-
-    // attach on-click events
+    loadNetworkNodes();
     attachTreeEvents();
   });
+
 </script>
 
 
@@ -548,9 +496,6 @@ var hiddenMacs = []; // hidden children
 var hiddenChildren = [];
 var deviceListGlobal = null; 
 
-
-
-
 // ---------------------------------------------------------------------------
 // Recursively get children nodes and build a tree
 function getChildren(node, list, path, visited = [])
@@ -558,23 +503,23 @@ function getChildren(node, list, path, visited = [])
     var children = [];
 
     // Check for infinite recursion by seeing if the node has been visited before
-    if (visited.includes(node.mac.toLowerCase())) {
-        console.error("Infinite recursion detected at node:", node.mac);
+    if (visited.includes(node.devMac.toLowerCase())) {
+        console.error("Infinite recursion detected at node:", node.devMac);
         write_notification("[ERROR] ⚠ Infinite recursion detected. You probably have assigned the Internet node to another children node or to itself. Please open a new issue on GitHub and describe how you did it.", 'interrupt')
-        return { error: "Infinite recursion detected", node: node.mac };
+        return { error: "Infinite recursion detected", node: node.devMac };
     }
 
     // Add current node to visited list
-    visited.push(node.mac.toLowerCase());
+    visited.push(node.devMac.toLowerCase());
 
     // Loop through all items to find children of the current node
     for (var i in list) {
-        if (list[i].parentMac.toLowerCase() == node.mac.toLowerCase() && !hiddenMacs.includes(list[i].parentMac)) {   
+        if (list[i].devParentMAC.toLowerCase() == node.devMac.toLowerCase() && !hiddenMacs.includes(list[i].devParentMAC)) {   
 
             visibleNodesCount++;
 
             // Process children recursively, passing a copy of the visited list
-            children.push(getChildren(list[i], list, path + ((path == "") ? "" : '|') + list[i].parentMac, visited));
+            children.push(getChildren(list[i], list, path + ((path == "") ? "" : '|') + list[i].devParentMAC, visited));
         }
     }
 
@@ -586,17 +531,25 @@ function getChildren(node, list, path, visited = [])
     }
 
     return { 
-        name: node.name,
+        name: node.devName,
         path: path,
-        mac: node.mac,
-        port: node.port,
-        id: node.mac,
-        parentMac: node.parentMac,
-        icon: node.icon,
-        type: node.type,
-        status: node.status,
-        hasChildren: children.length > 0 || hiddenMacs.includes(node.mac),
-        hiddenChildren: hiddenMacs.includes(node.mac),
+        mac: node.devMac,
+        port: node.devParentPort,
+        id: node.devMac,
+        parentMac: node.devParentMAC,
+        icon: node.devIcon,
+        type: node.devType,
+        devIsNetworkNodeDynamic: node.devIsNetworkNodeDynamic,
+        vendor: node.devVendor,
+        lastseen: node.devLastConnection,
+        firstseen: node.devFirstConnection,
+        ip: node.devLastIP,
+        status: node.devStatus,
+        presentLastScan: node.devPresentLastScan,
+        alertDown: node.devAlertDown,
+        hasChildren: children.length > 0 || hiddenMacs.includes(node.devMac),
+        relType: node.devParentRelType,
+        hiddenChildren: hiddenMacs.includes(node.devMac),
         qty: children.length,
         children: children
     };
@@ -607,62 +560,12 @@ function getHierarchy()
 { 
   for(i in deviceListGlobal)
   {      
-    if(deviceListGlobal[i].mac == 'Internet')
+    if(deviceListGlobal[i].devMac == 'Internet')
     { 
       return (getChildren(deviceListGlobal[i], deviceListGlobal, ''))
       break;
     }
   }
-}
-
-// ---------------------------------------------------------------------------
-function getFlatData() {
-  var result = [];
-  var leafNodesCount = 0;
-  var parentNodesCount = 0;
-  var visibleNodesCount = 0;
-  
-  for (let node of deviceListGlobal) {
-    let path = "";
-    let childrenCount = 0;
-
-    // count children of this node
-    for (let nodeTmp of deviceListGlobal) {
-        if (nodeTmp.parentMac === node.mac) {
-            childrenCount++;
-        }
-    }
-    
-    // store parent and leaf node count
-    if (childrenCount === 0) {
-        leafNodesCount++;
-    } else {
-        parentNodesCount++;
-    }
-    
-    if (!hiddenMacs.includes(node.parentMac)) {   
-      if (!((node.parentMac == "") && node.mac != "Internet")) {  // skip leaf nodes without father that are not the root
-        visibleNodesCount++;
-        
-        result.push({
-            name: node.name,
-            path: path,
-            mac: node.mac, // Replacing "mac" with "id"
-            parentMac: node.mac == "Internet" ? "" : node.parentMac, // Replacing "parentMac" with "father"
-            port: node.port,
-            icon: node.icon,
-            type: node.type,
-            status: node.status,
-            hasChildren: childrenCount > 0 || hiddenMacs.includes(node.mac),
-            hiddenChildren: hiddenMacs.includes(node.mac),
-            qty: childrenCount,
-        });
-      }
-    }
-      
-  }
-
-  return result;
 }
   
 //---------------------------------------------------------------------------
@@ -697,34 +600,101 @@ function attachTreeEvents()
 
 // --------------------------------------------------------------------------- 
 // Handle network node click - select correct tab in the bottom table
-function handleNodeClick(nodeData)
+function handleNodeClick(el)
 {    
-  const targetTabMAC = nodeData.data.mac;    
+
+  isNetworkDevice = $(el).data("devisnetworknodedynamic") == 1;
+  targetTabMAC = ""
+  thisDevMac= $(el).data("mac"); 
+  
+  if (isNetworkDevice == false)
+  {
+    targetTabMAC = $(el).data("parentmac");   
+  } else
+  {
+    targetTabMAC = thisDevMac;  
+  }
 
   var targetTab = $(`a[data-mytabmac="${targetTabMAC}"]`);
 
-  // Simulate a click event on the target tab
-  targetTab.click();
+  if (targetTab.length) {
+    // Simulate a click event on the target tab
+    targetTab.click();
+
+    
+  } 
+
+  if (isNetworkDevice) {
+    // Smooth scroll to the tab content
+    $('html, body').animate({
+      scrollTop: targetTab.offset().top - 50
+    }, 500); // Adjust the duration as needed
+  }  else {
+    $("tr.selected").removeClass("selected");
+    $(`tr[data-mac="${thisDevMac}"]`).addClass("selected");
+  
+    const tableId = "table_leafs_" + targetTabMAC.replace(/:/g, '_');
+    const $table = $(`#${tableId}`).DataTable();
+
+    // Find the row index (in the full data set) that matches
+    const rowIndex = $table
+      .rows()
+      .eq(0)
+      .filter(function(idx) {
+        return $table.row(idx).node().getAttribute("data-mac") === thisDevMac;
+      });
+
+    if (rowIndex.length > 0) {
+      // Change to the page where this row is
+      $table.page(Math.floor(rowIndex[0] / $table.page.len())).draw(false);
+
+      // Delay needed so the row is in the DOM after page draw
+      setTimeout(() => {
+        const rowNode = $table.row(rowIndex[0]).node();
+        $(rowNode).addClass("selected");
+
+        // Smooth scroll to the row
+        $('html, body').animate({
+          scrollTop: $(rowNode).offset().top - 50
+        }, 500);
+      }, 0);
+    }
+  }
 }
 
 // --------------------------------------------------------------------------- 
 var myTree;
-var visibleTreeArea = $(window).height()-155;
-var nodeWidth = 120;
+
+
 var emSize;
 var nodeHeight;
-var sizeCoefficient = 1.4
+// var sizeCoefficient = 1.4
+
+function pxToEm(px, element) {
+    var baseFontSize = parseFloat($(element || "body").css("font-size"));
+    return px / baseFontSize;
+}
+
+function emToPx(em, element) {
+    var baseFontSize = parseFloat($(element || "body").css("font-size"));
+    return Math.round(em * baseFontSize);
+}
 
 function initTree(myHierarchy)
 {
   // calculate the drawing area based on teh tree width and available screen size
-  var treeAreaHeight = visibleTreeArea > 800 ? 800 : visibleTreeArea;
-  let screenWidth = $('.content-header').width();
-  let treeWidth = (nodeWidth + 20) *  parentNodesCount;
-  let treeAreaWidth  =  screenWidth < treeWidth ? treeWidth : screenWidth;
+  
+  let baseFontSize = parseFloat($('html').css('font-size')); 
+  let treeAreaHeight = ($(window).height() - 155); ;
+  // calculate the font size of the leaf nodes to fit everything into the tree area
+  leafNodesCount == 0 ? 1 : leafNodesCount;
+
+  emSize = pxToEm((treeAreaHeight/(leafNodesCount)).toFixed(2));
+  
+  let screenWidthEm = pxToEm($('.networkTable').width()-15);
 
   // init the drawing area size
-  $("#networkTree").attr('style', `height:${treeAreaHeight}px; width:${treeAreaWidth}px`)
+  $("#networkTree").attr('style', `height:${treeAreaHeight}px; width:${emToPx(screenWidthEm)}px`)
 
   if(myHierarchy.type == "")
   {
@@ -733,27 +703,26 @@ function initTree(myHierarchy)
     return;
   }
 
-  // calculate the font size of the leaf nodes to fit everything into the tree area
-  leafNodesCount == 0 ? 1 : leafNodesCount;
-  emSize = ((treeAreaHeight/(25*leafNodesCount)).toFixed(2));
-  emSize = emSize > 1 ? 1 : emSize;
+  // handle canvas and node size if only a few nodes
+  emSize > 1 ? emSize = 1 : emSize = emSize;
 
-  // nodeHeight = ((emSize*100*0.30).toFixed(0))
-  nodeHeight = ((emSize*100*0.30).toFixed(0))
+  let nodeHeightPx = emToPx(emSize*1);
+  let nodeWidthPx = emToPx(screenWidthEm / (parentNodesCount));
+
+  // handle if only a few nodes
+  nodeWidthPx > 160 ? nodeWidthPx = 160 : nodeWidthPx = nodeWidthPx;
 
   console.log(Treeviz);
 
   myTree = Treeviz.create({
     htmlId: "networkTree",
     renderNode:  nodeData =>  {
-
-      var fontSize = "font-size:"+emSize+"em;";
-
+      
       (!emptyArr.includes(nodeData.data.port )) ? port =  nodeData.data.port : port = "";
 
       (port == "" || port == 0 || port == 'None' ) ? portBckgIcon = `<i class="fa fa-wifi"></i>` : portBckgIcon = `<i class="fa fa-ethernet"></i>`;
 
-      portHtml = (port == "" || port == 0 || port == 'None' ) ? "" : port;
+      portHtml = (port == "" || port == 0 || port == 'None' ) ? " &nbsp " : port;
       
       // Build HTML for individual nodes in the network diagram        
       deviceIcon = (!emptyArr.includes(nodeData.data.icon )) ?  
@@ -761,10 +730,10 @@ function initTree(myHierarchy)
                       ${atob(nodeData.data.icon)}
                 </div>` : "";
       devicePort = `<div  class="netPort" 
-                          style="width:${emSize*sizeCoefficient}em;height:${emSize*sizeCoefficient}em">
+                          style="width:${emSize}em;height:${emSize}em">
                       ${portHtml}</div> 
                     <div  class="portBckgIcon" 
-                          style="margin-left:-${emSize*sizeCoefficient}em;">
+                          style="margin-left:-${emSize*0.7}em;">
                           ${portBckgIcon}
                     </div>`;
       collapseExpandIcon = nodeData.data.hiddenChildren ? 
@@ -773,7 +742,7 @@ function initTree(myHierarchy)
       // generate +/- icon if node has children nodes
       collapseExpandHtml = nodeData.data.hasChildren ? 
                     `<div class="netCollapse" 
-                          style="font-size:${emSize*sizeCoefficient}em;top:${emSize/6}em" 
+                          style="font-size:${nodeHeightPx/2}px;top:${Math.floor(nodeHeightPx / 4)}px" 
                           data-mytreepath="${nodeData.data.path}" 
                           data-mytreemac="${nodeData.data.mac}">
                       <i class="fa fa-${collapseExpandIcon} pointer"></i>
@@ -782,37 +751,64 @@ function initTree(myHierarchy)
       selectedNodeMac = $(".nav-tabs-custom .active a").attr('data-mytabmac')
 
       highlightedCss = nodeData.data.mac == selectedNodeMac ? 
-                    " highlightedNode" : "";
+                    " highlightedNode " : "";
+      cssNodeType = nodeData.data.devIsNetworkNodeDynamic  ? 
+                    " node-network-device " : " node-standard-device ";
 
-      // css indicating online/offline status
-      statusCss = ` netStatus-${nodeData.data.status}`;
+      networkHardwareIcon = nodeData.data.devIsNetworkNodeDynamic ? `<span class="network-hw-icon">
+                                <i class="fa-solid fa-hard-drive"></i>
+                            </span>` : "";
 
-      return result = `<div class="box ${nodeData.data.hasChildren ? "pointer":""} ${statusCss} ${highlightedCss}"
-                            data-mytreemacmain="${nodeData.data.mac}"
-                            style="height:${nodeData.settings.nodeHeight}px;${fontSize}"
+      const badgeConf = getStatusBadgeParts(nodeData.data.presentLastScan, nodeData.data.alertDown, nodeData.data.mac, statusText = '')
+
+      return result = `<div 
+                            class="node-inner hover-node-info box pointer ${highlightedCss} ${cssNodeType}"
+                            style="height:${nodeHeightPx}px;font-size:${nodeHeightPx-5}px;"
+                            onclick="handleNodeClick(this)"
+                            data-mac="${nodeData.data.mac}"                            
+                            data-parentMac="${nodeData.data.parentMac}"                            
+                            data-name="${nodeData.data.name}"
+                            data-ip="${nodeData.data.ip}"
+                            data-mac="${nodeData.data.mac}"
+                            data-vendor="${nodeData.data.vendor}"
+                            data-type="${nodeData.data.type}"
+                            data-devIsNetworkNodeDynamic="${nodeData.data.devIsNetworkNodeDynamic}"
+                            data-lastseen="${nodeData.data.lastseen}"
+                            data-firstseen="${nodeData.data.firstseen}"
+                            data-relationship="${nodeData.data.relType}"
+                            data-status="${nodeData.data.status}"
+                            data-present="${nodeData.data.presentLastScan}"
+                            data-alert="${nodeData.data.alertDown}"
+                            data-icon="${nodeData.data.icon}"
                         >
                           <div class="netNodeText">
-                            <strong>${devicePort}  ${deviceIcon}
-                              <span class="spanNetworkTree anonymizeDev" >${nodeData.data.name}</span>
-                            </strong>
-                            ${collapseExpandHtml}
-                          </div>
-                        </div>`;
+                            <strong><span>${devicePort}  <span class="${badgeConf.cssText}">${deviceIcon}</span></span>
+                              <span class="spanNetworkTree anonymizeDev" style="width:${nodeWidthPx-50}px">${nodeData.data.name}</span>
+                              ${networkHardwareIcon}
+                            </strong>                            
+                          </div>                          
+                        </div>
+                        ${collapseExpandHtml}`;
     },
     mainAxisNodeSpacing: 'auto',
-    secondaryAxisNodeSpacing: 0.3,
-    nodeHeight: nodeHeight.toString(),
+    // secondaryAxisNodeSpacing: 0.3,
+    nodeHeight: nodeHeightPx,
+    nodeWidth: nodeWidthPx,
     marginTop: '5',
     isHorizontal : true,
     hasZoom: true,
     hasPan: true,
-    marginLeft: '15',
+    marginLeft: '10',
+    marginRight: '10',
     idKey: "mac",
     hasFlatData: false,
     relationnalField: "children",
-    linkWidth: (nodeData) => 3,
-    linkColor: (nodeData) => "#ffcc80",
-    onNodeClick: (nodeData) => handleNodeClick(nodeData),
+    linkWidth: (nodeData) => 2,
+    linkColor: (nodeData) => {  
+      relConf = getRelationshipConf(nodeData.data.relType)  
+      return relConf.color;
+    }
+    // onNodeClick: (nodeData) => handleNodeClick(nodeData),
   });      
 
   console.log(deviceListGlobal);
@@ -826,14 +822,6 @@ function initTree(myHierarchy)
 // ---------------------------------------------------------------------------
 // Tabs functionality
 // ---------------------------------------------------------------------------
-// Register events on tab change
-
-$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {   
-
-  initButtons()
-
-});
-
 
 // ---------------------------------------------------------------------------
 function initTab()
@@ -869,80 +857,164 @@ function initTab()
 }
 
 // ---------------------------------------------------------------------------
-function initDeviceNamesFromMACs()
-{
-  $('.mac-to-name').each(function() {
-      var dataMacValue = $(this).attr('my-data-mac');
-
-      if(dataMacValue =="" )
-      {
-        $(this).html(getString("Network_Root"))
-      }
-      else{
-        $(this).html(getNameByMacAddress(dataMacValue));
-      }
-  });
-  
-}
-
-// ---------------------------------------------------------------------------
-function initButtons()
+function initSelectedNodeHighlighting()
 { 
 
-  var currentNodeMac = $(".tab-content .active td[data-mynodemac]").attr('data-mynodemac'); 
+  var currentNodeMac = $(".networkNodeTabHeaders.active a").data("mytabmac");
 
   // change highlighted node in the tree
   selNode = $("#networkTree .highlightedNode")[0]
 
-  // console.log(selNode)
+  console.log(selNode)
 
   if(selNode)
   {
     $(selNode).attr('class',  $(selNode).attr('class').replace('highlightedNode'))
   }
 
-  newSelNode = $("#networkTree div[data-mytreemacmain='"+currentNodeMac+"']")[0]
+  newSelNode = $("#networkTree div[data-mac='"+currentNodeMac+"']")[0]
+
+  console.log(newSelNode)
   
   $(newSelNode).attr('class',  $(newSelNode).attr('class') + ' highlightedNode')
-
-
-  // init the Assign buttons
-  $('#unassignedDevices  button[data-myleafmac]').each(function(){
-    $(this).attr('onclick', `updateLeaf("${$(this).attr('data-myleafmac')}","${currentNodeMac}")`)
-  }); 
-
-  // init Unassign buttons
-  $('#assignedDevices button[data-myleafmac]').each(function(){
-    $(this).attr('onclick', `updateLeaf("${$(this).attr('data-myleafmac')}","")`)
-  }); 
 }
 
 // ---------------------------------------------------------------------------
-function updateLeaf(leafMac,nodeMac)
-{
-  console.log(leafMac) // child
-  console.log(nodeMac) // parent
-  console.log(nodeMac != "") // parent
+function updateLeaf(leafMac, action) {
+  console.log(leafMac); // child
+  console.log(action);  // action
 
-  // prevent the assignment of the Internet root node avoiding recursion when generating the network tree topology
-  if(leafMac.toLowerCase().includes('internet') && nodeMac != "")
-  {
-    showMessage(getString('Network_Cant_Assign'))
-  }
-  else{
-    saveData('updateNetworkLeaf', leafMac, nodeMac);
-    setTimeout("location.reload();", 500); // refresh page 
+  const nodeMac = $(".networkNodeTabHeaders.active a").data("mytabmac") || "";
+
+  if (action === "assign") {
+    if (!nodeMac) {
+      showMessage(getString("Network_Cant_Assign_No_Node_Selected"));
+    } else if (leafMac.toLowerCase().includes("internet")) {
+      showMessage(getString("Network_Cant_Assign"));
+    } else {
+      saveData("updateNetworkLeaf", leafMac, nodeMac);
+      setTimeout(() => location.reload(), 500);
+    }
+
+  } else if (action === "unassign") {
+    saveData("updateNetworkLeaf", leafMac, "");
+    setTimeout(() => location.reload(), 500);
+
+  } else {
+    console.warn("Unknown action:", action);
   }
 }
 
-// init device names where macs are used
-initDeviceNamesFromMACs();
+// ---------------------------------------------------------------------------
+// showing icons or device names in tabs depending on available screen size 
+function checkTabsOverflow() {
+  const $ul = $('.nav-tabs');
+  const $lis = $ul.find('li');
 
-// init selected (first) tab
-initTab();  
+  // First measure widths with current state
+  let totalWidth = 0;
+  $lis.each(function () {
+    totalWidth += $(this).outerWidth(true);
+  });
 
-// init Assign/Unassign buttons
-initButtons()
+  const ulWidth = $ul.width();
+  const isOverflowing = totalWidth > ulWidth;
+
+  if (isOverflowing) {
+    if (!$ul.hasClass('hide-node-names')) {
+      $ul.addClass('hide-node-names');
+
+      // Re-check: did hiding fix it?
+      requestAnimationFrame(() => {
+        let newTotal = 0;
+        $lis.each(function () {
+          newTotal += $(this).outerWidth(true);
+        });
+
+        if (newTotal > $ul.width()) {
+          // Still overflowing — do nothing, keep class
+        }
+      });
+    }
+  } else {
+    if ($ul.hasClass('hide-node-names')) {
+      $ul.removeClass('hide-node-names');
+
+      // Re-check: did un-hiding break it?
+      requestAnimationFrame(() => {
+        let newTotal = 0;
+        $lis.each(function () {
+          newTotal += $(this).outerWidth(true);
+        });
+
+        if (newTotal > $ul.width()) {
+          // Oops, that broke it — re-hide
+          $ul.addClass('hide-node-names');
+        }
+      });
+    }
+  }
+}
+
+let resizeTimeout;
+$(window).on('resize', function () {
+  clearTimeout(resizeTimeout);
+  resizeTimeout = setTimeout(() => {
+    checkTabsOverflow();
+  }, 100);
+});
+
+
+// init pop up hover  boxes for device details
+initHoverNodeInfo();
+
+$(document).ready(function () {
+  // Restore cached values on load
+  const cachedOffline = getCache('showOffline');
+  if (cachedOffline !== null) {
+    $('input[name="showOffline"]').prop('checked', cachedOffline === 'true');
+  }
+
+  const cachedArchived = getCache('showArchived');
+  if (cachedArchived !== null) {
+    $('input[name="showArchived"]').prop('checked', cachedArchived === 'true');
+  }
+
+  // Function to enable/disable showArchived based on showOffline
+  function updateArchivedToggle() {
+    const isOfflineChecked = $('input[name="showOffline"]').is(':checked');
+    const archivedToggle = $('input[name="showArchived"]');
+
+    if (!isOfflineChecked) {
+      archivedToggle.prop('checked', false);
+      archivedToggle.prop('disabled', true);
+      setCache('showArchived', false);
+    } else {
+      archivedToggle.prop('disabled', false);
+    }
+  }
+
+  // Initial state on load
+  updateArchivedToggle();
+
+  // Bind change event for both toggles
+  $('input[name="showOffline"], input[name="showArchived"]').on('change', function () {
+    const name = $(this).attr('name');
+    const value = $(this).is(':checked');
+    setCache(name, value);
+
+    // Update state of showArchived if showOffline changed
+    if (name === 'showOffline') {
+      updateArchivedToggle();
+    }
+
+    // Refresh page after a brief delay to ensure cache is written
+    setTimeout(() => {
+      location.reload();
+    }, 100);
+  });
+});
+
 
 </script>
 

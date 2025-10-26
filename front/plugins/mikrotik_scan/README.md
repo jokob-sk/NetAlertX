@@ -25,3 +25,11 @@ To assign a meaningful device name, the plugin resolves it in the following orde
 - **Comment**: The `comment` field in the MikroTik router's DHCP lease configuration. This is useful for naming static leases of known devies.
 - **Hostname**: The hostname provided by the device during DHCP negotiation.
 - **"(unknown)"**: as the fallback name, allowing other plugins to resolve the device name later.
+
+
+### Other info
+
+- Version: 1.0
+- Author: [lookflying](https://github.com/lookflying)
+- Maintainer(s): [elraro](https://github.com/elraro), [kamil-olszewski-devskiller](https://github.com/kamil-olszewski-devskiller)
+- Release Date: 12-Sep-2024

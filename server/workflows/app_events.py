@@ -14,7 +14,7 @@ from helper import get_setting_value, timeNowTZ
 # Make sure the TIMEZONE for logging is correct
 # conf.tz = pytz.timezone(get_setting_value('TIMEZONE'))
 
-from logger import mylog, Logger, print_log, logResult
+from logger import mylog, Logger, logResult
 
 # Make sure log level is initialized correctly
 Logger(get_setting_value('LOG_LEVEL'))
@@ -170,7 +170,7 @@ class AppEvent_obj:
             END;
         """
 
-        mylog("verbose", [query])
+        # mylog("verbose", [query])
 
         self.db.sql.execute(query)
 

@@ -45,7 +45,7 @@ from plugin_utils import get_plugins_configs
 from logger import mylog, Logger
 from const import pluginsPath, fullDbPath, logPath
 from helper import timeNowTZ, get_setting_value
-from notification import write_notification
+from messaging.in_app import write_notification
 from pytz import timezone
 import conf
 
@@ -285,16 +285,18 @@ def main():
     mylog("verbose", [f"[{pluginName}] login to omada result is: {omada_login}"])
 
     clients_list = callomada(["-t", "myomada", "clients"])
+    client_list_count = clients_list.count("\n")
     mylog(
         "verbose",
-        [f'[{pluginName}] clients found:"{clients_list.count("\n")}"\n{clients_list}'],
+        [f'[{pluginName}] clients found:"{client_list_count}"\n{clients_list}'],
     )
 
     switches_and_aps = callomada(["-t", "myomada", "devices"])
+    switches_and_aps_count = switches_and_aps.count("\n")
     mylog(
         "verbose",
         [
-            f'[{pluginName}] omada devices (switches, access points) found:"{switches_and_aps.count("\n")}" \n  {switches_and_aps}'
+            f'[{pluginName}] omada devices (switches, access points) found:"{switches_and_aps_count}" \n  {switches_and_aps}'
         ],
     )
 

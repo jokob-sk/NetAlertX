@@ -67,6 +67,15 @@ function getPluginConfig(pluginsData, prefix) {
   return result;
 }
 
+// ----------------------------------------
+// Show the description of a setting
+function showDescriptionPopup(e) {
+
+  console.log($(e).attr("my-set-key"));    
+
+  showModalOK("Info", getString($(e).attr("my-set-key") + '_description'))
+}
+
 // -------------------------------------------------------------------
 // Generate plugin HTML card based on prefixes in an array
 function pluginCards(prefixesOfEnabledPlugins, includeSettings) {
@@ -238,13 +247,6 @@ function settingsCollectedCorrectly(settingsArray, settingsJSON_DB) {
 // -------------------------------------------------------------------
 
 // ---------------------------------------------------------
-// Add row to datatable
-function addDataTableRow(el)
-{
-  alert("a")
-}
-
-// ---------------------------------------------------------
 // Clone datatable row
 function cloneDataTableRow(el){
 
@@ -297,6 +299,33 @@ function removeDataTableRow(el) {
   {
     showMessage (getString("CustProps_cant_remove"), 3000, "modal_red");  
   }
+}
+
+// ---------------------------------------------------------
+// Add item via pop up form dialog
+function addViaPopupForm(element) {
+  console.log(element);
+
+  const toId = $(element).attr("my-input-to");
+  const curValue = $(`#${toId}`).val();
+  const parsed = JSON.parse(atob($(`#${toId}`).data("elementoptionsbase64")));  
+  const popupFormJson = parsed.find(obj => "popupForm" in obj)?.popupForm ?? null;
+  
+  console.log(`toId  | curValue: ${toId}  | ${curValue}`);
+
+  showModalPopupForm(
+    `<i class="fa-solid fa-square-plus"></i> ${getString("Gen_Add")}`,  // title
+    "",                                                                 // message
+    getString("Gen_Cancel"),                                            // btnCancel
+    getString("Gen_Add"),                                               // btnOK
+    null,                                                               // curValue
+    popupFormJson,                                                      // popupform
+    toId,                                                               // parentSettingKey
+    element                                                             // triggeredBy
+  );
+
+  // flag something changes to prevent navigating from page
+  settingsChanged();
 }
 
 // ---------------------------------------------------------
@@ -363,8 +392,6 @@ function removeAllOptions(element) {
 function selectAll(element) {
   settingsChanged();
 
-  // Get the <select> element with the class 'deviceSelector'
-  // var selectElement = $('.deviceSelector select');
   var selectElement = $(`#${$(element).attr("my-input-to")}`);
   
   // Iterate over each option within the select element
@@ -381,8 +408,6 @@ function selectAll(element) {
 // UN-Select All
 function unselectAll(element) {
   settingsChanged();
-  // Get the <select> element with the class 'deviceSelector'
-  // var selectElement = $('.deviceSelector select');
   var selectElement = $(`#${$(element).attr("my-input-to")}`);
   
   // Iterate over each option within the select element
@@ -399,8 +424,7 @@ function unselectAll(element) {
 // Trigger change to open up the dropdown filed
 function selectChange(element) {
   settingsChanged();
-  // Get the <select> element with the class 'deviceSelector'
-  // var selectElement = $('.deviceSelector select');
+
   var selectElement = $(`#${$(element).attr("my-input-to")}`);
   
   selectElement.parent().find("input").focus().click();
@@ -432,18 +456,41 @@ function initListInteractionOptions(element) {
       // Perform action based on click count
       if (clickCounter === 1) {
         // Single-click action
-        showModalFieldInput(
-          `<i class="fa-regular fa-pen-to-square"></i> ${getString(
-            "Gen_Update_Value"
-          )}`,
-          getString("settings_update_item_warning"),
-          getString("Gen_Cancel"),
-          getString("Gen_Update"),
-          $option.html(),
-          function () {
-            updateOptionItem($option, $(`#modal-field-input-field`).val());
-          }
-        );
+
+        const $parent = $option.parent();
+        const transformers = $parent.attr("my-transformers");
+
+        if (transformers && transformers === "name|base64") {
+          // Parent has my-transformers="name|base64"
+          const toId =  $parent.attr("id");
+          const curValue = $option.val();
+          const parsed = JSON.parse(atob($parent.data("elementoptionsbase64")));  
+          const popupFormJson = parsed.find(obj => "popupForm" in obj)?.popupForm ?? null;
+                  
+          showModalPopupForm(
+            `<i class="fa fa-pen-to-square"></i> ${getString("Gen_Update_Value")}`, // title
+            "",                                                                     // message
+            getString("Gen_Cancel"),                                                // btnCancel
+            getString("Gen_Update"),                                                // btnOK
+            curValue,                                                               // curValue
+            popupFormJson,                                                          // popupform
+            toId,                                                                   // parentSettingKey
+            this                                                                    // triggeredBy
+          );
+        } else {
+          // Fallback to normal field input
+          showModalFieldInput(
+            `<i class="fa fa-pen-to-square"></i> ${getString("Gen_Update_Value")}`,
+            getString("settings_update_item_warning"),
+            getString("Gen_Cancel"),
+            getString("Gen_Update"),
+            $option.html(),
+            function () {
+              updateOptionItem($option, $(`#modal-field-input-field`).val());
+            }
+          );
+        }
+
       } else if (clickCounter === 2) {
         // Double-click action
         removeOptionItem($option);
@@ -624,10 +671,9 @@ function generateOptionsOrSetOptions(
   // console.log( setKey);
 
   // NOTE {value} options to replace with a setting or SQL value are handled in the cacheSettings() function
+  // obj.push({ id: item, name: item })
   options = arrayToObject(createArray(overrideOptions ? overrideOptions : getSettingOptions(setKey)))
 
-  
-  
   // Call to render lists
   renderList(
     options,
@@ -637,8 +683,6 @@ function generateOptionsOrSetOptions(
     targetField,
     transformers
   );
-  
-  
 }
 
 
@@ -659,6 +703,13 @@ function applyTransformers(val, transformers) {
           val = btoa(val);
         }
         break;
+      case "name|base64":
+        // // Implement base64  logic
+        // if (!isBase64(val)) {
+        //   val = btoa(val);
+        // }
+        val = val;   // probably TODO ⚠
+        break;
       case "getString":
         // no change
         val = val;        
@@ -671,7 +722,7 @@ function applyTransformers(val, transformers) {
 }
 
 // ------------------------------------------------------------
-// Function to reverse transformers applied to a value
+// Function to reverse transformers applied to a value - returns the LABEL
 function reverseTransformers(val, transformers) {
   transformers.reverse().forEach((transformer) => {
     switch (transformer) {
@@ -685,9 +736,23 @@ function reverseTransformers(val, transformers) {
           val = atob(val);
         }
         break;
+      case "name|base64":
+        // Implement base64 decoding logic
+        if (isBase64(val)) {
+          val = JSON.parse(atob(val))[0][3];
+        }
+        val = val;   // probably TODO ⚠
+        break;
       case "getString":
         // retrieve string
         val = getString(val);        
+        break;
+      case "deviceChip":
+        mac = val  // value is mac   
+        val =  `${getDevDataByMac(mac, "devName")}`
+        break;
+      case "deviceRelType":        
+        val =  val; // nothing to do
         break;
       default:
         console.warn(`Unknown transformer: ${transformer}`);
@@ -717,8 +782,8 @@ const handleElementOptions = (setKey, elementOptions, transformers, val) => {
   let customParams = "";
   let customId = "";
   let columns = [];
-  let base64Regex = "";
-
+  let base64Regex = "";  
+  let elementOptionsBase64 = btoa(JSON.stringify(elementOptions));
 
   elementOptions.forEach((option) => {
     if (option.prefillValue) {
@@ -801,7 +866,8 @@ const handleElementOptions = (setKey, elementOptions, transformers, val) => {
     customParams,
     customId,
     columns,
-    base64Regex
+    base64Regex,
+    elementOptionsBase64
   };
 };
 
@@ -822,13 +888,14 @@ function arrayToObject(array) {
 
 // -----------------------------------------------------------------------------
 // Processor to generate options
+//          options     - available options
+//          valuesArray - values = selected options
 function generateOptions(options, valuesArray, targetField, transformers, placeholder) {
   var optionsHtml = "";
 
   resultArray    = []
   selectedArray  = []
-  cssClass       = ""
-  
+  cssClass       = ""  
 
   // determine if options or values are used in the listing
   if (valuesArray.length > 0 && options.length > 0){
@@ -847,7 +914,6 @@ function generateOptions(options, valuesArray, targetField, transformers, placeh
     // dropdown -> options only (value == 1 STRING not ARRAY)
     resultArray   = options;
   }
-
  
   // Create a map to track the index of each item in valuesArray
   const orderMap = new Map(valuesArray.map((item, index) => [item, index]));
@@ -931,12 +997,101 @@ function genListWithInputSet(options, valuesArray, targetField, transformers, pl
   $("#" + placeholder).replaceWith(listHtml);
 }
 
+// -----------------------------------------------------------------
+// Collects a setting based on code name
+function collectSetting(prefix, setCodeName, setType, settingsArray) {
+  // Parse setType if it's a JSON string
+  const setTypeObject = (typeof setType === "string") 
+      ? JSON.parse(processQuotes(setType)) 
+      : setType;
+
+  const dataType = setTypeObject.dataType;
+
+  // Pick element with input value
+  let elements = setTypeObject.elements.filter(el => el.elementHasInputValue === 1);
+  let elementWithInputValue = elements.length === 0
+      ? setTypeObject.elements[setTypeObject.elements.length - 1]
+      : elements[0];
+
+  const { elementType, elementOptions = [], transformers = [] } = elementWithInputValue;
+
+  const opts = handleElementOptions('none', elementOptions, transformers, val = "");
+
+  // Map of handlers
+  const handlers = {
+      datatableString: () => {
+          const value = collectTableData(`#${setCodeName}_table`);
+          return btoa(JSON.stringify(value));
+      },
+      simpleValue: () => {
+          let value = $(`#${setCodeName}`).val();
+          return applyTransformers(value, transformers);
+      },
+      checkbox: () => {
+          let value = $(`#${setCodeName}`).is(':checked') ? 1 : 0;
+          if (dataType === "boolean") {
+              value = value === 1 ? "True" : "False";
+          }
+          return applyTransformers(value, transformers);
+      },
+      array: () => {
+          let temps = [];
+          if (opts.isOrdeable) {
+              temps = $(`#${setCodeName}`).val();
+          } else {            
+              const sel = $(`#${setCodeName}`).attr("my-editable") === "true" ? "" : ":selected";
+              $(`#${setCodeName} option${sel}`).each(function() {
+                  const vl = $(this).val();
+                  if (vl !== '') {
+                      temps.push(applyTransformers(vl, transformers));
+                  }
+              });
+          }
+          return JSON.stringify(temps);
+      },
+      none: () => "",
+      json: () => {
+          let value = $(`#${setCodeName}`).val();
+          value = applyTransformers(value, transformers);
+          return JSON.stringify(value, null, 2);
+      },
+      fallback: () => {
+          console.error(`[collectSetting] Couldn't determine how to handle (${setCodeName}|${dataType}|${opts.inputType})`);
+          let value = $(`#${setCodeName}`).val();
+          return applyTransformers(value, transformers);
+      }
+  };
+
+  // Select handler key
+  let handlerKey;
+  if (dataType === "string" && elementType === "datatable") {
+      handlerKey = "datatableString";
+  } else if (dataType === "string" || 
+            (dataType === "integer" && (opts.inputType === "number" || opts.inputType === "text"))) {
+      handlerKey = "simpleValue";
+  } else if (opts.inputType === "checkbox") {
+      handlerKey = "checkbox";
+  } else if (dataType === "array") {
+      handlerKey = "array";
+  } else if (dataType === "none") {
+      handlerKey = "none";
+  } else if (dataType === "json") {
+      handlerKey = "json";
+  } else {
+      handlerKey = "fallback";
+  }
+
+  const value = handlers[handlerKey]();
+  settingsArray.push([prefix, setCodeName, dataType, value]);
+
+  return settingsArray;
+}
+
 
 // ------------------------------------------------------------------------------
 // Generate the form control for setting
 function generateFormHtml(settingsData, set, overrideValue, overrideOptions, originalSetKey) {
   let inputHtml = '';
-
 
   isEmpty(overrideValue) ? inVal = set['setValue'] : inVal = overrideValue;  
   const setKey = set['setKey'];
@@ -952,6 +1107,8 @@ function generateFormHtml(settingsData, set, overrideValue, overrideOptions, ori
   // }
 
   // Parse the setType JSON string
+  // console.log(processQuotes(setType));
+  
   const setTypeObject = JSON.parse(processQuotes(setType))
   const dataType = setTypeObject.dataType;
   const elements = setTypeObject.elements || [];
@@ -979,7 +1136,8 @@ function generateFormHtml(settingsData, set, overrideValue, overrideOptions, ori
       customParams,
       customId,
       columns,
-      base64Regex
+      base64Regex,
+      elementOptionsBase64
     } = handleElementOptions(setKey, elementOptions, transformers, inVal);
 
     // Override value
@@ -1007,10 +1165,13 @@ function generateFormHtml(settingsData, set, overrideValue, overrideOptions, ori
                               class="form-control ${addCss} ${cssClasses}" 
                               name="${setKey}" 
                               id="${setKey}" 
+                              my-transformers=${transformers}
                               my-customparams="${customParams}" 
                               my-customid="${customId}" 
                               my-originalSetKey="${originalSetKey}" 
-                              ${multi}>
+                              data-elementoptionsbase64="${elementOptionsBase64}"
+                              ${multi}
+                              ${readOnly ? "disabled" : ""}>
                           <option value="" id="${setKey + "_temp_"}"></option>
                         </select>`;
 
@@ -1046,6 +1207,7 @@ function generateFormHtml(settingsData, set, overrideValue, overrideOptions, ori
                         my-originalSetKey="${originalSetKey}"
                         my-input-from="${sourceIds}" 
                         my-input-to="${setKey}" 
+                        data-elementoptionsbase64="${elementOptionsBase64}"
                         onclick="${onClick}">
                         ${getString(getStringKey)}
                       </button>`;
@@ -1188,22 +1350,49 @@ function generateFormHtml(settingsData, set, overrideValue, overrideOptions, ori
  
   const eventsList = createArray(set['setEvents']); 
   // inline buttons events
-  
+if (eventsList.length > 0) {
+  eventsList.forEach(event => {
+    let eventIcon = "fa-play";
 
-  if (eventsList.length > 0) {
-    eventsList.forEach(event => {
+    switch (event) {
+      case "select_icon":
+        eventIcon = "fa-chevron-down";
+        break;
+      case "add_icon":
+      case "add_option":
+        eventIcon = "fa-square-plus";
+        break;
+      case "copy_icons":
+        eventIcon = "fa-copy";
+        break;
+      case "go_to_device":
+        eventIcon = "fa-square-up-right";
+        break;
+      case "go_to_node":
+        eventIcon = "fa-sitemap fa-rotate-270";
+        break;
+      case "run":
+        eventIcon = "fa-play";
+        break;
+      case "test":
+        eventIcon = "fa-vial-circle-check";
+        break;
+      default:
+        eventIcon = "fa-play";
+        break;
+    }
 
-        eventsHtml += `<span class="input-group-addon pointer"
-                        id="${`${event}_${setKey}`}"
-                        data-myparam-setkey="${setKey}"
-                        data-myparam="${setKey}"
-                        data-myparam-plugin="${setKey.split('_')[0] || ''}"
-                        data-myevent="${event}"  
-                        onclick="execute_settingEvent(this)">
-                        <i title="${getString(event + "_event_tooltip")}" class="fa ${getString(event + "_event_icon")}"></i>
-                      </span>`;
-    });
-  }
+    eventsHtml += `<span class="input-group-addon pointer"
+                    id="${`${event}_${setKey}`}"
+                    data-myparam-setkey="${setKey}"
+                    data-myparam="${setKey}"
+                    data-myparam-plugin="${setKey.split('_')[0] || ''}"
+                    data-myevent="${event}"  
+                    onclick="execute_settingEvent(this)">
+                    <i title="${getString(event + "_event_tooltip")}" class="fa ${eventIcon}"></i>
+                  </span>`;
+  });
+}
 
   // Combine and return the final HTML
   return inputHtml + eventsHtml;

@@ -4,7 +4,7 @@
     "display": "standalone",
     "icons": [
     {
-      "src": "",
+      "src": "/img/NetAlertX_logo.png",
       "sizes": "180x180",
       "type": "image/png"
     }

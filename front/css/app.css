@@ -12,10 +12,13 @@
 ----------------------------------------------------------------------------- */
 :root {
     --color-aqua: #00c0ef;
+    --color-lightblue: #3c8dbc;
     --color-blue: #0060df;
     --color-green: #00a65a;
     --color-yellow: #f39c12;
     --color-red: #dd4b39;
+    --color-gray: #8c8c8c;
+    --color-black: #000;
 }
 
 .input-group .checkbox
@@ -26,6 +29,45 @@
 h5
 {
     font-size: medium;
+}
+
+a[target="_blank"] {
+    position: relative;
+    display: inline-block; /* Needed for positioning */
+    padding-right: 0.6em;    /* Space for the icon */
+  }
+  
+  a[target="_blank"]::after {
+    content: '↗';
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 0.75em;
+    line-height: 1;
+  }
+
+  .select2 .hover-node-info::after {
+    padding-left: 1px ;
+  }
+
+  /* .node-standard-device .netNodeText::after
+  {
+    right: -7px;
+    top: 1px;
+  } */
+  
+/* .select2-container--default .select2-selection--multiple .select2-selection__choice
+{
+    padding-right: 15px !important;
+} */
+
+.hoverHighlight
+{
+    opacity: 0.7;
+}
+.hoverHighlight:hover
+{
+    opacity: 1;
 }
 
 /* -----------------------------------------------------------------------------
@@ -47,6 +89,7 @@ h5
     text-align: end;
     float: inline-end;
 }
+
 
 /* -----------------------------------------------------------------------------
    Text Classes
@@ -340,6 +383,21 @@ body
     width: 100%;
 }
 
+.networkTable .nav-tabs-custom
+{
+    margin-bottom: 0px;
+}
+
+.plugin-content #tabs-location .nav-tabs-custom > .nav-tabs > li
+{
+    display: contents;
+}
+
+.plugin-content .left-nav
+{
+    display: contents;
+}
+
 .pa-small-box-2 .inner h3 {
     margin-left: 0em;
     margin-bottom: 1.3em;
@@ -474,7 +532,7 @@ body
 }
 
 .bottom-border-primary {
-    border-bottom-color: #3c8dbc;
+    border-bottom-color: var(--color-lightblue);
     border-bottom-style: solid;
     border-bottom-width: 3px
 }
@@ -545,6 +603,20 @@ body
     border-color: #ddd;
     background-color: #f4f4f4;
     cursor: default;
+}
+
+.btn-outline:hover
+{
+  border: 1px solid var(--color-black);
+  background: transparent;
+  color: var(--color-black);
+}
+
+.btn-outline
+{
+  border: 1px solid var(--color-gray);
+  background: transparent;
+  color: var(--color-gray);
 }
 
 /* -----------------------------------------------------------------------------
@@ -695,6 +767,39 @@ body
 
 /* maintenance buttons */
 
+#file-check-list{
+    display: block;
+}
+
+.file-checking .icon-wrap{
+    width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis; 
+    display: block;
+}
+
+.file-checking .icon-wrap i{
+    position: absolute;
+    font-size: xx-large;
+    right: 0;
+    top: 0;
+    opacity: 0.2;
+}
+
+.file-checking .file-name-wrap{
+    overflow: hidden;
+    text-overflow: ellipsis; 
+    display: flex;
+    padding: 5px;
+}
+
+.file-checking{
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis; 
+}
+
+
 .dbtools-button {
     display: inline-block;
     width: 160px;
@@ -841,6 +946,15 @@ height: 50px;
 {
     margin-bottom: 10px;
 }
+
+#notifications .notification-buttons{
+    margin: 10px;
+    padding: 10px;
+}
+#notifications .notification-box{
+    min-height: 90vh;
+}
+
 
 #notificationData textarea{
     width: 100%;
@@ -994,7 +1108,7 @@ height: 50px;
 
 .myhidden
 {
-    display:none;
+    display:none !important;
 }
 
 .center 
@@ -1098,7 +1212,7 @@ height: 50px;
 input[readonly] {
     /* Apply styles to the readonly input */
     background-color: #646566 !important;
-    color: #000;    
+    color: #e6e6e6;    
     cursor: not-allowed;
   }
 
@@ -1141,14 +1255,14 @@ input[readonly] {
 .settings-sticky-bottom-section {
     position: fixed;
     z-index: 999;
-    background-color: #5B5B66;
+    /* background-color: #5B5B66; */
     /* opacity: 0.8; */
     bottom: 30px;
     border-radius: 5px;
     /* margin:1px; */
-    border-width: 1px;
+    /* border-width: 1px;
     border-style: solid;
-    border-color: inherit;
+    border-color: inherit; */
     /* width: 87%; */
     padding: 10px;
   }
@@ -1316,11 +1430,13 @@ input[readonly] {
 
 .iconPreview {
     min-width: 40px;
+    /* display: inherit; */
 }
 
 .iconPreview svg{
     min-width: 20px;
     max-width: 20px;
+    margin-bottom: -3px;
 }
 
 
@@ -1361,7 +1477,8 @@ input[readonly] {
     cursor: -webkit-grab;
 }
 
-.select2-container--default .select2-selection--multiple .select2-selection__choice
+#settingsPage .select2-container--default .select2-selection--multiple .select2-selection__choice,
+#maintenancePage .select2-container--default .select2-selection--multiple .select2-selection__choice
 {
     background-color:#258744 !important;
 }
@@ -1374,6 +1491,15 @@ input[readonly] {
 {
     background-color:#606060 !important;
 }
+
+.select2-container--default .select2-selection--multiple,
+.select2-container--default .select2-selection--single
+{
+    border-radius: 0px !important;
+    border-color: #d2d6de !important;
+    min-height: 42px;
+}
+
 
 .helpIconSmallTopRight{
     position: absolute;
@@ -1389,7 +1515,7 @@ input[readonly] {
 }
 
 #tableDevicesBox td svg, #tableDevicesBox td i{
-    height: 1.5em !important;
+    height: 1em !important;
 }
 
 #TileCards .tile .inner
@@ -1411,11 +1537,21 @@ input[readonly] {
     text-align: left;
 }
 
+#panDetails .input-group {
+        
+    min-height: 40px;
+}
+
 #devicePageInfoPlc
 {
     display: none;
     padding-top: 2em;
     cursor: default;
+}
+
+.small-box:hover
+{
+    color: inherit;
 }
 
 /* ----------------------------------------------------------------- */
@@ -1484,16 +1620,111 @@ input[readonly] {
 }
 /* #panDetails .dataTables_wrapper .bottom .paging_simple_numbers */
 
-#panDetails #NEWDEV_devIcon
-{
-    display: none;
-}
-
-
 
 #panDetails #NEWDEV_devCustomProps_label
 {
     display: none;
+}
+
+#deviceDetailsEdit .select2-container--default .select2-selection--multiple .select2-selection__choice a
+{
+    color: #fff;
+}
+
+#deviceDetailsEdit .iconPreview svg
+{
+    height: 14px;
+}
+
+#deviceDetailsEdit .select2-container--default .select2-selection--multiple .select2-selection__choice 
+{
+    height: 20px;
+}
+
+#deviceDetailsEdit .select2-container--disabled 
+{
+    background-color: #606060;    
+}
+
+#deviceDetailsEdit .select2-container--default .select2-selection--multiple .select2-selection__choice span 
+{
+    font-size: 14px;
+}
+
+#deviceDetailsEdit .select2-selection 
+{
+    width: initial;
+    display: inline-block;
+    min-height: 42px;
+}
+
+/* Remove the default Select2 chevron (the down arrow) */
+.select2-container .select2-selection__arrow b {
+    display: none !important;
+  }
+
+/* Add custom icon */
+.select2-container .select2-selection__arrow::after {
+    font-family: 'Font Awesome 6 Free';
+    content: "\f078"; /* fa-chevron-down */
+    font-weight: 700;
+    position: absolute;
+    top: 75%;
+    left: 30%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+.custom-badge a
+{
+    color: #fff !important;
+    font-size: 14px;
+}
+.custom-badge
+{    
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    border-style: solid;
+    padding: 0 5px;
+    font-size: 14px;
+    display: inline-block;
+}
+
+#deviceDetailsEdit .form-control
+{
+    min-height: 42px;
+}
+
+.select2-selection--single .custom-chip
+{
+    margin-top: 11px;
+    display: flex;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered,
+.select2-container--default .select2-selection--single, .select2-selection .select2-selection--single
+{
+    padding: 0px 0px;
+    min-height: 42px;
+}
+
+/* .select2-container--default .select2-selection--single .select2-selection__rendered, */
+.select2-container--default .select2-selection--single
+{
+    /* color:initial !important; */
+    background-color:initial !important;
+}
+
+
+#deviceDetailsEdit .select2-container 
+{
+    width: 100% !important;
+}
+
+#deviceDetailsEdit .select2-container  .selection
+{
+    width: 100% !important;
+    display: inline-grid;
 }
 
 /* ----------------------------------------------------------------- */
@@ -1510,17 +1741,46 @@ input[readonly] {
     width: 92%;
 }
 
+#modal-ok
+{
+    z-index: 1051; /*highest priority*/
+}
+
+#modal-form-plc
+{
+    display: grid;
+}
+
 /* ----------------------------------------------------------------- */
 /* NETWORK page */
 /* ----------------------------------------------------------------- */
 
+.hide-node-names .node-name {
+    display: none;
+  }
+
+#toggleFilters
+{
+    display: block;
+    position: fixed;
+    padding-left: 32px;
+    padding-top: 10px;
+    background-color: inherit;
+    z-index: 3;
+    width: 190px;
+    box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.1);
+}
+
 /* AdminLTE overrides */
+.content-wrapper {
+    min-height: calc(100vh - 31px) !important;
+}
+
 #networkTree .box
 {
-    border-top:1px;
+    border-width:1px;
     border-top-color:grey;
     padding:0px;
-    padding-top:6px;
     margin:0px;
     align-items:center;
     border-radius:20px;
@@ -1528,15 +1788,15 @@ input[readonly] {
     /* display:flex; */
     flex-direction:column;
     justify-content:center;
-    display: inline-grid;
+    /* display: inline-grid; */
 }
-.networkHelpIcon
+.helpIcon
 {
-  padding: 5px;
-  margin-left: 5px;
-  top: 55px;
-  position: absolute;
-  z-index:5;
+    padding: 5px;
+    margin-left: 0px;
+    top: 47px;
+    position: absolute;
+    z-index: 5;
 }
 #networkTree .netNodeText
 { 
@@ -1554,6 +1814,7 @@ input[readonly] {
     opacity: 0.3;
     display: initial;    
     float: left;
+    width: 1em;
 }
 
 #networkTree
@@ -1577,19 +1838,82 @@ input[readonly] {
     width: auto;
 }
 
+#hover-box
+{
+  background-color: #ffffff;;
+}
+
+#hover-box .iconPreview
+{
+    padding: 0px;
+    display: flex;
+}
+
+#hover-box .devName
+{    
+    font-size: larger;    
+    display: contents;
+}
+
+#hover-box b
+{
+    float: left;
+}
+
+#hover-box .line
+{
+    float: left;
+    width: 100%;
+}
+
+#hover-box span
+{
+    float: right;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: block;
+    max-width: 200px;
+}
+
 #networkTree .netCollapse
 {
-    display: block;
     position: absolute;
-    margin-left: 170px;    
-    font-size: large;
-    left: -15px;
+    right: 0;
+    margin-right: -3px;
 }
+
+/* var(--color-aqua);
+--color-aqua: #00c0ef;
+--color-blue: #0060df;
+--color-green: #00a65a;
+--color-yellow: #f39c12;
+--color-red: #dd4b39; */
+
+#networkTree .node-inner.node-network-device:hover
+{
+    box-shadow: var(--color-aqua) 0px 0px 20px;
+}
+
+#networkTree .node-inner.node-standard-device:hover
+{
+    box-shadow: var(--color-gray) 0px 0px 10px;
+}
+
+#networkTree .network-hw-icon
+{
+    position: absolute;
+    margin-left: -0.4em;
+    opacity: 0.3;
+    margin-top: 0.1em;
+}
+
 #networkTree .highlightedNode
 {
-    border: solid;
-    border-color:cyan;
+    /* border: solid; */
+    border-color:var(--color-lightblue); 
+    box-shadow: var(--color-lightblue) 0px 0px 20px;
 }
+
 #networkTree .netStatus-Off-line i,
 #networkTree .netStatus-Off-line svg
 {
@@ -1598,7 +1922,6 @@ input[readonly] {
 
 .spanNetworkTree {
     display: inline-block;
-    /* width: 135px; */
     white-space: nowrap;
     overflow: hidden !important;
     text-overflow: ellipsis;
@@ -1612,6 +1935,28 @@ input[readonly] {
     /* z-index: 10; */
     top: 0.3em;
     /* margin-left: 0.2em; */
+}
+
+.networkTable
+{
+    padding-bottom: 1px;
+    z-index: 3;
+    position: relative;
+}
+
+.networkNodeTabHeaders .icon i
+{
+    padding-top: 8px !important;
+     padding-left: 6px !important;
+}
+
+.networkTable .box-body {
+    padding-top: 5px;
+}
+
+.networkTable .networkNodeTabHeaders a {
+    display: block;
+    height: 3em;
 }
 
 .networkTable .icon {
@@ -1632,11 +1977,12 @@ input[readonly] {
 
 .networkNodeTabHeaders
 {
-    max-width: 200px;
     text-overflow: ellipsis;
     overflow: hidden;
     text-wrap: nowrap;
 }
+
+
 
 @media (max-width: 767px) {
 
@@ -1668,7 +2014,10 @@ input[readonly] {
 /* PLUGINS page */
 /* ----------------------------------------------------------------- */
 
-
+#tabs-location
+{
+    padding-right: 0px;
+}
 
 .plugin-filters
 {    
@@ -1683,15 +2032,31 @@ input[readonly] {
     padding-bottom: 0px;
 }
 
-.plugin-content .left-nav{
+.plugin-content .nav-tabs li a
+{
+    border-right-width: 0px;
+}
+
+#tabs-content-location-wrap
+{
+    min-height: 90vh;
+}
+
+#tabs-content-location textarea {
     width: 100%;
+}
+
+.plugin-content .left-nav{
+    width: calc(100%);
     padding-right: 0px;
+    z-index: 2;
+    background-color: inherit !important;
 }
 
 .plugin-content #tabs-content-location
 {    
     margin: 0px;
-    /* padding-top: 0; */
+    padding-top: 0;
 }
 
 .integrations-plugins .content
@@ -1708,13 +2073,6 @@ input[readonly] {
 .plugins-description
 {
     padding-top: 20px;
-}
-
-  
-.login-page .login-custom
-{
-    width:480px;
-    
 }
 
 /*Hidden special button*/
@@ -1766,6 +2124,9 @@ input[readonly] {
 .pluginBadge
 {
     float: right;
+    margin-right: 10px;
+    opacity: 0.6;
+    margin-top: 4px;
 }
 
 .pluginBadgeWrap
@@ -1774,42 +2135,56 @@ input[readonly] {
     display: ruby;
     z-index: 1;
     position: sticky;
-    margin-top: 1px;
+    margin-top: 4px;
 }
 
 /* -----------------------------------------------------------------------------
    Spin
 ----------------------------------------------------------------------------- */
-.pa_semitransparent-panel {
-    position: absolute;
-    width: 100%; /*calc (100% -40px);*/
-    height: 100%;
-    left: 0;
-    top: 0;
+#loadingSpinner {
+    position: fixed;
+    z-index: 1000;
+    /* top: 0; */
+    /* left: 0; */
+    /* width: 100%; */
+    /* height: 100%; */
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    pointer-events: none;
     display: block;
-
-    opacity: 0.8;
-    background-color: #fff;
     z-index: 800;
 }
 
-.pa_spinner {
-    position: fixed;
-    left: 0;
-    right: 0;
+.fa-spinner
+{
+    font-size: initial;
+}
+
+#loadingSpinner.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.nax_semitransparent-panel {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    opacity: 0.5;
+    z-index: 99;
+}
+
+.nax_spinner {
+    position: absolute;
     top: 100px;
-    margin-left: auto;
-    margin-right: auto;
+    left: 50%;
+    transform: translateX(-50%);
     padding: 15px;
     width: 200px;
     background-color: #fff;
-    z-index: 801;
+    z-index: 1000;
 }
 
-#loadingSpinner
-{
-    z-index: 100;
-}
 
 /* Multi-edit adjustements */
 .box-header
@@ -1836,9 +2211,10 @@ input[readonly] {
 
 }
 
-.pia-top-left-logo
+.top-left-logo
 {
-    height:50px;
+    height:35px;
+    width:35px;
 }
 
 /* -----------------------------------------------------------------------------
@@ -1863,6 +2239,11 @@ input[readonly] {
     padding: 5px;
 }
 
+.workflows 
+{
+    max-width: 800px;
+}
+
 .workflows .col-sm-12, .workflows .col-sx-12
 {
     padding-right: 5px;
@@ -1884,6 +2265,7 @@ input[readonly] {
     margin-bottom: 7px;
     z-index: 1;
     display: flex;
+    opacity: 0.7;
 }
 
 .workflows .section-title
@@ -1905,18 +2287,18 @@ input[readonly] {
 
 .workflows .button-container 
 {
-    display: contents;
+    /* display: contents; */
     text-align: center;
-    width: 100%;
+    /* width: 100%; */
 }
 
-.workflows .panel:hover{
+/* .workflows .panel:hover{
     opacity: 1;
 }
 
 .workflows .panel{
     opacity: 0.8;
-}
+} */
 
 .workflows .bottom-buttons button
 {
@@ -1938,6 +2320,47 @@ input[readonly] {
 {
     width:100%; 
 } */
+
+.red-hover-text:hover
+{
+    color: var(--color-red) !important;    
+}
+
+.green-hover-text:hover
+{
+    color: var(--color-green) !important;
+}
+ 
+.workflows .bckg-icon-1-line
+{
+    font-size: 3em;
+    display: block;
+    position: absolute;
+    opacity: 0.1;
+    right: 0.1em;
+}
+.workflows .bckg-icon-2-line
+{
+    font-size: 6em;
+    display: block;
+    position: absolute;
+    opacity: 0.1;
+    right: 0.1em;
+}
+.workflows .bckg-icon-3-line
+{
+    font-size: 9em;
+    display: block;
+    position: absolute;
+    opacity: 0.1;
+    right: 0.1em;
+}
+
+
+.workflows .remove-condition
+{
+    z-index: 1;
+}
 
 .workflows .workflow-card 
 {

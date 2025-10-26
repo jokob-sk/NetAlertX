@@ -125,11 +125,11 @@
         },
         {
           "language_code": "es_es",
-          "string": "Solo está habilitado si selecciona <code>schedule</code> en la configuración <a href=\"#SYNC_RUN\"><code>SYNC_RUN</code></a>. Asegúrese de ingresar la programación en el formato similar a cron correcto (por ejemplo, valide en <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Por ejemplo, ingresar <code>0 4 * * *</code> ejecutará el escaneo después de las 4 a.m. en el <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</ código> que configuró arriba</a>. Se ejecutará la PRÓXIMA vez que pase el tiempo."
+          "string": "Solo está habilitado si selecciona <code>schedule</code> en la configuración <a href=\"#SYNC_RUN\"><code>SYNC_RUN</code></a>. Asegúrese de ingresar la programación en el formato similar a cron correcto (por ejemplo, valide en <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Por ejemplo, ingresar <code>0 4 * * *</code> ejecutará el escaneo después de las 4 a.m. en el <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</código> que configuró arriba</a>. Se ejecutará la PRÓXIMA vez que pase el tiempo."
         },
         {
           "language_code": "de_de",
-          "string": "Nur aktiviert, wenn Sie <code>schedule</code> in der <a href=\"#SYNC_RUN\"><code>SYNC_RUN</code>-Einstellung</a> auswählen. Stellen Sie sicher, dass Sie den Zeitplan im richtigen Cron-ähnlichen Format eingeben (z. B. validieren unter <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Wenn Sie beispielsweise <code>0 4 * * *</code> eingeben, wird der Scan nach 4 Uhr morgens in der <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</ ausgeführt. Code> den Sie oben festgelegt haben</a>. Wird das NÄCHSTE Mal ausgeführt, wenn die Zeit vergeht."
+          "string": "Nur aktiviert, wenn Sie <code>schedule</code> in der <a href=\"#SYNC_RUN\"><code>SYNC_RUN</code>-Einstellung</a> auswählen. Stellen Sie sicher, dass Sie den Zeitplan im richtigen Cron-ähnlichen Format eingeben (z. B. validieren unter <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Wenn Sie beispielsweise <code>0 4 * * *</code> eingeben, wird der Scan nach 4 Uhr morgens in der <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> ausgeführt, den Sie oben festgelegt haben</a>. Wird das NÄCHSTE Mal ausgeführt, wenn die Zeit vergeht."
         }
       ]
     },
@@ -245,7 +245,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "If specified, the hub will pull Devices data from the listed nodes. The <code>API_TOKEN</code> and <code>SYNC_encryption_key</code> must be set to the same value across the hub and all the nodes to ensure proper authentication and communication."
+          "string": "If specified, the hub will pull Devices data from the listed nodes. The <code>API_TOKEN</code> and <code>SYNC_encryption_key</code> must be set to the same value across the hub and all the nodes to ensure proper authentication and communication. Add full host URL and use the value of the <code>GRAPHQL_PORT</code> setting of the target, as the port."
         }
       ]
     },
@@ -271,7 +271,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "The URL of the hub (target instance). Set on the Node. Without a trailig slash, for example <code>http://192.168.1.82:20211</code>"
+          "string": "If specified, this node will push data to the <code>GRAPHQL_PORT</code> API of the target. Use the target device <code>GRAPHQL_PORT</code> URL Without a trailing slash, for example <code>http://192.168.1.82:20212</code>"
         }
       ]
     },
@@ -296,7 +296,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Use a unique node name, without spaces or special characters, such as <code>Node_Vlan01</code>"
+          "string": "The unique name of this node, without spaces or special characters, such as <code>Node_Vlan01</code>"
         }
       ]
     },
@@ -587,7 +587,7 @@
         "value": "sync"
       },
       "css_classes": "col-sm-2",
-      "show": true,
+      "show": false,
       "type": "label",
       "default_value": "",
       "options": [],

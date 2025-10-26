@@ -1,7 +1,7 @@
 # Migration form PiAlert to NetAlertX
 
 > [!WARNING] 
-> Follow this guide only after you you downloaded and started NetAlert X at least once after previously using the PiAlert image.
+> Follow this guide only after you you downloaded and started a version of NetAlertX prior to v25.6.7 (e.g. `docker pull ghcr.io/jokob-sk/netalertx:25.5.24`) at least once after previously using the PiAlert image. Later versions don't support migration and devices and settings will have to migrated manually, e.g. via [CSV import](./DEVICES_BULK_EDITING.md).
 
 ## STEPS: 
 

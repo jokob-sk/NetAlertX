@@ -41,7 +41,7 @@ The plugin operates in three different modes based on the configuration settings
 - **Schedule** `[n,h]`: `SYNC_RUN_SCHD`
 - **Encryption Key** `[n,h]`: `SYNC_encryption_key`
 - **Node Name** `[n]`: `SYNC_node_name`
-- **Hub URL** `[n]`: `SYNC_hub_url`
+- **Hub URL** `[n]`: `SYNC_hub_url` + `GRAPHQL_PORT` of the target
 - **Sync Devices** `[n]`: `SYNC_devices`
 - **Sync Plugins** `[n]`: `SYNC_plugins`
 
@@ -52,7 +52,7 @@ The plugin operates in three different modes based on the configuration settings
 - **When to Run** `[n,h]`: `SYNC_RUN`
 - **Schedule** `[n,h]`: `SYNC_RUN_SCHD`
 - **Encryption Key** `[n,h]`: `SYNC_encryption_key`
-- **Nodes to Pull From** `[h]`: `SYNC_nodes`
+- **Nodes to Pull From** `[h]`: `SYNC_nodes` + `GRAPHQL_PORT` of the source nodes
 
 ### Usage
 
@@ -115,7 +115,7 @@ Initially, I had one virtual machine (VM) with 6 network cards, one for each VLA
 2. Set the schedule (5 minutes works for me).
 3. **API Token**: Use any string, but it must match the clients (e.g., `abc123`).
 4. **Encryption Key**: Use any string, but it must match the clients (e.g., `abc123`).
-5. Under **Nodes**, add the full URL for each client, e.g., `http://192.168.1.20.20211/`.
+5. Under **Nodes**, add the full URL for each client, e.g., `http://192.168.1.20.20212/`, where the port `20212` is the value of the `GRAPHQL_PORT` setting of the given node (client)
 6. **Node Name**: Leave blank.
 7. Check **Sync Devices**.
 

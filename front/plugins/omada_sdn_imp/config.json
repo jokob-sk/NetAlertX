@@ -20,13 +20,13 @@
   "display_name": [
     {
       "language_code": "en_us",
-      "string": "OMADA SDN import"
+      "string": "OMADA SDN import (do not use)"
     }
   ],
   "description": [
     {
       "language_code": "en_us",
-      "string": "Plugin to import data from OMADA SDN."
+      "string": "Unmaintained and superseded. Use OMDSDNOPENAPI instead."
     }
   ],
   "icon": [
@@ -620,7 +620,7 @@
         "value": "OMDSDN"
       },
       "css_classes": "col-sm-2",
-      "show": true,
+      "show": false,
       "type": "label",
       "default_value": "",
       "options": [],

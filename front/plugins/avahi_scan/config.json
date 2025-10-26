@@ -52,7 +52,7 @@
           { "elementType": "select", "elementOptions": [], "transformers": [] }
         ]
       },
-      "default_value": "before_name_updates",
+      "default_value": "disabled",
       "options": [
         "disabled",
         "before_name_updates",
@@ -284,7 +284,7 @@
     {
       "column": "Watched_Value1",
       "css_classes": "col-sm-2",
-      "show": true,
+      "show": false,
       "type": "label",
       "default_value": "",
       "options": [],

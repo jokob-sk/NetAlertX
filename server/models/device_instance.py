@@ -4,7 +4,7 @@ import sys
 INSTALL_PATH="/app"
 sys.path.extend([f"{INSTALL_PATH}/server"])
 
-from logger import mylog, print_log
+from logger import mylog
 
 #-------------------------------------------------------------------------------
 # Device object handling (WIP)

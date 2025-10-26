@@ -31,7 +31,7 @@ The following workarounds should work for most complex network setups.
 
 ## Supplementing Plugins
 
-You can use supplementary plugins that employ alternate methods. Protocols used by the `SNMPDSC` or `DHCPLSS` plugins are widely supported on different routers and can be effective as workarounds. Check the [plugins list](https://github.com/jokob-sk/NetAlertX/blob/main/docs/PLUGINS.md) to find a plugin that works with your router and network setup.
+You can use supplementary plugins that employ alternate methods. Protocols used by the `SNMPDSC` or `DHCPLSS` plugins are widely supported on different routers and can be effective as workarounds. Check the [plugins list](./PLUGINS.md) to find a plugin that works with your router and network setup.
 
 ## Multiple NetAlertX Instances
 

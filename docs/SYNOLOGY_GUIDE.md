@@ -51,7 +51,7 @@ services:
 
 ![Project settings](./img/SYNOLOGY/07_Create_project.png)
 
-7. Replace the paths to your volume and/or comment out unnecessary line(s):
+7. Replace the paths to your volume and comment out unnecessary line(s):
 
 - This is only an example, your paths will differ.
 

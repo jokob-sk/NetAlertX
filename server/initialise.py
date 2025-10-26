@@ -12,14 +12,14 @@ import re
 # Register NetAlertX libraries
 import conf 
 from const import fullConfPath, applicationPath, fullConfFolder, default_tz
-from helper import fixPermissions, collect_lang_strings, updateSubnets, initOrSetParam, isJsonObject, setting_value_to_python_type, timeNowTZ, get_setting_value, generate_random_string
+from helper import fixPermissions, collect_lang_strings, updateSubnets, isJsonObject, setting_value_to_python_type, timeNowTZ, get_setting_value, generate_random_string
 from app_state import updateState
 from logger import mylog
 from api import update_api
 from scheduler import schedule_class
-from plugin import print_plugin_info, run_plugin_scripts
+from plugin import plugin_manager, print_plugin_info
 from plugin_utils import get_plugins_configs, get_set_value_for_init
-from notification import write_notification
+from messaging.in_app import write_notification
 from crypto_utils import get_random_bytes
 
 #===============================================================================
@@ -112,7 +112,7 @@ def update_or_append(settings_list, item_tuple, key):
     
 #-------------------------------------------------------------------------------
 
-def importConfigs (db, all_plugins): 
+def importConfigs (pm, db, all_plugins): 
 
     sql = db.sql
 
@@ -123,7 +123,7 @@ def importConfigs (db, all_plugins):
     # this avoids time zone issues as we just compare the previous timestamp to the current time stamp
 
     # rename settings that have changed names due to code cleanup and migration to plugins
-    renameSettings(config_file)
+    # renameSettings(config_file)
 
     fileModifiedTime = os.path.getmtime(config_file)
 
@@ -134,7 +134,7 @@ def importConfigs (db, all_plugins):
 
     if (fileModifiedTime == conf.lastImportedConfFile) and all_plugins is not None:
         mylog('debug', ['[Import Config] skipping config file import'])
-        return all_plugins, False
+        return pm, all_plugins, False
 
     # Header
     updateState("Import config", showSpinner = True)  
@@ -157,25 +157,26 @@ def importConfigs (db, all_plugins):
     # ----------------------------------------
     # ccd(key, default, config_dir, name, inputtype, options, group, events=[], desc = "", regex = "", setJsonMetadata = {}, overrideTemplate = {})
     
-    conf.LOADED_PLUGINS = ccd('LOADED_PLUGINS', [] , c_d, 'Loaded plugins', '{"dataType":"array", "elements": [{"elementType" : "select", "elementOptions" : [{"multiple":"true", "ordeable": "true"}] ,"transformers": []}]}', '[]', 'General')
+    conf.LOADED_PLUGINS = ccd('LOADED_PLUGINS', [] , c_d, 'Loaded plugins', '{"dataType":"array","elements":[{"elementType":"select","elementHasInputValue":1,"elementOptions":[{"multiple":"true","ordeable":"true"}],"transformers":[]},{"elementType":"button","elementOptions":[{"sourceSuffixes":[]},{"separator":""},{"cssClasses":"col-xs-12"},{"onClick":"selectChange(this)"},{"getStringKey":"Gen_Change"}],"transformers":[]}]}', '[]', 'General')
     conf.DISCOVER_PLUGINS = ccd('DISCOVER_PLUGINS', True , c_d, 'Discover plugins', """{"dataType": "boolean","elements": [{"elementType": "input","elementOptions": [{ "type": "checkbox" }],"transformers": []}]}""", '[]', 'General')
     conf.SCAN_SUBNETS = ccd('SCAN_SUBNETS', ['192.168.1.0/24 --interface=eth1', '192.168.1.0/24 --interface=eth0'] , c_d, 'Subnets to scan', '''{"dataType": "array","elements": [{"elementType": "input","elementOptions": [{"placeholder": "192.168.1.0/24 --interface=eth1"},{"suffix": "_in"},{"cssClasses": "col-sm-10"},{"prefillValue": "null"}],"transformers": []},{"elementType": "button","elementOptions": [{"sourceSuffixes": ["_in"]},{"separator": ""},{"cssClasses": "col-xs-12"},{"onClick": "addList(this, false)"},{"getStringKey": "Gen_Add"}],"transformers": []},{"elementType": "select","elementHasInputValue": 1,"elementOptions": [{"multiple": "true"},{"readonly": "true"},{"editable": "true"}],"transformers": []},{"elementType": "button","elementOptions": [{"sourceSuffixes": []},{"separator": ""},{"cssClasses": "col-xs-6"},{"onClick": "removeAllOptions(this)"},{"getStringKey": "Gen_Remove_All"}],"transformers": []},{"elementType": "button","elementOptions": [{"sourceSuffixes": []},{"separator": ""},{"cssClasses": "col-xs-6"},{"onClick": "removeFromList(this)"},{"getStringKey": "Gen_Remove_Last"}],"transformers": []}]}''', '[]', 'General')    
     conf.LOG_LEVEL = ccd('LOG_LEVEL', 'verbose' , c_d, 'Log verboseness', '{"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]}', "['none', 'minimal', 'verbose', 'debug', 'trace']", 'General')
     conf.TIMEZONE = ccd('TIMEZONE', default_tz , c_d, 'Time zone', '{"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]}', '[]', 'General')    
     conf.PLUGINS_KEEP_HIST = ccd('PLUGINS_KEEP_HIST', 250 , c_d, 'Keep history entries', '{"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type": "number"}] ,"transformers": []}]}', '[]', 'General') 
-    conf.REPORT_DASHBOARD_URL = ccd('REPORT_DASHBOARD_URL', 'http://netalertx/' , c_d, 'NetAlertX URL', '{"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]}', '[]', 'General')
+    conf.REPORT_DASHBOARD_URL = ccd('REPORT_DASHBOARD_URL', 'update_REPORT_DASHBOARD_URL_setting' , c_d, 'NetAlertX URL', '{"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]}', '[]', 'General')
     conf.DAYS_TO_KEEP_EVENTS = ccd('DAYS_TO_KEEP_EVENTS', 90 , c_d, 'Delete events days', '{"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type": "number"}] ,"transformers": []}]}', '[]', 'General')
     conf.HRS_TO_KEEP_NEWDEV = ccd('HRS_TO_KEEP_NEWDEV', 0 , c_d, 'Keep new devices for', '{"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type": "number"}] ,"transformers": []}]}', "[]", 'General')        
     conf.HRS_TO_KEEP_OFFDEV = ccd('HRS_TO_KEEP_OFFDEV', 0 , c_d, 'Keep offline devices for', '{"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type": "number"}] ,"transformers": []}]}', "[]", 'General')        
     conf.CLEAR_NEW_FLAG = ccd('CLEAR_NEW_FLAG', 0 , c_d, 'Clear new flag', '{"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type": "number"}] ,"transformers": []}]}', "[]", 'General')        
+    conf.REFRESH_FQDN = ccd('REFRESH_FQDN', False , c_d, 'Refresh FQDN', """{"dataType": "boolean","elements": [{"elementType": "input","elementOptions": [{ "type": "checkbox" }],"transformers": []}]}""", '[]', 'General')
     conf.API_CUSTOM_SQL = ccd('API_CUSTOM_SQL', 'SELECT * FROM Devices WHERE devPresentLastScan = 0' , c_d, 'Custom endpoint', '{"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]}', '[]', 'General')
     conf.VERSION = ccd('VERSION', '' , c_d, 'Version', '{"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [{ "readonly": "true" }] ,"transformers": []}]}', '', 'General')
-    conf.NETWORK_DEVICE_TYPES = ccd('NETWORK_DEVICE_TYPES', ['AP', 'Gateway', 'Firewall', 'Hypervisor', 'Powerline', 'Switch', 'WLAN', 'PLC', 'Router','USB LAN Adapter', 'USB WIFI Adapter', 'Internet'] , c_d, 'Network device types', '{"dataType":"array","elements":[{"elementType":"input","elementOptions":[{"placeholder":"Enter value"},{"suffix":"_in"},{"cssClasses":"col-sm-10"},{"prefillValue":"null"}],"transformers":[]},{"elementType":"button","elementOptions":[{"sourceSuffixes":["_in"]},{"separator":""},{"cssClasses":"col-xs-12"},{"onClick":"addList(this,false)"},{"getStringKey":"Gen_Add"}],"transformers":[]},{"elementType":"select",	"elementHasInputValue":1,"elementOptions":[{"multiple":"true"},{"readonly":"true"},{"editable":"true"}],"transformers":[]},{"elementType":"button","elementOptions":[{"sourceSuffixes":[]},{"separator":""},{"cssClasses":"col-xs-6"},{"onClick":"removeAllOptions(this)"},{"getStringKey":"Gen_Remove_All"}],"transformers":[]},{"elementType":"button","elementOptions":[{"sourceSuffixes":[]},{"separator":""},{"cssClasses":"col-xs-6"},{"onClick":"removeFromList(this)"},{"getStringKey":"Gen_Remove_Last"}],"transformers":[]}]}', '[]', 'General')
+    conf.NETWORK_DEVICE_TYPES = ccd('NETWORK_DEVICE_TYPES', ['AP', 'Access Point', 'Gateway', 'Firewall', 'Hypervisor', 'Powerline', 'Switch', 'WLAN', 'PLC', 'Router','USB LAN Adapter', 'USB WIFI Adapter', 'Internet'] , c_d, 'Network device types', '{"dataType":"array","elements":[{"elementType":"input","elementOptions":[{"placeholder":"Enter value"},{"suffix":"_in"},{"cssClasses":"col-sm-10"},{"prefillValue":"null"}],"transformers":[]},{"elementType":"button","elementOptions":[{"sourceSuffixes":["_in"]},{"separator":""},{"cssClasses":"col-xs-12"},{"onClick":"addList(this,false)"},{"getStringKey":"Gen_Add"}],"transformers":[]},{"elementType":"select",	"elementHasInputValue":1,"elementOptions":[{"multiple":"true"},{"readonly":"true"},{"editable":"true"}],"transformers":[]},{"elementType":"button","elementOptions":[{"sourceSuffixes":[]},{"separator":""},{"cssClasses":"col-xs-6"},{"onClick":"removeAllOptions(this)"},{"getStringKey":"Gen_Remove_All"}],"transformers":[]},{"elementType":"button","elementOptions":[{"sourceSuffixes":[]},{"separator":""},{"cssClasses":"col-xs-6"},{"onClick":"removeFromList(this)"},{"getStringKey":"Gen_Remove_Last"}],"transformers":[]}]}', '[]', 'General')
     conf.GRAPHQL_PORT = ccd('GRAPHQL_PORT', 20212 , c_d, 'GraphQL port', '{"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type": "number"}] ,"transformers": []}]}', '[]', 'General')
     conf.API_TOKEN = ccd('API_TOKEN', 't_' + generate_random_string(20) , c_d, 'API token', '{"dataType": "string","elements": [{"elementType": "input","elementHasInputValue": 1,"elementOptions": [{ "cssClasses": "col-xs-12" }],"transformers": []},{"elementType": "button","elementOptions": [{ "getStringKey": "Gen_Generate" },{ "customParams": "API_TOKEN" },{ "onClick": "generateApiToken(this, 20)" },{ "cssClasses": "col-xs-12" }],"transformers": []}]}', '[]', 'General')
 
     # UI
-    conf.UI_LANG = ccd('UI_LANG', 'English' , c_d, 'Language Interface', '{"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]}', "['English', 'German', 'Spanish', 'French', 'Norwegian', 'Russian', 'Italian (it_it)', 'Portuguese (pt_br)', 'Polish (pl_pl)', 'Chinese (zh_cn)', 'Turkish (tr_tr)', 'Czech (cs_cz)', 'Arabic (ar_ar)',  'Catalan (ca_ca)', 'Ukrainian (uk_ua)' ]", 'UI') 
+    conf.UI_LANG = ccd('UI_LANG', 'English (en_us)' , c_d, 'Language Interface', '{"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]}', "['English (en_us)', 'Arabic (ar_ar)', 'Catalan (ca_ca)', 'Czech (cs_cz)', 'German (de_de)', 'Spanish (es_es)', 'Farsi (fa_fa)', 'French (fr_fr)', 'Italian (it_it)', 'Norwegian (nb_no)', 'Polish (pl_pl)', 'Portuguese (pt_br)', 'Portuguese (pt_pt)', 'Russian (ru_ru)', 'Turkish (tr_tr)', 'Ukrainian (uk_ua)', 'Chinese (zh_cn)']", 'UI') 
     
     #  Init timezone in case it changed and handle invalid values
     try:
@@ -273,6 +274,15 @@ def importConfigs (db, all_plugins):
 
                 # Save the user defined value into the object
                 set["value"] = v
+
+                # Now check for popupForm inside elements → elementOptions
+                elements = set.get("type", {}).get("elements", [])
+                for element in elements:
+                    for option in element.get("elementOptions", []):
+                        if "popupForm" in option:
+                            for popup_entry in option["popupForm"]:
+                                popup_pref = key + "_popupform_" + popup_entry.get("function", "")
+                                stringSqlParams = collect_lang_strings(popup_entry, popup_pref, stringSqlParams)
 
                 # Collect settings related language strings
                 # Creates an entry with key, for example ARPSCAN_CMD_name
@@ -402,7 +412,9 @@ def importConfigs (db, all_plugins):
     update_api(db, all_plugins, True, ["settings"])  
     
     # run plugins that are modifying the config   
-    run_plugin_scripts(db, all_plugins, 'before_config_save' )
+    pm = plugin_manager(db, all_plugins)
+    pm.clear_cache()
+    pm.run_plugin_scripts('before_config_save')
 
     # Used to determine the next import
     conf.lastImportedConfFile = os.path.getmtime(config_file)   
@@ -420,7 +432,7 @@ def importConfigs (db, all_plugins):
     # front end app log loggging
     write_notification(msg, 'info', timeNowTZ())    
 
-    return all_plugins, True
+    return pm, all_plugins, True
 
 
 
@@ -444,46 +456,6 @@ replacements = {
     r'\bREPORT_TO\b': 'SMTP_REPORT_TO',
     r'\bSYNC_api_token\b': 'API_TOKEN',
     r'\bAPI_TOKEN=\'\'': f'API_TOKEN=\'t_{generate_random_string(20)}\'',
-    r'\bREPORT_FROM\b': 'SMTP_REPORT_FROM',
-    r'\bPIALERT_WEB_PROTECTION\b': 'SETPWD_enable_password',
-    r'\bPIALERT_WEB_PASSWORD\b': 'SETPWD_password',
-    r'REPORT_MAIL=True': "SMTP_RUN='on_notification'",
-    r'REPORT_APPRISE=True': "APPRISE_RUN='on_notification'",
-    r'REPORT_NTFY=True': "NTFY_RUN='on_notification'",
-    r'REPORT_WEBHOOK=True': "WEBHOOK_RUN='on_notification'",
-    r'REPORT_PUSHSAFER=True': "PUSHSAFER_RUN='on_notification'",
-    r'REPORT_MQTT=True': "MQTT_RUN='on_notification'",
-    # r'PIHOLE_CMD=': 'PIHOLE_CMD_OLD=',
-    r'\bINCLUDED_SECTIONS\b': 'NTFPRCS_INCLUDED_SECTIONS',
-    r'\bDIG_GET_IP_ARG\b': 'INTRNT_DIG_GET_IP_ARG',
-    r'dev_MAC': 'devMac',
-    r'dev_Name': 'devName',
-    r'dev_Favorite': 'devFavorite',
-    r'dev_Group': 'devGroup',
-    r'dev_Comments': 'devComments',
-    r'dev_FirstConnection': 'devFirstConnection',
-    r'dev_LastConnection': 'devLastConnection',
-    r'dev_LastIP': 'devLastIP',
-    r'dev_StaticIP': 'devStaticIP',
-    r'dev_ScanCycle': 'devScan',
-    r'dev_LogEvents': 'devLogEvents',
-    r'dev_AlertEvents': 'devAlertEvents',
-    r'dev_AlertDeviceDown': 'devAlertDown',
-    r'dev_SkipRepeated': 'devSkipRepeated',
-    r'dev_LastNotification': 'devLastNotification',
-    r'dev_PresentLastScan': 'devPresentLastScan',
-    r'dev_NewDevice': 'devIsNew',
-    r'dev_Location': 'devLocation',
-    r'dev_Archived': 'devIsArchived',
-    r'dev_Network_Node_MAC_ADDR': 'devParentMAC',
-    r'dev_Network_Node_port': 'devParentPort',
-    r'dev_Icon': 'devIcon',
-    r'dev_GUID': 'devGUID',
-    r'dev_NetworkSite': 'devSite',
-    r'dev_SSID': 'devSSID',
-    r'dev_SyncHubNodeName': 'devSyncHubNode',
-    r'dev_SourcePlugin': 'devSourcePlugin',
-    r'/home/pi/pialert\b': '/app'
 }
 
 
