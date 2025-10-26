@@ -48,7 +48,7 @@
   },
   "postStartCommand": {
       "Start Environment":"${containerWorkspaceFolder}/.devcontainer/scripts/setup.sh",
-      "Build test-container":"nohup screen docker buildx build --platform linux/amd64 --tag netalertx-test . & disown"
+      "Build test-container":"echo building netalertx-test container in background. check /tmp/build.log for progress. && setsid docker buildx build -t netalertx-test . > /tmp/build.log 2>&1 &"
   },
   "customizations": {
     "vscode": {

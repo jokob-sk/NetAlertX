@@ -1,3 +1,11 @@
+'''
+This set of tests requires netalertx-test image built. Ensure netalertx-test image is built prior
+to starting these tests or they will fail.  netalertx-test image is generally rebuilt using the 
+Build Unit Test Docker Image task. but can be created manually with the following command executed
+in the workspace:
+docker buildx build -t netalertx-test .
+'''
+
 import os
 import pathlib
 import shutil
