@@ -68,7 +68,7 @@ services:
     environment:
       LISTEN_ADDR: ${LISTEN_ADDR:-0.0.0.0}                      # Listen for connections on all interfaces
       PORT: ${PORT:-20211}                               # Application port
-      GRAPHQL_PORT: ${GRAPHQL_PORT:-20212}                       # GraphQL API port
+      APP_CONF_OVERRIDE: ${GRAPHQL_PORT:-20212}                       # GraphQL API port
       ALWAYS_FRESH_INSTALL: ${ALWAYS_FRESH_INSTALL:-false}               # Set to true to reset your config and database on each container start
       NETALERTX_DEBUG: ${NETALERTX_DEBUG:-0}                        # 0=kill all services and restart if any dies. 1 keeps running dead services.
 
