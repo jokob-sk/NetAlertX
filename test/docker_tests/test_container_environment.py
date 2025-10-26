@@ -111,20 +111,38 @@ def _setup_mount_tree(tmp_path: pathlib.Path, prefix: str, seed_config: bool = T
             pass
         paths[key] = host_path
 
+    # Determine repo root from env or by walking up from this file
+    repo_root_env = os.environ.get("NETALERTX_REPO_ROOT")
+    if repo_root_env:
+        repo_root = pathlib.Path(repo_root_env)
+    else:
+        repo_root = None
+        cur = pathlib.Path(__file__).resolve()
+        for parent in cur.parents:
+            if (parent / "pyproject.toml").exists() or (parent / ".git").exists() or (
+                (parent / "back").exists() and (parent / "db").exists()
+            ):
+                repo_root = parent
+                break
+        if repo_root is None:
+            repo_root = cur.parents[2]
+
     if seed_config:
         config_file = paths["app_config"] / "app.conf"
-        shutil.copyfile(
-            "/workspaces/NetAlertX/back/app.conf",
-            config_file,
-        )
-        config_file.chmod(0o600)
+        config_src = repo_root / "back" / "app.conf"
+        if not config_src.exists():
+            print(f"[WARN] Seed file not found: {config_src}. Set NETALERTX_REPO_ROOT or run from repo root. Skipping copy.")
+        else:
+            shutil.copyfile(config_src, config_file)
+            config_file.chmod(0o600)
     if seed_db:
         db_file = paths["app_db"] / "app.db"
-        shutil.copyfile(
-            "/workspaces/NetAlertX/db/app.db",
-            db_file,
-        )
-        db_file.chmod(0o600)
+        db_src = repo_root / "db" / "app.db"
+        if not db_src.exists():
+            print(f"[WARN] Seed file not found: {db_src}. Set NETALERTX_REPO_ROOT or run from repo root. Skipping copy.")
+        else:
+            shutil.copyfile(db_src, db_file)
+            db_file.chmod(0o600)
 
     _chown_netalertx(base)
 
