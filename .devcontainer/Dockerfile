@@ -185,6 +185,9 @@ RUN chown -R ${READ_ONLY_USER}:${READ_ONLY_GROUP} ${READ_ONLY_FOLDERS} && \
     find ${READ_WRITE_FOLDERS} -type d -exec chmod 700 {} + && \
     chown ${READ_ONLY_USER}:${READ_ONLY_GROUP} /entrypoint.sh /opt /opt/venv && \
     chmod 005 /entrypoint.sh ${SYSTEM_SERVICES}/*.sh /app /opt /opt/venv && \
+    for dir in ${READ_WRITE_FOLDERS}; do \
+        install -d -o ${NETALERTX_USER} -g ${NETALERTX_GROUP} -m 700 "$dir"; \
+    done && \
     apk del apk-tools && \
     rm -Rf /var /etc/sudoers.d/* /etc/shadow /etc/gshadow /etc/sudoers \
     /lib/apk /lib/firmware /lib/modules-load.d /lib/sysctl.d /mnt /home/ /root \

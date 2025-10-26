@@ -169,6 +169,7 @@ def _run_container(
     extra_args: list[str] | None = None,
     volume_specs: list[str] | None = None,
     sleep_seconds: float = GRACE_SECONDS,
+    userns: str | None = "host",
 ) -> subprocess.CompletedProcess[str]:
     name = f"netalertx-test-{label}-{uuid.uuid4().hex[:8]}".lower()
     cmd: list[str] = ["docker", "run", "--rm", "--name", name]

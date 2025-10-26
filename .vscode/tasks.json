@@ -164,7 +164,7 @@
     {
       "label": "[Any] Build Unit Test Docker image",
       "type": "shell",
-      "command": "docker build -t netalertx-test .",
+      "command": "docker build -t netalertx-test .; echo '🧪 Unit Test Docker image built: netalertx-test'",
       "presentation": {
         "echo": true,
         "reveal": "always",

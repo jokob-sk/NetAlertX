@@ -70,7 +70,9 @@ if [ "${NETALERTX_DEBUG:-0}" != "1" ]; then
 		if [ ${NETALERTX_DOCKER_ERROR_CHECK} -ne 0 ]; then
 			
 			echo exit code ${NETALERTX_DOCKER_ERROR_CHECK} from ${script}
-			exit ${NETALERTX_DOCKER_ERROR_CHECK}
+			if [ ${NETALERTX_DOCKER_ERROR_CHECK} -ne 0 ]; then
+			   NETALERTX_CHECK_ONLY=${NETALERTX_DOCKER_ERROR_CHECK}
+			fi
 		fi
 	done
 fi
