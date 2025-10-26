@@ -1,6 +1,11 @@
 #!/bin/sh
 # check-storage-extra.sh - ensure additional NetAlertX directories are persistent mounts.
 
+
+if [ "${NETALERTX_DEBUG}" == "1" ]; then
+    exit 0
+fi
+
 warn_if_not_persistent_mount() {
     path="$1"
     label="$2"
