@@ -29,7 +29,6 @@ if [ "${CURRENT_UID}" -eq 0 ]; then
 ══════════════════════════════════════════════════════════════════════════════
 EOF
     >&2 printf "%s" "${RESET}"
-	sleep 5 # Give user time to read the message
     exit 1
 fi
 

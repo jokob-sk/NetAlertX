@@ -19,7 +19,7 @@ TEMP_FILE="/services/run/tmp/ieee-oui.txt.tmp"
 OUTPUT_FILE="/services/run/tmp/ieee-oui.txt"
 
 # Download the file using wget to stdout and process it
-if ! wget --timeout=30 --tries=3 "https://standards-oui.ieee.org/oui/oui.txt" -O /dev/stdout | \
+if ! wget --timeout=30 --tries=3 "https://standards-oui.ieee.org/oui/oui.txt" -O /dev/stdout 2>/dev/null | \
 	sed -E 's/ *\(base 16\)//' | \
 	awk -F' ' '{printf "%s\t%s\n", $1, substr($0, index($0, $2))}' | \
 	sort | \

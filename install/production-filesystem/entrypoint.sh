@@ -51,30 +51,29 @@ printf '
    https://netalertx.com
 
 '
-
 set -u
 
-NETALERTX_DOCKER_ERROR_CHECK=0
+FAILED_STATUS=""
+echo "Startup pre-checks"
+for script in ${SYSTEM_SERVICES_SCRIPTS}/check-*.sh; do
+    script_name=$(basename "$script" | sed 's/^check-//;s/\.sh$//;s/-/ /g')
+    echo " --> ${script_name}"
+
+    sh "$script"
+    NETALERTX_DOCKER_ERROR_CHECK=$?
+
+    if [ ${NETALERTX_DOCKER_ERROR_CHECK} -ne 0 ]; then
+        # fail but continue checks so user can see all issues
+        FAILED_STATUS="${NETALERTX_DOCKER_ERROR_CHECK}"
+        echo "${script_name}: FAILED with ${FAILED_STATUS}"
+        echo "Failure detected in: ${script}"
+    fi
+done
 
 
-# Run all pre-startup checks to validate container environment and dependencies
-if [ "${NETALERTX_DEBUG:-0}" != "1" ]; then
-	echo "Startup pre-checks"
-	for script in ${SYSTEM_SERVICES_SCRIPTS}/check-*.sh; do
-		script_name=$(basename "$script" | sed 's/^check-//;s/\.sh$//;s/-/ /g')
-		echo " --> ${script_name}"
-		
-		sh "$script"
-		NETALERTX_DOCKER_ERROR_CHECK=$?
-		
-		if [ ${NETALERTX_DOCKER_ERROR_CHECK} -ne 0 ]; then
-			
-			echo exit code ${NETALERTX_DOCKER_ERROR_CHECK} from ${script}
-			if [ ${NETALERTX_DOCKER_ERROR_CHECK} -ne 0 ]; then
-			   NETALERTX_CHECK_ONLY=${NETALERTX_DOCKER_ERROR_CHECK}
-			fi
-		fi
-	done
+if [ ${FAILED_STATUS} ]; then
+    echo "Container startup checks failed with exit code ${FAILED_STATUS}."
+    exit ${FAILED_STATUS}
 fi
 
 # Exit after checks if in check-only mode (for testing)
@@ -91,7 +90,6 @@ bash ${SYSTEM_SERVICES_SCRIPTS}/update_vendors.sh &
 # Service management state variables
 SERVICES=""                 # Space-separated list of active services in format "pid:name"
 FAILED_NAME=""              # Name of service that failed (used for error reporting)
-FAILED_STATUS=0             # Exit status code from failed service or signal
 
 ################################################################################
 # is_pid_active() - Check if a process is alive and not in zombie/dead state

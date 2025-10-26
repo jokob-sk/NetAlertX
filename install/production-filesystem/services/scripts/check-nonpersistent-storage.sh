@@ -34,7 +34,6 @@ warn_if_not_persistent_mount "${NETALERTX_API}" "API JSON cache" || failures=$((
 warn_if_not_persistent_mount "${SYSTEM_SERVICES_RUN}" "Runtime work directory" || failures=$((failures + 1))  
 
 if [ "${failures}" -ne 0 ]; then
-    sleep 5
     exit 1
 fi
 

@@ -11,7 +11,6 @@ SYSTEM_NGINX_CONFIG_FILE="/services/config/nginx/conf.active/netalertx.conf"
 # Create directories if they don't exist
 mkdir -p "${LOG_DIR}" "${RUN_DIR}" "${TMP_DIR}"
 
-echo "Starting nginx..."
 
 nginx_pid=""
 
@@ -48,8 +47,8 @@ trap forward_signal INT TERM
 
 # Execute nginx with overrides
 # echo the full nginx command then run it
-echo "nginx	-p \"${RUN_DIR}/\" -c \"${SYSTEM_NGINX_CONFIG_FILE}\" -g \"error_log /dev/stderr; error_log ${NETALERTX_LOG}/nginx-error.log; pid ${RUN_DIR}/nginx.pid; daemon off;\" &"
-nginx \
+echo "Starting /usr/sbin/nginx -p \"${RUN_DIR}/\" -c \"${SYSTEM_NGINX_CONFIG_FILE}\" -g \"error_log /dev/stderr; error_log ${NETALERTX_LOG}/nginx-error.log; pid ${RUN_DIR}/nginx.pid; daemon off;\" &"
+/usr/sbin/nginx \
 	-p "${RUN_DIR}/" \
 	-c "${SYSTEM_NGINX_CONFIG_FILE}" \
 	-g "error_log /dev/stderr; error_log ${NETALERTX_LOG}/nginx-error.log; pid ${RUN_DIR}/nginx.pid; daemon off;" &

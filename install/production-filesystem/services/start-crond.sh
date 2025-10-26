@@ -1,7 +1,6 @@
 #!/bin/bash
 set -euo pipefail
 
-echo "Starting crond..."
 
 crond_pid=""
 
@@ -24,7 +23,7 @@ done
 trap cleanup EXIT
 trap forward_signal INT TERM
 
-echo "/usr/sbin/crond -c \"${SYSTEM_SERVICES_CROND}\" -f -L \"${LOG_CROND}\" >>\"${LOG_CROND}\" 2>&1 &"
+echo "Starting /usr/sbin/crond -c \"${SYSTEM_SERVICES_CROND}\" -f -L \"${LOG_CROND}\" >>\"${LOG_CROND}\" 2>&1 &"
 
 /usr/sbin/crond -c "${SYSTEM_SERVICES_CROND}" -f -L "${LOG_CROND}" >>"${LOG_CROND}" 2>&1 &
 crond_pid=$!
