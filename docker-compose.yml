@@ -1,31 +1,41 @@
 services:
   netalertx:
-    network_mode: host                          # Use host networking for ARP scanning and other services
+  #use an environmental variable to set host networking mode if needed
+    network_mode: ${NETALERTX_NETWORK_MODE:-host}   # Use host networking for ARP scanning and other services
     build:
-      context: .                                # Build context is the current directory   
-      dockerfile: Dockerfile                    # Specify the Dockerfile to use    
+      context: .                                    # Build context is the current directory
+      dockerfile: Dockerfile                        # Specify the Dockerfile to use
     image: netalertx:latest
-    container_name: netalertx                   # The name when you docker contiainer ls
-    read_only: true                             # Make the container filesystem read-only
-    cap_drop:                                   # Drop all capabilities for enhanced security
+    container_name: netalertx                       # The name when you docker contiainer ls
+    read_only: true                                 # Make the container filesystem read-only
+    cap_drop:                                       # Drop all capabilities for enhanced security
       - ALL
-    cap_add:                                    # Add only the necessary capabilities
-      - NET_ADMIN                               # Required for ARP scanning
-      - NET_RAW                                 # Required for raw socket operations
-      - NET_BIND_SERVICE                        # Required to bind to privileged ports (nbtscan)
+    cap_add:                                        # Add only the necessary capabilities
+      - NET_ADMIN                                   # Required for ARP scanning
+      - NET_RAW                                     # Required for raw socket operations
+      - NET_BIND_SERVICE                            # Required to bind to privileged ports (nbtscan)
 
     volumes:
-      - type: volume
-        source: netalertx_config
-        target: /app/config
-        read_only: false
+
+      - type: volume                                # Persistent Docker-managed Named Volume for storage of config files
+        source: netalertx_config                    # the default name of the volume is netalertx_config
+        target: /app/config                         # inside the container mounted to /app/config
+        read_only: false                            # writable volume
+
+    # Example custom local folder called /home/user/netalertx_config
+    # - type: bind
+    #   source: /home/user/netalertx_config
+    #   target: /app/config
+    #   read_only: false
+    # ... or use the alternative format
+    # - /home/user/netalertx_config:/app/config:rw
 
       - type: volume
         source: netalertx_db
         target: /app/db
         read_only: false
 
-      - type: bind
+      - type: bind                           # Bind mount for timezone consistency
         source: /etc/localtime
         target: /etc/localtime
         read_only: true
@@ -40,6 +50,10 @@ services:
       # - /path/on/host/log:/app/log
 
     # Tempfs mounts for writable directories in a read-only container and improve system performance
+    # All mounts have noexec,nosuid,nodev for security purposes no devices, no suid/sgid and no execution of binaries
+    # async where possible for performance, sync where required for correctness
+    # uid=20211 and gid=20211 is the netalertx user inside the container
+    # mode=1700 gives rwx------ permissions to the netalertx user only
     tmpfs:
       # Speed up logging. This can be commented out to retain logs between container restarts
       - "/app/log:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
@@ -52,11 +66,11 @@ services:
       # /tmp is required by php for session save this should be reworked to /services/run/tmp
       - "/tmp:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
     environment:
-      LISTEN_ADDR: 0.0.0.0                      # Listen for connections on all interfaces
-      PORT: 20211                               # Application port
-      GRAPHQL_PORT: 20212                       # GraphQL API port
-      ALWAYS_FRESH_INSTALL: false               # Set to true to reset your config and database on each container start
-      NETALERTX_DEBUG: 0                        # 0=kill all services and restart if any dies. 1 keeps running dead services.
+      LISTEN_ADDR: ${LISTEN_ADDR:-0.0.0.0}                      # Listen for connections on all interfaces
+      PORT: ${PORT:-20211}                               # Application port
+      GRAPHQL_PORT: ${GRAPHQL_PORT:-20212}                       # GraphQL API port
+      ALWAYS_FRESH_INSTALL: ${ALWAYS_FRESH_INSTALL:-false}               # Set to true to reset your config and database on each container start
+      NETALERTX_DEBUG: ${NETALERTX_DEBUG:-0}                        # 0=kill all services and restart if any dies. 1 keeps running dead services.
 
     # Resource limits to prevent resource exhaustion
     mem_limit: 2048m            # Maximum memory usage
@@ -72,7 +86,6 @@ services:
     # Always restart the container unless explicitly stopped
     restart: unless-stopped
 
-volumes:
-  netalertx_config:
-  netalertx_db:
- 
+volumes:                        # Persistent volumes for configuration and database storage
+  netalertx_config:             # Configuration files
+  netalertx_db:                 # Database files
