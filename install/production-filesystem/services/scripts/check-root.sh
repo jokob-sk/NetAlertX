@@ -20,9 +20,9 @@ if [ "${CURRENT_UID}" -eq 0 ]; then
       * Keep the default USER in the image (20211:20211), or
       * In docker-compose.yml, remove any 'user:' override that sets UID 0.
 
-	Note: As a courtesy, this special mode is only used to set the permissions
-	of /app/db and /app/config to be owned by the netalertx user so future 
-	runs work correctly.
+    Note: As a courtesy, this special mode is only used to set the permissions
+    of /app/db and /app/config to be owned by the netalertx user so future 
+    runs work correctly.
 
     Bottom line: never run security tooling as root unless you are actively
     trying to get pwned.
