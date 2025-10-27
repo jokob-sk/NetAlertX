@@ -156,7 +156,7 @@ services:
 
 ### 1.2 Migration from NetAlertX `v25.5.24`
 
-Versions prior to `v25.10.1` require an intermediate migration through `v25.5.24` to ensure database compatibility.
+Versions before `v25.10.1` require an intermediate migration through `v25.5.24` to ensure database compatibility.
 
 #### STEPS: 
 
