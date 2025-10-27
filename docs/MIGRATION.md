@@ -1,27 +1,47 @@
-# Migration form PiAlert to NetAlertX
+# Migration 
 
-> [!WARNING] 
-> Follow this guide only after you you downloaded and started a version of NetAlertX prior to v25.6.7 (e.g. `docker pull ghcr.io/jokob-sk/netalertx:25.5.24`) at least once after previously using the PiAlert image. Later versions don't support migration and devices and settings will have to migrated manually, e.g. via [CSV import](./DEVICES_BULK_EDITING.md).
+If upgrading from older versions of NetAlertX (or PiAlert (by jokob-sk)) the following data and setup migration steps need to be followed.
 
-## STEPS: 
+> [!TIP]
+> It's always important to have a [backup strategy](./BACKUPS.md) in place.
+
+## Migration scenarios
+
+- You are running PiAlert (by jokob-sk)  
+  → [Read the 1.1 Migration from PiAlert to NetAlertX `v25.5.24`](#11-migration-from-pialert-to-netalertx-v25524)
+
+- You are running NetAlertX (by jokob-sk) `25.5.24` or older  
+  → [Read the 1.2 Migration from NetAlertX `v25.5.24`](#12-migration-from-netalertx-v25524)
+
+- You are running NetAlertX (by jokob-sk) (`v25.6.7` to `v25.10.1`)  
+  → [Read the 1.3 Migration from NetAlertX `v25.10.1`](#13-migration-from-netalertx-v25101)
+
+
+### 1.0 Manual Migration
+
+You can migrate data manually, for example by exporting and importing devices using the [CSV import](./DEVICES_BULK_EDITING.md) method.
+
+
+### 1.1 Migration from PiAlert to NetAlertX `v25.5.24`
+
+#### STEPS: 
+
+The application will automatically migrate the database, configuration, and all device information.
+A ticker message will appear at the top of the web UI until you update your Docker mount points.
+
+1. Stop the container 
+2. [Back up your setup](./BACKUPS.md) 
+3. Update the Docker file mount locations in your `docker-compose.yml` or docker run command (See below **New Docker mount locations**). 
+4. Rename the DB and conf files to `app.db` and `app.conf` and place them in the appropriate location.
+5. Start the container
+
 
 > [!TIP] 
-> In short: The application will auto-migrate the database, config, and all device information. A ticker message on top will be displayed until you update your docker mount points. It's always good to have a [backup strategy](./BACKUPS.md) in place.
+> If you have troubles accessing past backups, config or database files you can copy them into the newly mapped directories, for example by running this command in the container:  `cp -r /app/config /home/pi/pialert/config/old_backup_files`. This should create a folder in the `config` directory called `old_backup_files` containing all the files in that location. Another approach is to map the old location and the new one at the same time to copy things over. 
 
-1. Backup your current config and database (optional `devices.csv` to have a backup) (See bellow tip if facing issues)
-2. Stop the container 
-2. Update the Docker file mount locations in your `docker-compose.yml` or docker run command (See bellow **New Docker mount locations**). 
-3. Rename the DB and conf files to `app.db` and `app.conf` and place them in the appropriate location.
-4. Start the Container
+#### New Docker mount locations
 
-
-> [!TIP] 
-> If you have troubles accessing past backups, config or database files you can copy them into the newly mapped directories, for example by running this command in the container:  `cp -r /app/config /home/pi/pialert/config/old_backup_files`. This should create a folder in the `config` directory called `old_backup_files` conatining all the files in that location. Another approach is to map the old location and the new one at the same time to copy things over. 
-
-
-### New Docker mount locations
-
-The application installation folder in the docker container has changed from `/home/pi/pialert` to `/app`. That means the new mount points are:
+The internal application path in the container has changed from `/home/pi/pialert` to `/app`. Update your volume mounts as follows:
 
  | Old mount point | New mount point | 
  |----------------------|---------------| 
@@ -41,13 +61,13 @@ The application installation folder in the docker container has changed from `/h
 > The application uses symlinks linking the old db and config locations to the new ones, so data loss should not occur. [Backup strategies](./BACKUPS.md) are still recommended to backup your setup.
 
 
-# Examples
+#### Examples
 
 Examples of docker files with the new mount points.
 
-## Example 1: Mapping folders
+##### Example 1: Mapping folders
 
-### Old docker-compose.yml
+###### Old docker-compose.yml
 
 ```yaml
 services:
@@ -68,15 +88,13 @@ services:
       - PORT=20211
 ```
 
-### New docker-compose.yml
+###### New docker-compose.yml
 
 ```yaml
 services:
   netalertx:                                  # ⚠  This has changed (🟡optional) 
     container_name: netalertx                 # ⚠  This has changed (🟡optional) 
-    # use the below line if you want to test the latest dev image
-    # image: "ghcr.io/jokob-sk/netalertx-dev:latest" 
-    image: "ghcr.io/jokob-sk/netalertx:latest"         # ⚠  This has changed (🟡optional/🔺required in future) 
+    image: "ghcr.io/jokob-sk/netalertx:25.5.24"         # ⚠  This has changed (🟡optional/🔺required in future) 
     network_mode: "host"        
     restart: unless-stopped
     volumes:
@@ -90,12 +108,12 @@ services:
 ```
 
 
-## Example 2: Mapping files
+##### Example 2: Mapping files
 
 > [!NOTE] 
 > The recommendation is to map folders as in Example 1, map files directly only when needed. 
 
-### Old docker-compose.yml
+###### Old docker-compose.yml
 
 ```yaml
 services:
@@ -116,15 +134,13 @@ services:
       - PORT=20211
 ```
 
-### New docker-compose.yml
+###### New docker-compose.yml
 
 ```yaml
 services:
   netalertx:                                  # ⚠  This has changed (🟡optional) 
     container_name: netalertx                 # ⚠  This has changed (🟡optional) 
-    # use the below line if you want to test the latest dev image
-    # image: "ghcr.io/jokob-sk/netalertx-dev:latest" 
-    image: "ghcr.io/jokob-sk/netalertx:latest"         # ⚠  This has changed (🟡optional/🔺required in future) 
+    image: "ghcr.io/jokob-sk/netalertx:25.5.24"         # ⚠  This has changed (🟡optional/🔺required in future) 
     network_mode: "host"        
     restart: unless-stopped
     volumes:
@@ -136,3 +152,98 @@ services:
       - TZ=Europe/Berlin      
       - PORT=20211
 ```
+
+
+### 1.2 Migration from NetAlertX `v25.5.24`
+
+Versions prior to `v25.10.1` require an intermediate migration through `v25.5.24` to ensure database compatibility.
+
+#### STEPS: 
+
+1. Stop the container 
+2. [Back up your setup](./BACKUPS.md) 
+3. Upgrade to `v25.5.24` by pinning the release version (See Examples below)
+4. Start the container and verify everything works as expected.
+5. Stop the container 
+6. Upgrade to `v25.10.1` by pinning the release version (See Examples below)
+7. Start the container and verify everything works as expected.
+
+#### Examples
+
+Examples of docker files with the tagged version.
+
+##### Example 1: Mapping folders
+
+###### docker-compose.yml changes
+
+```yaml
+services:
+  netalertx:                                  
+    container_name: netalertx                
+    image: "ghcr.io/jokob-sk/netalertx:25.5.24"         # ⚠  This is important (🔺required) 
+    network_mode: "host"        
+    restart: unless-stopped
+    volumes:
+      - local/path/config:/app/config         
+      - local/path/db:/app/db                 
+      # (optional) useful for debugging if you have issues setting up the container
+      - local/path/logs:/app/log        
+    environment:
+      - TZ=Europe/Berlin      
+      - PORT=20211
+```
+
+```yaml
+services:
+  netalertx:                                  
+    container_name: netalertx                
+    image: "ghcr.io/jokob-sk/netalertx:25.10.1"         # ⚠  This is important (🔺required) 
+    network_mode: "host"        
+    restart: unless-stopped
+    volumes:
+      - local/path/config:/app/config         
+      - local/path/db:/app/db                 
+      # (optional) useful for debugging if you have issues setting up the container
+      - local/path/logs:/app/log        
+    environment:
+      - TZ=Europe/Berlin      
+      - PORT=20211
+```
+
+### 1.3 Migration from NetAlertX `v25.10.1`
+
+> [!WARNING]
+> This section is under development. The migration path from `v25.10.1` to future versions (e.g., `v25.11.x` and newer) will be published soon.
+
+#### STEPS: 
+
+1. Stop the container 
+2. [Back up your setup](./BACKUPS.md) 
+3. Upgrade to `v25.10.1` by pinning the release version (See Examples below)
+4. Start the container and verify everything works as expected.
+5. Stop the container 
+6. 🔻 TBC 🔺
+
+##### Example 1: Mapping folders
+
+###### docker-compose.yml changes
+
+```yaml
+services:
+  netalertx:                                  
+    container_name: netalertx                
+    image: "ghcr.io/jokob-sk/netalertx:25.10.1"         # ⚠  This is important (🔺required) 
+    network_mode: "host"        
+    restart: unless-stopped
+    volumes:
+      - local/path/config:/app/config         
+      - local/path/db:/app/db                 
+      # (optional) useful for debugging if you have issues setting up the container
+      - local/path/logs:/app/log        
+    environment:
+      - TZ=Europe/Berlin      
+      - PORT=20211
+```
+
+
+🔻 TBC 🔺
