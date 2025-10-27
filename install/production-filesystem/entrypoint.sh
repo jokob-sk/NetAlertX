@@ -56,6 +56,10 @@ set -u
 FAILED_STATUS=""
 echo "Startup pre-checks"
 for script in ${SYSTEM_SERVICES_SCRIPTS}/check-*.sh; do
+    if [ -n "${DISABLE_STARTUP_CHECKS:-}" ]; then
+        echo "Skipping startup checks as DISABLE_STARTUP_CHECKS is set."
+        break
+    fi
     script_name=$(basename "$script" | sed 's/^check-//;s/\.sh$//;s/-/ /g')
     echo " --> ${script_name}"
 
@@ -75,6 +79,13 @@ if [ -n "${FAILED_STATUS}" ]; then
     echo "Container startup checks failed with exit code ${FAILED_STATUS}."
     exit ${FAILED_STATUS}
 fi
+
+# Set APP_CONF_OVERRIDE based on GRAPHQL_PORT if not already set
+if [ -n "${GRAPHQL_PORT:-}" ] && [ -z "${APP_CONF_OVERRIDE:-}" ]; then
+    export APP_CONF_OVERRIDE='{"GRAPHQL_PORT":"'"${GRAPHQL_PORT}"'"}'
+    echo "Setting APP_CONF_OVERRIDE to $APP_CONF_OVERRIDE"
+fi
+
 
 # Exit after checks if in check-only mode (for testing)
 if [ "${NETALERTX_CHECK_ONLY:-0}" -eq 1 ]; then
