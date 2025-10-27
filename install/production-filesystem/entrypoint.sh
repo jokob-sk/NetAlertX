@@ -56,8 +56,8 @@ set -u
 FAILED_STATUS=""
 echo "Startup pre-checks"
 for script in ${SYSTEM_SERVICES_SCRIPTS}/check-*.sh; do
-    if [ -n "${DISABLE_STARTUP_CHECKS:-}" ]; then
-        echo "Skipping startup checks as DISABLE_STARTUP_CHECKS is set."
+    if [ -n "${SKIP_TESTS:-}" ]; then
+        echo "Skipping startup checks as SKIP_TESTS is set."
         break
     fi
     script_name=$(basename "$script" | sed 's/^check-//;s/\.sh$//;s/-/ /g')
