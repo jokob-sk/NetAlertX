@@ -25,11 +25,52 @@ export PORT=20211
 export SOURCE_DIR="/workspaces/NetAlertX"
 
 
+ensure_docker_socket_access() {
+  local socket="/var/run/docker.sock"
+  if [ ! -S "${socket}" ]; then
+    echo "docker socket not present; skipping docker group configuration"
+    return
+  fi
+
+  local sock_gid
+  sock_gid=$(stat -c '%g' "${socket}" 2>/dev/null || true)
+  if [ -z "${sock_gid}" ]; then
+    echo "unable to determine docker socket gid; skipping docker group configuration"
+    return
+  fi
+
+  local group_entry=""
+  if command -v getent >/dev/null 2>&1; then
+    group_entry=$(getent group "${sock_gid}" 2>/dev/null || true)
+  else
+    group_entry=$(grep -E ":${sock_gid}:" /etc/group 2>/dev/null || true)
+  fi
+
+  local group_name=""
+  if [ -n "${group_entry}" ]; then
+    group_name=$(echo "${group_entry}" | cut -d: -f1)
+  else
+    group_name="docker-host"
+    sudo addgroup -g "${sock_gid}" "${group_name}" 2>/dev/null || group_name=$(grep -E ":${sock_gid}:" /etc/group | head -n1 | cut -d: -f1)
+  fi
+
+  if [ -z "${group_name}" ]; then
+    echo "failed to resolve group for docker socket gid ${sock_gid}; skipping docker group configuration"
+    return
+  fi
+
+  if ! id -nG netalertx | tr ' ' '\n' | grep -qx "${group_name}"; then
+    sudo addgroup netalertx "${group_name}" 2>/dev/null || true
+  fi
+}
+
+
 main() {
     echo "=== NetAlertX Development Container Setup ==="
     killall php-fpm83 nginx crond python3 2>/dev/null
     sleep 1
     echo "Setting up ${SOURCE_DIR}..."
+    ensure_docker_socket_access
     sudo chown $(id -u):$(id -g) /workspaces
     sudo chmod 755 /workspaces
     configure_source
@@ -102,6 +143,12 @@ configure_source() {
         killall python3 &>/dev/null
         sleep 0.2
     done
+	sudo chmod 777 /opt/venv/lib/python3.12/site-packages/ && \
+  sudo chmod 005 /opt/venv/lib/python3.12/site-packages/
+	sudo chmod 666 /var/run/docker.sock
+
+	echo "      -> Updating build timestamp"
+	date +%s > ${NETALERTX_FRONT}/buildtimestamp.txt
     
 }
 
