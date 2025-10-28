@@ -72,6 +72,7 @@ nav:
   - Development:
       - Plugin and app development:
         - Environment Setup: DEV_ENV_SETUP.md
+        - Builds: BUILDS.md
         - Devcontainer: DEV_DEVCONTAINER.md
         - Custom Plugins: PLUGINS_DEV.md
         - Plugin Config: PLUGINS_DEV_CONFIG.md
