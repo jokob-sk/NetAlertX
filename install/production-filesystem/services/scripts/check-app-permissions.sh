@@ -12,6 +12,7 @@
 # --- Color Codes ---
 RED='\033[1;31m'
 YELLOW='\033[1;33m'
+MAGENTA='\033[1;35m'
 RESET='\033[0m'
 
 # --- Main Logic ---
@@ -31,12 +32,36 @@ ${NETALERTX_API}
 ${NETALERTX_LOG}
 ${SYSTEM_SERVICES_RUN}
 ${NETALERTX_CONFIG}
-$(dirname "${NETALERTX_DB_FILE}")
+${NETALERTX_CONFIG_FILE}
+${NETALERTX_DB}
+${NETALERTX_DB_FILE}
 "
 
 # If running as root, fix permissions first
 if [ "$(id -u)" -eq 0 ]; then
-    echo "Running as root. Ensuring correct ownership and permissions..."
+    >&2 printf "%s" "${MAGENTA}"
+    >&2 cat <<'EOF'
+══════════════════════════════════════════════════════════════════════════════
+🚨 CRITICAL SECURITY ALERT: NetAlertX is running as ROOT (UID 0)! 🚨
+
+    This configuration bypasses all built-in security hardening measures.
+    You've granted a network monitoring application unrestricted access to
+    your host system. A successful compromise here could jeopardize your
+    entire infrastructure.
+
+    IMMEDIATE ACTION REQUIRED: Switch to the dedicated 'netalertx' user:
+      * Remove any 'user:' directive specifying UID 0 from docker-compose.yml or
+      * switch to the default USER in the image (20211:20211)
+
+    IMPORTANT: This corrective mode automatically adjusts ownership of
+    /app/db and /app/config directories to the netalertx user, ensuring
+    proper operation in subsequent runs.
+
+    Remember: Never operate security-critical tools as root unless you're 
+    actively trying to get pwned.
+══════════════════════════════════════════════════════════════════════════════
+EOF
+    >&2 printf "%s" "${RESET}"
 
     # Set ownership to netalertx user and group for all read-write paths
     chown -R netalertx:netalertx ${READ_WRITE_PATHS}
@@ -44,6 +69,7 @@ if [ "$(id -u)" -eq 0 ]; then
     # Set directory and file permissions for all read-write paths
     find ${READ_WRITE_PATHS} -type d -exec chmod 700 {} +
     find ${READ_WRITE_PATHS} -type f -exec chmod 600 {} +
+    sleep infinity & wait $!; exit 211
 fi
 
 # --- Permission Validation ---

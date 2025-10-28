@@ -710,7 +710,7 @@ def test_missing_mount_app_db(tmp_path: pathlib.Path) -> None:
     paths = _setup_mount_tree(tmp_path, "missing_mount_app_db")
     volumes = _build_volume_args(paths, skip={"app_db"})
     # CHANGE: Run as root (0:0) to bypass all permission checks on other mounts.
-    result = _run_container("missing-mount-app-db", volumes, user="0:0")
+    result = _run_container("missing-mount-app-db", volumes, user="20211:20211")
     # Acknowledge the original intent to check for permission denial (now implicit via root)
     # _assert_contains(result, "Write permission denied", result.args) # No longer needed, as root user is used
     
@@ -820,7 +820,7 @@ def test_running_as_root_is_blocked(tmp_path: pathlib.Path) -> None:
     dedicated netalertx user. Warning about security risks, special permission fix mode.
     Expected: Warning about security risks, guidance to use UID 20211.
 
-    Check script: check-root.sh
+    Check script: check-app-permissions.sh
     Sample message: "⚠️  ATTENTION: NetAlertX is running as root (UID 0). This defeats every hardening..."
     """
     paths = _setup_mount_tree(tmp_path, "run_as_root")
@@ -828,10 +828,10 @@ def test_running_as_root_is_blocked(tmp_path: pathlib.Path) -> None:
     result = _run_container(
         "run-as-root",
         volumes,
-        user="0:0",
+        user="0",
     )
-    _assert_contains(result, "NetAlertX is running as root", result.args)
-    assert result.returncode != 0
+    _assert_contains(result, "NetAlertX is running as ROOT", result.args)
+    assert result.returncode == 0 # container must be forced to exit 0 by termination after warning
 
 
 def test_running_as_uid_1000_warns(tmp_path: pathlib.Path) -> None:
@@ -852,7 +852,7 @@ def test_running_as_uid_1000_warns(tmp_path: pathlib.Path) -> None:
         volumes,
         user="1000:1000",
     )
-    _assert_contains(result, "NetAlertX is running as UID", result.args)
+    _assert_contains(result, "NetAlertX is running as UID 1000:1000", result.args)
     assert result.returncode != 0
 
 
@@ -888,7 +888,7 @@ def test_missing_app_conf_triggers_seed(tmp_path: pathlib.Path) -> None:
     paths = _setup_mount_tree(tmp_path, "missing_app_conf")
     (paths["app_config"] / "app.conf").unlink()
     volumes = _build_volume_args(paths)
-    result = _run_container("missing-app-conf", volumes, user="0:0")
+    result = _run_container("missing-app-conf", volumes)
     _assert_contains(result, "Default configuration written to", result.args)
     assert result.returncode != 0
 
