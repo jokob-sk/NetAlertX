@@ -831,6 +831,7 @@ def test_running_as_root_is_blocked(tmp_path: pathlib.Path) -> None:
         user="0",
     )
     _assert_contains(result, "NetAlertX is running as ROOT", result.args)
+    _assert_contains(result, "Permissions fixed for read-write paths.", result.args)
     assert result.returncode == 0 # container must be forced to exit 0 by termination after warning
 
 
@@ -885,8 +886,10 @@ def test_missing_app_conf_triggers_seed(tmp_path: pathlib.Path) -> None:
     Container automatically regenerates default configuration on startup.
     Expected: Automatic regeneration of default configuration.
     """
-    paths = _setup_mount_tree(tmp_path, "missing_app_conf")
-    (paths["app_config"] / "app.conf").unlink()
+    base = tmp_path / "missing_app_conf_base"
+    paths = _setup_fixed_mount_tree(base)
+    _chown_netalertx(paths["app_config"])
+    (paths["app_config"] / "testfile.txt").write_text("test")
     volumes = _build_volume_args(paths)
     result = _run_container("missing-app-conf", volumes)
     _assert_contains(result, "Default configuration written to", result.args)
@@ -900,10 +903,12 @@ def test_missing_app_db_triggers_seed(tmp_path: pathlib.Path) -> None:
     Container automatically creates initial database schema on startup.
     Expected: Automatic creation of initial database schema.
     """
-    paths = _setup_mount_tree(tmp_path, "missing_app_db")
-    (paths["app_db"] / "app.db").unlink()
+    base = tmp_path / "missing_app_db_base"
+    paths = _setup_fixed_mount_tree(base)
+    _chown_netalertx(paths["app_db"])
+    (paths["app_db"] / "testfile.txt").write_text("test")
     volumes = _build_volume_args(paths)
-    result = _run_container("missing-app-db", volumes, user="0:0")
+    result = _run_container("missing-app-db", volumes, user="20211:20211")
     _assert_contains(result, "Building initial database schema", result.args)
     assert result.returncode != 0
 

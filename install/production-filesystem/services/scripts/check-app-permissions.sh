@@ -67,8 +67,9 @@ EOF
     chown -R netalertx:netalertx ${READ_WRITE_PATHS}
 
     # Set directory and file permissions for all read-write paths
-    find ${READ_WRITE_PATHS} -type d -exec chmod 700 {} +
-    find ${READ_WRITE_PATHS} -type f -exec chmod 600 {} +
+    find ${READ_WRITE_PATHS} -type d -exec chmod 700 {} + 2>/dev/null
+    find ${READ_WRITE_PATHS} -type f -exec chmod 600 {} + 2>/dev/null
+    echo Permissions fixed for read-write paths. Please restart the container as user 20211.
     sleep infinity & wait $!; exit 211
 fi
 
