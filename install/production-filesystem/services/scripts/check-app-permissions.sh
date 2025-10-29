@@ -63,12 +63,12 @@ if [ "$(id -u)" -eq 0 ]; then
 EOF
     >&2 printf "%s" "${RESET}"
 
-    # Set ownership to netalertx user and group for all read-write paths
-    chown -R netalertx:netalertx ${READ_WRITE_PATHS}
+    # Set ownership to netalertx user for all read-write paths
+    chown -R netalertx ${READ_WRITE_PATHS}
 
     # Set directory and file permissions for all read-write paths
-    find ${READ_WRITE_PATHS} -type d -exec chmod 700 {} + 2>/dev/null
-    find ${READ_WRITE_PATHS} -type f -exec chmod 600 {} + 2>/dev/null
+    find ${READ_WRITE_PATHS} -type d -exec chmod u+rwx {} + 2>/dev/null
+    find ${READ_WRITE_PATHS} -type f -exec chmod u+rw {} + 2>/dev/null
     echo Permissions fixed for read-write paths. Please restart the container as user 20211.
     sleep infinity & wait $!; exit 211
 fi
