@@ -17,6 +17,7 @@ nav:
         - Docker Compose: DOCKER_COMPOSE.md
         - Docker File Permissions: FILE_PERMISSIONS.md
         - Docker Updates: UPDATES.md
+        - Docker Maintenance: DOCKER_MAINTENANCE.md
       - Other:
         - Synology Guide: SYNOLOGY_GUIDE.md
         - Portainer Stacks: DOCKER_PORTAINER.md

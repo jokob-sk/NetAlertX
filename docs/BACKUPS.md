@@ -1,90 +1,162 @@
-# Backing things up
+# Backing Things Up
 
 > [!NOTE]
-> To backup 99% of your configuration backup at least the `/app/config` folder. Please read the whole page (or at least "Scenario 2: Corrupted database") for details.
-> Note that database definitions might change over time. The safest way is to restore your older backups into the **same version** of the app they were taken from and then gradually upgarde between releases to the latest version.
+> To back up 99% of your configuration, back up at least the `/app/config` folder.
+> Database definitions can change between releases, so the safest method is to restore backups using the **same app version** they were taken from, then upgrade incrementally.
 
-There are 4 artifacts that can be used to backup the application:
+---
 
-| File                  | Description                   | Limitations                   |
-|-----------------------|-------------------------------|-------------------------------|
-| `/db/app.db`       | Database file(s)  | The database file might be in an uncommitted state or corrupted |
-| `/config/app.conf` | Configuration file |  Can be overridden with the [`APP_CONF_OVERRIDE` env variable](https://github.com/jokob-sk/NetAlertX/tree/main/dockerfiles#docker-environment-variables).  |
-| `/config/devices.csv`  | CSV file containing device information |     Doesn't contain historical data        |
-| `/config/workflows.json`  | A JSON file containing your workflows |     N/A        |
+## What to Back Up
 
+There are four key artifacts you can use to back up your NetAlertX configuration:
 
-## Backup strategies
+| File                     | Description                         | Limitations                                                                                                                                          |
+| ------------------------ | ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/db/app.db`             | The application database            | Might be in an uncommitted state or corrupted                                                                                                        |
+| `/config/app.conf`       | Configuration file                  | Can be overridden using the [`APP_CONF_OVERRIDE`](https://github.com/jokob-sk/NetAlertX/tree/main/dockerfiles#docker-environment-variables) variable |
+| `/config/devices.csv`    | CSV file containing device data     | Does not include historical data                                                                                                                     |
+| `/config/workflows.json` | JSON file containing your workflows | N/A                                                                                                                                                  |
 
-The safest approach to backups is to backup everything, by taking regular file system backups of the `/db` and `/config` folders (I use [Kopia](https://github.com/kopia/kopia)). 
+---
 
-Arguably, the most time is spent setting up the device list, so if only one file is kept I'd recommend to have a latest backup of the `devices_<timestamp>.csv` or `devices.csv` file, followed by the `app.conf` and `workflows.json` files. You can also download `app.conf` and `devices.csv` file in the Maintenance section:
+## Where the Data Lives
 
-![Backup and Restore Section in Maintenance](./img/BACKUPS/Maintenance_Backup_Restore.png)
-
-### Scenario 1: Full backup
-
-End-result: Full restore
-
-#### 💾 Source artifacts:
-
-- `/app/db/app.db` (uncorrupted)
-- `/app/config/app.conf`
-- `/app/config/workflows.json`
-
-#### 📥 Recovery:
-
-To restore the application map the above files as described in the [Setup documentation](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md#docker-paths). 
-
-
-### Scenario 2: Corrupted database
-
-End-result: Partial restore (historical data and some plugin data will be missing)
-
-#### 💾 Source artifacts:
-
-- `/app/config/app.conf`
-- `/app/config/devices_<timestamp>.csv` or `/app/config/devices.csv`
-- `/app/config/workflows.json`
-
-#### 📥 Recovery:
-
-Even with a corrupted database you can recover what I would argue is 99% of the configuration. 
-
-- upload the `app.conf` and `workflows.json` files into the mounted `/app/config/` folder as described in the [Setup documentation](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md#docker-paths).
-- rename the `devices_<timestamp>.csv` to `devices.csv` and place it in the `/app/config` folder
-- Restore the `devices.csv` backup via the [Maintenance section](./DEVICES_BULK_EDITING.md)
-
-## Data and backup storage
-
-To decide on a backup strategy, check where the data is stored:
+Understanding where your data is stored helps you plan your backup strategy.
 
 ### Core Configuration
 
-The core application configuration is in the `app.conf` file (See [Settings System](./SETTINGS_SYSTEM.md) for details), such as:
+Stored in `/app/config/app.conf`.
+This includes settings for:
 
-- Notification settings
-- Scanner settings
-- Scheduled maintenance settings
-- UI configuration
+* Notifications
+* Scanning
+* Scheduled maintenance
+* UI preferences
 
-### Core Device Data
+(See [Settings System](./SETTINGS_SYSTEM.md) for details.)
 
-The core device data is backed up to the `devices_<timestamp>.csv` or `devices.csv` file via the [CSV Backup `CSVBCKP` Plugin](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/csv_backup). This file contains data, such as:
+### Device Data
 
-- Device names
-- Device icons
-- Device network configuration
-- Device categorization 
-- Device custom properties data
+Stored in `/app/config/devices_<timestamp>.csv` or `/app/config/devices.csv`, created by the [CSV Backup `CSVBCKP` Plugin](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/csv_backup).
+Contains:
 
-### Historical data
+* Device names, icons, and categories
+* Network configuration
+* Custom properties
 
-Historical data is stored in the `app.db` database (See [Database overview](./DATABASE.md) for details). This data includes:
+### Historical Data
 
-- Plugin objects
-- Plugin historical entries
-- History of Events, Notifications, Workflow Events
-- Presence history
+Stored in `/app/db/app.db` (see [Database Overview](./DATABASE.md)).
+Contains:
 
+* Plugin data and historical entries
+* Event and notification history
+* Device presence history
 
+---
+
+## Backup Strategies
+
+The safest approach is to back up **both** the `/db` and `/config` folders regularly. Tools like [Kopia](https://github.com/kopia/kopia) make this simple and efficient.
+
+If you can only keep a few files, prioritize:
+
+1. The latest `devices_<timestamp>.csv` or `devices.csv`
+2. `app.conf`
+3. `workflows.json`
+
+You can also download the `app.conf` and `devices.csv` files from the **Maintenance** section:
+
+![Backup and Restore Section in Maintenance](./img/BACKUPS/Maintenance_Backup_Restore.png)
+
+---
+
+## Scenario 1: Full Backup and Restore
+
+**Goal:** Full recovery of your configuration and data.
+
+### 💾 What to Back Up
+
+* `/app/db/app.db` (uncorrupted)
+* `/app/config/app.conf`
+* `/app/config/workflows.json`
+
+### 📥 How to Restore
+
+Map these files into your container as described in the [Setup documentation](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md#docker-paths).
+
+---
+
+## Scenario 2: Corrupted Database
+
+**Goal:** Recover configuration and device data when the database is lost or corrupted.
+
+### 💾 What to Back Up
+
+* `/app/config/app.conf`
+* `/app/config/workflows.json`
+* `/app/config/devices_<timestamp>.csv` (rename to `devices.csv` during restore)
+
+### 📥 How to Restore
+
+1. Copy `app.conf` and `workflows.json` into `/app/config/`
+2. Rename and place `devices_<timestamp>.csv` → `/app/config/devices.csv`
+3. Restore via the **Maintenance** section under *Devices → Bulk Editing*
+
+This recovers nearly all configuration, workflows, and device metadata.
+
+---
+
+## Docker-Based Backup and Restore
+
+For users running NetAlertX via Docker, you can back up or restore directly from your host system — a convenient and scriptable option.
+
+### Full Backup (File-Level)
+
+1. **Stop the container:**
+
+   ```bash
+   docker stop netalertx
+   ```
+
+2. **Create a compressed archive** of your configuration and database volumes:
+
+   ```bash
+   docker run --rm -v netalertx_config:/config -v netalertx_db:/db alpine tar -cz /config /db > netalertx-backup.tar.gz
+   ```
+
+3. **Restart the container:**
+
+   ```bash
+   docker start netalertx
+   ```
+
+### Restore from Backup
+
+1. **Stop the container:**
+
+   ```bash
+   docker stop netalertx
+   ```
+
+2. **Restore from your backup file:**
+
+   ```bash
+   docker run --rm -i -v netalertx_config:/config -v netalertx_db:/db alpine tar -C / -xz < netalertx-backup.tar.gz
+   ```
+
+3. **Restart the container:**
+
+   ```bash
+   docker start netalertx
+   ```
+
+> This approach uses a temporary, minimal `alpine` container to access Docker-managed volumes. The `tar` command creates or extracts an archive directly from your host’s filesystem, making it fast, clean, and reliable for both automation and manual recovery.
+
+---
+
+## Summary
+
+* Back up `/app/config` for configuration and devices; `/app/db` for history
+* Keep regular backups, especially before upgrades
+* For Docker setups, use the lightweight `alpine`-based backup method for consistency and portability

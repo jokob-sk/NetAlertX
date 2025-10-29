@@ -21,3 +21,26 @@ Option to set specific user UID and GID can be useful for host system users need
 |----------------|--------|---------|-----------|----------|-------------|---------------------------------------------------------------------|
 | `/app/config`  | nginx  | PUID (default 102)     | www-data  | PGID (default 82)       | rwxr-xr-x   | Ensure `nginx` can read/write; other users can read if in `www-data` |
 | `/app/db`      | nginx  | PUID (default 102)     | www-data  | PGID (default 82)       | rwxr-xr-x   | Same as above                                                       |
+
+
+### Fixing Permission Problems
+
+The container fails to start with "Permission Denied" errors. This typically happens when your data volumes (`netalertx_config`, `netalertx_db`) are "owned" by the `root` user (UID 0) from a previous install, but the secure container must run as the `netalertx` user (UID 20211).
+
+### Solution
+
+1. Run the container **once** as the `root` user (`--user "0"`) to trigger the built-in fix-it mode:
+
+   ```bash
+   docker run -it --rm --name netalertx-fix --user "0" \
+     -v netalertx_config:/app/config \
+     -v netalertx_db:/app/db \
+     netalertx:latest
+   ```
+2. Wait for the logs to show a **magenta warning** and confirm permissions are being fixed. The container will then hang (this is intentional).
+3. Press **Ctrl+C** to stop the fix-it container.
+4. Start your container normally (e.g., with `docker-compose up -d` or your standard `docker run` command).
+
+### About This Method
+
+The container’s startup script detects it is running as `root` (UID 0). It automatically runs the `chown` command to fix the permissions on your volume files, setting them to the correct `20211` user. It then hangs (`sleep infinity`) to prevent you from *ever* running the application as `root`, forcing you to restart securely.
