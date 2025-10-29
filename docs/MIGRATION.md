@@ -1,6 +1,6 @@
 # Migration 
 
-If upgrading from older versions of NetAlertX (or PiAlert (by jokob-sk)) the following data and setup migration steps need to be followed.
+When upgrading from older versions of NetAlertX (or PiAlert (by jokob-sk)) the following data and setup migration steps need to be followed.
 
 > [!TIP]
 > It's always important to have a [backup strategy](./BACKUPS.md) in place.
@@ -222,7 +222,10 @@ services:
 3. Upgrade to `v25.10.1` by pinning the release version (See Examples below)
 4. Start the container and verify everything works as expected.
 5. Stop the container 
-6. 🔻 TBC 🔺
+6. 🔻 TBC 🔺 Perform a one-off migration to the `20211` user `docker run -it --rm --name netalertx --user "0" -v netalertx_config:/app/config -v netalertx_db:/app/db  netalertx:latest` 
+7. 🔻 TBC 🔺 Stop the container
+8. 🔻 TBC 🔺 Switch to the latest `netalertx` image
+9. 🔻 TBC 🔺 Start the container and verify everything works as expected.
 
 ##### Example 1: Mapping folders
 
@@ -245,5 +248,12 @@ services:
       - PORT=20211
 ```
 
-
 🔻 TBC 🔺
+
+```bash
+docker run -it --rm --name netalertx --user "0" \
+  -v netalertx_config:/app/config \
+  -v netalertx_db:/app/db \
+  netalertx:latest
+```
+

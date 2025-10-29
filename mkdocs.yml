@@ -33,7 +33,8 @@ nav:
         - Home Assistant: HOME_ASSISTANT.md
         - Emails: SMTP.md
         - Backups: BACKUPS.md   
-        - Security: SECURITY.md
+        - Security Features: SECURITY_FEATURES.md
+        - Security Considerations: SECURITY.md
       - Advanced guides:
         - Remote Networks: REMOTE_NETWORKS.md      
         - Notifications Guide: NOTIFICATIONS.md      
