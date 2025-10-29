@@ -55,15 +55,15 @@ set -u
 
 FAILED_STATUS=""
 echo "Startup pre-checks"
-for script in ${SYSTEM_SERVICES_SCRIPTS}/check-*.sh; do
+for script in ${ENTRYPOINT_CHECKS}/*; do
     if [ -n "${SKIP_TESTS:-}" ]; then
         echo "Skipping startup checks as SKIP_TESTS is set."
         break
     fi
-    script_name=$(basename "$script" | sed 's/^check-//;s/\.sh$//;s/-/ /g')
+    script_name=$(basename "$script" | sed 's/^[0-9]*-//;s/\.sh$//;s/-/ /g')
     echo " --> ${script_name}"
 
-    sh "$script"
+    "$script"
     NETALERTX_DOCKER_ERROR_CHECK=$?
 
     if [ ${NETALERTX_DOCKER_ERROR_CHECK} -ne 0 ]; then

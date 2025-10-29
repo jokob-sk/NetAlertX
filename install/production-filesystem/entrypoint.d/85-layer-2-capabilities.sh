@@ -1,5 +1,5 @@
 #!/bin/sh
-# check-cap.sh - Uses a real nmap command to detect missing container
+# layer-2-network.sh - Uses a real nmap command to detect missing container
 # privileges and warns the user. It is silent on success.
 
 # Run a fast nmap command that requires raw sockets, capturing only stderr.

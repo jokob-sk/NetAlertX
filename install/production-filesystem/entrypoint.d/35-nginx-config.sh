@@ -1,7 +1,7 @@
 #!/bin/sh
 # check-nginx-config.sh - verify nginx conf.active mount is writable when startup needs to render config.
 
-CONF_ACTIVE_DIR="${SYSTEM_NGINX_CONFIG}/conf.active"
+CONF_ACTIVE_DIR="${SYSTEM_SERVICES_ACTIVE_CONFIG}"
 TARGET_FILE="${CONF_ACTIVE_DIR}/netalertx.conf"
 
 # If the directory is missing entirely we warn and exit failure so the caller can see the message.

@@ -1,5 +1,5 @@
 #!/bin/sh
-# check-network-mode.sh - detect when the container is not using host networking.
+# detect when the container is not using host networking.
 
 # Exit if NETALERTX_DEBUG=1
 if [ "${NETALERTX_DEBUG}" = "1" ]; then
