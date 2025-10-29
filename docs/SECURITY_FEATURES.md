@@ -6,7 +6,7 @@ NetAlertX is engineered from the ground up to prevent this. It's not just an app
 
 Here’s a breakdown of the defensive layers you get, right out of the box using the default configuration.
 
-### Feature 1: The "Digital Concrete" Filesystem
+## Feature 1: The "Digital Concrete" Filesystem
 
 **Methodology:** The core application and its system files are treated as immutable. Once built, the app's code is "set in concrete," preventing attackers from modifying it or planting malware.
 
@@ -18,7 +18,7 @@ Here’s a breakdown of the defensive layers you get, right out of the box using
 
 **What's this mean to you:** Even if an attacker gets in, they **cannot modify the application code or plant malware.** It's like the app is set in digital concrete.
 
-### Feature 2: Surgical, "Keycard-Only" Access
+## Feature 2: Surgical, "Keycard-Only" Access
 
 **Methodology:** The principle of least privilege is strictly enforced. Every process gets only the absolute minimum set of permissions needed for its specific job.
 
@@ -30,7 +30,7 @@ Here’s a breakdown of the defensive layers you get, right out of the box using
 
 **What's this mean to you:** A security breach is **firewalled.** An attacker who gets into the web UI **does not have the "keycard"** to start scanning your network or take over the system. The breach is contained.
 
-### Feature 3: Attack Surface "Amputation"
+## Feature 3: Attack Surface "Amputation"
 
 **Methodology:** The potential attack surface is aggressively minimized by removing every non-essential tool an attacker would want to use.
 
@@ -44,7 +44,7 @@ Here’s a breakdown of the defensive layers you get, right out of the box using
 
 **What's this mean to you:** An attacker who breaks in finds themselves in an **empty room with no tools.** They have no `sudo` to get more power, no package manager to download weapons, and no compilers to build new ones.
 
-### Feature 4: "Self-Cleaning" Writable Areas
+## Feature 4: "Self-Cleaning" Writable Areas
 
 **Methodology:** All writable locations are treated as untrusted, temporary, and non-executable by default.
 
@@ -56,7 +56,7 @@ Here’s a breakdown of the defensive layers you get, right out of the box using
 
 **What's this mean to you:** Any malicious file an attacker *does* manage to drop is **written in invisible, non-permanent ink.** The file is written to RAM, not disk, so it **vaporizes the instant you restart** the container. Even worse for them, the `noexec` flag means they **can't even run the file** in the first place.
 
-### Feature 5: Built-in Resource Guardrails
+## Feature 5: Built-in Resource Guardrails
 
 **Methodology:** The container is constrained by resource limits to function as a "good citizen" on the host system. This prevents a compromised or runaway process from consuming excessive resources, a common vector for Denial of Service (DoS) attacks.
 
@@ -66,7 +66,7 @@ Here’s a breakdown of the defensive layers you get, right out of the box using
 
 **What's this mean to you:** NetAlertX is a "good neighbor" and **can't be used to crash your host machine.** Even if a process is compromised, it's in a digital straitjacket and **cannot** pull a "denial of service" attack by hogging all your CPU or memory.
 
-### Feature 6: The "Pre-Flight" Self-Check
+## Feature 6: The "Pre-Flight" Self-Check
 
 **Methodology:** Before any services start, NetAlertX runs a comprehensive "pre-flight" check to ensure its own security and configuration are sound. It's like a built-in auditor that verifies its own defenses.
 
@@ -78,7 +78,7 @@ Here’s a breakdown of the defensive layers you get, right out of the box using
 
 **What's this mean to you:** The system is **self-aware and checks its own work.** You get instant feedback if a setting is wrong, and you get peace of mind on every single boot knowing all these security layers are **active and verified,** all in about one second.
 
-### Conclusion: Security by Default
+## Conclusion: Security by Default
 
 No single security control is a silver bullet. The robust security posture of NetAlertX is achieved through **defense in depth**, layering these methodologies.
 
