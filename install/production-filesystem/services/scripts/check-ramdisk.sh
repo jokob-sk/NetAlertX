@@ -41,10 +41,8 @@ failures=0
 warn_if_not_dedicated_mount "${NETALERTX_API}"
 warn_if_not_dedicated_mount "${NETALERTX_LOG}"
 
-if [ "${failures}" -ne 0 ]; then
-    exit 1
-fi
 
-if [ ! -f "${SYSTEM_NGINX_CONFIG}/conf.active" ]; then
-    echo "Note: Using default listen address ${LISTEN_ADDR}:${PORT} (no ${SYSTEM_NGINX_CONFIG}/conf.active override)."
+if [ ! -w "${SYSTEM_NGINX_CONFIG}/conf.active" ]; then
+    echo "Note: Using default listen address 0.0.0.0:20211 instead of ${LISTEN_ADDR}:${PORT} (no ${SYSTEM_NGINX_CONFIG}/conf.active override)."
 fi
+exit 0

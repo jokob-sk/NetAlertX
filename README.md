@@ -10,17 +10,25 @@ Get visibility of what's going on on your WIFI/LAN network and enable presence d
 
 ## 📋 Table of Contents
 
-- [Features](#-features)
-- [Documentation](#-documentation)
-- [Quick Start](#-quick-start)
-- [Alternative Apps](#-other-alternative-apps)
-- [Security & Privacy](#-security--privacy)
-- [FAQ](#-faq)
-- [Known Issues](#-known-issues)
-- [Donations](#-donations)
-- [Contributors](#-contributors)
-- [Translations](#-translations)
-- [License](#license)
+- [NetAlertX - Network, presence scanner and alert framework](#netalertx---network-presence-scanner-and-alert-framework)
+  - [📋 Table of Contents](#-table-of-contents)
+  - [🚀 Quick Start](#-quick-start)
+  - [📦 Features](#-features)
+    - [Scanners](#scanners)
+    - [Notification gateways](#notification-gateways)
+    - [Integrations and Plugins](#integrations-and-plugins)
+    - [Workflows](#workflows)
+  - [📚 Documentation](#-documentation)
+  - [🔐 Security \& Privacy](#-security--privacy)
+  - [❓ FAQ](#-faq)
+  - [🐞 Known Issues](#-known-issues)
+  - [📃 Everything else](#-everything-else)
+    - [📧 Get notified what's new](#-get-notified-whats-new)
+    - [🔀 Other Alternative Apps](#-other-alternative-apps)
+    - [💙 Donations](#-donations)
+    - [🏗 Contributors](#-contributors)
+    - [🌍 Translations](#-translations)
+    - [License](#license)
 
 
 ## 🚀 Quick Start
@@ -36,6 +44,14 @@ docker run -d --rm --network=host \
   -e TZ=Europe/Berlin \
   -e PORT=20211 \
   ghcr.io/jokob-sk/netalertx:latest
+```
+
+To deploy a containerized instance directly from the source repository, execute the following BASH sequence:
+```bash
+git clone https://github.com/jokob-sk/NetAlertX.git
+cd NetAlertX
+docker compose up --force-recreate --build
+# To customize: edit docker-compose.yaml and run that last command again
 ```
 
 Need help configuring it? Check the [usage guide](https://github.com/jokob-sk/NetAlertX/blob/main/docs/README.md) or [full documentation](https://jokob-sk.github.io/NetAlertX/).

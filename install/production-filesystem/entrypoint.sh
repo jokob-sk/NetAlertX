@@ -49,25 +49,58 @@ printf '
 \033[0m
    Network intruder and presence detector. 
    https://netalertx.com
-'
 
+'
 set -u
 
-# Run all pre-startup checks to validate container environment and dependencies
+FAILED_STATUS=""
+echo "Startup pre-checks"
 for script in ${SYSTEM_SERVICES_SCRIPTS}/check-*.sh; do
-	sh "$script"
+    if [ -n "${SKIP_TESTS:-}" ]; then
+        echo "Skipping startup checks as SKIP_TESTS is set."
+        break
+    fi
+    script_name=$(basename "$script" | sed 's/^check-//;s/\.sh$//;s/-/ /g')
+    echo " --> ${script_name}"
+
+    sh "$script"
+    NETALERTX_DOCKER_ERROR_CHECK=$?
+
+    if [ ${NETALERTX_DOCKER_ERROR_CHECK} -ne 0 ]; then
+        # fail but continue checks so user can see all issues
+        FAILED_STATUS="${NETALERTX_DOCKER_ERROR_CHECK}"
+        echo "${script_name}: FAILED with ${FAILED_STATUS}"
+        echo "Failure detected in: ${script}"
+    fi
 done
+
+
+if [ -n "${FAILED_STATUS}" ]; then
+    echo "Container startup checks failed with exit code ${FAILED_STATUS}."
+    exit ${FAILED_STATUS}
+fi
+
+# Set APP_CONF_OVERRIDE based on GRAPHQL_PORT if not already set
+if [ -n "${GRAPHQL_PORT:-}" ] && [ -z "${APP_CONF_OVERRIDE:-}" ]; then
+    export APP_CONF_OVERRIDE='{"GRAPHQL_PORT":"'"${GRAPHQL_PORT}"'"}'
+    echo "Setting APP_CONF_OVERRIDE to $APP_CONF_OVERRIDE"
+fi
+
+
+# Exit after checks if in check-only mode (for testing)
+if [ "${NETALERTX_CHECK_ONLY:-0}" -eq 1 ]; then
+	exit 0
+fi
 
 # Update vendor data (MAC address OUI database) in the background
 # This happens concurrently with service startup to avoid blocking container readiness
-${SYSTEM_SERVICES_SCRIPTS}/update_vendors.sh &
+bash ${SYSTEM_SERVICES_SCRIPTS}/update_vendors.sh &
 
 
 
 # Service management state variables
 SERVICES=""                 # Space-separated list of active services in format "pid:name"
 FAILED_NAME=""              # Name of service that failed (used for error reporting)
-FAILED_STATUS=0             # Exit status code from failed service or signal
 
 ################################################################################
 # is_pid_active() - Check if a process is alive and not in zombie/dead state

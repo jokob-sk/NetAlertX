@@ -2,11 +2,36 @@ import subprocess
 import re
 import sys
 import ipaddress
+import shutil
+import os
 from flask import jsonify
 
 # Register NetAlertX directories
 INSTALL_PATH = "/app"
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
+
+# Resolve speedtest-cli path once at module load and validate it.
+# We do this once to avoid repeated PATH lookups and to fail fast when
+# the binary isn't available or executable.
+SPEEDTEST_CLI_PATH = None
+
+def _get_speedtest_cli_path():
+    """Resolve and validate the speedtest-cli executable path."""
+    path = shutil.which("speedtest-cli")
+    if path is None:
+        raise RuntimeError(
+            "speedtest-cli not found in PATH. Please install it: pip install speedtest-cli"
+        )
+    if not os.access(path, os.X_OK):
+        raise RuntimeError(f"speedtest-cli found at {path} but is not executable")
+    return path
+
+try:
+    SPEEDTEST_CLI_PATH = _get_speedtest_cli_path()
+except Exception as e:
+    # Warn but don't crash import — the endpoint will return 503 when called.
+    print(f"Warning: {e}", file=sys.stderr)
+    SPEEDTEST_CLI_PATH = None
 
 def wakeonlan(mac):  
 
@@ -77,10 +102,18 @@ def speedtest():
     API endpoint to run a speedtest using speedtest-cli.
     Returns JSON with the test output or error.
     """
+    # If the CLI wasn't found at module load, return a 503 so the caller
+    # knows the service is unavailable rather than failing unpredictably.
+    if SPEEDTEST_CLI_PATH is None:
+        return jsonify({
+            "success": False,
+            "error": "speedtest-cli is not installed or not found in PATH"
+        }), 503
+
     try:
-        # Run speedtest-cli command
+        # Run speedtest-cli command using the resolved absolute path
         result = subprocess.run(
-            [f"{INSTALL_PATH}/back/speedtest-cli", "--secure", "--simple"],
+            [SPEEDTEST_CLI_PATH, "--secure", "--simple"],
             capture_output=True,
             text=True,
             check=True
@@ -95,6 +128,13 @@ def speedtest():
             "success": False,
             "error": "Speedtest failed",
             "details": e.stderr.strip()
+        }), 500
+
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "error": "Failed to run speedtest",
+            "details": str(e)
         }), 500
 
 
