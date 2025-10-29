@@ -1,8 +1,6 @@
 #!/bin/bash
 set -euo pipefail
 
-echo "Starting php-fpm..."
-
 php_fpm_pid=""
 
 cleanup() {
@@ -24,8 +22,8 @@ done
 trap cleanup EXIT
 trap forward_signal INT TERM
 
-echo "/usr/sbin/php-fpm83 -y \"${PHP_FPM_CONFIG_FILE}\" -F >>\"${LOG_APP_PHP_ERRORS}\" 2>&1 &"
-/usr/sbin/php-fpm83 -y "${PHP_FPM_CONFIG_FILE}" -F >>"${LOG_APP_PHP_ERRORS}" 2>&1 &
+echo "Starting /usr/sbin/php-fpm83 -y \"${PHP_FPM_CONFIG_FILE}\" -F >>\"${LOG_APP_PHP_ERRORS}\" 2>/dev/stderr &"
+/usr/sbin/php-fpm83 -y "${PHP_FPM_CONFIG_FILE}" -F >>"${LOG_APP_PHP_ERRORS}" 2> /dev/stderr &
 php_fpm_pid=$!
 
 wait "${php_fpm_pid}"
