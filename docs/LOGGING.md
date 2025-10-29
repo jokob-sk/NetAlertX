@@ -1,6 +1,6 @@
 # Logging
 
-NetAlertX comes with several logs that help to identify application issues. These include ngnix logs, app, or plugin logs. For plugin-specific log debugging, please read the [Debug Plugins](./DEBUG_PLUGINS.md) guide.
+NetAlertX comes with several logs that help to identify application issues. These include nginx logs, app, or plugin logs. For plugin-specific log debugging, please read the [Debug Plugins](./DEBUG_PLUGINS.md) guide.
 
 > [!NOTE]
 > When debugging any issue, increase the `LOG_LEVEL` Setting as per the [Debug tips](./DEBUG_TIPS.md) documentation.
@@ -42,7 +42,7 @@ You cannot find any log files on the filesystem. The container is `read-only` an
 The default logs are erased every time the container restarts because they are stored in temporary in-memory storage (`tmpfs`). If you need to keep a persistent, file-based log history, follow the steps below.
 
 > [!NOTE]
-> This might lead to performance degradation so this approach is only suggested when activelly debuging issues. See the [Performance optimization](./PERFORMANCE.md) documentation for details.
+> This might lead to performance degradation so this approach is only suggested when actively debugging issues. See the [Performance optimization](./PERFORMANCE.md) documentation for details.
 
 1. Stop the container:
 
@@ -72,4 +72,4 @@ The default logs are erased every time the container restarts because they are s
    docker-compose up -d
    ```
 
-This change stops Docker from mounting a temporary in-memory volume at `/app/log`. Instead, it "bind mounts" a persistent folder from your host computer (e.g., `/data/netalertx_logs`) to that *exact same location* inside the container. 
+This change stops Docker from mounting a temporary in-memory volume at `/app/log`. Instead, it "bind mounts" a persistent folder from your host computer (e.g., `/data/netalertx_logs`) to that *same location* inside the container. 

@@ -122,7 +122,7 @@ For users running NetAlertX via Docker, you can back up or restore directly from
 2. **Create a compressed archive** of your configuration and database volumes:
 
    ```bash
-   docker run --rm -v netalertx_config:/config -v netalertx_db:/db alpine tar -cz /config /db > netalertx-backup.tar.gz
+   docker run --rm -v local_path/config:/config -v local_path/db:/db alpine tar -cz /config /db > netalertx-backup.tar.gz
    ```
 
 3. **Restart the container:**
@@ -142,7 +142,7 @@ For users running NetAlertX via Docker, you can back up or restore directly from
 2. **Restore from your backup file:**
 
    ```bash
-   docker run --rm -i -v netalertx_config:/config -v netalertx_db:/db alpine tar -C / -xz < netalertx-backup.tar.gz
+   docker run --rm -i -v local_path/config:/config -v local_path/db:/db alpine tar -C / -xz < netalertx-backup.tar.gz
    ```
 
 3. **Restart the container:**

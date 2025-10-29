@@ -68,7 +68,7 @@ Here’s a breakdown of the defensive layers you get, right out of the box using
 
 ## Feature 6: The "Pre-Flight" Self-Check
 
-**Methodology:** Before any services start, NetAlertX runs a comprehensive "pre-flight" check to ensure its own security and configuration are sound. It's like a built-in auditor that verifies its own defenses.
+**Methodology:** Before any services start, NetAlertX runs a comprehensive "pre-flight" check to ensure its own security and configuration are sound. It's like a built-in auditor who verifies its own defenses.
 
 * **Active Self-Diagnosis:** On every single boot, NetAlertX runs a series of startup pre-checks—and it's fast. The entire self-check process typically completes in less than a second, letting you get to the web UI in about three seconds from startup.
 
