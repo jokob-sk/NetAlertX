@@ -224,8 +224,8 @@ COPY .devcontainer/resources/devcontainer-overlay/ /
 USER root
 # Install common tools, create user, and set up sudo
 RUN apk add --no-cache git nano vim jq php83-pecl-xdebug py3-pip nodejs sudo gpgconf pytest \
-    pytest-cov fish shfmt github-cli py3-yaml py3-docker-py docker-cli docker-cli-buildx
-
+    pytest-cov fish shfmt github-cli py3-yaml py3-docker-py docker-cli docker-cli-buildx \
+    docker-cli-compose
 
 RUN install -d -o netalertx -g netalertx -m 755 /services/php/modules && \
     cp -a /usr/lib/php83/modules/. /services/php/modules/ && \
