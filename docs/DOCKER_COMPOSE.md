@@ -79,7 +79,7 @@ services:
     environment:
       LISTEN_ADDR: ${LISTEN_ADDR:-0.0.0.0}                   # Listen for connections on all interfaces
       PORT: ${PORT:-20211}                                   # Application port
-      APP_CONF_OVERRIDE: ${GRAPHQL_PORT:-20212}              # GraphQL API port (passed as APP_CONF_OVERRIDE)
+      GRAPHQL_PORT: ${GRAPHQL_PORT:-20212}                   # GraphQL API port (passed into APP_CONF_OVERRIDE at runtime)
       NETALERTX_DEBUG: ${NETALERTX_DEBUG:-0}                 # 0=kill all services and restart if any dies. 1 keeps running dead services.
 
     # Resource limits to prevent resource exhaustion
