@@ -3,13 +3,13 @@
 Great care is taken to ensure NetAlertX meets the needs of everyone while being flexible enough for anyone. This document outlines how you can configure your docker-compose. There are many settings, so we recommend using the Baseline Docker Compose as-is, or modifying it for your system.Good care is taken to ensure NetAlertX meets the needs of everyone while being flexible enough for anyone. This document outlines how you can configure your docker-compose. There are many settings, so we recommend using the Baseline Docker Compose as-is, or modifying it for your system. 
 
 > [!NOTE] 
-> The container needs to run in `network_mode:"host"` to access Layer 2 networking such as arp, nmap and others. Due to lack of support for this feature, Windows host is not a supported operating system.s operating system. 
+> The container needs to run in `network_mode:"host"` to access Layer 2 networking such as arp, nmap and others. Due to lack of support for this feature, Windows host is not a supported operating system. 
 
 ## Baseline Docker Compose
 
 There is one baseline for NetAlertX. That's the default security-enabled official distribution. 
 
-```
+```yaml
 services:
   netalertx:
   #use an environmental variable to set host networking mode if needed
@@ -104,7 +104,7 @@ volumes:                        # Persistent volumes for configuration and datab
 
 Run or re-run it:
 
-```
+```sh
 docker compose up --force-recreate
 ```
 
@@ -116,7 +116,7 @@ You can override the default settings by passing environmental variables to the 
 
 This command runs NetAlertX on port 8080 instead of the default 20211.
 
-```
+```sh
 PORT=8080 docker compose up
 ```
 
@@ -124,7 +124,7 @@ PORT=8080 docker compose up
 
 This command demonstrates overriding all primary environmental variables: running with host networking, on port 20211, GraphQL on 20212, and listening on all IPs.
 
-```
+```sh
 NETALERTX_NETWORK_MODE=host \
 LISTEN_ADDR=0.0.0.0 \
 PORT=20211 \
@@ -155,7 +155,7 @@ However, if you prefer to have direct, file-level access to your configuration f
 
 **Before (Using Named Volumes - Preferred):**
 
-```
+```yaml
 ...
     volumes:
       - netalertx_config:/app/config:rw #short-form volume (no /path is a short volume)
@@ -166,7 +166,7 @@ However, if you prefer to have direct, file-level access to your configuration f
 **After (Using a Local Folder / Bind Mount):**
 Make sure to replace `/home/adam/netalertx-files` with your actual path. The format is `<path_on_your_computer>:<path_inside_container>:<options>`.
 
-```
+```yaml
 ...
     volumes:
 #      - netalertx_config:/app/config:rw
@@ -190,7 +190,7 @@ This method is useful for keeping your paths and other settings separate from yo
 
 **`docker-compose.yml` changes:**
 
-```
+```yaml
 ...
 services:
   netalertx:
@@ -203,7 +203,7 @@ services:
 
 **`.env` file contents:**
 
-```
+```sh
 TZ=Europe/Paris
 PORT=20211
 NETALERTX_NETWORK_MODE=host
@@ -220,7 +220,7 @@ This is for deploying on a Docker Swarm cluster. The key differences from the ba
 
 Here are the *only* changes you need to make to the baseline compose file to make it Swarm-compatible.
 
-```
+```yaml
 services:
   netalertx:
     ...
