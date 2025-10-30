@@ -4,6 +4,9 @@ import os
 import sys
 from dataclasses import dataclass
 
+# if NETALERTX_DEBUG is 1 then exit
+if os.environ.get("NETALERTX_DEBUG") == "1":
+    sys.exit(0)
 @dataclass
 class MountCheckResult:
     """Object to track mount status and potential issues."""
