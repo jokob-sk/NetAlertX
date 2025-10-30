@@ -1,6 +1,6 @@
 # Migration 
 
-When upgrading from older versions of NetAlertX (or PiAlert (by jokob-sk)) the following data and setup migration steps need to be followed.
+When upgrading from older versions of NetAlertX (or PiAlert by jokob-sk), follow the migration steps below to ensure your data and configuration are properly transferred.
 
 > [!TIP]
 > It's always important to have a [backup strategy](./BACKUPS.md) in place.
@@ -27,7 +27,7 @@ You can migrate data manually, for example by exporting and importing devices us
 #### STEPS: 
 
 The application will automatically migrate the database, configuration, and all device information.
-A ticker message will appear at the top of the web UI until you update your Docker mount points.
+A banner message will appear at the top of the web UI reminding you to update your Docker mount points.
 
 1. Stop the container 
 2. [Back up your setup](./BACKUPS.md) 
@@ -37,7 +37,7 @@ A ticker message will appear at the top of the web UI until you update your Dock
 
 
 > [!TIP] 
-> If you have troubles accessing past backups, config or database files you can copy them into the newly mapped directories, for example by running this command in the container:  `cp -r /app/config /home/pi/pialert/config/old_backup_files`. This should create a folder in the `config` directory called `old_backup_files` containing all the files in that location. Another approach is to map the old location and the new one at the same time to copy things over. 
+> If you have trouble accessing past backups, config or database files you can copy them into the newly mapped directories, for example by running this command in the container:  `cp -r /app/config /home/pi/pialert/config/old_backup_files`. This should create a folder in the `config` directory called `old_backup_files` containing all the files in that location. Another approach is to map the old location and the new one at the same time to copy things over. 
 
 #### New Docker mount locations
 
@@ -58,7 +58,7 @@ The internal application path in the container has changed from `/home/pi/pialer
 
 
 > [!NOTE] 
-> The application uses symlinks linking the old db and config locations to the new ones, so data loss should not occur. [Backup strategies](./BACKUPS.md) are still recommended to backup your setup.
+> The application automatically creates symlinks from the old database and config locations to the new ones, so data loss should not occur. Read the [backup strategies](./BACKUPS.md) guide to backup your setup.
 
 
 #### Examples
@@ -92,16 +92,16 @@ services:
 
 ```yaml
 services:
-  netalertx:                                  # ⚠  This has changed (🟡optional) 
-    container_name: netalertx                 # ⚠  This has changed (🟡optional) 
-    image: "ghcr.io/jokob-sk/netalertx:25.5.24"         # ⚠  This has changed (🟡optional/🔺required in future) 
+  netalertx:                                  # 🆕 This has changed  
+    container_name: netalertx                 # 🆕 This has changed  
+    image: "ghcr.io/jokob-sk/netalertx:25.5.24"         # 🆕 This has changed  
     network_mode: "host"        
     restart: unless-stopped
     volumes:
-      - local/path/config:/app/config         # ⚠  This has changed (🔺required) 
-      - local/path/db:/app/db                 # ⚠  This has changed (🔺required) 
+      - local/path/config:/app/config         # 🆕 This has changed  
+      - local/path/db:/app/db                 # 🆕 This has changed  
       # (optional) useful for debugging if you have issues setting up the container
-      - local/path/logs:/app/log        # ⚠  This has changed (🟡optional) 
+      - local/path/logs:/app/log        # 🆕 This has changed  
     environment:
       - TZ=Europe/Berlin      
       - PORT=20211
@@ -138,16 +138,16 @@ services:
 
 ```yaml
 services:
-  netalertx:                                  # ⚠  This has changed (🟡optional) 
-    container_name: netalertx                 # ⚠  This has changed (🟡optional) 
-    image: "ghcr.io/jokob-sk/netalertx:25.5.24"         # ⚠  This has changed (🟡optional/🔺required in future) 
+  netalertx:                                  # 🆕 This has changed  
+    container_name: netalertx                 # 🆕 This has changed  
+    image: "ghcr.io/jokob-sk/netalertx:25.5.24"         # 🆕 This has changed  
     network_mode: "host"        
     restart: unless-stopped
     volumes:
-      - local/path/config/app.conf:/app/config/app.conf # ⚠  This has changed (🔺required) 
-      - local/path/db/app.db:/app/db/app.db             # ⚠  This has changed (🔺required) 
+      - local/path/config/app.conf:/app/config/app.conf # 🆕 This has changed  
+      - local/path/db/app.db:/app/db/app.db             # 🆕 This has changed  
       # (optional) useful for debugging if you have issues setting up the container
-      - local/path/logs:/app/log                  # ⚠  This has changed (🟡optional) 
+      - local/path/logs:/app/log                  # 🆕 This has changed  
     environment:
       - TZ=Europe/Berlin      
       - PORT=20211
@@ -156,7 +156,7 @@ services:
 
 ### 1.2 Migration from NetAlertX `v25.5.24`
 
-Versions before `v25.10.1` require an intermediate migration through `v25.5.24` to ensure database compatibility.
+Versions before `v25.10.1` require an intermediate migration through `v25.5.24` to ensure database compatibility. Skipping this step may cause compatibility issues due to database schema changes introduced after `v25.5.24`.
 
 #### STEPS: 
 
@@ -180,7 +180,7 @@ Examples of docker files with the tagged version.
 services:
   netalertx:                                  
     container_name: netalertx                
-    image: "ghcr.io/jokob-sk/netalertx:25.5.24"         # ⚠  This is important (🔺required) 
+    image: "ghcr.io/jokob-sk/netalertx:25.5.24"         # 🆕 This is important  
     network_mode: "host"        
     restart: unless-stopped
     volumes:
@@ -197,7 +197,7 @@ services:
 services:
   netalertx:                                  
     container_name: netalertx                
-    image: "ghcr.io/jokob-sk/netalertx:25.10.1"         # ⚠  This is important (🔺required) 
+    image: "ghcr.io/jokob-sk/netalertx:25.10.1"         # 🆕 This is important  
     network_mode: "host"        
     restart: unless-stopped
     volumes:
@@ -212,30 +212,19 @@ services:
 
 ### 1.3 Migration from NetAlertX `v25.10.1`
 
-> [!WARNING]
-> This section is under development. The migration path from `v25.10.1` to future versions (e.g., `v25.11.x` and newer) will be published soon.
+Starting from v25.10.1, the container uses a [more secure, read-only runtime environment](./SECURITY_FEATURES.md), which requires all writable paths (e.g., logs, API cache, temporary data) to be mounted as `tmpfs` or permanent writable volumes, with sufficient access [permissions](./FILE_PERMISSIONS.md). 
 
 #### STEPS: 
 
 1. Stop the container 
 2. [Back up your setup](./BACKUPS.md) 
-3. Upgrade to `v25.10.1` by pinning the release version (See Examples below)
-4. Start the container and verify everything works as expected.
-5. Stop the container 
-6. 🔻 TBC 🔺 Perform a one-off migration to the `20211` user `docker run -it --rm --name netalertx --user "0" -v netalertx_config:/app/config -v netalertx_db:/app/db  netalertx:latest` 
-7. 🔻 TBC 🔺 Stop the container
-8. 🔻 TBC 🔺 Switch to the latest `netalertx` image
-9. 🔻 TBC 🔺 Start the container and verify everything works as expected.
-
-##### Example 1: Mapping folders
-
-###### docker-compose.yml changes
+3. Upgrade to `v25.10.1` by pinning the release version (See the example below)
 
 ```yaml
 services:
   netalertx:                                  
     container_name: netalertx                
-    image: "ghcr.io/jokob-sk/netalertx:25.10.1"         # ⚠  This is important (🔺required) 
+    image: "ghcr.io/jokob-sk/netalertx:25.10.1"         # 🆕 This is important  
     network_mode: "host"        
     restart: unless-stopped
     volumes:
@@ -248,12 +237,56 @@ services:
       - PORT=20211
 ```
 
-🔻 TBC 🔺
+4. Start the container and verify everything works as expected.
+5. Stop the container.
+6. Perform a one-off migration to the latest `netalertx` image and `20211` user:
 
-```bash
+> [!NOTE]
+> The example below assumes your `/config` and `/db` folders are stored in `local/path`.  
+> Replace this path with your actual configuration directory. `netalertx` is the container name, whcih might differ from your setup.
+
+```sh
 docker run -it --rm --name netalertx --user "0" \
-  -v netalertx_config:/app/config \
-  -v netalertx_db:/app/db \
-  netalertx:latest
+  -v local/path/config:/app/config \
+  -v local/path/db:/app/db \
+  ghcr.io/jokob-sk/netalertx:latest
 ```
 
+7. Stop the container
+8. Update the `docker-compose.yml` as per example below.
+
+```yaml
+services:
+  netalertx:                                  
+    container_name: netalertx                
+    image: "ghcr.io/jokob-sk/netalertx"         # 🆕 This is important  
+    network_mode: "host"       
+    cap_add:                          # 🆕 New line
+      - NET_RAW                       # 🆕 New line 
+      - NET_ADMIN                     # 🆕 New line
+      - NET_BIND_SERVICE              # 🆕 New line 
+    restart: unless-stopped
+    volumes:
+      - local/path/config:/app/config         
+      - local/path/db:/app/db                 
+      # (optional) useful for debugging if you have issues setting up the container
+      #- local/path/logs:/app/log        
+    environment:
+      - TZ=Europe/Berlin      
+      - PORT=20211
+    # 🆕 New "tmpfs" section START 🔽
+    tmpfs: 
+      # Speed up logging. This can be commented out to retain logs between container restarts
+      - "/app/log:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      # Speed up API access as frontend/backend API is very chatty
+      - "/app/api:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,sync,noatime,nodiratime"  
+      # Required for customization of the nginx listen addr/port without rebuilding the container
+      - "/services/config/nginx/conf.active:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      # /services/config/nginx/conf.d is required for nginx and php to start
+      - "/services/run:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      # /tmp is required by php for session save this should be reworked to /services/run/tmp
+      - "/tmp:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+    # 🆕 New "tmpfs" section END  🔼
+```
+
+9. Start the container and verify everything works as expected.
