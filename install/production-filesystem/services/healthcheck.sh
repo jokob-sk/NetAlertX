@@ -55,13 +55,14 @@ else
     log_error "Port ${PORT:-20211} is not responding or doesn't contain 'netalertx'"
 fi
 
-# 6. Check port 20212/graphql returns "graphql" in first lines
-GRAPHQL_PORT=${GRAPHQL_PORT:-20212}
-if curl -sf --max-time 10 "http://localhost:${GRAPHQL_PORT}/graphql" | head -10 | grep -i "graphql" > /dev/null; then
-    log_success "Port ${GRAPHQL_PORT}/graphql is responding with GraphQL content"
-else
-    log_error "Port ${GRAPHQL_PORT}/graphql is not responding or doesn't contain 'graphql'"
-fi
+# NOTE: GRAPHQL_PORT might not be set and is initailized as a setting with a default value in the container. It can also be initialized via APP_CONF_OVERRIDE 
+# # 6. Check port 20212/graphql returns "graphql" in first lines
+# GRAPHQL_PORT=${GRAPHQL_PORT:-20212}
+# if curl -sf --max-time 10 "http://localhost:${GRAPHQL_PORT}/graphql" | head -10 | grep -i "graphql" > /dev/null; then
+#     log_success "Port ${GRAPHQL_PORT}/graphql is responding with GraphQL content"
+# else
+#     log_error "Port ${GRAPHQL_PORT}/graphql is not responding or doesn't contain 'graphql'"
+# fi
 
 # Summary
 if [ $EXIT_CODE -eq 0 ]; then
