@@ -378,7 +378,14 @@ def importConfigs (pm, db, all_plugins):
     # HANDLE APP was upgraded message - clear cache
     
     # Check if app was upgraded
-    with open(applicationPath + '/front/buildtimestamp.txt', 'r') as f:
+    build_timestamp_path = os.path.join(applicationPath, 'front/buildtimestamp.txt')
+
+    # Ensure the build timestamp file exists and has an initial value
+    if not os.path.exists(build_timestamp_path):
+        with open(build_timestamp_path, 'w') as f:
+            f.write("0")
+
+    with open(build_timestamp_path, 'r') as f:
         
         buildTimestamp = int(f.read().strip())
         cur_version = conf.VERSION 

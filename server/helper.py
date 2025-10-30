@@ -773,8 +773,16 @@ def checkNewVersion():
 
     newVersion = False
 
-    with open(applicationPath + '/front/buildtimestamp.txt', 'r') as f:
-        buildTimestamp = int(f.read().strip())
+    build_timestamp_path = os.path.join(applicationPath, 'front/buildtimestamp.txt')
+
+    # Ensure file exists, initialize if missing
+    if not os.path.exists(build_timestamp_path):
+        with open(build_timestamp_path, 'w') as f:
+            f.write("0")
+
+    # Now safely read the timestamp
+    with open(build_timestamp_path, 'r') as f:
+        buildTimestamp = int(f.read().strip() or 0)
 
     try:
         response = requests.get(
