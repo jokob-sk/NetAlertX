@@ -243,7 +243,7 @@ services:
 
 > [!NOTE]
 > The example below assumes your `/config` and `/db` folders are stored in `local/path`.  
-> Replace this path with your actual configuration directory. `netalertx` is the container name, whcih might differ from your setup.
+> Replace this path with your actual configuration directory. `netalertx` is the container name, which might differ from your setup.
 
 ```sh
 docker run -it --rm --name netalertx --user "0" \

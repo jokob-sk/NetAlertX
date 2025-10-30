@@ -15,7 +15,7 @@ NetAlertX requires certain paths to be writable at runtime. These paths should b
 | `/app/db`                            | Database files                      | Persistent volume recommended                          |
 | `/app/log`                           | Logs                                | Can be `tmpfs` for speed or host volume to retain logs |
 | `/app/api`                           | API cache                           | Use `tmpfs` for faster access                          |
-| `/services/config/nginx/conf.active` | Active nginx configuration override | `tmpfs` recommended or customiozed file mounted        |
+| `/services/config/nginx/conf.active` | Active nginx configuration override | `tmpfs` recommended or customized file mounted        |
 | `/services/run`                      | Runtime directories for nginx & PHP | `tmpfs` required                                       |
 | `/tmp`                               | PHP session save directory          | `tmpfs` required                                       |
 
