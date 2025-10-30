@@ -107,8 +107,8 @@ sql_devices_tiles = """
                             (SELECT COUNT(*) FROM Devices WHERE devIsNew = 1) AS new,
                             (SELECT COUNT(*) FROM Devices WHERE devIsArchived = 1) AS archived,
                             (SELECT COUNT(*) FROM Devices WHERE devFavorite = 1) AS favorites,
-                            (SELECT COUNT(*) FROM Devices) AS all,
-                            (SELECT COUNT(*) FROM Devices) AS all_devices,
+                            (SELECT COUNT(*) FROM Devices) AS "all",
+                            (SELECT COUNT(*) FROM Devices) AS "all_devices",
                             -- My Devices count
                             (SELECT COUNT(*) FROM MyDevicesFilter) AS my_devices
                         FROM Statuses; 
