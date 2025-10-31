@@ -12,7 +12,7 @@ import re
 # Register NetAlertX libraries
 import conf 
 from const import fullConfPath, applicationPath, fullConfFolder, default_tz
-from helper import fixPermissions, collect_lang_strings, updateSubnets, isJsonObject, setting_value_to_python_type, timeNowTZ, get_setting_value, generate_random_string
+from helper import getBuildTimeStamp, fixPermissions, collect_lang_strings, updateSubnets, isJsonObject, setting_value_to_python_type, timeNowTZ, get_setting_value, generate_random_string
 from app_state import updateState
 from logger import mylog
 from api import update_api
@@ -378,29 +378,21 @@ def importConfigs (pm, db, all_plugins):
     # HANDLE APP was upgraded message - clear cache
     
     # Check if app was upgraded
-    build_timestamp_path = os.path.join(applicationPath, 'front/buildtimestamp.txt')
-
-    # Ensure the build timestamp file exists and has an initial value
-    if not os.path.exists(build_timestamp_path):
-        with open(build_timestamp_path, 'w') as f:
-            f.write("0")
-
-    with open(build_timestamp_path, 'r') as f:
         
-        buildTimestamp = int(f.read().strip())
-        cur_version = conf.VERSION 
+    buildTimestamp = getBuildTimeStamp()
+    cur_version = conf.VERSION 
+    
+    mylog('debug', [f"[Config] buildTimestamp: '{buildTimestamp}'"])
+    mylog('debug', [f"[Config] conf.VERSION  : '{cur_version}'"])
+    
+    if str(cur_version) != str(buildTimestamp):
         
-        mylog('debug', [f"[Config] buildTimestamp: '{buildTimestamp}'"])
-        mylog('debug', [f"[Config] conf.VERSION  : '{cur_version}'"])
+        mylog('none', ['[Config] App upgraded 🚀'])      
+                
+        # ccd(key, default, config_dir, name, inputtype, options, group, events=None, desc="", setJsonMetadata=None, overrideTemplate=None, forceDefault=False)
+        ccd('VERSION', buildTimestamp , c_d, '_KEEP_', '_KEEP_', '_KEEP_', '_KEEP_', None, "_KEEP_", None, None, True)
         
-        if str(cur_version) != str(buildTimestamp):
-            
-            mylog('none', ['[Config] App upgraded 🚀'])      
-                 
-            # ccd(key, default, config_dir, name, inputtype, options, group, events=None, desc="", setJsonMetadata=None, overrideTemplate=None, forceDefault=False)
-            ccd('VERSION', buildTimestamp , c_d, '_KEEP_', '_KEEP_', '_KEEP_', '_KEEP_', None, "_KEEP_", None, None, True)
-            
-            write_notification(f'[Upgrade] : App upgraded 🚀 Please clear the cache: <ol> <li>Click OK below</li>  <li>Clear the browser cache (shift + browser refresh button)</li> <li> Clear app cache with the <i class="fa-solid fa-rotate"></i> (reload) button in the header</li><li>Go to Settings and click Save</li> </ol> Check out new features and what has changed in the <a href="https://github.com/jokob-sk/NetAlertX/releases" target="_blank">📓 release notes</a>.', 'interrupt', timeNowTZ())
+        write_notification(f'[Upgrade] : App upgraded 🚀 Please clear the cache: <ol> <li>Click OK below</li>  <li>Clear the browser cache (shift + browser refresh button)</li> <li> Clear app cache with the <i class="fa-solid fa-rotate"></i> (reload) button in the header</li><li>Go to Settings and click Save</li> </ol> Check out new features and what has changed in the <a href="https://github.com/jokob-sk/NetAlertX/releases" target="_blank">📓 release notes</a>.', 'interrupt', timeNowTZ())
 
     
 
