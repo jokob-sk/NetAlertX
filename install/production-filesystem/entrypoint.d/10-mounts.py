@@ -152,16 +152,19 @@ def main():
 
     results = []
     has_issues = False
+    has_write_errors = False
     for var_name, is_persistent in PATHS_TO_CHECK.items():
         result = analyze_path(
             var_name, is_persistent, 
             mounted_filesystems, NON_PERSISTENT_FSTYPES, READ_ONLY_VARS
         )
-        if result.dataloss_risk or result.error or result.write_error:
+        if result.dataloss_risk or result.error or result.write_error or result.performance_issue:
             has_issues = True
+        if result.write_error:
+            has_write_errors = True
         results.append(result)
 
-    if has_issues:
+    if has_issues or True:  # Always print table for diagnostic purposes
         # --- Print Table ---
         headers = ["Path", "Writeable", "Mount", "RAMDisk", "Performance", "DataLoss"]
         
@@ -238,10 +241,13 @@ def main():
             ))
 
         # --- Print Warning ---
-        print("\n", file=sys.stderr)
-        print_warning_message()
-        # Continue instead of exiting for testing purposes
-        # sys.exit(1)
+        if has_issues:
+            print("\n", file=sys.stderr)
+            print_warning_message()
+        
+        # Exit with error only if there are write permission issues
+        if has_write_errors and os.environ.get("NETALERTX_DEBUG") != "1":
+            sys.exit(1)
 
 if __name__ == "__main__":
     main()

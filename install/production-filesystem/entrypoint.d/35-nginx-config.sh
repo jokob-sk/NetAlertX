@@ -1,5 +1,10 @@
 #!/bin/sh
-# check-nginx-config.sh - verify nginx conf.active mount is writable when startup needs to render config.
+# check-nginx-config.sh - verify nginx conf.active mount is writable when PORT != 20211.
+
+# Only check nginx config writability if PORT is not the default 20211
+if [ "${PORT:-20211}" = "20211" ]; then
+    exit 0
+fi
 
 CONF_ACTIVE_DIR="${SYSTEM_SERVICES_ACTIVE_CONFIG}"
 TARGET_FILE="${CONF_ACTIVE_DIR}/netalertx.conf"

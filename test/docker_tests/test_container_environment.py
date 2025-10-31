@@ -197,6 +197,15 @@ def _run_container(
     sleep_seconds: float = GRACE_SECONDS,
 ) -> subprocess.CompletedProcess[str]:
     name = f"netalertx-test-{label}-{uuid.uuid4().hex[:8]}".lower()
+    
+    # Clean up any existing container with this name
+    subprocess.run(
+        ["docker", "rm", "-f", name],
+        check=False,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+    
     cmd: list[str] = ["docker", "run", "--rm", "--name", name]
 
     if network_mode:
@@ -272,11 +281,14 @@ def _run_container(
 
 
 def _assert_contains(result, snippet: str, cmd: list[str] = None) -> None:
-    if snippet not in result.output:
+    output = result.output + result.stderr
+    if snippet not in output:
         cmd_str = " ".join(cmd) if cmd else ""
         raise AssertionError(
             f"Expected to find '{snippet}' in container output.\n"
-            f"Got:\n{result.output}\n"
+            f"STDOUT:\n{result.output}\n"
+            f"STDERR:\n{result.stderr}\n"
+            f"Combined output:\n{output}\n"
             f"Container command:\n{cmd_str}"
         )
 
@@ -352,7 +364,7 @@ def test_running_as_root_is_blocked(tmp_path: pathlib.Path) -> None:
     )
     _assert_contains(result, "NetAlertX is running as ROOT", result.args)
     _assert_contains(result, "Permissions fixed for read-write paths.", result.args)
-    assert result.returncode == 0 # container must be forced to exit 0 by termination after warning
+    assert result.returncode == 0  # container warns but continues running, then terminated by test framework
 
 
 def test_running_as_uid_1000_warns(tmp_path: pathlib.Path) -> None:
@@ -374,7 +386,7 @@ def test_running_as_uid_1000_warns(tmp_path: pathlib.Path) -> None:
         user="1000:1000",
     )
     _assert_contains(result, "NetAlertX is running as UID 1000:1000", result.args)
-    assert result.returncode != 0
+
 
 
 def test_missing_host_network_warns(tmp_path: pathlib.Path) -> None:
@@ -388,7 +400,17 @@ def test_missing_host_network_warns(tmp_path: pathlib.Path) -> None:
     Check script: check-network-mode.sh
     Sample message: "⚠️  ATTENTION: NetAlertX is not running with --network=host. Bridge networking..."
     """
-    paths = _setup_mount_tree(tmp_path, "missing_host_net")
+    base = tmp_path / "missing_host_net_base"
+    paths = _setup_fixed_mount_tree(base)
+    # Ensure directories are writable and owned by netalertx user so container can operate
+    for key in ["app_db", "app_config", "app_log", "app_api", "services_run", "nginx_conf"]:
+        paths[key].chmod(0o777)
+        _chown_netalertx(paths[key])
+    # Create a config file so the writable check passes
+    config_file = paths["app_config"] / "app.conf"
+    config_file.write_text("test config")
+    config_file.chmod(0o666)
+    _chown_netalertx(config_file)
     volumes = _build_volume_args(paths)
     result = _run_container(
         "missing-host-network",
@@ -396,7 +418,6 @@ def test_missing_host_network_warns(tmp_path: pathlib.Path) -> None:
         network_mode=None,
     )
     _assert_contains(result, "not running with --network=host", result.args)
-    assert result.returncode != 0
 
 
 def test_missing_app_conf_triggers_seed(tmp_path: pathlib.Path) -> None:

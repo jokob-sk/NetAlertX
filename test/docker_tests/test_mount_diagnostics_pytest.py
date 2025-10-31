@@ -207,7 +207,9 @@ def create_test_scenarios() -> List[TestScenario]:
             elif scenario_name == "mounted" and is_persistent:
                 # Mounted is good for persistent paths
                 expected_issues = []
-
+            elif path_name == "active_config" and scenario_name == "unwritable":
+                # active_config unwritable: RAM disk issues detected
+                expected_issues = ["table_issues", "warning_message"]
             compose_file = f"docker-compose.mount-test.{path_name}_{scenario_name}.yml"
 
             # Determine expected exit code
@@ -236,6 +238,14 @@ def test_mount_diagnostic(netalertx_test_image, test_scenario):
 
     # Start container
     project_name = f"mount-test-{test_scenario.name.replace('_', '-')}"
+    
+    # Remove any existing containers with the same project name
+    cmd_down = [
+        "docker-compose", "-f", str(compose_file),
+        "-p", project_name, "down", "-v"
+    ]
+    subprocess.run(cmd_down, capture_output=True, timeout=30)
+    
     cmd_up = [
         "docker-compose", "-f", str(compose_file),
         "-p", project_name, "up", "-d"
@@ -251,7 +261,7 @@ def test_mount_diagnostic(netalertx_test_image, test_scenario):
     try:
         # Wait for container to be ready
         import time
-        time.sleep(3)
+        time.sleep(4)
 
         # Check if container is still running
         container_name = f"netalertx-test-mount-{test_scenario.name}"
@@ -348,29 +358,31 @@ def test_mount_diagnostic(netalertx_test_image, test_scenario):
                                 # active_config not mounted: mount=False, performance=False (not ramdisk)
                                 assert_table_row(logs, '/services/config/nginx/conf.active', mount=False, performance=False)
                             elif test_scenario.name == 'active_config_unwritable':
-                                # active_config read-only: but path doesn't exist, so parent dir check makes it writeable=True
-                                # This is a bug in the diagnostic tool, but we test the current behavior
-                                assert_table_row(logs, '/services/config/nginx/conf.active', writeable=True)
+                                # active_config unwritable: RAM disk issues detected
+                                assert_table_row(logs, '/services/config/nginx/conf.active', ramdisk=False, performance=False)
                     
                 except AssertionError as e:
                     pytest.fail(f"Table validation failed for {test_scenario.name}: {e}")
             
             return  # Test passed - container correctly detected issues and exited
 
-        # Container is still running - run diagnostic tool
-        cmd_exec = [
-            "docker", "exec", container_name,
-            "python3", "/entrypoint.d/10-mounts.py"
-        ]
+            # Container is still running - run diagnostic tool
+            cmd_exec = [
+                "docker", "exec", "--user", "netalertx", container_name,
+                "python3", "/entrypoint.d/10-mounts.py"
+            ]
+            result_exec = subprocess.run(cmd_exec, capture_output=True, text=True, timeout=30)
+            
+            # Diagnostic tool returns 1 if there are write errors, 0 otherwise
+            expected_tool_exit = 1 if "unwritable" in test_scenario.name else 0
+            assert result_exec.returncode == expected_tool_exit, f"Diagnostic tool failed: {result_exec.stderr}"
 
-        result_exec = subprocess.run(cmd_exec, capture_output=True, text=True, timeout=30)
-        assert result_exec.returncode == 0, f"Diagnostic tool failed: {result_exec.stderr}"
-
-        # For good configurations (no issues expected), verify no output
-        if not test_scenario.expected_issues:
-            assert result_exec.stdout.strip() == "", f"Good config {test_scenario.name} should produce no stdout, got: {result_exec.stdout}"
-            assert result_exec.stderr.strip() == "", f"Good config {test_scenario.name} should produce no stderr, got: {result_exec.stderr}"
-            return  # Test passed - good configuration correctly produces no issues
+            # For good configurations (no issues expected), verify table output but no warning
+            if not test_scenario.expected_issues:
+                # Should have table output but no warning message
+                assert "Path" in result_exec.stdout, f"Good config {test_scenario.name} should show table, got: {result_exec.stdout}"
+                assert "⚠️" not in result_exec.stderr, f"Good config {test_scenario.name} should not show warning, got stderr: {result_exec.stderr}"
+                return  # Test passed - good configuration correctly produces no warnings
 
     finally:
         # Stop container

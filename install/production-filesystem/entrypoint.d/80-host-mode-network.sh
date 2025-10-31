@@ -46,8 +46,8 @@ fi
 
 YELLOW=$(printf '\033[1;33m')
 RESET=$(printf '\033[0m')
->&2 printf "%s" "${YELLOW}"
-&>2 cat <<EOF
+printf "%s" "${YELLOW}"
+cat <<EOF
 ══════════════════════════════════════════════════════════════════════════════
 ⚠️  ATTENTION: NetAlertX is not running with --network=host.
 
@@ -62,5 +62,5 @@ RESET=$(printf '\033[0m')
     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/network-mode.md
 ══════════════════════════════════════════════════════════════════════════════
 EOF
-&>2 printf "%s" "${RESET}"
+printf "%s" "${RESET}"
 exit 0
