@@ -13,7 +13,7 @@ nav:
       - Installation options: INSTALLATION.md
       - Quick setup: INITIAL_SETUP.md      
       - Docker:
-        - Docker Guide: https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md    
+        - Docker Guide: DOCKER_INSTALLATION.md   
         - Docker Compose: DOCKER_COMPOSE.md
         - Docker File Permissions: FILE_PERMISSIONS.md
         - Docker Updates: UPDATES.md
