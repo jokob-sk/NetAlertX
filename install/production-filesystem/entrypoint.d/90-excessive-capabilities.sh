@@ -21,7 +21,8 @@ if [ "$EXTRA" -ne 0 ]; then
 
     Only NET_ADMIN, NET_BIND_SERVICE, and NET_RAW are required in this container.
     Please remove unnecessary capabilities.
+
+    https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/excessive-capabilities.md
 ══════════════════════════════════════════════════════════════════════════════
 EOF
-
 fi

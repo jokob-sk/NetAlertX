@@ -24,6 +24,8 @@ then
 
     Without those caps, NetAlertX cannot inspect your network. Fix it before
     trusting any results.
+
+    https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/missing-capabilities.md
 ══════════════════════════════════════════════════════════════════════════════
 EOF
     >&2 printf "%s" "${RESET}"

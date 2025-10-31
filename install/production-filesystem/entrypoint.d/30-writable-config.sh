@@ -6,9 +6,9 @@
 # critical configuration and database files after startup.
 
 # --- Color Codes ---
-RED='\033[1;31m'
-YELLOW='\033[1;33m'
-RESET='\033[0m'
+RED=$(printf '\033[1;31m')
+YELLOW=$(printf '\033[1;33m')
+RESET=$(printf '\033[0m')
 
 # --- Main Logic ---
 
@@ -33,6 +33,8 @@ for path in $READ_WRITE_PATHS; do
 
    The required path "${path}" could not be found. The application
    cannot start without its complete directory structure.
+
+   https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/file-permissions.md
 ══════════════════════════════════════════════════════════════════════════════
 EOF
         >&2 printf "%s" "${RESET}"
@@ -45,6 +47,8 @@ EOF
 
     The application cannot read from "${path}". This will cause
     unpredictable errors. Please correct the file system permissions.
+
+    https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/file-permissions.md
 ══════════════════════════════════════════════════════════════════════════════
 EOF
         >&2 printf "%s" "${RESET}"
@@ -60,6 +64,8 @@ EOF
 
     To fix this automatically, restart the container with root privileges
     (e.g., remove the "user:" directive in your Docker Compose file).
+
+    https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/file-permissions.md
 ══════════════════════════════════════════════════════════════════════════════
 EOF
         >&2 printf "%s" "${RESET}"

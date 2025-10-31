@@ -8,7 +8,7 @@ if ! awk '$2 == "/" && $4 ~ /ro/ {found=1} END {exit !found}' /proc/mounts; then
 ⚠️  Warning: Container is running as read-write, not in read-only mode.
 
     Please mount the root filesystem as --read-only or use read-only: true
-    https://github.com/jokob-sk/NetAlertX/blob/main/docs/DOCKER_COMPOSE.md
+    https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/read-only-filesystem.md
 ══════════════════════════════════════════════════════════════════════════════
 EOF
 

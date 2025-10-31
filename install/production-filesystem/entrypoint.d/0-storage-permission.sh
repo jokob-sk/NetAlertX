@@ -6,8 +6,8 @@
 # for read-write paths to ensure proper operation.
 
 # --- Color Codes ---
-MAGENTA='\033[1;35m'
-RESET='\033[0m'
+MAGENTA=$(printf '\033[1;35m')
+RESET=$(printf '\033[0m')
 
 # --- Main Logic ---
 
@@ -44,6 +44,8 @@ if [ "$(id -u)" -eq 0 ]; then
 
     Remember: Never operate security-critical tools as root unless you're 
     actively trying to get pwned.
+
+    https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/running-as-root.md
 ══════════════════════════════════════════════════════════════════════════════
 EOF
     >&2 printf "%s" "${RESET}"

@@ -14,8 +14,8 @@ elif [ -f "${NETALERTX_DB_FILE}" ]; then
     exit 0
 fi
 
-CYAN='\033[1;36m'
-RESET='\033[0m'
+CYAN=$(printf '\033[1;36m')
+RESET=$(printf '\033[0m')
 >&2 printf "%s" "${CYAN}"
 >&2 cat <<EOF
 ══════════════════════════════════════════════════════════════════════════════
@@ -441,8 +441,8 @@ CREATE TRIGGER "trg_delete_devices"
 end-of-database-schema
 
 if [ $? -ne 0 ]; then
-  RED='\033[1;31m'
-  RESET='\033[0m'
+  RED=$(printf '\033[1;31m')
+  RESET=$(printf '\033[0m')
   >&2 printf "%s" "${RED}"
   >&2 cat <<EOF
 ══════════════════════════════════════════════════════════════════════════════
