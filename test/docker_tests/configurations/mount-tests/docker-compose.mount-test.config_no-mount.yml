@@ -1,3 +1,7 @@
+# Expected outcome: Container shows mount error for config directory
+# - NETALERTX_CONFIG shows as not mounted
+# - Mount error since config directory should be mounted for proper operation
+# - Configuration may not persist across restarts
 services:
   netalertx:
     network_mode: host

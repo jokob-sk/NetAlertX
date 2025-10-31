@@ -1,3 +1,7 @@
+# Expected outcome: Container shows mount error warning but continues running
+# - NETALERTX_LOG shows as not mounted (❌ in Mount column)
+# - Warning message displayed about configuration issues
+# - Container continues to run despite the mount error
 services:
   netalertx:
     network_mode: host

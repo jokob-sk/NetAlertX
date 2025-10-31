@@ -1,3 +1,7 @@
+# Expected outcome: Container shows mount error for API directory
+# - NETALERTX_API shows as not mounted
+# - Mount error since API directory should be mounted for proper operation
+# - API functionality may be limited
 services:
   netalertx:
     network_mode: host

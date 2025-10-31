@@ -1,3 +1,7 @@
+# Expected outcome: Container shows dataloss risk warning for database on RAM disk
+# - NETALERTX_DB shows as mounted on tmpfs (RAM disk)
+# - Dataloss risk warning since database should be persistent
+# - Database will be lost on container restart
 services:
   netalertx:
     network_mode: host

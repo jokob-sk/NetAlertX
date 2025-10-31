@@ -1,3 +1,7 @@
+# Expected outcome: Container shows mount error warning but continues running
+# - NETALERTX_DB shows as not mounted (❌ in Mount column) but path gets created
+# - Warning message displayed about configuration issues
+# - Container continues because database directory can be created in writable filesystem
 services:
   netalertx:
     network_mode: host

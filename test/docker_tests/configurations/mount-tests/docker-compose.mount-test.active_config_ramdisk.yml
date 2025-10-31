@@ -1,3 +1,7 @@
+# Expected outcome: Container shows performance warning for nginx config on RAM disk
+# - SYSTEM_SERVICES_ACTIVE_CONFIG shows as mounted on tmpfs (RAM disk)
+# - Performance issue warning since nginx config should be persistent
+# - Custom PORT configuration may have performance implications
 services:
   netalertx:
     network_mode: host

@@ -1,3 +1,7 @@
+# Expected outcome: Container starts successfully with proper config mount
+# - NETALERTX_CONFIG shows as writable and mounted
+# - No configuration warnings for config path
+# - Configuration persistence works correctly
 services:
   netalertx:
     network_mode: host

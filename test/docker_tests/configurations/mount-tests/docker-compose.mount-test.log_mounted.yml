@@ -1,3 +1,7 @@
+# Expected outcome: Container starts successfully with proper log mount
+# - NETALERTX_LOG shows as mounted and writable
+# - No mount warnings since logs can be non-persistent
+# - Container starts normally with logging enabled
 services:
   netalertx:
     network_mode: host

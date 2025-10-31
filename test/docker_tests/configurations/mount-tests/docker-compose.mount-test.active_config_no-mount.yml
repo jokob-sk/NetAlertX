@@ -1,3 +1,7 @@
+# Expected outcome: Container shows warning about missing nginx config mount
+# - SYSTEM_SERVICES_ACTIVE_CONFIG shows as not mounted
+# - Warning message about nginx configuration mount being missing
+# - Custom PORT configuration may not work properly
 services:
   netalertx:
     network_mode: host

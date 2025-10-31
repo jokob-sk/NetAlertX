@@ -149,6 +149,7 @@ class TestScenario:
     is_persistent: bool
     docker_compose: str
     expected_issues: List[str]  # List of expected issue types
+    expected_exit_code: int  # Expected container exit code
 
 @pytest.fixture(scope="session")
 def netalertx_test_image():
@@ -209,13 +210,17 @@ def create_test_scenarios() -> List[TestScenario]:
 
             compose_file = f"docker-compose.mount-test.{path_name}_{scenario_name}.yml"
 
+            # Determine expected exit code
+            expected_exit_code = 1 if scenario_name == "unwritable" else 0
+
             scenarios.append(TestScenario(
                 name=f"{path_name}_{scenario_name}",
                 path_var=env_var,
                 container_path=container_path,
                 is_persistent=is_persistent,
                 docker_compose=compose_file,
-                expected_issues=expected_issues
+                expected_issues=expected_issues,
+                expected_exit_code=expected_exit_code
             ))
 
     return scenarios
@@ -246,7 +251,7 @@ def test_mount_diagnostic(netalertx_test_image, test_scenario):
     try:
         # Wait for container to be ready
         import time
-        time.sleep(5)
+        time.sleep(3)
 
         # Check if container is still running
         container_name = f"netalertx-test-mount-{test_scenario.name}"
@@ -256,7 +261,18 @@ def test_mount_diagnostic(netalertx_test_image, test_scenario):
         )
 
         if not result_ps.stdout.strip():
-            # Container exited - this is expected for configurations with issues
+            # Container exited - check the exit code
+            result_inspect = subprocess.run(
+                ["docker", "inspect", container_name, "--format={{.State.ExitCode}}"],
+                capture_output=True, text=True
+            )
+            actual_exit_code = int(result_inspect.stdout.strip())
+            
+            # Assert the exit code matches expected
+            assert actual_exit_code == test_scenario.expected_exit_code, (
+                f"Container {container_name} exited with code {actual_exit_code}, "
+                f"expected {test_scenario.expected_exit_code}"
+            )
             # Check the logs to see if it detected the expected issues
             result_logs = subprocess.run(
                 ["docker", "logs", container_name],

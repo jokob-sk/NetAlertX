@@ -1,3 +1,7 @@
+# Expected outcome: Container fails to start due to unwritable log partition
+# - NETALERTX_LOG shows as mounted but unwritable (❌ in Writeable column)
+# - 25-mandatory-folders.sh cannot create required log files and fails
+# - Container startup fails because logging infrastructure cannot be initialized
 services:
   netalertx:
     network_mode: host

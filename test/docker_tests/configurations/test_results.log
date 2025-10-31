@@ -1,0 +1,150 @@
+Starting Docker Compose Tests - Fri Oct 31 20:00:39 UTC 2025
+==========================================
+File: docker-compose.missing-caps.yml
+----------------------------------------
+
+Testing: docker-compose.missing-caps.yml
+Directory: /workspaces/NetAlertX/test/docker_tests/configurations
+
+Running docker-compose up...
+Attaching to netalertx-test-missing-caps
+[Knetalertx-test-missing-caps exited with code 255
+
+==========================================
+
+File: docker-compose.readonly.yml
+----------------------------------------
+
+Testing: docker-compose.readonly.yml
+Directory: /workspaces/NetAlertX/test/docker_tests/configurations
+
+Running docker-compose up...
+Attaching to netalertx-test-readonly
+netalertx-test-readonly  | [1;31m
+netalertx-test-readonly  |  _   _      _    ___  _           _  __   __
+netalertx-test-readonly  | | \ | |    | |  / _ \| |         | | \ \ / /
+netalertx-test-readonly  | |  \| | ___| |_/ /_\ \ | ___ _ __| |_ \ V / 
+netalertx-test-readonly  | | .   |/ _ \ __|  _  | |/ _ \  __| __|/   \ 
+netalertx-test-readonly  | | |\  |  __/ |_| | | | |  __/ |  | |_/ /^\ \ 
+netalertx-test-readonly  | \_| \_/\___|\__\_| |_/_|\___|_|   \__\/   \/
+netalertx-test-readonly  | 
+netalertx-test-readonly  | [0m   Network intruder and presence detector. 
+netalertx-test-readonly  |    https://netalertx.com
+netalertx-test-readonly  | 
+netalertx-test-readonly  | 
+netalertx-test-readonly  | Startup pre-checks
+netalertx-test-readonly  |  --> storage permission
+netalertx-test-readonly  |  --> mounts.py
+netalertx-test-readonly  |  --> first run config
+netalertx-test-readonly  |  --> first run db
+netalertx-test-readonly  |  --> mandatory folders
+netalertx-test-readonly  |  --> writable config
+netalertx-test-readonly  |  --> nginx config
+netalertx-test-readonly  | nginx config: FAILED with 1
+netalertx-test-readonly  | Failure detected in: /entrypoint.d/35-nginx-config.sh
+netalertx-test-readonly  |  --> user netalertx
+netalertx-test-readonly  |  --> host mode network
+netalertx-test-readonly  |  --> layer 2 capabilities
+netalertx-test-readonly  |  --> excessive capabilities
+netalertx-test-readonly  | excessive capabilities: FAILED with 2
+netalertx-test-readonly  | Failure detected in: /entrypoint.d/90-excessive-capabilities.sh
+netalertx-test-readonly  |  --> appliance integrity
+netalertx-test-readonly  |  --> ports available
+netalertx-test-readonly  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-readonly  | ⚠️  Port Warning: Application port 20211 is already in use.
+netalertx-test-readonly  | 
+netalertx-test-readonly  |     The main application (defined by $PORT) may fail to start.
+netalertx-test-readonly  | 
+netalertx-test-readonly  |     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/port-conflicts.md
+netalertx-test-readonly  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-readonly  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-readonly  | ⚠️  Port Warning: GraphQL API port 20212 is already in use.
+netalertx-test-readonly  | 
+netalertx-test-readonly  |     The GraphQL API (defined by $APP_CONF_OVERRIDE or $GRAPHQL_PORT)
+netalertx-test-readonly  |     may fail to start.
+netalertx-test-readonly  | 
+netalertx-test-readonly  |     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/port-conflicts.md
+netalertx-test-readonly  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-readonly  | Container startup checks failed with exit code 2.
+netalertx-test-readonly  | NETALERTX_DEBUG is set to 1, will not shut down other services if one fails.
+netalertx-test-readonly  | Starting /usr/sbin/crond -c "/services/config/crond" -f -L "/app/log/crond.log" >>"/app/log/crond.log" 2>&1 &
+netalertx-test-readonly  | Starting /usr/sbin/php-fpm83 -y "/services/config/php/php-fpm.conf" -F >>"/app/log/app.php_errors.log" 2>/dev/stderr &
+netalertx-test-readonly  | Crond stopped! (exit 1)
+netalertx-test-readonly  | php-fpm stopped! (exit 1)
+netalertx-test-readonly  | Starting python3  -m server > /app/log/stdout.log 2> >(tee /app/log/stderr.log >&2)
+[Knetalertx-test-readonly exited with code 0
+netalertx-test-readonly  |  --> first run config
+netalertx-test-readonly  |  --> first run db
+netalertx-test-readonly  |  --> mandatory folders
+netalertx-test-readonly  |  --> writable config
+netalertx-test-readonly  |  --> nginx config
+netalertx-test-readonly  | nginx config: FAILED with 1
+netalertx-test-readonly  | Failure detected in: /entrypoint.d/35-nginx-config.sh
+netalertx-test-readonly  |  --> user netalertx
+netalertx-test-readonly  |  --> host mode network
+netalertx-test-readonly  |  --> layer 2 capabilities
+netalertx-test-readonly  |  --> excessive capabilities
+netalertx-test-readonly  | excessive capabilities: FAILED with 2
+netalertx-test-readonly  | Failure detected in: /entrypoint.d/90-excessive-capabilities.sh
+netalertx-test-readonly  |  --> appliance integrity
+netalertx-test-readonly  |  --> ports available
+netalertx-test-readonly  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-readonly  | ⚠️  Port Warning: Application port 20211 is already in use.
+netalertx-test-readonly  | 
+netalertx-test-readonly  |     The main application (defined by $PORT) may fail to start.
+netalertx-test-readonly  | 
+netalertx-test-readonly  |     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/port-conflicts.md
+netalertx-test-readonly  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-readonly  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-readonly  | ⚠️  Port Warning: GraphQL API port 20212 is already in use.
+netalertx-test-readonly  | 
+netalertx-test-readonly  |     The GraphQL API (defined by $APP_CONF_OVERRIDE or $GRAPHQL_PORT)
+netalertx-test-readonly  |     may fail to start.
+netalertx-test-readonly  | 
+netalertx-test-readonly  |     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/port-conflicts.md
+netalertx-test-readonly  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-readonly  | Container startup checks failed with exit code 2.
+netalertx-test-readonly  | NETALERTX_DEBUG is set to 1, will not shut down other services if one fails.
+netalertx-test-readonly  | Starting /usr/sbin/crond -c "/services/config/crond" -f -L "/app/log/crond.log" >>"/app/log/crond.log" 2>&1 &
+netalertx-test-readonly  | Starting /usr/sbin/php-fpm83 -y "/services/config/php/php-fpm.conf" -F >>"/app/log/app.php_errors.log" 2>/dev/stderr &
+netalertx-test-readonly  | php-fpm stopped! (exit 1)
+netalertx-test-readonly  | Crond stopped! (exit 1)
+netalertx-test-readonly  | Starting python3  -m server > /app/log/stdout.log 2> >(tee /app/log/stderr.log >&2)
+
+==========================================
+
+File: docker-compose.writable.yml
+----------------------------------------
+
+Testing: docker-compose.writable.yml
+Directory: /workspaces/NetAlertX/test/docker_tests/configurations
+
+Running docker-compose up...
+
+==========================================
+
+File: docker-compose.mount-test.active_config_mounted.yml
+----------------------------------------
+Expected outcome: Container starts successfully with proper nginx config mount
+- SYSTEM_SERVICES_ACTIVE_CONFIG shows as writable and mounted
+- No configuration warnings for nginx config path
+- Custom PORT configuration should work when nginx config is writable
+
+Testing: docker-compose.mount-test.active_config_mounted.yml
+Directory: /workspaces/NetAlertX/test/docker_tests/configurations/mount-tests
+
+Running docker-compose up...
+
+==========================================
+
+File: docker-compose.mount-test.active_config_no-mount.yml
+----------------------------------------
+Expected outcome: Container shows warning about missing nginx config mount
+- SYSTEM_SERVICES_ACTIVE_CONFIG shows as not mounted
+- Warning message about nginx configuration mount being missing
+- Custom PORT configuration may not work properly
+
+Testing: docker-compose.mount-test.active_config_no-mount.yml
+Directory: /workspaces/NetAlertX/test/docker_tests/configurations/mount-tests
+
+Running docker-compose up...

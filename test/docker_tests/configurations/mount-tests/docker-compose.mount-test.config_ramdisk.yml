@@ -1,3 +1,7 @@
+# Expected outcome: Container shows dataloss risk warning for config on RAM disk
+# - NETALERTX_CONFIG shows as mounted on tmpfs (RAM disk)
+# - Dataloss risk warning since config data should be persistent
+# - Configuration will be lost on container restart
 services:
   netalertx:
     network_mode: host

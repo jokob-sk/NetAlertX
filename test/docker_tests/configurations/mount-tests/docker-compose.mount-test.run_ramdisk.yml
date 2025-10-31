@@ -1,3 +1,7 @@
+# Expected outcome: Container shows dataloss risk warning for run on RAM disk
+# - NETALERTX_RUN shows as mounted on tmpfs (RAM disk)
+# - Dataloss risk warning since runtime files may be lost on restart
+# - Container starts but runtime state may not persist
 services:
   netalertx:
     network_mode: host

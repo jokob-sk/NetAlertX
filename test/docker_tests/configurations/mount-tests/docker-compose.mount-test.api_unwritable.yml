@@ -1,3 +1,7 @@
+# Expected outcome: Container fails to start due to unwritable API partition
+# - NETALERTX_API shows as mounted but unwritable (❌ in Writeable column)
+# - API directory must be writable for proper operation
+# - Container startup fails because API functionality cannot work without write access
 services:
   netalertx:
     network_mode: host

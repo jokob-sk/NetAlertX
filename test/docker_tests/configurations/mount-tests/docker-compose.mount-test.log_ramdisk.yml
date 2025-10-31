@@ -1,3 +1,7 @@
+# Expected outcome: Container shows dataloss risk warning for logs on RAM disk
+# - NETALERTX_LOG shows as mounted on tmpfs (RAM disk)
+# - Dataloss risk warning since logs may be lost on restart
+# - Container starts but logs may not persist
 services:
   netalertx:
     network_mode: host

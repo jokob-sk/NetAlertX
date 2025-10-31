@@ -1,3 +1,7 @@
+# Expected outcome: Container fails to start due to unwritable nginx config partition
+# - SYSTEM_SERVICES_ACTIVE_CONFIG shows as mounted but unwritable (❌ in Writeable column)
+# - 35-nginx-config.sh detects permission error and exits with code 1
+# - Container startup fails because nginx configuration cannot be written for custom ports
 services:
   netalertx:
     network_mode: host

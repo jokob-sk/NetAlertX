@@ -1,3 +1,7 @@
+# Expected outcome: Container starts successfully with proper API mount
+# - NETALERTX_API shows as writable and mounted
+# - No configuration warnings for API path
+# - API data persistence works correctly
 services:
   netalertx:
     network_mode: host

@@ -1,3 +1,7 @@
+# Expected outcome: Container starts successfully with proper nginx config mount
+# - SYSTEM_SERVICES_ACTIVE_CONFIG shows as writable and mounted
+# - No configuration warnings for nginx config path
+# - Custom PORT configuration should work when nginx config is writable
 services:
   netalertx:
     network_mode: host

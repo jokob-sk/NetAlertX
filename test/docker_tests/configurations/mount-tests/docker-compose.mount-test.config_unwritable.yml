@@ -1,3 +1,7 @@
+# Expected outcome: Container fails to start due to unwritable config partition
+# - NETALERTX_CONFIG shows as mounted but unwritable (❌ in Writeable column)
+# - 30-writable-config.sh detects permission error and exits with code 1
+# - Container startup fails because config files cannot be written to
 services:
   netalertx:
     network_mode: host

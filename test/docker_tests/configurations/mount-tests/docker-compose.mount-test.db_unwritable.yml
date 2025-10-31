@@ -1,3 +1,7 @@
+# Expected outcome: Container fails to start due to unwritable database partition
+# - NETALERTX_DB shows as mounted but unwritable (❌ in Writeable column)
+# - 30-writable-config.sh detects permission error and exits with code 1
+# - Container startup fails because database files cannot be written to
 services:
   netalertx:
     network_mode: host

@@ -1,3 +1,7 @@
+# Expected outcome: Container shows performance warning for API on RAM disk
+# - NETALERTX_API shows as mounted on tmpfs (RAM disk)
+# - Performance issue warning since API data should be on persistent storage
+# - API data will be lost on container restart
 services:
   netalertx:
     network_mode: host
