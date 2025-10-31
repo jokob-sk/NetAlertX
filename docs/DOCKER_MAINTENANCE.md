@@ -1,5 +1,10 @@
 # The NetAlertX Container Operator's Guide
 
+> [!WARNING]
+> ⚠️ **Important:** The documentation has been recently updated and some instructions may have changed.  
+> If you are using the currently live production image, please follow the instructions on [Docker Hub](https://hub.docker.com/r/jokobsk/netalertx) for building and running the container.  
+> These docs reflect the latest development version and may differ from the production image.
+
 This guide assumes you are starting with the official `docker-compose.yml` file provided with the project. We strongly recommend you start with or migrate to this file as your baseline and modify it to suit your specific needs (e.g., changing file paths). While there are many ways to configure NetAlertX, the default file is designed to meet the mandatory security baseline with layer-2 networking capabilities while operating securely and without startup warnings.
 
 This guide provides direct, concise solutions for common NetAlertX administrative tasks. It is structured to help you identify a problem, implement the solution, and understand the details.
