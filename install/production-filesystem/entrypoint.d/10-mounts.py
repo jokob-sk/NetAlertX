@@ -159,8 +159,59 @@ def main():
         if result.performance_issue or result.dataloss_risk or result.error:
             has_issues = True
         results.append(result)
-
-    if has_issues:
+        
+        # Exit immediately if write error detected
+        if result.write_error:
+            # Print table with results so far
+            headers = ["Path", "Writeable", "Mount", "RAMDisk", "Performance", "DataLoss"]
+            
+            CHECK_SYMBOL = "✅"
+            CROSS_SYMBOL = "❌"
+            BLANK_SYMBOL = "➖"
+            
+            def bool_to_check(val):
+                return CHECK_SYMBOL if val else CROSS_SYMBOL
+            
+            print(" Mount Diagnostic Results", file=sys.stderr)
+            print("=" * 80, file=sys.stderr)
+            print("Issues detected! Container will exit.", file=sys.stderr)
+            print("", file=sys.stderr)
+            
+            # Print table header
+            row_fmt = "{:<40} {:<10} {:<6} {:<8} {:<12} {:<9}"
+            print(row_fmt.format(*headers), file=sys.stderr)
+            print("-" * 85, file=sys.stderr)
+            
+            # Print results
+            for r in results:
+                write_symbol = bool_to_check(r.is_writeable)
+                mount_symbol = bool_to_check(r.is_mounted)
+                
+                if r.is_mounted:
+                    ramdisk_symbol = CHECK_SYMBOL if r.is_ramdisk else CROSS_SYMBOL
+                else:
+                    ramdisk_symbol = BLANK_SYMBOL
+                    
+                if is_persistent:
+                    perf_symbol = BLANK_SYMBOL
+                else:
+                    perf_symbol = bool_to_check(not r.performance_issue)
+                
+                dataloss_symbol = bool_to_check(not r.dataloss_risk)
+                
+                print(row_fmt.format(
+                    r.path,
+                    write_symbol,
+                    mount_symbol,
+                    ramdisk_symbol,
+                    perf_symbol,
+                    dataloss_symbol
+                ), file=sys.stderr)
+            
+            # Print warning and exit
+            print("\n", file=sys.stderr)
+            print_warning_message()
+            sys.exit(1)
         # --- Print Table ---
         headers = ["Path", "Writeable", "Mount", "RAMDisk", "Performance", "DataLoss"]
         
