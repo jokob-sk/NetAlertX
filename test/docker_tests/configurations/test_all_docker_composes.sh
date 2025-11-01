@@ -40,17 +40,10 @@ run_test() {
     dirname=$(dirname "$file")
     local basename
     basename=$(basename "$file")
-    local basename
-    basename=$(basename "$file")
 
     echo "Testing: $basename" >> "$LOG_FILE"
     echo "Directory: $dirname" >> "$LOG_FILE"
     echo "" >> "$LOG_FILE"
-    cd "$dirname" || exit 1
-    # Change to the directory containing the docker-compose file
-    cd "$dirname"
-
-    timeout 10s docker-compose -f "$basename" up >> "$LOG_FILE" 2>&1
     echo "Running docker-compose up..." >> "$LOG_FILE"
     timeout 10s docker-compose -f "$basename" up 2>&1 >> "$LOG_FILE"
 
@@ -58,16 +51,11 @@ run_test() {
     docker-compose -f "$basename" down -v 2>/dev/null || true
     docker volume prune -f 2>/dev/null || true
 
-    echo "" >> "$LOG_FILE"
-    echo "==========================================" >> "$LOG_FILE"
-    echo "" >> "$LOG_FILE"
-}
 find "$SCRIPT_DIR" -name "docker-compose*.yml" -type f -print0 | sort -z | while IFS= read -r -d '' file; do
     extract_comments "$file"
     run_test "$file"
 done
-    run_test "$file"
-done
+
 
 echo "All tests completed - $(date)" >> "$LOG_FILE"
 echo "Results saved to: $LOG_FILE"
