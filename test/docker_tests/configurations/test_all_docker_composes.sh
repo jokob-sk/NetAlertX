@@ -45,10 +45,10 @@ run_test() {
     echo "Directory: $dirname" >> "$LOG_FILE"
     echo "" >> "$LOG_FILE"
     echo "Running docker-compose up..." >> "$LOG_FILE"
-    timeout 10s docker-compose -f "$basename" up 2>&1 >> "$LOG_FILE"
+    timeout 10s docker-compose -f "$file" up 2>&1 >> "$LOG_FILE"
 
     # Clean up
-    docker-compose -f "$basename" down -v 2>/dev/null || true
+    docker-compose -f "$file" down -v 2>/dev/null || true
     docker volume prune -f 2>/dev/null || true
 
 find "$SCRIPT_DIR" -name "docker-compose*.yml" -type f -print0 | sort -z | while IFS= read -r -d '' file; do
