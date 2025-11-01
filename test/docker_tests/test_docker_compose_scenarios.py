@@ -114,7 +114,7 @@ def _create_test_data_dirs(base_dir: pathlib.Path) -> None:
         conn.close()
 
 
-def _run_docker_compose(compose_file: pathlib.Path, project_name: str, timeout: int = 30, env_vars: dict = None) -> subprocess.CompletedProcess:
+def _run_docker_compose(compose_file: pathlib.Path, project_name: str, timeout: int = 30, env_vars: dict | None = None) -> subprocess.CompletedProcess:
     """Run docker compose up and capture output."""
     cmd = [
         "docker", "compose",
@@ -125,6 +125,11 @@ def _run_docker_compose(compose_file: pathlib.Path, project_name: str, timeout: 
         "--timeout", str(timeout)
     ]
 
+    # Merge custom env vars with current environment
+    env = os.environ.copy()
+    if env_vars:
+        env.update(env_vars)
+
     try:
         result = subprocess.run(
             cmd,
@@ -134,16 +139,17 @@ def _run_docker_compose(compose_file: pathlib.Path, project_name: str, timeout: 
             text=True,
             timeout=timeout + 10,
             check=False,
+            env=env,
         )
     except subprocess.TimeoutExpired:
         # Clean up on timeout
         subprocess.run(["docker", "compose", "-f", str(compose_file), "-p", project_name, "down", "-v"],
-                      cwd=compose_file.parent, check=False)
+                      cwd=compose_file.parent, check=False, env=env)
         raise
 
     # Always clean up
     subprocess.run(["docker", "compose", "-f", str(compose_file), "-p", project_name, "down", "-v"],
-                  cwd=compose_file.parent, check=False)
+                  cwd=compose_file.parent, check=False, env=env)
 
     # Combine stdout and stderr
     result.output = result.stdout + result.stderr
