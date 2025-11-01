@@ -5,14 +5,17 @@ This set of tests requires netalertx-test image built and docker compose.
 Ensure netalertx-test image is built prior to starting these tests.
 '''
 
+import copy
 import os
 import pathlib
+import re
 import subprocess
 import pytest
 import yaml
 
 # Path to test configurations
 CONFIG_DIR = pathlib.Path(__file__).parent / "configurations"
+ANSI_ESCAPE = re.compile(r"\x1B\[[0-9;]*[A-Za-z]")
 
 pytestmark = [pytest.mark.docker, pytest.mark.compose]
 
@@ -70,16 +73,36 @@ COMPOSE_CONFIGS = {
                 "image": IMAGE,
                 "network_mode": "host",
                 "userns_mode": "host",
+                "read_only": True,
+                "cap_drop": ["ALL"],
                 "cap_add": ["NET_RAW", "NET_ADMIN", "NET_BIND_SERVICE"],
                 "user": "20211:20211",
-                "tmpfs": ["/tmp:mode=777"],
+                "tmpfs": [
+                    "/app/log:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime",
+                    "/app/api:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,sync,noatime,nodiratime",
+                    "/services/config/nginx/conf.active:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime",
+                    "/services/run:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime",
+                    "/tmp:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime",
+                ],
                 "volumes": [
-                    "./test_data/app_db:/app/db",
-                    "./test_data/app_config:/app/config",
-                    "./test_data/app_log:/app/log",
-                    "./test_data/app_api:/app/api",
-                    "./test_data/nginx_conf:/services/config/nginx/conf.active",
-                    "./test_data/services_run:/services/run"
+                    {
+                        "type": "volume",
+                        "source": "__CONFIG_VOLUME__",
+                        "target": "/app/config",
+                        "read_only": False,
+                    },
+                    {
+                        "type": "volume",
+                        "source": "__DB_VOLUME__",
+                        "target": "/app/db",
+                        "read_only": False,
+                    },
+                    {
+                        "type": "bind",
+                        "source": "/etc/localtime",
+                        "target": "/etc/localtime",
+                        "read_only": True,
+                    },
                 ],
                 "environment": {
                     "TZ": "UTC"
@@ -88,21 +111,19 @@ COMPOSE_CONFIGS = {
         }
     }
 }
-
-
-
 def _create_test_data_dirs(base_dir: pathlib.Path) -> None:
-    """Create test data directories with proper permissions."""
+    """Create test data directories and files with write permissions for the container user."""
     dirs = ["app_db", "app_config", "app_log", "app_api", "nginx_conf", "services_run"]
     for dir_name in dirs:
         dir_path = base_dir / "test_data" / dir_name
         dir_path.mkdir(parents=True, exist_ok=True)
-        dir_path.chmod(0o755)
+        dir_path.chmod(0o777)
 
     # Create basic config file
     config_file = base_dir / "test_data" / "app_config" / "app.conf"
     if not config_file.exists():
         config_file.write_text("# Test configuration\n")
+    config_file.chmod(0o666)
 
     # Create basic db file
     db_file = base_dir / "test_data" / "app_db" / "app.db"
@@ -111,18 +132,31 @@ def _create_test_data_dirs(base_dir: pathlib.Path) -> None:
         import sqlite3
         conn = sqlite3.connect(str(db_file))
         conn.close()
+    db_file.chmod(0o666)
 
 
-def _run_docker_compose(compose_file: pathlib.Path, project_name: str, timeout: int = 30, env_vars: dict | None = None) -> subprocess.CompletedProcess:
+def _run_docker_compose(
+    compose_file: pathlib.Path,
+    project_name: str,
+    timeout: int = 5,
+    env_vars: dict | None = None,
+    detached: bool = False,
+) -> subprocess.CompletedProcess:
     """Run docker compose up and capture output."""
     cmd = [
         "docker", "compose",
         "-f", str(compose_file),
         "-p", project_name,
-        "up",
-        "--abort-on-container-exit",
-        "--timeout", str(timeout)
     ]
+
+    up_cmd = cmd + ["up"]
+    if detached:
+        up_cmd.append("-d")
+    else:
+        up_cmd.extend([
+            "--abort-on-container-exit",
+            "--timeout", str(timeout)
+        ])
 
     # Merge custom env vars with current environment
     env = os.environ.copy()
@@ -130,16 +164,47 @@ def _run_docker_compose(compose_file: pathlib.Path, project_name: str, timeout: 
         env.update(env_vars)
 
     try:
-        result = subprocess.run(
-            cmd,
-            cwd=compose_file.parent,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-            timeout=timeout + 10,
-            check=False,
-            env=env,
-        )
+        if detached:
+            up_result = subprocess.run(
+                up_cmd,
+                cwd=compose_file.parent,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                timeout=timeout,
+                check=False,
+                env=env,
+            )
+
+            logs_cmd = cmd + ["logs"]
+            logs_result = subprocess.run(
+                logs_cmd,
+                cwd=compose_file.parent,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                timeout=timeout,
+                check=False,
+                env=env,
+            )
+
+            result = subprocess.CompletedProcess(
+                up_cmd,
+                up_result.returncode,
+                stdout=(up_result.stdout or "") + (logs_result.stdout or ""),
+                stderr=(up_result.stderr or "") + (logs_result.stderr or ""),
+            )
+        else:
+            result = subprocess.run(
+                up_cmd,
+                cwd=compose_file.parent,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                timeout=timeout + 10,
+                check=False,
+                env=env,
+            )
     except subprocess.TimeoutExpired:
         # Clean up on timeout
         subprocess.run(["docker", "compose", "-f", str(compose_file), "-p", project_name, "down", "-v"],
@@ -152,6 +217,19 @@ def _run_docker_compose(compose_file: pathlib.Path, project_name: str, timeout: 
 
     # Combine stdout and stderr
     result.output = result.stdout + result.stderr
+
+    # Surface command context and IO for any caller to aid debugging
+    print("\n[compose command]", " ".join(up_cmd))
+    print("[compose cwd]", str(compose_file.parent))
+    print("[compose stdin]", "<none>")
+    if result.stdout:
+        print("[compose stdout]\n" + result.stdout)
+    if result.stderr:
+        print("[compose stderr]\n" + result.stderr)
+    if detached:
+        logs_cmd_display = cmd + ["logs"]
+        print("[compose logs command]", " ".join(logs_cmd_display))
+
     return result
 
 
@@ -220,32 +298,47 @@ def test_normal_startup_no_warnings_compose(tmp_path: pathlib.Path) -> None:
     base_dir = tmp_path / "normal_startup"
     base_dir.mkdir()
 
-    # Create test data directories with proper permissions
-    _create_test_data_dirs(base_dir)
+    project_name = "netalertx-normal"
 
-    # Make sure directories are writable by netalertx user
-    for dir_name in ["app_db", "app_config", "app_log", "app_api", "nginx_conf", "services_run"]:
-        dir_path = base_dir / "test_data" / dir_name
-        dir_path.chmod(0o777)  # Allow all users to write
+    # Create compose file mirroring production docker-compose.yml
+    compose_config = copy.deepcopy(COMPOSE_CONFIGS["normal_startup"])
+    service = compose_config["services"]["netalertx"]
 
-    # Create compose file
-    compose_config = COMPOSE_CONFIGS["normal_startup"].copy()
+    config_volume_name = f"{project_name}_config"
+    db_volume_name = f"{project_name}_db"
+
+    service["volumes"][0]["source"] = config_volume_name
+    service["volumes"][1]["source"] = db_volume_name
+
+    service.setdefault("environment", {})
+    service["environment"].update({
+        "PORT": "22111",
+        "GRAPHQL_PORT": "22112",
+    })
+
+    compose_config["volumes"] = {
+        config_volume_name: {},
+        db_volume_name: {},
+    }
+
     compose_file = base_dir / "docker-compose.yml"
     with open(compose_file, 'w') as f:
         yaml.dump(compose_config, f)
 
     # Run docker compose
-    result = _run_docker_compose(compose_file, "netalertx-normal")
+    result = _run_docker_compose(compose_file, project_name, detached=True)
 
-    # Check that expected warnings with pipe characters appear
-    # These are the typical warnings that appear in a "normal" startup
-    assert "⚠️  Warning: Excessive capabilities detected" in result.output
-    assert "⚠️  Warning: Container is running as read-write" in result.output
-    assert "═══" in result.output  # Box drawing characters in warnings
+    clean_output = ANSI_ESCAPE.sub("", result.output)
 
-    # Should not have critical permission errors (these indicate test setup issues)
-    assert "Write permission denied" not in result.output
-    assert "CRITICAL" in result.output  # CRITICAL messages are expected when permissions fail
+    # Check that startup completed without critical issues and mounts table shows success
+    assert "Startup pre-checks" in clean_output
+    assert "❌" not in clean_output
+    assert "/app/db                            |     ✅" in clean_output
+
+    # Ensure no critical errors or permission problems surfaced
+    assert "Write permission denied" not in clean_output
+    assert "CRITICAL" not in clean_output
+    assert "⚠️" not in clean_output
 
 
 def test_ram_disk_mount_analysis_compose(tmp_path: pathlib.Path) -> None:

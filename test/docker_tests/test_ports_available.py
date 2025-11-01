@@ -119,8 +119,8 @@ def _run_container(
         cmd.extend(["-v", mount])
 
     # Copy the script content and run it
-    script_path = "install/production-filesystem/entrypoint.d/99-ports-available.sh"
-    with open(script_path, 'r') as f:
+    script_path = pathlib.Path("install/production-filesystem/entrypoint.d/99-ports-available.sh")
+    with script_path.open('r', encoding='utf-8') as f:
         script_content = f.read()
 
     # Use printf to avoid shell interpretation issues
