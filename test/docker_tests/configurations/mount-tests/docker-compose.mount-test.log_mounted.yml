@@ -1,0 +1,52 @@
+# Expected outcome: Container starts successfully with proper log mount
+# - NETALERTX_LOG shows as mounted and writable
+# - No mount warnings since logs can be non-persistent
+# - Container starts normally with logging enabled
+services:
+  netalertx:
+    network_mode: host
+    build:
+      context: ../../../
+      dockerfile: Dockerfile
+    image: netalertx-test
+    container_name: netalertx-test-mount-log_mounted
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+      - NET_BIND_SERVICE
+    environment:
+      LISTEN_ADDR: 0.0.0.0
+      PORT: 9999  # Use non-default port to test all paths
+      APP_CONF_OVERRIDE: 20212
+      ALWAYS_FRESH_INSTALL: true
+      NETALERTX_DEBUG: 0
+      NETALERTX_LOG: /app/log
+
+    volumes:
+      - type: volume
+        source: netalertx_db
+        target: /app/db
+        read_only: false
+      - type: volume
+        source: netalertx_config
+        target: /app/config
+        read_only: false
+      - type: volume
+        source: test_netalertx_log
+        target: /app/log
+        read_only: false
+    tmpfs:
+      - "/app/api:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      - "/services/run:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      - "/services/config/nginx/conf.active:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+volumes:
+  netalertx_config:
+  netalertx_db:
+  test_netalertx_db:
+  test_netalertx_config:
+  test_netalertx_api:
+  test_netalertx_log:
+  test_system_services_run:
+  test_system_services_active_config:

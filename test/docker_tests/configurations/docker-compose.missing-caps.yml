@@ -1,0 +1,49 @@
+services:
+  netalertx:
+    # Missing capabilities configuration for testing
+    network_mode: ${NETALERTX_NETWORK_MODE:-host}
+    build:
+      context: ../../../
+      dockerfile: Dockerfile
+    image: netalertx-test
+    container_name: netalertx-test-missing-caps
+    read_only: true
+    cap_drop:
+      - ALL  # Drop all capabilities to test missing capabilities scenario
+
+    volumes:
+      - type: volume
+        source: netalertx_config
+        target: /app/config
+        read_only: false
+
+      - type: volume
+        source: netalertx_db
+        target: /app/db
+        read_only: false
+
+      - type: bind
+        source: /etc/localtime
+        target: /etc/localtime
+        read_only: true
+
+    environment:
+      LISTEN_ADDR: ${LISTEN_ADDR:-0.0.0.0}
+      PORT: ${PORT:-20211}
+      APP_CONF_OVERRIDE: ${GRAPHQL_PORT:-20212}
+      ALWAYS_FRESH_INSTALL: ${ALWAYS_FRESH_INSTALL:-false}
+      NETALERTX_DEBUG: ${NETALERTX_DEBUG:-0}
+
+    mem_limit: 2048m
+    mem_reservation: 1024m
+    cpu_shares: 512
+    pids_limit: 512
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  netalertx_config:
+  netalertx_db:

@@ -1,5 +1,5 @@
 #!/bin/sh
-# check-network-mode.sh - detect when the container is not using host networking.
+# detect when the container is not using host networking.
 
 # Exit if NETALERTX_DEBUG=1
 if [ "${NETALERTX_DEBUG}" = "1" ]; then
@@ -46,8 +46,8 @@ fi
 
 YELLOW=$(printf '\033[1;33m')
 RESET=$(printf '\033[0m')
->&2 printf "%s" "${YELLOW}"
->&2 cat <<EOF
+printf "%s" "${YELLOW}"
+cat <<EOF
 ══════════════════════════════════════════════════════════════════════════════
 ⚠️  ATTENTION: NetAlertX is not running with --network=host.
 
@@ -58,7 +58,9 @@ RESET=$(printf '\033[0m')
     Restart the container with:
         docker run --network=host --cap-add=NET_RAW --cap-add=NET_ADMIN --cap-add=NET_BIND_SERVICE
     or set "network_mode: host" in docker-compose.yml.
+
+    https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/network-mode.md
 ══════════════════════════════════════════════════════════════════════════════
 EOF
->&2 printf "%s" "${RESET}"
+printf "%s" "${RESET}"
 exit 0

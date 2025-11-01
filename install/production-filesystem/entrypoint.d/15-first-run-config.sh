@@ -11,7 +11,7 @@ if [ ! -f ${NETALERTX_CONFIG}/app.conf ]; then
         >&2 echo "ERROR: Failed to copy default config to ${NETALERTX_CONFIG}/app.conf"
         exit 2
     }
-    RESET='\033[0m'
+    RESET=$(printf '\033[0m')
     >&2 cat <<EOF
 ══════════════════════════════════════════════════════════════════════════════
 🆕  First run detected. Default configuration written to ${NETALERTX_CONFIG}/app.conf.

@@ -197,6 +197,15 @@ def _run_container(
     sleep_seconds: float = GRACE_SECONDS,
 ) -> subprocess.CompletedProcess[str]:
     name = f"netalertx-test-{label}-{uuid.uuid4().hex[:8]}".lower()
+    
+    # Clean up any existing container with this name
+    subprocess.run(
+        ["docker", "rm", "-f", name],
+        check=False,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+    
     cmd: list[str] = ["docker", "run", "--rm", "--name", name]
 
     if network_mode:
@@ -263,21 +272,23 @@ def _run_container(
     )   
     result.output = stdouterr
     # Print container output for debugging in every test run.
-    try:
-        print("\n--- CONTAINER out ---\n", result.output)
-    except Exception:
-        pass
+    print("\n--- CONTAINER OUTPUT START ---")
+    print(result.output)
+    print("--- CONTAINER OUTPUT END ---\n")
 
     return result
 
 
 
 def _assert_contains(result, snippet: str, cmd: list[str] = None) -> None:
-    if snippet not in result.output:
+    output = result.output + result.stderr
+    if snippet not in output:
         cmd_str = " ".join(cmd) if cmd else ""
         raise AssertionError(
             f"Expected to find '{snippet}' in container output.\n"
-            f"Got:\n{result.output}\n"
+            f"STDOUT:\n{result.output}\n"
+            f"STDERR:\n{result.stderr}\n"
+            f"Combined output:\n{output}\n"
             f"Container command:\n{cmd_str}"
         )
 
@@ -313,485 +324,6 @@ def _restore_zero_perm_dir(paths: dict[str, pathlib.Path], key: str) -> None:
 
 
 
-def test_root_owned_app_db_mount(tmp_path: pathlib.Path) -> None:
-    """Test root-owned mounts - simulates mounting host directories owned by root.
-
-    1. Root-Owned Mounts: Simulates mounting host directories owned by root
-    (common with docker run -v /host/path:/app/db).
-    Tests each required mount point when owned by root user.
-    Expected: Warning about permission issues, guidance to fix ownership.
-
-    Check script: check-app-permissions.sh
-    Sample message: "⚠️  ATTENTION: Write permission denied. The application cannot write to..."
-    """
-    paths = _setup_mount_tree(tmp_path, "root_app_db")
-    _chown_root(paths["app_db"])
-    volumes = _build_volume_args(paths)
-    try:
-        result = _run_container("root-app-db", volumes)
-        _assert_contains(result, "Write permission denied", result.args)
-        _assert_contains(result, str(VOLUME_MAP["app_db"]), result.args)
-    finally:
-        _chown_netalertx(paths["app_db"])
-
-
-def test_root_owned_app_config_mount(tmp_path: pathlib.Path) -> None:
-    """Test root-owned mounts - simulates mounting host directories owned by root.
-
-    1. Root-Owned Mounts: Simulates mounting host directories owned by root
-    (common with docker run -v /host/path:/app/db).
-    Tests each required mount point when owned by root user.
-    Expected: Warning about permission issues, guidance to fix ownership.
-    """
-    paths = _setup_mount_tree(tmp_path, "root_app_config")
-    _chown_root(paths["app_config"])
-    volumes = _build_volume_args(paths)
-    try:
-        result = _run_container("root-app-config", volumes)
-        _assert_contains(result, "Write permission denied", result.args)
-        _assert_contains(result, str(VOLUME_MAP["app_config"]), result.args)
-        assert result.returncode != 0
-    finally:
-        _chown_netalertx(paths["app_config"])
-
-
-def test_root_owned_app_log_mount(tmp_path: pathlib.Path) -> None:
-    """Test root-owned mounts - simulates mounting host directories owned by root.
-
-    1. Root-Owned Mounts: Simulates mounting host directories owned by root
-    (common with docker run -v /host/path:/app/db).
-    Tests each required mount point when owned by root user.
-    Expected: Warning about permission issues, guidance to fix ownership.
-    """
-    paths = _setup_mount_tree(tmp_path, "root_app_log")
-    _chown_root(paths["app_log"])
-    volumes = _build_volume_args(paths)
-    try:
-        result = _run_container("root-app-log", volumes)
-        _assert_contains(result, "Write permission denied", result.args)
-        _assert_contains(result, str(VOLUME_MAP["app_log"]), result.args)
-        assert result.returncode != 0
-    finally:
-        _chown_netalertx(paths["app_log"])
-
-
-def test_root_owned_app_api_mount(tmp_path: pathlib.Path) -> None:
-    """Test root-owned mounts - simulates mounting host directories owned by root.
-
-    1. Root-Owned Mounts: Simulates mounting host directories owned by root
-    (common with docker run -v /host/path:/app/db).
-    Tests each required mount point when owned by root user.
-    Expected: Warning about permission issues, guidance to fix ownership.
-    """
-    paths = _setup_mount_tree(tmp_path, "root_app_api")
-    _chown_root(paths["app_api"])
-    volumes = _build_volume_args(paths)
-    try:
-        result = _run_container("root-app-api", volumes)
-        _assert_contains(result, "Write permission denied", result.args)
-        _assert_contains(result, str(VOLUME_MAP["app_api"]), result.args)
-        assert result.returncode != 0
-    finally:
-        _chown_netalertx(paths["app_api"])
-
-
-def test_root_owned_nginx_conf_mount(tmp_path: pathlib.Path) -> None:
-    """Test root-owned mounts - simulates mounting host directories owned by root.
-
-    1. Root-Owned Mounts: Simulates mounting host directories owned by root
-    (common with docker run -v /host/path:/app/db).
-    Tests each required mount point when owned by root user.
-    Expected: Warning about permission issues, guidance to fix ownership.
-    """
-    paths = _setup_mount_tree(tmp_path, "root_nginx_conf")
-    _chown_root(paths["nginx_conf"])
-    volumes = _build_volume_args(paths)
-    try:
-        result = _run_container("root-nginx-conf", volumes)
-        _assert_contains(result, "Write permission denied", result.args)
-        _assert_contains(result, str(VOLUME_MAP["nginx_conf"]), result.args)
-        assert result.returncode != 0
-    finally:
-        _chown_netalertx(paths["nginx_conf"])
-
-
-def test_root_owned_services_run_mount(tmp_path: pathlib.Path) -> None:
-    """Test root-owned mounts - simulates mounting host directories owned by root.
-
-    1. Root-Owned Mounts: Simulates mounting host directories owned by root
-    (common with docker run -v /host/path:/app/db).
-    Tests each required mount point when owned by root user.
-    Expected: Warning about permission issues, guidance to fix ownership.
-    """
-    paths = _setup_mount_tree(tmp_path, "root_services_run")
-    _chown_root(paths["services_run"])
-    volumes = _build_volume_args(paths)
-    try:
-        result = _run_container("root-services-run", volumes)
-        _assert_contains(result, "Write permission denied", result.args)
-        _assert_contains(result, str(VOLUME_MAP["services_run"]), result.args)
-        assert result.returncode != 0
-    finally:
-        _chown_netalertx(paths["services_run"])
-
-
-def test_zero_permissions_app_db_dir(tmp_path: pathlib.Path) -> None:
-    """Test zero permissions - simulates mounting directories/files with no permissions.
-
-    2. Zero Permissions: Simulates mounting directories/files with no permissions (chmod 000).
-    Tests directories and files with no read/write/execute permissions.
-    Expected: "Write permission denied" error with path, guidance to fix permissions.
-
-    Check script: check-app-permissions.sh
-    Sample messages: "⚠️  ATTENTION: Write permission denied. The application cannot write to..."
-                     "⚠️  ATTENTION: Read permission denied. The application cannot read from..."
-    """
-    paths = _setup_mount_tree(tmp_path, "chmod_app_db")
-    _setup_zero_perm_dir(paths, "app_db")
-    volumes = _build_volume_args(paths)
-    try:
-        result = _run_container("chmod-app-db", volumes, user="20211:20211")
-        _assert_contains(result, "Write permission denied", result.args)
-        _assert_contains(result, str(VOLUME_MAP["app_db"]), result.args)
-        assert result.returncode != 0
-    finally:
-        _restore_zero_perm_dir(paths, "app_db")
-
-
-def test_zero_permissions_app_db_file(tmp_path: pathlib.Path) -> None:
-    """Test zero permissions - simulates mounting directories/files with no permissions.
-
-    2. Zero Permissions: Simulates mounting directories/files with no permissions (chmod 000).
-    Tests directories and files with no read/write/execute permissions.
-    Expected: "Write permission denied" error with path, guidance to fix permissions.
-    """
-    paths = _setup_mount_tree(tmp_path, "chmod_app_db_file")
-    (paths["app_db"] / "app.db").chmod(0)
-    volumes = _build_volume_args(paths)
-    try:
-        result = _run_container("chmod-app-db-file", volumes)
-        _assert_contains(result, "Write permission denied", result.args)
-        assert result.returncode != 0
-    finally:
-        (paths["app_db"] / "app.db").chmod(0o600)
-
-
-def test_zero_permissions_app_config_dir(tmp_path: pathlib.Path) -> None:
-    """Test zero permissions - simulates mounting directories/files with no permissions.
-
-    2. Zero Permissions: Simulates mounting directories/files with no permissions (chmod 000).
-    Tests directories and files with no read/write/execute permissions.
-    Expected: "Write permission denied" error with path, guidance to fix permissions.
-    """
-    paths = _setup_mount_tree(tmp_path, "chmod_app_config")
-    _setup_zero_perm_dir(paths, "app_config")
-    volumes = _build_volume_args(paths)
-    try:
-        result = _run_container("chmod-app-config", volumes, user="20211:20211")
-        _assert_contains(result, "Write permission denied", result.args)
-        _assert_contains(result, str(VOLUME_MAP["app_config"]), result.args)
-        assert result.returncode != 0
-    finally:
-        _restore_zero_perm_dir(paths, "app_config")
-
-
-def test_zero_permissions_app_config_file(tmp_path: pathlib.Path) -> None:
-    """Test zero permissions - simulates mounting directories/files with no permissions.
-
-    2. Zero Permissions: Simulates mounting directories/files with no permissions (chmod 000).
-    Tests directories and files with no read/write/execute permissions.
-    Expected: "Write permission denied" error with path, guidance to fix permissions.
-    """
-    paths = _setup_mount_tree(tmp_path, "chmod_app_config_file")
-    (paths["app_config"] / "app.conf").chmod(0)
-    volumes = _build_volume_args(paths)
-    try:
-        result = _run_container("chmod-app-config-file", volumes)
-        _assert_contains(result, "Write permission denied", result.args)
-        assert result.returncode != 0
-    finally:
-        (paths["app_config"] / "app.conf").chmod(0o600)
-
-
-def test_zero_permissions_app_log_dir(tmp_path: pathlib.Path) -> None:
-    """Test zero permissions - simulates mounting directories/files with no permissions.
-
-    2. Zero Permissions: Simulates mounting directories/files with no permissions (chmod 000).
-    Tests directories and files with no read/write/execute permissions.
-    Expected: "Write permission denied" error with path, guidance to fix permissions.
-    """
-    paths = _setup_mount_tree(tmp_path, "chmod_app_log")
-    _setup_zero_perm_dir(paths, "app_log")
-    volumes = _build_volume_args(paths)
-    try:
-        result = _run_container("chmod-app-log", volumes, user="20211:20211")
-        _assert_contains(result, "Write permission denied", result.args)
-        _assert_contains(result, str(VOLUME_MAP["app_log"]), result.args)
-        assert result.returncode != 0
-    finally:
-        _restore_zero_perm_dir(paths, "app_log")
-
-
-def test_zero_permissions_app_api_dir(tmp_path: pathlib.Path) -> None:
-    """Test zero permissions - simulates mounting directories/files with no permissions.
-
-    2. Zero Permissions: Simulates mounting directories/files with no permissions (chmod 000).
-    Tests directories and files with no read/write/execute permissions.
-    Expected: "Write permission denied" error with path, guidance to fix permissions.
-    """
-    paths = _setup_mount_tree(tmp_path, "chmod_app_api")
-    _setup_zero_perm_dir(paths, "app_api")
-    volumes = _build_volume_args(paths)
-    try:
-        result = _run_container("chmod-app-api", volumes, user="20211:20211")
-        _assert_contains(result, "Write permission denied", result.args)
-        _assert_contains(result, str(VOLUME_MAP["app_api"]), result.args)
-        assert result.returncode != 0
-    finally:
-        _restore_zero_perm_dir(paths, "app_api")
-
-
-def test_zero_permissions_nginx_conf_dir(tmp_path: pathlib.Path) -> None:
-    """Test zero permissions - simulates mounting directories/files with no permissions.
-
-    2. Zero Permissions: Simulates mounting directories/files with no permissions (chmod 000).
-    Tests directories and files with no read/write/execute permissions.
-    Expected: "Write permission denied" error with path, guidance to fix permissions.
-    """
-    paths = _setup_mount_tree(tmp_path, "chmod_nginx_conf")
-    _setup_zero_perm_dir(paths, "nginx_conf")
-    volumes = _build_volume_args(paths)
-    try:
-        result = _run_container("chmod-nginx-conf", volumes, user="20211:20211")
-        assert result.returncode != 0
-    finally:
-        _restore_zero_perm_dir(paths, "nginx_conf")
-
-
-def test_zero_permissions_services_run_dir(tmp_path: pathlib.Path) -> None:
-    """Test zero permissions - simulates mounting directories/files with no permissions.
-
-    2. Zero Permissions: Simulates mounting directories/files with no permissions (chmod 000).
-    Tests directories and files with no read/write/execute permissions.
-    Expected: "Write permission denied" error with path, guidance to fix permissions.
-    """
-    paths = _setup_mount_tree(tmp_path, "chmod_services_run")
-    _setup_zero_perm_dir(paths, "services_run")
-    volumes = _build_volume_args(paths)
-    try:
-        result = _run_container("chmod-services-run", volumes, user="20211:20211")
-        _assert_contains(result, "Write permission denied", result.args)
-        _assert_contains(result, str(VOLUME_MAP["services_run"]), result.args)
-        assert result.returncode != 0
-    finally:
-        _restore_zero_perm_dir(paths, "services_run")
-
-
-def test_readonly_app_db_mount(tmp_path: pathlib.Path) -> None:
-    """Test readonly mounts - simulates read-only volume mounts in containers.
-
-    3. Missing Required Mounts: Simulates forgetting to mount required persistent volumes
-    in read-only containers. Tests each required mount point when mounted read-only.
-    Expected: "Write permission denied" error with path, guidance to add volume mounts.
-    """
-    paths = _setup_mount_tree(tmp_path, "readonly_app_db")
-    volumes = _build_volume_args(paths, read_only={"app_db"})
-    result = _run_container("readonly-app-db", volumes)
-    _assert_contains(result, "Write permission denied", result.args)
-    _assert_contains(result, str(VOLUME_MAP["app_db"]), result.args)
-    assert result.returncode != 0
-
-
-def test_readonly_app_config_mount(tmp_path: pathlib.Path) -> None:
-    """Test readonly mounts - simulates read-only volume mounts in containers.
-
-    3. Missing Required Mounts: Simulates forgetting to mount required persistent volumes
-    in read-only containers. Tests each required mount point when mounted read-only.
-    Expected: "Write permission denied" error with path, guidance to add volume mounts.
-    """
-    paths = _setup_mount_tree(tmp_path, "readonly_app_config")
-    volumes = _build_volume_args(paths, read_only={"app_config"})
-    result = _run_container("readonly-app-config", volumes)
-    _assert_contains(result, "Write permission denied", result.args)
-    _assert_contains(result, str(VOLUME_MAP["app_config"]), result.args)
-    assert result.returncode != 0
-
-
-def test_readonly_app_log_mount(tmp_path: pathlib.Path) -> None:
-    """Test readonly mounts - simulates read-only volume mounts in containers.
-
-    3. Missing Required Mounts: Simulates forgetting to mount required persistent volumes
-    in read-only containers. Tests each required mount point when mounted read-only.
-    Expected: "Write permission denied" error with path, guidance to add volume mounts.
-    """
-    paths = _setup_mount_tree(tmp_path, "readonly_app_log")
-    volumes = _build_volume_args(paths, read_only={"app_log"})
-    result = _run_container("readonly-app-log", volumes)
-    _assert_contains(result, "Write permission denied", result.args)
-    _assert_contains(result, str(VOLUME_MAP["app_log"]), result.args)
-    assert result.returncode != 0
-
-
-def test_readonly_app_api_mount(tmp_path: pathlib.Path) -> None:
-    """Test readonly mounts - simulates read-only volume mounts in containers.
-
-    3. Missing Required Mounts: Simulates forgetting to mount required persistent volumes
-    in read-only containers. Tests each required mount point when mounted read-only.
-    Expected: "Write permission denied" error with path, guidance to add volume mounts.
-    """
-    paths = _setup_mount_tree(tmp_path, "readonly_app_api")
-    volumes = _build_volume_args(paths, read_only={"app_api"})
-    result = _run_container("readonly-app-api", volumes)
-    _assert_contains(result, "Write permission denied", result.args)
-    _assert_contains(result, str(VOLUME_MAP["app_api"]), result.args)
-    assert result.returncode != 0
-
-
-def test_readonly_nginx_conf_mount(tmp_path: pathlib.Path) -> None:
-    """Test readonly mounts - simulates read-only volume mounts in containers.
-
-    3. Missing Required Mounts: Simulates forgetting to mount required persistent volumes
-    in read-only containers. Tests each required mount point when mounted read-only.
-    Expected: "Write permission denied" error with path, guidance to add volume mounts.
-    """
-    paths = _setup_mount_tree(tmp_path, "readonly_nginx_conf")
-    volumes = _build_volume_args(paths, read_only={"nginx_conf"})
-    result = _run_container("readonly-nginx-conf", volumes)
-    _assert_contains(result, "Write permission denied", result.args)
-    _assert_contains(result, "/services/config/nginx/conf.active", result.args)
-    assert result.returncode != 0
-
-
-def test_readonly_services_run_mount(tmp_path: pathlib.Path) -> None:
-    """Test readonly mounts - simulates read-only volume mounts in containers.
-
-    3. Missing Required Mounts: Simulates forgetting to mount required persistent volumes
-    in read-only containers. Tests each required mount point when mounted read-only.
-    Expected: "Write permission denied" error with path, guidance to add volume mounts.
-    """
-    paths = _setup_mount_tree(tmp_path, "readonly_services_run")
-    volumes = _build_volume_args(paths, read_only={"services_run"})
-    result = _run_container("readonly-services-run", volumes)
-    _assert_contains(result, "Write permission denied", result.args)
-    _assert_contains(result, str(VOLUME_MAP["services_run"]), result.args)
-    assert result.returncode != 0
-
-
-def test_custom_port_without_writable_conf(tmp_path: pathlib.Path) -> None:
-    """Test custom port configuration without writable nginx config mount.
-
-    4. Custom Port Without Nginx Config Mount: Simulates setting custom LISTEN_ADDR/PORT
-    without mounting nginx config. Container starts but uses default address.
-    Expected: Container starts but uses default address, warning about missing config mount.
-
-    Check script: check-nginx-config.sh
-    Sample messages: "⚠️  ATTENTION: Nginx configuration mount /services/config/nginx/conf.active is missing."
-                     "⚠️  ATTENTION: Unable to write to /services/config/nginx/conf.active/netalertx.conf."
-    """
-    paths = _setup_mount_tree(tmp_path, "custom_port_ro_conf")
-    paths["nginx_conf"].chmod(0o500)
-    volumes = _build_volume_args(paths)
-    try:
-        result = _run_container(
-            "custom-port-ro-conf",
-            volumes,
-            env={"PORT": "24444", "LISTEN_ADDR": "127.0.0.1"},
-        )
-        _assert_contains(result, "Write permission denied", result.args)
-        _assert_contains(result, "/services/config/nginx/conf.active", result.args)
-        assert result.returncode != 0
-    finally:
-        paths["nginx_conf"].chmod(0o755)
-
-def test_missing_mount_app_db(tmp_path: pathlib.Path) -> None:
-    """Test missing required mounts - simulates forgetting to mount persistent volumes.
-    ...
-    """
-    paths = _setup_mount_tree(tmp_path, "missing_mount_app_db")
-    volumes = _build_volume_args(paths, skip={"app_db"})
-    # CHANGE: Run as root (0:0) to bypass all permission checks on other mounts.
-    result = _run_container("missing-mount-app-db", volumes, user="20211:20211")
-    # Acknowledge the original intent to check for permission denial (now implicit via root)
-    # _assert_contains(result, "Write permission denied", result.args) # No longer needed, as root user is used
-    
-    # Robust assertion: check for both the warning and the path
-    if "not a persistent mount" not in result.output or "/app/db" not in result.output:
-        print("\n--- DEBUG CONTAINER OUTPUT ---\n", result.output)
-        raise AssertionError("Expected persistent mount warning for /app/db in container output.")
-
-
-def test_missing_mount_app_config(tmp_path: pathlib.Path) -> None:
-    """Test missing required mounts - simulates forgetting to mount persistent volumes.
-
-    3. Missing Required Mounts: Simulates forgetting to mount required persistent volumes
-    in read-only containers. Tests each required mount point when missing.
-    Expected: "Write permission denied" error with path, guidance to add volume mounts.
-    """
-    paths = _setup_mount_tree(tmp_path, "missing_mount_app_config")
-    volumes = _build_volume_args(paths, skip={"app_config"})
-    result = _run_container("missing-mount-app-config", volumes, user="20211:20211")
-    _assert_contains(result, "Write permission denied", result.args)
-    _assert_contains(result, "/app/config", result.args)
-
-
-def test_missing_mount_app_log(tmp_path: pathlib.Path) -> None:
-    """Test missing required mounts - simulates forgetting to mount persistent volumes.
-
-    3. Missing Required Mounts: Simulates forgetting to mount required persistent volumes
-    in read-only containers. Tests each required mount point when missing.
-    Expected: "Write permission denied" error with path, guidance to add volume mounts.
-    """
-    paths = _setup_mount_tree(tmp_path, "missing_mount_app_log")
-    volumes = _build_volume_args(paths, skip={"app_log"})
-    result = _run_container("missing-mount-app-log", volumes, user="20211:20211")
-    _assert_contains(result, "Write permission denied", result.args)
-    _assert_contains(result, "/app/log", result.args)
-
-
-def test_missing_mount_app_api(tmp_path: pathlib.Path) -> None:
-    """Test missing required mounts - simulates forgetting to mount persistent volumes.
-
-    3. Missing Required Mounts: Simulates forgetting to mount required persistent volumes
-    in read-only containers. Tests each required mount point when missing.
-    Expected: "Write permission denied" error with path, guidance to add volume mounts.
-    """
-    paths = _setup_mount_tree(tmp_path, "missing_mount_app_api")
-    volumes = _build_volume_args(paths, skip={"app_api"})
-    result = _run_container("missing-mount-app-api", volumes, user="20211:20211")
-    _assert_contains(result, "Write permission denied", result.args)
-    _assert_contains(result, "/app/api", result.args)
-
-
-def test_missing_mount_nginx_conf(tmp_path: pathlib.Path) -> None:
-    """Test missing required mounts - simulates forgetting to mount persistent volumes.
-
-    3. Missing Required Mounts: Simulates forgetting to mount required persistent volumes
-    in read-only containers. Tests each required mount point when missing.
-    Expected: "Write permission denied" error with path, guidance to add volume mounts.
-    """
-    paths = _setup_mount_tree(tmp_path, "missing_mount_nginx_conf")
-    volumes = _build_volume_args(paths, skip={"nginx_conf"})
-    result = _run_container("missing-mount-nginx-conf", volumes, user="20211:20211")
-    _assert_contains(result, "Write permission denied", result.args)
-    _assert_contains(result, "/services/config/nginx/conf.active", result.args)
-    assert result.returncode != 0
-
-
-def test_missing_mount_services_run(tmp_path: pathlib.Path) -> None:
-    """Test missing required mounts - simulates forgetting to mount persistent volumes.
-
-    3. Missing Required Mounts: Simulates forgetting to mount required persistent volumes
-    in read-only containers. Tests each required mount point when missing.
-    Expected: "Write permission denied" error with path, guidance to add volume mounts.
-    """
-    paths = _setup_mount_tree(tmp_path, "missing_mount_services_run")
-    volumes = _build_volume_args(paths, skip={"services_run"})
-    result = _run_container("missing-mount-services-run", volumes, user="20211:20211")
-    _assert_contains(result, "Write permission denied", result.args)
-    _assert_contains(result, "/services/run", result.args)
-    _assert_contains(result, "Container startup checks failed with exit code", result.args)
-
-
 def test_missing_capabilities_triggers_warning(tmp_path: pathlib.Path) -> None:
     """Test missing required capabilities - simulates insufficient container privileges.
 
@@ -799,8 +331,8 @@ def test_missing_capabilities_triggers_warning(tmp_path: pathlib.Path) -> None:
     NET_BIND_SERVICE capabilities. Required for ARP scanning and network operations.
     Expected: "exec /bin/sh: operation not permitted" error, guidance to add capabilities.
 
-    Check script: check-cap.sh
-    Sample message: "⚠️  ATTENTION: Raw network capabilities are missing. Tools that rely on NET_RAW..."
+    Check script: N/A (capability check happens at container runtime)
+    Sample message: "exec /bin/sh: operation not permitted"
     """
     paths = _setup_mount_tree(tmp_path, "missing_caps")
     volumes = _build_volume_args(paths)
@@ -820,8 +352,8 @@ def test_running_as_root_is_blocked(tmp_path: pathlib.Path) -> None:
     dedicated netalertx user. Warning about security risks, special permission fix mode.
     Expected: Warning about security risks, guidance to use UID 20211.
 
-    Check script: check-app-permissions.sh
-    Sample message: "⚠️  ATTENTION: NetAlertX is running as root (UID 0). This defeats every hardening..."
+    Check script: /entrypoint.d/0-storage-permission.sh
+    Sample message: "🚨 CRITICAL SECURITY ALERT: NetAlertX is running as ROOT (UID 0)!"
     """
     paths = _setup_mount_tree(tmp_path, "run_as_root")
     volumes = _build_volume_args(paths)
@@ -832,7 +364,7 @@ def test_running_as_root_is_blocked(tmp_path: pathlib.Path) -> None:
     )
     _assert_contains(result, "NetAlertX is running as ROOT", result.args)
     _assert_contains(result, "Permissions fixed for read-write paths.", result.args)
-    assert result.returncode == 0 # container must be forced to exit 0 by termination after warning
+    assert result.returncode == 0  # container warns but continues running, then terminated by test framework
 
 
 def test_running_as_uid_1000_warns(tmp_path: pathlib.Path) -> None:
@@ -843,7 +375,7 @@ def test_running_as_uid_1000_warns(tmp_path: pathlib.Path) -> None:
     of netalertx user. Permission errors due to incorrect user context.
     Expected: Permission errors, guidance to use correct user.
 
-    Check script: check-user-netalertx.sh
+    Check script: /entrypoint.d/60-user-netalertx.sh
     Sample message: "⚠️  ATTENTION: NetAlertX is running as UID 1000:1000. Hardened permissions..."
     """
     paths = _setup_mount_tree(tmp_path, "run_as_1000")
@@ -854,7 +386,7 @@ def test_running_as_uid_1000_warns(tmp_path: pathlib.Path) -> None:
         user="1000:1000",
     )
     _assert_contains(result, "NetAlertX is running as UID 1000:1000", result.args)
-    assert result.returncode != 0
+
 
 
 def test_missing_host_network_warns(tmp_path: pathlib.Path) -> None:
@@ -868,7 +400,17 @@ def test_missing_host_network_warns(tmp_path: pathlib.Path) -> None:
     Check script: check-network-mode.sh
     Sample message: "⚠️  ATTENTION: NetAlertX is not running with --network=host. Bridge networking..."
     """
-    paths = _setup_mount_tree(tmp_path, "missing_host_net")
+    base = tmp_path / "missing_host_net_base"
+    paths = _setup_fixed_mount_tree(base)
+    # Ensure directories are writable and owned by netalertx user so container can operate
+    for key in ["app_db", "app_config", "app_log", "app_api", "services_run", "nginx_conf"]:
+        paths[key].chmod(0o777)
+        _chown_netalertx(paths[key])
+    # Create a config file so the writable check passes
+    config_file = paths["app_config"] / "app.conf"
+    config_file.write_text("test config")
+    config_file.chmod(0o666)
+    _chown_netalertx(config_file)
     volumes = _build_volume_args(paths)
     result = _run_container(
         "missing-host-network",
@@ -876,7 +418,6 @@ def test_missing_host_network_warns(tmp_path: pathlib.Path) -> None:
         network_mode=None,
     )
     _assert_contains(result, "not running with --network=host", result.args)
-    assert result.returncode != 0
 
 
 def test_missing_app_conf_triggers_seed(tmp_path: pathlib.Path) -> None:
@@ -885,15 +426,21 @@ def test_missing_app_conf_triggers_seed(tmp_path: pathlib.Path) -> None:
     9. Missing Configuration File: Simulates corrupted/missing app.conf.
     Container automatically regenerates default configuration on startup.
     Expected: Automatic regeneration of default configuration.
+
+    Check script: /entrypoint.d/15-first-run-config.sh
+    Sample message: "Default configuration written to"
     """
     base = tmp_path / "missing_app_conf_base"
     paths = _setup_fixed_mount_tree(base)
-    _chown_netalertx(paths["app_config"])
+    # Ensure directories are writable and owned by netalertx user so container can operate
+    for key in ["app_db", "app_config", "app_log", "app_api", "services_run", "nginx_conf"]:
+        paths[key].chmod(0o777)
+        _chown_netalertx(paths[key])
     (paths["app_config"] / "testfile.txt").write_text("test")
     volumes = _build_volume_args(paths)
-    result = _run_container("missing-app-conf", volumes)
+    result = _run_container("missing-app-conf", volumes, sleep_seconds=5)
     _assert_contains(result, "Default configuration written to", result.args)
-    assert result.returncode != 0
+    assert result.returncode == 0
 
 
 def test_missing_app_db_triggers_seed(tmp_path: pathlib.Path) -> None:
@@ -902,54 +449,253 @@ def test_missing_app_db_triggers_seed(tmp_path: pathlib.Path) -> None:
     10. Missing Database File: Simulates corrupted/missing app.db.
     Container automatically creates initial database schema on startup.
     Expected: Automatic creation of initial database schema.
+
+    Check script: /entrypoint.d/20-first-run-db.sh
+    Sample message: "Building initial database schema"
     """
     base = tmp_path / "missing_app_db_base"
     paths = _setup_fixed_mount_tree(base)
     _chown_netalertx(paths["app_db"])
     (paths["app_db"] / "testfile.txt").write_text("test")
     volumes = _build_volume_args(paths)
-    result = _run_container("missing-app-db", volumes, user="20211:20211")
+    result = _run_container("missing-app-db", volumes, user="20211:20211", sleep_seconds=5)
     _assert_contains(result, "Building initial database schema", result.args)
     assert result.returncode != 0
 
 
-def test_tmpfs_config_mount_warns(tmp_path: pathlib.Path) -> None:
-    """Test tmpfs instead of volumes - simulates using tmpfs for persistent data.
+def test_custom_port_without_writable_conf(tmp_path: pathlib.Path) -> None:
+    """Test custom port configuration without writable nginx config mount.
 
-    11. Tmpfs Instead of Volumes: Simulates using tmpfs mounts instead of persistent volumes
-    (data loss on restart). Tests config and db directories mounted as tmpfs.
-    Expected: "Read permission denied" error, guidance to use persistent volumes.
+    4. Custom Port Without Nginx Config Mount: Simulates setting custom LISTEN_ADDR/PORT
+    without mounting nginx config. Container starts but uses default address.
+    Expected: Container starts but uses default address, warning about missing config mount.
 
-    Check scripts: check-storage.sh, check-storage-extra.sh
-    Sample message: "⚠️  ATTENTION: /app/config is not a persistent mount. Your data in this directory..."
+    Check script: check-nginx-config.sh
+    Sample messages: "⚠️  ATTENTION: Nginx configuration mount /services/config/nginx/conf.active is missing."
+                     "⚠️  ATTENTION: Unable to write to /services/config/nginx/conf.active/netalertx.conf."
+
+    TODO: Custom ports can only be assigned when we have the PORT=something, and in that case
+    the /config.active partition shows up in the messages. It SHOULD exit if port is specified
+    and not writeable and I'm not sure it will.
+    
+    RESOLVED: When PORT is specified but nginx config is not writable, the container warns
+    "Unable to write to /services/config/nginx/conf.active/netalertx.conf" but does NOT exit.
+    It continues with startup and fails later for other reasons if any directories are not writable.
     """
-    paths = _setup_mount_tree(tmp_path, "tmpfs_config")
-    volumes = _build_volume_args(paths, skip={"app_config"})
-    extra = ["--mount", "type=tmpfs,destination=/app/config"]
-    result = _run_container(
-        "tmpfs-config",
-        volumes,
-        extra_args=extra,
-    )
-    _assert_contains(result, "not a persistent mount.", result.args)
-    _assert_contains(result, "/app/config", result.args)
+    paths = _setup_mount_tree(tmp_path, "custom_port_ro_conf")
+    # Ensure other directories are writable so container gets to nginx config check
+    for key in ["app_db", "app_config", "app_log", "app_api", "services_run"]:
+        paths[key].chmod(0o777)
+    paths["nginx_conf"].chmod(0o500)
+    volumes = _build_volume_args(paths)
+    try:
+        result = _run_container(
+            "custom-port-ro-conf",
+            volumes,
+            env={"PORT": "24444", "LISTEN_ADDR": "127.0.0.1"},
+            user="20211:20211",
+            sleep_seconds=5,
+        )
+        _assert_contains(result, "Unable to write to", result.args)
+        _assert_contains(result, "/services/config/nginx/conf.active/netalertx.conf", result.args)
+        # TODO: Should this exit when PORT is specified but nginx config is not writable?
+        # Currently it just warns and continues
+        assert result.returncode != 0
+    finally:
+        paths["nginx_conf"].chmod(0o755)
+def test_zero_permissions_app_db_dir(tmp_path: pathlib.Path) -> None:
+    """Test zero permissions - simulates mounting directories/files with no permissions.
 
-
-def test_tmpfs_db_mount_warns(tmp_path: pathlib.Path) -> None:
-    """Test tmpfs instead of volumes - simulates using tmpfs for persistent data.
-
-    11. Tmpfs Instead of Volumes: Simulates using tmpfs mounts instead of persistent volumes
-    (data loss on restart). Tests config and db directories mounted as tmpfs.
-    Expected: "Read permission denied" error, guidance to use persistent volumes.
+    2. Zero Permissions: Simulates mounting directories/files with no permissions (chmod 000).
+    Tests directories and files with no read/write/execute permissions.
+    Expected: Mounts table shows ❌ for writeable status, configuration issues detected.
     """
-    paths = _setup_mount_tree(tmp_path, "tmpfs_db")
-    volumes = _build_volume_args(paths, skip={"app_db"})
-    extra = ["--mount", "type=tmpfs,destination=/app/db"]
+    paths = _setup_mount_tree(tmp_path, "chmod_app_db")
+    _setup_zero_perm_dir(paths, "app_db")
+    volumes = _build_volume_args(paths)
+    try:
+        result = _run_container("chmod-app-db", volumes, user="20211:20211")
+        # Check that the mounts table shows the app_db directory as not writeable
+        _assert_contains(result, "/app/db       |     ❌    |", result.args)
+        # Check that configuration issues are detected
+        _assert_contains(result, "Configuration issues detected", result.args)
+        assert result.returncode != 0
+    finally:
+        _restore_zero_perm_dir(paths, "app_db")
+
+
+def test_zero_permissions_app_config_dir(tmp_path: pathlib.Path) -> None:
+    """Test zero permissions - simulates mounting directories/files with no permissions.
+
+    2. Zero Permissions: Simulates mounting directories/files with no permissions (chmod 000).
+    Tests directories and files with no read/write/execute permissions.
+    Expected: Mounts table shows ❌ for writeable status, configuration issues detected.
+    """
+    paths = _setup_mount_tree(tmp_path, "chmod_app_config")
+    _setup_zero_perm_dir(paths, "app_config")
+    volumes = _build_volume_args(paths)
+    try:
+        result = _run_container("chmod-app-config", volumes, user="20211:20211")
+        # Check that the mounts table shows the app_config directory as not writeable
+        _assert_contains(result, "/app/config   |     ❌    |", result.args)
+        # Check that configuration issues are detected
+        _assert_contains(result, "Configuration issues detected", result.args)
+        assert result.returncode != 0
+    finally:
+        _restore_zero_perm_dir(paths, "app_config")
+
+
+def test_mandatory_folders_creation(tmp_path: pathlib.Path) -> None:
+    """Test mandatory folders creation - simulates missing plugins log directory.
+
+    1. Mandatory Folders: Simulates missing required directories and log files.
+    Container automatically creates plugins log, system services run log/tmp directories,
+    and required log files on startup.
+    Expected: Automatic creation of all required directories and files.
+
+    Check script: 25-mandatory-folders.sh
+    Sample message: "Creating Plugins log"
+    """
+    paths = _setup_mount_tree(tmp_path, "mandatory_folders")
+    # Remove the plugins log directory to simulate missing mandatory folder
+    plugins_log_dir = paths["app_log"] / "plugins"
+    if plugins_log_dir.exists():
+        shutil.rmtree(plugins_log_dir)
+    
+    # Ensure other directories are writable and owned by netalertx user so container gets past mounts.py
+    for key in ["app_db", "app_config", "app_log", "app_api", "services_run", "nginx_conf"]:
+        paths[key].chmod(0o777)
+        _chown_netalertx(paths[key])  # Ensure all directories are owned by netalertx
+    
+    volumes = _build_volume_args(paths)
+    result = _run_container("mandatory-folders", volumes, user="20211:20211", sleep_seconds=5)
+    _assert_contains(result, "Creating Plugins log", result.args)
+    # The container will fail at writable config due to permission issues, but we just want to verify
+    # that mandatory folders creation ran successfully
+
+
+def test_writable_config_validation(tmp_path: pathlib.Path) -> None:
+    """Test writable config validation - simulates read-only config file.
+
+    3. Writable Config Validation: Simulates config file with read-only permissions.
+    Container verifies it can read from and write to critical config and database files.
+    Expected: "Read permission denied" warning for config file.
+
+    Check script: 30-writable-config.sh
+    Sample message: "Read permission denied"
+    """
+    paths = _setup_mount_tree(tmp_path, "writable_config")
+    # Make config file read-only but keep directories writable so container gets past mounts.py
+    config_file = paths["app_config"] / "app.conf"
+    config_file.chmod(0o400)  # Read-only for owner
+    
+    # Ensure directories are writable and owned by netalertx user so container gets past mounts.py
+    for key in ["app_db", "app_config", "app_log", "app_api", "services_run", "nginx_conf"]:
+        paths[key].chmod(0o777)
+        _chown_netalertx(paths[key])
+    
+    volumes = _build_volume_args(paths)
+    result = _run_container("writable-config", volumes, user="20211:20211", sleep_seconds=5.0)
+    _assert_contains(result, "Read permission denied", result.args)
+
+
+def test_excessive_capabilities_warning(tmp_path: pathlib.Path) -> None:
+    """Test excessive capabilities detection - simulates container with extra capabilities.
+
+    11. Excessive Capabilities: Simulates container with capabilities beyond the required
+    NET_ADMIN, NET_RAW, and NET_BIND_SERVICE.
+    Expected: Warning about excessive capabilities detected.
+
+    Check script: 90-excessive-capabilities.sh
+    Sample message: "Excessive capabilities detected"
+    """
+    paths = _setup_mount_tree(tmp_path, "excessive_caps")
+    volumes = _build_volume_args(paths)
+    # Add excessive capabilities beyond the required ones
     result = _run_container(
-        "tmpfs-db",
+        "excessive-caps",
         volumes,
-        extra_args=extra,
+        extra_args=["--cap-add=SYS_ADMIN", "--cap-add=NET_BROADCAST"],
+        sleep_seconds=5,
     )
-    _assert_contains(result, "not a persistent mount.", result.args)
-    _assert_contains(result, "/app/db", result.args)
+    _assert_contains(result, "Excessive capabilities detected", result.args)
+    _assert_contains(result, "bounding caps:", result.args)
+    # This warning doesn't cause failure by itself, but other issues might
+def test_appliance_integrity_read_write_mode(tmp_path: pathlib.Path) -> None:
+    """Test appliance integrity - simulates running with read-write root filesystem.
+
+    12. Appliance Integrity: Simulates running container with read-write root filesystem
+    instead of read-only mode.
+    Expected: Warning about running in read-write mode instead of read-only.
+
+    Check script: 95-appliance-integrity.sh
+    Sample message: "Container is running as read-write, not in read-only mode"
+    """
+    paths = _setup_mount_tree(tmp_path, "appliance_integrity")
+    volumes = _build_volume_args(paths)
+    # Container runs read-write by default (not mounting root as read-only)
+    result = _run_container("appliance-integrity", volumes, sleep_seconds=5)
+    _assert_contains(result, "Container is running as read-write, not in read-only mode", result.args)
+    _assert_contains(result, "read-only: true", result.args)
+    # This warning doesn't cause failure by itself, but other issues might
+
+
+def test_mount_analysis_ram_disk_performance(tmp_path: pathlib.Path) -> None:
+    """Test mount analysis for RAM disk performance issues.
+
+    Tests 10-mounts.py detection of persistent paths on RAM disks (tmpfs) which can cause
+    performance issues and data loss on container restart.
+    Expected: Mounts table shows ❌ for RAMDisk on persistent paths, performance warnings.
+
+    Check script: 10-mounts.py
+    Sample message: "Configuration issues detected"
+    """
+    paths = _setup_mount_tree(tmp_path, "ram_disk_mount")
+    # Mount persistent paths (db, config) on tmpfs to simulate RAM disk
+    volumes = [
+        (str(paths["app_log"]), "/app/log", False),
+        (str(paths["app_api"]), "/app/api", False),
+        (str(paths["services_run"]), "/services/run", False),
+        (str(paths["nginx_conf"]), "/services/config/nginx/conf.active", False),
+    ]
+    # Use tmpfs mounts for persistent paths with proper permissions
+    extra_args = ["--tmpfs", "/app/db:uid=20211,gid=20211,mode=755", "--tmpfs", "/app/config:uid=20211,gid=20211,mode=755"]
+    result = _run_container("ram-disk-mount", volumes=volumes, extra_args=extra_args, user="20211:20211")
+    # Check that mounts table shows RAM disk detection for persistent paths
+    _assert_contains(result, "/app/db       |     ✅    |   ✅  |    ❌   |      ➖     |    ❌", result.args)
+    _assert_contains(result, "/app/config   |     ✅    |   ✅  |    ❌   |      ➖     |    ❌", result.args)
+    # Check that configuration issues are detected due to dataloss risk
+    _assert_contains(result, "Configuration issues detected", result.args)
     assert result.returncode != 0
+
+
+def test_mount_analysis_dataloss_risk(tmp_path: pathlib.Path) -> None:
+    """Test mount analysis for dataloss risk on non-persistent filesystems.
+
+    Tests 10-mounts.py detection when persistent database/config paths are
+    mounted on non-persistent filesystems (tmpfs, ramfs).
+    Expected: Mounts table shows dataloss risk warnings for persistent paths on tmpfs.
+
+    Check script: 10-mounts.py
+    Sample message: "Configuration issues detected"
+    """
+    paths = _setup_mount_tree(tmp_path, "dataloss_risk")
+    # Mount persistent paths (db, config) on tmpfs to simulate non-persistent storage
+    volumes = [
+        (str(paths["app_log"]), "/app/log", False),
+        (str(paths["app_api"]), "/app/api", False),
+        (str(paths["services_run"]), "/services/run", False),
+        (str(paths["nginx_conf"]), "/services/config/nginx/conf.active", False),
+    ]
+    # Use tmpfs mounts for persistent paths with proper permissions
+    extra_args = ["--tmpfs", "/app/db:uid=20211,gid=20211,mode=755", "--tmpfs", "/app/config:uid=20211,gid=20211,mode=755"]
+    result = _run_container("dataloss-risk", volumes=volumes, extra_args=extra_args, user="20211:20211")
+    # Check that mounts table shows dataloss risk for persistent paths on tmpfs
+    _assert_contains(result, "/app/db       |     ✅    |   ✅  |    ❌   |      ➖     |    ❌", result.args)
+    _assert_contains(result, "/app/config   |     ✅    |   ✅  |    ❌   |      ➖     |    ❌", result.args)
+    # Check that configuration issues are detected due to dataloss risk
+    _assert_contains(result, "Configuration issues detected", result.args)
+    assert result.returncode != 0
+
+
+

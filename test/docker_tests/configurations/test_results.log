@@ -1,0 +1,1004 @@
+Starting Docker Compose Tests - Fri Oct 31 22:34:52 UTC 2025
+==========================================
+File: docker-compose.missing-caps.yml
+----------------------------------------
+
+Testing: docker-compose.missing-caps.yml
+Directory: /workspaces/NetAlertX/test/docker_tests/configurations
+
+Running docker-compose up...
+Attaching to netalertx-test-missing-caps
+[Knetalertx-test-missing-caps exited with code 255
+
+==========================================
+
+File: docker-compose.readonly.yml
+----------------------------------------
+
+Testing: docker-compose.readonly.yml
+Directory: /workspaces/NetAlertX/test/docker_tests/configurations
+
+Running docker-compose up...
+Attaching to netalertx-test-readonly
+netalertx-test-readonly  | [1;31m
+netalertx-test-readonly  |  _   _      _    ___  _           _  __   __
+netalertx-test-readonly  | | \ | |    | |  / _ \| |         | | \ \ / /
+netalertx-test-readonly  | |  \| | ___| |_/ /_\ \ | ___ _ __| |_ \ V / 
+netalertx-test-readonly  | | .   |/ _ \ __|  _  | |/ _ \  __| __|/   \ 
+netalertx-test-readonly  | | |\  |  __/ |_| | | | |  __/ |  | |_/ /^\ \ 
+netalertx-test-readonly  | \_| \_/\___|\__\_| |_/_|\___|_|   \__\/   \/
+netalertx-test-readonly  | 
+netalertx-test-readonly  | [0m   Network intruder and presence detector. 
+netalertx-test-readonly  |    https://netalertx.com
+netalertx-test-readonly  | 
+netalertx-test-readonly  | 
+netalertx-test-readonly  | Startup pre-checks
+netalertx-test-readonly  |  --> storage permission
+netalertx-test-readonly  |  --> mounts.py
+netalertx-test-readonly  |  --> first run config
+netalertx-test-readonly  |  --> first run db
+netalertx-test-readonly  |  --> mandatory folders
+netalertx-test-readonly  |  --> writable config
+netalertx-test-readonly  |  --> nginx config
+netalertx-test-readonly  | nginx config: FAILED with 1
+netalertx-test-readonly  | Failure detected in: /entrypoint.d/35-nginx-config.sh
+netalertx-test-readonly  |  --> user netalertx
+netalertx-test-readonly  |  --> host mode network
+netalertx-test-readonly  |  --> layer 2 capabilities
+netalertx-test-readonly  |  --> excessive capabilities
+netalertx-test-readonly  |  --> appliance integrity
+netalertx-test-readonly  |  --> ports available
+netalertx-test-readonly  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-readonly  | ⚠️  Port Warning: Application port 20211 is already in use.
+netalertx-test-readonly  | 
+netalertx-test-readonly  |     The main application (defined by $PORT) may fail to start.
+netalertx-test-readonly  | 
+netalertx-test-readonly  |     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/port-conflicts.md
+netalertx-test-readonly  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-readonly  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-readonly  | ⚠️  Port Warning: GraphQL API port 20212 is already in use.
+netalertx-test-readonly  | 
+netalertx-test-readonly  |     The GraphQL API (defined by $APP_CONF_OVERRIDE or $GRAPHQL_PORT)
+netalertx-test-readonly  |     may fail to start.
+netalertx-test-readonly  | 
+netalertx-test-readonly  |     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/port-conflicts.md
+netalertx-test-readonly  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-readonly  | Container startup checks failed with exit code 1.
+netalertx-test-readonly  | NETALERTX_DEBUG is set to 1, will not shut down other services if one fails.
+netalertx-test-readonly  | Starting /usr/sbin/php-fpm83 -y "/services/config/php/php-fpm.conf" -F >>"/app/log/app.php_errors.log" 2>/dev/stderr &
+netalertx-test-readonly  | Starting /usr/sbin/crond -c "/services/config/crond" -f -L "/app/log/crond.log" >>"/app/log/crond.log" 2>&1 &
+netalertx-test-readonly  | php-fpm stopped! (exit 1)
+netalertx-test-readonly  | Crond stopped! (exit 1)
+netalertx-test-readonly  | Starting python3  -m server > /app/log/stdout.log 2> >(tee /app/log/stderr.log >&2)
+[Knetalertx-test-readonly exited with code 0
+netalertx-test-readonly  |  --> first run config
+netalertx-test-readonly  |  --> first run db
+netalertx-test-readonly  |  --> mandatory folders
+netalertx-test-readonly  |  --> writable config
+netalertx-test-readonly  |  --> nginx config
+netalertx-test-readonly  | nginx config: FAILED with 1
+netalertx-test-readonly  | Failure detected in: /entrypoint.d/35-nginx-config.sh
+netalertx-test-readonly  |  --> user netalertx
+netalertx-test-readonly  |  --> host mode network
+netalertx-test-readonly  |  --> layer 2 capabilities
+netalertx-test-readonly  |  --> excessive capabilities
+netalertx-test-readonly  |  --> appliance integrity
+netalertx-test-readonly  |  --> ports available
+netalertx-test-readonly  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-readonly  | ⚠️  Port Warning: Application port 20211 is already in use.
+netalertx-test-readonly  | 
+netalertx-test-readonly  |     The main application (defined by $PORT) may fail to start.
+netalertx-test-readonly  | 
+netalertx-test-readonly  |     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/port-conflicts.md
+netalertx-test-readonly  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-readonly  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-readonly  | ⚠️  Port Warning: GraphQL API port 20212 is already in use.
+netalertx-test-readonly  | 
+netalertx-test-readonly  |     The GraphQL API (defined by $APP_CONF_OVERRIDE or $GRAPHQL_PORT)
+netalertx-test-readonly  |     may fail to start.
+netalertx-test-readonly  | 
+netalertx-test-readonly  |     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/port-conflicts.md
+netalertx-test-readonly  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-readonly  | Container startup checks failed with exit code 1.
+netalertx-test-readonly  | NETALERTX_DEBUG is set to 1, will not shut down other services if one fails.
+netalertx-test-readonly  | Starting /usr/sbin/crond -c "/services/config/crond" -f -L "/app/log/crond.log" >>"/app/log/crond.log" 2>&1 &
+netalertx-test-readonly  | Starting /usr/sbin/php-fpm83 -y "/services/config/php/php-fpm.conf" -F >>"/app/log/app.php_errors.log" 2>/dev/stderr &
+netalertx-test-readonly  | Crond stopped! (exit 1)
+netalertx-test-readonly  | php-fpm stopped! (exit 1)
+netalertx-test-readonly  | Starting python3  -m server > /app/log/stdout.log 2> >(tee /app/log/stderr.log >&2)
+[Knetalertx-test-readonly exited with code 0
+netalertx-test-readonly  |  --> first run config
+netalertx-test-readonly  |  --> first run db
+netalertx-test-readonly  |  --> mandatory folders
+netalertx-test-readonly  |  --> writable config
+netalertx-test-readonly  |  --> nginx config
+netalertx-test-readonly  | nginx config: FAILED with 1
+netalertx-test-readonly  | Failure detected in: /entrypoint.d/35-nginx-config.sh
+netalertx-test-readonly  |  --> user netalertx
+netalertx-test-readonly  |  --> host mode network
+netalertx-test-readonly  |  --> layer 2 capabilities
+netalertx-test-readonly  |  --> excessive capabilities
+netalertx-test-readonly  |  --> appliance integrity
+netalertx-test-readonly  |  --> ports available
+netalertx-test-readonly  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-readonly  | ⚠️  Port Warning: Application port 20211 is already in use.
+netalertx-test-readonly  | 
+netalertx-test-readonly  |     The main application (defined by $PORT) may fail to start.
+netalertx-test-readonly  | 
+netalertx-test-readonly  |     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/port-conflicts.md
+netalertx-test-readonly  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-readonly  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-readonly  | ⚠️  Port Warning: GraphQL API port 20212 is already in use.
+netalertx-test-readonly  | 
+netalertx-test-readonly  |     The GraphQL API (defined by $APP_CONF_OVERRIDE or $GRAPHQL_PORT)
+netalertx-test-readonly  |     may fail to start.
+netalertx-test-readonly  | 
+netalertx-test-readonly  |     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/port-conflicts.md
+netalertx-test-readonly  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-readonly  | Container startup checks failed with exit code 1.
+netalertx-test-readonly  | NETALERTX_DEBUG is set to 1, will not shut down other services if one fails.
+netalertx-test-readonly  | Starting /usr/sbin/php-fpm83 -y "/services/config/php/php-fpm.conf" -F >>"/app/log/app.php_errors.log" 2>/dev/stderr &
+netalertx-test-readonly  | Starting /usr/sbin/crond -c "/services/config/crond" -f -L "/app/log/crond.log" >>"/app/log/crond.log" 2>&1 &
+netalertx-test-readonly  | Crond stopped! (exit 1)
+netalertx-test-readonly  | php-fpm stopped! (exit 1)
+netalertx-test-readonly  | Starting python3  -m server > /app/log/stdout.log 2> >(tee /app/log/stderr.log >&2)
+[Knetalertx-test-readonly exited with code 0
+
+==========================================
+
+File: docker-compose.writable.yml
+----------------------------------------
+
+Testing: docker-compose.writable.yml
+Directory: /workspaces/NetAlertX/test/docker_tests/configurations
+
+Running docker-compose up...
+Attaching to netalertx-test-writable
+netalertx-test-writable  | [1;31m
+netalertx-test-writable  |  _   _      _    ___  _           _  __   __
+netalertx-test-writable  | | \ | |    | |  / _ \| |         | | \ \ / /
+netalertx-test-writable  | |  \| | ___| |_/ /_\ \ | ___ _ __| |_ \ V / 
+netalertx-test-writable  | | .   |/ _ \ __|  _  | |/ _ \  __| __|/   \ 
+netalertx-test-writable  | | |\  |  __/ |_| | | | |  __/ |  | |_/ /^\ \ 
+netalertx-test-writable  | \_| \_/\___|\__\_| |_/_|\___|_|   \__\/   \/
+netalertx-test-writable  | 
+netalertx-test-writable  | [0m   Network intruder and presence detector. 
+netalertx-test-writable  |    https://netalertx.com
+netalertx-test-writable  | 
+netalertx-test-writable  | 
+netalertx-test-writable  | Startup pre-checks
+netalertx-test-writable  |  --> storage permission
+netalertx-test-writable  |  --> mounts.py
+netalertx-test-writable  |  --> first run config
+netalertx-test-writable  |  --> first run db
+netalertx-test-writable  |  --> mandatory folders
+netalertx-test-writable  |     * Creating Plugins log.
+netalertx-test-writable  |     * Creating System services run log.
+netalertx-test-writable  |     * Creating System services run tmp.
+netalertx-test-writable  |     * Creating DB locked log.
+netalertx-test-writable  |     * Creating Execution queue log.
+netalertx-test-writable  |  --> writable config
+netalertx-test-writable  |  --> nginx config
+netalertx-test-writable  |  --> user netalertx
+netalertx-test-writable  |  --> host mode network
+netalertx-test-writable  |  --> layer 2 capabilities
+netalertx-test-writable  |  --> excessive capabilities
+netalertx-test-writable  |  --> appliance integrity
+netalertx-test-writable  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-writable  | ⚠️  Warning: Container is running as read-write, not in read-only mode.
+netalertx-test-writable  | 
+netalertx-test-writable  |     Please mount the root filesystem as --read-only or use read-only: true
+netalertx-test-writable  |     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/read-only-filesystem.md
+netalertx-test-writable  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-writable  |  --> ports available
+netalertx-test-writable  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-writable  | ⚠️  Port Warning: Application port 20211 is already in use.
+netalertx-test-writable  | 
+netalertx-test-writable  |     The main application (defined by $PORT) may fail to start.
+netalertx-test-writable  | 
+netalertx-test-writable  |     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/port-conflicts.md
+netalertx-test-writable  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-writable  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-writable  | ⚠️  Port Warning: GraphQL API port 20212 is already in use.
+netalertx-test-writable  | 
+netalertx-test-writable  |     The GraphQL API (defined by $APP_CONF_OVERRIDE or $GRAPHQL_PORT)
+netalertx-test-writable  |     may fail to start.
+netalertx-test-writable  | 
+netalertx-test-writable  |     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/port-conflicts.md
+netalertx-test-writable  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-writable  | NETALERTX_DEBUG is set to 1, will not shut down other services if one fails.
+netalertx-test-writable  | Starting /usr/sbin/crond -c "/services/config/crond" -f -L "/app/log/crond.log" >>"/app/log/crond.log" 2>&1 &
+netalertx-test-writable  | Starting /usr/sbin/php-fpm83 -y "/services/config/php/php-fpm.conf" -F >>"/app/log/app.php_errors.log" 2>/dev/stderr &
+netalertx-test-writable  | Starting python3  -m server > /app/log/stdout.log 2> >(tee /app/log/stderr.log >&2)
+netalertx-test-writable  | Starting /usr/sbin/nginx -p "/services/run/" -c "/services/config/nginx/conf.active/netalertx.conf" -g "error_log /dev/stderr; error_log /app/log/nginx-error.log; pid /services/run/nginx.pid; daemon off;" &
+netalertx-test-writable  | nginx stopped! (exit 1)
+netalertx-test-writable  | Successfully updated IEEE OUI database (111620 entries)
+
+==========================================
+
+File: docker-compose.mount-test.active_config_mounted.yml
+----------------------------------------
+Expected outcome: Container starts successfully with proper nginx config mount
+- SYSTEM_SERVICES_ACTIVE_CONFIG shows as writable and mounted
+- No configuration warnings for nginx config path
+- Custom PORT configuration should work when nginx config is writable
+
+Testing: docker-compose.mount-test.active_config_mounted.yml
+Directory: /workspaces/NetAlertX/test/docker_tests/configurations/mount-tests
+
+Running docker-compose up...
+Attaching to netalertx-test-mount-active_config_mounted
+netalertx-test-mount-active_config_mounted  | [1;31m
+netalertx-test-mount-active_config_mounted  |  _   _      _    ___  _           _  __   __
+netalertx-test-mount-active_config_mounted  | | \ | |    | |  / _ \| |         | | \ \ / /
+netalertx-test-mount-active_config_mounted  | |  \| | ___| |_/ /_\ \ | ___ _ __| |_ \ V / 
+netalertx-test-mount-active_config_mounted  | | .   |/ _ \ __|  _  | |/ _ \  __| __|/   \ 
+netalertx-test-mount-active_config_mounted  | | |\  |  __/ |_| | | | |  __/ |  | |_/ /^\ \ 
+netalertx-test-mount-active_config_mounted  | \_| \_/\___|\__\_| |_/_|\___|_|   \__\/   \/
+netalertx-test-mount-active_config_mounted  | 
+netalertx-test-mount-active_config_mounted  | [0m   Network intruder and presence detector. 
+netalertx-test-mount-active_config_mounted  |    https://netalertx.com
+netalertx-test-mount-active_config_mounted  | 
+netalertx-test-mount-active_config_mounted  | 
+netalertx-test-mount-active_config_mounted  | Startup pre-checks
+netalertx-test-mount-active_config_mounted  |  --> storage permission
+netalertx-test-mount-active_config_mounted  |  --> mounts.py
+netalertx-test-mount-active_config_mounted  |  --> first run config
+netalertx-test-mount-active_config_mounted  |  --> first run db
+netalertx-test-mount-active_config_mounted  |  --> mandatory folders
+netalertx-test-mount-active_config_mounted  |     * Creating Plugins log.
+netalertx-test-mount-active_config_mounted  |     * Creating System services run log.
+netalertx-test-mount-active_config_mounted  |     * Creating System services run tmp.
+netalertx-test-mount-active_config_mounted  |     * Creating DB locked log.
+netalertx-test-mount-active_config_mounted  |     * Creating Execution queue log.
+netalertx-test-mount-active_config_mounted  |  --> writable config
+netalertx-test-mount-active_config_mounted  |  --> nginx config
+netalertx-test-mount-active_config_mounted  | nginx config: FAILED with 1
+netalertx-test-mount-active_config_mounted  | Failure detected in: /entrypoint.d/35-nginx-config.sh
+netalertx-test-mount-active_config_mounted  |  --> user netalertx
+netalertx-test-mount-active_config_mounted  |  --> host mode network
+netalertx-test-mount-active_config_mounted  |  --> layer 2 capabilities
+netalertx-test-mount-active_config_mounted  |  --> excessive capabilities
+netalertx-test-mount-active_config_mounted  |  --> appliance integrity
+netalertx-test-mount-active_config_mounted  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-mount-active_config_mounted  | ⚠️  Warning: Container is running as read-write, not in read-only mode.
+netalertx-test-mount-active_config_mounted  | 
+netalertx-test-mount-active_config_mounted  |     Please mount the root filesystem as --read-only or use read-only: true
+netalertx-test-mount-active_config_mounted  |     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/read-only-filesystem.md
+netalertx-test-mount-active_config_mounted  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-mount-active_config_mounted  |  --> ports available
+netalertx-test-mount-active_config_mounted  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-mount-active_config_mounted  | ⚠️  Port Warning: GraphQL API port 20212 is already in use.
+netalertx-test-mount-active_config_mounted  | 
+netalertx-test-mount-active_config_mounted  |     The GraphQL API (defined by $APP_CONF_OVERRIDE or $GRAPHQL_PORT)
+netalertx-test-mount-active_config_mounted  |     may fail to start.
+netalertx-test-mount-active_config_mounted  | 
+netalertx-test-mount-active_config_mounted  |     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/port-conflicts.md
+netalertx-test-mount-active_config_mounted  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-mount-active_config_mounted  | Container startup checks failed with exit code 1.
+netalertx-test-mount-active_config_mounted  | Starting /usr/sbin/php-fpm83 -y "/services/config/php/php-fpm.conf" -F >>"/app/log/app.php_errors.log" 2>/dev/stderr &
+netalertx-test-mount-active_config_mounted  | Starting /usr/sbin/crond -c "/services/config/crond" -f -L "/app/log/crond.log" >>"/app/log/crond.log" 2>&1 &
+netalertx-test-mount-active_config_mounted  | Starting python3  -m server > /app/log/stdout.log 2> >(tee /app/log/stderr.log >&2)
+netalertx-test-mount-active_config_mounted  | Successfully updated IEEE OUI database (111620 entries)
+
+==========================================
+
+File: docker-compose.mount-test.active_config_no-mount.yml
+----------------------------------------
+Expected outcome: Container shows mount error for nginx config directory
+- SYSTEM_SERVICES_ACTIVE_CONFIG shows as not mounted
+- Mount error since nginx config directory should be mounted for custom config
+- Container may show warnings about nginx config but should continue
+
+Testing: docker-compose.mount-test.active_config_no-mount.yml
+Directory: /workspaces/NetAlertX/test/docker_tests/configurations/mount-tests
+
+Running docker-compose up...
+Attaching to netalertx-test-mount-active_config_no-mount
+netalertx-test-mount-active_config_no-mount  | [1;31m
+netalertx-test-mount-active_config_no-mount  |  _   _      _    ___  _           _  __   __
+netalertx-test-mount-active_config_no-mount  | | \ | |    | |  / _ \| |         | | \ \ / /
+netalertx-test-mount-active_config_no-mount  | |  \| | ___| |_/ /_\ \ | ___ _ __| |_ \ V / 
+netalertx-test-mount-active_config_no-mount  | | .   |/ _ \ __|  _  | |/ _ \  __| __|/   \ 
+netalertx-test-mount-active_config_no-mount  | | |\  |  __/ |_| | | | |  __/ |  | |_/ /^\ \ 
+netalertx-test-mount-active_config_no-mount  | \_| \_/\___|\__\_| |_/_|\___|_|   \__\/   \/
+netalertx-test-mount-active_config_no-mount  | 
+netalertx-test-mount-active_config_no-mount  | [0m   Network intruder and presence detector. 
+netalertx-test-mount-active_config_no-mount  |    https://netalertx.com
+netalertx-test-mount-active_config_no-mount  | 
+netalertx-test-mount-active_config_no-mount  | 
+netalertx-test-mount-active_config_no-mount  | Startup pre-checks
+netalertx-test-mount-active_config_no-mount  |  --> storage permission
+netalertx-test-mount-active_config_no-mount  |  --> mounts.py
+netalertx-test-mount-active_config_no-mount  |  --> first run config
+netalertx-test-mount-active_config_no-mount  |  --> first run db
+netalertx-test-mount-active_config_no-mount  |  --> mandatory folders
+netalertx-test-mount-active_config_no-mount  |     * Creating Plugins log.
+netalertx-test-mount-active_config_no-mount  |     * Creating System services run log.
+netalertx-test-mount-active_config_no-mount  |     * Creating System services run tmp.
+netalertx-test-mount-active_config_no-mount  |     * Creating DB locked log.
+netalertx-test-mount-active_config_no-mount  |     * Creating Execution queue log.
+netalertx-test-mount-active_config_no-mount  |  --> writable config
+netalertx-test-mount-active_config_no-mount  |  --> nginx config
+netalertx-test-mount-active_config_no-mount  | nginx config: FAILED with 1
+netalertx-test-mount-active_config_no-mount  | Failure detected in: /entrypoint.d/35-nginx-config.sh
+netalertx-test-mount-active_config_no-mount  |  --> user netalertx
+netalertx-test-mount-active_config_no-mount  |  --> host mode network
+netalertx-test-mount-active_config_no-mount  |  --> layer 2 capabilities
+netalertx-test-mount-active_config_no-mount  |  --> excessive capabilities
+netalertx-test-mount-active_config_no-mount  |  --> appliance integrity
+netalertx-test-mount-active_config_no-mount  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-mount-active_config_no-mount  | ⚠️  Warning: Container is running as read-write, not in read-only mode.
+netalertx-test-mount-active_config_no-mount  | 
+netalertx-test-mount-active_config_no-mount  |     Please mount the root filesystem as --read-only or use read-only: true
+netalertx-test-mount-active_config_no-mount  |     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/read-only-filesystem.md
+netalertx-test-mount-active_config_no-mount  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-mount-active_config_no-mount  |  --> ports available
+netalertx-test-mount-active_config_no-mount  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-mount-active_config_no-mount  | ⚠️  Port Warning: GraphQL API port 20212 is already in use.
+netalertx-test-mount-active_config_no-mount  | 
+netalertx-test-mount-active_config_no-mount  |     The GraphQL API (defined by $APP_CONF_OVERRIDE or $GRAPHQL_PORT)
+netalertx-test-mount-active_config_no-mount  |     may fail to start.
+netalertx-test-mount-active_config_no-mount  | 
+netalertx-test-mount-active_config_no-mount  |     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/port-conflicts.md
+netalertx-test-mount-active_config_no-mount  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-mount-active_config_no-mount  | Container startup checks failed with exit code 1.
+netalertx-test-mount-active_config_no-mount  | Starting /usr/sbin/php-fpm83 -y "/services/config/php/php-fpm.conf" -F >>"/app/log/app.php_errors.log" 2>/dev/stderr &
+netalertx-test-mount-active_config_no-mount  | Starting /usr/sbin/crond -c "/services/config/crond" -f -L "/app/log/crond.log" >>"/app/log/crond.log" 2>&1 &
+netalertx-test-mount-active_config_no-mount  | Starting python3  -m server > /app/log/stdout.log 2> >(tee /app/log/stderr.log >&2)
+netalertx-test-mount-active_config_no-mount  | Successfully updated IEEE OUI database (111620 entries)
+
+==========================================
+
+File: docker-compose.mount-test.active_config_ramdisk.yml
+----------------------------------------
+Expected outcome: Container shows performance warning for nginx config on RAM disk
+- SYSTEM_SERVICES_ACTIVE_CONFIG shows as mounted on tmpfs (RAM disk)
+- Performance issue warning since nginx config should be persistent
+- Custom PORT configuration may have performance implications
+
+Testing: docker-compose.mount-test.active_config_ramdisk.yml
+Directory: /workspaces/NetAlertX/test/docker_tests/configurations/mount-tests
+
+Running docker-compose up...
+Attaching to netalertx-test-mount-active_config_ramdisk
+netalertx-test-mount-active_config_ramdisk  | [1;31m
+netalertx-test-mount-active_config_ramdisk  |  _   _      _    ___  _           _  __   __
+netalertx-test-mount-active_config_ramdisk  | | \ | |    | |  / _ \| |         | | \ \ / /
+netalertx-test-mount-active_config_ramdisk  | |  \| | ___| |_/ /_\ \ | ___ _ __| |_ \ V / 
+netalertx-test-mount-active_config_ramdisk  | | .   |/ _ \ __|  _  | |/ _ \  __| __|/   \ 
+netalertx-test-mount-active_config_ramdisk  | | |\  |  __/ |_| | | | |  __/ |  | |_/ /^\ \ 
+netalertx-test-mount-active_config_ramdisk  | \_| \_/\___|\__\_| |_/_|\___|_|   \__\/   \/
+netalertx-test-mount-active_config_ramdisk  | 
+netalertx-test-mount-active_config_ramdisk  | [0m   Network intruder and presence detector. 
+netalertx-test-mount-active_config_ramdisk  |    https://netalertx.com
+netalertx-test-mount-active_config_ramdisk  | 
+netalertx-test-mount-active_config_ramdisk  | 
+netalertx-test-mount-active_config_ramdisk  | Startup pre-checks
+netalertx-test-mount-active_config_ramdisk  |  --> storage permission
+netalertx-test-mount-active_config_ramdisk  |  --> mounts.py
+netalertx-test-mount-active_config_ramdisk  |  --> first run config
+netalertx-test-mount-active_config_ramdisk  |  --> first run db
+netalertx-test-mount-active_config_ramdisk  |  --> mandatory folders
+netalertx-test-mount-active_config_ramdisk  |     * Creating Plugins log.
+netalertx-test-mount-active_config_ramdisk  |     * Creating System services run log.
+netalertx-test-mount-active_config_ramdisk  |     * Creating System services run tmp.
+netalertx-test-mount-active_config_ramdisk  |     * Creating DB locked log.
+netalertx-test-mount-active_config_ramdisk  |     * Creating Execution queue log.
+netalertx-test-mount-active_config_ramdisk  |  --> writable config
+netalertx-test-mount-active_config_ramdisk  |  --> nginx config
+netalertx-test-mount-active_config_ramdisk  |  --> user netalertx
+netalertx-test-mount-active_config_ramdisk  |  --> host mode network
+netalertx-test-mount-active_config_ramdisk  |  --> layer 2 capabilities
+netalertx-test-mount-active_config_ramdisk  |  --> excessive capabilities
+netalertx-test-mount-active_config_ramdisk  |  --> appliance integrity
+netalertx-test-mount-active_config_ramdisk  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-mount-active_config_ramdisk  | ⚠️  Warning: Container is running as read-write, not in read-only mode.
+netalertx-test-mount-active_config_ramdisk  | 
+netalertx-test-mount-active_config_ramdisk  |     Please mount the root filesystem as --read-only or use read-only: true
+netalertx-test-mount-active_config_ramdisk  |     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/read-only-filesystem.md
+netalertx-test-mount-active_config_ramdisk  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-mount-active_config_ramdisk  |  --> ports available
+netalertx-test-mount-active_config_ramdisk  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-mount-active_config_ramdisk  | ⚠️  Port Warning: GraphQL API port 20212 is already in use.
+netalertx-test-mount-active_config_ramdisk  | 
+netalertx-test-mount-active_config_ramdisk  |     The GraphQL API (defined by $APP_CONF_OVERRIDE or $GRAPHQL_PORT)
+netalertx-test-mount-active_config_ramdisk  |     may fail to start.
+netalertx-test-mount-active_config_ramdisk  | 
+netalertx-test-mount-active_config_ramdisk  |     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/port-conflicts.md
+netalertx-test-mount-active_config_ramdisk  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-mount-active_config_ramdisk  | Starting /usr/sbin/crond -c "/services/config/crond" -f -L "/app/log/crond.log" >>"/app/log/crond.log" 2>&1 &
+netalertx-test-mount-active_config_ramdisk  | Starting /usr/sbin/php-fpm83 -y "/services/config/php/php-fpm.conf" -F >>"/app/log/app.php_errors.log" 2>/dev/stderr &
+netalertx-test-mount-active_config_ramdisk  | Starting python3  -m server > /app/log/stdout.log 2> >(tee /app/log/stderr.log >&2)
+netalertx-test-mount-active_config_ramdisk  | Starting /usr/sbin/nginx -p "/services/run/" -c "/services/config/nginx/conf.active/netalertx.conf" -g "error_log /dev/stderr; error_log /app/log/nginx-error.log; pid /services/run/nginx.pid; daemon off;" &
+netalertx-test-mount-active_config_ramdisk  | Successfully updated IEEE OUI database (111620 entries)
+
+==========================================
+
+File: docker-compose.mount-test.active_config_unwritable.yml
+----------------------------------------
+Expected outcome: Container fails to start due to unwritable nginx config partition
+- SYSTEM_SERVICES_ACTIVE_CONFIG shows as mounted but unwritable (❌ in Writeable column)
+- 35-nginx-config.sh detects permission error and exits with code 1
+- Container startup fails because nginx configuration cannot be written for custom ports
+
+Testing: docker-compose.mount-test.active_config_unwritable.yml
+Directory: /workspaces/NetAlertX/test/docker_tests/configurations/mount-tests
+
+Running docker-compose up...
+Attaching to netalertx-test-mount-active_config_unwritable
+netalertx-test-mount-active_config_unwritable  | [1;31m
+netalertx-test-mount-active_config_unwritable  |  _   _      _    ___  _           _  __   __
+netalertx-test-mount-active_config_unwritable  | | \ | |    | |  / _ \| |         | | \ \ / /
+netalertx-test-mount-active_config_unwritable  | |  \| | ___| |_/ /_\ \ | ___ _ __| |_ \ V / 
+netalertx-test-mount-active_config_unwritable  | | .   |/ _ \ __|  _  | |/ _ \  __| __|/   \ 
+netalertx-test-mount-active_config_unwritable  | | |\  |  __/ |_| | | | |  __/ |  | |_/ /^\ \ 
+netalertx-test-mount-active_config_unwritable  | \_| \_/\___|\__\_| |_/_|\___|_|   \__\/   \/
+netalertx-test-mount-active_config_unwritable  | 
+netalertx-test-mount-active_config_unwritable  | [0m   Network intruder and presence detector. 
+netalertx-test-mount-active_config_unwritable  |    https://netalertx.com
+netalertx-test-mount-active_config_unwritable  | 
+netalertx-test-mount-active_config_unwritable  | 
+netalertx-test-mount-active_config_unwritable  | Startup pre-checks
+netalertx-test-mount-active_config_unwritable  |  --> storage permission
+netalertx-test-mount-active_config_unwritable  |  --> mounts.py
+netalertx-test-mount-active_config_unwritable  |  --> first run config
+netalertx-test-mount-active_config_unwritable  |  --> first run db
+netalertx-test-mount-active_config_unwritable  |  --> mandatory folders
+netalertx-test-mount-active_config_unwritable  |     * Creating Plugins log.
+netalertx-test-mount-active_config_unwritable  |     * Creating System services run log.
+netalertx-test-mount-active_config_unwritable  |     * Creating System services run tmp.
+netalertx-test-mount-active_config_unwritable  |     * Creating DB locked log.
+netalertx-test-mount-active_config_unwritable  |     * Creating Execution queue log.
+netalertx-test-mount-active_config_unwritable  |  --> writable config
+netalertx-test-mount-active_config_unwritable  |  --> nginx config
+netalertx-test-mount-active_config_unwritable  | nginx config: FAILED with 1
+netalertx-test-mount-active_config_unwritable  | Failure detected in: /entrypoint.d/35-nginx-config.sh
+netalertx-test-mount-active_config_unwritable  |  --> user netalertx
+netalertx-test-mount-active_config_unwritable  |  --> host mode network
+netalertx-test-mount-active_config_unwritable  |  --> layer 2 capabilities
+netalertx-test-mount-active_config_unwritable  |  --> excessive capabilities
+netalertx-test-mount-active_config_unwritable  |  --> appliance integrity
+netalertx-test-mount-active_config_unwritable  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-mount-active_config_unwritable  | ⚠️  Warning: Container is running as read-write, not in read-only mode.
+netalertx-test-mount-active_config_unwritable  | 
+netalertx-test-mount-active_config_unwritable  |     Please mount the root filesystem as --read-only or use read-only: true
+netalertx-test-mount-active_config_unwritable  |     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/read-only-filesystem.md
+netalertx-test-mount-active_config_unwritable  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-mount-active_config_unwritable  |  --> ports available
+netalertx-test-mount-active_config_unwritable  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-mount-active_config_unwritable  | ⚠️  Port Warning: GraphQL API port 20212 is already in use.
+netalertx-test-mount-active_config_unwritable  | 
+netalertx-test-mount-active_config_unwritable  |     The GraphQL API (defined by $APP_CONF_OVERRIDE or $GRAPHQL_PORT)
+netalertx-test-mount-active_config_unwritable  |     may fail to start.
+netalertx-test-mount-active_config_unwritable  | 
+netalertx-test-mount-active_config_unwritable  |     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/port-conflicts.md
+netalertx-test-mount-active_config_unwritable  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-mount-active_config_unwritable  | Container startup checks failed with exit code 1.
+netalertx-test-mount-active_config_unwritable  | Starting /usr/sbin/php-fpm83 -y "/services/config/php/php-fpm.conf" -F >>"/app/log/app.php_errors.log" 2>/dev/stderr &
+netalertx-test-mount-active_config_unwritable  | Starting /usr/sbin/crond -c "/services/config/crond" -f -L "/app/log/crond.log" >>"/app/log/crond.log" 2>&1 &
+netalertx-test-mount-active_config_unwritable  | Starting python3  -m server > /app/log/stdout.log 2> >(tee /app/log/stderr.log >&2)
+netalertx-test-mount-active_config_unwritable  | Successfully updated IEEE OUI database (111620 entries)
+
+==========================================
+
+File: docker-compose.mount-test.api_mounted.yml
+----------------------------------------
+Expected outcome: Container starts successfully with proper API mount
+- NETALERTX_API shows as writable and mounted
+- No configuration warnings for API path
+- API data persistence works correctly
+
+Testing: docker-compose.mount-test.api_mounted.yml
+Directory: /workspaces/NetAlertX/test/docker_tests/configurations/mount-tests
+
+Running docker-compose up...
+Attaching to netalertx-test-mount-api_mounted
+netalertx-test-mount-api_mounted  | [1;31m
+netalertx-test-mount-api_mounted  |  _   _      _    ___  _           _  __   __
+netalertx-test-mount-api_mounted  | | \ | |    | |  / _ \| |         | | \ \ / /
+netalertx-test-mount-api_mounted  | |  \| | ___| |_/ /_\ \ | ___ _ __| |_ \ V / 
+netalertx-test-mount-api_mounted  | | .   |/ _ \ __|  _  | |/ _ \  __| __|/   \ 
+netalertx-test-mount-api_mounted  | | |\  |  __/ |_| | | | |  __/ |  | |_/ /^\ \ 
+netalertx-test-mount-api_mounted  | \_| \_/\___|\__\_| |_/_|\___|_|   \__\/   \/
+netalertx-test-mount-api_mounted  | 
+netalertx-test-mount-api_mounted  | [0m   Network intruder and presence detector. 
+netalertx-test-mount-api_mounted  |    https://netalertx.com
+netalertx-test-mount-api_mounted  | 
+netalertx-test-mount-api_mounted  | 
+netalertx-test-mount-api_mounted  | Startup pre-checks
+netalertx-test-mount-api_mounted  |  --> storage permission
+netalertx-test-mount-api_mounted  |  --> mounts.py
+netalertx-test-mount-api_mounted  |  --> first run config
+netalertx-test-mount-api_mounted  |  --> first run db
+netalertx-test-mount-api_mounted  |  --> mandatory folders
+netalertx-test-mount-api_mounted  |     * Creating Plugins log.
+netalertx-test-mount-api_mounted  |     * Creating System services run log.
+netalertx-test-mount-api_mounted  |     * Creating System services run tmp.
+netalertx-test-mount-api_mounted  |     * Creating DB locked log.
+netalertx-test-mount-api_mounted  |     * Creating Execution queue log.
+netalertx-test-mount-api_mounted  |  --> writable config
+netalertx-test-mount-api_mounted  |  --> nginx config
+netalertx-test-mount-api_mounted  |  --> user netalertx
+netalertx-test-mount-api_mounted  |  --> host mode network
+netalertx-test-mount-api_mounted  |  --> layer 2 capabilities
+netalertx-test-mount-api_mounted  |  --> excessive capabilities
+netalertx-test-mount-api_mounted  |  --> appliance integrity
+netalertx-test-mount-api_mounted  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-mount-api_mounted  | ⚠️  Warning: Container is running as read-write, not in read-only mode.
+netalertx-test-mount-api_mounted  | 
+netalertx-test-mount-api_mounted  |     Please mount the root filesystem as --read-only or use read-only: true
+netalertx-test-mount-api_mounted  |     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/read-only-filesystem.md
+netalertx-test-mount-api_mounted  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-mount-api_mounted  |  --> ports available
+netalertx-test-mount-api_mounted  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-mount-api_mounted  | ⚠️  Port Warning: GraphQL API port 20212 is already in use.
+netalertx-test-mount-api_mounted  | 
+netalertx-test-mount-api_mounted  |     The GraphQL API (defined by $APP_CONF_OVERRIDE or $GRAPHQL_PORT)
+netalertx-test-mount-api_mounted  |     may fail to start.
+netalertx-test-mount-api_mounted  | 
+netalertx-test-mount-api_mounted  |     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/port-conflicts.md
+netalertx-test-mount-api_mounted  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-mount-api_mounted  | Starting /usr/sbin/crond -c "/services/config/crond" -f -L "/app/log/crond.log" >>"/app/log/crond.log" 2>&1 &
+netalertx-test-mount-api_mounted  | Starting /usr/sbin/php-fpm83 -y "/services/config/php/php-fpm.conf" -F >>"/app/log/app.php_errors.log" 2>/dev/stderr &
+netalertx-test-mount-api_mounted  | Starting python3  -m server > /app/log/stdout.log 2> >(tee /app/log/stderr.log >&2)
+netalertx-test-mount-api_mounted  | Starting /usr/sbin/nginx -p "/services/run/" -c "/services/config/nginx/conf.active/netalertx.conf" -g "error_log /dev/stderr; error_log /app/log/nginx-error.log; pid /services/run/nginx.pid; daemon off;" &
+netalertx-test-mount-api_mounted  | Successfully updated IEEE OUI database (111620 entries)
+
+==========================================
+
+File: docker-compose.mount-test.api_no-mount.yml
+----------------------------------------
+Expected outcome: Container shows mount error for API directory
+- NETALERTX_API shows as not mounted
+- Mount error since API directory should be mounted for proper operation
+- API functionality may be limited
+
+Testing: docker-compose.mount-test.api_no-mount.yml
+Directory: /workspaces/NetAlertX/test/docker_tests/configurations/mount-tests
+
+Running docker-compose up...
+Attaching to netalertx-test-mount-api_no-mount
+netalertx-test-mount-api_no-mount  | [1;31m
+netalertx-test-mount-api_no-mount  |  _   _      _    ___  _           _  __   __
+netalertx-test-mount-api_no-mount  | | \ | |    | |  / _ \| |         | | \ \ / /
+netalertx-test-mount-api_no-mount  | |  \| | ___| |_/ /_\ \ | ___ _ __| |_ \ V / 
+netalertx-test-mount-api_no-mount  | | .   |/ _ \ __|  _  | |/ _ \  __| __|/   \ 
+netalertx-test-mount-api_no-mount  | | |\  |  __/ |_| | | | |  __/ |  | |_/ /^\ \ 
+netalertx-test-mount-api_no-mount  | \_| \_/\___|\__\_| |_/_|\___|_|   \__\/   \/
+netalertx-test-mount-api_no-mount  | 
+netalertx-test-mount-api_no-mount  | [0m   Network intruder and presence detector. 
+netalertx-test-mount-api_no-mount  |    https://netalertx.com
+netalertx-test-mount-api_no-mount  | 
+netalertx-test-mount-api_no-mount  | 
+netalertx-test-mount-api_no-mount  | Startup pre-checks
+netalertx-test-mount-api_no-mount  |  --> storage permission
+netalertx-test-mount-api_no-mount  |  --> mounts.py
+netalertx-test-mount-api_no-mount  |  --> first run config
+netalertx-test-mount-api_no-mount  |  --> first run db
+netalertx-test-mount-api_no-mount  |  --> mandatory folders
+netalertx-test-mount-api_no-mount  |     * Creating Plugins log.
+netalertx-test-mount-api_no-mount  |     * Creating System services run log.
+netalertx-test-mount-api_no-mount  |     * Creating System services run tmp.
+netalertx-test-mount-api_no-mount  |     * Creating DB locked log.
+netalertx-test-mount-api_no-mount  |     * Creating Execution queue log.
+netalertx-test-mount-api_no-mount  |  --> writable config
+netalertx-test-mount-api_no-mount  |  --> nginx config
+netalertx-test-mount-api_no-mount  |  --> user netalertx
+netalertx-test-mount-api_no-mount  |  --> host mode network
+netalertx-test-mount-api_no-mount  |  --> layer 2 capabilities
+netalertx-test-mount-api_no-mount  |  --> excessive capabilities
+netalertx-test-mount-api_no-mount  |  --> appliance integrity
+netalertx-test-mount-api_no-mount  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-mount-api_no-mount  | ⚠️  Warning: Container is running as read-write, not in read-only mode.
+netalertx-test-mount-api_no-mount  | 
+netalertx-test-mount-api_no-mount  |     Please mount the root filesystem as --read-only or use read-only: true
+netalertx-test-mount-api_no-mount  |     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/read-only-filesystem.md
+netalertx-test-mount-api_no-mount  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-mount-api_no-mount  |  --> ports available
+netalertx-test-mount-api_no-mount  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-mount-api_no-mount  | ⚠️  Port Warning: GraphQL API port 20212 is already in use.
+netalertx-test-mount-api_no-mount  | 
+netalertx-test-mount-api_no-mount  |     The GraphQL API (defined by $APP_CONF_OVERRIDE or $GRAPHQL_PORT)
+netalertx-test-mount-api_no-mount  |     may fail to start.
+netalertx-test-mount-api_no-mount  | 
+netalertx-test-mount-api_no-mount  |     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/port-conflicts.md
+netalertx-test-mount-api_no-mount  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-mount-api_no-mount  | Starting /usr/sbin/php-fpm83 -y "/services/config/php/php-fpm.conf" -F >>"/app/log/app.php_errors.log" 2>/dev/stderr &
+netalertx-test-mount-api_no-mount  | Starting /usr/sbin/crond -c "/services/config/crond" -f -L "/app/log/crond.log" >>"/app/log/crond.log" 2>&1 &
+netalertx-test-mount-api_no-mount  | Starting python3  -m server > /app/log/stdout.log 2> >(tee /app/log/stderr.log >&2)
+netalertx-test-mount-api_no-mount  | Starting /usr/sbin/nginx -p "/services/run/" -c "/services/config/nginx/conf.active/netalertx.conf" -g "error_log /dev/stderr; error_log /app/log/nginx-error.log; pid /services/run/nginx.pid; daemon off;" &
+netalertx-test-mount-api_no-mount  | Successfully updated IEEE OUI database (111620 entries)
+
+==========================================
+
+File: docker-compose.mount-test.api_ramdisk.yml
+----------------------------------------
+Expected outcome: Container shows performance warning for API on RAM disk
+- NETALERTX_API shows as mounted on tmpfs (RAM disk)
+- Performance issue warning since API data should be on persistent storage
+- API data will be lost on container restart
+
+Testing: docker-compose.mount-test.api_ramdisk.yml
+Directory: /workspaces/NetAlertX/test/docker_tests/configurations/mount-tests
+
+Running docker-compose up...
+Attaching to netalertx-test-mount-api_ramdisk
+netalertx-test-mount-api_ramdisk  | [1;31m
+netalertx-test-mount-api_ramdisk  |  _   _      _    ___  _           _  __   __
+netalertx-test-mount-api_ramdisk  | | \ | |    | |  / _ \| |         | | \ \ / /
+netalertx-test-mount-api_ramdisk  | |  \| | ___| |_/ /_\ \ | ___ _ __| |_ \ V / 
+netalertx-test-mount-api_ramdisk  | | .   |/ _ \ __|  _  | |/ _ \  __| __|/   \ 
+netalertx-test-mount-api_ramdisk  | | |\  |  __/ |_| | | | |  __/ |  | |_/ /^\ \ 
+netalertx-test-mount-api_ramdisk  | \_| \_/\___|\__\_| |_/_|\___|_|   \__\/   \/
+netalertx-test-mount-api_ramdisk  | 
+netalertx-test-mount-api_ramdisk  | [0m   Network intruder and presence detector. 
+netalertx-test-mount-api_ramdisk  |    https://netalertx.com
+netalertx-test-mount-api_ramdisk  | 
+netalertx-test-mount-api_ramdisk  | 
+netalertx-test-mount-api_ramdisk  | Startup pre-checks
+netalertx-test-mount-api_ramdisk  |  --> storage permission
+netalertx-test-mount-api_ramdisk  |  --> mounts.py
+netalertx-test-mount-api_ramdisk  |  --> first run config
+netalertx-test-mount-api_ramdisk  |  --> first run db
+netalertx-test-mount-api_ramdisk  |  --> mandatory folders
+netalertx-test-mount-api_ramdisk  |     * Creating Plugins log.
+netalertx-test-mount-api_ramdisk  |     * Creating System services run log.
+netalertx-test-mount-api_ramdisk  |     * Creating System services run tmp.
+netalertx-test-mount-api_ramdisk  |     * Creating DB locked log.
+netalertx-test-mount-api_ramdisk  |     * Creating Execution queue log.
+netalertx-test-mount-api_ramdisk  |  --> writable config
+netalertx-test-mount-api_ramdisk  |  --> nginx config
+netalertx-test-mount-api_ramdisk  |  --> user netalertx
+netalertx-test-mount-api_ramdisk  |  --> host mode network
+netalertx-test-mount-api_ramdisk  |  --> layer 2 capabilities
+netalertx-test-mount-api_ramdisk  |  --> excessive capabilities
+netalertx-test-mount-api_ramdisk  |  --> appliance integrity
+netalertx-test-mount-api_ramdisk  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-mount-api_ramdisk  | ⚠️  Warning: Container is running as read-write, not in read-only mode.
+netalertx-test-mount-api_ramdisk  | 
+netalertx-test-mount-api_ramdisk  |     Please mount the root filesystem as --read-only or use read-only: true
+netalertx-test-mount-api_ramdisk  |     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/read-only-filesystem.md
+netalertx-test-mount-api_ramdisk  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-mount-api_ramdisk  |  --> ports available
+netalertx-test-mount-api_ramdisk  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-mount-api_ramdisk  | ⚠️  Port Warning: GraphQL API port 20212 is already in use.
+netalertx-test-mount-api_ramdisk  | 
+netalertx-test-mount-api_ramdisk  |     The GraphQL API (defined by $APP_CONF_OVERRIDE or $GRAPHQL_PORT)
+netalertx-test-mount-api_ramdisk  |     may fail to start.
+netalertx-test-mount-api_ramdisk  | 
+netalertx-test-mount-api_ramdisk  |     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/port-conflicts.md
+netalertx-test-mount-api_ramdisk  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-mount-api_ramdisk  | Starting /usr/sbin/php-fpm83 -y "/services/config/php/php-fpm.conf" -F >>"/app/log/app.php_errors.log" 2>/dev/stderr &
+netalertx-test-mount-api_ramdisk  | Starting /usr/sbin/crond -c "/services/config/crond" -f -L "/app/log/crond.log" >>"/app/log/crond.log" 2>&1 &
+netalertx-test-mount-api_ramdisk  | Starting python3  -m server > /app/log/stdout.log 2> >(tee /app/log/stderr.log >&2)
+netalertx-test-mount-api_ramdisk  | Starting /usr/sbin/nginx -p "/services/run/" -c "/services/config/nginx/conf.active/netalertx.conf" -g "error_log /dev/stderr; error_log /app/log/nginx-error.log; pid /services/run/nginx.pid; daemon off;" &
+netalertx-test-mount-api_ramdisk  | Successfully updated IEEE OUI database (111620 entries)
+
+==========================================
+
+File: docker-compose.mount-test.api_unwritable.yml
+----------------------------------------
+Expected outcome: Container fails to start due to unwritable API partition
+- NETALERTX_API shows as mounted but unwritable (❌ in Writeable column)
+- API directory must be writable for proper operation
+- Container startup fails because API functionality cannot work without write access
+
+Testing: docker-compose.mount-test.api_unwritable.yml
+Directory: /workspaces/NetAlertX/test/docker_tests/configurations/mount-tests
+
+Running docker-compose up...
+Attaching to netalertx-test-mount-api_unwritable
+netalertx-test-mount-api_unwritable  | [1;31m
+netalertx-test-mount-api_unwritable  |  _   _      _    ___  _           _  __   __
+netalertx-test-mount-api_unwritable  | | \ | |    | |  / _ \| |         | | \ \ / /
+netalertx-test-mount-api_unwritable  | |  \| | ___| |_/ /_\ \ | ___ _ __| |_ \ V / 
+netalertx-test-mount-api_unwritable  | | .   |/ _ \ __|  _  | |/ _ \  __| __|/   \ 
+netalertx-test-mount-api_unwritable  | | |\  |  __/ |_| | | | |  __/ |  | |_/ /^\ \ 
+netalertx-test-mount-api_unwritable  | \_| \_/\___|\__\_| |_/_|\___|_|   \__\/   \/
+netalertx-test-mount-api_unwritable  | 
+netalertx-test-mount-api_unwritable  | [0m   Network intruder and presence detector. 
+netalertx-test-mount-api_unwritable  |    https://netalertx.com
+netalertx-test-mount-api_unwritable  | 
+netalertx-test-mount-api_unwritable  | 
+netalertx-test-mount-api_unwritable  | Startup pre-checks
+netalertx-test-mount-api_unwritable  |  --> storage permission
+netalertx-test-mount-api_unwritable  |  --> mounts.py
+netalertx-test-mount-api_unwritable  |  Path                               | Writeable | Mount | RAMDisk | Performance | DataLoss 
+netalertx-test-mount-api_unwritable  | ------------------------------------+-----------+-------+---------+-------------+----------
+netalertx-test-mount-api_unwritable  |  /app/db                            |     ✅    |   ✅  |    ➖   |      ➖     |    ✅     
+netalertx-test-mount-api_unwritable  |  /app/config                        |     ✅    |   ✅  |    ➖   |      ➖     |    ✅     
+netalertx-test-mount-api_unwritable  |  /app/api                           |     ❌    |   ✅  |    ❌   |      ❌     |    ✅     
+netalertx-test-mount-api_unwritable  |  /app/log                           |     ✅    |   ✅  |    ✅   |      ✅     |    ✅     
+netalertx-test-mount-api_unwritable  |  /services/run                      |     ✅    |   ✅  |    ✅   |      ✅     |    ✅     
+netalertx-test-mount-api_unwritable  |  /services/config/nginx/conf.active |     ✅    |   ✅  |    ✅   |      ✅     |    ✅     
+netalertx-test-mount-api_unwritable  |  --> first run config
+netalertx-test-mount-api_unwritable  |  --> first run db
+netalertx-test-mount-api_unwritable  |  --> mandatory folders
+netalertx-test-mount-api_unwritable  |     * Creating Plugins log.
+netalertx-test-mount-api_unwritable  |     * Creating System services run log.
+netalertx-test-mount-api_unwritable  |     * Creating System services run tmp.
+netalertx-test-mount-api_unwritable  |     * Creating DB locked log.
+netalertx-test-mount-api_unwritable  |     * Creating Execution queue log.
+netalertx-test-mount-api_unwritable  |  --> writable config
+netalertx-test-mount-api_unwritable  |  --> nginx config
+netalertx-test-mount-api_unwritable  |  --> user netalertx
+netalertx-test-mount-api_unwritable  |  --> host mode network
+netalertx-test-mount-api_unwritable  |  --> layer 2 capabilities
+netalertx-test-mount-api_unwritable  |  --> excessive capabilities
+netalertx-test-mount-api_unwritable  |  --> appliance integrity
+netalertx-test-mount-api_unwritable  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-mount-api_unwritable  | ⚠️  Warning: Container is running as read-write, not in read-only mode.
+netalertx-test-mount-api_unwritable  | 
+netalertx-test-mount-api_unwritable  |     Please mount the root filesystem as --read-only or use read-only: true
+netalertx-test-mount-api_unwritable  |     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/read-only-filesystem.md
+netalertx-test-mount-api_unwritable  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-mount-api_unwritable  |  --> ports available
+netalertx-test-mount-api_unwritable  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-mount-api_unwritable  | ⚠️  Port Warning: GraphQL API port 20212 is already in use.
+netalertx-test-mount-api_unwritable  | 
+netalertx-test-mount-api_unwritable  |     The GraphQL API (defined by $APP_CONF_OVERRIDE or $GRAPHQL_PORT)
+netalertx-test-mount-api_unwritable  |     may fail to start.
+netalertx-test-mount-api_unwritable  | 
+netalertx-test-mount-api_unwritable  |     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/port-conflicts.md
+netalertx-test-mount-api_unwritable  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-mount-api_unwritable  | Starting /usr/sbin/crond -c "/services/config/crond" -f -L "/app/log/crond.log" >>"/app/log/crond.log" 2>&1 &
+netalertx-test-mount-api_unwritable  | Starting /usr/sbin/php-fpm83 -y "/services/config/php/php-fpm.conf" -F >>"/app/log/app.php_errors.log" 2>/dev/stderr &
+netalertx-test-mount-api_unwritable  | Starting python3  -m server > /app/log/stdout.log 2> >(tee /app/log/stderr.log >&2)
+netalertx-test-mount-api_unwritable  | Starting /usr/sbin/nginx -p "/services/run/" -c "/services/config/nginx/conf.active/netalertx.conf" -g "error_log /dev/stderr; error_log /app/log/nginx-error.log; pid /services/run/nginx.pid; daemon off;" &
+netalertx-test-mount-api_unwritable  | Successfully updated IEEE OUI database (111620 entries)
+
+==========================================
+
+File: docker-compose.mount-test.config_mounted.yml
+----------------------------------------
+Expected outcome: Container starts successfully with proper config mount
+- NETALERTX_CONFIG shows as writable and mounted
+- No configuration warnings for config path
+- Configuration persistence works correctly
+
+Testing: docker-compose.mount-test.config_mounted.yml
+Directory: /workspaces/NetAlertX/test/docker_tests/configurations/mount-tests
+
+Running docker-compose up...
+Attaching to netalertx-test-mount-config_mounted
+netalertx-test-mount-config_mounted  | [1;31m
+netalertx-test-mount-config_mounted  |  _   _      _    ___  _           _  __   __
+netalertx-test-mount-config_mounted  | | \ | |    | |  / _ \| |         | | \ \ / /
+netalertx-test-mount-config_mounted  | |  \| | ___| |_/ /_\ \ | ___ _ __| |_ \ V / 
+netalertx-test-mount-config_mounted  | | .   |/ _ \ __|  _  | |/ _ \  __| __|/   \ 
+netalertx-test-mount-config_mounted  | | |\  |  __/ |_| | | | |  __/ |  | |_/ /^\ \ 
+netalertx-test-mount-config_mounted  | \_| \_/\___|\__\_| |_/_|\___|_|   \__\/   \/
+netalertx-test-mount-config_mounted  | 
+netalertx-test-mount-config_mounted  | [0m   Network intruder and presence detector. 
+netalertx-test-mount-config_mounted  |    https://netalertx.com
+netalertx-test-mount-config_mounted  | 
+netalertx-test-mount-config_mounted  | 
+netalertx-test-mount-config_mounted  | Startup pre-checks
+netalertx-test-mount-config_mounted  |  --> storage permission
+netalertx-test-mount-config_mounted  |  --> mounts.py
+netalertx-test-mount-config_mounted  |  --> first run config
+netalertx-test-mount-config_mounted  |  --> first run db
+netalertx-test-mount-config_mounted  |  --> mandatory folders
+netalertx-test-mount-config_mounted  |     * Creating Plugins log.
+netalertx-test-mount-config_mounted  |     * Creating System services run log.
+netalertx-test-mount-config_mounted  |     * Creating System services run tmp.
+netalertx-test-mount-config_mounted  |     * Creating DB locked log.
+netalertx-test-mount-config_mounted  |     * Creating Execution queue log.
+netalertx-test-mount-config_mounted  |  --> writable config
+netalertx-test-mount-config_mounted  |  --> nginx config
+netalertx-test-mount-config_mounted  |  --> user netalertx
+netalertx-test-mount-config_mounted  |  --> host mode network
+netalertx-test-mount-config_mounted  |  --> layer 2 capabilities
+netalertx-test-mount-config_mounted  |  --> excessive capabilities
+netalertx-test-mount-config_mounted  |  --> appliance integrity
+netalertx-test-mount-config_mounted  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-mount-config_mounted  | ⚠️  Warning: Container is running as read-write, not in read-only mode.
+netalertx-test-mount-config_mounted  | 
+netalertx-test-mount-config_mounted  |     Please mount the root filesystem as --read-only or use read-only: true
+netalertx-test-mount-config_mounted  |     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/read-only-filesystem.md
+netalertx-test-mount-config_mounted  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-mount-config_mounted  |  --> ports available
+netalertx-test-mount-config_mounted  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-mount-config_mounted  | ⚠️  Port Warning: GraphQL API port 20212 is already in use.
+netalertx-test-mount-config_mounted  | 
+netalertx-test-mount-config_mounted  |     The GraphQL API (defined by $APP_CONF_OVERRIDE or $GRAPHQL_PORT)
+netalertx-test-mount-config_mounted  |     may fail to start.
+netalertx-test-mount-config_mounted  | 
+netalertx-test-mount-config_mounted  |     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/port-conflicts.md
+netalertx-test-mount-config_mounted  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-mount-config_mounted  | Starting /usr/sbin/php-fpm83 -y "/services/config/php/php-fpm.conf" -F >>"/app/log/app.php_errors.log" 2>/dev/stderr &
+netalertx-test-mount-config_mounted  | Starting /usr/sbin/crond -c "/services/config/crond" -f -L "/app/log/crond.log" >>"/app/log/crond.log" 2>&1 &
+netalertx-test-mount-config_mounted  | Starting python3  -m server > /app/log/stdout.log 2> >(tee /app/log/stderr.log >&2)
+netalertx-test-mount-config_mounted  | Starting /usr/sbin/nginx -p "/services/run/" -c "/services/config/nginx/conf.active/netalertx.conf" -g "error_log /dev/stderr; error_log /app/log/nginx-error.log; pid /services/run/nginx.pid; daemon off;" &
+netalertx-test-mount-config_mounted  | Successfully updated IEEE OUI database (111620 entries)
+
+==========================================
+
+File: docker-compose.mount-test.config_no-mount.yml
+----------------------------------------
+Expected outcome: Container shows mount error for config directory
+- NETALERTX_CONFIG shows as not mounted
+- Mount error since config directory should be mounted for proper operation
+- Configuration may not persist across restarts
+
+Testing: docker-compose.mount-test.config_no-mount.yml
+Directory: /workspaces/NetAlertX/test/docker_tests/configurations/mount-tests
+
+Running docker-compose up...
+Attaching to netalertx-test-mount-config_no-mount
+netalertx-test-mount-config_no-mount  | [1;31m
+netalertx-test-mount-config_no-mount  |  _   _      _    ___  _           _  __   __
+netalertx-test-mount-config_no-mount  | | \ | |    | |  / _ \| |         | | \ \ / /
+netalertx-test-mount-config_no-mount  | |  \| | ___| |_/ /_\ \ | ___ _ __| |_ \ V / 
+netalertx-test-mount-config_no-mount  | | .   |/ _ \ __|  _  | |/ _ \  __| __|/   \ 
+netalertx-test-mount-config_no-mount  | | |\  |  __/ |_| | | | |  __/ |  | |_/ /^\ \ 
+netalertx-test-mount-config_no-mount  | \_| \_/\___|\__\_| |_/_|\___|_|   \__\/   \/
+netalertx-test-mount-config_no-mount  | 
+netalertx-test-mount-config_no-mount  | [0m   Network intruder and presence detector. 
+netalertx-test-mount-config_no-mount  |    https://netalertx.com
+netalertx-test-mount-config_no-mount  | 
+netalertx-test-mount-config_no-mount  | 
+netalertx-test-mount-config_no-mount  | Startup pre-checks
+netalertx-test-mount-config_no-mount  |  --> storage permission
+netalertx-test-mount-config_no-mount  |  --> mounts.py
+netalertx-test-mount-config_no-mount  |  Path                               | Writeable | Mount | RAMDisk | Performance | DataLoss 
+netalertx-test-mount-config_no-mount  | ------------------------------------+-----------+-------+---------+-------------+----------
+netalertx-test-mount-config_no-mount  |  /app/db                            |     ✅    |   ✅  |    ➖   |      ➖     |    ✅     
+netalertx-test-mount-config_no-mount  |  /app/config                        |     ✅    |   ❌  |    ➖   |      ➖     |    ❌     
+netalertx-test-mount-config_no-mount  |  /app/api                           |     ✅    |   ✅  |    ✅   |      ✅     |    ✅     
+netalertx-test-mount-config_no-mount  |  /app/log                           |     ✅    |   ✅  |    ✅   |      ✅     |    ✅     
+netalertx-test-mount-config_no-mount  |  /services/run                      |     ✅    |   ✅  |    ✅   |      ✅     |    ✅     
+netalertx-test-mount-config_no-mount  |  /services/config/nginx/conf.active |     ✅    |   ✅  |    ✅   |      ✅     |    ✅     
+netalertx-test-mount-config_no-mount  |  --> first run config
+netalertx-test-mount-config_no-mount  |  --> first run db
+netalertx-test-mount-config_no-mount  |  --> mandatory folders
+netalertx-test-mount-config_no-mount  |     * Creating Plugins log.
+netalertx-test-mount-config_no-mount  |     * Creating System services run log.
+netalertx-test-mount-config_no-mount  |     * Creating System services run tmp.
+netalertx-test-mount-config_no-mount  |     * Creating DB locked log.
+netalertx-test-mount-config_no-mount  |     * Creating Execution queue log.
+netalertx-test-mount-config_no-mount  |  --> writable config
+netalertx-test-mount-config_no-mount  |  --> nginx config
+netalertx-test-mount-config_no-mount  |  --> user netalertx
+netalertx-test-mount-config_no-mount  |  --> host mode network
+netalertx-test-mount-config_no-mount  |  --> layer 2 capabilities
+netalertx-test-mount-config_no-mount  |  --> excessive capabilities
+netalertx-test-mount-config_no-mount  |  --> appliance integrity
+netalertx-test-mount-config_no-mount  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-mount-config_no-mount  | ⚠️  Warning: Container is running as read-write, not in read-only mode.
+netalertx-test-mount-config_no-mount  | 
+netalertx-test-mount-config_no-mount  |     Please mount the root filesystem as --read-only or use read-only: true
+netalertx-test-mount-config_no-mount  |     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/read-only-filesystem.md
+netalertx-test-mount-config_no-mount  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-mount-config_no-mount  |  --> ports available
+netalertx-test-mount-config_no-mount  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-mount-config_no-mount  | ⚠️  Port Warning: GraphQL API port 20212 is already in use.
+netalertx-test-mount-config_no-mount  | 
+netalertx-test-mount-config_no-mount  |     The GraphQL API (defined by $APP_CONF_OVERRIDE or $GRAPHQL_PORT)
+netalertx-test-mount-config_no-mount  |     may fail to start.
+netalertx-test-mount-config_no-mount  | 
+netalertx-test-mount-config_no-mount  |     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/port-conflicts.md
+netalertx-test-mount-config_no-mount  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-mount-config_no-mount  | Starting /usr/sbin/php-fpm83 -y "/services/config/php/php-fpm.conf" -F >>"/app/log/app.php_errors.log" 2>/dev/stderr &
+netalertx-test-mount-config_no-mount  | Starting /usr/sbin/crond -c "/services/config/crond" -f -L "/app/log/crond.log" >>"/app/log/crond.log" 2>&1 &
+netalertx-test-mount-config_no-mount  | Starting python3  -m server > /app/log/stdout.log 2> >(tee /app/log/stderr.log >&2)
+netalertx-test-mount-config_no-mount  | Starting /usr/sbin/nginx -p "/services/run/" -c "/services/config/nginx/conf.active/netalertx.conf" -g "error_log /dev/stderr; error_log /app/log/nginx-error.log; pid /services/run/nginx.pid; daemon off;" &
+netalertx-test-mount-config_no-mount  | Successfully updated IEEE OUI database (111620 entries)
+
+==========================================
+
+File: docker-compose.mount-test.config_ramdisk.yml
+----------------------------------------
+Expected outcome: Container shows dataloss risk warning for config on RAM disk
+- NETALERTX_CONFIG shows as mounted on tmpfs (RAM disk)
+- Dataloss risk warning since config data should be persistent
+- Configuration will be lost on container restart
+
+Testing: docker-compose.mount-test.config_ramdisk.yml
+Directory: /workspaces/NetAlertX/test/docker_tests/configurations/mount-tests
+
+Running docker-compose up...
+Attaching to netalertx-test-mount-config_ramdisk
+netalertx-test-mount-config_ramdisk  | [1;31m
+netalertx-test-mount-config_ramdisk  |  _   _      _    ___  _           _  __   __
+netalertx-test-mount-config_ramdisk  | | \ | |    | |  / _ \| |         | | \ \ / /
+netalertx-test-mount-config_ramdisk  | |  \| | ___| |_/ /_\ \ | ___ _ __| |_ \ V / 
+netalertx-test-mount-config_ramdisk  | | .   |/ _ \ __|  _  | |/ _ \  __| __|/   \ 
+netalertx-test-mount-config_ramdisk  | | |\  |  __/ |_| | | | |  __/ |  | |_/ /^\ \ 
+netalertx-test-mount-config_ramdisk  | \_| \_/\___|\__\_| |_/_|\___|_|   \__\/   \/
+netalertx-test-mount-config_ramdisk  | 
+netalertx-test-mount-config_ramdisk  | [0m   Network intruder and presence detector. 
+netalertx-test-mount-config_ramdisk  |    https://netalertx.com
+netalertx-test-mount-config_ramdisk  | 
+netalertx-test-mount-config_ramdisk  | 
+netalertx-test-mount-config_ramdisk  | Startup pre-checks
+netalertx-test-mount-config_ramdisk  |  --> storage permission
+netalertx-test-mount-config_ramdisk  |  --> mounts.py
+netalertx-test-mount-config_ramdisk  |  Path                               | Writeable | Mount | RAMDisk | Performance | DataLoss 
+netalertx-test-mount-config_ramdisk  | ------------------------------------+-----------+-------+---------+-------------+----------
+netalertx-test-mount-config_ramdisk  |  /app/db                            |     ✅    |   ✅  |    ➖   |      ➖     |    ✅     
+netalertx-test-mount-config_ramdisk  |  /app/config                        |     ✅    |   ✅  |    ❌   |      ➖     |    ❌     
+netalertx-test-mount-config_ramdisk  |  /app/api                           |     ✅    |   ✅  |    ✅   |      ✅     |    ✅     
+netalertx-test-mount-config_ramdisk  |  /app/log                           |     ✅    |   ✅  |    ✅   |      ✅     |    ✅     
+netalertx-test-mount-config_ramdisk  |  /services/run                      |     ✅    |   ✅  |    ✅   |      ✅     |    ✅     
+netalertx-test-mount-config_ramdisk  |  /services/config/nginx/conf.active |     ✅    |   ✅  |    ✅   |      ✅     |    ✅     
+netalertx-test-mount-config_ramdisk  |  --> first run config
+netalertx-test-mount-config_ramdisk  |  --> first run db
+netalertx-test-mount-config_ramdisk  |  --> mandatory folders
+netalertx-test-mount-config_ramdisk  |     * Creating Plugins log.
+netalertx-test-mount-config_ramdisk  |     * Creating System services run log.
+netalertx-test-mount-config_ramdisk  |     * Creating System services run tmp.
+netalertx-test-mount-config_ramdisk  |     * Creating DB locked log.
+netalertx-test-mount-config_ramdisk  |     * Creating Execution queue log.
+netalertx-test-mount-config_ramdisk  |  --> writable config
+netalertx-test-mount-config_ramdisk  | writable config: FAILED with 1
+netalertx-test-mount-config_ramdisk  | Failure detected in: /entrypoint.d/30-writable-config.sh
+netalertx-test-mount-config_ramdisk  |  --> nginx config
+netalertx-test-mount-config_ramdisk  |  --> user netalertx
+netalertx-test-mount-config_ramdisk  |  --> host mode network
+netalertx-test-mount-config_ramdisk  |  --> layer 2 capabilities
+netalertx-test-mount-config_ramdisk  |  --> excessive capabilities
+netalertx-test-mount-config_ramdisk  |  --> appliance integrity
+netalertx-test-mount-config_ramdisk  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-mount-config_ramdisk  | ⚠️  Warning: Container is running as read-write, not in read-only mode.
+netalertx-test-mount-config_ramdisk  | 
+netalertx-test-mount-config_ramdisk  |     Please mount the root filesystem as --read-only or use read-only: true
+netalertx-test-mount-config_ramdisk  |     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/read-only-filesystem.md
+netalertx-test-mount-config_ramdisk  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-mount-config_ramdisk  |  --> ports available
+netalertx-test-mount-config_ramdisk  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-mount-config_ramdisk  | ⚠️  Port Warning: GraphQL API port 20212 is already in use.
+netalertx-test-mount-config_ramdisk  | 
+netalertx-test-mount-config_ramdisk  |     The GraphQL API (defined by $APP_CONF_OVERRIDE or $GRAPHQL_PORT)
+netalertx-test-mount-config_ramdisk  |     may fail to start.
+netalertx-test-mount-config_ramdisk  | 
+netalertx-test-mount-config_ramdisk  |     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/port-conflicts.md
+netalertx-test-mount-config_ramdisk  | ══════════════════════════════════════════════════════════════════════════════
+netalertx-test-mount-config_ramdisk  | Container startup checks failed with exit code 1.
+netalertx-test-mount-config_ramdisk  | Starting /usr/sbin/php-fpm83 -y "/services/config/php/php-fpm.conf" -F >>"/app/log/app.php_errors.log" 2>/dev/stderr &
+netalertx-test-mount-config_ramdisk  | Starting /usr/sbin/crond -c "/services/config/crond" -f -L "/app/log/crond.log" >>"/app/log/crond.log" 2>&1 &
+netalertx-test-mount-config_ramdisk  | Starting python3  -m server > /app/log/stdout.log 2> >(tee /app/log/stderr.log >&2)
+netalertx-test-mount-config_ramdisk  | Starting /usr/sbin/nginx -p "/services/run/" -c "/services/config/nginx/conf.active/netalertx.conf" -g "error_log /dev/stderr; error_log /app/log/nginx-error.log; pid /services/run/nginx.pid; daemon off;" &
+netalertx-test-mount-config_ramdisk  | Successfully updated IEEE OUI database (111620 entries)
+
+==========================================
+
+File: docker-compose.mount-test.config_unwritable.yml
+----------------------------------------
+Expected outcome: Container fails to start due to unwritable config partition
+- NETALERTX_CONFIG shows as mounted but unwritable (❌ in Writeable column)
+- 30-writable-config.sh detects permission error and exits with code 1
+- Container startup fails because config files cannot be written to
+
+Testing: docker-compose.mount-test.config_unwritable.yml
+Directory: /workspaces/NetAlertX/test/docker_tests/configurations/mount-tests
+
+Running docker-compose up...
+Attaching to netalertx-test-mount-config_unwritable
+netalertx-test-mount-config_unwritable  | [1;31m
+netalertx-test-mount-config_unwritable  |  _   _      _    ___  _           _  __   __
+netalertx-test-mount-config_unwritable  | | \ | |    | |  / _ \| |         | | \ \ / /
+netalertx-test-mount-config_unwritable  | |  \| | ___| |_/ /_\ \ | ___ _ __| |_ \ V / 
+netalertx-test-mount-config_unwritable  | | .   |/ _ \ __|  _  | |/ _ \  __| __|/   \ 
+netalertx-test-mount-config_unwritable  | | |\  |  __/ |_| | | | |  __/ |  | |_/ /^\ \ 
+netalertx-test-mount-config_unwritable  | \_| \_/\___|\__\_| |_/_|\___|_|   \__\/   \/
+netalertx-test-mount-config_unwritable  | 
+netalertx-test-mount-config_unwritable  | [0m   Network intruder and presence detector. 
+netalertx-test-mount-config_unwritable  |    https://netalertx.com
+netalertx-test-mount-config_unwritable  | 
+netalertx-test-mount-config_unwritable  | 
+netalertx-test-mount-config_unwritable  | Startup pre-checks
+netalertx-test-mount-config_unwritable  |  --> storage permission
+netalertx-test-mount-config_unwritable  |  --> mounts.py
+netalertx-test-mount-config_unwritable  |  Path                               | Writeable | Mount | RAMDisk | Performance | DataLoss 
+netalertx-test-mount-config_unwritable  | ------------------------------------+-----------+-------+---------+-------------+----------
+netalertx-test-mount-config_unwritable  |  /app/db                            |     ✅    |   ✅  |    ➖   |      ➖     |    ✅     
+netalertx-test-mount-config_unwritable  |  /app/config                        |     ❌    |   ✅  |    ➖   |      ➖     |    ✅     
+netalertx-test-mount-config_unwritable  |  /app/api                           |     ✅    |   ✅  |    ✅   |      ✅     |    ✅     
+netalertx-test-mount-config_unwritable  |  /app/log                           |     ✅    |   ✅  |    ✅   |      ✅     |    ✅     
+netalertx-test-mount-config_unwritable  |  /services/run                      |     ✅    |   ✅  |    ✅   |      ✅     |    ✅     
+netalertx-test-mount-config_unwritable  |  /services/config/nginx/conf.active |     ✅    |   ✅  |    ✅   |      ✅     |    ✅     
+netalertx-test-mount-config_unwritable  |  --> first run config
+netalertx-test-mount-config_unwritable  |  --> first run db
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              

@@ -1,7 +1,12 @@
 #!/bin/sh
-# check-nginx-config.sh - verify nginx conf.active mount is writable when startup needs to render config.
+# check-nginx-config.sh - verify nginx conf.active mount is writable when PORT != 20211.
 
-CONF_ACTIVE_DIR="${SYSTEM_NGINX_CONFIG}/conf.active"
+# Only check nginx config writability if PORT is not the default 20211
+if [ "${PORT:-20211}" = "20211" ]; then
+    exit 0
+fi
+
+CONF_ACTIVE_DIR="${SYSTEM_SERVICES_ACTIVE_CONFIG}"
 TARGET_FILE="${CONF_ACTIVE_DIR}/netalertx.conf"
 
 # If the directory is missing entirely we warn and exit failure so the caller can see the message.
@@ -20,6 +25,8 @@ if [ ! -d "${CONF_ACTIVE_DIR}" ]; then
     Create a bind mount:
         --mount type=bind,src=/path/on/host,dst=${CONF_ACTIVE_DIR}
     and ensure it is owned by the netalertx user (20211:20211) with 700 perms.
+
+    https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/nginx-configuration-mount.md
 ══════════════════════════════════════════════════════════════════════════════
 EOF
     >&2 printf "%s" "${RESET}"
@@ -40,6 +47,8 @@ if ! ( : >"${TMP_FILE}" ) 2>/dev/null; then
         chown -R 20211:20211 ${CONF_ACTIVE_DIR}
         find ${CONF_ACTIVE_DIR} -type d -exec chmod 700 {} +
         find ${CONF_ACTIVE_DIR} -type f -exec chmod 600 {} +
+
+    https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/nginx-configuration-mount.md
 ══════════════════════════════════════════════════════════════════════════════
 EOF
     >&2 printf "%s" "${RESET}"

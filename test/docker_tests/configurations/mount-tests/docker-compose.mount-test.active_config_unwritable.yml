@@ -1,0 +1,52 @@
+# Expected outcome: Container fails to start due to unwritable nginx config partition
+# - SYSTEM_SERVICES_ACTIVE_CONFIG shows as mounted but unwritable (❌ in Writeable column)
+# - 35-nginx-config.sh detects permission error and exits with code 1
+# - Container startup fails because nginx configuration cannot be written for custom ports
+services:
+  netalertx:
+    network_mode: host
+    build:
+      context: ../../../
+      dockerfile: Dockerfile
+    image: netalertx-test
+    container_name: netalertx-test-mount-active_config_unwritable
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+      - NET_BIND_SERVICE
+    environment:
+      LISTEN_ADDR: 0.0.0.0
+      PORT: 9999  # Use non-default port to test all paths
+      APP_CONF_OVERRIDE: 20212
+      ALWAYS_FRESH_INSTALL: true
+      NETALERTX_DEBUG: 0
+      SYSTEM_SERVICES_ACTIVE_CONFIG: /services/config/nginx/conf.active
+
+    volumes:
+      - type: volume
+        source: netalertx_db
+        target: /app/db
+        read_only: false
+      - type: volume
+        source: netalertx_config
+        target: /app/config
+        read_only: false
+      - type: volume
+        source: test_system_services_active_config
+        target: /services/config/nginx/conf.active
+        read_only: true
+    tmpfs:
+      - "/app/api:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      - "/app/log:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      - "/services/run:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+volumes:
+  netalertx_config:
+  netalertx_db:
+  test_netalertx_db:
+  test_netalertx_config:
+  test_netalertx_api:
+  test_netalertx_log:
+  test_system_services_run:
+  test_system_services_active_config:
