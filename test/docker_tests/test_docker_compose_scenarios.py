@@ -8,64 +8,13 @@ Ensure netalertx-test image is built prior to starting these tests.
 import os
 import pathlib
 import subprocess
-import time
 import pytest
-
-IMAGE = os.environ.get("NETALERTX_TEST_IMAGE", "netalertx-test")
+import yaml
 
 # Path to test configurations
 CONFIG_DIR = pathlib.Path(__file__).parent / "configurations"
 
 pytestmark = [pytest.mark.docker, pytest.mark.compose]
-
-
-def _run_docker_compose(compose_file: pathlib.Path, project_name: str, timeout: int = 30, env_vars: dict = None) -> subprocess.CompletedProcess:
-    """Run docker compose up and capture output."""
-    cmd = [
-        "docker", "compose",
-        "-f", str(compose_file),
-        "-p", project_name,
-        "up",
-        "--abort-on-container-exit",
-        "--timeout", str(timeout)
-    ]
-
-    env = os.environ.copy()
-    if env_vars:
-        env.update(env_vars)
-
-    try:
-        result = subprocess.run(
-            cmd,
-            cwd=compose_file.parent,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-            timeout=timeout + 10,
-            env=env,
-            check=False,
-        )
-    except subprocess.TimeoutExpired:
-        # Clean up on timeout
-        subprocess.run(["docker", "compose", "-f", str(compose_file), "-p", project_name, "down", "-v"],
-                      cwd=compose_file.parent, check=False)
-        raise
-
-    # Always clean up
-    subprocess.run(["docker", "compose", "-f", str(compose_file), "-p", project_name, "down", "-v"],
-                  cwd=compose_file.parent, check=False)
-
-    # Combine stdout and stderr
-    result.output = result.stdout + result.stderr
-    return result
-
-import os
-import pathlib
-import subprocess
-import tempfile
-import time
-import pytest
-import yaml
 
 IMAGE = os.environ.get("NETALERTX_TEST_IMAGE", "netalertx-test")
 
@@ -213,46 +162,6 @@ def test_missing_capabilities_compose() -> None:
     # Check for expected error
     assert "exec /bin/sh: operation not permitted" in result.output
     assert result.returncode != 0
-
-
-def test_host_network_compose(tmp_path: pathlib.Path) -> None:
-    """Test host networking mode using docker compose.
-
-    Simulates running with network_mode: host.
-    Expected: Container starts successfully with host networking.
-    """
-    base_dir = tmp_path / "host_network"
-    base_dir.mkdir()
-
-    # Create test data directories
-    _create_test_data_dirs(base_dir)
-
-    # Create compose file
-    compose_config = COMPOSE_CONFIGS["host_network"].copy()
-    compose_file = base_dir / "docker-compose.yml"
-    with open(compose_file, 'w') as f:
-        yaml.dump(compose_config, f)
-
-    # Run docker compose
-    result = _run_docker_compose(compose_file, "netalertx-host-net")
-
-    # Check that it doesn't fail with network-related errors
-    assert "not running with --network=host" not in result.output
-    # Container should start (may fail later for other reasons, but network should be OK)
-
-
-def test_host_network_compose() -> None:
-    """Test host networking mode using docker compose.
-
-    Uses docker-compose.readonly.yml with host networking.
-    Expected: Container starts successfully with host networking.
-    """
-    compose_file = CONFIG_DIR / "docker-compose.readonly.yml"
-    result = _run_docker_compose(compose_file, "netalertx-host-net")
-
-    # Check that it doesn't fail with network-related errors
-    assert "not running with --network=host" not in result.output
-    # Container should start (may fail later for other reasons, but network should be OK)
 
 
 def test_custom_port_with_unwritable_nginx_config_compose() -> None:

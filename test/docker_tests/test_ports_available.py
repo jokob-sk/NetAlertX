@@ -119,7 +119,7 @@ def _run_container(
         cmd.extend(["-v", mount])
 
     # Copy the script content and run it
-    script_path = "/workspaces/NetAlertX/install/production-filesystem/entrypoint.d/99-ports-available.sh"
+    script_path = "install/production-filesystem/entrypoint.d/99-ports-available.sh"
     with open(script_path, 'r') as f:
         script_content = f.read()
 

@@ -36,17 +36,21 @@ extract_comments() {
 # Function to run docker-compose test
 run_test() {
     local file="$1"
-    local dirname=$(dirname "$file")
-    local basename=$(basename "$file")
+    local dirname
+    dirname=$(dirname "$file")
+    local basename
+    basename=$(basename "$file")
+    local basename
+    basename=$(basename "$file")
 
     echo "Testing: $basename" >> "$LOG_FILE"
     echo "Directory: $dirname" >> "$LOG_FILE"
     echo "" >> "$LOG_FILE"
-
+    cd "$dirname" || exit 1
     # Change to the directory containing the docker-compose file
     cd "$dirname"
 
-    # Run docker-compose up with timeout
+    timeout 10s docker-compose -f "$basename" up >> "$LOG_FILE" 2>&1
     echo "Running docker-compose up..." >> "$LOG_FILE"
     timeout 10s docker-compose -f "$basename" up 2>&1 >> "$LOG_FILE"
 
@@ -58,10 +62,10 @@ run_test() {
     echo "==========================================" >> "$LOG_FILE"
     echo "" >> "$LOG_FILE"
 }
-
-# Find all docker-compose files
-find "$SCRIPT_DIR" -name "docker-compose*.yml" -type f | sort | while read -r file; do
+find "$SCRIPT_DIR" -name "docker-compose*.yml" -type f -print0 | sort -z | while IFS= read -r -d '' file; do
     extract_comments "$file"
+    run_test "$file"
+done
     run_test "$file"
 done
 

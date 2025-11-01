@@ -227,6 +227,83 @@ def create_test_scenarios() -> List[TestScenario]:
 
     return scenarios
 
+
+def validate_scenario_table_output(output: str, test_scenario: TestScenario) -> None:
+    """Validate the diagnostic table for scenarios that should report issues."""
+
+    if not test_scenario.expected_issues:
+        return
+
+    try:
+        if test_scenario.name.startswith('db_'):
+            if test_scenario.name == 'db_ramdisk':
+                # db on ramdisk: mount=True, ramdisk=False (detected), dataloss=False (risk)
+                assert_table_row(output, '/app/db', mount=True, ramdisk=False, dataloss=False)
+            elif test_scenario.name == 'db_no-mount':
+                # db not mounted: mount=False, dataloss=False (risk)
+                assert_table_row(output, '/app/db', mount=False, dataloss=False)
+            elif test_scenario.name == 'db_unwritable':
+                # db read-only: writeable=False
+                assert_table_row(output, '/app/db', writeable=False)
+
+        elif test_scenario.name.startswith('config_'):
+            if test_scenario.name == 'config_ramdisk':
+                # config on ramdisk: mount=True, ramdisk=False (detected), dataloss=False (risk)
+                assert_table_row(output, '/app/config', mount=True, ramdisk=False, dataloss=False)
+            elif test_scenario.name == 'config_no-mount':
+                # config not mounted: mount=False, dataloss=False (risk)
+                assert_table_row(output, '/app/config', mount=False, dataloss=False)
+            elif test_scenario.name == 'config_unwritable':
+                # config read-only: writeable=False
+                assert_table_row(output, '/app/config', writeable=False)
+
+        elif test_scenario.name.startswith('api_'):
+            if test_scenario.name == 'api_mounted':
+                # api with volume mount: mount=True, performance=False (not ramdisk)
+                assert_table_row(output, '/app/api', mount=True, performance=False)
+            elif test_scenario.name == 'api_no-mount':
+                # api not mounted: mount=False, performance=False (not ramdisk)
+                assert_table_row(output, '/app/api', mount=False, performance=False)
+            elif test_scenario.name == 'api_unwritable':
+                # api read-only: writeable=False
+                assert_table_row(output, '/app/api', writeable=False)
+
+        elif test_scenario.name.startswith('log_'):
+            if test_scenario.name == 'log_mounted':
+                # log with volume mount: mount=True, performance=False (not ramdisk)
+                assert_table_row(output, '/app/log', mount=True, performance=False)
+            elif test_scenario.name == 'log_no-mount':
+                # log not mounted: mount=False, performance=False (not ramdisk)
+                assert_table_row(output, '/app/log', mount=False, performance=False)
+            elif test_scenario.name == 'log_unwritable':
+                # log read-only: writeable=False
+                assert_table_row(output, '/app/log', writeable=False)
+
+        elif test_scenario.name.startswith('run_'):
+            if test_scenario.name == 'run_mounted':
+                # run with volume mount: mount=True, performance=False (not ramdisk)
+                assert_table_row(output, '/services/run', mount=True, performance=False)
+            elif test_scenario.name == 'run_no-mount':
+                # run not mounted: mount=False, performance=False (not ramdisk)
+                assert_table_row(output, '/services/run', mount=False, performance=False)
+            elif test_scenario.name == 'run_unwritable':
+                # run read-only: writeable=False
+                assert_table_row(output, '/services/run', writeable=False)
+
+        elif test_scenario.name.startswith('active_config_'):
+            if test_scenario.name == 'active_config_mounted':
+                # active_config with volume mount: mount=True, performance=False (not ramdisk)
+                assert_table_row(output, '/services/config/nginx/conf.active', mount=True, performance=False)
+            elif test_scenario.name == 'active_config_no-mount':
+                # active_config not mounted: mount=False, performance=False (not ramdisk)
+                assert_table_row(output, '/services/config/nginx/conf.active', mount=False, performance=False)
+            elif test_scenario.name == 'active_config_unwritable':
+                # active_config unwritable: RAM disk issues detected
+                assert_table_row(output, '/services/config/nginx/conf.active', ramdisk=False, performance=False)
+
+    except AssertionError as e:
+        pytest.fail(f"Table validation failed for {test_scenario.name}: {e}")
+
 @pytest.mark.parametrize("test_scenario", create_test_scenarios(), ids=lambda s: s.name)
 @pytest.mark.docker
 def test_mount_diagnostic(netalertx_test_image, test_scenario):
@@ -291,98 +368,43 @@ def test_mount_diagnostic(netalertx_test_image, test_scenario):
 
             logs = result_logs.stdout + result_logs.stderr
 
-            # For tests that expect issues, validate the table content
             if test_scenario.expected_issues:
-                # Parse and validate the table for the specific path being tested
-                try:
-                    if test_scenario.name.startswith('db_'):
-                        if test_scenario.name == 'db_ramdisk':
-                            # db on ramdisk: mount=True, ramdisk=False (detected), dataloss=False (risk)
-                            assert_table_row(logs, '/app/db', mount=True, ramdisk=False, dataloss=False)
-                        elif test_scenario.name == 'db_no-mount':
-                            # db not mounted: mount=False, dataloss=False (risk)
-                            assert_table_row(logs, '/app/db', mount=False, dataloss=False)
-                        elif test_scenario.name == 'db_unwritable':
-                            # db read-only: writeable=False
-                            assert_table_row(logs, '/app/db', writeable=False)
-                    
-                    elif test_scenario.name.startswith('config_'):
-                        if test_scenario.name == 'config_ramdisk':
-                            # config on ramdisk: mount=True, ramdisk=False (detected), dataloss=False (risk)
-                            assert_table_row(logs, '/app/config', mount=True, ramdisk=False, dataloss=False)
-                        elif test_scenario.name == 'config_no-mount':
-                            # config not mounted: mount=False, dataloss=False (risk)
-                            assert_table_row(logs, '/app/config', mount=False, dataloss=False)
-                        elif test_scenario.name == 'config_unwritable':
-                            # config read-only: writeable=False
-                            assert_table_row(logs, '/app/config', writeable=False)
-                    
-                    elif test_scenario.name.startswith('api_'):
-                        if test_scenario.name == 'api_mounted':
-                            # api with volume mount: mount=True, performance=False (not ramdisk)
-                            assert_table_row(logs, '/app/api', mount=True, performance=False)
-                        elif test_scenario.name == 'api_no-mount':
-                            # api not mounted: mount=False, performance=False (not ramdisk)
-                            assert_table_row(logs, '/app/api', mount=False, performance=False)
-                        elif test_scenario.name == 'api_unwritable':
-                            # api read-only: writeable=False
-                            assert_table_row(logs, '/app/api', writeable=False)
-                    
-                    elif test_scenario.name.startswith('log_'):
-                        if test_scenario.name == 'log_mounted':
-                            # log with volume mount: mount=True, performance=False (not ramdisk)
-                            assert_table_row(logs, '/app/log', mount=True, performance=False)
-                        elif test_scenario.name == 'log_no-mount':
-                            # log not mounted: mount=False, performance=False (not ramdisk)
-                            assert_table_row(logs, '/app/log', mount=False, performance=False)
-                        elif test_scenario.name == 'log_unwritable':
-                            # log read-only: writeable=False
-                            assert_table_row(logs, '/app/log', writeable=False)
-                    
-                    elif test_scenario.name.startswith('run_'):
-                        if test_scenario.name == 'run_mounted':
-                            # run with volume mount: mount=True, performance=False (not ramdisk)
-                            assert_table_row(logs, '/services/run', mount=True, performance=False)
-                        elif test_scenario.name == 'run_no-mount':
-                            # run not mounted: mount=False, performance=False (not ramdisk)
-                            assert_table_row(logs, '/services/run', mount=False, performance=False)
-                        elif test_scenario.name == 'run_unwritable':
-                            # run read-only: writeable=False
-                            assert_table_row(logs, '/services/run', writeable=False)
-                    
-                        elif test_scenario.name.startswith('active_config_'):
-                            if test_scenario.name == 'active_config_mounted':
-                                # active_config with volume mount: mount=True, performance=False (not ramdisk)
-                                assert_table_row(logs, '/services/config/nginx/conf.active', mount=True, performance=False)
-                            elif test_scenario.name == 'active_config_no-mount':
-                                # active_config not mounted: mount=False, performance=False (not ramdisk)
-                                assert_table_row(logs, '/services/config/nginx/conf.active', mount=False, performance=False)
-                            elif test_scenario.name == 'active_config_unwritable':
-                                # active_config unwritable: RAM disk issues detected
-                                assert_table_row(logs, '/services/config/nginx/conf.active', ramdisk=False, performance=False)
-                    
-                except AssertionError as e:
-                    pytest.fail(f"Table validation failed for {test_scenario.name}: {e}")
+                validate_scenario_table_output(logs, test_scenario)
             
             return  # Test passed - container correctly detected issues and exited
 
-            # Container is still running - run diagnostic tool
-            cmd_exec = [
-                "docker", "exec", "--user", "netalertx", container_name,
-                "python3", "/entrypoint.d/10-mounts.py"
-            ]
-            result_exec = subprocess.run(cmd_exec, capture_output=True, text=True, timeout=30)
-            
-            # Diagnostic tool returns 1 if there are write errors, 0 otherwise
-            expected_tool_exit = 1 if "unwritable" in test_scenario.name else 0
-            assert result_exec.returncode == expected_tool_exit, f"Diagnostic tool failed: {result_exec.stderr}"
+        # Container is still running - run diagnostic tool
+        cmd_exec = [
+            "docker", "exec", "--user", "netalertx", container_name,
+            "python3", "/entrypoint.d/10-mounts.py"
+        ]
+        result_exec = subprocess.run(cmd_exec, capture_output=True, text=True, timeout=30)
+        diagnostic_output = result_exec.stdout + result_exec.stderr
 
-            # For good configurations (no issues expected), verify table output but no warning
-            if not test_scenario.expected_issues:
-                # Should have table output but no warning message
-                assert "Path" in result_exec.stdout, f"Good config {test_scenario.name} should show table, got: {result_exec.stdout}"
-                assert "⚠️" not in result_exec.stderr, f"Good config {test_scenario.name} should not show warning, got stderr: {result_exec.stderr}"
-                return  # Test passed - good configuration correctly produces no warnings
+        # The diagnostic tool returns 1 for unwritable paths except active_config, which only warns
+        if test_scenario.name.startswith('active_config_') and 'unwritable' in test_scenario.name:
+            expected_tool_exit = 0
+        elif 'unwritable' in test_scenario.name:
+            expected_tool_exit = 1
+        else:
+            expected_tool_exit = 0
+
+        assert result_exec.returncode == expected_tool_exit, (
+            f"Diagnostic tool failed: {result_exec.stderr}"
+        )
+
+        if test_scenario.expected_issues:
+            validate_scenario_table_output(diagnostic_output, test_scenario)
+            assert "⚠️" in diagnostic_output, (
+                f"Issue scenario {test_scenario.name} should include a warning symbol, got: {result_exec.stderr}"
+            )
+        else:
+            # Should have table output but no warning message
+            assert "Path" in result_exec.stdout, f"Good config {test_scenario.name} should show table, got: {result_exec.stdout}"
+            assert "⚠️" not in diagnostic_output, (
+                f"Good config {test_scenario.name} should not show warning, got stderr: {result_exec.stderr}"
+            )
+        return  # Test passed - diagnostic output validated
 
     finally:
         # Stop container
