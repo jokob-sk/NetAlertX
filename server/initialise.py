@@ -449,8 +449,8 @@ def read_config_file(filename):
 
 
 #-------------------------------------------------------------------------------
-# DEPERECATED soonest after 10/10/2024
-# 🤔Idea/TODO: Check and compare versions/timestamps amd only perform a replacement if config/version older than...
+# DEPRECATE soonest after 10/10/2024
+# 🤔Idea/TODO: Check and compare versions/timestamps and only perform a replacement if config/version older than...
 replacements = {
     r'\bREPORT_TO\b': 'SMTP_REPORT_TO',
     r'\bSYNC_api_token\b': 'API_TOKEN',
