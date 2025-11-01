@@ -89,7 +89,6 @@ COMPOSE_CONFIGS = {
     }
 }
 
-pytestmark = [pytest.mark.docker, pytest.mark.compose]
 
 
 def _create_test_data_dirs(base_dir: pathlib.Path) -> None:
