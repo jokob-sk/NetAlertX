@@ -990,7 +990,7 @@ function initializeDatatable (status) {
 
           // search only after idle
           var typingTimer;  // Timer identifier
-          var debounceTime = 500;  // Delay in milliseconds
+          var debounceTime = 750;  // Delay in milliseconds
 
           $('input[aria-controls="tableDevices"]').off().on('keyup', function () {
               clearTimeout(typingTimer);  // Clear the previous timer

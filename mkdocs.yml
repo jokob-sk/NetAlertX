@@ -13,10 +13,11 @@ nav:
       - Installation options: INSTALLATION.md
       - Quick setup: INITIAL_SETUP.md      
       - Docker:
-        - Docker Guide: INSTALLATION_DOCKER.md   
+        - Docker Guide: DOCKER_INSTALLATION.md   
         - Docker Compose: DOCKER_COMPOSE.md
         - Docker File Permissions: FILE_PERMISSIONS.md
         - Docker Updates: UPDATES.md
+        - Docker Maintenance: DOCKER_MAINTENANCE.md
       - Other:
         - Synology Guide: SYNOLOGY_GUIDE.md
         - Portainer Stacks: DOCKER_PORTAINER.md
@@ -33,7 +34,8 @@ nav:
         - Home Assistant: HOME_ASSISTANT.md
         - Emails: SMTP.md
         - Backups: BACKUPS.md   
-        - Security: SECURITY.md
+        - Security Features: SECURITY_FEATURES.md
+        - Security Considerations: SECURITY.md
       - Advanced guides:
         - Remote Networks: REMOTE_NETWORKS.md      
         - Notifications Guide: NOTIFICATIONS.md      
@@ -72,6 +74,7 @@ nav:
   - Development:
       - Plugin and app development:
         - Environment Setup: DEV_ENV_SETUP.md
+        - Builds: BUILDS.md
         - Devcontainer: DEV_DEVCONTAINER.md
         - Custom Plugins: PLUGINS_DEV.md
         - Plugin Config: PLUGINS_DEV_CONFIG.md

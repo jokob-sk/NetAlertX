@@ -768,13 +768,39 @@ def collect_lang_strings(json, pref, stringSqlParams):
     return stringSqlParams
 
 #-------------------------------------------------------------------------------
+# Get the value from the buildtimestamp.txt and initialize it if missing
+def getBuildTimeStamp():
+    """
+    Retrieves the build timestamp from 'front/buildtimestamp.txt' within the
+    application directory.
+
+    If the file does not exist, it is created and initialized with the value '0'.
+
+    Returns:
+        int: The integer value of the build timestamp read from the file.
+             Returns 0 if the file is empty or just initialized.
+    """
+    buildTimestamp = 0
+    build_timestamp_path = os.path.join(applicationPath, 'front/buildtimestamp.txt')
+
+    # Ensure file exists, initialize if missing
+    if not os.path.exists(build_timestamp_path):
+        with open(build_timestamp_path, 'w') as f:
+            f.write("0")
+
+    # Now safely read the timestamp
+    with open(build_timestamp_path, 'r') as f:
+        buildTimestamp = int(f.read().strip() or 0)
+
+    return buildTimestamp
+
+
+#-------------------------------------------------------------------------------
 def checkNewVersion():
     mylog('debug', [f"[Version check] Checking if new version available"])
 
     newVersion = False
-
-    with open(applicationPath + '/front/buildtimestamp.txt', 'r') as f:
-        buildTimestamp = int(f.read().strip())
+    buildTimestamp = getBuildTimeStamp()
 
     try:
         response = requests.get(

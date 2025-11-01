@@ -12,7 +12,7 @@ import re
 # Register NetAlertX libraries
 import conf 
 from const import fullConfPath, applicationPath, fullConfFolder, default_tz
-from helper import fixPermissions, collect_lang_strings, updateSubnets, isJsonObject, setting_value_to_python_type, timeNowTZ, get_setting_value, generate_random_string
+from helper import getBuildTimeStamp, fixPermissions, collect_lang_strings, updateSubnets, isJsonObject, setting_value_to_python_type, timeNowTZ, get_setting_value, generate_random_string
 from app_state import updateState
 from logger import mylog
 from api import update_api
@@ -176,7 +176,7 @@ def importConfigs (pm, db, all_plugins):
     conf.API_TOKEN = ccd('API_TOKEN', 't_' + generate_random_string(20) , c_d, 'API token', '{"dataType": "string","elements": [{"elementType": "input","elementHasInputValue": 1,"elementOptions": [{ "cssClasses": "col-xs-12" }],"transformers": []},{"elementType": "button","elementOptions": [{ "getStringKey": "Gen_Generate" },{ "customParams": "API_TOKEN" },{ "onClick": "generateApiToken(this, 20)" },{ "cssClasses": "col-xs-12" }],"transformers": []}]}', '[]', 'General')
 
     # UI
-    conf.UI_LANG = ccd('UI_LANG', 'English (en_us)' , c_d, 'Language Interface', '{"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]}', "['English (en_us)', 'Arabic (ar_ar)', 'Catalan (ca_ca)', 'Czech (cs_cz)', 'German (de_de)', 'Spanish (es_es)', 'Farsi (fa_fa)', 'French (fr_fr)', 'Italian (it_it)', 'Norwegian (nb_no)', 'Polish (pl_pl)', 'Portuguese (pt_br)', 'Portuguese (pt_pt)', 'Russian (ru_ru)', 'Turkish (tr_tr)', 'Ukrainian (uk_ua)', 'Chinese (zh_cn)']", 'UI') 
+    conf.UI_LANG = ccd('UI_LANG', 'English (en_us)' , c_d, 'Language Interface', '{"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]}', "['English (en_us)', 'Arabic (ar_ar)', 'Catalan (ca_ca)', 'Czech (cs_cz)', 'German (de_de)', 'Spanish (es_es)', 'Farsi (fa_fa)', 'French (fr_fr)', 'Italian (it_it)', 'Norwegian (nb_no)', 'Polish (pl_pl)', 'Portuguese (pt_br)', 'Portuguese (pt_pt)', 'Russian (ru_ru)', 'Swedish (sv_sv)', 'Turkish (tr_tr)', 'Ukrainian (uk_ua)', 'Chinese (zh_cn)']", 'UI') 
     
     #  Init timezone in case it changed and handle invalid values
     try:
@@ -378,22 +378,21 @@ def importConfigs (pm, db, all_plugins):
     # HANDLE APP was upgraded message - clear cache
     
     # Check if app was upgraded
-    with open(applicationPath + '/front/buildtimestamp.txt', 'r') as f:
         
-        buildTimestamp = int(f.read().strip())
-        cur_version = conf.VERSION 
+    buildTimestamp = getBuildTimeStamp()
+    cur_version = conf.VERSION 
+    
+    mylog('debug', [f"[Config] buildTimestamp: '{buildTimestamp}'"])
+    mylog('debug', [f"[Config] conf.VERSION  : '{cur_version}'"])
+    
+    if str(cur_version) != str(buildTimestamp):
         
-        mylog('debug', [f"[Config] buildTimestamp: '{buildTimestamp}'"])
-        mylog('debug', [f"[Config] conf.VERSION  : '{cur_version}'"])
+        mylog('none', ['[Config] App upgraded 🚀'])      
+                
+        # ccd(key, default, config_dir, name, inputtype, options, group, events=None, desc="", setJsonMetadata=None, overrideTemplate=None, forceDefault=False)
+        ccd('VERSION', buildTimestamp , c_d, '_KEEP_', '_KEEP_', '_KEEP_', '_KEEP_', None, "_KEEP_", None, None, True)
         
-        if str(cur_version) != str(buildTimestamp):
-            
-            mylog('none', ['[Config] App upgraded 🚀'])      
-                 
-            # ccd(key, default, config_dir, name, inputtype, options, group, events=None, desc="", setJsonMetadata=None, overrideTemplate=None, forceDefault=False)
-            ccd('VERSION', buildTimestamp , c_d, '_KEEP_', '_KEEP_', '_KEEP_', '_KEEP_', None, "_KEEP_", None, None, True)
-            
-            write_notification(f'[Upgrade] : App upgraded 🚀 Please clear the cache: <ol> <li>Click OK below</li>  <li>Clear the browser cache (shift + browser refresh button)</li> <li> Clear app cache with the <i class="fa-solid fa-rotate"></i> (reload) button in the header</li><li>Go to Settings and click Save</li> </ol> Check out new features and what has changed in the <a href="https://github.com/jokob-sk/NetAlertX/releases" target="_blank">📓 release notes</a>.', 'interrupt', timeNowTZ())
+        write_notification(f'[Upgrade] : App upgraded 🚀 Please clear the cache: <ol> <li>Click OK below</li>  <li>Clear the browser cache (shift + browser refresh button)</li> <li> Clear app cache with the <i class="fa-solid fa-rotate"></i> (reload) button in the header</li><li>Go to Settings and click Save</li> </ol> Check out new features and what has changed in the <a href="https://github.com/jokob-sk/NetAlertX/releases" target="_blank">📓 release notes</a>.', 'interrupt', timeNowTZ())
 
     
 

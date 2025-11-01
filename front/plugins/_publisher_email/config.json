@@ -534,7 +534,7 @@
           {
             "elementType": "input",
             "elementOptions": [{ "type": "password" }],
-            "transformers": []
+            "transformers": ["base64"]
           }
         ]
       },

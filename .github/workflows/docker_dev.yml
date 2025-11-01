@@ -3,12 +3,12 @@ name: docker
 on:
   push:
     branches:
-      - main
+      - next_release
     tags:
       - '*.*.*'
   pull_request:
     branches:
-      - main
+      - next_release
 
 jobs: 
   docker_dev:
