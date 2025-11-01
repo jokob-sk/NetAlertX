@@ -75,7 +75,7 @@ def main ():
     updateState("Initializing", None, None, None, 0)    
 
     # Open DB once and keep open
-    # Opening / closing DB frequently actually casues more issues
+    # Opening/closing the DB frequently actually causes more issues
     db = DB()  # instance of class DB
     db.open()
     sql = db.sql  # To-Do replace with the db class
@@ -148,12 +148,14 @@ def main ():
             mylog('debug', [f'[MAIN] processScan: {processScan}'])
             
             if processScan == True:   
-                mylog('debug', "[MAIN] start processig scan results")
+                mylog('debug', "[MAIN] start processing scan results")
                 process_scan(db)
                 updateState("Scan processed", None, None, None, None, False)
                           
-            # --------
-            # Reporting   
+            # ------------------------------------------------------------------------------
+            # Reporting
+            # ------------------------------------------------------------------------------
+  
             # run plugins before notification processing (e.g. Plugins to discover device names)
             pm.run_plugin_scripts('before_name_updates')
 
@@ -181,19 +183,29 @@ def main ():
             notification    = NotificationInstance(db)
             notificationObj = notification.create(final_json, "")
 
-            # run all enabled publisher gateways 
+            # ------------------------------------------------------------------------------
+            # Run all enabled publisher gateways (notification delivery)
+            # ------------------------------------------------------------------------------
+            # Design notes:
+            # - The eve_PendingAlertEmail flag is only cleared *after* a notification is sent.
+            # - If no notification is sent (HasNotifications == False), the flag stays set,
+            #   meaning the event may still trigger alerts later depending on user settings
+            #   (e.g. down-event reporting, delay timers, plugin conditions).
+            # - A pending flag means “still under evaluation,” not “missed.”
+            #   It will clear automatically once its event is included in a sent alert.
+            # ------------------------------------------------------------------------------            
             if notificationObj.HasNotifications:                
                 
                 pm.run_plugin_scripts('on_notification') 
                 notification.setAllProcessed()
                 
-                # clear pending email flag
-                # and the plugin events
+                # Only clear pending email flags and plugins_events once notifications are sent.
                 notification.clearPendingEmailFlag()
                 
             else:
                 # If there are no notifications to process,
-                # we still need to clear all plugin events
+                # we still need to clear all plugin events to prevent database growth if 
+                # no notification gateways are configured
                 notification.clearPluginEvents()
                 mylog('verbose', ['[Notification] No changes to report'])
 
