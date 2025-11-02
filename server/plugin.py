@@ -229,7 +229,7 @@ class plugin_manager:
                 WHERE Plugin = ?
             """, (plugin_name,))
             row = sql.fetchone()
-            last_changed, total_objects, new_objects, state_updated = row if row else ("", 0, 0)
+            last_changed, total_objects, new_objects, state_updated = row if row else ("", 0, 0, "")
             new_objects = new_objects or 0  # ensure it's int
             changed_objects = total_objects - new_objects
 

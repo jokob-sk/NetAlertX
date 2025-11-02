@@ -141,7 +141,7 @@ class app_state_class:
             except (TypeError, ValueError) as e:
                 mylog('none', [f'[app_state_class] Failed to serialize object to JSON: {e}'])   
 
-        return  # Allows chaining by returning self     
+        return  self  # Allows chaining by returning self     
 
 
 
