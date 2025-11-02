@@ -138,12 +138,12 @@ def execute_arpscan(userSubnets):
             unique_devices.append(device)    
 
     # return list
-    mylog('verbose', [f'[{pluginName}] Found: Devices without duplicates ', len(unique_devices)  ]) 
+    mylog('verbose', [f'[{pluginName}] All devices List len:', len(devices_list)])    
+    mylog('verbose', [f'[{pluginName}] Devices List:', devices_list])
 
-    mylog('verbose', [f'[{pluginName}] Devices List len:', len(devices_list)])    
-    mylog('verbose', [f'[{pluginName}] Devices List:', devices_list])              
+    mylog('verbose', [f'[{pluginName}] Found: Devices without duplicates ', len(unique_devices)  ])              
 
-    return devices_list
+    return unique_devices
 
 
 def execute_arpscan_on_interface(interface):
