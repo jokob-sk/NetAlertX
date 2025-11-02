@@ -645,10 +645,7 @@ def update_devices_names(pm):
 
     # --- Step 3: Log last checked time ---
     # After resolving names, update last checked
-    sql = pm.db.sql
-    sql.execute("SELECT CURRENT_TIMESTAMP")
-    row = sql.fetchone()
-    pm.name_plugins_checked = row[0] if row else None
+    pm.name_plugins_checked = timeNowTZ()
 
 #-------------------------------------------------------------------------------
 # Updates devPresentLastScan for parent devices based on the presence of their NICs
