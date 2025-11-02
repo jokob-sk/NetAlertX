@@ -183,7 +183,7 @@ RUN chown -R ${READ_ONLY_USER}:${READ_ONLY_GROUP} ${READ_ONLY_FOLDERS} && \
     chmod -R 600 ${READ_WRITE_FOLDERS} && \
     find ${READ_WRITE_FOLDERS} -type d -exec chmod 700 {} + && \
     chown ${READ_ONLY_USER}:${READ_ONLY_GROUP} /entrypoint.sh /opt /opt/venv && \
-    chmod 005 /entrypoint.sh ${SYSTEM_SERVICES}/*.sh ${ENTRYPOINT_CHECKS}/* /app /opt /opt/venv && \
+    chmod 005 /entrypoint.sh ${SYSTEM_SERVICES}/*.sh ${SYSTEM_SERVICES_SCRIPTS}/* ${ENTRYPOINT_CHECKS}/* /app /opt /opt/venv && \
     for dir in ${READ_WRITE_FOLDERS}; do \
         install -d -o ${NETALERTX_USER} -g ${NETALERTX_GROUP} -m 700 "$dir"; \
     done && \
