@@ -107,8 +107,12 @@ class app_state_class:
         if pluginsStates is not None:
             for plugin, state in pluginsStates.items():
                 if plugin in self.pluginsStates:
-                    # Only update existing keys
-                    self.pluginsStates[plugin].update(state)
+                     # Only update existing keys if both are dicts
+                    if isinstance(self.pluginsStates[plugin], dict) and isinstance(state, dict):
+                        self.pluginsStates[plugin].update(state)
+                    else:
+                        # Replace if types don't match
+                        self.pluginsStates[plugin] = state
                 else:
                     # Optionally ignore or add new plugin entries
                     # To ignore new plugins, comment out the next line

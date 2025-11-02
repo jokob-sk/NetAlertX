@@ -3,18 +3,22 @@ import subprocess
 import conf
 import os
 import re
+from dateutil import parser
 
 # Register NetAlertX directories
 INSTALL_PATH="/app"
 sys.path.extend([f"{INSTALL_PATH}/server"])
 
 from helper import timeNowTZ, get_setting_value, check_IP_format
-from logger import mylog
+from logger import mylog, Logger
 from const import vendorsPath, vendorsPathNewest, sql_generateGuid
 from models.device_instance import DeviceInstance
 from scan.name_resolution import NameResolver
 from scan.device_heuristics import guess_icon, guess_type
 from db.db_helper import sanitize_SQL_input, list_to_where
+
+# Make sure log level is initialized correctly
+Logger(get_setting_value('LOG_LEVEL'))
 
 #-------------------------------------------------------------------------------
 # Removing devices from the CurrentScan DB table which the user chose to ignore by MAC or IP
@@ -521,25 +525,25 @@ def update_devices_names(pm):
     resolver = NameResolver(pm.db)
     device_handler = DeviceInstance(pm.db)
 
-    # --- Short-circuit if no plugin that resolves names changed ---
+    # --- Short-circuit if no name-resolution plugin has changed ---
     name_plugins = ["DIGSCAN", "NSLOOKUP", "NBTSCAN", "AVAHISCAN"]
-    
-    # Get last check timestamp from plugin manager
-    last_checked = pm.name_plugins_checked
 
-    # Determine the latest 'lastChanged' timestamp among name plugins
-    latest_change = max(
-        [pm.plugin_states.get(p, {}).get("lastChanged") for p in name_plugins if pm.plugin_states.get(p)],
-        default=None
-    )
+    # Retrieve last time name resolution was checked (string or datetime)
+    last_checked_str = pm.name_plugins_checked
+    last_checked_dt = parser.parse(last_checked_str) if isinstance(last_checked_str, str) else last_checked_str
 
-    # Convert to comparable datetime if needed
-    from dateutil import parser
-    latest_change_dt = parser.parse(latest_change) if latest_change else None
+    # Find the most recent plugin update time among name-related plugins
+    state_times = [
+        pm.plugin_states.get(p, {}).get("stateUpdated")
+        for p in name_plugins
+        if pm.plugin_states.get(p)
+    ]
+    latest_state_str = max(state_times, default=None)
+    latest_state_dt = parser.parse(latest_state_str) if latest_state_str else None
 
-    # Skip if nothing changed since last check
-    if last_checked and latest_change_dt and latest_change_dt <= last_checked:
-        mylog('debug', '[Update Device Name] No relevant plugin changes since last check, skipping.')
+    # Skip if no plugin state changed since last check
+    if last_checked_dt and latest_state_dt and latest_state_dt <= last_checked_dt:
+        mylog('debug', '[Update Device Name] No relevant name plugin changes since last check — skipping update.')
         return
 
     nameNotFound = "(name not found)"
@@ -639,7 +643,10 @@ def update_devices_names(pm):
 
     # --- Step 3: Log last checked time ---
     # After resolving names, update last checked
-    pm.name_plugins_checked = timeNowTZ()
+    sql = pm.db.sql
+    sql.execute("SELECT CURRENT_TIMESTAMP")
+    row = sql.fetchone()
+    pm.name_plugins_checked = row[0] if row else None
 
 #-------------------------------------------------------------------------------
 # Updates devPresentLastScan for parent devices based on the presence of their NICs

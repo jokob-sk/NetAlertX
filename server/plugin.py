@@ -212,7 +212,8 @@ class plugin_manager:
             "lastChanged": str,
             "totalObjects": int,
             "newObjects": int,
-            "changedObjects": int
+            "changedObjects": int,
+            "stateUpdated": str
         }
         """
         sql = self.db.sql
@@ -222,12 +223,13 @@ class plugin_manager:
             sql.execute("""
                 SELECT MAX(DateTimeChanged) AS last_changed,
                     COUNT(*) AS total_objects,
-                    SUM(CASE WHEN DateTimeCreated = DateTimeChanged THEN 1 ELSE 0 END) AS new_objects
+                    SUM(CASE WHEN DateTimeCreated = DateTimeChanged THEN 1 ELSE 0 END) AS new_objects,
+                    CURRENT_TIMESTAMP AS state_updated
                 FROM Plugins_Objects
                 WHERE Plugin = ?
             """, (plugin_name,))
             row = sql.fetchone()
-            last_changed, total_objects, new_objects = row if row else ("", 0, 0)
+            last_changed, total_objects, new_objects, state_updated = row if row else ("", 0, 0)
             new_objects = new_objects or 0  # ensure it's int
             changed_objects = total_objects - new_objects
 
@@ -235,7 +237,8 @@ class plugin_manager:
                 "lastChanged": last_changed or "",
                 "totalObjects": total_objects or 0,
                 "newObjects": new_objects or 0,
-                "changedObjects": changed_objects or 0
+                "changedObjects": changed_objects or 0,
+                "stateUpdated": state_updated or ""
             }
 
             # Save in memory
@@ -246,18 +249,20 @@ class plugin_manager:
                 SELECT Plugin,
                     MAX(DateTimeChanged) AS last_changed,
                     COUNT(*) AS total_objects,
-                    SUM(CASE WHEN DateTimeCreated = DateTimeChanged THEN 1 ELSE 0 END) AS new_objects
+                    SUM(CASE WHEN DateTimeCreated = DateTimeChanged THEN 1 ELSE 0 END) AS new_objects,
+                    CURRENT_TIMESTAMP AS state_updated
                 FROM Plugins_Objects
                 GROUP BY Plugin
             """)
-            for plugin, last_changed, total_objects, new_objects in sql.fetchall():
+            for plugin, last_changed, total_objects, new_objects, state_updated in sql.fetchall():
                 new_objects = new_objects or 0  # ensure it's int
                 changed_objects = total_objects - new_objects
                 plugin_states[plugin] = {
                     "lastChanged": last_changed or "",
                     "totalObjects": total_objects or 0,
                     "newObjects": new_objects or 0,
-                    "changedObjects": changed_objects or 0
+                    "changedObjects": changed_objects or 0,
+                    "stateUpdated": state_updated or ""
                 }
 
             # Save in memory
