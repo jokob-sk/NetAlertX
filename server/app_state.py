@@ -59,7 +59,7 @@ class app_state_class:
         previousState = ""
 
         # Update self
-        self.lastUpdated = str(timeNowTZ())
+        self.lastUpdated = str(timeNowTZ().astimezone().isoformat())
         
         if os.path.exists(stateFile):
             try:            
@@ -107,7 +107,7 @@ class app_state_class:
         if pluginsStates is not None:
             for plugin, state in pluginsStates.items():
                 if plugin in self.pluginsStates:
-                     # Only update existing keys if both are dicts
+                    # Only update existing keys if both are dicts
                     if isinstance(self.pluginsStates[plugin], dict) and isinstance(state, dict):
                         self.pluginsStates[plugin].update(state)
                     else:

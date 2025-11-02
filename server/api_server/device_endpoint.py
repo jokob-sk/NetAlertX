@@ -14,7 +14,7 @@ INSTALL_PATH="/app"
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from database import get_temp_db_connection
-from helper import is_random_mac, format_date, get_setting_value
+from helper import is_random_mac, format_date, get_setting_value, timeNowTZ
 from db.db_helper import row_to_json, get_date_from_period
 
 # --------------------------
@@ -30,7 +30,7 @@ def get_device_data(mac):
     
     # Special case for new device
     if mac.lower() == "new":
-        now = datetime.now().strftime("%Y-%m-%d %H:%M")
+        now = timeNowTZ().astimezone().isoformat()
         device_data = {
             "devMac": "",
             "devName": "",
@@ -78,7 +78,6 @@ def get_device_data(mac):
     # Compute period date for sessions/events
     period = request.args.get('period', '')  # e.g., '7 days', '1 month', etc.
     period_date_sql = get_date_from_period(period)
-    current_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     # Fetch device info + computed fields
     sql = f"""
@@ -106,7 +105,7 @@ def get_device_data(mac):
            AND eve_EventType = 'Device Down') AS devDownAlerts,
 
         (SELECT CAST(MAX(0, SUM(
-            julianday(IFNULL(ses_DateTimeDisconnection,'{current_date}')) -
+            julianday(IFNULL(ses_DateTimeDisconnection,'{now}')) -
             julianday(CASE WHEN ses_DateTimeConnection < {period_date_sql}
                            THEN {period_date_sql} ELSE ses_DateTimeConnection END)
         ) * 24) AS INT)
@@ -186,8 +185,8 @@ def set_device_data(mac, data):
             data.get("devSkipRepeated", 0),
             data.get("devIsNew", 0),
             data.get("devIsArchived", 0),
-            data.get("devLastConnection", datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
-            data.get("devFirstConnection", datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
+            data.get("devLastConnection", timeNowTZ().astimezone().isoformat()),
+            data.get("devFirstConnection", timeNowTZ().astimezone().isoformat()),
             data.get("devLastIP", ""),
             data.get("devGUID", ""),
             data.get("devCustomProps", ""),

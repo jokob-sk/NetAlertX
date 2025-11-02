@@ -93,6 +93,9 @@ class plugin_manager:
 
                 # Update plugin states in app_state
                 current_plugin_state = self.get_plugin_states(prefix)  # get latest plugin state
+
+                # mylog('debug', f'current_plugin_state: {current_plugin_state}')
+
                 updateState(pluginsStates={prefix: current_plugin_state.get(prefix, {})})
 
                 # update last run time
@@ -218,6 +221,7 @@ class plugin_manager:
         """
         sql = self.db.sql
         plugin_states = {}
+        now_str = timeNowTZ().isoformat()
 
         if plugin_name:  # Only compute for single plugin
             sql.execute("""
@@ -228,7 +232,7 @@ class plugin_manager:
                 WHERE Plugin = ?
             """, (plugin_name,))
             row = sql.fetchone()
-            last_changed, total_objects, new_objects, state_updated = row if row else ("", 0, 0)
+            last_changed, total_objects, new_objects = row if row else ("", 0, 0)
             new_objects = new_objects or 0  # ensure it's int
             changed_objects = total_objects - new_objects
 
@@ -237,7 +241,7 @@ class plugin_manager:
                 "totalObjects": total_objects or 0,
                 "newObjects": new_objects or 0,
                 "changedObjects": changed_objects or 0,
-                "stateUpdated": timeNowTZ()
+                "stateUpdated": now_str
             }
 
             # Save in memory
@@ -252,7 +256,7 @@ class plugin_manager:
                 FROM Plugins_Objects
                 GROUP BY Plugin
             """)
-            for plugin, last_changed, total_objects, new_objects, state_updated in sql.fetchall():
+            for plugin, last_changed, total_objects, new_objects in sql.fetchall():
                 new_objects = new_objects or 0  # ensure it's int
                 changed_objects = total_objects - new_objects
                 plugin_states[plugin] = {
@@ -260,7 +264,7 @@ class plugin_manager:
                     "totalObjects": total_objects or 0,
                     "newObjects": new_objects or 0,
                     "changedObjects": changed_objects or 0,
-                    "stateUpdated": timeNowTZ()
+                    "stateUpdated": now_str
                 }
 
             # Save in memory
@@ -755,7 +759,7 @@ def process_plugin_events(db, plugin, plugEventsArr):
                 if isMissing:
                     # if wasn't missing before, mark as changed
                     if tmpObj.status != "missing-in-last-scan":
-                        tmpObj.changed = timeNowTZ().strftime('%Y-%m-%d %H:%M:%S')
+                        tmpObj.changed = timeNowTZ().astimezone().isoformat()
                         tmpObj.status = "missing-in-last-scan"                    
                     # mylog('debug', [f'[Plugins] Missing from last scan (PrimaryID | SecondaryID): {tmpObj.primaryId} | {tmpObj.secondaryId}'])
 

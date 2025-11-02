@@ -1,4 +1,3 @@
-from time import strftime
 import pytz
 from pytz import timezone, all_timezones, UnknownTimeZoneError
 import sys
@@ -205,7 +204,7 @@ class Plugin_Object:
         self.pluginPref = ""
         self.primaryId = primaryId
         self.secondaryId = secondaryId
-        self.created = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.created = datetime.now().astimezone().isoformat()
         self.changed = ""
         self.watched1 = watched1
         self.watched2 = watched2

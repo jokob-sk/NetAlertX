@@ -8,7 +8,6 @@ import sys
 import re
 import base64
 import subprocess
-from time import strftime
 
 # Register NetAlertX directories
 INSTALL_PATH="/app"

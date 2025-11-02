@@ -44,8 +44,11 @@ def main():
     nmapArgs = ['sudo', 'nmap', '--privileged', '--script', 'broadcast-dhcp-discover']
 
     try:
+        # Number of DHCP discovery probes to send
         dhcp_probes = 1
-        newLines = [datetime.now().strftime("%Y-%m-%d %H:%M:%S")]
+        
+        # Initialize a list to store output lines from the scan
+        newLines = []
         
         for _ in range(dhcp_probes):
             output = subprocess.check_output(nmapArgs, universal_newlines=True, stderr=subprocess.STDOUT, timeout=timeoutSec)

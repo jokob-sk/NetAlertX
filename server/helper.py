@@ -58,25 +58,6 @@ def get_timezone_offset():
 #  Date and time methods
 #-------------------------------------------------------------------------------
 
-# # -------------------------------------------------------------------------------------------
-# def format_date(date_str: str) -> str:
-#     """Format a date string as 'YYYY-MM-DD   HH:MM'"""
-#     dt = datetime.datetime.fromisoformat(date_str) if isinstance(date_str, str) else date_str
-#     return dt.strftime('%Y-%m-%d   %H:%M')
-
-# # -------------------------------------------------------------------------------------------
-# def format_date_diff(date1: str, date2: str) -> str:
-#     """Return difference between two dates formatted as 'Xd   HH:MM'"""
-#     dt1 = datetime.datetime.fromisoformat(date1) if isinstance(date1, str) else date1
-#     dt2 = datetime.datetime.fromisoformat(date2) if isinstance(date2, str) else date2
-#     delta = dt2 - dt1
-
-#     days = delta.days
-#     hours, remainder = divmod(delta.seconds, 3600)
-#     minutes = remainder // 60
-
-#     return f"{days}d   {hours:02}:{minutes:02}"
-
 # -------------------------------------------------------------------------------------------
 def format_date_iso(date1: str) -> str:
     """Return ISO 8601 string for a date or None if empty"""
