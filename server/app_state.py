@@ -35,7 +35,7 @@ class app_state_class:
     def __init__(self, currentState=None, 
                        settingsSaved=None, 
                        settingsImported=None, 
-                       showSpinner=False, 
+                       showSpinner=None, 
                        graphQLServerStarted=0, 
                        processScan=False,
                        pluginsStates=None):
@@ -150,7 +150,7 @@ class app_state_class:
 def updateState(newState = None, 
                 settingsSaved = None, 
                 settingsImported = None, 
-                showSpinner = False, 
+                showSpinner = None, 
                 graphQLServerStarted = None, 
                 processScan = None, 
                 pluginsStates=None):
