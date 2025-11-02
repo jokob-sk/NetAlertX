@@ -26,6 +26,8 @@ class plugin_manager:
     def __init__(self, db, all_plugins):
         self.db = db
         self.all_plugins = all_plugins
+        self.plugin_states = {}
+        self.name_plugins_checked = None
 
         # object cache of settings and schedules for faster lookups
         self._cache = {}
@@ -66,20 +68,6 @@ class plugin_manager:
             # 🔹 Lookup RUN setting from cache instead of calling get_plugin_setting_obj each time
             run_setting = self._cache["settings"].get(prefix, {}).get("RUN")
 
-            # set = get_plugin_setting_obj(plugin, "RUN")
-            
-            # mylog('debug', [f'[run_plugin_scripts] plugin: {plugin}'])
-            # mylog('debug', [f'[run_plugin_scripts] set: {set}'])
-            # if set != None and set['value'] == runType:
-            #     if runType != "schedule":
-            #         shouldRun = True
-            #     elif  runType == "schedule":
-            #         # run if overdue scheduled time   
-            #         # check schedules if any contains a unique plugin prefix matching the current plugin
-            #         for schd in conf.mySchedules:
-            #             if schd.service == prefix:          
-            #                 # Check if schedule overdue
-            #                 shouldRun = schd.runScheduleCheck()  
             if run_setting != None and run_setting['value'] == runType:
                 if runType != "schedule":
                     shouldRun = True
@@ -91,19 +79,6 @@ class plugin_manager:
                         # Check if schedule overdue
                         shouldRun = schd.runScheduleCheck()  
 
-            # if shouldRun:            
-            #     # Header
-            #     updateState(f"Plugin: {prefix}")
-                            
-            #     print_plugin_info(plugin, ['display_name'])
-            #     mylog('debug', ['[Plugins] CMD: ', get_plugin_setting_obj(plugin, "CMD")["value"]])
-            #     execute_plugin(self.db, self.all_plugins, plugin) 
-            #     #  update last run time
-            #     if runType == "schedule":
-            #         for schd in conf.mySchedules:
-            #             if schd.service == prefix:          
-            #                 # note the last time the scheduled plugin run was executed
-            #                 schd.last_run = timeNowTZ()
             if shouldRun:            
                 # Header
                 updateState(f"Plugin: {prefix}")
@@ -115,6 +90,10 @@ class plugin_manager:
                 mylog('debug', ['[Plugins] CMD: ', cmd_setting["value"] if cmd_setting else None])
 
                 execute_plugin(self.db, self.all_plugins, plugin) 
+
+                # Update plugin states in app_state
+                current_plugin_state = self.get_plugin_states(prefix)  # get latest plugin state
+                updateState(pluginsStates={prefix: current_plugin_state.get(prefix, {})})
 
                 # update last run time
                 if runType == "schedule":
@@ -183,12 +162,20 @@ class plugin_manager:
         
         mylog('minimal', ['[', timeNowTZ(), '] START Run: ', runType])
         
-        # run the plugin to run
+        # run the plugin
         for plugin in self.all_plugins:
-            if plugin["unique_prefix"] == runType:                
+            if plugin["unique_prefix"] == runType:            
+
+                pluginName = plugin["unique_prefix"]
+
                 execute_plugin(self.db, self.all_plugins, plugin) 
 
-        mylog('minimal', ['[', timeNowTZ(), '] END Run: ', runType])
+                # Update plugin states in app_state
+                current_plugin_state = self.get_plugin_states(pluginName)  # get latest plugin state
+                updateState(pluginsStates={pluginName: current_plugin_state.get(pluginName, {})})
+
+        mylog('minimal', ['[', timeNowTZ(), '] END Run: ', runType])        
+
         return 
 
 
@@ -214,6 +201,71 @@ class plugin_manager:
         mylog('minimal', ['[Test] END Test: ', runType])
 
         return 
+
+    #-------------------------------------------------------------------------------
+    def get_plugin_states(self, plugin_name=None):
+        """
+        Returns plugin state summary suitable for updateState(..., pluginsStates=...).
+        If plugin_name is provided, only calculates stats for that plugin.
+        Structure per plugin:
+        {
+            "lastChanged": str,
+            "totalObjects": int,
+            "newObjects": int,
+            "changedObjects": int
+        }
+        """
+        sql = self.db.sql
+        plugin_states = {}
+
+        if plugin_name:  # Only compute for single plugin
+            sql.execute("""
+                SELECT MAX(DateTimeChanged) AS last_changed,
+                    COUNT(*) AS total_objects,
+                    SUM(CASE WHEN DateTimeCreated = DateTimeChanged THEN 1 ELSE 0 END) AS new_objects
+                FROM Plugins_Objects
+                WHERE Plugin = ?
+            """, (plugin_name,))
+            row = sql.fetchone()
+            last_changed, total_objects, new_objects = row if row else ("", 0, 0)
+            new_objects = new_objects or 0  # ensure it's int
+            changed_objects = total_objects - new_objects
+
+            plugin_states[plugin_name] = {
+                "lastChanged": last_changed or "",
+                "totalObjects": total_objects or 0,
+                "newObjects": new_objects or 0,
+                "changedObjects": changed_objects or 0
+            }
+
+            # Save in memory
+            self.plugin_states[plugin_name] = plugin_states[plugin_name]
+
+        else:  # Compute for all plugins (full refresh)
+            sql.execute("""
+                SELECT Plugin,
+                    MAX(DateTimeChanged) AS last_changed,
+                    COUNT(*) AS total_objects,
+                    SUM(CASE WHEN DateTimeCreated = DateTimeChanged THEN 1 ELSE 0 END) AS new_objects
+                FROM Plugins_Objects
+                GROUP BY Plugin
+            """)
+            for plugin, last_changed, total_objects, new_objects in sql.fetchall():
+                new_objects = new_objects or 0  # ensure it's int
+                changed_objects = total_objects - new_objects
+                plugin_states[plugin] = {
+                    "lastChanged": last_changed or "",
+                    "totalObjects": total_objects or 0,
+                    "newObjects": new_objects or 0,
+                    "changedObjects": changed_objects or 0
+                }
+
+            # Save in memory
+            self.plugin_states = plugin_states
+
+        return plugin_states
+
+
     
 
 #-------------------------------------------------------------------------------
