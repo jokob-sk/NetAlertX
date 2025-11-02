@@ -35,7 +35,7 @@ class NameResolver:
             WHERE Plugin = '{plugin}' AND Object_PrimaryID = '{pMAC}'
         """)
         result = sql.fetchall()
-        self.db.commitDB()
+        # self.db.commitDB() # Issue #1251: Optimize name resolution lookup
         if result:
             raw = result[0][0]
             return ResolvedName(raw, self.clean_device_name(raw, False))
@@ -46,7 +46,7 @@ class NameResolver:
             WHERE Plugin = '{plugin}' AND Object_SecondaryID = '{pIP}'
         """)
         result = sql.fetchall()
-        self.db.commitDB()
+        # self.db.commitDB() # Issue #1251: Optimize name resolution lookup
         if result:
             raw = result[0][0]
             return ResolvedName(raw, self.clean_device_name(raw, True))

@@ -195,7 +195,10 @@ def ensure_Indexes(sql) -> bool:
         ("idx_dev_location", "CREATE INDEX idx_dev_location ON Devices(devLocation)"),
         
         # Settings
-        ("idx_set_key", "CREATE INDEX idx_set_key ON Settings(setKey)")
+        ("idx_set_key", "CREATE INDEX idx_set_key ON Settings(setKey)"),
+
+        # Plugins_Objects
+        ("idx_plugins_plugin_mac_ip", "CREATE INDEX idx_plugins_plugin_mac_ip ON Plugins_Objects(Plugin, Object_PrimaryID, Object_SecondaryID)")   # Issue #1251: Optimize name resolution lookup
     ]
 
     for name, create_sql in indexes:
