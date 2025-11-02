@@ -116,6 +116,9 @@ def execute_scan(subnets_list, timeout, fakeMac, args):
 
 
 def execute_scan_on_interface (interface, timeout, args):
+    # Remove unsupported VLAN flags 
+    interface = re.sub(r'--vlan=\S+', '', interface).strip()
+
     # Prepare command arguments
     scan_args = args.split() + interface.replace('--interface=','-e ').split()
 

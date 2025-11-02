@@ -3,18 +3,22 @@ import subprocess
 import conf
 import os
 import re
+from dateutil import parser
 
 # Register NetAlertX directories
 INSTALL_PATH="/app"
 sys.path.extend([f"{INSTALL_PATH}/server"])
 
 from helper import timeNowTZ, get_setting_value, check_IP_format
-from logger import mylog
+from logger import mylog, Logger
 from const import vendorsPath, vendorsPathNewest, sql_generateGuid
 from models.device_instance import DeviceInstance
 from scan.name_resolution import NameResolver
 from scan.device_heuristics import guess_icon, guess_type
 from db.db_helper import sanitize_SQL_input, list_to_where
+
+# Make sure log level is initialized correctly
+Logger(get_setting_value('LOG_LEVEL'))
 
 #-------------------------------------------------------------------------------
 # Removing devices from the CurrentScan DB table which the user chose to ignore by MAC or IP
@@ -516,19 +520,42 @@ def create_new_devices (db):
 
 
 #-------------------------------------------------------------------------------
-def update_devices_names(db):
-    sql = db.sql
-    resolver = NameResolver(db)
-    device_handler = DeviceInstance(db)
+def update_devices_names(pm):
+    sql = pm.db.sql
+    resolver = NameResolver(pm.db)
+    device_handler = DeviceInstance(pm.db)
+
+    # --- Short-circuit if no name-resolution plugin has changed ---
+    name_plugins = ["DIGSCAN", "NSLOOKUP", "NBTSCAN", "AVAHISCAN"]
+
+    # Retrieve last time name resolution was checked (string or datetime)
+    last_checked_str = pm.name_plugins_checked
+    last_checked_dt = parser.parse(last_checked_str) if isinstance(last_checked_str, str) else last_checked_str
+
+    # Collect valid state update timestamps for name-related plugins
+    state_times = []
+    for p in name_plugins:
+        state_updated = pm.plugin_states.get(p, {}).get("stateUpdated")
+        if state_updated and state_updated.strip():  # skip empty or None
+            state_times.append(state_updated)
+
+    # Determine the latest valid stateUpdated timestamp
+    latest_state_str = max(state_times, default=None)
+    latest_state_dt = parser.parse(latest_state_str) if latest_state_str else None
+
+    # Skip if no plugin state changed since last check
+    if last_checked_dt and latest_state_dt and latest_state_dt <= last_checked_dt:
+        mylog('debug', '[Update Device Name] No relevant name plugin changes since last check — skipping update.')
+        return
 
     nameNotFound = "(name not found)"
 
     # Define resolution strategies in priority order
     strategies = [
-        (resolver.resolve_dig, 'dig'),
-        (resolver.resolve_mdns, 'mdns'),
-        (resolver.resolve_nslookup, 'nslookup'),
-        (resolver.resolve_nbtlookup, 'nbtlookup')
+        (resolver.resolve_dig, 'DIGSCAN'),
+        (resolver.resolve_mdns, 'AVAHISCAN'),
+        (resolver.resolve_nslookup, 'NSLOOKUP'),
+        (resolver.resolve_nbtlookup, 'NBTSCAN')
     ]
 
     def resolve_devices(devices, resolve_both_name_and_fqdn=True):
@@ -590,7 +617,7 @@ def update_devices_names(db):
         recordsToUpdate, recordsNotFound, foundStats, notFound = resolve_devices(unknownDevices)
 
         # Log summary
-        mylog('verbose', f"[Update Device Name] Names Found (DiG/mDNS/NSLOOKUP/NBTSCAN): {len(recordsToUpdate)} ({foundStats['dig']}/{foundStats['mdns']}/{foundStats['nslookup']}/{foundStats['nbtlookup']})")
+        mylog('verbose', f"[Update Device Name] Names Found (DIGSCAN/AVAHISCAN/NSLOOKUP/NBTSCAN): {len(recordsToUpdate)} ({foundStats['DIGSCAN']}/{foundStats['AVAHISCAN']}/{foundStats['NSLOOKUP']}/{foundStats['NBTSCAN']})")
         mylog('verbose', f'[Update Device Name] Names Not Found         : {notFound}')
 
         # Apply updates to database
@@ -607,14 +634,21 @@ def update_devices_names(db):
             recordsToUpdate, _, foundStats, notFound = resolve_devices(allDevices, resolve_both_name_and_fqdn=False)
 
             # Log summary
-            mylog('verbose', f"[Update FQDN] Names Found (DiG/mDNS/NSLOOKUP/NBTSCAN): {len(recordsToUpdate)} ({foundStats['dig']}/{foundStats['mdns']}/{foundStats['nslookup']}/{foundStats['nbtlookup']})")
+            mylog('verbose', f"[Update FQDN] Names Found (DIGSCAN/AVAHISCAN/NSLOOKUP/NBTSCAN): {len(recordsToUpdate)} ({foundStats['DIGSCAN']}/{foundStats['AVAHISCAN']}/{foundStats['NSLOOKUP']}/{foundStats['NBTSCAN']})")
             mylog('verbose', f'[Update FQDN] Names Not Found         : {notFound}')
 
             # Apply FQDN-only updates
             sql.executemany("UPDATE Devices SET devFQDN = ? WHERE devMac = ?", recordsToUpdate)
 
     # Commit all database changes
-    db.commitDB()
+    pm.db.commitDB()
+
+    # --- Step 3: Log last checked time ---
+    # After resolving names, update last checked
+    sql = pm.db.sql
+    sql.execute("SELECT CURRENT_TIMESTAMP")
+    row = sql.fetchone()
+    pm.name_plugins_checked = row[0] if row else None
 
 #-------------------------------------------------------------------------------
 # Updates devPresentLastScan for parent devices based on the presence of their NICs

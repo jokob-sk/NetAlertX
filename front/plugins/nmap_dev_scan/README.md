@@ -1,21 +1,28 @@
 ## Overview
 
-NMAP-scan is a command-line tool to discover and fingerprint IP hosts on the local network. The NMAP-scan (and other Network-scan plugin times using the `SCAN_SUBNETS` setting) time depends on the number of IP addresses to check so set this up carefully with the appropriate network mask and interface. Check the [subnets documentation](https://github.com/jokob-sk/NetAlertX/blob/main/docs/SUBNETS.md) for help with setting up VLANs, what VLANs are supported, or how to figure out the network mask and your interface. 
+**NMAP-scan** is a command-line tool used to discover and fingerprint IP hosts on your network.
+The NMAP-scan (and other Network-scan plugins using the `SCAN_SUBNETS` setting) runtime depends on the number of IP addresses to check — so configure it carefully with the appropriate **network mask** and **interface**.
+
+Refer to the [subnets documentation](https://github.com/jokob-sk/NetAlertX/blob/main/docs/SUBNETS.md) for help with setting up VLANs, understanding which VLANs are supported, and determining your network mask and interface.
 
 > [!NOTE]
-> The `NMAPDEV` plugin is great for detecting the availability of devices, however ARP scan might be better covering multiple VLANS and subnets as NMAP can't pickup the MAC address from other subnets (this is an NMAP limitation) which are necessary to identify a device. You can always combine different scan methods. You can find all available network scanning options (marked as `🔍 dev scanner`) in the [Plugins overview](https://github.com/jokob-sk/NetAlertX/blob/main/docs/PLUGINS.md) readme.  
+> The `NMAPDEV` plugin is excellent for detecting device availability, but **ARP-scan** is better for scanning across multiple VLANs and subnets.
+> NMAP cannot retrieve MAC addresses from other subnets (an NMAP limitation), which are often required to identify devices.
+> You can safely combine different scan methods.
+> See all available network scanning options (marked with `🔍 dev scanner`) in the [Plugins overview](https://github.com/jokob-sk/NetAlertX/blob/main/docs/PLUGINS.md).
 
+This plugin is **not optimized for name resolution** (use `NSLOOKUP` or `AVAHISCAN` instead), but if a name is available it will appear in the **Resolved Name** column.
 
-This plugin is not the best for name resolution (Use e.g.: `NSLOOKUP`, `AVAHISCAN` instead), however if available a name will be displayed in the `Resolved Name` column. 
+---
 
 ### Usage
 
-- Go to settings and set the `SCAN_SUBNETS` setting as per [subnets documentation](https://github.com/jokob-sk/NetAlertX/blob/main/docs/SUBNETS.md).
-- Enable the plugin by changing the RUN parameter from disabled to your preferred run time (usually: `schedule`).
-  - Specify the schedule in the `NMAPDEV_RUN_SCHD` setting
-- Adjust the timeout if needed in the `NMAPDEV_RUN_TIMEOUT` setting
-- If scanning remote networks you may want to enable the `NMAPDEV_FAKE_MAC` setting. Please read the setting description carefully.
-- Review remaining settings
-- SAVE
-- Wait for the next scan to finish
-
+1. In **Settings**, configure the `SCAN_SUBNETS` value as described in the [subnets documentation](https://github.com/jokob-sk/NetAlertX/blob/main/docs/SUBNETS.md).
+   The plugin automatically **strips unsupported `--vlan` parameters** and replaces `--interface` with `-e`.
+2. Enable the plugin by setting the `RUN` parameter from `disabled` to your preferred run mode (usually `schedule`).
+3. Specify the schedule using the `NMAPDEV_RUN_SCHD` setting.
+4. Adjust the scan timeout if necessary with the `NMAPDEV_RUN_TIMEOUT` setting.
+5. If scanning **remote networks**, consider enabling the `NMAPDEV_FAKE_MAC` setting — review its description carefully before use.
+6. Review all remaining settings.
+7. Click **SAVE**.
+8. Wait for the next scheduled scan to complete.

@@ -35,7 +35,6 @@ from database import DB
 from messaging.reporting import get_notifications
 from models.notification_instance import NotificationInstance
 from models.user_events_queue_instance import UserEventsQueueInstance
-from plugin import plugin_manager 
 from scan.device_handling import update_devices_names
 from workflows.manager import WorkflowManager 
 
@@ -152,17 +151,20 @@ def main ():
                 process_scan(db)
                 updateState("Scan processed", None, None, None, None, False)
                           
-            # ------------------------------------------------------------------------------
-            # Reporting
-            # ------------------------------------------------------------------------------
-  
+            # Name resolution
+            # --------------------------------------------
+
             # run plugins before notification processing (e.g. Plugins to discover device names)
             pm.run_plugin_scripts('before_name_updates')
 
             # Resolve devices names
             mylog('debug','[Main] Resolve devices names')
-            update_devices_names(db)     
+            update_devices_names(pm)     
             
+
+            # --------
+            # Reporting   
+
             # Check if new devices found
             sql.execute (sql_new_devices)
             newDevices = sql.fetchall()
