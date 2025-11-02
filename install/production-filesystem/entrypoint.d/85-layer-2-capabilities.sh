@@ -1,5 +1,5 @@
 #!/bin/sh
-# check-cap.sh - Uses a real nmap command to detect missing container
+# layer-2-network.sh - Uses a real nmap command to detect missing container
 # privileges and warns the user. It is silent on success.
 
 # Run a fast nmap command that requires raw sockets, capturing only stderr.
@@ -24,6 +24,8 @@ then
 
     Without those caps, NetAlertX cannot inspect your network. Fix it before
     trusting any results.
+
+    https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/missing-capabilities.md
 ══════════════════════════════════════════════════════════════════════════════
 EOF
     >&2 printf "%s" "${RESET}"

@@ -36,6 +36,8 @@ RESET=$(printf '\033[0m')
       * Remove any custom --user flag
       * Delete "user:" overrides in compose files
       * Recreate the container so volume ownership is reset
+
+    https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/incorrect-user.md
 ══════════════════════════════════════════════════════════════════════════════
 EOF
 >&2 printf "%s" "${RESET}"

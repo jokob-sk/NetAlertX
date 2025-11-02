@@ -13,7 +13,7 @@ sys.path.extend([f"{INSTALL_PATH}/server"])
 # Register NetAlertX modules
 import conf
 from const import applicationPath, logPath, apiPath, reportTemplatesPath
-from logger import mylog
+from logger import mylog, Logger
 from helper import generate_mac_links, \
     removeDuplicateNewLines, \
     timeNowTZ, \
@@ -45,6 +45,9 @@ class NotificationInstance:
             PRIMARY KEY("Index" AUTOINCREMENT)
         );
         """)
+
+        # Make sure log level is initialized correctly
+        Logger(get_setting_value('LOG_LEVEL'))
 
         self.save()
 

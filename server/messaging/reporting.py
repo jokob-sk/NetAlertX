@@ -223,6 +223,15 @@ def get_notifications (db):
 
 #-------------------------------------------------------------------------------
 def skip_repeated_notifications (db):
+    """
+    Skips sending alerts for devices recently notified.
+
+    Clears `eve_PendingAlertEmail` for events linked to devices whose last
+    notification time is within their `devSkipRepeated` interval.
+
+    Args:
+        db: Database object with `.sql.execute()` and `.commitDB()`.
+    """
 
     # Skip repeated notifications
     # due strfime : Overflow --> use  "strftime / 60"

@@ -5,13 +5,12 @@
 .gitconfig
 .*CommandMarker
 deviceid
-.VERSION
-
-# Sensitive data
+.DS_Store
 .cache
 nohup.out
 config/*
 .ash_history
+.VERSION
 config/pialert.conf
 config/app.conf
 db/*
@@ -24,35 +23,23 @@ front/api/*
 /api/*
 **/plugins/**/*.log
 **/plugins/cloud_services/*
+**/%40eaDir/
+**/@eaDir/
+
+__pycache__/
+*.py[cod]
+*$py.class
+
 **/last_result.log
 **/script.log
 **/pialert.conf_bak
 **/pialert.db_bak
+.*.swp
 
-# future stuff
 front/img/cloud_services/*
 **/cloud_services.php
 **/cloud_services.js
 front/css/cloud_services.css
 
-# OS junk
-Thumbs.db
-ehthumbs.db
-Desktop.ini
-**/%40eaDir/
-**/@eaDir/
-*/%40eaDir/
-*/@eaDir/
-.DS_Store
-.*.swp
-
-# Python junk
-venv/
-.env/
-__pycache__/
-*.py[cod]
-*$py.class
-
-# Build artifacts (if you ever package anything)
-dist/
-build/
+docker-compose.yml.ffsb42
+.env.omada.ffsb42
