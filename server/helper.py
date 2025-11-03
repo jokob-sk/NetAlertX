@@ -99,8 +99,15 @@ def parse_datetime(dt_str):
             return None
 
 def format_date(date_str: str) -> str:
-    dt = parse_datetime(date_str)
-    return dt.strftime('%Y-%m-%d   %H:%M') if dt else "invalid"
+    try:
+        dt = parse_datetime(date_str)
+        if dt.tzinfo is None:
+            # Set timezone if missing — change to timezone.utc if you prefer UTC
+            now = datetime.datetime.now(conf.tz)
+            dt = dt.replace(tzinfo=now.astimezone().tzinfo)
+        return dt.astimezone().isoformat()
+    except Exception:
+        return "invalid"
 
 def format_date_diff(date1, date2):
     """

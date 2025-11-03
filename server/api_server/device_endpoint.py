@@ -27,10 +27,12 @@ def get_device_data(mac):
     # Open temporary connection for this request
     conn = get_temp_db_connection()
     cur = conn.cursor()
+
+    now = timeNowTZ().astimezone().isoformat()
     
     # Special case for new device
     if mac.lower() == "new":
-        now = timeNowTZ().astimezone().isoformat()
+        
         device_data = {
             "devMac": "",
             "devName": "",

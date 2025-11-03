@@ -40,9 +40,12 @@ def b64(sql: str) -> str:
 # Device lifecycle via dbquery endpoints
 # -----------------------------
 def test_dbquery_create_device(client, api_token, test_mac):
+
+    now = timeNowTZ().astimezone().isoformat()
+
     sql = f"""
         INSERT INTO Devices (devMac, devName, devVendor, devOwner, devFirstConnection, devLastConnection, devLastIP)
-        VALUES ('{test_mac}', 'UnitTestDevice', 'TestVendor', 'UnitTest', '{timeNowTZ()}', '{timeNowTZ()}', '192.168.100.22' )
+        VALUES ('{test_mac}', 'UnitTestDevice', 'TestVendor', 'UnitTest', '{now}', '{now}', '192.168.100.22' )
     """
     resp = client.post("/dbquery/write", json={"rawSql": b64(sql)}, headers=auth_headers(api_token))
     print(resp.json)

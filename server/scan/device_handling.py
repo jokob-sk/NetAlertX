@@ -532,21 +532,33 @@ def update_devices_names(pm):
     # Retrieve last time name resolution was checked 
     last_checked = pm.name_plugins_checked 
 
-    # Collect valid state update timestamps for name-related plugins
-    state_times = []
+    # Collect and normalize valid state update timestamps for name-related plugins
+    state_times = []   
+    latest_state = None
+
     for p in name_plugins:
         state_updated = pm.plugin_states.get(p, {}).get("stateUpdated")
-        if state_updated:  # skip empty or None
-            state_times.append(state_updated)
+        if not state_updated:
+            continue
 
-    # Determine the latest valid stateUpdated timestamp
-    latest_state_str = max(state_times, default=None)
-    if isinstance(latest_state_str, datetime.datetime):
-        latest_state = latest_state_str
-    elif latest_state_str:
-        latest_state = parser.parse(latest_state_str)
-    else:
-        latest_state = None
+        # Normalize and validate timestamp
+        if isinstance(state_updated, datetime.datetime):
+            state_times.append(state_updated)
+        elif isinstance(state_updated, str):
+            try:
+                state_times.append(parser.parse(state_updated))
+            except Exception as e:
+                mylog('none', f'[Update Device Name] Failed to parse timestamp for {p}: {state_updated!r} ({e})')
+        else:
+            mylog('none', f'[Update Device Name] Unexpected timestamp type for {p}: {type(state_updated)}')
+             # Determine the latest valid timestamp safely            
+            try:
+                if state_times:
+                    latest_state = max(state_times)
+            except Exception as e:
+                mylog('none', f'[Update Device Name] Failed to determine latest timestamp, using fallback ({e})')
+                latest_state = state_times[-1] if state_times else None
+
 
     # Skip if no plugin state changed since last check
     if last_checked and latest_state and latest_state <= last_checked:
@@ -650,7 +662,7 @@ def update_devices_names(pm):
 
     # --- Step 3: Log last checked time ---
     # After resolving names, update last checked
-    pm.name_plugins_checked = timeNowTZ()
+    pm.name_plugins_checked = timeNowTZ().astimezone().isoformat()
 
 #-------------------------------------------------------------------------------
 # Updates devPresentLastScan for parent devices based on the presence of their NICs
