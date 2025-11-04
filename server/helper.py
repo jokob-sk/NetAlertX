@@ -95,7 +95,7 @@ def format_event_date(date_str: str, event_type: str) -> str:
 # -------------------------------------------------------------------------------------------
 def ensure_datetime(dt: Union[str, datetime.datetime, None]) -> datetime.datetime:
     if dt is None:
-        return timeNowDB()
+        return timeNowTZ()
     if isinstance(dt, str):
         return datetime.datetime.fromisoformat(dt)
     return dt
