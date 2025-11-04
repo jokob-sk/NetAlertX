@@ -532,6 +532,16 @@ def update_devices_names(pm):
     # Retrieve last time name resolution was checked 
     last_checked = pm.name_plugins_checked 
 
+    # Normalize last_checked to datetime if it's a string  
+    if isinstance(last_checked, str):  
+        try:  
+            last_checked = parser.parse(last_checked)  
+        except Exception as e:  
+            mylog('none', f'[Update Device Name] Could not parse last_checked timestamp: {last_checked!r} ({e})')  
+            last_checked = None  
+    elif not isinstance(last_checked, datetime.datetime):  
+        last_checked = None  
+
     # Collect and normalize valid state update timestamps for name-related plugins
     state_times = []   
     latest_state = None
