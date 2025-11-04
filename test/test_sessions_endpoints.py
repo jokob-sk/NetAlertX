@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 INSTALL_PATH = "/app"
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from helper import timeNowDB, get_setting_value
+from helper import timeNowDB, timeNowTZ, get_setting_value
 from api_server.api_server_start import app
 
 @pytest.fixture(scope="session")

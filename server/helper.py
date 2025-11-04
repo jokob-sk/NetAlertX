@@ -56,7 +56,12 @@ def timeNowDB(local=True):
     """
     if local:
         try:
-            tz = ZoneInfo(conf.tz) if conf.tz else None
+            if isinstance(conf.tz, datetime.tzinfo):
+                tz = conf.tz
+            elif conf.tz:
+                tz = ZoneInfo(conf.tz)
+            else:
+                tz = None
         except Exception:
             tz = None
         return datetime.datetime.now(tz).strftime('%Y-%m-%d %H:%M:%S')
