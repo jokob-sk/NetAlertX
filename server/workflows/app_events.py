@@ -10,7 +10,7 @@ sys.path.extend([f"{INSTALL_PATH}/server"])
 
 # Register NetAlertX modules 
 import conf
-from helper import get_setting_value, timeNowTZ
+from helper import get_setting_value
 # Make sure the TIMEZONE for logging is correct
 # conf.tz = pytz.timezone(get_setting_value('TIMEZONE'))
 
@@ -20,7 +20,6 @@ from logger import mylog, Logger, logResult
 Logger(get_setting_value('LOG_LEVEL'))
 
 from const import applicationPath, logPath, apiPath, confFileName, sql_generateGuid
-from helper import  timeNowTZ
 
 class AppEvent_obj:
     def __init__(self, db):

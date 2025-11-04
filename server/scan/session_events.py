@@ -6,7 +6,7 @@ sys.path.extend([f"{INSTALL_PATH}/server"])
 
 import conf
 from scan.device_handling import create_new_devices, print_scan_stats, save_scanned_devices, exclude_ignored_devices, update_devices_data_from_scan
-from helper import timeNowTZ, get_setting_value
+from helper import timeNowDB, get_setting_value
 from db.db_helper import print_table_schema
 from logger import mylog, Logger
 from messaging.reporting import skip_repeated_notifications
@@ -128,7 +128,7 @@ def create_sessions_snapshot (db):
 #-------------------------------------------------------------------------------
 def insert_events (db):
     sql = db.sql #TO-DO
-    startTime = timeNowTZ()    
+    startTime = timeNowDB()    
     
     # Check device down
     mylog('debug','[Events] - 1 - Devices down')
@@ -191,7 +191,7 @@ def insert_events (db):
 def insertOnlineHistory(db):
     sql = db.sql  # TO-DO: Implement sql object
 
-    scanTimestamp = timeNowTZ()
+    scanTimestamp = timeNowDB()
 
     # Query to fetch all relevant device counts in one go
     query = """

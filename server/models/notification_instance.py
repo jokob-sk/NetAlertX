@@ -16,6 +16,7 @@ from const import applicationPath, logPath, apiPath, reportTemplatesPath
 from logger import mylog, Logger
 from helper import generate_mac_links, \
     removeDuplicateNewLines, \
+    timeNowDB, \
     timeNowTZ, \
     write_file, \
     get_setting_value, \
@@ -71,7 +72,7 @@ class NotificationInstance:
             self.HasNotifications = True
 
         self.GUID               = str(uuid.uuid4())
-        self.DateTimeCreated    = timeNowTZ()
+        self.DateTimeCreated    = timeNowDB()
         self.DateTimePushed     = ""
         self.Status             = "new"
         self.JSON               = JSON
@@ -112,7 +113,7 @@ class NotificationInstance:
             mail_html = mail_html.replace('<NEW_VERSION>', newVersionText)
 
             # Report "REPORT_DATE" in Header & footer
-            timeFormated = timeNowTZ().strftime('%Y-%m-%d %H:%M')
+            timeFormated = timeNowDB()
             mail_text = mail_text.replace('<REPORT_DATE>', timeFormated)
             mail_html = mail_html.replace('<REPORT_DATE>', timeFormated)
 
@@ -231,7 +232,7 @@ class NotificationInstance:
     # Updates the Published properties
     def updatePublishedVia(self, newPublishedVia):
         self.PublishedVia = newPublishedVia
-        self.DateTimePushed = timeNowTZ()
+        self.DateTimePushed = timeNowDB()
         self.upsert()
 
     # create or update a notification
@@ -282,7 +283,7 @@ class NotificationInstance:
                     SELECT eve_MAC FROM Events
                         WHERE eve_PendingAlertEmail = 1
                     )
-                """, (timeNowTZ(),))
+                """, (timeNowDB(),))
 
         self.db.sql.execute("""
             UPDATE Events SET eve_PendingAlertEmail = 0

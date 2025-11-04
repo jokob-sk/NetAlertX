@@ -4,7 +4,7 @@ import json
 import conf
 from const import *
 from logger import mylog, logResult
-from helper import timeNowTZ, timeNow, checkNewVersion
+from helper import timeNowDB, timeNow, checkNewVersion
 
 # Register NetAlertX directories
 INSTALL_PATH="/app"
@@ -59,7 +59,7 @@ class app_state_class:
         previousState = ""
 
         # Update self
-        self.lastUpdated = str(timeNowTZ().astimezone().isoformat())
+        self.lastUpdated = str(timeNowDB())
         
         if os.path.exists(stateFile):
             try:            

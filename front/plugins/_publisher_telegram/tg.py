@@ -16,7 +16,7 @@ import conf
 from const import confFileName, logPath
 from plugin_helper import Plugin_Objects
 from logger import mylog, Logger, append_line_to_file
-from helper import timeNowTZ, get_setting_value
+from helper import timeNowDB, get_setting_value
 from models.notification_instance import NotificationInstance
 from database import DB
 from pytz import timezone
@@ -65,7 +65,7 @@ def main():
         # Log result
         plugin_objects.add_object(
             primaryId=pluginName,
-            secondaryId=timeNowTZ(),
+            secondaryId=timeNowDB(),
             watched1=notification["GUID"],
             watched2=result,
             watched3='null',

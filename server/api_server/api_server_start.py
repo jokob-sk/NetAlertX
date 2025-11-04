@@ -9,7 +9,7 @@ INSTALL_PATH = "/app"
 sys.path.extend([f"{INSTALL_PATH}/server"])
 
 from logger import mylog
-from helper import get_setting_value, timeNowTZ
+from helper import get_setting_value
 from db.db_helper import get_date_from_period
 from app_state import updateState
 

@@ -12,7 +12,7 @@ sys.path.extend([f"{INSTALL_PATH}/server"])
 import conf
 from const import *
 from logger import mylog
-from helper import timeNowTZ, get_setting_value
+from helper import get_setting_value
 
 # Load MAC/device-type/icon rules from external file
 MAC_TYPE_ICON_PATH = Path(f"{INSTALL_PATH}/back/device_heuristics_rules.json")

@@ -20,7 +20,7 @@ sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64
 from logger import mylog, Logger, append_line_to_file
-from helper import timeNowTZ, check_IP_format, get_setting_value
+from helper import timeNowDB, check_IP_format, get_setting_value
 from const import logPath, applicationPath, fullDbPath
 import conf
 from pytz import timezone
@@ -80,7 +80,7 @@ def main():
         mylog('verbose', [f'[{pluginName}] Curl Fallback (new_internet_IP|cmd_output): {new_internet_IP} | {cmd_output}'])   
 
     #  logging
-    append_line_to_file (logPath + '/IP_changes.log', '['+str(timeNowTZ()) +']\t'+ new_internet_IP +'\n')    
+    append_line_to_file (logPath + '/IP_changes.log', '['+str(timeNowDB()) +']\t'+ new_internet_IP +'\n')    
 
     plugin_objects = Plugin_Objects(RESULT_FILE)    
     

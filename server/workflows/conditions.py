@@ -8,7 +8,7 @@ sys.path.extend([f"{INSTALL_PATH}/server"])
 
 import conf
 from logger import mylog, Logger
-from helper import get_setting_value, timeNowTZ
+from helper import get_setting_value
 
 # Make sure log level is initialized correctly
 Logger(get_setting_value('LOG_LEVEL'))

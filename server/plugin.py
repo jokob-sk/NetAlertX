@@ -12,7 +12,7 @@ from collections import namedtuple
 import conf
 from const import pluginsPath, logPath, applicationPath, reportTemplatesPath
 from logger import mylog, Logger 
-from helper import timeNowTZ, get_file_content, write_file, get_setting, get_setting_value
+from helper import timeNowDB, timeNowTZ, get_file_content, write_file, get_setting, get_setting_value
 from app_state import updateState
 from api import update_api
 from plugin_utils import logEventStatusCounts, get_plugin_string, get_plugin_setting_obj, print_plugin_info, list_to_csv, combine_plugin_objects, resolve_wildcards_arr, handle_empty, custom_plugin_decoder, decode_and_rename_files
@@ -154,7 +154,7 @@ class plugin_manager:
         if len(executed_events) > 0 and executed_events:
             executed_events_message = ', '.join(executed_events)
             mylog('minimal', ['[check_and_run_user_event] INFO: Executed events: ', executed_events_message])
-            write_notification(f"[Ad-hoc events] Events executed: {executed_events_message}", "interrupt", timeNowTZ())
+            write_notification(f"[Ad-hoc events] Events executed: {executed_events_message}", "interrupt", timeNowDB())
 
         return
 
@@ -163,7 +163,7 @@ class plugin_manager:
     #-------------------------------------------------------------------------------
     def handle_run(self, runType):
         
-        mylog('minimal', ['[', timeNowTZ(), '] START Run: ', runType])
+        mylog('minimal', ['[', timeNowDB(), '] START Run: ', runType])
         
         # run the plugin
         for plugin in self.all_plugins:
@@ -177,7 +177,7 @@ class plugin_manager:
                 current_plugin_state = self.get_plugin_states(pluginName)  # get latest plugin state
                 updateState(pluginsStates={pluginName: current_plugin_state.get(pluginName, {})})
 
-        mylog('minimal', ['[', timeNowTZ(), '] END Run: ', runType])        
+        mylog('minimal', ['[', timeNowDB(), '] END Run: ', runType])        
 
         return 
 
@@ -186,7 +186,7 @@ class plugin_manager:
     #-------------------------------------------------------------------------------
     def handle_test(self, runType):
 
-        mylog('minimal', ['[', timeNowTZ(), '] [Test] START Test: ', runType])
+        mylog('minimal', ['[', timeNowDB(), '] [Test] START Test: ', runType])
         
         # Prepare test samples
         sample_json = json.loads(get_file_content(reportTemplatesPath + 'webhook_json_sample.json'))[0]["body"]["attachments"][0]["text"]
@@ -221,7 +221,7 @@ class plugin_manager:
         """
         sql = self.db.sql
         plugin_states = {}
-        now_str = timeNowTZ().isoformat()
+        now_str = timeNowDB()
 
         if plugin_name:  # Only compute for single plugin
             sql.execute("""
@@ -759,7 +759,7 @@ def process_plugin_events(db, plugin, plugEventsArr):
                 if isMissing:
                     # if wasn't missing before, mark as changed
                     if tmpObj.status != "missing-in-last-scan":
-                        tmpObj.changed = timeNowTZ().astimezone().isoformat()
+                        tmpObj.changed = timeNowDB()
                         tmpObj.status = "missing-in-last-scan"                    
                     # mylog('debug', [f'[Plugins] Missing from last scan (PrimaryID | SecondaryID): {tmpObj.primaryId} | {tmpObj.secondaryId}'])
 

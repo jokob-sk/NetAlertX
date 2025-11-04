@@ -31,18 +31,11 @@ INSTALL_PATH="/app"
 #-------------------------------------------------------------------------------
 # DateTime
 #-------------------------------------------------------------------------------
-# Get the current time in the current TimeZone
 def timeNowTZ():
     if conf.tz:
         return datetime.datetime.now(conf.tz).replace(microsecond=0)
     else:
         return datetime.datetime.now().replace(microsecond=0)
-    # if isinstance(conf.TIMEZONE, str):
-    #     tz = pytz.timezone(conf.TIMEZONE)
-    # else:
-    #     tz = conf.TIMEZONE
-
-    # return datetime.datetime.now(tz).replace(microsecond=0)
 
 def timeNow():
     return datetime.datetime.now().replace(microsecond=0)
@@ -52,6 +45,23 @@ def get_timezone_offset():
     offset_hours = now.utcoffset().total_seconds() / 3600        
     offset_formatted =  "{:+03d}:{:02d}".format(int(offset_hours), int((offset_hours % 1) * 60))
     return offset_formatted
+
+def timeNowDB(local=True):
+    """
+    Return the current time (local or UTC) as ISO 8601 for DB storage.
+    Safe for SQLite, PostgreSQL, etc.
+
+    Example local: '2025-11-04 18:09:11'
+    Example UTC:   '2025-11-04 07:09:11'
+    """
+    if local:
+        try:
+            tz = ZoneInfo(conf.tz) if conf.tz else None
+        except Exception:
+            tz = None
+        return datetime.datetime.now(tz).strftime('%Y-%m-%d %H:%M:%S')
+    else:
+        return datetime.datetime.now(datetime.UTC).strftime('%Y-%m-%d %H:%M:%S')
 
 
 #-------------------------------------------------------------------------------
@@ -79,7 +89,7 @@ def format_event_date(date_str: str, event_type: str) -> str:
 # -------------------------------------------------------------------------------------------
 def ensure_datetime(dt: Union[str, datetime.datetime, None]) -> datetime.datetime:
     if dt is None:
-        return timeNowTZ()
+        return timeNowDB()
     if isinstance(dt, str):
         return datetime.datetime.fromisoformat(dt)
     return dt

@@ -18,7 +18,7 @@ from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64
 from plugin_utils import get_plugins_configs, decode_and_rename_files
 from logger import mylog, Logger
 from const import pluginsPath, fullDbPath, logPath
-from helper import timeNowTZ, get_setting_value 
+from helper import timeNowDB, get_setting_value 
 from crypto_utils import encrypt_data
 from messaging.in_app import write_notification
 import conf
@@ -149,7 +149,7 @@ def main():
             message = f'[{pluginName}] Device data from node "{node_name}" written to {log_file_name}'
             mylog('verbose', [message])
             if lggr.isAbove('verbose'):
-                write_notification(message, 'info', timeNowTZ())           
+                write_notification(message, 'info', timeNowDB())           
         
 
     # Process any received data for the Device DB table (ONLY JSON)
@@ -255,7 +255,7 @@ def main():
                 message = f'[{pluginName}] Inserted "{len(new_devices)}" new devices'
 
                 mylog('verbose', [message])
-                write_notification(message, 'info', timeNowTZ())
+                write_notification(message, 'info', timeNowDB())
             
 
         # Commit and close the connection
@@ -299,7 +299,7 @@ def send_data(api_token, file_content, encryption_key, file_path, node_name, pre
             if response.status_code == 200:
                 message = f'[{pluginName}] Data for "{file_path}" sent successfully via {final_endpoint}'
                 mylog('verbose', [message])
-                write_notification(message, 'info', timeNowTZ())
+                write_notification(message, 'info', timeNowDB())
                 return True
 
         except requests.RequestException as e:
@@ -308,7 +308,7 @@ def send_data(api_token, file_content, encryption_key, file_path, node_name, pre
     # If all endpoints fail
     message = f'[{pluginName}] Failed to send data for "{file_path}" via all endpoints'
     mylog('verbose', [message])
-    write_notification(message, 'alert', timeNowTZ())
+    write_notification(message, 'alert', timeNowDB())
     return False
 
 
@@ -332,7 +332,7 @@ def get_data(api_token, node_url):
                 except json.JSONDecodeError:
                     message = f'[{pluginName}] Failed to parse JSON from {final_endpoint}'
                     mylog('verbose', [message])
-                    write_notification(message, 'alert', timeNowTZ())
+                    write_notification(message, 'alert', timeNowDB())
                     return ""
         except requests.RequestException as e:
             mylog('verbose', [f'[{pluginName}] Error calling {final_endpoint}: {e}'])
@@ -340,7 +340,7 @@ def get_data(api_token, node_url):
     # If all endpoints fail
     message = f'[{pluginName}] Failed to get data from "{node_url}" via all endpoints'
     mylog('verbose', [message])
-    write_notification(message, 'alert', timeNowTZ())
+    write_notification(message, 'alert', timeNowDB())
     return ""
 
 

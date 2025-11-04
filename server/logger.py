@@ -19,6 +19,23 @@ def timeNowTZ():
     else:
         return datetime.datetime.now().replace(microsecond=0)
 
+def timeNowDB(local=True):
+    """
+    Return the current time (local or UTC) as ISO 8601 for DB storage.
+    Safe for SQLite, PostgreSQL, etc.
+
+    Example local: '2025-11-04 18:09:11'
+    Example UTC:   '2025-11-04 07:09:11'
+    """
+    if local:
+        try:
+            tz = ZoneInfo(conf.tz) if conf.tz else None
+        except Exception:
+            tz = None
+        return datetime.datetime.now(tz).strftime('%Y-%m-%d %H:%M:%S')
+    else:
+        return datetime.datetime.now(datetime.UTC).strftime('%Y-%m-%d %H:%M:%S')
+
 #-------------------------------------------------------------------------------
 # Map custom debug levels to Python logging levels
 custom_to_logging_levels = {

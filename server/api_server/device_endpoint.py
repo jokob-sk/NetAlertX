@@ -14,7 +14,7 @@ INSTALL_PATH="/app"
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from database import get_temp_db_connection
-from helper import is_random_mac, format_date, get_setting_value, timeNowTZ
+from helper import is_random_mac, format_date, get_setting_value, timeNowDB
 from db.db_helper import row_to_json, get_date_from_period
 
 # --------------------------
@@ -28,7 +28,7 @@ def get_device_data(mac):
     conn = get_temp_db_connection()
     cur = conn.cursor()
 
-    now = timeNowTZ().astimezone().isoformat()
+    now = timeNowDB()
     
     # Special case for new device
     if mac.lower() == "new":
@@ -187,8 +187,8 @@ def set_device_data(mac, data):
             data.get("devSkipRepeated", 0),
             data.get("devIsNew", 0),
             data.get("devIsArchived", 0),
-            data.get("devLastConnection", timeNowTZ().astimezone().isoformat()),
-            data.get("devFirstConnection", timeNowTZ().astimezone().isoformat()),
+            data.get("devLastConnection", timeNowDB()),
+            data.get("devFirstConnection", timeNowDB()),
             data.get("devLastIP", ""),
             data.get("devGUID", ""),
             data.get("devCustomProps", ""),

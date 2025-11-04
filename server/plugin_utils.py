@@ -4,7 +4,7 @@ import json
 import conf 
 from logger import mylog
 from const import pluginsPath, logPath, apiPath
-from helper import timeNowTZ, get_file_content, write_file, get_setting, get_setting_value, setting_value_to_python_type
+from helper import get_file_content, write_file, get_setting, get_setting_value, setting_value_to_python_type
 from app_state import updateState
 from crypto_utils import decrypt_data, generate_deterministic_guid
 

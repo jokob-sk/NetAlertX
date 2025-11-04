@@ -16,7 +16,7 @@ from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64
 from plugin_utils import get_plugins_configs
 from logger import mylog, Logger
 from const import pluginsPath, fullDbPath, logPath
-from helper import timeNowTZ, get_setting_value 
+from helper import get_setting_value 
 from messaging.in_app import write_notification
 from database import DB
 from models.device_instance import DeviceInstance

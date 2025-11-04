@@ -20,7 +20,7 @@ sys.path.extend([f"{INSTALL_PATH}/server"])
 
 import conf
 from const import applicationPath, logPath, apiPath, confFileName
-from helper import timeNowTZ, get_file_content, write_file, get_timezone_offset, get_setting_value
+from helper import get_file_content, write_file, get_timezone_offset, get_setting_value
 from logger import logResult, mylog
 from db.sql_safe_builder import create_safe_condition_builder
 
@@ -123,6 +123,9 @@ def get_notifications (db):
                         )
                         ORDER BY down_events.eve_DateTime;
                     """
+
+
+        mylog("none", sqlQuery)            
         
         # Get the events as JSON        
         json_obj = db.get_table_as_json(sqlQuery)

@@ -12,7 +12,7 @@ import re
 # Register NetAlertX libraries
 import conf 
 from const import fullConfPath, applicationPath, fullConfFolder, default_tz
-from helper import getBuildTimeStamp, fixPermissions, collect_lang_strings, updateSubnets, isJsonObject, setting_value_to_python_type, timeNowTZ, get_setting_value, generate_random_string
+from helper import getBuildTimeStamp, fixPermissions, collect_lang_strings, updateSubnets, isJsonObject, setting_value_to_python_type, timeNowDB, get_setting_value, generate_random_string
 from app_state import updateState
 from logger import mylog
 from api import update_api
@@ -392,7 +392,7 @@ def importConfigs (pm, db, all_plugins):
         # ccd(key, default, config_dir, name, inputtype, options, group, events=None, desc="", setJsonMetadata=None, overrideTemplate=None, forceDefault=False)
         ccd('VERSION', buildTimestamp , c_d, '_KEEP_', '_KEEP_', '_KEEP_', '_KEEP_', None, "_KEEP_", None, None, True)
         
-        write_notification(f'[Upgrade] : App upgraded 🚀 Please clear the cache: <ol> <li>Click OK below</li>  <li>Clear the browser cache (shift + browser refresh button)</li> <li> Clear app cache with the <i class="fa-solid fa-rotate"></i> (reload) button in the header</li><li>Go to Settings and click Save</li> </ol> Check out new features and what has changed in the <a href="https://github.com/jokob-sk/NetAlertX/releases" target="_blank">📓 release notes</a>.', 'interrupt', timeNowTZ())
+        write_notification(f'[Upgrade] : App upgraded 🚀 Please clear the cache: <ol> <li>Click OK below</li>  <li>Clear the browser cache (shift + browser refresh button)</li> <li> Clear app cache with the <i class="fa-solid fa-rotate"></i> (reload) button in the header</li><li>Go to Settings and click Save</li> </ol> Check out new features and what has changed in the <a href="https://github.com/jokob-sk/NetAlertX/releases" target="_blank">📓 release notes</a>.', 'interrupt', timeNowDB())
 
     
 
@@ -429,7 +429,7 @@ def importConfigs (pm, db, all_plugins):
     mylog('minimal', msg)
     
     # front end app log loggging
-    write_notification(msg, 'info', timeNowTZ())    
+    write_notification(msg, 'info', timeNowDB())    
 
     return pm, all_plugins, True
 

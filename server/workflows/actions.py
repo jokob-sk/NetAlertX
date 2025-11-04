@@ -7,7 +7,7 @@ sys.path.extend([f"{INSTALL_PATH}/server"])
 
 import conf
 from logger import mylog, Logger
-from helper import get_setting_value, timeNowTZ
+from helper import get_setting_value
 from models.device_instance import DeviceInstance
 from models.plugin_object_instance import PluginObjectInstance
 

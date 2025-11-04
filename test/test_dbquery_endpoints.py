@@ -6,7 +6,7 @@ import pytest
 INSTALL_PATH = "/app"
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from helper import get_setting_value, timeNowTZ
+from helper import get_setting_value, timeNowDB
 from api_server.api_server_start import app
 
 
@@ -41,7 +41,7 @@ def b64(sql: str) -> str:
 # -----------------------------
 def test_dbquery_create_device(client, api_token, test_mac):
 
-    now = timeNowTZ().astimezone().isoformat()
+    now = timeNowDB()
 
     sql = f"""
         INSERT INTO Devices (devMac, devName, devVendor, devOwner, devFirstConnection, devLastConnection, devLastIP)

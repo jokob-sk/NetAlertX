@@ -10,7 +10,7 @@ from dateutil import parser
 INSTALL_PATH="/app"
 sys.path.extend([f"{INSTALL_PATH}/server"])
 
-from helper import timeNowTZ, get_setting_value, check_IP_format
+from helper import timeNowDB, timeNowTZ, get_setting_value, check_IP_format
 from logger import mylog, Logger
 from const import vendorsPath, vendorsPathNewest, sql_generateGuid
 from models.device_instance import DeviceInstance
@@ -56,7 +56,7 @@ def exclude_ignored_devices(db):
 #-------------------------------------------------------------------------------
 def update_devices_data_from_scan (db):
     sql = db.sql #TO-DO    
-    startTime = timeNowTZ().astimezone().isoformat()
+    startTime = timeNowDB()
 
     # Update Last Connection
     mylog('debug', '[Update Devices] 1 Last Connection')
@@ -371,7 +371,7 @@ def print_scan_stats(db):
 #-------------------------------------------------------------------------------
 def create_new_devices (db):
     sql = db.sql # TO-DO
-    startTime = timeNowTZ()
+    startTime = timeNowDB()
 
     # Insert events for new devices from CurrentScan (not yet in Devices)
 
@@ -536,7 +536,7 @@ def update_devices_names(pm):
     if isinstance(last_checked, str):  
         try:  
             last_checked = parser.parse(last_checked)  
-        except Exception as e:  
+        except (ValueError, TypeError) as e:
             mylog('none', f'[Update Device Name] Could not parse last_checked timestamp: {last_checked!r} ({e})')  
             last_checked = None  
     elif not isinstance(last_checked, datetime.datetime):  
@@ -544,7 +544,6 @@ def update_devices_names(pm):
 
     # Collect and normalize valid state update timestamps for name-related plugins
     state_times = []   
-    latest_state = None
 
     for p in name_plugins:
         state_updated = pm.plugin_states.get(p, {}).get("stateUpdated")
@@ -561,13 +560,15 @@ def update_devices_names(pm):
                 mylog('none', f'[Update Device Name] Failed to parse timestamp for {p}: {state_updated!r} ({e})')
         else:
             mylog('none', f'[Update Device Name] Unexpected timestamp type for {p}: {type(state_updated)}')
-             # Determine the latest valid timestamp safely            
-            try:
-                if state_times:
-                    latest_state = max(state_times)
-            except Exception as e:
-                mylog('none', f'[Update Device Name] Failed to determine latest timestamp, using fallback ({e})')
-                latest_state = state_times[-1] if state_times else None
+
+    # Determine the latest valid timestamp safely (after collecting all timestamps)
+    latest_state = None
+    try:
+        if state_times:
+            latest_state = max(state_times)
+    except (ValueError, TypeError) as e:
+        mylog('none', f'[Update Device Name] Failed to determine latest timestamp, using fallback ({e})')
+        latest_state = state_times[-1] if state_times else None
 
 
     # Skip if no plugin state changed since last check
@@ -672,7 +673,7 @@ def update_devices_names(pm):
 
     # --- Step 3: Log last checked time ---
     # After resolving names, update last checked
-    pm.name_plugins_checked = timeNowTZ().astimezone().isoformat()
+    pm.name_plugins_checked = timeNowDB()
 
 #-------------------------------------------------------------------------------
 # Updates devPresentLastScan for parent devices based on the presence of their NICs

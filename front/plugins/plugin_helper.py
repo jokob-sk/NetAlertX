@@ -11,7 +11,7 @@ INSTALL_PATH = "/app"
 sys.path.append(f"{INSTALL_PATH}/front/plugins")
 sys.path.append(f'{INSTALL_PATH}/server') 
 
-from logger import mylog, Logger
+from logger import mylog, Logger, timeNowDB
 from const import confFileName, default_tz
 
 #-------------------------------------------------------------------------------
@@ -204,7 +204,7 @@ class Plugin_Object:
         self.pluginPref = ""
         self.primaryId = primaryId
         self.secondaryId = secondaryId
-        self.created = datetime.now().astimezone().isoformat()
+        self.created = timeNowDB()
         self.changed = ""
         self.watched1 = watched1
         self.watched2 = watched2
