@@ -1,22 +1,20 @@
 #!/usr/bin/env python
 # Based on the work of https://github.com/leiweibau/Pi.Alert
 
-import argparse
 import requests
 from requests.exceptions import SSLError, Timeout, RequestException
-import pathlib
 import sys
 import os
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
+import urllib3
+from urllib3.exceptions import InsecureRequestWarning
 
 # Register NetAlertX directories
-INSTALL_PATH="/app"
+INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from plugin_helper import Plugin_Objects
-from datetime import datetime
 from const import logPath
-from helper import timeNowTZ, get_setting_value 
+from helper import get_setting_value 
 import conf
 from pytz import timezone
 from logger import mylog, Logger
@@ -54,7 +52,7 @@ def check_services_health(site):
 
     mylog('verbose', [f'[{pluginName}] Checking {site}'])
 
-    requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+    urllib3.disable_warnings(InsecureRequestWarning)
     
     try:
         resp = requests.get(site, verify=False, timeout=get_setting_value('WEBMON_RUN_TIMEOUT'), headers={"User-Agent": "NetAlertX"})

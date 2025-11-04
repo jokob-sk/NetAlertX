@@ -4,7 +4,7 @@ import os
 import sys
 
 # Register NetAlertX directories
-INSTALL_PATH="/app"
+INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from plugin_helper import Plugin_Objects

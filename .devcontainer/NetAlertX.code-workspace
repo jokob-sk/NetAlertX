@@ -1,0 +1,37 @@
+{
+	"folders": [
+		{
+			"name": "NetAlertX Source",
+			"path": "."
+		},
+		{
+			"name": "💾 NetAlertX Data",
+			"path": "/data"
+		},
+		{
+			"name": "🔍 Active NetAlertX log",
+			"path": "/tmp/log"
+		},
+		{
+			"name": "🌐 Active NetAlertX nginx",
+			"path": "/tmp/nginx"
+		},
+		{
+			"name": "📊 Active NetAlertX api",
+			"path": "/tmp/api"
+		},
+		{
+			"name": "⚙️ Active NetAlertX run",
+			"path": "/tmp/run"
+		}
+	],
+	"settings": {
+		"terminal.integrated.suggest.enabled": true,
+		"terminal.integrated.defaultProfile.linux": "zsh",
+		"terminal.integrated.profiles.linux": {
+			"zsh": {
+				"path": "/usr/bin/fish"
+			}
+		}
+	}
+}

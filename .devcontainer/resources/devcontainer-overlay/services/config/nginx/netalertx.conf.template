@@ -8,7 +8,9 @@ worker_processes auto;
 pcre_jit on;
 
 # Configures default error logger.
-error_log /app/log/nginx-error.log warn;
+error_log /tmp/log/nginx-error.log warn;
+
+pid /tmp/run/nginx.pid;
 
 events {
 	# The maximum number of simultaneous connections that can be opened by
@@ -19,11 +21,11 @@ events {
 http {
 
 	# Mapping of temp paths for various nginx modules.
-    client_body_temp_path /services/run/tmp/client_body;
-    proxy_temp_path /services/run/tmp/proxy;
-	fastcgi_temp_path /services/run/tmp/fastcgi;
-	uwsgi_temp_path /services/run/tmp/uwsgi;
-	scgi_temp_path /services/run/tmp/scgi;
+    client_body_temp_path /tmp/nginx/client_body;
+    proxy_temp_path /tmp/nginx/proxy;
+	fastcgi_temp_path /tmp/nginx/fastcgi;
+	uwsgi_temp_path /tmp/nginx/uwsgi;
+	scgi_temp_path /tmp/nginx/scgi;
 	
 	# Includes mapping of file name extensions to MIME types of responses
 	# and defines the default type.
@@ -89,7 +91,7 @@ http {
 	    '"$http_user_agent" "$http_x_forwarded_for"';
 
 	# Sets the path, format, and configuration for a buffered log write.
-	access_log /app/log/nginx-access.log main;
+	access_log /tmp/log/nginx-access.log main;
 
 
 	# Virtual host config
@@ -104,7 +106,7 @@ http {
         location ~* \.php$ {
             # Set Cache-Control header to prevent caching on the first load
             add_header Cache-Control "no-store";
-            fastcgi_pass unix:/services/run/php.sock;
+			fastcgi_pass unix:/tmp/run/php.sock;
             include /services/config/nginx/fastcgi_params;
 			fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
 			fastcgi_param SCRIPT_NAME $fastcgi_script_name;

@@ -12,13 +12,14 @@ import pytest
 IMAGE = os.environ.get("NETALERTX_TEST_IMAGE", "netalertx-test")
 GRACE_SECONDS = float(os.environ.get("NETALERTX_TEST_GRACE", "2"))
 
-VOLUME_MAP = {
-    "app_db": "/app/db",
-    "app_config": "/app/config",
-    "app_log": "/app/log",
-    "app_api": "/app/api",
-    "nginx_conf": "/services/config/nginx/conf.active",
-    "services_run": "/services/run",
+CONTAINER_TARGETS = {
+    "data": "/data",
+    "app_db": "/data/db",
+    "app_config": "/data/config",
+    "app_log": "/tmp/log",
+    "app_api": os.environ.get("NETALERTX_API", "/tmp/api"),
+    "nginx_conf": "/tmp/nginx/active-config",
+    "services_run": "/tmp/run",
 }
 
 pytestmark = [pytest.mark.docker, pytest.mark.feature_complete]
@@ -58,7 +59,6 @@ def dummy_container(tmp_path):
 
 def _setup_mount_tree(tmp_path: pathlib.Path, label: str) -> dict[str, pathlib.Path]:
     """Set up mount tree for testing."""
-    import uuid
     import shutil
 
     base = tmp_path / f"{label}_mount_root"
@@ -66,23 +66,41 @@ def _setup_mount_tree(tmp_path: pathlib.Path, label: str) -> dict[str, pathlib.P
         shutil.rmtree(base)
     base.mkdir(parents=True)
 
-    paths = {}
-    for key, target in VOLUME_MAP.items():
-        folder_name = f"{label}_{key.upper()}_INTENTIONAL_NETALERTX_TEST"
-        host_path = base / folder_name
-        host_path.mkdir(parents=True, exist_ok=True)
-        host_path.chmod(0o777)
-        paths[key] = host_path
+    paths: dict[str, pathlib.Path] = {}
+
+    data_root = base / f"{label}_DATA_INTENTIONAL_NETALERTX_TEST"
+    data_root.mkdir(parents=True, exist_ok=True)
+    data_root.chmod(0o777)
+    paths["data"] = data_root
+
+    db_dir = data_root / "db"
+    db_dir.mkdir(exist_ok=True)
+    db_dir.chmod(0o777)
+    paths["app_db"] = db_dir
+
+    config_dir = data_root / "config"
+    config_dir.mkdir(exist_ok=True)
+    config_dir.chmod(0o777)
+    paths["app_config"] = config_dir
+
+    # Seed config and database from repository defaults when available
+    repo_root = pathlib.Path(__file__).resolve().parents[2]
+    config_src = repo_root / "back" / "app.conf"
+    db_src = repo_root / "db" / "app.db"
+
+    if config_src.exists():
+        shutil.copyfile(config_src, config_dir / "app.conf")
+        (config_dir / "app.conf").chmod(0o600)
+    if db_src.exists():
+        shutil.copyfile(db_src, db_dir / "app.db")
+        (db_dir / "app.db").chmod(0o600)
 
     return paths
 
 
 def _build_volume_args(paths: dict[str, pathlib.Path]) -> list[tuple[str, str, bool]]:
     """Build volume arguments for docker run."""
-    bindings = []
-    for key, target in VOLUME_MAP.items():
-        bindings.append((str(paths[key]), target, False))
-    return bindings
+    return [(str(paths["data"]), CONTAINER_TARGETS["data"], False)]
 
 
 def _run_container(

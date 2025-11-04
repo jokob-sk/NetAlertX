@@ -40,10 +40,10 @@ services:
     network_mode: "host"        
     restart: unless-stopped
     volumes:
-      - local/path/config:/app/config
-      - local/path/db:/app/db      
+      - local/path/config:/data/config
+      - local/path/db:/data/db      
       # (optional) useful for debugging if you have issues setting up the container
-      - local/path/logs:/app/log
+      - local/path/logs:/tmp/log
     environment:
       - TZ=Europe/Berlin      
       - PORT=20211
@@ -57,10 +57,10 @@ services:
 
 ```yaml
  volumes:
-      - /volume1/app_storage/netalertx/config:/app/config
-      - /volume1/app_storage/netalertx/db:/app/db      
+      - /volume1/app_storage/netalertx/config:/data/config
+      - /volume1/app_storage/netalertx/db:/data/db      
       # (optional) useful for debugging if you have issues setting up the container
-      # - local/path/logs:/app/log <- commented out with # ⚠
+      # - local/path/logs:/tmp/log <- commented out with # ⚠
 ```
 
 ![Adjusting docker-compose](./img/SYNOLOGY/08_Adjust_docker_compose_volumes.png)

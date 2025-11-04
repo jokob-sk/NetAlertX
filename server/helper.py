@@ -1,4 +1,4 @@
-""" Colection of generic functions to support NetAlertX """
+"""Colection of generic functions to support NetAlertX"""
 
 import io
 import sys
@@ -9,10 +9,7 @@ import unicodedata
 import subprocess
 from typing import Union
 import pytz
-from pytz import timezone
 import json
-import time
-from pathlib import Path
 import requests
 import base64
 import hashlib
@@ -25,12 +22,13 @@ import conf
 from const import *
 from logger import mylog, logResult
 
-# Register NetAlertX directories
-INSTALL_PATH="/app"
+# Register NetAlertX directories using runtime configuration
+INSTALL_PATH = applicationPath
 
-#-------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------
 # DateTime
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 # Get the current time in the current TimeZone
 def timeNowTZ():
     if conf.tz:
@@ -44,19 +42,23 @@ def timeNowTZ():
 
     # return datetime.datetime.now(tz).replace(microsecond=0)
 
+
 def timeNow():
     return datetime.datetime.now().replace(microsecond=0)
 
-def get_timezone_offset():    
+
+def get_timezone_offset():
     now = datetime.datetime.now(conf.tz)
-    offset_hours = now.utcoffset().total_seconds() / 3600        
-    offset_formatted =  "{:+03d}:{:02d}".format(int(offset_hours), int((offset_hours % 1) * 60))
+    offset_hours = now.utcoffset().total_seconds() / 3600
+    offset_formatted = "{:+03d}:{:02d}".format(
+        int(offset_hours), int((offset_hours % 1) * 60)
+    )
     return offset_formatted
 
 
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 #  Date and time methods
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 
 # # -------------------------------------------------------------------------------------------
 # def format_date(date_str: str) -> str:
@@ -77,6 +79,7 @@ def get_timezone_offset():
 
 #     return f"{days}d   {hours:02}:{minutes:02}"
 
+
 # -------------------------------------------------------------------------------------------
 def format_date_iso(date1: str) -> str:
     """Return ISO 8601 string for a date or None if empty"""
@@ -84,6 +87,7 @@ def format_date_iso(date1: str) -> str:
         return None
     dt = datetime.datetime.fromisoformat(date1) if isinstance(date1, str) else date1
     return dt.isoformat()
+
 
 # -------------------------------------------------------------------------------------------
 def format_event_date(date_str: str, event_type: str) -> str:
@@ -94,6 +98,7 @@ def format_event_date(date_str: str, event_type: str) -> str:
         return "<missing event>"
     else:
         return "<still connected>"
+
 
 # -------------------------------------------------------------------------------------------
 def ensure_datetime(dt: Union[str, datetime.datetime, None]) -> datetime.datetime:
@@ -113,13 +118,15 @@ def parse_datetime(dt_str):
     except ValueError:
         # Try RFC1123 / HTTP format
         try:
-            return datetime.datetime.strptime(dt_str, '%a, %d %b %Y %H:%M:%S GMT')
+            return datetime.datetime.strptime(dt_str, "%a, %d %b %Y %H:%M:%S GMT")
         except ValueError:
             return None
 
+
 def format_date(date_str: str) -> str:
     dt = parse_datetime(date_str)
-    return dt.strftime('%Y-%m-%d   %H:%M') if dt else "invalid"
+    return dt.strftime("%Y-%m-%d   %H:%M") if dt else "invalid"
+
 
 def format_date_diff(date1, date2):
     """
@@ -161,71 +168,116 @@ def format_date_diff(date1, date2):
         "days": days,
         "hours": hours,
         "minutes": minutes,
-        "total_minutes": total_minutes
+        "total_minutes": total_minutes,
     }
 
-#-------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------
 # File system permission handling
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 # check RW access of DB and config file
 def checkPermissionsOK():
-    #global confR_access, confW_access, dbR_access, dbW_access
+    # global confR_access, confW_access, dbR_access, dbW_access
 
-    confR_access = (os.access(fullConfPath, os.R_OK))
-    confW_access = (os.access(fullConfPath, os.W_OK))
-    dbR_access = (os.access(fullDbPath, os.R_OK))
-    dbW_access = (os.access(fullDbPath, os.W_OK))
+    confR_access = os.access(fullConfPath, os.R_OK)
+    confW_access = os.access(fullConfPath, os.W_OK)
+    dbR_access = os.access(fullDbPath, os.R_OK)
+    dbW_access = os.access(fullDbPath, os.W_OK)
 
-    mylog('none', ['\n'])
-    mylog('none', ['The backend restarted (started). If this is unexpected check https://bit.ly/NetAlertX_debug for troubleshooting tips.'])
-    mylog('none', ['\n'])
-    mylog('none', ['Permissions check (All should be True)'])
-    mylog('none', ['------------------------------------------------'])
-    mylog('none', [ "  " , confPath ,     " | " , " READ  | " , confR_access])
-    mylog('none', [ "  " , confPath ,     " | " , " WRITE | " , confW_access])
-    mylog('none', [ "  " , dbPath , "       | " , " READ  | " , dbR_access])
-    mylog('none', [ "  " , dbPath , "       | " , " WRITE | " , dbW_access])
-    mylog('none', ['------------------------------------------------'])
+    mylog("none", ["\n"])
+    mylog(
+        "none",
+        [
+            "The backend restarted (started). If this is unexpected check https://bit.ly/NetAlertX_debug for troubleshooting tips."
+        ],
+    )
+    mylog("none", ["\n"])
+    mylog("none", ["Permissions check (All should be True)"])
+    mylog("none", ["------------------------------------------------"])
+    mylog("none", ["  ", confPath, " | ", " READ  | ", confR_access])
+    mylog("none", ["  ", confPath, " | ", " WRITE | ", confW_access])
+    mylog("none", ["  ", dbPath, "       | ", " READ  | ", dbR_access])
+    mylog("none", ["  ", dbPath, "       | ", " WRITE | ", dbW_access])
+    mylog("none", ["------------------------------------------------"])
 
-    #return dbR_access and dbW_access and confR_access and confW_access
+    # return dbR_access and dbW_access and confR_access and confW_access
     return (confR_access, dbR_access)
-#-------------------------------------------------------------------------------
+
+
+# -------------------------------------------------------------------------------
 def fixPermissions():
     # Try fixing access rights if needed
     chmodCommands = []
 
-  
 
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 def initialiseFile(pathToCheck, defaultFile):
     # if file not readable (missing?) try to copy over the backed-up (default) one
     if str(os.access(pathToCheck, os.R_OK)) == "False":
-        mylog('none', ["[Setup] ("+ pathToCheck +") file is not readable or missing. Trying to copy over the default one."])
+        mylog(
+            "none",
+            [
+                "[Setup] ("
+                + pathToCheck
+                + ") file is not readable or missing. Trying to copy over the default one."
+            ],
+        )
         try:
             # try runnning a subprocess
-            p = subprocess.Popen(["cp", defaultFile , pathToCheck], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            p = subprocess.Popen(
+                ["cp", defaultFile, pathToCheck],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+            )
             stdout, stderr = p.communicate()
 
             if str(os.access(pathToCheck, os.R_OK)) == "False":
-                mylog('none', ["[Setup] ⚠ ERROR copying ("+defaultFile+") to ("+pathToCheck+"). Make sure the app has Read & Write access to the parent directory."])
+                mylog(
+                    "none",
+                    [
+                        "[Setup] ⚠ ERROR copying ("
+                        + defaultFile
+                        + ") to ("
+                        + pathToCheck
+                        + "). Make sure the app has Read & Write access to the parent directory."
+                    ],
+                )
             else:
-                mylog('none', ["[Setup] ("+defaultFile+") copied over successfully to ("+pathToCheck+")."])
+                mylog(
+                    "none",
+                    [
+                        "[Setup] ("
+                        + defaultFile
+                        + ") copied over successfully to ("
+                        + pathToCheck
+                        + ")."
+                    ],
+                )
 
             # write stdout and stderr into .log files for debugging if needed
-            logResult (stdout, stderr)  # TO-DO should be changed to mylog
+            logResult(stdout, stderr)  # TO-DO should be changed to mylog
 
         except subprocess.CalledProcessError as e:
             # An error occured, handle it
-            mylog('none', ["[Setup] ⚠ ERROR copying ("+defaultFile+"). Make sure the app has Read & Write access to " + pathToCheck])
-            mylog('none', [e.output])
+            mylog(
+                "none",
+                [
+                    "[Setup] ⚠ ERROR copying ("
+                    + defaultFile
+                    + "). Make sure the app has Read & Write access to "
+                    + pathToCheck
+                ],
+            )
+            mylog("none", [e.output])
 
-#-------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------
 def filePermissions():
     # check and initialize .conf
-    (confR_access, dbR_access) = checkPermissionsOK() # Initial check
+    (confR_access, dbR_access) = checkPermissionsOK()  # Initial check
 
     if confR_access == False:
-        initialiseFile(fullConfPath, f"{INSTALL_PATH}/back/app.conf" )
+        initialiseFile(fullConfPath, f"{INSTALL_PATH}/back/app.conf")
 
     # check and initialize .db
     if dbR_access == False:
@@ -235,19 +287,19 @@ def filePermissions():
     fixPermissions()
 
 
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 # File manipulation methods
-#-------------------------------------------------------------------------------
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 def get_file_content(path):
-
-    f = open(path, 'r')
+    f = open(path, "r")
     content = f.read()
     f.close()
 
     return content
 
-#-------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------
 def write_file(pPath, pText):
     # Convert pText to a string if it's a dictionary
     if isinstance(pText, dict):
@@ -261,25 +313,27 @@ def write_file(pPath, pText):
     else:
         # Write the text using the correct Python version
         if sys.version_info < (3, 0):
-            file = io.open(pPath, mode='w', encoding='utf-8')
-            file.write(pText.decode('unicode_escape'))
+            file = io.open(pPath, mode="w", encoding="utf-8")
+            file.write(pText.decode("unicode_escape"))
             file.close()
         else:
-            file = open(pPath, 'w', encoding='utf-8')
+            file = open(pPath, "w", encoding="utf-8")
             if pText is None:
                 pText = ""
             file.write(pText)
             file.close()
 
-#-------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------
 # Setting methods
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 
 SETTINGS_CACHE = {}
 SETTINGS_LASTCACHEDATE = 0
-SETTINGS_SECONDARYCACHE={}
+SETTINGS_SECONDARYCACHE = {}
 
-#-------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------
 #  Return whole setting touple
 def get_setting(key):
     """
@@ -296,51 +350,58 @@ def get_setting(key):
         dict | None: The setting dictionary for the key, or None if not found.
     """
     global SETTINGS_LASTCACHEDATE, SETTINGS_CACHE, SETTINGS_SECONDARYCACHE
-    
-    settingsFile = apiPath + 'table_settings.json'
+
+    settingsFile = apiPath + "table_settings.json"
     try:
         fileModifiedTime = os.path.getmtime(settingsFile)
     except FileNotFoundError:
-        mylog('none', [f'[Settings] ⚠ File not found: {settingsFile}'])
+        mylog("none", [f"[Settings] ⚠ File not found: {settingsFile}"])
         return None
 
-    mylog('trace', [
-        '[Import table_settings.json] checking table_settings.json file',
-        f'SETTINGS_LASTCACHEDATE: {SETTINGS_LASTCACHEDATE}',
-        f'fileModifiedTime: {fileModifiedTime}'
-    ])
+    mylog(
+        "trace",
+        [
+            "[Import table_settings.json] checking table_settings.json file",
+            f"SETTINGS_LASTCACHEDATE: {SETTINGS_LASTCACHEDATE}",
+            f"fileModifiedTime: {fileModifiedTime}",
+        ],
+    )
 
     # Use cache if file hasn't changed
     if fileModifiedTime == SETTINGS_LASTCACHEDATE and SETTINGS_CACHE:
-        mylog('trace', ['[Import table_settings.json] using cached version'])
+        mylog("trace", ["[Import table_settings.json] using cached version"])
         return SETTINGS_CACHE.get(key)
 
     # invalidate CACHE
     SETTINGS_CACHE = {}
-    SETTINGS_SECONDARYCACHE={}
+    SETTINGS_SECONDARYCACHE = {}
 
     # Load JSON and populate cache
     try:
-        with open(settingsFile, 'r') as json_file:
+        with open(settingsFile, "r") as json_file:
             data = json.load(json_file)
             SETTINGS_CACHE = {item["setKey"]: item for item in data.get("data", [])}
     except json.JSONDecodeError:
-        mylog('none', [f'[Settings] ⚠ JSON decode error in file {settingsFile}'])
+        mylog("none", [f"[Settings] ⚠ JSON decode error in file {settingsFile}"])
         return None
     except ValueError as e:
-        mylog('none', [f'[Settings] ⚠ Value error: {e} in file {settingsFile}'])
+        mylog("none", [f"[Settings] ⚠ Value error: {e} in file {settingsFile}"])
         return None
 
     # Only update file date when we successfully parsed the file
     SETTINGS_LASTCACHEDATE = fileModifiedTime
-    
+
     if key not in SETTINGS_CACHE:
-        mylog('none', [f'[Settings] ⚠ ERROR - setting_missing - {key} not in {settingsFile}'])
+        mylog(
+            "none",
+            [f"[Settings] ⚠ ERROR - setting_missing - {key} not in {settingsFile}"],
+        )
         return None
 
     return SETTINGS_CACHE[key]
 
-#-------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------
 #  Return setting value
 def get_setting_value(key):
     """
@@ -359,9 +420,9 @@ def get_setting_value(key):
     """
 
     global SETTINGS_SECONDARYCACHE
-    
+
     # Returns empty string if not found
-    value = ''
+    value = ""
 
     # lookup key in secondary cache
     if key in SETTINGS_SECONDARYCACHE:
@@ -371,8 +432,8 @@ def get_setting_value(key):
         # conf.mySettings is a list of tuples, find by key (tuple[0])
         for item in conf.mySettings:
             if item[0] == key:
-                set_type = item[3]   # type
-                set_value = item[5]  # value                
+                set_type = item[3]  # type
+                set_value = item[5]  # value
                 if isinstance(set_value, (list, dict)):
                     value = setting_value_to_python_type(set_type, set_value)
                 else:
@@ -384,13 +445,17 @@ def get_setting_value(key):
     setting = get_setting(key)
 
     if setting is not None:
-        # mylog('none', [f'[SETTINGS] setting json:{json.dumps(setting)}'])        
+        # mylog('none', [f'[SETTINGS] setting json:{json.dumps(setting)}'])
 
-        set_type  = 'Error: Not handled'
-        set_value = 'Error: Not handled'
+        set_type = "Error: Not handled"
+        set_value = "Error: Not handled"
 
-        set_value = setting["setValue"]  # Setting value (Value (upper case) = user overridden default_value)
-        set_type  = setting["setType"]   # Setting type  # lower case "type" - default json value vs uppper-case "setType" (= from user defined settings)
+        set_value = setting[
+            "setValue"
+        ]  # Setting value (Value (upper case) = user overridden default_value)
+        set_type = setting[
+            "setType"
+        ]  # Setting type  # lower case "type" - default json value vs uppper-case "setType" (= from user defined settings)
 
         value = setting_value_to_python_type(set_type, set_value)
         SETTINGS_SECONDARYCACHE[key] = value
@@ -398,100 +463,122 @@ def get_setting_value(key):
     return value
 
 
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 #  Convert the setting value to the corresponding python type
 def setting_value_to_python_type(set_type, set_value):
-    value = '----not processed----'
+    value = "----not processed----"
 
     # "type": {"dataType":"array", "elements": [{"elementType" : "select", "elementOptions" : [{"multiple":"true"}] ,"transformers": []}]}
- 
-    setTypJSN = json.loads(str(set_type).replace('"','\"').replace("'",'"'))
+
+    setTypJSN = json.loads(str(set_type).replace('"', '"').replace("'", '"'))
 
     # Handle different types of settings based on set_type dictionary
-    dataType = setTypJSN.get('dataType', '')
-    elements = setTypJSN.get('elements', [])
+    dataType = setTypJSN.get("dataType", "")
+    elements = setTypJSN.get("elements", [])
 
     # Ensure there's at least one element in the elements list
     if not elements:
-        mylog('none', [f'[HELPER] No elements provided in set_type: {set_type} '])
+        mylog("none", [f"[HELPER] No elements provided in set_type: {set_type} "])
         return value
 
     # Find the first element where elementHasInputValue is 1
-    element_with_input_value = next((elem for elem in elements if elem.get("elementHasInputValue") == 1), None)
+    element_with_input_value = next(
+        (elem for elem in elements if elem.get("elementHasInputValue") == 1), None
+    )
 
     # If no such element is found, use the last element
     if element_with_input_value is None:
         element_with_input_value = elements[-1]
-        
-    elementType     = element_with_input_value.get('elementType', '')
-    elementOptions  = element_with_input_value.get('elementOptions', [])
-    transformers    = element_with_input_value.get('transformers', [])
+
+    elementType = element_with_input_value.get("elementType", "")
+    elementOptions = element_with_input_value.get("elementOptions", [])
+    transformers = element_with_input_value.get("transformers", [])
 
     # Convert value based on dataType and elementType
-    if dataType == 'string' and elementType in ['input', 'select', 'textarea', 'datatable']:
+    if dataType == "string" and elementType in [
+        "input",
+        "select",
+        "textarea",
+        "datatable",
+    ]:
         value = reverseTransformers(str(set_value), transformers)
 
-    elif dataType == 'integer' and (elementType == 'input' or elementType == 'select'):    
+    elif dataType == "integer" and (elementType == "input" or elementType == "select"):
         # handle storing/retrieving boolean values as 1/0
-        if set_value.lower() not in ['true', 'false'] and isinstance(set_value, str):
+        if set_value.lower() not in ["true", "false"] and isinstance(set_value, str):
             value = int(set_value)
 
         elif isinstance(set_value, bool):
             value = 1 if set_value else 0
 
-        elif isinstance(set_value, str): 
-            value = 1 if set_value.lower() == 'true' else 0
-            
-        else: 
+        elif isinstance(set_value, str):
+            value = 1 if set_value.lower() == "true" else 0
+
+        else:
             value = int(set_value)
 
-    # boolean handling 
-    elif dataType == 'boolean' and elementType == 'input':
-        value = set_value.lower() in ['true', '1']
+    # boolean handling
+    elif dataType == "boolean" and elementType == "input":
+        value = set_value.lower() in ["true", "1"]
 
     # array handling
-    elif dataType == 'array' and elementType == 'select':
+    elif dataType == "array" and elementType == "select":
         if isinstance(set_value, str):
             try:
-                value = json.loads(set_value.replace("'", "\""))
-                
+                value = json.loads(set_value.replace("'", '"'))
+
                 # reverse transformations to all entries
                 value = reverseTransformers(value, transformers)
-                    
+
             except json.JSONDecodeError as e:
-                mylog('none', [f'[setting_value_to_python_type] Error decoding JSON object: {e}'])  
-                mylog('none', [set_value])  
+                mylog(
+                    "none",
+                    [f"[setting_value_to_python_type] Error decoding JSON object: {e}"],
+                )
+                mylog("none", [set_value])
                 value = []
-                
+
         elif isinstance(set_value, list):
             value = set_value
 
-    elif dataType == 'object' and elementType == 'input':
+    elif dataType == "object" and elementType == "input":
         if isinstance(set_value, str):
             try:
                 value = reverseTransformers(json.loads(set_value), transformers)
-            except json.JSONDecodeError as e:                
-                mylog('none', [f'[setting_value_to_python_type] Error decoding JSON object: {e}'])  
-                mylog('none', [{set_value}])  
+            except json.JSONDecodeError as e:
+                mylog(
+                    "none",
+                    [f"[setting_value_to_python_type] Error decoding JSON object: {e}"],
+                )
+                mylog("none", [{set_value}])
                 value = {}
-                
+
         elif isinstance(set_value, dict):
             value = set_value
 
-    elif dataType == 'string' and elementType == 'input' and any(opt.get('readonly') == "true" for opt in elementOptions):
+    elif (
+        dataType == "string"
+        and elementType == "input"
+        and any(opt.get("readonly") == "true" for opt in elementOptions)
+    ):
         value = reverseTransformers(str(set_value), transformers)
 
-    elif dataType == 'string' and elementType == 'input' and any(opt.get('type') == "password" for opt in elementOptions) and 'sha256' in transformers:
+    elif (
+        dataType == "string"
+        and elementType == "input"
+        and any(opt.get("type") == "password" for opt in elementOptions)
+        and "sha256" in transformers
+    ):
         value = hashlib.sha256(set_value.encode()).hexdigest()
 
-
-    if value == '----not processed----':
-        mylog('none', [f'[HELPER] ⚠ ERROR not processed set_type:  {set_type} '])  
-        mylog('none', [f'[HELPER] ⚠ ERROR not processed set_value: {set_value} '])  
+    if value == "----not processed----":
+        mylog("none", [f"[HELPER] ⚠ ERROR not processed set_type:  {set_type} "])
+        mylog("none", [f"[HELPER] ⚠ ERROR not processed set_value: {set_value} "])
 
     return value
 
-#-------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------
 def updateSubnets(scan_subnets):
     """
     Normalize scan subnet input into a list of subnets.
@@ -515,17 +602,17 @@ def updateSubnets(scan_subnets):
     return subnets
 
 
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 # Reverse transformed values if needed
 def reverseTransformers(val, transformers):
     # Function to apply transformers to a single value
     def reverse_transformers(value, transformers):
         for transformer in transformers:
-            if transformer == 'base64':
+            if transformer == "base64":
                 if isinstance(value, str):
-                    value = base64.b64decode(value).decode('utf-8')
-            elif transformer == 'sha256':
-                mylog('none', [f'[reverseTransformers] sha256 is irreversible'])
+                    value = base64.b64decode(value).decode("utf-8")
+            elif transformer == "sha256":
+                mylog("none", ["[reverseTransformers] sha256 is irreversible"])
         return value
 
     # Check if the value is a list
@@ -535,82 +622,91 @@ def reverseTransformers(val, transformers):
         return reverse_transformers(val, transformers)
 
 
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 # IP validation methods
-#-------------------------------------------------------------------------------
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 def checkIPV4(ip):
-    """ Define a function to validate an Ip address
-    """
+    """Define a function to validate an Ip address"""
     ipRegex = r"^((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])$"
 
-    if(re.search(ipRegex, ip)):
+    if re.search(ipRegex, ip):
         return True
     else:
         return False
 
-#-------------------------------------------------------------------------------
-def check_IP_format (pIP):
-    # check if TCP communication error ocurred 
-    if 'communications error to' in pIP:
-        return ''
 
-    # Check IP format 
-    IPv4SEG  = r'(?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9])'
-    IPv4ADDR = r'(?:(?:' + IPv4SEG + r'\.){3,3}' + IPv4SEG + r')'
+# -------------------------------------------------------------------------------
+def check_IP_format(pIP):
+    # check if TCP communication error ocurred
+    if "communications error to" in pIP:
+        return ""
+
+    # Check IP format
+    IPv4SEG = r"(?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9])"
+    IPv4ADDR = r"(?:(?:" + IPv4SEG + r"\.){3,3}" + IPv4SEG + r")"
     IP = re.search(IPv4ADDR, pIP)
 
     # Return empty if not IP
-    if IP is None :
+    if IP is None:
         return ""
 
     # Return IP
     return IP.group(0)
 
-#-------------------------------------------------------------------------------
-# String manipulation methods
-#-------------------------------------------------------------------------------
 
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
+# String manipulation methods
+# -------------------------------------------------------------------------------
+
+
+# -------------------------------------------------------------------------------
 def generate_random_string(length):
     characters = string.ascii_letters + string.digits
-    return ''.join(random.choice(characters) for _ in range(length))
+    return "".join(random.choice(characters) for _ in range(length))
 
-#-------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------
 def extract_between_strings(text, start, end):
     start_index = text.find(start)
     end_index = text.find(end, start_index + len(start))
     if start_index != -1 and end_index != -1:
-        return text[start_index + len(start):end_index]
+        return text[start_index + len(start) : end_index]
     else:
         return ""
 
-#-------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------
+
 
 def bytes_to_string(value):
     # if value is of type bytes, convert to string
     if isinstance(value, bytes):
-        value = value.decode('utf-8')
+        value = value.decode("utf-8")
     return value
 
-#-------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------
+
 
 def if_byte_then_to_str(input):
     if isinstance(input, bytes):
-        input = input.decode('utf-8')
-        input = bytes_to_string(re.sub(r'[^a-zA-Z0-9-_\s]', '', str(input)))
+        input = input.decode("utf-8")
+        input = bytes_to_string(re.sub(r"[^a-zA-Z0-9-_\s]", "", str(input)))
     return input
 
-#-------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------
 def hide_email(email):
-    m = email.split('@')
+    m = email.split("@")
 
     if len(m) == 2:
-        return f'{m[0][0]}{"*"*(len(m[0])-2)}{m[0][-1] if len(m[0]) > 1 else ""}@{m[1]}'
+        return f"{m[0][0]}{'*' * (len(m[0]) - 2)}{m[0][-1] if len(m[0]) > 1 else ''}@{m[1]}"
 
     return email
 
-#-------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------
 def hide_string(input_string):
     if len(input_string) < 3:
         return input_string  # Strings with 2 or fewer characters remain unchanged
@@ -618,43 +714,46 @@ def hide_string(input_string):
         return input_string[0] + "*" * (len(input_string) - 2) + input_string[-1]
 
 
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 def removeDuplicateNewLines(text):
     if "\n\n\n" in text:
         return removeDuplicateNewLines(text.replace("\n\n\n", "\n\n"))
     else:
         return text
 
-#-------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------
 def sanitize_string(input):
     if isinstance(input, bytes):
-        input = input.decode('utf-8')
-    input = bytes_to_string(re.sub(r'[^a-zA-Z0-9-_\s]', '', str(input)))
+        input = input.decode("utf-8")
+    input = bytes_to_string(re.sub(r"[^a-zA-Z0-9-_\s]", "", str(input)))
     return input
 
 
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 # Function to normalize the string and remove diacritics
 def normalize_string(text):
     # Normalize the text to 'NFD' to separate base characters and diacritics
     if not isinstance(text, str):
         text = str(text)
-    normalized_text = unicodedata.normalize('NFD', text)
+    normalized_text = unicodedata.normalize("NFD", text)
     # Filter out diacritics and unwanted characters
-    return ''.join(c for c in normalized_text if unicodedata.category(c) != 'Mn')
+    return "".join(c for c in normalized_text if unicodedata.category(c) != "Mn")
 
-# ------------------------------------------------------------------------------    
+
+# ------------------------------------------------------------------------------
 # MAC and IP helper methods
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 
-# -------------------------------------------------------------------------------------------    
+
+# -------------------------------------------------------------------------------------------
 def is_random_mac(mac: str) -> bool:
     """Determine if a MAC address is random, respecting user-defined prefixes not to mark as random."""
 
     is_random = mac[1].upper() in ["2", "6", "A", "E"]
 
     # Get prefixes from settings
-    prefixes = get_setting_value("UI_NOT_RANDOM_MAC")  
+    prefixes = get_setting_value("UI_NOT_RANDOM_MAC")
 
     # If detected as random, make sure it doesn't start with a prefix the user wants to exclude
     if is_random:
@@ -665,31 +764,37 @@ def is_random_mac(mac: str) -> bool:
 
     return is_random
 
-# -------------------------------------------------------------------------------------------    
-def generate_mac_links (html, deviceUrl):
 
-    p = re.compile(r'(?:[0-9a-fA-F]:?){12}')
+# -------------------------------------------------------------------------------------------
+def generate_mac_links(html, deviceUrl):
+    p = re.compile(r"(?:[0-9a-fA-F]:?){12}")
 
     MACs = re.findall(p, html)
 
     for mac in MACs:
-        html = html.replace('<td>' + mac + '</td>','<td><a href="' + deviceUrl + mac + '">' + mac + '</a></td>')
+        html = html.replace(
+            "<td>" + mac + "</td>",
+            '<td><a href="' + deviceUrl + mac + '">' + mac + "</a></td>",
+        )
 
     return html
 
-#-------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------
 def extract_mac_addresses(text):
     mac_pattern = r"([0-9A-Fa-f]{2}[:-][0-9A-Fa-f]{2}[:-][0-9A-Fa-f]{2}[:-][0-9A-Fa-f]{2}[:-][0-9A-Fa-f]{2}[:-][0-9A-Fa-f]{2})"
     mac_addresses = re.findall(mac_pattern, text)
     return mac_addresses
 
-#-------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------
 def extract_ip_addresses(text):
     ip_pattern = r"\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b"
     ip_addresses = re.findall(ip_pattern, text)
     return ip_addresses
 
-#-------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------
 # Helper function to determine if a MAC address is random
 def is_random_mac(mac):
     # Check if second character matches "2", "6", "A", "E" (case insensitive)
@@ -704,19 +809,22 @@ def is_random_mac(mac):
                 break
     return is_random
 
-#-------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------
 # Helper function to calculate number of children
 def get_number_of_children(mac, devices):
     # Count children by checking devParentMAC for each device
-    return sum(1 for dev in devices if dev.get("devParentMAC", "").strip() == mac.strip())
+    return sum(
+        1 for dev in devices if dev.get("devParentMAC", "").strip() == mac.strip()
+    )
 
 
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 # Function to convert IP to a long integer
 def format_ip_long(ip_address):
     try:
         # Check if it's an IPv6 address
-        if ':' in ip_address:
+        if ":" in ip_address:
             ip = ipaddress.IPv6Address(ip_address)
         else:
             # Assume it's an IPv4 address
@@ -726,18 +834,21 @@ def format_ip_long(ip_address):
         # Return a default error value if IP is invalid
         return -1
 
-#-------------------------------------------------------------------------------
-# JSON methods
-#-------------------------------------------------------------------------------
 
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
+# JSON methods
+# -------------------------------------------------------------------------------
+
+
+# -------------------------------------------------------------------------------
 def isJsonObject(value):
     return isinstance(value, dict)
 
-#-------------------------------------------------------------------------------
-def add_json_list (row, list):
+
+# -------------------------------------------------------------------------------
+def add_json_list(row, list):
     new_row = []
-    for column in row :
+    for column in row:
         column = bytes_to_string(column)
 
         new_row.append(column)
@@ -746,28 +857,35 @@ def add_json_list (row, list):
 
     return list
 
-#-------------------------------------------------------------------------------
-# Checks if the object has a __dict__ attribute. If it does, it assumes that it's an instance of a class and serializes its attributes dynamically. 
+
+# -------------------------------------------------------------------------------
+# Checks if the object has a __dict__ attribute. If it does, it assumes that it's an instance of a class and serializes its attributes dynamically.
 class NotiStrucEncoder(json.JSONEncoder):
     def default(self, obj):
-        if hasattr(obj, '__dict__'):
+        if hasattr(obj, "__dict__"):
             # If the object has a '__dict__', assume it's an instance of a class
             return obj.__dict__
         return super().default(obj)
 
-#-------------------------------------------------------------------------------
-# Get language strings from plugin JSON
-def collect_lang_strings(json, pref, stringSqlParams):    
 
+# -------------------------------------------------------------------------------
+# Get language strings from plugin JSON
+def collect_lang_strings(json, pref, stringSqlParams):
     for prop in json["localized"]:
         for language_string in json[prop]:
-
-            stringSqlParams.append((str(language_string["language_code"]), str(pref + "_" + prop), str(language_string["string"]), ""))
-
+            stringSqlParams.append(
+                (
+                    str(language_string["language_code"]),
+                    str(pref + "_" + prop),
+                    str(language_string["string"]),
+                    "",
+                )
+            )
 
     return stringSqlParams
 
-#-------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------
 # Get the value from the buildtimestamp.txt and initialize it if missing
 def getBuildTimeStamp():
     """
@@ -781,62 +899,69 @@ def getBuildTimeStamp():
              Returns 0 if the file is empty or just initialized.
     """
     buildTimestamp = 0
-    build_timestamp_path = os.path.join(applicationPath, 'front/buildtimestamp.txt')
+    build_timestamp_path = os.path.join(applicationPath, "front/buildtimestamp.txt")
 
     # Ensure file exists, initialize if missing
     if not os.path.exists(build_timestamp_path):
-        with open(build_timestamp_path, 'w') as f:
+        with open(build_timestamp_path, "w") as f:
             f.write("0")
 
     # Now safely read the timestamp
-    with open(build_timestamp_path, 'r') as f:
+    with open(build_timestamp_path, "r") as f:
         buildTimestamp = int(f.read().strip() or 0)
 
     return buildTimestamp
 
 
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 def checkNewVersion():
-    mylog('debug', [f"[Version check] Checking if new version available"])
+    mylog("debug", ["[Version check] Checking if new version available"])
 
     newVersion = False
     buildTimestamp = getBuildTimeStamp()
 
     try:
         response = requests.get(
-            "https://api.github.com/repos/jokob-sk/NetAlertX/releases",
-            timeout=5
+            "https://api.github.com/repos/jokob-sk/NetAlertX/releases", timeout=5
         )
         response.raise_for_status()  # Raise an exception for HTTP errors
         text = response.text
-    except requests.exceptions.RequestException as e:
-        mylog('minimal', ["[Version check] ⚠ ERROR: Couldn't check for new release."])
+    except requests.exceptions.RequestException:
+        mylog("minimal", ["[Version check] ⚠ ERROR: Couldn't check for new release."])
         return False
 
     try:
         data = json.loads(text)
-    except json.JSONDecodeError as e:
-        mylog('minimal', ["[Version check] ⚠ ERROR: Invalid JSON response from GitHub."])
+    except json.JSONDecodeError:
+        mylog(
+            "minimal", ["[Version check] ⚠ ERROR: Invalid JSON response from GitHub."]
+        )
         return False
 
     # make sure we received a valid response and not an API rate limit exceeded message
     if data and isinstance(data, list) and "published_at" in data[0]:
         dateTimeStr = data[0]["published_at"]
-        releaseTimestamp = int(datetime.datetime.strptime(dateTimeStr, '%Y-%m-%dT%H:%M:%S%z').timestamp())
+        releaseTimestamp = int(
+            datetime.datetime.strptime(dateTimeStr, "%Y-%m-%dT%H:%M:%S%z").timestamp()
+        )
 
         if releaseTimestamp > buildTimestamp + 600:
-            mylog('none', ["[Version check] New version of the container available!"])
+            mylog("none", ["[Version check] New version of the container available!"])
             newVersion = True
         else:
-            mylog('none', ["[Version check] Running the latest version."])
+            mylog("none", ["[Version check] Running the latest version."])
     else:
-        mylog('minimal', ["[Version check] ⚠ ERROR: Received unexpected response from GitHub."])
+        mylog(
+            "minimal",
+            ["[Version check] ⚠ ERROR: Received unexpected response from GitHub."],
+        )
 
     return newVersion
 
-#-------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------
 class noti_obj:
     def __init__(self, json, text, html):
         self.json = json
         self.text = text
-        self.html = html  
+        self.html = html

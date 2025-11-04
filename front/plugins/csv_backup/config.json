@@ -344,7 +344,7 @@
           }
         ]
       },
-      "default_value": "/app/config",
+  "default_value": "/data/config",
       "options": [],
       "localized": [
         "name",
@@ -367,15 +367,15 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Where the <code>devices.csv</code> file should be saved. For example <code>/app/config</code>."
+          "string": "Where the <code>devices.csv</code> file should be saved. For example <code>/data/config</code>."
         },
         {
           "language_code": "es_es",
-          "string": "Donde se debe guardar el archivo <code>devices.csv</code>. Por ejemplo <code>/app/config</code>."
+          "string": "Donde se debe guardar el archivo <code>devices.csv</code>. Por ejemplo <code>/data/config</code>."
         },
         {
           "language_code": "de_de",
-          "string": "Wo die Datei <code>devices.csv</code> gespeichert werden soll. Zum Beispiel <code>/app/config</code>."
+          "string": "Wo die Datei <code>devices.csv</code> gespeichert werden soll. Zum Beispiel <code>/data/config</code>."
         }
       ]
     }

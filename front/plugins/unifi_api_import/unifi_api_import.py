@@ -1,24 +1,20 @@
 #!/usr/bin/env python
 
 import os
-import pathlib
 import sys
 import json
-import sqlite3
 from pytz import timezone
 from unifi_sm_api.api import SiteManagerAPI
 
 # Define the installation path and extend the system path for plugin imports
-INSTALL_PATH = "/app"
+INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64, decode_settings_base64
-from plugin_utils import get_plugins_configs
+from plugin_helper import Plugin_Objects, decode_settings_base64
 from logger import mylog, Logger
-from const import pluginsPath, fullDbPath, logPath
-from helper import timeNowTZ, get_setting_value 
+from const import logPath
+from helper import get_setting_value 
 
-from messaging.in_app import write_notification
 import conf
 
 # Make sure the TIMEZONE for logging is correct

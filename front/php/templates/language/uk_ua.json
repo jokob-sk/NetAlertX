@@ -674,7 +674,7 @@
     "Systeminfo_System_Uptime": "Час роботи:",
     "Systeminfo_This_Client": "Цей клієнт",
     "Systeminfo_USB_Devices": "USB-пристрої",
-    "TICKER_MIGRATE_TO_NETALERTX": "⚠ Виявлено старі місця монтування. Дотримуйтеся <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/MIGRATION.md\" target=\"_blank\">цього посібника</a>, щоб перейти на новий <code> папки /app/config</code> і <code>/app/db</code> і контейнер <code>netalertx</code>.",
+    "TICKER_MIGRATE_TO_NETALERTX": "⚠ Виявлено старі місця монтування. Дотримуйтеся <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/MIGRATION.md\" target=\"_blank\">цього посібника</a>, щоб перейти на нові папки <code>/data/config</code> і <code>/data/db</code> та контейнер <code>netalertx</code>.",
     "TIMEZONE_description": "Часовий пояс для правильного відображення статистики. Знайдіть свій часовий пояс <a target=\"_blank\" href=\"https://en.wikipedia.org/wiki/List_of_tz_database_time_zones\" rel=\"nofollow\">тут</a>.",
     "TIMEZONE_name": "Часовий пояс",
     "UI_DEV_SECTIONS_description": "Виберіть, які елементи інтерфейсу користувача приховати на сторінках пристроїв.",

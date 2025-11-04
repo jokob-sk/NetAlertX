@@ -1,20 +1,19 @@
 #!/usr/bin/env python
 
-import json
-import subprocess
-import argparse
 import os
-import pathlib
 import sys
 from datetime import datetime
-from flask import jsonify, request
+from flask import jsonify
 
 # Register NetAlertX directories
-INSTALL_PATH="/app"
+INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from database import get_temp_db_connection
-from helper import is_random_mac, format_date, get_setting_value, format_date_iso, format_event_date, timeNowTZ, mylog, ensure_datetime
+from helper import (
+    mylog,
+    ensure_datetime,
+)
 from db.db_helper import row_to_json, get_date_from_period
 
 
@@ -24,12 +23,12 @@ from db.db_helper import row_to_json, get_date_from_period
 
 
 def create_event(
-    mac: str, 
-    ip: str, 
-    event_type: str = "Device Down", 
-    additional_info: str = "", 
+    mac: str,
+    ip: str,
+    event_type: str = "Device Down",
+    additional_info: str = "",
     pending_alert: int = 1,
-    event_time: datetime | None = None
+    event_time: datetime | None = None,
 ):
     """
     Insert a single event into the Events table and return a standardized JSON response.
@@ -42,10 +41,13 @@ def create_event(
 
     start_time = ensure_datetime(event_time)
 
-    cur.execute("""
+    cur.execute(
+        """
         INSERT INTO Events (eve_MAC, eve_IP, eve_DateTime, eve_EventType, eve_AdditionalInfo, eve_PendingAlertEmail)
         VALUES (?, ?, ?, ?, ?, ?)
-    """, (mac, ip, start_time, event_type, additional_info, pending_alert))
+    """,
+        (mac, ip, start_time, event_type, additional_info, pending_alert),
+    )
 
     conn.commit()
     conn.close()
@@ -75,6 +77,7 @@ def get_events(mac=None):
     conn.close()
     return jsonify({"success": True, "events": events})
 
+
 def delete_events_older_than(days):
     """Delete all events older than a specified number of days"""
 
@@ -83,15 +86,15 @@ def delete_events_older_than(days):
 
     # Use a parameterized query with sqlite date function
     sql = "DELETE FROM Events WHERE eve_DateTime <= date('now', ?)"
-    cur.execute(sql, [f'-{days} days'])
-    
+    cur.execute(sql, [f"-{days} days"])
+
     conn.commit()
     conn.close()
 
-    return jsonify({
-        "success": True, 
-        "message": f"Deleted events older than {days} days"
-    })
+    return jsonify(
+        {"success": True, "message": f"Deleted events older than {days} days"}
+    )
+
 
 def delete_events():
     """Delete all events"""
@@ -105,7 +108,6 @@ def delete_events():
     conn.close()
 
     return jsonify({"success": True, "message": "Deleted all events"})
-
 
 
 def get_events_totals(period: str = "7 days"):
@@ -143,4 +145,3 @@ def get_events_totals(period: str = "7 days"):
     # Return as JSON array
     result_json = [row[0], row[1], row[2], row[3], row[4], row[5]]
     return jsonify(result_json)
-

@@ -17,11 +17,12 @@
 
 // Size and last mod of DB ------------------------------------------------------
 
-$nax_db = str_replace('front', 'db', getcwd()).'/app.db';
-$nax_wal = str_replace('front', 'db', getcwd()).'/app.db-wal';
-$nax_db_size = number_format((filesize($nax_db) / 1000000),2,",",".") . ' MB';
-$nax_wal_size = number_format((filesize($nax_wal) / 1000000),2,",",".") . ' MB';
-$nax_db_mod = date ("F d Y H:i:s", filemtime($nax_db));
+$dbBasePath = rtrim(getenv('NETALERTX_DB') ?: '/data/db', '/');
+$nax_db = $dbBasePath . '/app.db';
+$nax_wal = $dbBasePath . '/app.db-wal';
+$nax_db_size = file_exists($nax_db) ? number_format((filesize($nax_db) / 1000000),2,",",".") . ' MB' : '0 MB';
+$nax_wal_size = file_exists($nax_wal) ? number_format((filesize($nax_wal) / 1000000),2,",",".") . ' MB' : '0 MB';
+$nax_db_mod = file_exists($nax_db) ? date ("F d Y H:i:s", filemtime($nax_db)) : 'N/A';
 
 
 // Table sizes -----------------------------------------------------------------
@@ -334,7 +335,7 @@ $db->close();
 var emptyArr = ['undefined', "", undefined, null];
 var selectedTab                 = 'tab_DBTools_id';
 
-initializeTabs();
+// initializeTabs() is called in window.onload
 
 // -----------------------------------------------------------
 // delete devices with emty macs
@@ -704,7 +705,7 @@ function renderLogs(customData) {
 window.onload = function asyncFooter() {
   renderLogs();
 
-  // initializeTabs();
+  initializeTabs();
 
   try {
     $("#lastCommit").append('<a href="https://github.com/jokob-sk/NetAlertX/commits" target="_blank"><img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/jokob-sk/netalertx/main?logo=github"></a>');

@@ -2,30 +2,59 @@
 
 require '../server/init.php';
 
+$logBasePath = rtrim(getenv('NETALERTX_LOG') ?: '/tmp/log', '/');
+
+function resolveLogPath($path)
+{
+    global $logBasePath;
+
+    if ($path === null || $path === '') {
+        return $path;
+    }
+
+    $placeholder = '__NETALERTX_LOG__';
+    if (strpos($path, $placeholder) === 0) {
+        return $logBasePath . substr($path, strlen($placeholder));
+    }
+
+    return $path;
+}
+
 //------------------------------------------------------------------------------
 // check if authenticated
 require_once  $_SERVER['DOCUMENT_ROOT'] . '/php/templates/security.php';
 
 // Function to render the log area component
 function renderLogArea($params) {
+    global $logBasePath;
+
     $fileName = isset($params['fileName']) ? $params['fileName'] : '';
     $filePath = isset($params['filePath']) ? $params['filePath'] : '';
     $textAreaCssClass = isset($params['textAreaCssClass']) ? $params['textAreaCssClass'] : '';
     $buttons = isset($params['buttons']) ? $params['buttons'] : [];
     $content = "";
 
-    if (filesize($filePath) > 2000000) {
+    $filePath = resolveLogPath($filePath);
+
+    if (!is_file($filePath)) {
+        $content = "";
+        $fileSizeMb = 0.0;
+    } elseif (filesize($filePath) > 2000000) {
         $content = file_get_contents($filePath, false, null, -2000000);
+        $fileSizeMb = filesize($filePath) / 1000000;
     } else {
         $content = file_get_contents($filePath);
+        $fileSizeMb = filesize($filePath) / 1000000;
     }
 
-    // Prepare the download button HTML if filePath starts with /app
+    // Prepare the download button HTML if filePath resides under the active log base path
     $downloadButtonHtml = '';
-    if (strpos($filePath, '/app') === 0) {
+    $logPrefix = $logBasePath . '/';
+    if ($logPrefix !== '/' && strpos($filePath, $logPrefix) === 0) {
+        $downloadName = basename($filePath);
         $downloadButtonHtml = '
             <span class="span-padding">
-                <a href="' . htmlspecialchars(str_replace('/app/log/', '/php/server/query_logs.php?file=', $filePath)) . '" target="_blank">
+                <a href="' . htmlspecialchars('/php/server/query_logs.php?file=' . rawurlencode($downloadName)) . '" target="_blank">
                     <i class="fa fa-download"></i>
                 </a>
             </span>';
@@ -63,7 +92,7 @@ function renderLogArea($params) {
             </div>
             <div class="row logs-row">
                 <div class="log-file col-sm-6 col-xs-12">' . htmlspecialchars($filePath) . '
-                    <div class="logs-size">' . number_format((filesize($filePath) / 1000000), 2, ",", ".") . ' MB'
+                    <div class="logs-size">' . number_format($fileSizeMb, 2, ",", ".") . ' MB'
                     . $downloadButtonHtml .
                     '</div>
                 </div>

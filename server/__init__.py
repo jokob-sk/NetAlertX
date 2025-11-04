@@ -1,1 +1,1 @@
-""" __init__ for NetAlertX """
+"""__init__ for NetAlertX"""

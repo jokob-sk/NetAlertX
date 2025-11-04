@@ -1,20 +1,19 @@
 #!/usr/bin/env python
 
 from __future__ import unicode_literals
-import pathlib
 import subprocess
 import argparse
 import os
 import sys
 
 # Register NetAlertX directories
-INSTALL_PATH="/app"
+INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64, handleEmpty, normalize_mac
+from plugin_helper import Plugin_Objects, handleEmpty, normalize_mac
 from logger import mylog, Logger
-from helper import timeNowTZ, get_setting_value 
-from const import logPath, applicationPath
+from helper import get_setting_value 
+from const import logPath
 import conf
 from pytz import timezone
 
@@ -94,7 +93,7 @@ def main():
                                 foreignKey  = handleEmpty(macAddress)  # Use the primary ID as the foreign key
                             )
                         else:
-                            mylog('verbose', [f'[SNMPDSC] ipStr does not seem to contain a valid IP:', ipStr]) 
+                            mylog('verbose', ['[SNMPDSC] ipStr does not seem to contain a valid IP:', ipStr]) 
 
 
                     elif line.startswith('ipNetToMediaPhysAddress'):

@@ -32,7 +32,7 @@ from datetime import datetime
 from typing import Literal, Any, Dict
 
 # Define the installation path and extend the system path for plugin imports
-INSTALL_PATH = "/app"
+INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from plugin_helper import Plugin_Objects, is_typical_router_ip, is_mac
@@ -395,7 +395,7 @@ class OmadaData:
         response_result = normalized_input_data.get("response_result", {})
         for entry in response_result:
             if len(entry) == 0:
-                OmadaHelper.minimal(f"Skipping entry, missing data.")
+                OmadaHelper.minimal("Skipping entry, missing data.")
                 continue
 
             OmadaHelper.verbose(f"Making entry for: {entry['mac_address']}")

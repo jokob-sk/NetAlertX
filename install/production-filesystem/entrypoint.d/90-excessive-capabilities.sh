@@ -3,6 +3,14 @@
 # excessive-capabilities.sh checks that no more than the necessary
 # NET_ADMIN NET_BIND_SERVICE and NET_RAW capabilities are present.
 
+
+# if we are running in devcontainer then we should exit imemditely without checking
+# The devcontainer is set up to have additional permissions which are not granted
+# in production so this check would always fail there.
+if [ "${NETALERTX_DEBUG}" == "1" ]; then
+    exit 0
+fi
+
 # Get bounding capabilities from /proc/self/status (what can be acquired)
 BND_HEX=$(grep '^CapBnd:' /proc/self/status 2>/dev/null | awk '{print $2}' | tr -d '\t')  
 

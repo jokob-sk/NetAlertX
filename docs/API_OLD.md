@@ -141,7 +141,7 @@ The endpoints are updated when objects in the API endpoints are changed.
 
 ### Location of the endpoints
 
-In the container, these files are located under the `/app/api/` folder. You can access them via the `/php/server/query_json.php?file=user_notifications.json` endpoint.
+In the container, these files are located under the API directory (default: `/tmp/api/`, configurable via `NETALERTX_API` environment variable). You can access them via the `/php/server/query_json.php?file=user_notifications.json` endpoint.
 
 ### Available endpoints
 
@@ -332,7 +332,7 @@ Grafana template sample: [Download json](./samples/API/Grafana_Dashboard.json)
 
 ## API Endpoint: /log files
 
-This API endpoint retrieves files from the `/app/log` folder. 
+This API endpoint retrieves files from the `/tmp/log` folder. 
 
 - Endpoint URL: `php/server/query_logs.php?file=<file name>`
 - Host: `same as front end (web ui)`
@@ -357,7 +357,7 @@ This API endpoint retrieves files from the `/app/log` folder.
 
 ## API Endpoint: /config files
 
-To retrieve files from the `/app/config` folder. 
+To retrieve files from the `/data/config` folder. 
 
 - Endpoint URL: `php/server/query_config.php?file=<file name>`
 - Host: `same as front end (web ui)`

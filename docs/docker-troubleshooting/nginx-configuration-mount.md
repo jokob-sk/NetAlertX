@@ -20,7 +20,7 @@ If you want to use a custom port, create a bind mount for the nginx configuratio
 - Add to your docker-compose.yml:
   ```yaml
   volumes:
-    - /path/to/nginx-config:/app/system/services/active/config
+    - /path/to/nginx-config:/tmp/nginx/active-config
   environment:
     - PORT=your_custom_port
   ```

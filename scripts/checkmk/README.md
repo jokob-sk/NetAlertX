@@ -1,6 +1,6 @@
 # NetAlertX-New-Devices-Checkmk-Script
 
-This script retrieves the list of all devices from NetAlertX by reading the `/app/api/table_devices.json` file within the "NetAlertX" Docker container. It then checks if there are any new devices (`devIsNew == 1`). 
+This script retrieves the list of all devices from NetAlertX by reading the `table_devices.json` file from the API directory within the "NetAlertX" Docker container (default: `/tmp/api`, configurable via `NETALERTX_API` environment variable). It then checks if there are any new devices (`devIsNew == 1`). 
 
 - If new devices are found, a warning state is reported.  
 - Otherwise, an OK state is returned.

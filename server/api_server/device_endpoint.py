@@ -1,16 +1,12 @@
 #!/usr/bin/env python
 
-import json
-import subprocess
-import argparse
 import os
-import pathlib
 import sys
 from datetime import datetime
 from flask import jsonify, request
 
 # Register NetAlertX directories
-INSTALL_PATH="/app"
+INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from database import get_temp_db_connection
@@ -21,13 +17,14 @@ from db.db_helper import row_to_json, get_date_from_period
 # Device Endpoints Functions
 # --------------------------
 
+
 def get_device_data(mac):
     """Fetch device info with children, event stats, and presence calculation."""
 
     # Open temporary connection for this request
     conn = get_temp_db_connection()
     cur = conn.cursor()
-    
+
     # Special case for new device
     if mac.lower() == "new":
         now = datetime.now().strftime("%Y-%m-%d %H:%M")
@@ -71,12 +68,12 @@ def get_device_data(mac):
             "devEvents": 0,
             "devDownAlerts": 0,
             "devPresenceHours": 0,
-            "devFQDN": ""
+            "devFQDN": "",
         }
         return jsonify(device_data)
 
     # Compute period date for sessions/events
-    period = request.args.get('period', '')  # e.g., '7 days', '1 month', etc.
+    period = request.args.get("period", "")  # e.g., '7 days', '1 month', etc.
     period_date_sql = get_date_from_period(period)
     current_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
@@ -128,18 +125,21 @@ def get_device_data(mac):
         return jsonify({"error": "Device not found"}), 404
 
     device_data = row_to_json(list(row.keys()), row)
-    device_data['devFirstConnection'] = format_date(device_data['devFirstConnection'])
-    device_data['devLastConnection'] = format_date(device_data['devLastConnection'])
-    device_data['devIsRandomMAC'] = is_random_mac(device_data['devMac'])
+    device_data["devFirstConnection"] = format_date(device_data["devFirstConnection"])
+    device_data["devLastConnection"] = format_date(device_data["devLastConnection"])
+    device_data["devIsRandomMAC"] = is_random_mac(device_data["devMac"])
 
     # Fetch children
-    cur.execute("SELECT * FROM Devices WHERE devParentMAC = ? ORDER BY devPresentLastScan DESC", ( device_data['devMac'],))
+    cur.execute(
+        "SELECT * FROM Devices WHERE devParentMAC = ? ORDER BY devPresentLastScan DESC",
+        (device_data["devMac"],),
+    )
     children_rows = cur.fetchall()
     children = [row_to_json(list(r.keys()), r) for r in children_rows]
     children_nics = [c for c in children if c.get("devParentRelType") == "nic"]
 
-    device_data['devChildrenDynamic'] = children
-    device_data['devChildrenNicsDynamic'] = children_nics
+    device_data["devChildrenDynamic"] = children
+    device_data["devChildrenNicsDynamic"] = children_nics
 
     conn.close()
 
@@ -187,7 +187,9 @@ def set_device_data(mac, data):
             data.get("devIsNew", 0),
             data.get("devIsArchived", 0),
             data.get("devLastConnection", datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
-            data.get("devFirstConnection", datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
+            data.get(
+                "devFirstConnection", datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            ),
             data.get("devLastIP", ""),
             data.get("devGUID", ""),
             data.get("devCustomProps", ""),
@@ -206,31 +208,31 @@ def set_device_data(mac, data):
         WHERE devMac=?
         """
         values = (
-                data.get("devName", ""),
-                data.get("devOwner", ""),
-                data.get("devType", ""),
-                data.get("devVendor", ""),
-                data.get("devIcon", ""),
-                data.get("devFavorite", 0),
-                data.get("devGroup", ""),
-                data.get("devLocation", ""),
-                data.get("devComments", ""),
-                data.get("devParentMAC", ""),
-                data.get("devParentPort", ""),
-                data.get("devSSID", ""),
-                data.get("devSite", ""),
-                data.get("devStaticIP", 0),
-                data.get("devScan", 0),
-                data.get("devAlertEvents", 0),
-                data.get("devAlertDown", 0),
-                data.get("devParentRelType", "default"),
-                data.get("devReqNicsOnline", 0),
-                data.get("devSkipRepeated", 0),
-                data.get("devIsNew", 0),
-                data.get("devIsArchived", 0),
-                data.get("devCustomProps", ""),
-                mac
-            )
+            data.get("devName", ""),
+            data.get("devOwner", ""),
+            data.get("devType", ""),
+            data.get("devVendor", ""),
+            data.get("devIcon", ""),
+            data.get("devFavorite", 0),
+            data.get("devGroup", ""),
+            data.get("devLocation", ""),
+            data.get("devComments", ""),
+            data.get("devParentMAC", ""),
+            data.get("devParentPort", ""),
+            data.get("devSSID", ""),
+            data.get("devSite", ""),
+            data.get("devStaticIP", 0),
+            data.get("devScan", 0),
+            data.get("devAlertEvents", 0),
+            data.get("devAlertDown", 0),
+            data.get("devParentRelType", "default"),
+            data.get("devReqNicsOnline", 0),
+            data.get("devSkipRepeated", 0),
+            data.get("devIsNew", 0),
+            data.get("devIsArchived", 0),
+            data.get("devCustomProps", ""),
+            mac,
+        )
 
     conn = get_temp_db_connection()
     cur = conn.cursor()
@@ -238,7 +240,6 @@ def set_device_data(mac, data):
     conn.commit()
     conn.close()
     return jsonify({"success": True})
-
 
 
 def delete_device(mac):
@@ -274,12 +275,13 @@ def reset_device_props(mac, data=None):
     conn.close()
     return jsonify({"success": True})
 
+
 def update_device_column(mac, column_name, column_value):
     """
     Update a specific column for a given device.
     Example: update_device_column("AA:BB:CC:DD:EE:FF", "devParentMAC", "Internet")
     """
-    
+
     conn = get_temp_db_connection()
     cur = conn.cursor()
 
@@ -292,10 +294,11 @@ def update_device_column(mac, column_name, column_value):
         return jsonify({"success": True})
     else:
         return jsonify({"success": False, "error": "Device not found"}), 404
-    
+
     conn.close()
 
     return jsonify({"success": True})
+
 
 def copy_device(mac_from, mac_to):
     """
@@ -310,7 +313,10 @@ def copy_device(mac_from, mac_to):
         cur.execute("DROP TABLE IF EXISTS temp_devices")
 
         # Create temporary table with source device
-        cur.execute("CREATE TABLE temp_devices AS SELECT * FROM Devices WHERE devMac = ?", (mac_from,))
+        cur.execute(
+            "CREATE TABLE temp_devices AS SELECT * FROM Devices WHERE devMac = ?",
+            (mac_from,),
+        )
 
         # Update temporary table to target MAC
         cur.execute("UPDATE temp_devices SET devMac = ?", (mac_to,))
@@ -319,18 +325,21 @@ def copy_device(mac_from, mac_to):
         cur.execute("DELETE FROM Devices WHERE devMac = ?", (mac_to,))
 
         # Insert new entry from temporary table
-        cur.execute("INSERT INTO Devices SELECT * FROM temp_devices WHERE devMac = ?", (mac_to,))
+        cur.execute(
+            "INSERT INTO Devices SELECT * FROM temp_devices WHERE devMac = ?", (mac_to,)
+        )
 
         # Drop temporary table
         cur.execute("DROP TABLE temp_devices")
 
         conn.commit()
-        return jsonify({"success": True, "message": f"Device copied from {mac_from} to {mac_to}"})
-    
+        return jsonify(
+            {"success": True, "message": f"Device copied from {mac_from} to {mac_to}"}
+        )
+
     except Exception as e:
         conn.rollback()
         return jsonify({"success": False, "error": str(e)})
-    
+
     finally:
         conn.close()
-

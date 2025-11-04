@@ -8,7 +8,8 @@ Directory: /workspaces/NetAlertX/test/docker_tests/configurations
 
 Running docker-compose up...
 Attaching to netalertx-test-missing-caps
-[Knetalertx-test-missing-caps exited with code 255
+
+[Knetalertx-test-missing-caps exited with code 255
 
 ==========================================
 
@@ -65,12 +66,13 @@ netalertx-test-readonly  |     https://github.com/jokob-sk/NetAlertX/blob/main/d
 netalertx-test-readonly  | ══════════════════════════════════════════════════════════════════════════════
 netalertx-test-readonly  | Container startup checks failed with exit code 1.
 netalertx-test-readonly  | NETALERTX_DEBUG is set to 1, will not shut down other services if one fails.
-netalertx-test-readonly  | Starting /usr/sbin/php-fpm83 -y "/services/config/php/php-fpm.conf" -F >>"/app/log/app.php_errors.log" 2>/dev/stderr &
-netalertx-test-readonly  | Starting /usr/sbin/crond -c "/services/config/crond" -f -L "/app/log/crond.log" >>"/app/log/crond.log" 2>&1 &
+netalertx-test-readonly  | Starting /usr/sbin/php-fpm83 -y "/services/config/php/php-fpm.conf" -F >>"/tmp/log/app.php_errors.log" 2>/dev/stderr &
+netalertx-test-readonly  | Starting /usr/sbin/crond -c "/services/config/crond" -f -L "/tmp/log/crond.log" >>"/tmp/log/crond.log" 2>&1 &
 netalertx-test-readonly  | php-fpm stopped! (exit 1)
 netalertx-test-readonly  | Crond stopped! (exit 1)
-netalertx-test-readonly  | Starting python3  -m server > /app/log/stdout.log 2> >(tee /app/log/stderr.log >&2)
-[Knetalertx-test-readonly exited with code 0
+netalertx-test-readonly  | Starting python3  -m server > /tmp/log/stdout.log 2> >(tee /tmp/log/stderr.log >&2)
+
+[Knetalertx-test-readonly exited with code 0
 netalertx-test-readonly  |  --> first run config
 netalertx-test-readonly  |  --> first run db
 netalertx-test-readonly  |  --> mandatory folders
@@ -101,12 +103,13 @@ netalertx-test-readonly  |     https://github.com/jokob-sk/NetAlertX/blob/main/d
 netalertx-test-readonly  | ══════════════════════════════════════════════════════════════════════════════
 netalertx-test-readonly  | Container startup checks failed with exit code 1.
 netalertx-test-readonly  | NETALERTX_DEBUG is set to 1, will not shut down other services if one fails.
-netalertx-test-readonly  | Starting /usr/sbin/crond -c "/services/config/crond" -f -L "/app/log/crond.log" >>"/app/log/crond.log" 2>&1 &
-netalertx-test-readonly  | Starting /usr/sbin/php-fpm83 -y "/services/config/php/php-fpm.conf" -F >>"/app/log/app.php_errors.log" 2>/dev/stderr &
+netalertx-test-readonly  | Starting /usr/sbin/crond -c "/services/config/crond" -f -L "/tmp/log/crond.log" >>"/tmp/log/crond.log" 2>&1 &
+netalertx-test-readonly  | Starting /usr/sbin/php-fpm83 -y "/services/config/php/php-fpm.conf" -F >>"/tmp/log/app.php_errors.log" 2>/dev/stderr &
 netalertx-test-readonly  | Crond stopped! (exit 1)
 netalertx-test-readonly  | php-fpm stopped! (exit 1)
-netalertx-test-readonly  | Starting python3  -m server > /app/log/stdout.log 2> >(tee /app/log/stderr.log >&2)
-[Knetalertx-test-readonly exited with code 0
+netalertx-test-readonly  | Starting python3  -m server > /tmp/log/stdout.log 2> >(tee /tmp/log/stderr.log >&2)
+
+[Knetalertx-test-readonly exited with code 0
 netalertx-test-readonly  |  --> first run config
 netalertx-test-readonly  |  --> first run db
 netalertx-test-readonly  |  --> mandatory folders
@@ -137,12 +140,13 @@ netalertx-test-readonly  |     https://github.com/jokob-sk/NetAlertX/blob/main/d
 netalertx-test-readonly  | ══════════════════════════════════════════════════════════════════════════════
 netalertx-test-readonly  | Container startup checks failed with exit code 1.
 netalertx-test-readonly  | NETALERTX_DEBUG is set to 1, will not shut down other services if one fails.
-netalertx-test-readonly  | Starting /usr/sbin/php-fpm83 -y "/services/config/php/php-fpm.conf" -F >>"/app/log/app.php_errors.log" 2>/dev/stderr &
-netalertx-test-readonly  | Starting /usr/sbin/crond -c "/services/config/crond" -f -L "/app/log/crond.log" >>"/app/log/crond.log" 2>&1 &
+netalertx-test-readonly  | Starting /usr/sbin/php-fpm83 -y "/services/config/php/php-fpm.conf" -F >>"/tmp/log/app.php_errors.log" 2>/dev/stderr &
+netalertx-test-readonly  | Starting /usr/sbin/crond -c "/services/config/crond" -f -L "/tmp/log/crond.log" >>"/tmp/log/crond.log" 2>&1 &
 netalertx-test-readonly  | Crond stopped! (exit 1)
 netalertx-test-readonly  | php-fpm stopped! (exit 1)
-netalertx-test-readonly  | Starting python3  -m server > /app/log/stdout.log 2> >(tee /app/log/stderr.log >&2)
-[Knetalertx-test-readonly exited with code 0
+netalertx-test-readonly  | Starting python3  -m server > /tmp/log/stdout.log 2> >(tee /tmp/log/stderr.log >&2)
+
+[Knetalertx-test-readonly exited with code 0
 
 ==========================================
 
@@ -207,10 +211,10 @@ netalertx-test-writable  |
 netalertx-test-writable  |     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/port-conflicts.md
 netalertx-test-writable  | ══════════════════════════════════════════════════════════════════════════════
 netalertx-test-writable  | NETALERTX_DEBUG is set to 1, will not shut down other services if one fails.
-netalertx-test-writable  | Starting /usr/sbin/crond -c "/services/config/crond" -f -L "/app/log/crond.log" >>"/app/log/crond.log" 2>&1 &
-netalertx-test-writable  | Starting /usr/sbin/php-fpm83 -y "/services/config/php/php-fpm.conf" -F >>"/app/log/app.php_errors.log" 2>/dev/stderr &
-netalertx-test-writable  | Starting python3  -m server > /app/log/stdout.log 2> >(tee /app/log/stderr.log >&2)
-netalertx-test-writable  | Starting /usr/sbin/nginx -p "/services/run/" -c "/services/config/nginx/conf.active/netalertx.conf" -g "error_log /dev/stderr; error_log /app/log/nginx-error.log; pid /services/run/nginx.pid; daemon off;" &
+netalertx-test-writable  | Starting /usr/sbin/crond -c "/services/config/crond" -f -L "/tmp/log/crond.log" >>"/tmp/log/crond.log" 2>&1 &
+netalertx-test-writable  | Starting /usr/sbin/php-fpm83 -y "/services/config/php/php-fpm.conf" -F >>"/tmp/log/app.php_errors.log" 2>/dev/stderr &
+netalertx-test-writable  | Starting python3  -m server > /tmp/log/stdout.log 2> >(tee /tmp/log/stderr.log >&2)
+netalertx-test-writable  | Starting /usr/sbin/nginx -p "/tmp/run/" -c "/tmp/nginx-active-config/netalertx.conf" -g "error_log /dev/stderr; error_log /tmp/log/nginx-error.log; pid /tmp/run/nginx.pid; daemon off;" &
 netalertx-test-writable  | nginx stopped! (exit 1)
 netalertx-test-writable  | Successfully updated IEEE OUI database (111620 entries)
 
@@ -276,9 +280,9 @@ netalertx-test-mount-active_config_mounted  |
 netalertx-test-mount-active_config_mounted  |     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/port-conflicts.md
 netalertx-test-mount-active_config_mounted  | ══════════════════════════════════════════════════════════════════════════════
 netalertx-test-mount-active_config_mounted  | Container startup checks failed with exit code 1.
-netalertx-test-mount-active_config_mounted  | Starting /usr/sbin/php-fpm83 -y "/services/config/php/php-fpm.conf" -F >>"/app/log/app.php_errors.log" 2>/dev/stderr &
-netalertx-test-mount-active_config_mounted  | Starting /usr/sbin/crond -c "/services/config/crond" -f -L "/app/log/crond.log" >>"/app/log/crond.log" 2>&1 &
-netalertx-test-mount-active_config_mounted  | Starting python3  -m server > /app/log/stdout.log 2> >(tee /app/log/stderr.log >&2)
+netalertx-test-mount-active_config_mounted  | Starting /usr/sbin/php-fpm83 -y "/services/config/php/php-fpm.conf" -F >>"/tmp/log/app.php_errors.log" 2>/dev/stderr &
+netalertx-test-mount-active_config_mounted  | Starting /usr/sbin/crond -c "/services/config/crond" -f -L "/tmp/log/crond.log" >>"/tmp/log/crond.log" 2>&1 &
+netalertx-test-mount-active_config_mounted  | Starting python3  -m server > /tmp/log/stdout.log 2> >(tee /tmp/log/stderr.log >&2)
 netalertx-test-mount-active_config_mounted  | Successfully updated IEEE OUI database (111620 entries)
 
 ==========================================
@@ -343,9 +347,9 @@ netalertx-test-mount-active_config_no-mount  |
 netalertx-test-mount-active_config_no-mount  |     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/port-conflicts.md
 netalertx-test-mount-active_config_no-mount  | ══════════════════════════════════════════════════════════════════════════════
 netalertx-test-mount-active_config_no-mount  | Container startup checks failed with exit code 1.
-netalertx-test-mount-active_config_no-mount  | Starting /usr/sbin/php-fpm83 -y "/services/config/php/php-fpm.conf" -F >>"/app/log/app.php_errors.log" 2>/dev/stderr &
-netalertx-test-mount-active_config_no-mount  | Starting /usr/sbin/crond -c "/services/config/crond" -f -L "/app/log/crond.log" >>"/app/log/crond.log" 2>&1 &
-netalertx-test-mount-active_config_no-mount  | Starting python3  -m server > /app/log/stdout.log 2> >(tee /app/log/stderr.log >&2)
+netalertx-test-mount-active_config_no-mount  | Starting /usr/sbin/php-fpm83 -y "/services/config/php/php-fpm.conf" -F >>"/tmp/log/app.php_errors.log" 2>/dev/stderr &
+netalertx-test-mount-active_config_no-mount  | Starting /usr/sbin/crond -c "/services/config/crond" -f -L "/tmp/log/crond.log" >>"/tmp/log/crond.log" 2>&1 &
+netalertx-test-mount-active_config_no-mount  | Starting python3  -m server > /tmp/log/stdout.log 2> >(tee /tmp/log/stderr.log >&2)
 netalertx-test-mount-active_config_no-mount  | Successfully updated IEEE OUI database (111620 entries)
 
 ==========================================
@@ -407,10 +411,10 @@ netalertx-test-mount-active_config_ramdisk  |     may fail to start.
 netalertx-test-mount-active_config_ramdisk  | 
 netalertx-test-mount-active_config_ramdisk  |     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/port-conflicts.md
 netalertx-test-mount-active_config_ramdisk  | ══════════════════════════════════════════════════════════════════════════════
-netalertx-test-mount-active_config_ramdisk  | Starting /usr/sbin/crond -c "/services/config/crond" -f -L "/app/log/crond.log" >>"/app/log/crond.log" 2>&1 &
-netalertx-test-mount-active_config_ramdisk  | Starting /usr/sbin/php-fpm83 -y "/services/config/php/php-fpm.conf" -F >>"/app/log/app.php_errors.log" 2>/dev/stderr &
-netalertx-test-mount-active_config_ramdisk  | Starting python3  -m server > /app/log/stdout.log 2> >(tee /app/log/stderr.log >&2)
-netalertx-test-mount-active_config_ramdisk  | Starting /usr/sbin/nginx -p "/services/run/" -c "/services/config/nginx/conf.active/netalertx.conf" -g "error_log /dev/stderr; error_log /app/log/nginx-error.log; pid /services/run/nginx.pid; daemon off;" &
+netalertx-test-mount-active_config_ramdisk  | Starting /usr/sbin/crond -c "/services/config/crond" -f -L "/tmp/log/crond.log" >>"/tmp/log/crond.log" 2>&1 &
+netalertx-test-mount-active_config_ramdisk  | Starting /usr/sbin/php-fpm83 -y "/services/config/php/php-fpm.conf" -F >>"/tmp/log/app.php_errors.log" 2>/dev/stderr &
+netalertx-test-mount-active_config_ramdisk  | Starting python3  -m server > /tmp/log/stdout.log 2> >(tee /tmp/log/stderr.log >&2)
+netalertx-test-mount-active_config_ramdisk  | Starting /usr/sbin/nginx -p "/tmp/run/" -c "/tmp/nginx-active-config/netalertx.conf" -g "error_log /dev/stderr; error_log /tmp/log/nginx-error.log; pid /tmp/run/nginx.pid; daemon off;" &
 netalertx-test-mount-active_config_ramdisk  | Successfully updated IEEE OUI database (111620 entries)
 
 ==========================================
@@ -475,9 +479,9 @@ netalertx-test-mount-active_config_unwritable  |
 netalertx-test-mount-active_config_unwritable  |     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/port-conflicts.md
 netalertx-test-mount-active_config_unwritable  | ══════════════════════════════════════════════════════════════════════════════
 netalertx-test-mount-active_config_unwritable  | Container startup checks failed with exit code 1.
-netalertx-test-mount-active_config_unwritable  | Starting /usr/sbin/php-fpm83 -y "/services/config/php/php-fpm.conf" -F >>"/app/log/app.php_errors.log" 2>/dev/stderr &
-netalertx-test-mount-active_config_unwritable  | Starting /usr/sbin/crond -c "/services/config/crond" -f -L "/app/log/crond.log" >>"/app/log/crond.log" 2>&1 &
-netalertx-test-mount-active_config_unwritable  | Starting python3  -m server > /app/log/stdout.log 2> >(tee /app/log/stderr.log >&2)
+netalertx-test-mount-active_config_unwritable  | Starting /usr/sbin/php-fpm83 -y "/services/config/php/php-fpm.conf" -F >>"/tmp/log/app.php_errors.log" 2>/dev/stderr &
+netalertx-test-mount-active_config_unwritable  | Starting /usr/sbin/crond -c "/services/config/crond" -f -L "/tmp/log/crond.log" >>"/tmp/log/crond.log" 2>&1 &
+netalertx-test-mount-active_config_unwritable  | Starting python3  -m server > /tmp/log/stdout.log 2> >(tee /tmp/log/stderr.log >&2)
 netalertx-test-mount-active_config_unwritable  | Successfully updated IEEE OUI database (111620 entries)
 
 ==========================================
@@ -539,10 +543,10 @@ netalertx-test-mount-api_mounted  |     may fail to start.
 netalertx-test-mount-api_mounted  | 
 netalertx-test-mount-api_mounted  |     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/port-conflicts.md
 netalertx-test-mount-api_mounted  | ══════════════════════════════════════════════════════════════════════════════
-netalertx-test-mount-api_mounted  | Starting /usr/sbin/crond -c "/services/config/crond" -f -L "/app/log/crond.log" >>"/app/log/crond.log" 2>&1 &
-netalertx-test-mount-api_mounted  | Starting /usr/sbin/php-fpm83 -y "/services/config/php/php-fpm.conf" -F >>"/app/log/app.php_errors.log" 2>/dev/stderr &
-netalertx-test-mount-api_mounted  | Starting python3  -m server > /app/log/stdout.log 2> >(tee /app/log/stderr.log >&2)
-netalertx-test-mount-api_mounted  | Starting /usr/sbin/nginx -p "/services/run/" -c "/services/config/nginx/conf.active/netalertx.conf" -g "error_log /dev/stderr; error_log /app/log/nginx-error.log; pid /services/run/nginx.pid; daemon off;" &
+netalertx-test-mount-api_mounted  | Starting /usr/sbin/crond -c "/services/config/crond" -f -L "/tmp/log/crond.log" >>"/tmp/log/crond.log" 2>&1 &
+netalertx-test-mount-api_mounted  | Starting /usr/sbin/php-fpm83 -y "/services/config/php/php-fpm.conf" -F >>"/tmp/log/app.php_errors.log" 2>/dev/stderr &
+netalertx-test-mount-api_mounted  | Starting python3  -m server > /tmp/log/stdout.log 2> >(tee /tmp/log/stderr.log >&2)
+netalertx-test-mount-api_mounted  | Starting /usr/sbin/nginx -p "/tmp/run/" -c "/tmp/nginx-active-config/netalertx.conf" -g "error_log /dev/stderr; error_log /tmp/log/nginx-error.log; pid /tmp/run/nginx.pid; daemon off;" &
 netalertx-test-mount-api_mounted  | Successfully updated IEEE OUI database (111620 entries)
 
 ==========================================
@@ -604,10 +608,10 @@ netalertx-test-mount-api_no-mount  |     may fail to start.
 netalertx-test-mount-api_no-mount  | 
 netalertx-test-mount-api_no-mount  |     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/port-conflicts.md
 netalertx-test-mount-api_no-mount  | ══════════════════════════════════════════════════════════════════════════════
-netalertx-test-mount-api_no-mount  | Starting /usr/sbin/php-fpm83 -y "/services/config/php/php-fpm.conf" -F >>"/app/log/app.php_errors.log" 2>/dev/stderr &
-netalertx-test-mount-api_no-mount  | Starting /usr/sbin/crond -c "/services/config/crond" -f -L "/app/log/crond.log" >>"/app/log/crond.log" 2>&1 &
-netalertx-test-mount-api_no-mount  | Starting python3  -m server > /app/log/stdout.log 2> >(tee /app/log/stderr.log >&2)
-netalertx-test-mount-api_no-mount  | Starting /usr/sbin/nginx -p "/services/run/" -c "/services/config/nginx/conf.active/netalertx.conf" -g "error_log /dev/stderr; error_log /app/log/nginx-error.log; pid /services/run/nginx.pid; daemon off;" &
+netalertx-test-mount-api_no-mount  | Starting /usr/sbin/php-fpm83 -y "/services/config/php/php-fpm.conf" -F >>"/tmp/log/app.php_errors.log" 2>/dev/stderr &
+netalertx-test-mount-api_no-mount  | Starting /usr/sbin/crond -c "/services/config/crond" -f -L "/tmp/log/crond.log" >>"/tmp/log/crond.log" 2>&1 &
+netalertx-test-mount-api_no-mount  | Starting python3  -m server > /tmp/log/stdout.log 2> >(tee /tmp/log/stderr.log >&2)
+netalertx-test-mount-api_no-mount  | Starting /usr/sbin/nginx -p "/tmp/run/" -c "/tmp/nginx-active-config/netalertx.conf" -g "error_log /dev/stderr; error_log /tmp/log/nginx-error.log; pid /tmp/run/nginx.pid; daemon off;" &
 netalertx-test-mount-api_no-mount  | Successfully updated IEEE OUI database (111620 entries)
 
 ==========================================
@@ -669,10 +673,10 @@ netalertx-test-mount-api_ramdisk  |     may fail to start.
 netalertx-test-mount-api_ramdisk  | 
 netalertx-test-mount-api_ramdisk  |     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/port-conflicts.md
 netalertx-test-mount-api_ramdisk  | ══════════════════════════════════════════════════════════════════════════════
-netalertx-test-mount-api_ramdisk  | Starting /usr/sbin/php-fpm83 -y "/services/config/php/php-fpm.conf" -F >>"/app/log/app.php_errors.log" 2>/dev/stderr &
-netalertx-test-mount-api_ramdisk  | Starting /usr/sbin/crond -c "/services/config/crond" -f -L "/app/log/crond.log" >>"/app/log/crond.log" 2>&1 &
-netalertx-test-mount-api_ramdisk  | Starting python3  -m server > /app/log/stdout.log 2> >(tee /app/log/stderr.log >&2)
-netalertx-test-mount-api_ramdisk  | Starting /usr/sbin/nginx -p "/services/run/" -c "/services/config/nginx/conf.active/netalertx.conf" -g "error_log /dev/stderr; error_log /app/log/nginx-error.log; pid /services/run/nginx.pid; daemon off;" &
+netalertx-test-mount-api_ramdisk  | Starting /usr/sbin/php-fpm83 -y "/services/config/php/php-fpm.conf" -F >>"/tmp/log/app.php_errors.log" 2>/dev/stderr &
+netalertx-test-mount-api_ramdisk  | Starting /usr/sbin/crond -c "/services/config/crond" -f -L "/tmp/log/crond.log" >>"/tmp/log/crond.log" 2>&1 &
+netalertx-test-mount-api_ramdisk  | Starting python3  -m server > /tmp/log/stdout.log 2> >(tee /tmp/log/stderr.log >&2)
+netalertx-test-mount-api_ramdisk  | Starting /usr/sbin/nginx -p "/tmp/run/" -c "/tmp/nginx-active-config/netalertx.conf" -g "error_log /dev/stderr; error_log /tmp/log/nginx-error.log; pid /tmp/run/nginx.pid; daemon off;" &
 netalertx-test-mount-api_ramdisk  | Successfully updated IEEE OUI database (111620 entries)
 
 ==========================================
@@ -706,12 +710,12 @@ netalertx-test-mount-api_unwritable  |  --> storage permission
 netalertx-test-mount-api_unwritable  |  --> mounts.py
 netalertx-test-mount-api_unwritable  |  Path                               | Writeable | Mount | RAMDisk | Performance | DataLoss 
 netalertx-test-mount-api_unwritable  | ------------------------------------+-----------+-------+---------+-------------+----------
-netalertx-test-mount-api_unwritable  |  /app/db                            |     ✅    |   ✅  |    ➖   |      ➖     |    ✅     
-netalertx-test-mount-api_unwritable  |  /app/config                        |     ✅    |   ✅  |    ➖   |      ➖     |    ✅     
-netalertx-test-mount-api_unwritable  |  /app/api                           |     ❌    |   ✅  |    ❌   |      ❌     |    ✅     
-netalertx-test-mount-api_unwritable  |  /app/log                           |     ✅    |   ✅  |    ✅   |      ✅     |    ✅     
-netalertx-test-mount-api_unwritable  |  /services/run                      |     ✅    |   ✅  |    ✅   |      ✅     |    ✅     
-netalertx-test-mount-api_unwritable  |  /services/config/nginx/conf.active |     ✅    |   ✅  |    ✅   |      ✅     |    ✅     
+netalertx-test-mount-api_unwritable  |  /data/db                            |     ✅    |   ✅  |    ➖   |      ➖     |    ✅     
+netalertx-test-mount-api_unwritable  |  /data/config                        |     ✅    |   ✅  |    ➖   |      ➖     |    ✅     
+netalertx-test-mount-api_unwritable  |  /tmp/api                           |     ❌    |   ✅  |    ❌   |      ❌     |    ✅     
+netalertx-test-mount-api_unwritable  |  /tmp/log                           |     ✅    |   ✅  |    ✅   |      ✅     |    ✅     
+netalertx-test-mount-api_unwritable  |  /tmp/run                      |     ✅    |   ✅  |    ✅   |      ✅     |    ✅     
+netalertx-test-mount-api_unwritable  |  /tmp/nginx-active-config |     ✅    |   ✅  |    ✅   |      ✅     |    ✅     
 netalertx-test-mount-api_unwritable  |  --> first run config
 netalertx-test-mount-api_unwritable  |  --> first run db
 netalertx-test-mount-api_unwritable  |  --> mandatory folders
@@ -742,10 +746,10 @@ netalertx-test-mount-api_unwritable  |     may fail to start.
 netalertx-test-mount-api_unwritable  | 
 netalertx-test-mount-api_unwritable  |     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/port-conflicts.md
 netalertx-test-mount-api_unwritable  | ══════════════════════════════════════════════════════════════════════════════
-netalertx-test-mount-api_unwritable  | Starting /usr/sbin/crond -c "/services/config/crond" -f -L "/app/log/crond.log" >>"/app/log/crond.log" 2>&1 &
-netalertx-test-mount-api_unwritable  | Starting /usr/sbin/php-fpm83 -y "/services/config/php/php-fpm.conf" -F >>"/app/log/app.php_errors.log" 2>/dev/stderr &
-netalertx-test-mount-api_unwritable  | Starting python3  -m server > /app/log/stdout.log 2> >(tee /app/log/stderr.log >&2)
-netalertx-test-mount-api_unwritable  | Starting /usr/sbin/nginx -p "/services/run/" -c "/services/config/nginx/conf.active/netalertx.conf" -g "error_log /dev/stderr; error_log /app/log/nginx-error.log; pid /services/run/nginx.pid; daemon off;" &
+netalertx-test-mount-api_unwritable  | Starting /usr/sbin/crond -c "/services/config/crond" -f -L "/tmp/log/crond.log" >>"/tmp/log/crond.log" 2>&1 &
+netalertx-test-mount-api_unwritable  | Starting /usr/sbin/php-fpm83 -y "/services/config/php/php-fpm.conf" -F >>"/tmp/log/app.php_errors.log" 2>/dev/stderr &
+netalertx-test-mount-api_unwritable  | Starting python3  -m server > /tmp/log/stdout.log 2> >(tee /tmp/log/stderr.log >&2)
+netalertx-test-mount-api_unwritable  | Starting /usr/sbin/nginx -p "/tmp/run/" -c "/tmp/nginx-active-config/netalertx.conf" -g "error_log /dev/stderr; error_log /tmp/log/nginx-error.log; pid /tmp/run/nginx.pid; daemon off;" &
 netalertx-test-mount-api_unwritable  | Successfully updated IEEE OUI database (111620 entries)
 
 ==========================================
@@ -807,10 +811,10 @@ netalertx-test-mount-config_mounted  |     may fail to start.
 netalertx-test-mount-config_mounted  | 
 netalertx-test-mount-config_mounted  |     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/port-conflicts.md
 netalertx-test-mount-config_mounted  | ══════════════════════════════════════════════════════════════════════════════
-netalertx-test-mount-config_mounted  | Starting /usr/sbin/php-fpm83 -y "/services/config/php/php-fpm.conf" -F >>"/app/log/app.php_errors.log" 2>/dev/stderr &
-netalertx-test-mount-config_mounted  | Starting /usr/sbin/crond -c "/services/config/crond" -f -L "/app/log/crond.log" >>"/app/log/crond.log" 2>&1 &
-netalertx-test-mount-config_mounted  | Starting python3  -m server > /app/log/stdout.log 2> >(tee /app/log/stderr.log >&2)
-netalertx-test-mount-config_mounted  | Starting /usr/sbin/nginx -p "/services/run/" -c "/services/config/nginx/conf.active/netalertx.conf" -g "error_log /dev/stderr; error_log /app/log/nginx-error.log; pid /services/run/nginx.pid; daemon off;" &
+netalertx-test-mount-config_mounted  | Starting /usr/sbin/php-fpm83 -y "/services/config/php/php-fpm.conf" -F >>"/tmp/log/app.php_errors.log" 2>/dev/stderr &
+netalertx-test-mount-config_mounted  | Starting /usr/sbin/crond -c "/services/config/crond" -f -L "/tmp/log/crond.log" >>"/tmp/log/crond.log" 2>&1 &
+netalertx-test-mount-config_mounted  | Starting python3  -m server > /tmp/log/stdout.log 2> >(tee /tmp/log/stderr.log >&2)
+netalertx-test-mount-config_mounted  | Starting /usr/sbin/nginx -p "/tmp/run/" -c "/tmp/nginx-active-config/netalertx.conf" -g "error_log /dev/stderr; error_log /tmp/log/nginx-error.log; pid /tmp/run/nginx.pid; daemon off;" &
 netalertx-test-mount-config_mounted  | Successfully updated IEEE OUI database (111620 entries)
 
 ==========================================
@@ -844,12 +848,12 @@ netalertx-test-mount-config_no-mount  |  --> storage permission
 netalertx-test-mount-config_no-mount  |  --> mounts.py
 netalertx-test-mount-config_no-mount  |  Path                               | Writeable | Mount | RAMDisk | Performance | DataLoss 
 netalertx-test-mount-config_no-mount  | ------------------------------------+-----------+-------+---------+-------------+----------
-netalertx-test-mount-config_no-mount  |  /app/db                            |     ✅    |   ✅  |    ➖   |      ➖     |    ✅     
-netalertx-test-mount-config_no-mount  |  /app/config                        |     ✅    |   ❌  |    ➖   |      ➖     |    ❌     
-netalertx-test-mount-config_no-mount  |  /app/api                           |     ✅    |   ✅  |    ✅   |      ✅     |    ✅     
-netalertx-test-mount-config_no-mount  |  /app/log                           |     ✅    |   ✅  |    ✅   |      ✅     |    ✅     
-netalertx-test-mount-config_no-mount  |  /services/run                      |     ✅    |   ✅  |    ✅   |      ✅     |    ✅     
-netalertx-test-mount-config_no-mount  |  /services/config/nginx/conf.active |     ✅    |   ✅  |    ✅   |      ✅     |    ✅     
+netalertx-test-mount-config_no-mount  |  /data/db                            |     ✅    |   ✅  |    ➖   |      ➖     |    ✅     
+netalertx-test-mount-config_no-mount  |  /data/config                        |     ✅    |   ❌  |    ➖   |      ➖     |    ❌     
+netalertx-test-mount-config_no-mount  |  /tmp/api                           |     ✅    |   ✅  |    ✅   |      ✅     |    ✅     
+netalertx-test-mount-config_no-mount  |  /tmp/log                           |     ✅    |   ✅  |    ✅   |      ✅     |    ✅     
+netalertx-test-mount-config_no-mount  |  /tmp/run                      |     ✅    |   ✅  |    ✅   |      ✅     |    ✅     
+netalertx-test-mount-config_no-mount  |  /tmp/nginx-active-config |     ✅    |   ✅  |    ✅   |      ✅     |    ✅     
 netalertx-test-mount-config_no-mount  |  --> first run config
 netalertx-test-mount-config_no-mount  |  --> first run db
 netalertx-test-mount-config_no-mount  |  --> mandatory folders
@@ -880,10 +884,10 @@ netalertx-test-mount-config_no-mount  |     may fail to start.
 netalertx-test-mount-config_no-mount  | 
 netalertx-test-mount-config_no-mount  |     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/port-conflicts.md
 netalertx-test-mount-config_no-mount  | ══════════════════════════════════════════════════════════════════════════════
-netalertx-test-mount-config_no-mount  | Starting /usr/sbin/php-fpm83 -y "/services/config/php/php-fpm.conf" -F >>"/app/log/app.php_errors.log" 2>/dev/stderr &
-netalertx-test-mount-config_no-mount  | Starting /usr/sbin/crond -c "/services/config/crond" -f -L "/app/log/crond.log" >>"/app/log/crond.log" 2>&1 &
-netalertx-test-mount-config_no-mount  | Starting python3  -m server > /app/log/stdout.log 2> >(tee /app/log/stderr.log >&2)
-netalertx-test-mount-config_no-mount  | Starting /usr/sbin/nginx -p "/services/run/" -c "/services/config/nginx/conf.active/netalertx.conf" -g "error_log /dev/stderr; error_log /app/log/nginx-error.log; pid /services/run/nginx.pid; daemon off;" &
+netalertx-test-mount-config_no-mount  | Starting /usr/sbin/php-fpm83 -y "/services/config/php/php-fpm.conf" -F >>"/tmp/log/app.php_errors.log" 2>/dev/stderr &
+netalertx-test-mount-config_no-mount  | Starting /usr/sbin/crond -c "/services/config/crond" -f -L "/tmp/log/crond.log" >>"/tmp/log/crond.log" 2>&1 &
+netalertx-test-mount-config_no-mount  | Starting python3  -m server > /tmp/log/stdout.log 2> >(tee /tmp/log/stderr.log >&2)
+netalertx-test-mount-config_no-mount  | Starting /usr/sbin/nginx -p "/tmp/run/" -c "/tmp/nginx-active-config/netalertx.conf" -g "error_log /dev/stderr; error_log /tmp/log/nginx-error.log; pid /tmp/run/nginx.pid; daemon off;" &
 netalertx-test-mount-config_no-mount  | Successfully updated IEEE OUI database (111620 entries)
 
 ==========================================
@@ -917,12 +921,12 @@ netalertx-test-mount-config_ramdisk  |  --> storage permission
 netalertx-test-mount-config_ramdisk  |  --> mounts.py
 netalertx-test-mount-config_ramdisk  |  Path                               | Writeable | Mount | RAMDisk | Performance | DataLoss 
 netalertx-test-mount-config_ramdisk  | ------------------------------------+-----------+-------+---------+-------------+----------
-netalertx-test-mount-config_ramdisk  |  /app/db                            |     ✅    |   ✅  |    ➖   |      ➖     |    ✅     
-netalertx-test-mount-config_ramdisk  |  /app/config                        |     ✅    |   ✅  |    ❌   |      ➖     |    ❌     
-netalertx-test-mount-config_ramdisk  |  /app/api                           |     ✅    |   ✅  |    ✅   |      ✅     |    ✅     
-netalertx-test-mount-config_ramdisk  |  /app/log                           |     ✅    |   ✅  |    ✅   |      ✅     |    ✅     
-netalertx-test-mount-config_ramdisk  |  /services/run                      |     ✅    |   ✅  |    ✅   |      ✅     |    ✅     
-netalertx-test-mount-config_ramdisk  |  /services/config/nginx/conf.active |     ✅    |   ✅  |    ✅   |      ✅     |    ✅     
+netalertx-test-mount-config_ramdisk  |  /data/db                            |     ✅    |   ✅  |    ➖   |      ➖     |    ✅     
+netalertx-test-mount-config_ramdisk  |  /data/config                        |     ✅    |   ✅  |    ❌   |      ➖     |    ❌     
+netalertx-test-mount-config_ramdisk  |  /tmp/api                           |     ✅    |   ✅  |    ✅   |      ✅     |    ✅     
+netalertx-test-mount-config_ramdisk  |  /tmp/log                           |     ✅    |   ✅  |    ✅   |      ✅     |    ✅     
+netalertx-test-mount-config_ramdisk  |  /tmp/run                      |     ✅    |   ✅  |    ✅   |      ✅     |    ✅     
+netalertx-test-mount-config_ramdisk  |  /tmp/nginx-active-config |     ✅    |   ✅  |    ✅   |      ✅     |    ✅     
 netalertx-test-mount-config_ramdisk  |  --> first run config
 netalertx-test-mount-config_ramdisk  |  --> first run db
 netalertx-test-mount-config_ramdisk  |  --> mandatory folders
@@ -956,10 +960,10 @@ netalertx-test-mount-config_ramdisk  |
 netalertx-test-mount-config_ramdisk  |     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/port-conflicts.md
 netalertx-test-mount-config_ramdisk  | ══════════════════════════════════════════════════════════════════════════════
 netalertx-test-mount-config_ramdisk  | Container startup checks failed with exit code 1.
-netalertx-test-mount-config_ramdisk  | Starting /usr/sbin/php-fpm83 -y "/services/config/php/php-fpm.conf" -F >>"/app/log/app.php_errors.log" 2>/dev/stderr &
-netalertx-test-mount-config_ramdisk  | Starting /usr/sbin/crond -c "/services/config/crond" -f -L "/app/log/crond.log" >>"/app/log/crond.log" 2>&1 &
-netalertx-test-mount-config_ramdisk  | Starting python3  -m server > /app/log/stdout.log 2> >(tee /app/log/stderr.log >&2)
-netalertx-test-mount-config_ramdisk  | Starting /usr/sbin/nginx -p "/services/run/" -c "/services/config/nginx/conf.active/netalertx.conf" -g "error_log /dev/stderr; error_log /app/log/nginx-error.log; pid /services/run/nginx.pid; daemon off;" &
+netalertx-test-mount-config_ramdisk  | Starting /usr/sbin/php-fpm83 -y "/services/config/php/php-fpm.conf" -F >>"/tmp/log/app.php_errors.log" 2>/dev/stderr &
+netalertx-test-mount-config_ramdisk  | Starting /usr/sbin/crond -c "/services/config/crond" -f -L "/tmp/log/crond.log" >>"/tmp/log/crond.log" 2>&1 &
+netalertx-test-mount-config_ramdisk  | Starting python3  -m server > /tmp/log/stdout.log 2> >(tee /tmp/log/stderr.log >&2)
+netalertx-test-mount-config_ramdisk  | Starting /usr/sbin/nginx -p "/tmp/run/" -c "/tmp/nginx-active-config/netalertx.conf" -g "error_log /dev/stderr; error_log /tmp/log/nginx-error.log; pid /tmp/run/nginx.pid; daemon off;" &
 netalertx-test-mount-config_ramdisk  | Successfully updated IEEE OUI database (111620 entries)
 
 ==========================================
@@ -993,12 +997,12 @@ netalertx-test-mount-config_unwritable  |  --> storage permission
 netalertx-test-mount-config_unwritable  |  --> mounts.py
 netalertx-test-mount-config_unwritable  |  Path                               | Writeable | Mount | RAMDisk | Performance | DataLoss 
 netalertx-test-mount-config_unwritable  | ------------------------------------+-----------+-------+---------+-------------+----------
-netalertx-test-mount-config_unwritable  |  /app/db                            |     ✅    |   ✅  |    ➖   |      ➖     |    ✅     
-netalertx-test-mount-config_unwritable  |  /app/config                        |     ❌    |   ✅  |    ➖   |      ➖     |    ✅     
-netalertx-test-mount-config_unwritable  |  /app/api                           |     ✅    |   ✅  |    ✅   |      ✅     |    ✅     
-netalertx-test-mount-config_unwritable  |  /app/log                           |     ✅    |   ✅  |    ✅   |      ✅     |    ✅     
-netalertx-test-mount-config_unwritable  |  /services/run                      |     ✅    |   ✅  |    ✅   |      ✅     |    ✅     
-netalertx-test-mount-config_unwritable  |  /services/config/nginx/conf.active |     ✅    |   ✅  |    ✅   |      ✅     |    ✅     
+netalertx-test-mount-config_unwritable  |  /data/db                            |     ✅    |   ✅  |    ➖   |      ➖     |    ✅     
+netalertx-test-mount-config_unwritable  |  /data/config                        |     ❌    |   ✅  |    ➖   |      ➖     |    ✅     
+netalertx-test-mount-config_unwritable  |  /tmp/api                           |     ✅    |   ✅  |    ✅   |      ✅     |    ✅     
+netalertx-test-mount-config_unwritable  |  /tmp/log                           |     ✅    |   ✅  |    ✅   |      ✅     |    ✅     
+netalertx-test-mount-config_unwritable  |  /tmp/run                      |     ✅    |   ✅  |    ✅   |      ✅     |    ✅     
+netalertx-test-mount-config_unwritable  |  /tmp/nginx-active-config |     ✅    |   ✅  |    ✅   |      ✅     |    ✅     
 netalertx-test-mount-config_unwritable  |  --> first run config
 netalertx-test-mount-config_unwritable  |  --> first run db
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               

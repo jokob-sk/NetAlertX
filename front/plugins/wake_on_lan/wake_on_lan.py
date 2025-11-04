@@ -1,23 +1,18 @@
 #!/usr/bin/env python
 
 import os
-import pathlib
 import sys
-import json
-import sqlite3
 from pytz import timezone
 from wakeonlan import send_magic_packet
 
 # Define the installation path and extend the system path for plugin imports
-INSTALL_PATH = "/app"
+INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64
-from plugin_utils import get_plugins_configs
+from plugin_helper import Plugin_Objects
 from logger import mylog, Logger
-from const import pluginsPath, fullDbPath, logPath
-from helper import timeNowTZ, get_setting_value 
-from messaging.in_app import write_notification
+from const import logPath
+from helper import get_setting_value 
 from database import DB
 from models.device_instance import DeviceInstance
 import conf

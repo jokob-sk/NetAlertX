@@ -14,7 +14,7 @@ from pytz import timezone
 
 
 # Register NetAlertX directories
-INSTALL_PATH = "/app"
+INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 # NetAlertX modules
@@ -364,7 +364,6 @@ def mqtt_create_client():
                 return
             except Exception as err:
                 mylog('verbose', [f"[{pluginName}]         {err} Reconnect failed. Retrying..."])
-                pass
 
             reconnect_delay *= RECONNECT_RATE
             reconnect_delay = min(reconnect_delay, MAX_RECONNECT_DELAY)

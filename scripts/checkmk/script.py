@@ -1,13 +1,12 @@
 
-YABin
-
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 NetAlertX-New-Devices-Checkmk-Script
 
 Dieses Skript ruft die Liste aller Devices aus NetAlertX ab, indem es innerhalb
-des Docker-Containers "NetAlertX" die Datei /app/api/table_devices.json ausliest.
+des Docker-Containers "NetAlertX" die Datei table_devices.json aus dem API-Verzeichnis
+ausliest (standardmäßig /tmp/api, konfigurierbar via NETALERTX_API).
 Anschließend wird geprüft, ob neue Geräte vorhanden sind (devIsNew == 1).
 Falls ja, wird ein Warning-Zustand gemeldet, sonst OK.
 
@@ -18,12 +17,17 @@ Siehe: https://docs.checkmk.com/latest/de/localchecks.html
 
 import subprocess
 import json
+import os
 
 def check_new_devices():
+    # Get API path from environment variable, fallback to /tmp/api
+    api_path = os.environ.get('NETALERTX_API', '/tmp/api')
+    table_devices_path = f'{api_path}/table_devices.json'
+    
     try:
         # Rufe die JSON-Datei aus dem Docker-Container ab
         result = subprocess.run(
-            ['docker', 'exec', 'NetAlertX', 'cat', '/app/api/table_devices.json'],
+            ['docker', 'exec', 'NetAlertX', 'cat', table_devices_path],
             capture_output=True,
             text=True,
             check=True

@@ -674,7 +674,7 @@
     "Systeminfo_System_Uptime": "Czas pracy:",
     "Systeminfo_This_Client": "Ten klient",
     "Systeminfo_USB_Devices": "Urządzenia USB",
-    "TICKER_MIGRATE_TO_NETALERTX": "⚠ Wykryto stare lokalizacje montowania. Skorzystaj z <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/MIGRATION.md\" target=\"_blank\">tego przewodnika</a>, aby przeprowadzić migrację do nowych folderów <code>/app/config</code> i <code>/app/db</code> oraz kontenera <code>netalertx</code>.",
+    "TICKER_MIGRATE_TO_NETALERTX": "⚠ Wykryto stare lokalizacje montowania. Skorzystaj z <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/MIGRATION.md\" target=\"_blank\">tego przewodnika</a>, aby przeprowadzić migrację do nowych folderów <code>/data/config</code> i <code>/data/db</code> oraz kontenera <code>netalertx</code>.",
     "TIMEZONE_description": "Ustaw strefę czasową, aby statystyki były wyświetlane poprawnie. Znajdź swoją strefę czasową <a target=\"_blank\" href=\"https://en.wikipedia.org/wiki/List_of_tz_database_time_zones\" rel=\"nofollow\">tutaj</a>.",
     "TIMEZONE_name": "Strefa czasowa",
     "UI_DEV_SECTIONS_description": "Wybierz elementy interfejsu użytkownika (UI), które chcesz ukryć na stronach Urządzeń.",

@@ -4,8 +4,8 @@
 // ## Global constants and TimeZone processing
 // ######################################################################
 
-$configFolderPath = "/app/config/";
-$logFolderPath = "/app/log/";
+$configFolderPath = rtrim(getenv('NETALERTX_CONFIG') ?: '/data/config', '/') . '/';
+$logFolderPath = rtrim(getenv('NETALERTX_LOG') ?: '/tmp/log', '/') . '/';
 
 $config_file = "app.conf";
 $workflows_file = "workflows.json";

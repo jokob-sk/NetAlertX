@@ -15,8 +15,8 @@ set -euo pipefail
 #    /usr/share/arp-scan
 # ----------------------------------------------------------------------
 
-TEMP_FILE="/services/run/tmp/ieee-oui.txt.tmp"
-OUTPUT_FILE="/services/run/tmp/ieee-oui.txt"
+TEMP_FILE="${SYSTEM_SERVICES_RUN_TMP}/ieee-oui.txt.tmp"
+OUTPUT_FILE="${SYSTEM_SERVICES_RUN_TMP}/ieee-oui.txt"
 
 # Download the file using wget to stdout and process it
 if ! wget --timeout=30 --tries=3 "https://standards-oui.ieee.org/oui/oui.txt" -O /dev/stdout 2>/dev/null | \

@@ -45,7 +45,8 @@ function jsonResponse($status, $data = '', $message = '') {
 if ($method === 'GET') {
     checkAuthorization($method);
 
-    $file_path = "/app/api/table_devices.json";
+    $apiRoot = getenv('NETALERTX_API') ?: '/tmp/api';
+    $file_path = rtrim($apiRoot, '/') . '/table_devices.json';
 
     $data = file_get_contents($file_path);   
 
@@ -68,7 +69,8 @@ else if ($method === 'POST') {
     $node_name = $_POST['node_name'] ?? '';
     $plugin = $_POST['plugin'] ?? '';
 
-    $storage_path = "/app/log/plugins/";
+    $logRoot = getenv('NETALERTX_PLUGINS_LOG') ?: (rtrim(getenv('NETALERTX_LOG') ?: '/tmp/log', '/') . '/plugins');
+    $storage_path = rtrim($logRoot, '/');
 
     // // check location
     // if (!is_dir($storage_path)) {

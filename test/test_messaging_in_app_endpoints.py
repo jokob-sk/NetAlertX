@@ -11,7 +11,7 @@ import os
 import sys
 
 # Define the installation path and extend the system path for plugin imports
-INSTALL_PATH = "/app"
+INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from api_server.api_server_start import app

@@ -18,7 +18,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     // Check if file parameter is provided
     if ($file) {
         // Define the folder where files are located
-        $filePath = "/app/config/" . basename($file);
+        $configRoot = getenv('NETALERTX_CONFIG') ?: '/data/config';
+        $filePath = rtrim($configRoot, '/') . "/" . basename($file);
 
         // Check if the file exists and is readable
         if (file_exists($filePath) && is_readable($filePath)) {

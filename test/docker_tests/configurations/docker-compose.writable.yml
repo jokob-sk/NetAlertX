@@ -17,13 +17,8 @@ services:
 
     volumes:
       - type: volume
-        source: netalertx_config
-        target: /app/config
-        read_only: false
-
-      - type: volume
-        source: netalertx_db
-        target: /app/db
+        source: netalertx_data
+        target: /data
         read_only: false
 
       - type: bind
@@ -31,17 +26,8 @@ services:
         target: /etc/localtime
         read_only: true
 
-    # Tempfs mounts for writable directories in a read-only container and improve system performance
+    # tmpfs mount aligns with simplified runtime layout
     tmpfs:
-      # Speed up logging
-      - "/app/log:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
-      # Speed up API access
-      - "/app/api:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,sync,noatime,nodiratime"
-      # Required for customization of the nginx listen addr/port
-      - "/services/config/nginx/conf.active:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
-      # Required for nginx and php
-      - "/services/run:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
-      # Required by php for session save
       - "/tmp:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
 
     environment:
@@ -64,5 +50,4 @@ services:
     restart: unless-stopped
 
 volumes:
-  netalertx_config:
-  netalertx_db:
+  netalertx_data:

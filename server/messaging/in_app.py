@@ -1,31 +1,27 @@
-import datetime
 import os
 import sys
 import _io
 import json
 import uuid
-import socket
-import subprocess
-import requests
-from yattag import indent
-from json2table import convert
+import time
+
 from flask import jsonify
 
 # Register NetAlertX directories
-INSTALL_PATH="/app"
+INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
 sys.path.extend([f"{INSTALL_PATH}/server"])
 
-# Register NetAlertX modules 
+from const import apiPath
+from logger import mylog
+from helper import (
+    timeNowTZ,
+)
 
-import conf
-from const import applicationPath, logPath, apiPath, confFileName, reportTemplatesPath
-from logger import logResult, mylog
-from helper import generate_mac_links, removeDuplicateNewLines, timeNowTZ, get_file_content, write_file, get_setting_value, get_timezone_offset
+NOTIFICATION_API_FILE = apiPath + "user_notifications.json"
 
-NOTIFICATION_API_FILE = apiPath + 'user_notifications.json'
 
 # Show Frontend User Notification
-def write_notification(content, level='alert', timestamp=None):   
+def write_notification(content, level="alert", timestamp=None):
     """
     Create and append a new user notification entry to the notifications file.
 
@@ -39,33 +35,33 @@ def write_notification(content, level='alert', timestamp=None):
         None
     """
     if timestamp is None:
-        timestamp = timeNowTZ()     
+        timestamp = timeNowTZ()
 
     # Generate GUID
     guid = str(uuid.uuid4())
 
     # Prepare notification dictionary
     notification = {
-        'timestamp': str(timestamp),
-        'guid': guid,
-        'read': 0,
-        'level': level,
-        'content': content
+        "timestamp": str(timestamp),
+        "guid": guid,
+        "read": 0,
+        "level": level,
+        "content": content,
     }
 
     # If file exists, load existing data, otherwise initialize as empty list
     if os.path.exists(NOTIFICATION_API_FILE):
-        with open(NOTIFICATION_API_FILE, 'r') as file:
+        with open(NOTIFICATION_API_FILE, "r") as file:
             # Check if the file object is of type _io.TextIOWrapper
             if isinstance(file, _io.TextIOWrapper):
                 file_contents = file.read()  # Read file contents
-                if file_contents == '':
-                    file_contents = '[]'  # If file is empty, initialize as empty list
+                if file_contents == "":
+                    file_contents = "[]"  # If file is empty, initialize as empty list
 
                 # mylog('debug', ['[Notification] User Notifications file: ', file_contents])
                 notifications = json.loads(file_contents)  # Parse JSON data
             else:
-                mylog('none', '[Notification] File is not of type _io.TextIOWrapper')
+                mylog("none", "[Notification] File is not of type _io.TextIOWrapper")
                 notifications = []
     else:
         notifications = []
@@ -74,8 +70,9 @@ def write_notification(content, level='alert', timestamp=None):
     notifications.append(notification)
 
     # Write updated data back to file
-    with open(NOTIFICATION_API_FILE, 'w') as file:
+    with open(NOTIFICATION_API_FILE, "w") as file:
         json.dump(notifications, file, indent=4)
+
 
 # Trim notifications
 def remove_old(keepNumberOfEntries):
@@ -90,30 +87,30 @@ def remove_old(keepNumberOfEntries):
     """
     # Check if file exists
     if not os.path.exists(NOTIFICATION_API_FILE):
-        mylog('info', '[Notification] No notifications file to clean.')
+        mylog("info", "[Notification] No notifications file to clean.")
         return
 
     # Load existing notifications
     try:
-        with open(NOTIFICATION_API_FILE, 'r') as file:
+        with open(NOTIFICATION_API_FILE, "r") as file:
             file_contents = file.read().strip()
-            if file_contents == '':
+            if file_contents == "":
                 notifications = []
             else:
                 notifications = json.loads(file_contents)
     except Exception as e:
-        mylog('none', f'[Notification] Error reading notifications file: {e}')
+        mylog("none", f"[Notification] Error reading notifications file: {e}")
         return
 
     if not isinstance(notifications, list):
-        mylog('none', '[Notification] Invalid format: not a list')
+        mylog("none", "[Notification] Invalid format: not a list")
         return
 
     # Sort by timestamp descending
     try:
-        notifications.sort(key=lambda x: x['timestamp'], reverse=True)
+        notifications.sort(key=lambda x: x["timestamp"], reverse=True)
     except KeyError:
-        mylog('none', '[Notification] Missing timestamp in one or more entries')
+        mylog("none", "[Notification] Missing timestamp in one or more entries")
         return
 
     # Trim to the latest entries
@@ -121,11 +118,14 @@ def remove_old(keepNumberOfEntries):
 
     # Write back the trimmed list
     try:
-        with open(NOTIFICATION_API_FILE, 'w') as file:
+        with open(NOTIFICATION_API_FILE, "w") as file:
             json.dump(trimmed, file, indent=4)
-        mylog('verbose', f'[Notification] Trimmed notifications to latest {keepNumberOfEntries}')
+        mylog(
+            "verbose",
+            f"[Notification] Trimmed notifications to latest {keepNumberOfEntries}",
+        )
     except Exception as e:
-        mylog('none', f'Error writing trimmed notifications file: {e}')
+        mylog("none", f"Error writing trimmed notifications file: {e}")
 
 
 def mark_all_notifications_read():
@@ -162,6 +162,7 @@ def mark_all_notifications_read():
     mylog("debug", "[Notification] All notifications marked as read.")
     return {"success": True}
 
+
 def delete_notifications():
     """
     Delete all notifications from the JSON file.
@@ -194,7 +195,7 @@ def get_unread_notifications():
 
 def mark_notification_as_read(guid=None, max_attempts=3):
     """
-    Mark a notification as read based on GUID. 
+    Mark a notification as read based on GUID.
     If guid is None, mark all notifications as read.
 
     Args:
@@ -208,7 +209,9 @@ def mark_notification_as_read(guid=None, max_attempts=3):
 
     while attempts < max_attempts:
         try:
-            if os.path.exists(NOTIFICATION_API_FILE) and os.access(NOTIFICATION_API_FILE, os.R_OK | os.W_OK):
+            if os.path.exists(NOTIFICATION_API_FILE) and os.access(
+                NOTIFICATION_API_FILE, os.R_OK | os.W_OK
+            ):
                 with open(NOTIFICATION_API_FILE, "r") as f:
                     notifications = json.load(f)
 
@@ -222,7 +225,7 @@ def mark_notification_as_read(guid=None, max_attempts=3):
 
                     return {"success": True}
         except Exception as e:
-            mylog("none", f"[Notification] Attempt {attempts+1} failed: {e}")
+            mylog("none", f"[Notification] Attempt {attempts + 1} failed: {e}")
 
         attempts += 1
         time.sleep(0.5)  # Sleep 0.5 seconds before retrying
@@ -230,6 +233,7 @@ def mark_notification_as_read(guid=None, max_attempts=3):
     error_msg = f"Failed to read/write notification file after {max_attempts} attempts."
     mylog("none", f"[Notification] {error_msg}")
     return {"success": False, "error": error_msg}
+
 
 def delete_notification(guid):
     """
@@ -263,4 +267,3 @@ def delete_notification(guid):
     except Exception as e:
         mylog("none", f"[Notification] Failed to delete notification {guid}: {e}")
         return {"success": False, "error": str(e)}
-

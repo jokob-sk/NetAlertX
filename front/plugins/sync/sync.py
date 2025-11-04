@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 
 import os
-import pathlib
 import sys
-import hashlib
 import requests
 import json
 import sqlite3
@@ -11,13 +9,13 @@ import base64
 
 
 # Define the installation path and extend the system path for plugin imports
-INSTALL_PATH = "/app"
+INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64
+from plugin_helper import Plugin_Objects
 from plugin_utils import get_plugins_configs, decode_and_rename_files
 from logger import mylog, Logger
-from const import pluginsPath, fullDbPath, logPath
+from const import fullDbPath, logPath
 from helper import timeNowTZ, get_setting_value 
 from crypto_utils import encrypt_data
 from messaging.in_app import write_notification
@@ -270,8 +268,8 @@ def main():
 # ------------------------------------------------------------------
 # Data retrieval methods
 api_endpoints = [
-    f"/sync",  # New Python-based endpoint
-    f"/plugins/sync/hub.php"  # Legacy PHP endpoint
+    "/sync",  # New Python-based endpoint
+    "/plugins/sync/hub.php"  # Legacy PHP endpoint
 ]
 
 # send data to the HUB

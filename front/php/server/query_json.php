@@ -11,6 +11,8 @@ require dirname(__FILE__).'/../server/init.php';
 //------------------------------------------------------------------------------
 // Handle incoming requests
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    $configRoot = getenv('NETALERTX_CONFIG') ?: '/data/config';
+    $apiRoot = getenv('NETALERTX_API') ?: '/tmp/api';
     // Get query string parameter ?file=settings_table.json
     $file = isset($_GET['file']) ? $_GET['file'] : null;
 
@@ -19,10 +21,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         // Define the folder where files are located
         if ($file == "workflows.json") 
         {
-            $filePath = "/app/config/" . basename($file);
+            $filePath = rtrim($configRoot, '/') . "/" . basename($file);
         } else
         {       
-            $filePath = "/app/api/" . basename($file);
+            $filePath = rtrim($apiRoot, '/') . "/" . basename($file);
         }
 
         // Check if the file exists
@@ -59,7 +61,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     }
     
     $file = $_GET['file'];
-    $filePath = "/app/config/" . basename($file);
+    $configRoot = getenv('NETALERTX_CONFIG') ?: '/data/config';
+    $filePath = rtrim($configRoot, '/') . "/" . basename($file);
 
     // Save new workflows.json (replace existing content)
     if (file_put_contents($filePath, json_encode($decodedData, JSON_PRETTY_PRINT))) {

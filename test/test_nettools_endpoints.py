@@ -5,9 +5,10 @@ import base64
 import random
 import string
 import uuid
+import os
 import pytest
 
-INSTALL_PATH = "/app"
+INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from helper import timeNowTZ, get_setting_value

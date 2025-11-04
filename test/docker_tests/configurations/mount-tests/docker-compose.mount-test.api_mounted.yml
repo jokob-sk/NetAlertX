@@ -22,25 +22,25 @@ services:
       APP_CONF_OVERRIDE: 20212
       ALWAYS_FRESH_INSTALL: true
       NETALERTX_DEBUG: 0
-      NETALERTX_API: /app/api
+      NETALERTX_API: /tmp/api
 
     volumes:
       - type: volume
         source: netalertx_db
-        target: /app/db
+        target: /data/db
         read_only: false
       - type: volume
         source: netalertx_config
-        target: /app/config
+        target: /data/config
         read_only: false
       - type: volume
         source: test_netalertx_api
-        target: /app/api
+        target: /tmp/api
         read_only: false
     tmpfs:
-      - "/app/log:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
-      - "/services/run:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
-      - "/services/config/nginx/conf.active:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      - "/tmp/log:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      - "/tmp/run:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      - "/tmp/nginx/active-config:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
 volumes:
   netalertx_config:
   netalertx_db:

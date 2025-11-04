@@ -1,21 +1,19 @@
 #!/usr/bin/env python
 
 from __future__ import unicode_literals
-import pathlib
-import subprocess
 import argparse
 import os
 import sys
 import chardet  
 
 # Register NetAlertX directories
-INSTALL_PATH="/app"
+INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from plugin_helper import Plugin_Object, Plugin_Objects, handleEmpty, is_mac
+from plugin_helper import Plugin_Objects, handleEmpty, is_mac
 from logger import mylog, Logger
 from dhcp_leases import DhcpLeases
-from helper import timeNowTZ, get_setting_value 
+from helper import get_setting_value 
 import conf
 from const import logPath
 from pytz import timezone

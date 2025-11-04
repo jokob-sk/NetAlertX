@@ -674,7 +674,7 @@
     "Systeminfo_System_Uptime": "Uptime:",
     "Systeminfo_This_Client": "This Client",
     "Systeminfo_USB_Devices": "USB devices",
-    "TICKER_MIGRATE_TO_NETALERTX": "⚠ Old mount locations detected. Follow <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/MIGRATION.md\" target=\"_blank\">this guide</a> to migrate to the new <code>/app/config</code> and <code>/app/db</code> folders and the <code>netalertx</code> container.",
+    "TICKER_MIGRATE_TO_NETALERTX": "⚠ Old mount locations detected. Follow <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/MIGRATION.md\" target=\"_blank\">this guide</a> to migrate to the new <code>/data/config</code> and <code>/data/db</code> folders and the <code>netalertx</code> container.",
     "TIMEZONE_description": "Time zone to display stats correctly. Find your time zone <a target=\"_blank\" href=\"https://en.wikipedia.org/wiki/List_of_tz_database_time_zones\" rel=\"nofollow\">here</a>.",
     "TIMEZONE_name": "Time zone",
     "UI_DEV_SECTIONS_description": "Select which UI elements to hide in the devices pages.",

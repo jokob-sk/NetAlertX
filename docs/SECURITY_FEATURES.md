@@ -48,7 +48,7 @@ Here’s a breakdown of the defensive layers you get, right out of the box using
 
 **Methodology:** All writable locations are treated as untrusted, temporary, and non-executable by default.
 
-* **In-Memory Volatile Storage:** The `docker-compose.yml` configuration maps all temporary directories (e.g., `/app/log`, `/app/api`, `/tmp`) to in-memory `tmpfs` filesystems. They do not exist on the host's disk.
+* **In-Memory Volatile Storage:** The `docker-compose.yml` configuration maps all temporary directories (e.g., `/tmp/log`, `/tmp/api`, `/tmp`) to in-memory `tmpfs` filesystems. They do not exist on the host's disk.
 
 * **Volatile Data:** Because these locations exist only in RAM, their contents are **instantly and irrevocably erased** when the container is stopped. This provides a "self-cleaning" mechanism that purges any attacker-dropped files or payloads on every single restart.
 

@@ -1,7 +1,8 @@
 import sys
+import os
 
 # Register NetAlertX directories
-INSTALL_PATH="/app"
+INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
 sys.path.extend([f"{INSTALL_PATH}/server"])
 
 from logger import mylog
@@ -12,7 +13,7 @@ def ensure_column(sql, table: str, column_name: str, column_type: str) -> bool:
     """
     Ensures a column exists in the specified table. If missing, attempts to add it.
     Returns True on success, False on failure.
-    
+
     Parameters:
     - sql: database cursor or connection wrapper (must support execute() and fetchall()).
     - table: name of the table (e.g., "Devices").
@@ -31,14 +32,37 @@ def ensure_column(sql, table: str, column_name: str, column_type: str) -> bool:
 
         # Define the expected columns (hardcoded base schema) [v25.5.24] - available in teh default app.db
         expected_columns = [
-            'devMac', 'devName', 'devOwner', 'devType', 'devVendor',
-            'devFavorite', 'devGroup', 'devComments', 'devFirstConnection',
-            'devLastConnection', 'devLastIP', 'devStaticIP', 'devScan',
-            'devLogEvents', 'devAlertEvents', 'devAlertDown', 'devSkipRepeated',
-            'devLastNotification', 'devPresentLastScan', 'devIsNew',
-            'devLocation', 'devIsArchived', 'devParentMAC', 'devParentPort',
-            'devIcon', 'devGUID', 'devSite', 'devSSID', 'devSyncHubNode',
-            'devSourcePlugin', 'devCustomProps'
+            "devMac",
+            "devName",
+            "devOwner",
+            "devType",
+            "devVendor",
+            "devFavorite",
+            "devGroup",
+            "devComments",
+            "devFirstConnection",
+            "devLastConnection",
+            "devLastIP",
+            "devStaticIP",
+            "devScan",
+            "devLogEvents",
+            "devAlertEvents",
+            "devAlertDown",
+            "devSkipRepeated",
+            "devLastNotification",
+            "devPresentLastScan",
+            "devIsNew",
+            "devLocation",
+            "devIsArchived",
+            "devParentMAC",
+            "devParentPort",
+            "devIcon",
+            "devGUID",
+            "devSite",
+            "devSSID",
+            "devSyncHubNode",
+            "devSourcePlugin",
+            "devCustomProps",
         ]
 
         # Check for mismatches in base schema
@@ -46,46 +70,52 @@ def ensure_column(sql, table: str, column_name: str, column_type: str) -> bool:
         extra = set(actual_columns) - set(expected_columns)
 
         if missing:
-            msg = (f"[db_upgrade] ⚠ ERROR: Unexpected DB structure "
-                   f"(missing: {', '.join(missing) if missing else 'none'}, "
-                   f"extra: {', '.join(extra) if extra else 'none'}) - "
-                   "aborting schema change to prevent corruption. "
-                   "Check https://github.com/jokob-sk/NetAlertX/blob/main/docs/UPDATES.md")
-            mylog('none', [msg])
+            msg = (
+                f"[db_upgrade] ⚠ ERROR: Unexpected DB structure "
+                f"(missing: {', '.join(missing) if missing else 'none'}, "
+                f"extra: {', '.join(extra) if extra else 'none'}) - "
+                "aborting schema change to prevent corruption. "
+                "Check https://github.com/jokob-sk/NetAlertX/blob/main/docs/UPDATES.md"
+            )
+            mylog("none", [msg])
             write_notification(msg)
             return False
 
         if extra:
-            msg = f"[db_upgrade] Extra DB columns detected in {table}: {', '.join(extra)}"
-            mylog('none', [msg])
+            msg = (
+                f"[db_upgrade] Extra DB columns detected in {table}: {', '.join(extra)}"
+            )
+            mylog("none", [msg])
 
         # Add missing column
-        mylog('verbose', [f"[db_upgrade] Adding '{column_name}' ({column_type}) to {table} table"])
+        mylog(
+            "verbose",
+            [f"[db_upgrade] Adding '{column_name}' ({column_type}) to {table} table"],
+        )
         sql.execute(f'ALTER TABLE "{table}" ADD "{column_name}" {column_type}')
         return True
 
     except Exception as e:
-        mylog('none', [f"[db_upgrade] ERROR while adding '{column_name}': {e}"])
+        mylog("none", [f"[db_upgrade] ERROR while adding '{column_name}': {e}"])
         return False
 
 
 def ensure_views(sql) -> bool:
-        """
-            Ensures required views exist.
-            
-            Parameters:
-            - sql: database cursor or connection wrapper (must support execute() and fetchall()).
-        """
-        sql.execute(""" DROP VIEW IF EXISTS Events_Devices;""")
-        sql.execute(""" CREATE VIEW Events_Devices AS 
+    """
+    Ensures required views exist.
+
+    Parameters:
+    - sql: database cursor or connection wrapper (must support execute() and fetchall()).
+    """
+    sql.execute(""" DROP VIEW IF EXISTS Events_Devices;""")
+    sql.execute(""" CREATE VIEW Events_Devices AS 
                             SELECT * 
                             FROM Events 
                             LEFT JOIN Devices ON eve_MAC = devMac;
                           """)
-        
-        
-        sql.execute(""" DROP VIEW IF EXISTS LatestEventsPerMAC;""")
-        sql.execute("""CREATE VIEW LatestEventsPerMAC AS
+
+    sql.execute(""" DROP VIEW IF EXISTS LatestEventsPerMAC;""")
+    sql.execute("""CREATE VIEW LatestEventsPerMAC AS
                                 WITH RankedEvents AS (
                                     SELECT 
                                         e.*,
@@ -100,11 +130,13 @@ def ensure_views(sql) -> bool:
                                 LEFT JOIN Devices AS d ON e.eve_MAC = d.devMac
                                 INNER JOIN CurrentScan AS c ON e.eve_MAC = c.cur_MAC
                                 WHERE e.row_num = 1;""")
-        
-        sql.execute(""" DROP VIEW IF EXISTS Sessions_Devices;""")
-        sql.execute("""CREATE VIEW Sessions_Devices AS SELECT * FROM Sessions LEFT JOIN "Devices" ON ses_MAC = devMac;""")
 
-        sql.execute(""" CREATE VIEW IF NOT EXISTS LatestEventsPerMAC AS
+    sql.execute(""" DROP VIEW IF EXISTS Sessions_Devices;""")
+    sql.execute(
+        """CREATE VIEW Sessions_Devices AS SELECT * FROM Sessions LEFT JOIN "Devices" ON ses_MAC = devMac;"""
+    )
+
+    sql.execute(""" CREATE VIEW IF NOT EXISTS LatestEventsPerMAC AS
                                 WITH RankedEvents AS (
                                     SELECT 
                                         e.*,
@@ -121,9 +153,9 @@ def ensure_views(sql) -> bool:
                                 WHERE e.row_num = 1;
                             """)
 
-        # handling the Convert_Events_to_Sessions / Sessions screens         
-        sql.execute("""DROP VIEW IF EXISTS Convert_Events_to_Sessions;""")
-        sql.execute("""CREATE VIEW Convert_Events_to_Sessions AS  SELECT EVE1.eve_MAC,
+    # handling the Convert_Events_to_Sessions / Sessions screens
+    sql.execute("""DROP VIEW IF EXISTS Convert_Events_to_Sessions;""")
+    sql.execute("""CREATE VIEW Convert_Events_to_Sessions AS  SELECT EVE1.eve_MAC,
                                       EVE1.eve_IP,
                                       EVE1.eve_EventType AS eve_EventTypeConnection,
                                       EVE1.eve_DateTime AS eve_DateTimeConnection,
@@ -151,7 +183,8 @@ def ensure_views(sql) -> bool:
                                       EVE1.eve_PairEventRowID IS NULL;
                           """)
 
-        return True
+    return True
+
 
 def ensure_Indexes(sql) -> bool:
     """
@@ -162,30 +195,51 @@ def ensure_Indexes(sql) -> bool:
     """
     indexes = [
         # Sessions
-        ("idx_ses_mac_date", 
-         "CREATE INDEX idx_ses_mac_date ON Sessions(ses_MAC, ses_DateTimeConnection, ses_DateTimeDisconnection, ses_StillConnected)"),
-
+        (
+            "idx_ses_mac_date",
+            "CREATE INDEX idx_ses_mac_date ON Sessions(ses_MAC, ses_DateTimeConnection, ses_DateTimeDisconnection, ses_StillConnected)",
+        ),
         # Events
-        ("idx_eve_mac_date_type", 
-         "CREATE INDEX idx_eve_mac_date_type ON Events(eve_MAC, eve_DateTime, eve_EventType)"),
-        ("idx_eve_alert_pending", 
-         "CREATE INDEX idx_eve_alert_pending ON Events(eve_PendingAlertEmail)"),
-        ("idx_eve_mac_datetime_desc", 
-         "CREATE INDEX idx_eve_mac_datetime_desc ON Events(eve_MAC, eve_DateTime DESC)"),
-        ("idx_eve_pairevent", 
-         "CREATE INDEX idx_eve_pairevent ON Events(eve_PairEventRowID)"),
-        ("idx_eve_type_date", 
-         "CREATE INDEX idx_eve_type_date ON Events(eve_EventType, eve_DateTime)"),
-
+        (
+            "idx_eve_mac_date_type",
+            "CREATE INDEX idx_eve_mac_date_type ON Events(eve_MAC, eve_DateTime, eve_EventType)",
+        ),
+        (
+            "idx_eve_alert_pending",
+            "CREATE INDEX idx_eve_alert_pending ON Events(eve_PendingAlertEmail)",
+        ),
+        (
+            "idx_eve_mac_datetime_desc",
+            "CREATE INDEX idx_eve_mac_datetime_desc ON Events(eve_MAC, eve_DateTime DESC)",
+        ),
+        (
+            "idx_eve_pairevent",
+            "CREATE INDEX idx_eve_pairevent ON Events(eve_PairEventRowID)",
+        ),
+        (
+            "idx_eve_type_date",
+            "CREATE INDEX idx_eve_type_date ON Events(eve_EventType, eve_DateTime)",
+        ),
         # Devices
         ("idx_dev_mac", "CREATE INDEX idx_dev_mac ON Devices(devMac)"),
-        ("idx_dev_present", "CREATE INDEX idx_dev_present ON Devices(devPresentLastScan)"),
-        ("idx_dev_alertdown", "CREATE INDEX idx_dev_alertdown ON Devices(devAlertDown)"),
+        (
+            "idx_dev_present",
+            "CREATE INDEX idx_dev_present ON Devices(devPresentLastScan)",
+        ),
+        (
+            "idx_dev_alertdown",
+            "CREATE INDEX idx_dev_alertdown ON Devices(devAlertDown)",
+        ),
         ("idx_dev_isnew", "CREATE INDEX idx_dev_isnew ON Devices(devIsNew)"),
-        ("idx_dev_isarchived", "CREATE INDEX idx_dev_isarchived ON Devices(devIsArchived)"),
+        (
+            "idx_dev_isarchived",
+            "CREATE INDEX idx_dev_isarchived ON Devices(devIsArchived)",
+        ),
         ("idx_dev_favorite", "CREATE INDEX idx_dev_favorite ON Devices(devFavorite)"),
-        ("idx_dev_parentmac", "CREATE INDEX idx_dev_parentmac ON Devices(devParentMAC)"),
-        
+        (
+            "idx_dev_parentmac",
+            "CREATE INDEX idx_dev_parentmac ON Devices(devParentMAC)",
+        ),
         # Optional filter indexes
         ("idx_dev_site", "CREATE INDEX idx_dev_site ON Devices(devSite)"),
         ("idx_dev_group", "CREATE INDEX idx_dev_group ON Devices(devGroup)"),
@@ -193,12 +247,13 @@ def ensure_Indexes(sql) -> bool:
         ("idx_dev_type", "CREATE INDEX idx_dev_type ON Devices(devType)"),
         ("idx_dev_vendor", "CREATE INDEX idx_dev_vendor ON Devices(devVendor)"),
         ("idx_dev_location", "CREATE INDEX idx_dev_location ON Devices(devLocation)"),
-        
         # Settings
         ("idx_set_key", "CREATE INDEX idx_set_key ON Settings(setKey)"),
-
         # Plugins_Objects
-        ("idx_plugins_plugin_mac_ip", "CREATE INDEX idx_plugins_plugin_mac_ip ON Plugins_Objects(Plugin, Object_PrimaryID, Object_SecondaryID)")   # Issue #1251: Optimize name resolution lookup
+        (
+            "idx_plugins_plugin_mac_ip",
+            "CREATE INDEX idx_plugins_plugin_mac_ip ON Plugins_Objects(Plugin, Object_PrimaryID, Object_SecondaryID)",
+        ),  # Issue #1251: Optimize name resolution lookup
     ]
 
     for name, create_sql in indexes:
@@ -208,19 +263,16 @@ def ensure_Indexes(sql) -> bool:
     return True
 
 
-
-
-
 def ensure_CurrentScan(sql) -> bool:
-        """
-            Ensures required CurrentScan table exist.
-            
-            Parameters:
-            - sql: database cursor or connection wrapper (must support execute() and fetchall()).
-        """
-        # 🐛 CurrentScan DEBUG: comment out below when debugging to keep the CurrentScan table after restarts/scan finishes
-        sql.execute("DROP TABLE IF EXISTS CurrentScan;")
-        sql.execute(""" CREATE TABLE IF NOT EXISTS CurrentScan (                                
+    """
+    Ensures required CurrentScan table exist.
+
+    Parameters:
+    - sql: database cursor or connection wrapper (must support execute() and fetchall()).
+    """
+    # 🐛 CurrentScan DEBUG: comment out below when debugging to keep the CurrentScan table after restarts/scan finishes
+    sql.execute("DROP TABLE IF EXISTS CurrentScan;")
+    sql.execute(""" CREATE TABLE IF NOT EXISTS CurrentScan (                                
                                 cur_MAC STRING(50) NOT NULL COLLATE NOCASE,
                                 cur_IP STRING(50) NOT NULL COLLATE NOCASE,
                                 cur_Vendor STRING(250),
@@ -237,42 +289,44 @@ def ensure_CurrentScan(sql) -> bool:
                             );
                         """)
 
-        return True
+    return True
+
 
 def ensure_Parameters(sql) -> bool:
-        """
-            Ensures required Parameters table exist.
-            
-            Parameters:
-            - sql: database cursor or connection wrapper (must support execute() and fetchall()).
-        """
-        
-        # Re-creating Parameters table
-        mylog('verbose', ["[db_upgrade] Re-creating Parameters table"])
-        sql.execute("DROP TABLE Parameters;")
+    """
+    Ensures required Parameters table exist.
 
-        sql.execute("""
+    Parameters:
+    - sql: database cursor or connection wrapper (must support execute() and fetchall()).
+    """
+
+    # Re-creating Parameters table
+    mylog("verbose", ["[db_upgrade] Re-creating Parameters table"])
+    sql.execute("DROP TABLE Parameters;")
+
+    sql.execute("""
           CREATE TABLE "Parameters" (
             "par_ID" TEXT PRIMARY KEY,
             "par_Value"	TEXT
           );
-          """)    
-          
-        return True
+          """)
+
+    return True
+
 
 def ensure_Settings(sql) -> bool:
-        """
-            Ensures required Settings table exist.
-            
-            Parameters:
-            - sql: database cursor or connection wrapper (must support execute() and fetchall()).
-        """
-        
-        # Re-creating Settings table
-        mylog('verbose', ["[db_upgrade] Re-creating Settings table"])
+    """
+    Ensures required Settings table exist.
 
-        sql.execute(""" DROP TABLE IF EXISTS Settings;""")
-        sql.execute("""
+    Parameters:
+    - sql: database cursor or connection wrapper (must support execute() and fetchall()).
+    """
+
+    # Re-creating Settings table
+    mylog("verbose", ["[db_upgrade] Re-creating Settings table"])
+
+    sql.execute(""" DROP TABLE IF EXISTS Settings;""")
+    sql.execute("""
             CREATE TABLE "Settings" (
             "setKey"	        TEXT,
             "setName"	        TEXT,
@@ -284,21 +338,21 @@ def ensure_Settings(sql) -> bool:
             "setEvents"	        TEXT,
             "setOverriddenByEnv" INTEGER
             );
-            """)     
+            """)
 
-        return True
+    return True
 
 
 def ensure_plugins_tables(sql) -> bool:
-        """
-            Ensures required plugins tables exist.
-            
-            Parameters:
-            - sql: database cursor or connection wrapper (must support execute() and fetchall()).
-        """
-       
-        # Plugin state
-        sql_Plugins_Objects = """ CREATE TABLE IF NOT EXISTS Plugins_Objects(
+    """
+    Ensures required plugins tables exist.
+
+    Parameters:
+    - sql: database cursor or connection wrapper (must support execute() and fetchall()).
+    """
+
+    # Plugin state
+    sql_Plugins_Objects = """ CREATE TABLE IF NOT EXISTS Plugins_Objects(
                                     "Index"	          INTEGER,
                                     Plugin TEXT NOT NULL,                                    
                                     Object_PrimaryID TEXT NOT NULL,
@@ -321,10 +375,10 @@ def ensure_plugins_tables(sql) -> bool:
                                     ObjectGUID TEXT,
                                     PRIMARY KEY("Index" AUTOINCREMENT)
                         ); """
-        sql.execute(sql_Plugins_Objects)
+    sql.execute(sql_Plugins_Objects)
 
-        # Plugin execution results
-        sql_Plugins_Events = """ CREATE TABLE IF NOT EXISTS Plugins_Events(
+    # Plugin execution results
+    sql_Plugins_Events = """ CREATE TABLE IF NOT EXISTS Plugins_Events(
                                     "Index"	          INTEGER,
                                     Plugin TEXT NOT NULL,
                                     Object_PrimaryID TEXT NOT NULL,
@@ -346,10 +400,10 @@ def ensure_plugins_tables(sql) -> bool:
                                     "HelpVal4" TEXT,
                                     PRIMARY KEY("Index" AUTOINCREMENT)
                         ); """
-        sql.execute(sql_Plugins_Events)
+    sql.execute(sql_Plugins_Events)
 
-        # Plugin execution history
-        sql_Plugins_History = """ CREATE TABLE IF NOT EXISTS Plugins_History(
+    # Plugin execution history
+    sql_Plugins_History = """ CREATE TABLE IF NOT EXISTS Plugins_History(
                                     "Index"	          INTEGER,
                                     Plugin TEXT NOT NULL,
                                     Object_PrimaryID TEXT NOT NULL,
@@ -371,11 +425,11 @@ def ensure_plugins_tables(sql) -> bool:
                                     "HelpVal4" TEXT,
                                     PRIMARY KEY("Index" AUTOINCREMENT)
                         ); """
-        sql.execute(sql_Plugins_History)
+    sql.execute(sql_Plugins_History)
 
-        # Dynamically generated language strings
-        sql.execute("DROP TABLE IF EXISTS Plugins_Language_Strings;")
-        sql.execute(""" CREATE TABLE IF NOT EXISTS Plugins_Language_Strings(
+    # Dynamically generated language strings
+    sql.execute("DROP TABLE IF EXISTS Plugins_Language_Strings;")
+    sql.execute(""" CREATE TABLE IF NOT EXISTS Plugins_Language_Strings(
                                 "Index"	          INTEGER,
                                 Language_Code TEXT NOT NULL,
                                 String_Key TEXT NOT NULL,
@@ -384,4 +438,4 @@ def ensure_plugins_tables(sql) -> bool:
                                 PRIMARY KEY("Index" AUTOINCREMENT)
                         ); """)
 
-        return True
+    return True
