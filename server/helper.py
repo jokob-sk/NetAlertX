@@ -12,6 +12,7 @@ import pytz
 from pytz import timezone
 import json
 import time
+from zoneinfo import ZoneInfo
 from pathlib import Path
 import requests
 import base64

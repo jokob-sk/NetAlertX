@@ -5,6 +5,7 @@ import threading
 import queue
 import time
 import logging
+from zoneinfo import ZoneInfo
 
 # NetAlertX imports
 import conf
