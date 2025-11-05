@@ -208,6 +208,7 @@ def get_device_sessions(mac, period):
     cur.execute(sql, (mac,))
     rows = cur.fetchall()
     conn.close()
+    tz_name = get_setting_value("TIMEZONE") or "UTC"
 
     table_data = {"data": []}
 
@@ -230,9 +231,9 @@ def get_device_sessions(mac, period):
         if row["ses_EventTypeConnection"] in ("<missing event>", None) or row["ses_EventTypeDisconnection"] in ("<missing event>", None):
             dur = "..."
         elif row["ses_StillConnected"]:
-            dur = format_date_diff(row["ses_DateTimeConnection"], None)["text"]
+            dur = format_date_diff(row["ses_DateTimeConnection"], None, tz_name)["text"]
         else:
-            dur = format_date_diff(row["ses_DateTimeConnection"], row["ses_DateTimeDisconnection"])["text"]
+            dur = format_date_diff(row["ses_DateTimeConnection"], row["ses_DateTimeDisconnection"], tz_name)["text"]
 
         # Additional Info
         info = row["ses_AdditionalInfo"]
@@ -350,11 +351,11 @@ def get_session_events(event_type, period_date):
         if event_type in ("sessions", "missing"):
             # Duration
             if row[5] and row[6]:
-                delta = format_date_diff(row[5], row[6])
+                delta = format_date_diff(row[5], row[6], tz_name)
                 row[7] = delta["text"]
                 row[8] = int(delta["total_minutes"] * 60)  # seconds
             elif row[12] == 1:
-                delta = format_date_diff(row[5], None)
+                delta = format_date_diff(row[5], None, tz_name)
                 row[7] = delta["text"]
                 row[8] = int(delta["total_minutes"] * 60)  # seconds
             else:

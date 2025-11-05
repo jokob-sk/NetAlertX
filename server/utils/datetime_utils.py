@@ -4,18 +4,16 @@ import os
 import pathlib
 import sys
 from datetime import datetime
+import datetime
 import pytz
 from pytz import timezone
-import datetime
 from typing import Union
+from zoneinfo import ZoneInfo
+import email.utils
 
 # Register NetAlertX directories
 INSTALL_PATH="/app"
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
-
-
-# Register NetAlertX directories
-INSTALL_PATH="/app"
 
 import conf
 from const import *
@@ -115,17 +113,16 @@ def format_date(date_str: str) -> str:
             now = datetime.datetime.now(conf.tz)
             dt = dt.replace(tzinfo=now.astimezone().tzinfo)
         return dt.astimezone().isoformat()
-    except Exception:
+    except (ValueError, AttributeError, TypeError):
         return "invalid"
 
-def format_date_diff(date1, date2):
+def format_date_diff(date1, date2, tz_name):
     """
     Return difference between two datetimes as 'Xd   HH:MM'.
     Uses app timezone if datetime is naive.
     date2 can be None (uses now).
     """
-    # Get timezone from settings
-    tz_name = get_setting_value("TIMEZONE") or "UTC"
+    # Get timezone from settings    
     tz = pytz.timezone(tz_name)
 
     def parse_dt(dt):
@@ -134,9 +131,9 @@ def format_date_diff(date1, date2):
         if isinstance(dt, str):
             try:
                 dt_parsed = email.utils.parsedate_to_datetime(dt)
-            except Exception:
-                # fallback: parse ISO string
-                dt_parsed = datetime.datetime.fromisoformat(dt)
+            except (ValueError, TypeError):
+             # fallback: parse ISO string
+             dt_parsed = datetime.datetime.fromisoformat(dt)
             # convert naive GMT/UTC to app timezone
             if dt_parsed.tzinfo is None:
                 dt_parsed = tz.localize(dt_parsed)
