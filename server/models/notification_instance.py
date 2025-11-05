@@ -16,10 +16,12 @@ from const import applicationPath, logPath, apiPath, reportTemplatesPath
 from logger import mylog, Logger
 from helper import generate_mac_links, \
     removeDuplicateNewLines, \
+    timeNowDB, \
+    timeNowTZ, \
     write_file, \
-    get_setting_value
+    get_setting_value, \
+    get_timezone_offset
 from messaging.in_app import write_notification
-from utils.datetime_utils import timeNowDB, get_timezone_offset
 
 
 # -----------------------------------------------------------------------------

@@ -13,16 +13,22 @@ function renderLogArea($params) {
     $textAreaCssClass = isset($params['textAreaCssClass']) ? $params['textAreaCssClass'] : '';
     $buttons = isset($params['buttons']) ? $params['buttons'] : [];
     $content = "";
+    $fileSize = 0;
 
-    if (filesize($filePath) > 2000000) {
-        $content = file_get_contents($filePath, false, null, -2000000);
+    if (file_exists($filePath) && is_readable($filePath)) {
+        $fileSize = filesize($filePath);
+        if ($fileSize > 2000000) {
+            $content = file_get_contents($filePath, false, null, max(0, $fileSize - 2000000));
+        } else {
+            $content = file_get_contents($filePath);
+        }
     } else {
-        $content = file_get_contents($filePath);
+        $content = "⚠️ File not found or not readable: $filePath";
     }
 
     // Prepare the download button HTML if filePath starts with /app
     $downloadButtonHtml = '';
-    if (strpos($filePath, '/app') === 0) {
+    if (strpos($filePath, '/app') === 0 && file_exists($filePath)) {
         $downloadButtonHtml = '
             <span class="span-padding">
                 <a href="' . htmlspecialchars(str_replace('/app/log/', '/php/server/query_logs.php?file=', $filePath)) . '" target="_blank">
@@ -34,13 +40,7 @@ function renderLogArea($params) {
     // Prepare buttons HTML
     $buttonsHtml = '';
     $totalButtons = count($buttons);
-    if ($totalButtons > 0) {
-        $colClass = 12 / $totalButtons;
-        // Use $colClass in your HTML generation or further logic
-    } else {
-        // Handle case where $buttons array is empty
-        $colClass = 12;
-    }
+    $colClass = $totalButtons > 0 ? (12 / $totalButtons) : 12;
 
     foreach ($buttons as $button) {
         $labelStringCode = isset($button['labelStringCode']) ? $button['labelStringCode'] : '';
@@ -52,8 +52,7 @@ function renderLogArea($params) {
             </div>';
     }
 
-
-    // Render the log area HTML
+    // Render HTML
     $html = '
         <div class="log-area box box-solid box-primary">
             <div class="row logs-row col-sm-12 col-xs-12">
@@ -63,7 +62,7 @@ function renderLogArea($params) {
             </div>
             <div class="row logs-row">
                 <div class="log-file col-sm-6 col-xs-12">' . htmlspecialchars($filePath) . '
-                    <div class="logs-size">' . number_format((filesize($filePath) / 1000000), 2, ",", ".") . ' MB'
+                    <div class="logs-size">' . number_format(($fileSize / 1000000), 2, ",", ".") . ' MB'
                     . $downloadButtonHtml .
                     '</div>
                 </div>
