@@ -6,7 +6,8 @@ import pytest
 INSTALL_PATH = "/app"
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from helper import get_setting_value, timeNowDB
+from helper import get_setting_value
+from utils.datetime_utils import timeNowDB
 from api_server.api_server_start import app
 
 

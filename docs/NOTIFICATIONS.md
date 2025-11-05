@@ -58,7 +58,7 @@ You can completely ignore detected devices globally. This could be because your 
 
 ## Ignoring notifications 🔕
 
-You can filter out unwanted notifications globally. This could be because of a misbehaving device (GoogleNest/GoogleHub (See also [ARPSAN docs and the `--exclude-broadcast` flag](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/arp_scan#ip-flipping-on-google-nest-devices))) which flips between IP addresses, or because you want to ignore new device notifications of a certian pattern.
+You can filter out unwanted notifications globally. This could be because of a misbehaving device (GoogleNest/GoogleHub (See also [ARPSAN docs and the `--exclude-broadcast` flag](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/arp_scan#ip-flipping-on-google-nest-devices))) which flips between IP addresses, or because you want to ignore new device notifications of a certain pattern.
 
 1. Events Filter (`NTFPRCS_event_condition`) -  filter out Events from notifications.
 2. New Devices Filter (`NTFPRCS_new_dev_condition`) -  filter out New Devices from notifications, but log and keep a new device in the system.

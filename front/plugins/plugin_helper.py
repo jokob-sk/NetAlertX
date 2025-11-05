@@ -11,7 +11,8 @@ INSTALL_PATH = "/app"
 sys.path.append(f"{INSTALL_PATH}/front/plugins")
 sys.path.append(f'{INSTALL_PATH}/server') 
 
-from logger import mylog, Logger, timeNowDB
+from logger import mylog, Logger
+from utils.datetime_utils import timeNowDB
 from const import confFileName, default_tz
 
 #-------------------------------------------------------------------------------

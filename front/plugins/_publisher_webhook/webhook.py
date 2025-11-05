@@ -22,7 +22,8 @@ import conf
 from const import logPath, confFileName
 from plugin_helper import Plugin_Objects, handleEmpty
 from logger import mylog, Logger, append_line_to_file
-from helper import timeNowDB, get_setting_value, hide_string, write_file
+from helper import get_setting_value, hide_string, write_file
+from utils.datetime_utils import timeNowDB
 from models.notification_instance import NotificationInstance
 from database import DB
 from pytz import timezone

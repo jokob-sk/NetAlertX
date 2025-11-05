@@ -25,7 +25,8 @@ import conf
 from const import confFileName, logPath
 from plugin_helper import Plugin_Objects
 from logger import mylog, Logger, append_line_to_file
-from helper import timeNowDB, get_setting_value, hide_email
+from helper import get_setting_value, hide_email
+from utils.datetime_utils import timeNowDB
 from models.notification_instance import NotificationInstance
 from database import DB
 from pytz import timezone

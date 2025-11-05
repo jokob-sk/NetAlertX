@@ -12,7 +12,8 @@ import re
 # Register NetAlertX libraries
 import conf 
 from const import fullConfPath, applicationPath, fullConfFolder, default_tz
-from helper import getBuildTimeStamp, fixPermissions, collect_lang_strings, updateSubnets, isJsonObject, setting_value_to_python_type, timeNowDB, get_setting_value, generate_random_string
+from helper import getBuildTimeStamp, fixPermissions, collect_lang_strings, updateSubnets, isJsonObject, setting_value_to_python_type, get_setting_value, generate_random_string
+from utils.datetime_utils import timeNowDB
 from app_state import updateState
 from logger import mylog
 from api import update_api

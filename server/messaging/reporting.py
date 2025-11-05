@@ -20,9 +20,10 @@ sys.path.extend([f"{INSTALL_PATH}/server"])
 
 import conf
 from const import applicationPath, logPath, apiPath, confFileName
-from helper import get_file_content, write_file, get_timezone_offset, get_setting_value
+from helper import get_file_content, write_file, get_setting_value
 from logger import logResult, mylog
 from db.sql_safe_builder import create_safe_condition_builder
+from utils.datetime_utils import get_timezone_offset
 
 #===============================================================================
 # REPORTING

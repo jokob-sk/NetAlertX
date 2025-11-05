@@ -20,7 +20,8 @@ sys.path.extend([f"{INSTALL_PATH}/server"])
 import conf
 from const import applicationPath, logPath, apiPath, confFileName, reportTemplatesPath
 from logger import logResult, mylog
-from helper import generate_mac_links, removeDuplicateNewLines, timeNowDB, get_file_content, write_file, get_setting_value, get_timezone_offset
+from helper import generate_mac_links, removeDuplicateNewLines, get_file_content, write_file, get_setting_value
+from utils.datetime_utils import timeNowDB
 
 NOTIFICATION_API_FILE = apiPath + 'user_notifications.json'
 

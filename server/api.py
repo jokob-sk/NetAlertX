@@ -7,7 +7,8 @@ import datetime
 import conf  
 from const import (apiPath, sql_appevents, sql_devices_all, sql_events_pending_alert, sql_settings, sql_plugins_events, sql_plugins_history, sql_plugins_objects,sql_language_strings, sql_notifications_all, sql_online_history, sql_devices_tiles, sql_devices_filters)
 from logger import mylog
-from helper import write_file, get_setting_value, timeNowTZ
+from helper import write_file, get_setting_value
+from utils.datetime_utils import timeNowTZ
 from app_state import updateState
 from models.user_events_queue_instance import UserEventsQueueInstance
 from messaging.in_app import write_notification

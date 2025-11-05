@@ -14,8 +14,9 @@ INSTALL_PATH="/app"
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from database import get_temp_db_connection
-from helper import is_random_mac, format_date, get_setting_value, format_date_iso, format_event_date, mylog, ensure_datetime
+from helper import is_random_mac, get_setting_value, mylog
 from db.db_helper import row_to_json, get_date_from_period
+from utils.datetime_utils import format_date, format_date_iso, format_event_date, ensure_datetime
 
 
 # --------------------------

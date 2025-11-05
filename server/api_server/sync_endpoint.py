@@ -2,7 +2,8 @@ import os
 import base64
 from flask import jsonify, request
 from logger import mylog
-from helper import get_setting_value, timeNowDB
+from helper import get_setting_value
+from utils.datetime_utils import timeNowDB
 from messaging.in_app import write_notification
 
 INSTALL_PATH = "/app"

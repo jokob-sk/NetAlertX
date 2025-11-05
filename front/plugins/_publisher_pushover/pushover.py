@@ -11,7 +11,8 @@ sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from plugin_helper import Plugin_Objects, handleEmpty  # noqa: E402
 from logger import mylog, Logger  # noqa: E402
-from helper import timeNowDB, get_setting_value, hide_string  # noqa: E402
+from helper import get_setting_value, hide_string  # noqa: E402
+from utils.datetime_utils import timeNowDB
 from models.notification_instance import NotificationInstance  # noqa: E402
 from database import DB  # noqa: E402
 import conf

@@ -4,7 +4,8 @@ import json
 import conf
 from const import *
 from logger import mylog, logResult
-from helper import timeNowDB, timeNow, checkNewVersion
+from helper import checkNewVersion
+from utils.datetime_utils import timeNowDB, timeNow
 
 # Register NetAlertX directories
 INSTALL_PATH="/app"

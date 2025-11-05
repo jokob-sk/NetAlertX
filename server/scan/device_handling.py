@@ -10,7 +10,8 @@ from dateutil import parser
 INSTALL_PATH="/app"
 sys.path.extend([f"{INSTALL_PATH}/server"])
 
-from helper import timeNowDB, timeNowTZ, get_setting_value, check_IP_format
+from helper import get_setting_value, check_IP_format
+from utils.datetime_utils import timeNowDB
 from logger import mylog, Logger
 from const import vendorsPath, vendorsPathNewest, sql_generateGuid
 from models.device_instance import DeviceInstance

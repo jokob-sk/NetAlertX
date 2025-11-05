@@ -12,7 +12,8 @@ from collections import namedtuple
 import conf
 from const import pluginsPath, logPath, applicationPath, reportTemplatesPath
 from logger import mylog, Logger 
-from helper import timeNowDB, timeNowTZ, get_file_content, write_file, get_setting, get_setting_value
+from helper import get_file_content, write_file, get_setting, get_setting_value
+from utils.datetime_utils import timeNowTZ, timeNowDB
 from app_state import updateState
 from api import update_api
 from plugin_utils import logEventStatusCounts, get_plugin_string, get_plugin_setting_obj, print_plugin_info, list_to_csv, combine_plugin_objects, resolve_wildcards_arr, handle_empty, custom_plugin_decoder, decode_and_rename_files

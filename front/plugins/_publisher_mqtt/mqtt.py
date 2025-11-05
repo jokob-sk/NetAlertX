@@ -23,8 +23,9 @@ from const import confFileName, logPath
 from plugin_utils import getPluginObject
 from plugin_helper import Plugin_Objects
 from logger import mylog, Logger
-from helper import timeNowDB, get_setting_value, bytes_to_string, \
+from helper import get_setting_value, bytes_to_string, \
     sanitize_string, normalize_string
+from utils.datetime_utils import timeNowDB
 from database import DB, get_device_stats
 
 

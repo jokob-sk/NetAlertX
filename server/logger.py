@@ -7,40 +7,15 @@ import time
 import logging
 from zoneinfo import ZoneInfo
 
+# Register NetAlertX directories
+INSTALL_PATH="/app"
+
+sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
+
 # NetAlertX imports
 import conf
 from const import *
-
-#-------------------------------------------------------------------------------
-# duplication from helper to avoid circle
-#-------------------------------------------------------------------------------
-def timeNowTZ():
-    if conf.tz:
-        return datetime.datetime.now(conf.tz).replace(microsecond=0)
-    else:
-        return datetime.datetime.now().replace(microsecond=0)
-
-def timeNowDB(local=True):
-    """
-    Return the current time (local or UTC) as ISO 8601 for DB storage.
-    Safe for SQLite, PostgreSQL, etc.
-
-    Example local: '2025-11-04 18:09:11'
-    Example UTC:   '2025-11-04 07:09:11'
-    """
-    if local:
-        try:
-            if isinstance(conf.tz, datetime.tzinfo):
-                tz = conf.tz
-            elif conf.tz:
-                tz = ZoneInfo(conf.tz)
-            else:
-                tz = None
-        except Exception:
-            tz = None
-        return datetime.datetime.now(tz).strftime('%Y-%m-%d %H:%M:%S')
-    else:
-        return datetime.datetime.now(datetime.UTC).strftime('%Y-%m-%d %H:%M:%S')
+from utils.datetime_utils import timeNowTZ
 
 #-------------------------------------------------------------------------------
 # Map custom debug levels to Python logging levels
