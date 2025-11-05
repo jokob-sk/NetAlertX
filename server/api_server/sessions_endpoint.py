@@ -270,6 +270,7 @@ def get_session_events(event_type, period_date):
     conn = get_temp_db_connection()
     conn.row_factory = sqlite3.Row
     cur = conn.cursor()
+    tz_name = get_setting_value("TIMEZONE") or "UTC"
 
     # Base SQLs
     sql_events = f"""
