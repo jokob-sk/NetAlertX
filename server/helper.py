@@ -381,10 +381,12 @@ def get_setting_value(key):
                     value = setting_value_to_python_type(set_type, set_value)
                 else:
                     value = setting_value_to_python_type(set_type, str(set_value))
+            
                 SETTINGS_SECONDARYCACHE[key] = value
+
                 return value
 
-    # Otherwise fall back to retrive from json
+    # Otherwise fall back to retrieve from json
     setting = get_setting(key)
 
     if setting is not None:
@@ -458,9 +460,6 @@ def setting_value_to_python_type(set_type, set_value):
         if isinstance(set_value, str):
             try:
                 value = json.loads(set_value.replace("'", "\""))
-                
-                # reverse transformations to all entries
-                value = reverseTransformers(value, transformers)
                     
             except json.JSONDecodeError as e:
                 mylog('none', [f'[setting_value_to_python_type] Error decoding JSON object: {e}'])  
@@ -469,6 +468,9 @@ def setting_value_to_python_type(set_type, set_value):
                 
         elif isinstance(set_value, list):
             value = set_value
+
+        # Always apply transformers (base64, etc.) to array entries
+        value = reverseTransformers(value, transformers)
 
     elif dataType == 'object' and elementType == 'input':
         if isinstance(set_value, str):
