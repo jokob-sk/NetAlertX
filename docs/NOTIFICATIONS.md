@@ -47,7 +47,7 @@ In Notification Processing settings, you can specify blanket rules. These allow 
 3. A filter to allow you to set device-specific exceptions to New devices being added to the app.
 4. A filter to allow you to set device-specific exceptions to generated Events.
 
-## Ignoring devices 🔕
+## Ignoring devices 💻
 
 ![Ignoring new devices](./img/NOTIFICATIONS/NEWDEV_ignores.png)
 
@@ -55,3 +55,10 @@ You can completely ignore detected devices globally. This could be because your 
 
 1. Ignored MACs (`NEWDEV_ignored_MACs`) - List of MACs to ignore.
 2. Ignored IPs (`NEWDEV_ignored_IPs`) - List of IPs to ignore. 
+
+## Ignoring notifications 🔕
+
+You can filter out unwanted notifications globally. This could be because of a misbehaving device (GoogleNest/GoogleHub (See also [ARPSAN docs and the `--exclude-broadcast` flag](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/arp_scan#ip-flipping-on-google-nest-devices))) which flips between IP addresses, or because you want to ignore new device notifications of a certian pattern.
+
+1. Events Filter (`NTFPRCS_event_condition`) -  filter out Events from notifications.
+2. New Devices Filter (`NTFPRCS_new_dev_condition`) -  filter out New Devices from notifications, but log and keep a new device in the system.
