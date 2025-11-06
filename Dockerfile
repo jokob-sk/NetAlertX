@@ -130,6 +130,9 @@ RUN install -d -o ${NETALERTX_USER} -g ${NETALERTX_GROUP} -m 755 ${NETALERTX_API
     sh -c "find ${NETALERTX_APP} -type f \( -name '*.sh' -o -name 'speedtest-cli' \) \
     -exec chmod 750 {} \;"
 
+# Copy version information into the image
+COPY --chown=${NETALERTX_USER}:${NETALERTX_GROUP} .VERSION ${NETALERTX_APP}/.VERSION
+
 # Copy the virtualenv from the builder stage
 COPY --from=builder --chown=20212:20212 ${VIRTUAL_ENV} ${VIRTUAL_ENV}
 
