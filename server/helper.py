@@ -666,7 +666,6 @@ def getBuildTimeStamp():
 def checkNewVersion():
     mylog('debug', [f"[Version check] Checking if new version available"])
 
-    newVersion = False
     buildTimestamp = getBuildTimeStamp()
 
     try:
@@ -693,13 +692,13 @@ def checkNewVersion():
 
         if releaseTimestamp > buildTimestamp + 600:
             mylog('none', ["[Version check] New version of the container available!"])
-            newVersion = True
+            return True
         else:
             mylog('none', ["[Version check] Running the latest version."])
     else:
         mylog('minimal', ["[Version check] ⚠ ERROR: Received unexpected response from GitHub."])
 
-    return newVersion
+    return False
 
 #-------------------------------------------------------------------------------
 class noti_obj:
