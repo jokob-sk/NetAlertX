@@ -636,37 +636,42 @@ def collect_lang_strings(json, pref, stringSqlParams):
 
 #-------------------------------------------------------------------------------
 # Get the value from the buildtimestamp.txt and initialize it if missing
-def getBuildTimeStamp():
+def getBuildTimeStampAndVersion():
     """
-    Retrieves the build timestamp from 'front/buildtimestamp.txt' within the
-    application directory.
-
-    If the file does not exist, it is created and initialized with the value '0'.
+    Retrieves the build timestamp and version from files within the
+    application directory. Initializes them if missing.
 
     Returns:
-        int: The integer value of the build timestamp read from the file.
-             Returns 0 if the file is empty or just initialized.
+        tuple: (int buildTimestamp, str version)
     """
-    buildTimestamp = 0
-    build_timestamp_path = os.path.join(applicationPath, 'front/buildtimestamp.txt')
+    files_defaults = [
+        ('front/buildtimestamp.txt', '0'),
+        ('.VERSION', 'unknown')
+    ]
 
-    # Ensure file exists, initialize if missing
-    if not os.path.exists(build_timestamp_path):
-        with open(build_timestamp_path, 'w') as f:
-            f.write("0")
+    results = []
 
-    # Now safely read the timestamp
-    with open(build_timestamp_path, 'r') as f:
-        buildTimestamp = int(f.read().strip() or 0)
+    for filename, default in files_defaults:
+        path = os.path.join(applicationPath, filename)
+        if not os.path.exists(path):
+            with open(path, 'w') as f:
+                f.write(default)
 
-    return buildTimestamp
+        with open(path, 'r') as f:
+            content = f.read().strip() or default
+            # Convert buildtimestamp to int, leave version as string
+            value = int(content) if filename.endswith('buildtimestamp.txt') else content
+            results.append(value)
+
+    return tuple(results)
+
 
 
 #-------------------------------------------------------------------------------
 def checkNewVersion():
     mylog('debug', [f"[Version check] Checking if new version available"])
 
-    buildTimestamp = getBuildTimeStamp()
+    buildTimestamp, _version = getBuildTimeStampAndVersion()
 
     try:
         response = requests.get(
