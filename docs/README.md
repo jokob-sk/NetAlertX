@@ -13,7 +13,7 @@ There is also an in-app Help / FAQ section that should be answering frequently a
 
 #### 🐳 Docker (Fully supported)
 
-- The main installation method is as a [docker container - follow these instructions here](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md). 
+- The main installation method is as a [docker container - follow these instructions here](./DOCKER_INSTALLATION.md). 
 
 #### 💻 Bare-metal / On-server (Experimental/community supported 🧪)
 

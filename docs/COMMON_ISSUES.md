@@ -16,7 +16,7 @@ Make sure you [File permissions](./FILE_PERMISSIONS.md) are set correctly.
 
 * If facing issues (AJAX errors, can't write to DB, empty screen, etc,) make sure permissions are set correctly, and check the logs under `/app/log`. 
 * To solve permission issues you can try setting the owner and group of the `app.db` by executing the following on the host system: `docker exec netalertx chown -R www-data:www-data /app/db/app.db`. 
-* If still facing issues, try to map the app.db file (⚠ not folder) to `:/app/db/app.db` (see [docker-compose Examples](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md#-docker-composeyml-examples) for details)
+* If still facing issues, try to map the app.db file (⚠ not folder) to `:/app/db/app.db` (see [docker-compose Examples](./DOCKER_COMPOSE.md) for details)
 
 ### Container restarts / crashes
 
