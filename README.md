@@ -6,7 +6,7 @@
 
 # NetAlertX - Network, presence scanner and alert framework
 
-Get visibility of what's going on on your WIFI/LAN network and enable presence detection of important devices. Schedule scans for devices, port changes and get alerts if unknown devices or changes are found. Write your own [Plugin](https://github.com/jokob-sk/NetAlertX/tree/main/docs/PLUGINS.md#readme) with auto-generated UI and in-build notification system. Build out and easily maintain your network source of truth (NSoT).
+Get visibility of what's going on on your WIFI/LAN network and enable presence detection of important devices. Schedule scans for devices, port changes and get alerts if unknown devices or changes are found. Write your own [Plugin](https://github.com/jokob-sk/NetAlertX/tree/main/docs/PLUGINS.md#readme) with auto-generated UI and in-build notification system. Build out and easily maintain your network source of truth (NSoT) and device inventory.
 
 ## 📋 Table of Contents
 
