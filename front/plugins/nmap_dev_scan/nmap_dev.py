@@ -46,10 +46,6 @@ def main():
 
     mylog('verbose', [f'[{pluginName}] In script'])     
 
-    # Create a database connection
-    db = DB()  # instance of class DB
-    db.open()
-
     timeout = get_setting_value('NMAPDEV_RUN_TIMEOUT')
     fakeMac = get_setting_value('NMAPDEV_FAKE_MAC')
     subnets = get_setting_value('SCAN_SUBNETS')
