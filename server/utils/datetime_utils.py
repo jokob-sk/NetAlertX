@@ -4,7 +4,9 @@ import os
 import pathlib
 import sys
 from datetime import datetime
+from dateutil import parser
 import datetime
+import re
 import pytz
 from pytz import timezone
 from typing import Union
@@ -23,6 +25,10 @@ from const import *
 #-------------------------------------------------------------------------------
 # DateTime
 #-------------------------------------------------------------------------------
+
+DATETIME_PATTERN = "%Y-%m-%d %H:%M:%S"
+DATETIME_REGEX = re.compile(r'^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$')
+
 def timeNowTZ():
     if conf.tz:
         return datetime.datetime.now(conf.tz).replace(microsecond=0)
@@ -56,9 +62,9 @@ def timeNowDB(local=True):
                 tz = None
         except Exception:
             tz = None
-        return datetime.datetime.now(tz).strftime('%Y-%m-%d %H:%M:%S')
+        return datetime.datetime.now(tz).strftime(DATETIME_PATTERN)
     else:
-        return datetime.datetime.now(datetime.UTC).strftime('%Y-%m-%d %H:%M:%S')
+        return datetime.datetime.now(datetime.UTC).strftime(DATETIME_PATTERN)
 
 
 #-------------------------------------------------------------------------------
@@ -85,7 +91,7 @@ def normalizeTimeStamp(inputTimeStamp):
 
     # Epoch timestamp (integer or float)
     if isinstance(inputTimeStamp, (int, float)):
-        try:
+        try:            
             return datetime.datetime.fromtimestamp(inputTimeStamp)
         except (OSError, OverflowError, ValueError):
             return None
@@ -96,8 +102,14 @@ def normalizeTimeStamp(inputTimeStamp):
         if not inputTimeStamp:
             return None
         try:
-            # Handles SQLite and ISO8601 automatically
-            return parser.parse(inputTimeStamp)
+            # match the "2025-11-08 14:32:10" format
+            pattern = DATETIME_REGEX
+
+            if pattern.match(inputTimeStamp):
+                return datetime.datetime.strptime(inputTimeStamp, DATETIME_PATTERN)
+            else:
+                # Handles SQLite and ISO8601 automatically
+                return parser.parse(inputTimeStamp)
         except Exception:
             return None
 

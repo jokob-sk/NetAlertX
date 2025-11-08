@@ -558,20 +558,20 @@ def check_plugin_data_changed(pm, plugins_to_check):
             continue
 
         # Normalize and validate last_changed timestamp
-        last_changed_ts = normalizeTimeStamp(str(last_data_change))
+        last_changed_ts = normalizeTimeStamp(last_data_change)
 
         if last_changed_ts == None:
-            mylog('none', f'[check_plugin_data_changed] Unexpected last_data_change timestamp for {plugin_name}: {last_data_change}')
+            mylog('none', f'[check_plugin_data_changed] Unexpected last_data_change timestamp for {plugin_name} (input|output): ({last_data_change}|{last_changed_ts})')
 
         # Normalize and validate last_data_check timestamp
-        last_data_check_ts = normalizeTimeStamp(str(last_data_check))
+        last_data_check_ts = normalizeTimeStamp(last_data_check)
 
         if last_data_check_ts == None:
-            mylog('none', f'[check_plugin_data_changed] Unexpected last_data_check timestamp for {plugin_name}: {last_data_check}')
+            mylog('none', f'[check_plugin_data_changed] Unexpected last_data_check timestamp for {plugin_name} (input|output): ({last_data_check}|{last_data_check_ts})')
 
         # Track which plugins have newer state than last_checked
         if last_data_check_ts is None or last_changed_ts is None or last_changed_ts > last_data_check_ts:
-            mylog('debug', f'[check_plugin_data_changed] plugin_name changed last_changed_ts | last_data_check_ts: {last_changed_ts} | {last_data_check_ts}')
+            mylog('debug', f'[check_plugin_data_changed] {plugin_name} changed (last_changed_ts|last_data_check_ts): ({last_changed_ts}|{last_data_check_ts})')
             plugins_changed.append(plugin_name)
 
     # Skip if no plugin state changed since last check
