@@ -65,6 +65,46 @@ def timeNowDB(local=True):
 #  Date and time methods
 #-------------------------------------------------------------------------------
 
+def normalizeTimeStamp(inputTimeStamp):
+    """
+    Normalize various timestamp formats into a datetime.datetime object.
+
+    Supports:
+    - SQLite-style 'YYYY-MM-DD HH:MM:SS'
+    - ISO 8601 'YYYY-MM-DDTHH:MM:SSZ'
+    - Epoch timestamps (int or float)
+    - datetime.datetime objects (returned as-is)
+    - Empty or invalid values (returns None)
+    """
+    if inputTimeStamp is None:
+        return None
+
+    # Already a datetime
+    if isinstance(inputTimeStamp, datetime.datetime):
+        return inputTimeStamp
+
+    # Epoch timestamp (integer or float)
+    if isinstance(inputTimeStamp, (int, float)):
+        try:
+            return datetime.datetime.fromtimestamp(inputTimeStamp)
+        except (OSError, OverflowError, ValueError):
+            return None
+
+    # String formats (SQLite / ISO8601)
+    if isinstance(inputTimeStamp, str):
+        inputTimeStamp = inputTimeStamp.strip()
+        if not inputTimeStamp:
+            return None
+        try:
+            # Handles SQLite and ISO8601 automatically
+            return parser.parse(inputTimeStamp)
+        except Exception:
+            return None
+
+    # Unrecognized type
+    return None
+
+
 # -------------------------------------------------------------------------------------------
 def format_date_iso(date1: str) -> str:
     """Return ISO 8601 string for a date or None if empty"""

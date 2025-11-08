@@ -28,7 +28,7 @@ class plugin_manager:
         self.db = db
         self.all_plugins = all_plugins
         self.plugin_states = {}
-        self.name_plugins_checked = None
+        self.plugin_checks = {}
 
         # object cache of settings and schedules for faster lookups
         self._cache = {}
@@ -213,7 +213,7 @@ class plugin_manager:
         If plugin_name is provided, only calculates stats for that plugin.
         Structure per plugin:
         {
-            "lastChanged": str,
+            "lastDataChange": str,
             "totalObjects": int,
             "newObjects": int,
             "changedObjects": int,
@@ -238,7 +238,7 @@ class plugin_manager:
             changed_objects = total_objects - new_objects
 
             plugin_states[plugin_name] = {
-                "lastChanged": last_changed or "",
+                "lastDataChange": last_changed or "",
                 "totalObjects": total_objects or 0,
                 "newObjects": new_objects or 0,
                 "changedObjects": changed_objects or 0,
@@ -261,7 +261,7 @@ class plugin_manager:
                 new_objects = new_objects or 0  # ensure it's int
                 changed_objects = total_objects - new_objects
                 plugin_states[plugin] = {
-                    "lastChanged": last_changed or "",
+                    "lastDataChange": last_changed or "",
                     "totalObjects": total_objects or 0,
                     "newObjects": new_objects or 0,
                     "changedObjects": changed_objects or 0,
