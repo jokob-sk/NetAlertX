@@ -80,7 +80,7 @@ services:
       # /services/config/nginx/conf.d is required for nginx and php to start
       - "/services/run:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
       # /tmp is required by php for session save this should be reworked to /services/run/tmp
-      - "/tmp:uid=2Key-Value Pairs: 20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      - "/tmp:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
     environment:
       LISTEN_ADDR: ${LISTEN_ADDR:-0.0.0.0}                   # Listen for connections on all interfaces
       PORT: ${PORT:-20211}                                   # Application port
