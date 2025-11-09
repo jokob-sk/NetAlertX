@@ -64,8 +64,9 @@ http://<server>:<GRAPHQL_PORT>/
 * [Metrics](API_METRICS.md) – Prometheus metrics and per-device status
 * [Network Tools](API_NETTOOLS.md) – Utilities like Wake-on-LAN, traceroute, nslookup, nmap, and internet info
 * [Online History](API_ONLINEHISTORY.md) – Online/offline device records
-* [GraphQL](API_GRAPHQL.md) – Advanced queries and filtering
+* [GraphQL](API_GRAPHQL.md) – Advanced queries and filtering for Devices, Settings and Language Strings
 * [Sync](API_SYNC.md) – Synchronization between multiple NetAlertX instances
+* [Logs](API_LOGS.md) – Purging of logs and adding to the event execution queue for user triggered events
 * [DB query](API_DBQUERY.md) (⚠ Internal) - Low level database access - use other endpoints if possible
 
 See [Testing](API_TESTS.md) for example requests and usage.

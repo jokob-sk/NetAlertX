@@ -1,0 +1,58 @@
+import os
+import sys
+from flask import jsonify
+
+# Register NetAlertX directories
+INSTALL_PATH="/app"
+sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
+
+from const import logPath
+from logger import mylog, Logger
+from helper import  get_setting_value
+from utils.datetime_utils import timeNowDB
+from messaging.in_app import write_notification
+
+# Make sure log level is initialized correctly
+Logger(get_setting_value('LOG_LEVEL'))
+
+def clean_log(log_file):
+    """
+    Purge the content of an allowed log file within the /app/log/ directory.
+
+    Args:
+        log_file (str): Name of the log file to purge.
+
+    Returns:
+        flask.Response: JSON response with success and message keys
+    """
+    allowed_files = [
+        'app.log', 'app_front.log', 'IP_changes.log', 'stdout.log', 'stderr.log',
+        'app.php_errors.log', 'execution_queue.log', 'db_is_locked.log'
+    ]
+
+    # Validate filename if purging allowed
+    if log_file not in allowed_files:
+        msg = f"[clean_log] File {log_file} is not allowed to be purged"
+
+        mylog('none', [msg])
+        write_notification(msg, 'interrupt')
+        return jsonify({"success": False, "message": msg}), 400
+
+    log_path = os.path.join(logPath, log_file)
+
+    try:
+        # Purge content
+        with open(log_path, "w") as f:
+            f.write("File manually purged\n")
+        msg = f"[clean_log] File {log_file} purged successfully"
+
+        mylog('minimal', [msg])
+        write_notification(msg, 'interrupt')
+        return jsonify({"success": True, "message": msg}), 200
+    except Exception as e:
+        msg = f"[clean_log] ERROR Failed to purge {log_file}: {e}"
+
+        mylog('none', [])
+        write_notification(msg)
+        return jsonify({"success": False, "message": msg}), 200
+

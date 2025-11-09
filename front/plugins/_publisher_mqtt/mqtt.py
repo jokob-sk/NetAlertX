@@ -20,7 +20,7 @@ sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 # NetAlertX modules
 import conf
 from const import confFileName, logPath
-from plugin_utils import getPluginObject
+from utils.plugin_utils import getPluginObject
 from plugin_helper import Plugin_Objects
 from logger import mylog, Logger
 from helper import get_setting_value, bytes_to_string, \

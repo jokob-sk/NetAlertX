@@ -15,12 +15,12 @@ INSTALL_PATH = "/app"
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64
-from plugin_utils import get_plugins_configs, decode_and_rename_files
+from utils.plugin_utils import get_plugins_configs, decode_and_rename_files
 from logger import mylog, Logger
 from const import pluginsPath, fullDbPath, logPath
 from helper import get_setting_value 
 from utils.datetime_utils import timeNowDB
-from crypto_utils import encrypt_data
+from utils.crypto_utils import encrypt_data
 from messaging.in_app import write_notification
 import conf
 from pytz import timezone

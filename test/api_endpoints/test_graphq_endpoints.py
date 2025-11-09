@@ -44,6 +44,8 @@ def test_graphql_post_unauthorized(client):
     assert resp.status_code == 401
     assert "Unauthorized access attempt" in resp.json.get("error", "")
 
+# --- DEVICES TESTS ---
+
 def test_graphql_post_devices(client, api_token):
     """POST /graphql with a valid token should return device data"""
     query = {
@@ -74,6 +76,8 @@ def test_graphql_post_devices(client, api_token):
     assert isinstance(data["devices"]["devices"], list)
     assert isinstance(data["devices"]["count"], int)
 
+# --- SETTINGS TESTS ---
+
 def test_graphql_post_settings(client, api_token):
     """POST /graphql should return settings data"""
     query = {
@@ -91,3 +95,76 @@ def test_graphql_post_settings(client, api_token):
     data = resp.json.get("data", {})
     assert "settings" in data
     assert isinstance(data["settings"]["settings"], list)
+
+# --- LANGSTRINGS TESTS ---
+
+def test_graphql_post_langstrings_specific(client, api_token):
+    """Retrieve a specific langString in a given language"""
+    query = {
+        "query": """
+        {
+            langStrings(langCode: "en_us", langStringKey: "settings_other_scanners") {
+                langStrings { langCode langStringKey langStringText }
+                count
+            }
+        }
+        """
+    }
+    resp = client.post("/graphql", json=query, headers=auth_headers(api_token))
+    assert resp.status_code == 200
+    data = resp.json.get("data", {}).get("langStrings", {})
+    assert data["count"] >= 1
+    for entry in data["langStrings"]:
+        assert entry["langCode"] == "en_us"
+        assert entry["langStringKey"] == "settings_other_scanners"
+        assert isinstance(entry["langStringText"], str)
+
+
+def test_graphql_post_langstrings_fallback(client, api_token):
+    """Fallback to en_us if requested language string is empty"""
+    query = {
+        "query": """
+        {
+            langStrings(langCode: "de_de", langStringKey: "settings_other_scanners") {
+                langStrings { langCode langStringKey langStringText }
+                count
+            }
+        }
+        """
+    }
+    resp = client.post("/graphql", json=query, headers=auth_headers(api_token))
+    assert resp.status_code == 200
+    data = resp.json.get("data", {}).get("langStrings", {})
+    assert data["count"] >= 1
+    # Ensure fallback occurred if de_de text is empty
+    for entry in data["langStrings"]:
+        assert entry["langStringText"] != ""
+
+
+def test_graphql_post_langstrings_all_languages(client, api_token):
+    """Retrieve all languages for a given key"""
+    query = {
+        "query": """
+        {
+            enStrings: langStrings(langCode: "en_us", langStringKey: "settings_other_scanners") {
+                langStrings { langCode langStringKey langStringText }
+                count
+            }
+            deStrings: langStrings(langCode: "de_de", langStringKey: "settings_other_scanners") {
+                langStrings { langCode langStringKey langStringText }
+                count
+            }
+        }
+        """
+    }
+    resp = client.post("/graphql", json=query, headers=auth_headers(api_token))
+    assert resp.status_code == 200
+    data = resp.json.get("data", {})
+    assert "enStrings" in data
+    assert "deStrings" in data
+    # At least one string in each language
+    assert data["enStrings"]["count"] >= 1
+    assert data["deStrings"]["count"] >= 1
+    # Ensure langCode matches
+    assert all(e["langCode"] == "en_us" for e in data["enStrings"]["langStrings"])
+    assert all(e["langCode"] == "de_de" for e in data["deStrings"]["langStrings"])
