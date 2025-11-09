@@ -52,7 +52,7 @@ def clean_log(log_file):
     except Exception as e:
         msg = f"[clean_log] ERROR Failed to purge {log_file}: {e}"
 
-        mylog('none', [])
-        write_notification(msg)
-        return jsonify({"success": False, "message": msg}), 200
+        mylog('none', [msg])
+        write_notification(msg, 'interrupt')
+        return jsonify({"success": False, "message": msg}), 500
 

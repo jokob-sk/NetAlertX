@@ -181,8 +181,10 @@ def main():
                 
                 # make sure the file has the correct name (e.g last_result.encoded.Node_1.1.log) to skip any otehr plugin files
                 if len(file_name.split('.')) > 2:
-                    # Store e.g. Node_1 from last_result.encoded.Node_1.1.log
-                    syncHubNodeName = file_name.split('.')[1]   
+                    # Extract node name from either last_result.decoded.Node_1.1.log or last_result.Node_1.log
+                    parts = file_name.split('.')
+                    # If decoded/encoded file, node name is at index 2; otherwise at index 1
+                    syncHubNodeName = parts[2] if 'decoded' in file_name or 'encoded' in file_name else parts[1]   
 
                     file_path = f"{LOG_PATH}/{file_name}"
                     

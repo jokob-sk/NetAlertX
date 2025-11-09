@@ -390,6 +390,10 @@ def api_clean_log():
 
 @app.route("/logs/add-to-execution-queue", methods=["POST"])
 def api_add_to_execution_queue():
+
+    if not is_authorized():
+        return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
+        
     queue = UserEventsQueueInstance()
 
     # Get JSON payload safely
