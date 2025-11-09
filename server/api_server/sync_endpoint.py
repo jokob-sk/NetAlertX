@@ -2,7 +2,8 @@ import os
 import base64
 from flask import jsonify, request
 from logger import mylog
-from helper import get_setting_value, timeNowTZ
+from helper import get_setting_value
+from utils.datetime_utils import timeNowDB
 from messaging.in_app import write_notification
 
 INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
@@ -17,22 +18,20 @@ def handle_sync_get():
             raw_data = f.read()
     except FileNotFoundError:
         msg = f"[Plugin: SYNC] Data file not found: {file_path}"
-        write_notification(msg, "alert", timeNowTZ())
+        write_notification(msg, "alert", timeNowDB())
         mylog("verbose", [msg])
         return jsonify({"error": msg}), 500
 
     response_data = base64.b64encode(raw_data).decode("utf-8")
 
-    write_notification("[Plugin: SYNC] Data sent", "info", timeNowTZ())
-    return jsonify(
-        {
-            "node_name": get_setting_value("SYNC_node_name"),
-            "status": 200,
-            "message": "OK",
-            "data_base64": response_data,
-            "timestamp": timeNowTZ(),
-        }
-    ), 200
+    write_notification("[Plugin: SYNC] Data sent", "info", timeNowDB())
+    return jsonify({
+        "node_name": get_setting_value("SYNC_node_name"),
+        "status": 200,
+        "message": "OK",
+        "data_base64": response_data,
+        "timestamp": timeNowDB()
+    }), 200
 
 
 def handle_sync_post():
@@ -65,11 +64,11 @@ def handle_sync_post():
             f.write(data)
     except Exception as e:
         msg = f"[Plugin: SYNC] Failed to store data: {e}"
-        write_notification(msg, "alert", timeNowTZ())
+        write_notification(msg, "alert", timeNowDB())
         mylog("verbose", [msg])
         return jsonify({"error": msg}), 500
 
     msg = f"[Plugin: SYNC] Data received ({file_path_new})"
-    write_notification(msg, "info", timeNowTZ())
+    write_notification(msg, "info", timeNowDB())
     mylog("verbose", [msg])
     return jsonify({"message": "Data received and stored successfully"}), 200

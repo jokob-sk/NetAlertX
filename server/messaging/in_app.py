@@ -17,7 +17,10 @@ from helper import (
     timeNowTZ,
 )
 
-NOTIFICATION_API_FILE = apiPath + "user_notifications.json"
+import conf
+from const import applicationPath, logPath, apiPath, confFileName, reportTemplatesPath
+from logger import mylog
+from utils.datetime_utils import timeNowDB
 
 
 # Show Frontend User Notification
@@ -35,7 +38,7 @@ def write_notification(content, level="alert", timestamp=None):
         None
     """
     if timestamp is None:
-        timestamp = timeNowTZ()
+        timestamp = timeNowDB()     
 
     # Generate GUID
     guid = str(uuid.uuid4())

@@ -10,7 +10,7 @@ import pytest
 INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from helper import timeNowTZ, get_setting_value
+from helper import get_setting_value
 from api_server.api_server_start import app
 
 

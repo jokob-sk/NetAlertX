@@ -3,7 +3,8 @@ import json
 
 from const import *
 from logger import mylog
-from helper import timeNowTZ, timeNow, checkNewVersion
+from helper import checkNewVersion
+from utils.datetime_utils import timeNowDB, timeNow
 
 # Register NetAlertX directories using runtime configuration
 INSTALL_PATH = applicationPath
@@ -31,16 +32,14 @@ class app_state_class:
         isNewVersionChecked (int): Timestamp of last version check.
     """
 
-    def __init__(
-        self,
-        currentState=None,
-        settingsSaved=None,
-        settingsImported=None,
-        showSpinner=None,
-        graphQLServerStarted=0,
-        processScan=False,
-        pluginsStates=None,
-    ):
+    def __init__(self, currentState=None, 
+                       settingsSaved=None, 
+                       settingsImported=None, 
+                       showSpinner=None, 
+                       graphQLServerStarted=0, 
+                       processScan=False,
+                       pluginsStates=None,
+                       appVersion=None):
         """
         Initialize the application state, optionally overwriting previous values.
 
@@ -55,14 +54,15 @@ class app_state_class:
             graphQLServerStarted (int, optional): Initial GraphQL server timestamp.
             processScan (bool, optional): Initial processScan flag.
             pluginsStates (dict, optional): Initial plugin states to merge with previous state.
+            appVersion (str, optional): Application version.
         """
         # json file containing the state to communicate with the frontend
         stateFile = apiPath + "app_state.json"
         previousState = ""
 
         # Update self
-        self.lastUpdated = str(timeNowTZ())
-
+        self.lastUpdated = str(timeNowDB())
+        
         if os.path.exists(stateFile):
             try:
                 with open(stateFile, "r") as json_file:
@@ -73,26 +73,28 @@ class app_state_class:
                 )
 
         # Check if the file exists and recover previous values
-        if previousState != "":
-            self.settingsSaved = previousState.get("settingsSaved", 0)
-            self.settingsImported = previousState.get("settingsImported", 0)
-            self.processScan = previousState.get("processScan", False)
-            self.showSpinner = previousState.get("showSpinner", False)
-            self.isNewVersion = previousState.get("isNewVersion", False)
-            self.isNewVersionChecked = previousState.get("isNewVersionChecked", 0)
-            self.graphQLServerStarted = previousState.get("graphQLServerStarted", 0)
-            self.currentState = previousState.get("currentState", "Init")
-            self.pluginsStates = previousState.get("pluginsStates", {})
-        else:  # init first time values
-            self.settingsSaved = 0
-            self.settingsImported = 0
-            self.showSpinner = False
-            self.processScan = False
-            self.isNewVersion = checkNewVersion()
-            self.isNewVersionChecked = int(timeNow().timestamp())
-            self.graphQLServerStarted = 0
-            self.currentState = "Init"
-            self.pluginsStates = {}
+        if previousState != "":            
+            self.settingsSaved          = previousState.get("settingsSaved", 0)
+            self.settingsImported       = previousState.get("settingsImported", 0)
+            self.processScan            = previousState.get("processScan", False)
+            self.showSpinner            = previousState.get("showSpinner", False)
+            self.isNewVersion           = previousState.get("isNewVersion", False)
+            self.isNewVersionChecked    = previousState.get("isNewVersionChecked", 0)
+            self.graphQLServerStarted   = previousState.get("graphQLServerStarted", 0)
+            self.currentState           = previousState.get("currentState", "Init")
+            self.pluginsStates          = previousState.get("pluginsStates", {}) 
+            self.appVersion             = previousState.get("appVersion", "") 
+        else: # init first time values
+            self.settingsSaved          = 0
+            self.settingsImported       = 0
+            self.showSpinner            = False
+            self.processScan            = False
+            self.isNewVersion           = checkNewVersion()
+            self.isNewVersionChecked    = int(timeNow().timestamp())
+            self.graphQLServerStarted   = 0
+            self.currentState           = "Init"
+            self.pluginsStates          = {}
+            self.appVersion             = ""
 
         # Overwrite with provided parameters if supplied
         if settingsSaved is not None:
@@ -112,9 +114,7 @@ class app_state_class:
             for plugin, state in pluginsStates.items():
                 if plugin in self.pluginsStates:
                     # Only update existing keys if both are dicts
-                    if isinstance(self.pluginsStates[plugin], dict) and isinstance(
-                        state, dict
-                    ):
+                    if isinstance(self.pluginsStates[plugin], dict) and isinstance(state, dict):
                         self.pluginsStates[plugin].update(state)
                     else:
                         # Replace if types don't match
@@ -123,7 +123,8 @@ class app_state_class:
                     # Optionally ignore or add new plugin entries
                     # To ignore new plugins, comment out the next line
                     self.pluginsStates[plugin] = state
-
+        if appVersion is not None:
+            self.appVersion = appVersion
         # check for new version every hour and if currently not running new version
         if self.isNewVersion is False and self.isNewVersionChecked + 3600 < int(
             timeNow().timestamp()
@@ -157,15 +158,14 @@ class app_state_class:
 
 # -------------------------------------------------------------------------------
 # method to update the state
-def updateState(
-    newState=None,
-    settingsSaved=None,
-    settingsImported=None,
-    showSpinner=None,
-    graphQLServerStarted=None,
-    processScan=None,
-    pluginsStates=None,
-):
+def updateState(newState = None, 
+                settingsSaved = None, 
+                settingsImported = None, 
+                showSpinner = None, 
+                graphQLServerStarted = None, 
+                processScan = None, 
+                pluginsStates=None,
+                appVersion=None):
     """
     Convenience method to create or update the app state.
 
@@ -177,19 +177,19 @@ def updateState(
         graphQLServerStarted (int, optional): Timestamp of GraphQL server start.
         processScan (bool, optional): Flag indicating if a scan is active.
         pluginsStates (dict, optional): Plugin state updates.
+        appVersion (str, optional): Application version.
 
     Returns:
         app_state_class: Updated state object.
     """
-    return app_state_class(
-        newState,
-        settingsSaved,
-        settingsImported,
-        showSpinner,
-        graphQLServerStarted,
-        processScan,
-        pluginsStates,
-    )
+    return app_state_class( newState, 
+                            settingsSaved, 
+                            settingsImported, 
+                            showSpinner, 
+                            graphQLServerStarted, 
+                            processScan, 
+                            pluginsStates,
+                            appVersion)
 
 
 # -------------------------------------------------------------------------------

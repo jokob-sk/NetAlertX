@@ -46,7 +46,7 @@ body:
   attributes:
     label: app.conf
     description: |
-      Paste your `app.conf` (remove personal info)    
+      Paste relevant `app.conf`settings (remove sensitive info)    
     render: python
   validations:
     required: false
@@ -70,6 +70,13 @@ body:
       - Bare-metal (community only support - Check Discord)
   validations:
     required: true
+- type: checkboxes
+  attributes:
+    label: Debug or Trace enabled
+    description: I confirm I set `LOG_LEVEL` to `debug` or `trace`
+    options:
+    - label: I have read and followed the steps in the wiki link above and provided the required debug logs and the log section covers the time when the issue occurs.
+      required: true
 - type: textarea
   attributes:
     label: app.log
@@ -78,13 +85,14 @@ body:
       ***Generally speaking, all bug reports should have logs provided.***
       Tip: You can attach images or log files by clicking this area to highlight it and then dragging files in.
       Additionally, any additional info? Screenshots? References? Anything that will give us more context about the issue you are encountering!
-      You can use `tail -100 /app/log/app.log` in the container if you have trouble getting to the log files. 
+      You can use `tail -100 /app/log/app.log` in the container if you have trouble getting to the log files or send them to netalertx@gmail.com with the issue number.
   validations:
     required: false
-- type: checkboxes
+- type: textarea
   attributes:
-    label: Debug enabled
-    description: I confirm I enabled `debug`
-    options:
-    - label: I have read and followed the steps in the wiki link above and provided the required debug logs and the log section covers the time when the issue occurs.
-      required: true
+    label: Docker Logs
+    description: |
+     You can retrieve the logs from Portainer -> Containers -> your NetAlertX container -> Logs or by running `sudo docker logs netalertx`.
+  validations:
+    required: true
+

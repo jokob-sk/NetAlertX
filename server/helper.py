@@ -7,7 +7,6 @@ import os
 import re
 import unicodedata
 import subprocess
-from typing import Union
 import pytz
 import json
 import requests
@@ -25,151 +24,6 @@ from logger import mylog, logResult
 # Register NetAlertX directories using runtime configuration
 INSTALL_PATH = applicationPath
 
-
-# -------------------------------------------------------------------------------
-# DateTime
-# -------------------------------------------------------------------------------
-# Get the current time in the current TimeZone
-def timeNowTZ():
-    if conf.tz:
-        return datetime.datetime.now(conf.tz).replace(microsecond=0)
-    else:
-        return datetime.datetime.now().replace(microsecond=0)
-    # if isinstance(conf.TIMEZONE, str):
-    #     tz = pytz.timezone(conf.TIMEZONE)
-    # else:
-    #     tz = conf.TIMEZONE
-
-    # return datetime.datetime.now(tz).replace(microsecond=0)
-
-
-def timeNow():
-    return datetime.datetime.now().replace(microsecond=0)
-
-
-def get_timezone_offset():
-    now = datetime.datetime.now(conf.tz)
-    offset_hours = now.utcoffset().total_seconds() / 3600
-    offset_formatted = "{:+03d}:{:02d}".format(
-        int(offset_hours), int((offset_hours % 1) * 60)
-    )
-    return offset_formatted
-
-
-# -------------------------------------------------------------------------------
-#  Date and time methods
-# -------------------------------------------------------------------------------
-
-# # -------------------------------------------------------------------------------------------
-# def format_date(date_str: str) -> str:
-#     """Format a date string as 'YYYY-MM-DD   HH:MM'"""
-#     dt = datetime.datetime.fromisoformat(date_str) if isinstance(date_str, str) else date_str
-#     return dt.strftime('%Y-%m-%d   %H:%M')
-
-# # -------------------------------------------------------------------------------------------
-# def format_date_diff(date1: str, date2: str) -> str:
-#     """Return difference between two dates formatted as 'Xd   HH:MM'"""
-#     dt1 = datetime.datetime.fromisoformat(date1) if isinstance(date1, str) else date1
-#     dt2 = datetime.datetime.fromisoformat(date2) if isinstance(date2, str) else date2
-#     delta = dt2 - dt1
-
-#     days = delta.days
-#     hours, remainder = divmod(delta.seconds, 3600)
-#     minutes = remainder // 60
-
-#     return f"{days}d   {hours:02}:{minutes:02}"
-
-
-# -------------------------------------------------------------------------------------------
-def format_date_iso(date1: str) -> str:
-    """Return ISO 8601 string for a date or None if empty"""
-    if date1 is None:
-        return None
-    dt = datetime.datetime.fromisoformat(date1) if isinstance(date1, str) else date1
-    return dt.isoformat()
-
-
-# -------------------------------------------------------------------------------------------
-def format_event_date(date_str: str, event_type: str) -> str:
-    """Format event date with fallback rules."""
-    if date_str:
-        return format_date(date_str)
-    elif event_type == "<missing event>":
-        return "<missing event>"
-    else:
-        return "<still connected>"
-
-
-# -------------------------------------------------------------------------------------------
-def ensure_datetime(dt: Union[str, datetime.datetime, None]) -> datetime.datetime:
-    if dt is None:
-        return timeNowTZ()
-    if isinstance(dt, str):
-        return datetime.datetime.fromisoformat(dt)
-    return dt
-
-
-def parse_datetime(dt_str):
-    if not dt_str:
-        return None
-    try:
-        # Try ISO8601 first
-        return datetime.datetime.fromisoformat(dt_str)
-    except ValueError:
-        # Try RFC1123 / HTTP format
-        try:
-            return datetime.datetime.strptime(dt_str, "%a, %d %b %Y %H:%M:%S GMT")
-        except ValueError:
-            return None
-
-
-def format_date(date_str: str) -> str:
-    dt = parse_datetime(date_str)
-    return dt.strftime("%Y-%m-%d   %H:%M") if dt else "invalid"
-
-
-def format_date_diff(date1, date2):
-    """
-    Return difference between two datetimes as 'Xd   HH:MM'.
-    Uses app timezone if datetime is naive.
-    date2 can be None (uses now).
-    """
-    # Get timezone from settings
-    tz_name = get_setting_value("TIMEZONE") or "UTC"
-    tz = pytz.timezone(tz_name)
-
-    def parse_dt(dt):
-        if dt is None:
-            return datetime.datetime.now(tz)
-        if isinstance(dt, str):
-            try:
-                dt_parsed = email.utils.parsedate_to_datetime(dt)
-            except Exception:
-                # fallback: parse ISO string
-                dt_parsed = datetime.datetime.fromisoformat(dt)
-            # convert naive GMT/UTC to app timezone
-            if dt_parsed.tzinfo is None:
-                dt_parsed = tz.localize(dt_parsed)
-            else:
-                dt_parsed = dt_parsed.astimezone(tz)
-            return dt_parsed
-        return dt if dt.tzinfo else tz.localize(dt)
-
-    dt1 = parse_dt(date1)
-    dt2 = parse_dt(date2)
-
-    delta = dt2 - dt1
-    total_minutes = int(delta.total_seconds() // 60)
-    days, rem_minutes = divmod(total_minutes, 1440)  # 1440 mins in a day
-    hours, minutes = divmod(rem_minutes, 60)
-
-    return {
-        "text": f"{days}d {hours:02}:{minutes:02}",
-        "days": days,
-        "hours": hours,
-        "minutes": minutes,
-        "total_minutes": total_minutes,
-    }
 
 
 # -------------------------------------------------------------------------------
@@ -438,10 +292,12 @@ def get_setting_value(key):
                     value = setting_value_to_python_type(set_type, set_value)
                 else:
                     value = setting_value_to_python_type(set_type, str(set_value))
+            
                 SETTINGS_SECONDARYCACHE[key] = value
+
                 return value
 
-    # Otherwise fall back to retrive from json
+    # Otherwise fall back to retrieve from json
     setting = get_setting(key)
 
     if setting is not None:
@@ -525,11 +381,8 @@ def setting_value_to_python_type(set_type, set_value):
     elif dataType == "array" and elementType == "select":
         if isinstance(set_value, str):
             try:
-                value = json.loads(set_value.replace("'", '"'))
-
-                # reverse transformations to all entries
-                value = reverseTransformers(value, transformers)
-
+                value = json.loads(set_value.replace("'", "\""))
+                    
             except json.JSONDecodeError as e:
                 mylog(
                     "none",
@@ -541,7 +394,10 @@ def setting_value_to_python_type(set_type, set_value):
         elif isinstance(set_value, list):
             value = set_value
 
-    elif dataType == "object" and elementType == "input":
+        # Always apply transformers (base64, etc.) to array entries
+        value = reverseTransformers(value, transformers)
+
+    elif dataType == 'object' and elementType == 'input':
         if isinstance(set_value, str):
             try:
                 value = reverseTransformers(json.loads(set_value), transformers)
@@ -887,38 +743,42 @@ def collect_lang_strings(json, pref, stringSqlParams):
 
 # -------------------------------------------------------------------------------
 # Get the value from the buildtimestamp.txt and initialize it if missing
-def getBuildTimeStamp():
+def getBuildTimeStampAndVersion():
     """
-    Retrieves the build timestamp from 'front/buildtimestamp.txt' within the
-    application directory.
-
-    If the file does not exist, it is created and initialized with the value '0'.
+    Retrieves the build timestamp and version from files within the
+    application directory. Initializes them if missing.
 
     Returns:
-        int: The integer value of the build timestamp read from the file.
-             Returns 0 if the file is empty or just initialized.
+        tuple: (int buildTimestamp, str version)
     """
-    buildTimestamp = 0
-    build_timestamp_path = os.path.join(applicationPath, "front/buildtimestamp.txt")
+    files_defaults = [
+        ('front/buildtimestamp.txt', '0'),
+        ('.VERSION', 'unknown')
+    ]
 
-    # Ensure file exists, initialize if missing
-    if not os.path.exists(build_timestamp_path):
-        with open(build_timestamp_path, "w") as f:
-            f.write("0")
+    results = []
 
-    # Now safely read the timestamp
-    with open(build_timestamp_path, "r") as f:
-        buildTimestamp = int(f.read().strip() or 0)
+    for filename, default in files_defaults:
+        path = os.path.join(applicationPath, filename)
+        if not os.path.exists(path):
+            with open(path, 'w') as f:
+                f.write(default)
 
-    return buildTimestamp
+        with open(path, 'r') as f:
+            content = f.read().strip() or default
+            # Convert buildtimestamp to int, leave version as string
+            value = int(content) if filename.endswith('buildtimestamp.txt') else content
+            results.append(value)
+
+    return tuple(results)
+
 
 
 # -------------------------------------------------------------------------------
 def checkNewVersion():
     mylog("debug", ["[Version check] Checking if new version available"])
 
-    newVersion = False
-    buildTimestamp = getBuildTimeStamp()
+    buildTimestamp, _version = getBuildTimeStampAndVersion()
 
     try:
         response = requests.get(
@@ -946,8 +806,8 @@ def checkNewVersion():
         )
 
         if releaseTimestamp > buildTimestamp + 600:
-            mylog("none", ["[Version check] New version of the container available!"])
-            newVersion = True
+            mylog('none', ["[Version check] New version of the container available!"])
+            return True
         else:
             mylog("none", ["[Version check] Running the latest version."])
     else:
@@ -956,7 +816,7 @@ def checkNewVersion():
             ["[Version check] ⚠ ERROR: Received unexpected response from GitHub."],
         )
 
-    return newVersion
+    return False
 
 
 # -------------------------------------------------------------------------------

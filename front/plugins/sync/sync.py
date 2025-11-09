@@ -13,11 +13,12 @@ INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from plugin_helper import Plugin_Objects
-from plugin_utils import get_plugins_configs, decode_and_rename_files
+from utils.plugin_utils import get_plugins_configs, decode_and_rename_files
 from logger import mylog, Logger
 from const import fullDbPath, logPath
-from helper import timeNowTZ, get_setting_value 
-from crypto_utils import encrypt_data
+from helper import get_setting_value 
+from utils.datetime_utils import timeNowDB
+from utils.crypto_utils import encrypt_data
 from messaging.in_app import write_notification
 import conf
 from pytz import timezone
@@ -147,7 +148,7 @@ def main():
             message = f'[{pluginName}] Device data from node "{node_name}" written to {log_file_name}'
             mylog('verbose', [message])
             if lggr.isAbove('verbose'):
-                write_notification(message, 'info', timeNowTZ())           
+                write_notification(message, 'info', timeNowDB())           
         
 
     # Process any received data for the Device DB table (ONLY JSON)
@@ -178,8 +179,10 @@ def main():
                 
                 # make sure the file has the correct name (e.g last_result.encoded.Node_1.1.log) to skip any otehr plugin files
                 if len(file_name.split('.')) > 2:
-                    # Store e.g. Node_1 from last_result.encoded.Node_1.1.log
-                    syncHubNodeName = file_name.split('.')[1]   
+                    # Extract node name from either last_result.decoded.Node_1.1.log or last_result.Node_1.log
+                    parts = file_name.split('.')
+                    # If decoded/encoded file, node name is at index 2; otherwise at index 1
+                    syncHubNodeName = parts[2] if 'decoded' in file_name or 'encoded' in file_name else parts[1]   
 
                     file_path = f"{LOG_PATH}/{file_name}"
                     
@@ -253,7 +256,7 @@ def main():
                 message = f'[{pluginName}] Inserted "{len(new_devices)}" new devices'
 
                 mylog('verbose', [message])
-                write_notification(message, 'info', timeNowTZ())
+                write_notification(message, 'info', timeNowDB())
             
 
         # Commit and close the connection
@@ -297,7 +300,7 @@ def send_data(api_token, file_content, encryption_key, file_path, node_name, pre
             if response.status_code == 200:
                 message = f'[{pluginName}] Data for "{file_path}" sent successfully via {final_endpoint}'
                 mylog('verbose', [message])
-                write_notification(message, 'info', timeNowTZ())
+                write_notification(message, 'info', timeNowDB())
                 return True
 
         except requests.RequestException as e:
@@ -306,7 +309,7 @@ def send_data(api_token, file_content, encryption_key, file_path, node_name, pre
     # If all endpoints fail
     message = f'[{pluginName}] Failed to send data for "{file_path}" via all endpoints'
     mylog('verbose', [message])
-    write_notification(message, 'alert', timeNowTZ())
+    write_notification(message, 'alert', timeNowDB())
     return False
 
 
@@ -330,7 +333,7 @@ def get_data(api_token, node_url):
                 except json.JSONDecodeError:
                     message = f'[{pluginName}] Failed to parse JSON from {final_endpoint}'
                     mylog('verbose', [message])
-                    write_notification(message, 'alert', timeNowTZ())
+                    write_notification(message, 'alert', timeNowDB())
                     return ""
         except requests.RequestException as e:
             mylog('verbose', [f'[{pluginName}] Error calling {final_endpoint}: {e}'])
@@ -338,7 +341,7 @@ def get_data(api_token, node_url):
     # If all endpoints fail
     message = f'[{pluginName}] Failed to get data from "{node_url}" via all endpoints'
     mylog('verbose', [message])
-    write_notification(message, 'alert', timeNowTZ())
+    write_notification(message, 'alert', timeNowDB())
     return ""
 
 

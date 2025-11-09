@@ -21,7 +21,8 @@ from const import (
     sql_devices_filters,
 )
 from logger import mylog
-from helper import write_file, get_setting_value, timeNowTZ
+from helper import write_file, get_setting_value
+from utils.datetime_utils import timeNowTZ
 from app_state import updateState
 from models.user_events_queue_instance import UserEventsQueueInstance
 

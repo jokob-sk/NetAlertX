@@ -15,7 +15,7 @@ The **Web UI** is served by an **nginx** server, while the **API backend** runs 
   APP_CONF_OVERRIDE={"GRAPHQL_PORT":"20212"}
   ```
 
-For more information, check the [Docker installation guide](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md).
+For more information, check the [Docker installation guide](./DOCKER_INSTALLATION.md).
 
 ## Possible issues and troubleshooting
 

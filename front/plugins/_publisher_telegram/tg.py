@@ -11,8 +11,9 @@ sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 import conf
 from const import confFileName, logPath
 from plugin_helper import Plugin_Objects
+from utils.datetime_utils import timeNowDB
 from logger import mylog, Logger
-from helper import timeNowTZ, get_setting_value
+from helper import get_setting_value
 from models.notification_instance import NotificationInstance
 from database import DB
 from pytz import timezone
@@ -61,7 +62,7 @@ def main():
         # Log result
         plugin_objects.add_object(
             primaryId=pluginName,
-            secondaryId=timeNowTZ(),
+            secondaryId=timeNowDB(),
             watched1=notification["GUID"],
             watched2=result,
             watched3='null',

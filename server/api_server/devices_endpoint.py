@@ -16,6 +16,7 @@ sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from database import get_temp_db_connection
 from db.db_helper import get_table_json, get_device_condition_by_status
+from utils.datetime_utils import format_date
 
 
 # --------------------------

@@ -4,20 +4,17 @@ import datetime
 import threading
 import queue
 import logging
+from zoneinfo import ZoneInfo
+
+# Register NetAlertX directories
+INSTALL_PATH="/app"
+
+sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 # NetAlertX imports
 import conf
 from const import *
-
-
-# -------------------------------------------------------------------------------
-# duplication from helper to avoid circle
-# -------------------------------------------------------------------------------
-def timeNowTZ():
-    if conf.tz:
-        return datetime.datetime.now(conf.tz).replace(microsecond=0)
-    else:
-        return datetime.datetime.now().replace(microsecond=0)
+from utils.datetime_utils import timeNowTZ
 
 
 # -------------------------------------------------------------------------------

@@ -10,11 +10,9 @@ INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from database import get_temp_db_connection
-from helper import (
-    mylog,
-    ensure_datetime,
-)
+from helper import is_random_mac, mylog
 from db.db_helper import row_to_json, get_date_from_period
+from utils.datetime_utils import format_date, format_date_iso, format_event_date, ensure_datetime
 
 
 # --------------------------

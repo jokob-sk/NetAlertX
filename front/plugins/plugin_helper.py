@@ -12,7 +12,8 @@ INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.append(f"{INSTALL_PATH}/front/plugins")
 sys.path.append(f'{INSTALL_PATH}/server') 
 
-from logger import mylog
+from logger import mylog, Logger
+from utils.datetime_utils import timeNowDB
 from const import default_tz, fullConfPath
 
 #-------------------------------------------------------------------------------
@@ -205,7 +206,7 @@ class Plugin_Object:
         self.pluginPref = ""
         self.primaryId = primaryId
         self.secondaryId = secondaryId
-        self.created = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.created = timeNowDB()
         self.changed = ""
         self.watched1 = watched1
         self.watched2 = watched2

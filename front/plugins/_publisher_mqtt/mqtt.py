@@ -20,11 +20,12 @@ sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 # NetAlertX modules
 import conf
 from const import confFileName, logPath
-from plugin_utils import getPluginObject
+from utils.plugin_utils import getPluginObject
 from plugin_helper import Plugin_Objects
 from logger import mylog, Logger
-from helper import timeNowTZ, get_setting_value, bytes_to_string, \
+from helper import get_setting_value, bytes_to_string, \
     sanitize_string, normalize_string
+from utils.datetime_utils import timeNowDB
 from database import DB, get_device_stats
 
 
@@ -566,7 +567,7 @@ def prepTimeStamp(datetime_str):
     except ValueError:
         mylog('verbose', [f"[{pluginName}]  Timestamp conversion failed of string '{datetime_str}'"])
         # Use the current time if the input format is invalid
-        parsed_datetime = timeNowTZ()  # Assuming this function returns the current time with timezone
+        parsed_datetime = datetime.now(conf.tz)
 
     # Convert to the required format with 'T' between date and time and ensure the timezone is included
     return parsed_datetime.isoformat()  # This will include the timezone offset

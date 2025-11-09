@@ -10,14 +10,9 @@ INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from database import get_temp_db_connection
-from helper import (
-    format_date,
-    format_date_iso,
-    format_event_date,
-    format_date_diff,
-    format_ip_long,
-)
-from db.db_helper import get_date_from_period
+from helper import is_random_mac, get_setting_value, mylog, format_ip_long
+from db.db_helper import row_to_json, get_date_from_period
+from utils.datetime_utils import format_date_iso, format_event_date, format_date_diff, parse_datetime, format_date
 
 
 # --------------------------
@@ -231,6 +226,7 @@ def get_device_sessions(mac, period):
     cur.execute(sql, (mac,))
     rows = cur.fetchall()
     conn.close()
+    tz_name = get_setting_value("TIMEZONE") or "UTC"
 
     table_data = {"data": []}
 
@@ -255,11 +251,9 @@ def get_device_sessions(mac, period):
         ] in ("<missing event>", None):
             dur = "..."
         elif row["ses_StillConnected"]:
-            dur = format_date_diff(row["ses_DateTimeConnection"], None)["text"]
+            dur = format_date_diff(row["ses_DateTimeConnection"], None, tz_name)["text"]
         else:
-            dur = format_date_diff(
-                row["ses_DateTimeConnection"], row["ses_DateTimeDisconnection"]
-            )["text"]
+            dur = format_date_diff(row["ses_DateTimeConnection"], row["ses_DateTimeDisconnection"], tz_name)["text"]
 
         # Additional Info
         info = row["ses_AdditionalInfo"]
@@ -295,6 +289,7 @@ def get_session_events(event_type, period_date):
     conn = get_temp_db_connection()
     conn.row_factory = sqlite3.Row
     cur = conn.cursor()
+    tz_name = get_setting_value("TIMEZONE") or "UTC"
 
     # Base SQLs
     sql_events = f"""
@@ -382,11 +377,11 @@ def get_session_events(event_type, period_date):
         if event_type in ("sessions", "missing"):
             # Duration
             if row[5] and row[6]:
-                delta = format_date_diff(row[5], row[6])
+                delta = format_date_diff(row[5], row[6], tz_name)
                 row[7] = delta["text"]
                 row[8] = int(delta["total_minutes"] * 60)  # seconds
             elif row[12] == 1:
-                delta = format_date_diff(row[5], None)
+                delta = format_date_diff(row[5], None, tz_name)
                 row[7] = delta["text"]
                 row[8] = int(delta["total_minutes"] * 60)  # seconds
             else:

@@ -11,7 +11,8 @@ from datetime import datetime, timedelta
 INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from helper import timeNowTZ, get_setting_value
+from helper import get_setting_value
+from utils.datetime_utils import timeNowTZ
 from api_server.api_server_start import app
 
 @pytest.fixture(scope="session")

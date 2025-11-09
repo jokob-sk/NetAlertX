@@ -8,30 +8,17 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # Register NetAlertX modules
 import conf
-from const import logPath, reportTemplatesPath, pluginsPath, applicationPath
-from logger import mylog, Logger
-from helper import (
-    timeNowTZ,
-    get_file_content,
-    get_setting,
-    get_setting_value,
-)
+from const import pluginsPath, logPath, applicationPath, reportTemplatesPath
+from logger import mylog, Logger 
+from helper import get_file_content, write_file, get_setting, get_setting_value
+from utils.datetime_utils import timeNowTZ, timeNowDB
 from app_state import updateState
 from api import update_api
-from plugin_utils import (
-    logEventStatusCounts,
-    get_plugin_setting_obj,
-    print_plugin_info,
-    list_to_csv,
-    combine_plugin_objects,
-    resolve_wildcards_arr,
-    handle_empty,
-    decode_and_rename_files,
-)
+from utils.plugin_utils import logEventStatusCounts, get_plugin_string, get_plugin_setting_obj, print_plugin_info, list_to_csv, combine_plugin_objects, resolve_wildcards_arr, handle_empty, custom_plugin_decoder, decode_and_rename_files
 from models.notification_instance import NotificationInstance
 from messaging.in_app import write_notification
 from models.user_events_queue_instance import UserEventsQueueInstance
-from crypto_utils import generate_deterministic_guid
+from utils.crypto_utils import generate_deterministic_guid
 
 
 # -------------------------------------------------------------------------------
@@ -40,7 +27,7 @@ class plugin_manager:
         self.db = db
         self.all_plugins = all_plugins
         self.plugin_states = {}
-        self.name_plugins_checked = None
+        self.plugin_checks = {}
 
         # object cache of settings and schedules for faster lookups
         self._cache = {}
@@ -112,12 +99,11 @@ class plugin_manager:
                 execute_plugin(self.db, self.all_plugins, plugin)
 
                 # Update plugin states in app_state
-                current_plugin_state = self.get_plugin_states(
-                    prefix
-                )  # get latest plugin state
-                updateState(
-                    pluginsStates={prefix: current_plugin_state.get(prefix, {})}
-                )
+                current_plugin_state = self.get_plugin_states(prefix)  # get latest plugin state
+
+                # mylog('debug', f'current_plugin_state: {current_plugin_state}')
+
+                updateState(pluginsStates={prefix: current_plugin_state.get(prefix, {})})
 
                 # update last run time
                 if runType == "schedule":
@@ -189,26 +175,17 @@ class plugin_manager:
 
         # Notify user about executed events (if applicable)
         if len(executed_events) > 0 and executed_events:
-            executed_events_message = ", ".join(executed_events)
-            mylog(
-                "minimal",
-                [
-                    "[check_and_run_user_event] INFO: Executed events: ",
-                    executed_events_message,
-                ],
-            )
-            write_notification(
-                f"[Ad-hoc events] Events executed: {executed_events_message}",
-                "interrupt",
-                timeNowTZ(),
-            )
+            executed_events_message = ', '.join(executed_events)
+            mylog('minimal', ['[check_and_run_user_event] INFO: Executed events: ', executed_events_message])
+            write_notification(f"[Ad-hoc events] Events executed: {executed_events_message}", "interrupt", timeNowDB())
 
         return
 
     # -------------------------------------------------------------------------------
     def handle_run(self, runType):
-        mylog("minimal", ["[", timeNowTZ(), "] START Run: ", runType])
-
+        
+        mylog('minimal', ['[', timeNowDB(), '] START Run: ', runType])
+        
         # run the plugin
         for plugin in self.all_plugins:
             if plugin["unique_prefix"] == runType:
@@ -224,7 +201,7 @@ class plugin_manager:
                     pluginsStates={pluginName: current_plugin_state.get(pluginName, {})}
                 )
 
-        mylog("minimal", ["[", timeNowTZ(), "] END Run: ", runType])
+        mylog('minimal', ['[', timeNowDB(), '] END Run: ', runType])        
 
         return
 
@@ -232,6 +209,8 @@ class plugin_manager:
     def handle_test(self, runType):
         mylog("minimal", ["[", timeNowTZ(), "] [Test] START Test: ", runType])
 
+        mylog('minimal', ['[', timeNowDB(), '] [Test] START Test: ', runType])
+        
         # Prepare test samples
         sample_json = json.loads(
             get_file_content(reportTemplatesPath + "webhook_json_sample.json")
@@ -258,7 +237,7 @@ class plugin_manager:
         If plugin_name is provided, only calculates stats for that plugin.
         Structure per plugin:
         {
-            "lastChanged": str,
+            "lastDataChange": str,
             "totalObjects": int,
             "newObjects": int,
             "changedObjects": int,
@@ -267,32 +246,30 @@ class plugin_manager:
         """
         sql = self.db.sql
         plugin_states = {}
+        now_str = timeNowDB()
 
         if plugin_name:  # Only compute for single plugin
             sql.execute(
                 """
                 SELECT MAX(DateTimeChanged) AS last_changed,
                     COUNT(*) AS total_objects,
-                    SUM(CASE WHEN DateTimeCreated = DateTimeChanged THEN 1 ELSE 0 END) AS new_objects,
-                    CURRENT_TIMESTAMP AS state_updated
+                    SUM(CASE WHEN DateTimeCreated = DateTimeChanged THEN 1 ELSE 0 END) AS new_objects
                 FROM Plugins_Objects
                 WHERE Plugin = ?
             """,
                 (plugin_name,),
             )
             row = sql.fetchone()
-            last_changed, total_objects, new_objects, state_updated = (
-                row if row else ("", 0, 0, "")
-            )
+            last_changed, total_objects, new_objects = row if row else ("", 0, 0)
             new_objects = new_objects or 0  # ensure it's int
             changed_objects = total_objects - new_objects
 
             plugin_states[plugin_name] = {
-                "lastChanged": last_changed or "",
+                "lastDataChange": last_changed or "",
                 "totalObjects": total_objects or 0,
                 "newObjects": new_objects or 0,
                 "changedObjects": changed_objects or 0,
-                "stateUpdated": state_updated or "",
+                "stateUpdated": now_str
             }
 
             # Save in memory
@@ -303,26 +280,19 @@ class plugin_manager:
                 SELECT Plugin,
                     MAX(DateTimeChanged) AS last_changed,
                     COUNT(*) AS total_objects,
-                    SUM(CASE WHEN DateTimeCreated = DateTimeChanged THEN 1 ELSE 0 END) AS new_objects,
-                    CURRENT_TIMESTAMP AS state_updated
+                    SUM(CASE WHEN DateTimeCreated = DateTimeChanged THEN 1 ELSE 0 END) AS new_objects
                 FROM Plugins_Objects
                 GROUP BY Plugin
             """)
-            for (
-                plugin,
-                last_changed,
-                total_objects,
-                new_objects,
-                state_updated,
-            ) in sql.fetchall():
+            for plugin, last_changed, total_objects, new_objects in sql.fetchall():
                 new_objects = new_objects or 0  # ensure it's int
                 changed_objects = total_objects - new_objects
                 plugin_states[plugin] = {
-                    "lastChanged": last_changed or "",
+                    "lastDataChange": last_changed or "",
                     "totalObjects": total_objects or 0,
                     "newObjects": new_objects or 0,
                     "changedObjects": changed_objects or 0,
-                    "stateUpdated": state_updated or "",
+                    "stateUpdated": now_str
                 }
 
             # Save in memory
@@ -908,8 +878,8 @@ def process_plugin_events(db, plugin, plugEventsArr):
                 if isMissing:
                     # if wasn't missing before, mark as changed
                     if tmpObj.status != "missing-in-last-scan":
-                        tmpObj.changed = timeNowTZ().strftime("%Y-%m-%d %H:%M:%S")
-                        tmpObj.status = "missing-in-last-scan"
+                        tmpObj.changed = timeNowDB()
+                        tmpObj.status = "missing-in-last-scan"                    
                     # mylog('debug', [f'[Plugins] Missing from last scan (PrimaryID | SecondaryID): {tmpObj.primaryId} | {tmpObj.secondaryId}'])
 
             # Merge existing plugin objects with newly discovered ones and update existing ones with new values

@@ -11,6 +11,7 @@ sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 import conf
 from const import confFileName, logPath
+from utils.datetime_utils import timeNowDB
 from plugin_helper import Plugin_Objects
 from logger import mylog, Logger
 from helper import timeNowTZ, get_setting_value
@@ -63,14 +64,14 @@ def main():
 
         # Log result
         plugin_objects.add_object(
-            primaryId=pluginName,
-            secondaryId=timeNowTZ(),
-            watched1=notification["GUID"],
-            watched2=result,
-            watched3="null",
-            watched4="null",
-            extra="null",
-            foreignKey=notification["GUID"],
+            primaryId   = pluginName,
+            secondaryId = timeNowDB(),            
+            watched1    = notification["GUID"],
+            watched2    = result,            
+            watched3    = 'null',
+            watched4    = 'null',
+            extra       = 'null',
+            foreignKey  = notification["GUID"]
         )
 
     plugin_objects.write_result_file()

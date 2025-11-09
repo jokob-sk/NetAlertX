@@ -43,7 +43,7 @@ Backend loop phases (see `server/__main__.py` and `server/plugin.py`): `once`, `
 ## Conventions & helpers to reuse
 - Settings: add/modify via `ccd()` in `server/initialise.py` or per‑plugin manifest. Never hardcode ports or secrets; use `get_setting_value()`.
 - Logging: use `logger.mylog(level, [message])`; levels: none/minimal/verbose/debug/trace.
-- Time/MAC/strings: `helper.py` (`timeNowTZ`, `normalize_mac`, sanitizers). Validate MACs before DB writes.
+- Time/MAC/strings: `helper.py` (`timeNowDB`, `normalize_mac`, sanitizers). Validate MACs before DB writes.
 - DB helpers: prefer `server/db/db_helper.py` functions (e.g., `get_table_json`, device condition helpers) over raw SQL in new paths.
 
 ## Dev workflow (devcontainer)

@@ -1,146 +1,192 @@
-## config.json Lifecycle in NetAlertX
+# Plugins Implementation Details
 
-This document describes on a high level how `config.json` is read, processed, and used by the NetAlertX core and plugins. It also outlines the plugin output contract and the main plugin types.
+Plugins provide data to the NetAlertX core, which processes it to detect changes, discover new devices, raise alerts, and apply heuristics.
 
-> [!NOTE]
-> For a deep-dive on the specific configuration options and sections of the `config.json` plugin manifest, consult the [Plugins Development Guide](PLUGINS_DEV.md).
+---
+
+## Overview: Plugin Data Flow
+
+1. Each plugin runs on a defined schedule.
+2. Aligning all plugin schedules is recommended so they execute in the same loop.
+3. During execution, all plugins write their collected data into the **`CurrentScan`** table.
+4. After all plugins complete, the `CurrentScan` table is evaluated to detect **new devices**, **changes**, and **triggers**.
+
+Although plugins run independently, they contribute to the shared `CurrentScan` table.
+To inspect its contents, set `LOG_LEVEL=trace` and check for the log section:
+
+```
+================ CurrentScan table content ================
+```
+
+---
+
+## `config.json` Lifecycle
+
+This section outlines how each plugin’s `config.json` manifest is read, validated, and used by the core and plugins.
+It also describes plugin output expectations and the main plugin categories.
+
+> [!TIP]
+> For detailed schema and examples, see the [Plugin Development Guide](PLUGINS_DEV.md).
 
 ---
 
 ### 1. Loading
 
-* On startup, the app core loads `config.json` for each plugin.
-* The `config.json` represents a plugin manifest, that contains metadata and runtime settings.
+* On startup, the core loads `config.json` for each plugin.
+* The file acts as a **plugin manifest**, defining metadata, runtime configuration, and database mappings.
 
 ---
 
 ### 2. Validation
 
-* The core checks that each required settings key (such as `RUN`) for a plugin exists.
-* Invalid or missing values may be replaced with defaults, or the plugin may be disabled.
+* The core validates required keys (for example, `RUN`).
+* Missing or invalid entries may be replaced with defaults or cause the plugin to be disabled.
 
 ---
 
 ### 3. Preparation
 
-* The plugin’s settings (paths, commands, parameters) are prepared.
-* Database mappings (`mapped_to_table`, `database_column_definitions`) for data ingestion into the core app are parsed.
+* Plugin parameters (paths, commands, and options) are prepared for execution.
+* Database mappings (`mapped_to_table`, `database_column_definitions`) are parsed to define how data integrates with the main app.
 
 ---
 
 ### 4. Execution
 
-* Plugins can be run at different core app execution points, such as on schedule, once on start, after a notification, etc. 
-* At runtime, the scheduler triggers plugins according to their `interval`.
-* The plugin executes its command or script.
+* Plugins may run:
+
+  * On a fixed schedule.
+  * Once at startup.
+  * After a notification or other trigger.
+* The scheduler executes plugins according to their `interval`.
 
 ---
 
 ### 5. Parsing
 
-* Plugin output is expected in **pipe (`|`)-delimited format**.
-* The core parses lines into fields, matching the **plugin interface contract**.
+* Plugin output must be **pipe-delimited (`|`)**.
+* The core parses each output line following the **Plugin Interface Contract**, splitting and mapping fields accordingly.
 
 ---
 
 ### 6. Mapping
 
-* Each parsed field is moved into the `Plugins_` database tables and can be mapped into a configured database table.
-* Controlled by `database_column_definitions` and `mapped_to_table`.
-* Example: `Object_PrimaryID → Devices.MAC`.
+* Parsed fields are inserted into the plugin’s `Plugins_*` table.
+* Data can be mapped into other tables (e.g., `Devices`, `CurrentScan`) as defined by:
+
+  * `database_column_definitions`
+  * `mapped_to_table`
+
+**Example:** `Object_PrimaryID → devMAC`
 
 ---
 
 ### 6a. Plugin Output Contract
 
-Each plugin must output results in the **plugin interface contract format**, pipe (`|`)-delimited values, in the column order described under [Plugin Interface Contract](PLUGINS_DEV.md)
+All plugins must follow the **Plugin Interface Contract** defined in `PLUGINS_DEV.md`.
+Output values are pipe-delimited in a fixed order.
 
-#### IDs
+#### Identifiers
 
-  * `Object_PrimaryID` and `Object_SecondaryID` identify the record (e.g. `MAC|IP`).
+* `Object_PrimaryID` and `Object_SecondaryID` uniquely identify records (for example, `MAC|IP`).
 
-#### **Watched values (`Watched_Value1–4`)**
+#### Watched Values (`Watched_Value1–4`)
 
-  * Used by the core to detect changes between runs.
-  * Changes here can trigger **notifications**.
+* Used by the core to detect changes between runs.
+* Changes in these fields can trigger notifications.
 
-#### **Extra value (`Extra`)**
+#### Extra Field (`Extra`)
 
-  * Optional, extra field.
-  * Stored in the database but **not used for alerts**.
+* Optional additional value.
+* Stored in the database but not used for alerts.
 
-#### **Helper values (`Helper_Value1–3`)**
+#### Helper Values (`Helper_Value1–3`)
 
-  * Added for cases where more than IDs + watched + extra are needed.
-  * Can be made visible in the UI.
-  * Stored in the database but **not used for alerts**.
+* Optional auxiliary data (for display or plugin logic).
+* Stored but not alert-triggering.
 
-#### **Mapping matters**
+#### Mapping
 
-  * While the plugin output is free-form, the `database_column_definitions` and `mapped_to_table` settings in `config.json` determine the **target columns and data types** in NetAlertX.
+* While the output format is flexible, the plugin’s manifest determines the destination and type of each field.
 
 ---
 
 ### 7. Persistence
 
-* Data is upserted into the database.
-* Conflicts are resolved using `Object_PrimaryID` + `Object_SecondaryID`.
+* Parsed data is **upserted** into the database.
+* Conflicts are resolved using the combined key: `Object_PrimaryID + Object_SecondaryID`.
 
 ---
 
-### 8. Plugin Types and Expected Outputs
+## Plugin Categories
 
-Beyond the `data_source` setting, plugins fall into functional categories. Each has its own input requirements and output expectations:
+Plugins fall into several functional categories depending on their purpose and expected outputs.
 
-#### **Device discovery plugins**
+### 1. Device Discovery Plugins
 
-  * **Inputs:** `N/A`, subnet, or API for discovery service, or similar.
-  * **Outputs:** At minimum `MAC` and `IP` that results in a new or updated device records in the `Devices` table.
-  * **Mapping:** Must be mapped to the `CurrentScan` table via `database_column_definitions` and `data_filters`.
-  * **Examples:** ARP-scan, NMAP device discovery (e.g., `ARPSCAN`, `NMAPDEV`).
-
-#### **Device-data enrichment plugins**
-
-  * **Inputs:** Device identifier (usually `MAC`, `IP`).
-  * **Outputs:** Additional data for that device (e.g. open ports).
-  * **Mapping:** Controlled via `database_column_definitions` and `data_filters`.
-  * **Examples:** Ports, MQTT messages (e.g., `NMAP`, `MQTT`)
-
-#### **Name resolver plugins**
-
-  * **Inputs:** Device identifiers (MAC, IP, or hostname).
-  * **Outputs:** Updated `devName` and `devFQDN` fields.
-  * **Mapping:** Not expected.
-  * **Note:** Currently requires **core app modification** to add new plugins, not fully driven by the plugins’ `config.json`.
-  * **Examples:** Avahiscan (e.g., `NBTSCAN`, `NSLOOKUP`).
-
-#### **Generic plugins**
-
-  * **Inputs:** Whatever the script or query provides.
-  * **Outputs:** Data shown only in **Integrations → Plugins**, not tied to devices.
-  * **Mapping:** Not expected.
-  * **Examples:** External monitoring data (e.g., `INTRSPD`)
-
-#### **Configuration-only plugins**
-
-  * **Inputs/Outputs:** None at runtime.
-  * **Mapping:** Not expected. 
-  * **Examples:** Used to provide additional settings or execute scripts (e.g., `MAINT`, `CSVBCKP`).
+* **Inputs:** None, subnet, or discovery API.
+* **Outputs:** `MAC` and `IP` for new or updated device records in `Devices`.
+* **Mapping:** Required – usually into `CurrentScan`.
+* **Examples:** `ARPSCAN`, `NMAPDEV`.
 
 ---
 
-### 9. Post-Processing
+### 2. Device Data Enrichment Plugins
 
-* Notifications are generated if watched values change.
-* UI is updated with new or updated records.
-* All values that are configured to be shown in teh UI appear in the Plugins section.
+* **Inputs:** Device identifiers (`MAC`, `IP`).
+* **Outputs:** Additional metadata (for example, open ports or sensors).
+* **Mapping:** Controlled via manifest definitions.
+* **Examples:** `NMAP`, `MQTT`.
 
 ---
 
-### 10. Summary
+### 3. Name Resolver Plugins
 
-The lifecycle of `config.json` entries is:
+* **Inputs:** Device identifiers (`MAC`, `IP`, hostname`).
+* **Outputs:** Updated `devName` and `devFQDN`.
+* **Mapping:** Typically none.
+* **Note:** Adding new resolvers currently requires a core change.
+* **Examples:** `NBTSCAN`, `NSLOOKUP`.
+
+---
+
+### 4. Generic Plugins
+
+* **Inputs:** Custom, based on the plugin logic or script.
+* **Outputs:** Data displayed under **Integrations → Plugins** only.
+* **Mapping:** Not required.
+* **Examples:** `INTRSPD`, custom monitoring scripts.
+
+---
+
+### 5. Configuration-Only Plugins
+
+* **Inputs/Outputs:** None at runtime.
+* **Purpose:** Used for configuration or maintenance tasks.
+* **Examples:** `MAINT`, `CSVBCKP`.
+
+---
+
+## Post-Processing
+
+After persistence:
+
+* The core generates notifications for any watched value changes.
+* The UI updates with new or modified data.
+* Plugins with UI-enabled data display under **Integrations → Plugins**.
+
+---
+
+## Summary
+
+The lifecycle of a plugin configuration is:
 
 **Load → Validate → Prepare → Execute → Parse → Map → Persist → Post-process**
 
-Plugins must follow the **output contract**, and their category (discovery, specific, resolver, generic, config-only) defines what inputs they require and what outputs are expected.
+Each plugin must:
+
+* Follow the **output contract**.
+* Declare its type and expected output structure.
+* Define mappings and watched values clearly in `config.json`.
+
+

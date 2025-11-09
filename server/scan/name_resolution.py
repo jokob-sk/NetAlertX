@@ -71,7 +71,8 @@ class NameResolver:
         if match_ip:
             name += " (IP match)"
 
-        regexes = get_setting_value("NEWDEV_NAME_CLEANUP_REGEX") or []
+        regexes = get_setting_value('NEWDEV_NAME_CLEANUP_REGEX') or []
+        mylog('trace', [f"[cleanDeviceName] applying regexes: {regexes}"])
         for rgx in regexes:
             mylog("trace", [f"[cleanDeviceName] applying regex: {rgx}"])
             name = re.sub(rgx, "", name)

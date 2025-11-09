@@ -83,7 +83,7 @@ You can also download the `app.conf` and `devices.csv` files from the **Maintena
 
 ### 📥 How to Restore
 
-Map these files into your container as described in the [Setup documentation](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md#docker-paths).
+Map these files into your container as described in the [Setup documentation](./DOCKER_INSTALLATION.md).
 
 ---
 

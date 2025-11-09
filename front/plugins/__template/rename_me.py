@@ -8,9 +8,9 @@ from pytz import timezone
 INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
+from const import logPath
 from plugin_helper import Plugin_Objects
 from logger import mylog, Logger
-from const import logPath
 from helper import get_setting_value 
 
 import conf

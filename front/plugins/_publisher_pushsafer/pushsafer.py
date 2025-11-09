@@ -14,7 +14,8 @@ import conf
 from const import confFileName, logPath
 from plugin_helper import Plugin_Objects, handleEmpty
 from logger import mylog, Logger
-from helper import timeNowTZ, get_setting_value, hide_string
+from helper import get_setting_value, hide_string
+from utils.datetime_utils import timeNowDB
 from models.notification_instance import NotificationInstance
 from database import DB
 from pytz import timezone
@@ -63,7 +64,7 @@ def main():
         # Log result
         plugin_objects.add_object(
             primaryId   = pluginName,
-            secondaryId = timeNowTZ(),            
+            secondaryId = timeNowDB(),            
             watched1    = notification["GUID"],
             watched2    = handleEmpty(response_text),            
             watched3    = response_status_code,

@@ -11,7 +11,8 @@ from datetime import datetime, timedelta
 INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from helper import timeNowTZ, get_setting_value
+from helper import get_setting_value
+from utils.datetime_utils import timeNowTZ, timeNowDB
 from api_server.api_server_start import app
 
 @pytest.fixture(scope="session")
@@ -49,7 +50,7 @@ def test_create_session(client, api_token, test_mac):
     payload = {
         "mac": test_mac,
         "ip": "192.168.1.100",
-        "start_time": timeNowTZ(),
+        "start_time": timeNowDB(),
         "event_type_conn": "Connected",
         "event_type_disc": "Disconnected"
     }
@@ -64,7 +65,7 @@ def test_list_sessions(client, api_token, test_mac):
     payload = {
         "mac": test_mac,
         "ip": "192.168.1.100",
-        "start_time": timeNowTZ()
+        "start_time": timeNowDB()
     }
     client.post("/sessions/create", json=payload, headers=auth_headers(api_token))
 
@@ -81,7 +82,7 @@ def test_device_sessions_by_period(client, api_token, test_mac):
     payload = {
         "mac": test_mac,
         "ip": "192.168.1.200",
-        "start_time": timeNowTZ()
+        "start_time": timeNowDB()
     }
     resp_create = client.post("/sessions/create", json=payload, headers=auth_headers(api_token))
     assert resp_create.status_code == 200
@@ -116,7 +117,7 @@ def test_device_session_events(client, api_token, test_mac):
     payload = {
         "mac": test_mac,
         "ip": "192.168.1.250",
-        "start_time": timeNowTZ()
+        "start_time": timeNowDB()
     }
     resp_create = client.post(
         "/sessions/create",
@@ -164,7 +165,7 @@ def test_delete_session(client, api_token, test_mac):
     payload = {
         "mac": test_mac,
         "ip": "192.168.1.100",
-        "start_time": timeNowTZ()
+        "start_time": timeNowDB()
     }
     client.post("/sessions/create", json=payload, headers=auth_headers(api_token))
 

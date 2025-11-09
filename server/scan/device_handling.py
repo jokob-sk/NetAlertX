@@ -2,13 +2,15 @@ import sys
 import subprocess
 import os
 import re
+import datetime
 from dateutil import parser
 
 # Register NetAlertX directories
 INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
 sys.path.extend([f"{INSTALL_PATH}/server"])
 
-from helper import timeNowTZ, get_setting_value, check_IP_format
+from helper import get_setting_value, check_IP_format
+from utils.datetime_utils import timeNowDB, normalizeTimeStamp
 from logger import mylog, Logger
 from const import vendorsPath, vendorsPathNewest, sql_generateGuid
 from models.device_instance import DeviceInstance
@@ -55,11 +57,10 @@ def exclude_ignored_devices(db):
 
     sql.execute(query)
 
-
-# -------------------------------------------------------------------------------
-def update_devices_data_from_scan(db):
-    sql = db.sql  # TO-DO
-    startTime = timeNowTZ().strftime("%Y-%m-%d %H:%M:%S")
+#-------------------------------------------------------------------------------
+def update_devices_data_from_scan (db):
+    sql = db.sql #TO-DO    
+    startTime = timeNowDB()
 
     # Update Last Connection
     mylog("debug", "[Update Devices] 1 Last Connection")
@@ -424,10 +425,10 @@ def print_scan_stats(db):
             mylog("verbose", f"    {row['cur_ScanMethod']}: {row['scan_method_count']}")
 
 
-# -------------------------------------------------------------------------------
-def create_new_devices(db):
-    sql = db.sql  # TO-DO
-    startTime = timeNowTZ()
+#-------------------------------------------------------------------------------
+def create_new_devices (db):
+    sql = db.sql # TO-DO
+    startTime = timeNowDB()
 
     # Insert events for new devices from CurrentScan (not yet in Devices)
 
@@ -597,43 +598,86 @@ def create_new_devices(db):
     mylog("debug", "[New Devices] New Devices end")
     db.commitDB()
 
+#-------------------------------------------------------------------------------
+# Check if plugins data changed
+def check_plugin_data_changed(pm, plugins_to_check):
+    """
+    Checks whether any of the specified plugins have updated data since their
+    last recorded check time.
 
-# -------------------------------------------------------------------------------
-def update_devices_names(pm):
-    sql = pm.db.sql
-    resolver = NameResolver(pm.db)
-    device_handler = DeviceInstance(pm.db)
+    This function compares each plugin's `lastDataChange` timestamp from
+    `pm.plugin_states` with its corresponding `lastDataCheck` timestamp from
+    `pm.plugin_checks`. If a plugin's data has changed more recently than it
+    was last checked, it is flagged as changed.
 
-    # --- Short-circuit if no name-resolution plugin has changed ---
-    name_plugins = ["DIGSCAN", "NSLOOKUP", "NBTSCAN", "AVAHISCAN"]
+    Args:
+        pm (object): Plugin manager or state object containing:
+            - plugin_states (dict): Per-plugin metadata with "lastDataChange".
+            - plugin_checks (dict): Per-plugin last check timestamps.
+        plugins_to_check (list[str]): List of plugin names to validate.
 
-    # Retrieve last time name resolution was checked (string or datetime)
-    last_checked_str = pm.name_plugins_checked
-    last_checked_dt = (
-        parser.parse(last_checked_str)
-        if isinstance(last_checked_str, str)
-        else last_checked_str
-    )
+    Returns:
+        bool: True if any plugin data has changed since last check,
+              otherwise False.
 
-    # Collect valid state update timestamps for name-related plugins
-    state_times = []
-    for p in name_plugins:
-        state_updated = pm.plugin_states.get(p, {}).get("stateUpdated")
-        if state_updated and state_updated.strip():  # skip empty or None
-            state_times.append(state_updated)
+    Logging:
+        - Logs unexpected or invalid timestamps at level 'none'.
+        - Logs when no changes are detected at level 'debug'.
+        - Logs each changed plugin at level 'debug'.
+    """
 
-    # Determine the latest valid stateUpdated timestamp
-    latest_state_str = max(state_times, default=None)
-    latest_state_dt = parser.parse(latest_state_str) if latest_state_str else None
+    plugins_changed = []
+
+    for plugin_name in plugins_to_check:
+
+        last_data_change = pm.plugin_states.get(plugin_name, {}).get("lastDataChange")  
+        last_data_check = pm.plugin_checks.get(plugin_name, "")
+
+        if not last_data_change:
+            continue
+
+        # Normalize and validate last_changed timestamp
+        last_changed_ts = normalizeTimeStamp(last_data_change)
+
+        if last_changed_ts == None:
+            mylog('none', f'[check_plugin_data_changed] Unexpected last_data_change timestamp for {plugin_name} (input|output): ({last_data_change}|{last_changed_ts})')
+
+        # Normalize and validate last_data_check timestamp
+        last_data_check_ts = normalizeTimeStamp(last_data_check)
+
+        if last_data_check_ts == None:
+            mylog('none', f'[check_plugin_data_changed] Unexpected last_data_check timestamp for {plugin_name} (input|output): ({last_data_check}|{last_data_check_ts})')
+
+        # Track which plugins have newer state than last_checked
+        if last_data_check_ts is None or last_changed_ts is None or last_changed_ts > last_data_check_ts:
+            mylog('debug', f'[check_plugin_data_changed] {plugin_name} changed (last_changed_ts|last_data_check_ts): ({last_changed_ts}|{last_data_check_ts})')
+            plugins_changed.append(plugin_name)
 
     # Skip if no plugin state changed since last check
-    if last_checked_dt and latest_state_dt and latest_state_dt <= last_checked_dt:
-        mylog(
-            "debug",
-            "[Update Device Name] No relevant name plugin changes since last check — skipping update.",
-        )
+    if len(plugins_changed) == 0:
+        mylog('debug', f'[check_plugin_data_changed] No relevant plugin changes since last check for {plugins_to_check}')
+        return False
+
+    # Continue if changes detected
+    for p in plugins_changed:
+        mylog('debug', f'[check_plugin_data_changed] {p} changed (last_data_change|last_data_check): ({pm.plugin_states.get(p, {}).get("lastDataChange")}|{pm.plugin_checks.get(p)})')
+
+    return True
+
+#-------------------------------------------------------------------------------
+def update_devices_names(pm):
+
+    # --- Short-circuit if no name-resolution plugin has changed ---
+    if check_plugin_data_changed(pm, ["DIGSCAN", "NSLOOKUP", "NBTSCAN", "AVAHISCAN"]) == False:
+        mylog('debug', '[Update Device Name] No relevant plugin changes since last check.')
         return
 
+    mylog('debug', '[Update Device Name] Check if unknown devices present to resolve names for or if REFRESH_FQDN enabled.')
+
+    sql = pm.db.sql
+    resolver = NameResolver(pm.db)
+    device_handler = DeviceInstance(pm.db)   
+    
     nameNotFound = "(name not found)"
 
     # Define resolution strategies in priority order
@@ -759,10 +803,7 @@ def update_devices_names(pm):
 
     # --- Step 3: Log last checked time ---
     # After resolving names, update last checked
-    sql = pm.db.sql
-    sql.execute("SELECT CURRENT_TIMESTAMP")
-    row = sql.fetchone()
-    pm.name_plugins_checked = row[0] if row else None
+    pm.plugin_checks = {"DIGSCAN": timeNowDB(), "AVAHISCAN": timeNowDB(), "NSLOOKUP": timeNowDB(), "NBTSCAN": timeNowDB() }
 
 
 # -------------------------------------------------------------------------------

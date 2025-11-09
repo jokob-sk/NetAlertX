@@ -8,23 +8,18 @@ import shutil
 import re
 
 # Register NetAlertX libraries
-import conf
-from const import fullConfPath, fullConfFolder, default_tz
-from helper import (
-    getBuildTimeStamp,
-    fixPermissions,
-    collect_lang_strings,
-    updateSubnets,
-    timeNowTZ,
-    generate_random_string,
-)
+import conf 
+from const import fullConfPath, applicationPath, fullConfFolder, default_tz
+from helper import getBuildTimeStampAndVersion, fixPermissions, collect_lang_strings, updateSubnets, isJsonObject, setting_value_to_python_type, get_setting_value, generate_random_string
+from utils.datetime_utils import timeNowDB
 from app_state import updateState
 from logger import mylog
 from api import update_api
 from scheduler import schedule_class
 from plugin import plugin_manager, print_plugin_info
-from plugin_utils import get_plugins_configs, get_set_value_for_init
+from utils.plugin_utils import get_plugins_configs, get_set_value_for_init
 from messaging.in_app import write_notification
+from utils.crypto_utils import get_random_bytes
 
 # ===============================================================================
 # Initialise user defined values
@@ -674,39 +669,23 @@ def importConfigs(pm, db, all_plugins):
 
     # -----------------
     # HANDLE APP was upgraded message - clear cache
-
+    
     # Check if app was upgraded
-
-    buildTimestamp = getBuildTimeStamp()
-    cur_version = conf.VERSION
-
-    mylog("debug", [f"[Config] buildTimestamp: '{buildTimestamp}'"])
-    mylog("debug", [f"[Config] conf.VERSION  : '{cur_version}'"])
-
-    if str(cur_version) != str(buildTimestamp):
-        mylog("none", ["[Config] App upgraded 🚀"])
-
+        
+    buildTimestamp, new_version = getBuildTimeStampAndVersion()
+    prev_version = conf.VERSION 
+    
+    mylog('debug', [f"[Config] buildTimestamp | prev_version | .VERSION file: '{buildTimestamp}|{prev_version}|{new_version}'"])
+    
+    if str(prev_version) != str(new_version):
+        
+        mylog('none', ['[Config] App upgraded 🚀'])      
+                
         # ccd(key, default, config_dir, name, inputtype, options, group, events=None, desc="", setJsonMetadata=None, overrideTemplate=None, forceDefault=False)
-        ccd(
-            "VERSION",
-            buildTimestamp,
-            c_d,
-            "_KEEP_",
-            "_KEEP_",
-            "_KEEP_",
-            "_KEEP_",
-            None,
-            "_KEEP_",
-            None,
-            None,
-            True,
-        )
-
-        write_notification(
-            '[Upgrade] : App upgraded 🚀 Please clear the cache: <ol> <li>Click OK below</li>  <li>Clear the browser cache (shift + browser refresh button)</li> <li> Clear app cache with the <i class="fa-solid fa-rotate"></i> (reload) button in the header</li><li>Go to Settings and click Save</li> </ol> Check out new features and what has changed in the <a href="https://github.com/jokob-sk/NetAlertX/releases" target="_blank">📓 release notes</a>.',
-            "interrupt",
-            timeNowTZ(),
-        )
+        ccd('VERSION', new_version , c_d, '_KEEP_', '_KEEP_', '_KEEP_', '_KEEP_', None, "_KEEP_", None, None, True)
+        
+        write_notification(f'[Upgrade] : App upgraded from {prev_version} to {new_version} 🚀 Please clear the cache: <ol> <li>Click OK below</li>  <li>Clear the browser cache (shift + browser refresh button)</li> <li> Clear app cache with the <i class="fa-solid fa-rotate"></i> (reload) button in the header</li><li>Go to Settings and click Save</li> </ol> Check out new features and what has changed in the <a href="https://github.com/jokob-sk/NetAlertX/releases" target="_blank">📓 release notes</a>.', 'interrupt', timeNowDB())
+    
 
     # -----------------
     # Initialization finished, update DB and API endpoints
@@ -738,19 +717,13 @@ def importConfigs(pm, db, all_plugins):
     #             settingsImported = None (timestamp),
     #             showSpinner = False (1/0),
     #             graphQLServerStarted = 1 (1/0))
-    updateState(
-        "Config imported",
-        conf.lastImportedConfFile,
-        conf.lastImportedConfFile,
-        False,
-        1,
-    )
-
-    msg = "[Config] Imported new settings config"
-    mylog("minimal", msg)
-
+    updateState("Config imported", conf.lastImportedConfFile, conf.lastImportedConfFile, False, 1, None, None, new_version)   
+    
+    msg = '[Config] Imported new settings config'
+    mylog('minimal', msg)
+    
     # front end app log loggging
-    write_notification(msg, "info", timeNowTZ())
+    write_notification(msg, 'info', timeNowDB())    
 
     return pm, all_plugins, True
 

@@ -12,8 +12,9 @@ from scan.device_handling import (
     exclude_ignored_devices,
     update_devices_data_from_scan,
 )
-from helper import timeNowTZ, get_setting_value
+from helper import get_setting_value
 from db.db_helper import print_table_schema
+from utils.datetime_utils import timeNowDB, timeNowTZ
 from logger import mylog, Logger
 from messaging.reporting import skip_repeated_notifications
 
@@ -132,11 +133,11 @@ def create_sessions_snapshot(db):
     db.commitDB()
 
 
-# -------------------------------------------------------------------------------
-def insert_events(db):
-    sql = db.sql  # TO-DO
-    startTime = timeNowTZ()
-
+#-------------------------------------------------------------------------------
+def insert_events (db):
+    sql = db.sql #TO-DO
+    startTime = timeNowDB()    
+    
     # Check device down
     mylog("debug", "[Events] - 1 - Devices down")
     sql.execute(f"""INSERT INTO Events (eve_MAC, eve_IP, eve_DateTime,
@@ -198,7 +199,7 @@ def insert_events(db):
 def insertOnlineHistory(db):
     sql = db.sql  # TO-DO: Implement sql object
 
-    scanTimestamp = timeNowTZ()
+    scanTimestamp = timeNowDB()
 
     # Query to fetch all relevant device counts in one go
     query = """

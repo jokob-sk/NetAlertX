@@ -1,19 +1,24 @@
 #!/usr/bin/env python
-
-from database import DB
-from plugin_helper import Plugin_Objects, handleEmpty
-from logger import mylog, Logger
-from helper import get_setting_value
-from const import logPath
-import conf
-from pytz import timezone
-
 import os
 import time
+import pathlib
 import argparse
+import sys
 import re
 import base64
 import subprocess
+
+# Register NetAlertX directories
+INSTALL_PATH="/app"
+sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
+
+from database import DB
+from plugin_helper import Plugin_Objects, handleEmpty
+from logger import mylog, Logger, append_line_to_file
+from helper import get_setting_value
+from const import logPath, applicationPath
+import conf
+from pytz import timezone
 
 # Make sure the TIMEZONE for logging is correct
 conf.tz = timezone(get_setting_value("TIMEZONE"))

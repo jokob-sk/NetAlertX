@@ -11,7 +11,8 @@ sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from plugin_helper import Plugin_Objects, decodeBase64
 from logger import mylog, Logger, append_line_to_file
-from helper import timeNowTZ, get_setting_value 
+from utils.datetime_utils import timeNowDB
+from helper import get_setting_value 
 from const import logPath
 import conf
 from pytz import timezone
@@ -155,7 +156,7 @@ def performNmapScan(deviceIPs, deviceMACs, timeoutSec, args):
                 elif 'PORT' in line and 'STATE' in line and 'SERVICE' in line:    
                     startCollecting = False # end reached
                 elif startCollecting and len(line.split()) == 3:                                    
-                    newEntriesTmp.append(nmap_entry(ip, deviceMACs[devIndex], timeNowTZ(), line.split()[0], line.split()[1], line.split()[2]))
+                    newEntriesTmp.append(nmap_entry(ip, deviceMACs[devIndex], timeNowDB(), line.split()[0], line.split()[1], line.split()[2]))
                     newPortsPerDevice += 1
                 elif 'Nmap done' in line:
                     duration = line.split('scanned in ')[1]            

@@ -10,8 +10,9 @@ INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from plugin_helper import Plugin_Objects
+from utils.datetime_utils import timeNowDB
 from logger import mylog, Logger
-from helper import timeNowTZ, get_setting_value 
+from helper import get_setting_value 
 import conf
 from pytz import timezone
 from const import logPath
@@ -38,7 +39,7 @@ def main():
     speedtest_result = run_speedtest()
     plugin_objects.add_object(
         primaryId   = 'Speedtest',
-        secondaryId = timeNowTZ(),            
+        secondaryId = timeNowDB(),            
         watched1    = speedtest_result['download_speed'],
         watched2    = speedtest_result['upload_speed'],
         watched3    = 'null',

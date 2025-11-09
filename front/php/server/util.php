@@ -177,7 +177,10 @@ function checkPermissions($files)
 }
 
 // ----------------------------------------------------------------------------------------
-
+// 🔺----- API ENDPOINTS SUPERSEDED -----🔺
+// check server/api_server/api_server_start.py for equivalents
+// equivalent: /messaging/in-app/write
+// 🔺----- API ENDPOINTS SUPERSEDED -----🔺
 function displayMessage($message, $logAlert = FALSE, $logConsole = TRUE, $logFile = TRUE, $logEcho = FALSE)
 {
   global $logFolderPath, $log_file, $timestamp;
@@ -235,7 +238,10 @@ function displayMessage($message, $logAlert = FALSE, $logConsole = TRUE, $logFil
 
 }
 
-
+// 🔺----- API ENDPOINTS SUPERSEDED -----🔺
+// check server/api_server/api_server_start.py for equivalents
+// equivalent: /logs/add-to-execution-queue
+// 🔺----- API ENDPOINTS SUPERSEDED -----🔺
 // ----------------------------------------------------------------------------------------
 // Adds an action to perform into the execution_queue.log file
 function addToExecutionQueue($action)
@@ -258,6 +264,10 @@ function addToExecutionQueue($action)
 
 
 // ----------------------------------------------------------------------------------------
+// 🔺----- API ENDPOINTS SUPERSEDED -----🔺
+// check server/api_server/api_server_start.py for equivalents
+// equivalent: /logs DELETE
+// 🔺----- API ENDPOINTS SUPERSEDED -----🔺
 function cleanLog($logFile)
 {  
   global $logFolderPath, $timestamp;
@@ -424,6 +434,10 @@ function saveSettings()
 }
 
 // -------------------------------------------------------------------------------------------
+// 🔺----- API ENDPOINTS SUPERSEDED -----🔺
+// check server/api_server/api_server_start.py for equivalents
+// equivalent: /graphql LangStrings endpoint
+// 🔺----- API ENDPOINTS SUPERSEDED -----🔺
 function getString ($setKey, $default) {
 
   $result = lang($setKey);
@@ -436,6 +450,10 @@ function getString ($setKey, $default) {
   return $default;
 }
 // -------------------------------------------------------------------------------------------
+// 🔺----- API ENDPOINTS SUPERSEDED -----🔺
+// check server/api_server/api_server_start.py for equivalents
+// equivalent: /settings/<key>
+// 🔺----- API ENDPOINTS SUPERSEDED -----🔺
 function getSettingValue($setKey) {
   // Define the JSON endpoint URL
   $apiRoot = rtrim(getenv('NETALERTX_API') ?: '/tmp/api', '/');

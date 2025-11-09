@@ -3,13 +3,13 @@ import json
 
 import conf
 from logger import mylog
+from utils.crypto_utils import decrypt_data
 from const import pluginsPath, apiPath
 from helper import (
     get_file_content,
     get_setting_value,
     setting_value_to_python_type,
 )
-from crypto_utils import decrypt_data
 
 module_name = "Plugin utils"
 

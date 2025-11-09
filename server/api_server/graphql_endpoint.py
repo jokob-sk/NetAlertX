@@ -1,5 +1,5 @@
 import graphene
-from graphene import ObjectType, String, Int, Boolean, List, Field, InputObjectType
+from graphene import ObjectType, String, Int, Boolean, List, Field, InputObjectType, Argument
 import json
 import sys
 import os
@@ -111,6 +111,22 @@ class SettingResult(ObjectType):
     settings = List(Setting)
     count = Int()
 
+# --- LANGSTRINGS --- 
+
+# In-memory cache for lang strings
+_langstrings_cache = {}        # caches lists per file (core JSON or plugin)
+_langstrings_cache_mtime = {}  # tracks last modified times
+
+# LangString ObjectType
+class LangString(ObjectType):
+    langCode = String()
+    langStringKey = String()
+    langStringText = String()
+
+
+class LangStringResult(ObjectType):
+    langStrings = List(LangString)
+    count = Int()
 
 # Define Query Type with Pagination Support
 class Query(ObjectType):
@@ -324,6 +340,107 @@ class Query(ObjectType):
 
         return SettingResult(settings=settings, count=len(settings))
 
+    # --- LANGSTRINGS --- 
+    langStrings = Field(
+        LangStringResult,
+        langCode=Argument(String, required=False),
+        langStringKey=Argument(String, required=False)
+    )
+
+    def resolve_langStrings(self, info, langCode=None, langStringKey=None, fallback_to_en=True):
+        """
+        Collect language strings, optionally filtered by language code and/or string key.
+        Caches in memory for performance. Can fallback to 'en_us' if a string is missing.
+        """
+        global _langstrings_cache, _langstrings_cache_mtime
+
+        langStrings = []
+
+        # --- CORE JSON FILES ---
+        language_folder = '/app/front/php/templates/language/'
+        if os.path.exists(language_folder):
+            for filename in os.listdir(language_folder):
+                if filename.endswith('.json'):
+                    file_lang_code = filename.replace('.json', '')
+
+                    # Filter by langCode if provided
+                    if langCode and file_lang_code != langCode:
+                        continue
+
+                    file_path = os.path.join(language_folder, filename)
+                    file_mtime = os.path.getmtime(file_path)
+                    cache_key = f'core_{file_lang_code}'
+
+                    # Use cached data if available and not modified
+                    if cache_key in _langstrings_cache_mtime and _langstrings_cache_mtime[cache_key] == file_mtime:
+                        lang_list = _langstrings_cache[cache_key]
+                    else:
+                        try:
+                            with open(file_path, 'r', encoding='utf-8') as f:
+                                data = json.load(f)
+                                lang_list = [
+                                    LangString(
+                                        langCode=file_lang_code,
+                                        langStringKey=key,
+                                        langStringText=value
+                                    ) for key, value in data.items()
+                                ]
+                                _langstrings_cache[cache_key] = lang_list
+                                _langstrings_cache_mtime[cache_key] = file_mtime
+                        except (FileNotFoundError, json.JSONDecodeError) as e:
+                            mylog('none', f'[graphql_schema] Error loading core language strings from {filename}: {e}')
+                            lang_list = []
+
+                    langStrings.extend(lang_list)
+
+        # --- PLUGIN STRINGS ---
+        plugin_file = folder + 'table_plugins_language_strings.json'
+        try:
+            file_mtime = os.path.getmtime(plugin_file)
+            cache_key = 'plugin'
+            if cache_key in _langstrings_cache_mtime and _langstrings_cache_mtime[cache_key] == file_mtime:
+                plugin_list = _langstrings_cache[cache_key]
+            else:
+                with open(plugin_file, 'r', encoding='utf-8') as f:
+                    plugin_data = json.load(f).get("data", [])
+                    plugin_list = [
+                        LangString(
+                            langCode=entry.get("Language_Code"),
+                            langStringKey=entry.get("String_Key"),
+                            langStringText=entry.get("String_Value")
+                        ) for entry in plugin_data
+                    ]
+                    _langstrings_cache[cache_key] = plugin_list
+                    _langstrings_cache_mtime[cache_key] = file_mtime
+        except (FileNotFoundError, json.JSONDecodeError) as e:
+            mylog('none', f'[graphql_schema] Error loading plugin language strings from {plugin_file}: {e}')
+            plugin_list = []
+
+        # Filter plugin strings by langCode if provided
+        if langCode:
+            plugin_list = [p for p in plugin_list if p.langCode == langCode]
+
+        langStrings.extend(plugin_list)
+
+        # --- Filter by string key if requested ---
+        if langStringKey:
+            langStrings = [ls for ls in langStrings if ls.langStringKey == langStringKey]
+
+        # --- Fallback to en_us if enabled and requested lang is missing ---
+        if fallback_to_en and langCode and langCode != "en_us":
+            for i, ls in enumerate(langStrings):
+                if not ls.langStringText:  # empty string triggers fallback
+                    # try to get en_us version
+                    en_list = _langstrings_cache.get("core_en_us", [])
+                    en_list += [p for p in _langstrings_cache.get("plugin", []) if p.langCode == "en_us"]
+                    en_fallback = [e for e in en_list if e.langStringKey == ls.langStringKey]
+                    if en_fallback:
+                        langStrings[i] = en_fallback[0]
+
+        mylog('trace', f'[graphql_schema] Collected {len(langStrings)} language strings '
+                    f'(langCode={langCode}, key={langStringKey}, fallback_to_en={fallback_to_en})')
+
+        return LangStringResult(langStrings=langStrings, count=len(langStrings))
 
 # helps sorting inconsistent dataset mixed integers and strings
 def mixed_type_sort_key(value):

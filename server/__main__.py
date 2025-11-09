@@ -23,8 +23,9 @@ from pathlib import Path
 # Register NetAlertX modules
 import conf
 from const import *
-from logger import mylog
-from helper import filePermissions, timeNowTZ
+from logger import  mylog
+from helper import  filePermissions
+from utils.datetime_utils import timeNowTZ
 from app_state import updateState
 from api import update_api
 from scan.session_events import process_scan

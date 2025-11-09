@@ -7,7 +7,8 @@ import pytest
 INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from helper import get_setting_value, timeNowTZ
+from helper import get_setting_value
+from utils.datetime_utils import timeNowDB
 from api_server.api_server_start import app
 
 
@@ -41,9 +42,12 @@ def b64(sql: str) -> str:
 # Device lifecycle via dbquery endpoints
 # -----------------------------
 def test_dbquery_create_device(client, api_token, test_mac):
+
+    now = timeNowDB()
+
     sql = f"""
         INSERT INTO Devices (devMac, devName, devVendor, devOwner, devFirstConnection, devLastConnection, devLastIP)
-        VALUES ('{test_mac}', 'UnitTestDevice', 'TestVendor', 'UnitTest', '{timeNowTZ()}', '{timeNowTZ()}', '192.168.100.22' )
+        VALUES ('{test_mac}', 'UnitTestDevice', 'TestVendor', 'UnitTest', '{now}', '{now}', '192.168.100.22' )
     """
     resp = client.post("/dbquery/write", json={"rawSql": b64(sql)}, headers=auth_headers(api_token))
     print(resp.json)

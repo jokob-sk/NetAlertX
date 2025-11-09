@@ -1,7 +1,9 @@
 import os
+import uuid
 
 from const import logPath
 from logger import mylog
+from utils.datetime_utils import timeNowDB
 
 
 class UserEventsQueueInstance:
@@ -78,3 +80,44 @@ class UserEventsQueueInstance:
         mylog("minimal", ["[UserEventsQueueInstance] Processed event: ", event])
 
         return removed
+
+    def add_event(self, action):
+        """
+        Append an action to the execution queue log file.
+
+        Args:
+            action (str): Description of the action to queue.
+
+        Returns:
+            tuple: (success: bool, message: str)
+                success - True if the event was successfully added.
+                message - Log message describing the result.
+        """
+        timestamp = timeNowDB()
+        # Generate GUID
+        guid = str(uuid.uuid4())
+
+        if not action or not isinstance(action, str):
+            msg = "[UserEventsQueueInstance] Invalid or missing action"
+            mylog('none', [msg])
+            
+            return False, msg
+
+        try:
+            with open(self.log_file, "a") as f:
+                f.write(f"[{timestamp}]|{guid}|{action}\n")
+
+            msg = f'[UserEventsQueueInstance] Action "{action}" added to the execution queue.'
+            mylog('minimal', [msg])
+            
+            return True, msg
+
+        except Exception as e:
+            msg = f"[UserEventsQueueInstance] ERROR Failed to write to {self.log_file}: {e}"
+            mylog('none', [msg])
+            
+            return False, msg
+    
+
+
+
