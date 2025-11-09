@@ -152,7 +152,7 @@ def api_copy_device():
     mac_to = data.get("macTo")
 
     if not mac_from or not mac_to:
-        return jsonify({"success": False, "message": "Missing parameters", "error": "macFrom and macTo are required"}), 400
+        return jsonify({"success": False, "message": "ERROR: Missing parameters", "error": "macFrom and macTo are required"}), 400
 
     return copy_device(mac_from, mac_to)
 
@@ -166,7 +166,7 @@ def api_update_device_column(mac):
     column_value = data.get("columnValue")
 
     if not column_name or not column_value:
-        return jsonify({"success": False, "message": "Missing parameters", "error": "columnName and columnValue are required"}), 400
+        return jsonify({"success": False, "message": "ERROR: Missing parameters", "error": "columnName and columnValue are required"}), 400
 
     return update_device_column(mac, column_name, column_value)
 
@@ -267,7 +267,7 @@ def api_nslookup():
 
     data = request.get_json(silent=True)
     if not data or "devLastIP" not in data:
-        return jsonify({"success": False, "message": "Missing parameters", "error": "Missing 'devLastIP'"}), 400
+        return jsonify({"success": False, "message": "ERROR: Missing parameters", "error": "Missing 'devLastIP'"}), 400
 
     ip = data["devLastIP"]
     return nslookup(ip)
@@ -283,7 +283,7 @@ def api_nmap():
 
     data = request.get_json(silent=True)
     if not data or "scan" not in data or "mode" not in data:
-        return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Missing 'scan' or 'mode'"}), 400
+        return jsonify({"success": False, "message": "ERROR: Missing parameters", "error": "Missing 'scan' or 'mode'"}), 400
 
     ip = data["scan"]
     mode = data["mode"]
@@ -310,7 +310,7 @@ def dbquery_read():
     raw_sql_b64 = data.get("rawSql")
 
     if not raw_sql_b64:
-        return jsonify({"success": False, "message": "Missing parameters", "error": "rawSql is required"}), 400
+        return jsonify({"success": False, "message": "ERROR: Missing parameters", "error": "rawSql is required"}), 400
     
     return read_query(raw_sql_b64)
     
@@ -323,7 +323,7 @@ def dbquery_write():
     data = request.get_json() or {}
     raw_sql_b64 = data.get("rawSql")
     if not raw_sql_b64:
-        return jsonify({"success": False, "message": "Missing parameters",  "error": "rawSql is required"}), 400
+        return jsonify({"success": False, "message": "ERROR: Missing parameters",  "error": "rawSql is required"}), 400
 
     return write_query(raw_sql_b64)
 
@@ -336,7 +336,7 @@ def dbquery_update():
     data = request.get_json() or {}
     required = ["columnName", "id", "dbtable", "columns", "values"]
     if not all(data.get(k) for k in required):
-        return jsonify({"success": False, "message": "Missing parameters", "error": "Missing required 'columnName', 'id', 'dbtable', 'columns', or 'values' query parameter"}), 400
+        return jsonify({"success": False, "message": "ERROR: Missing parameters", "error": "Missing required 'columnName', 'id', 'dbtable', 'columns', or 'values' query parameter"}), 400
 
     return update_query(
                 column_name=data["columnName"],
@@ -355,7 +355,7 @@ def dbquery_delete():
     data = request.get_json() or {}
     required = ["columnName", "id", "dbtable"]
     if not all(data.get(k) for k in required):
-        return jsonify({"success": False, "message": "Missing parameters", "error": "Missing required 'columnName', 'id', or 'dbtable' query parameter"}), 400
+        return jsonify({"success": False, "message": "ERROR: Missing parameters", "error": "Missing required 'columnName', 'id', or 'dbtable' query parameter"}), 400
 
     return  delete_query(
                 column_name=data["columnName"],
@@ -384,7 +384,7 @@ def api_clean_log():
 
     file = request.args.get("file")
     if not file:
-        return jsonify({"success": False, "message": "Missing parameters", "error": "Missing 'file' query parameter"}), 400
+        return jsonify({"success": False, "message": "ERROR: Missing parameters", "error": "Missing 'file' query parameter"}), 400
 
     return clean_log(file)
 
@@ -402,7 +402,7 @@ def api_add_to_execution_queue():
 
     if not action:
         return jsonify({
-            "success": False, "message": "Missing parameters", "error": "Missing required 'action' field in JSON body"}), 400
+            "success": False, "message": "ERROR: Missing parameters", "error": "Missing required 'action' field in JSON body"}), 400
 
     success, message = queue.add_event(action)
     status_code = 200 if success else 400
@@ -494,7 +494,7 @@ def api_create_session():
     event_type_disc = data.get("event_type_disc", "Disconnected")
 
     if not mac or not ip or not start_time:
-        return jsonify({"success": False, "message": "Missing parameters", "error": "Missing required 'mac', 'ip', or 'start_time' query parameter"}), 400
+        return jsonify({"success": False, "message": "ERROR: Missing parameters", "error": "Missing required 'mac', 'ip', or 'start_time' query parameter"}), 400
 
     return create_session(mac, ip, start_time, end_time, event_type_conn, event_type_disc)
 
@@ -506,7 +506,7 @@ def api_delete_session():
 
     mac = request.json.get("mac") if request.is_json else None
     if not mac:
-        return jsonify({"success": False, "message": "Missing parameters", "error": "Missing 'mac' query parameter"}), 400
+        return jsonify({"success": False, "message": "ERROR: Missing parameters", "error": "Missing 'mac' query parameter"}), 400
 
     return delete_session(mac)
 
@@ -574,7 +574,7 @@ def api_write_notification():
     level = data.get("level", "alert")
 
     if not content:
-        return jsonify({"success": False, "message": "Missing parameters", "error": "Missing content"}), 400
+        return jsonify({"success": False, "message": "ERROR: Missing parameters", "error": "Missing content"}), 400
     
     write_notification(content, level)
     return jsonify({"success": True})
