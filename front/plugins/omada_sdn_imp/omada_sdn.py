@@ -21,12 +21,7 @@ __version__ = "1.3"  # fix detection of the default gateway IP address that woul
 # curl -X POST -d '{"host":{"enabled":"1","hostname":"test","domain":"testdomain.com","rr":"A","mxprio":"","mx":"","server":"10.0.1.1","description":""}}' -H "Content-Type: application/json" -k -u $OPNS_KEY:$OPNS_SECRET https://$IPFW/api/unbound/settings/AddHostOverride
 #
 import os
-import pathlib
 import sys
-import json
-import sqlite3
-import tplink_omada_client
-import importlib.util
 import time
 import io
 import re
@@ -37,15 +32,13 @@ import multiprocessing
 
 
 # Define the installation path and extend the system path for plugin imports
-INSTALL_PATH = "/app"
+INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64
-from utils.plugin_utils import get_plugins_configs
+from plugin_helper import Plugin_Objects
 from logger import mylog, Logger
-from const import pluginsPath, fullDbPath, logPath
+from const import logPath
 from helper import get_setting_value
-from messaging.in_app import write_notification
 from pytz import timezone
 import conf
 
@@ -151,7 +144,7 @@ def callomada(myargs):
             with redirect_stdout(mf):
                 bar = omada(myargs)
             omada_output = mf.getvalue()
-        except Exception as e:
+        except Exception:
             mylog(
                 "minimal",
                 [f"[{pluginName}] ERROR WHILE CALLING callomada:{arguments}\n {mf}"],
@@ -172,7 +165,7 @@ def extract_mac_addresses(text):
 
 def find_default_gateway_ip():
     # Get the routing table
-    from scapy.all import conf, Route, sr1, IP, ICMP
+    from scapy.all import conf
 
     routing_table = conf.route.routes
     for route in routing_table:

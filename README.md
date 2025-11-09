@@ -37,9 +37,9 @@ Start NetAlertX in seconds with Docker:
 
 ```bash
 docker run -d --rm --network=host \
-  -v local_path/config:/app/config \
-  -v local_path/db:/app/db \
-  --mount type=tmpfs,target=/app/api \
+  -v local_path/config:/data/config \
+  -v local_path/db:/data/db \
+  --mount type=tmpfs,target=/tmp/api \
   -e PUID=200 -e PGID=300 \
   -e TZ=Europe/Berlin \
   -e PORT=20211 \
@@ -140,7 +140,7 @@ A: No. All scans and data remain local, unless you set up cloud-based notificati
 A: Yes! You can install it bare-metal. See the [bare metal installation guide](https://github.com/jokob-sk/NetAlertX/blob/main/docs/HW_INSTALL.md).
 
 **Q: Where is the data stored?**  
-A: In the `/config` and `/db` folders, mapped in Docker. Back up these folders regularly.
+A: In the `/data/config` and `/data/db` folders. Back up these folders regularly.
 
 
 ## 🐞 Known Issues

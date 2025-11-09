@@ -1,13 +1,11 @@
 #!/usr/bin/env python3
 import os
 import sys
-import json
 import socket
 import ipaddress
-from zeroconf import Zeroconf, ServiceBrowser, ServiceInfo, InterfaceChoice, IPVersion
-from zeroconf.asyncio import AsyncZeroconf
+from zeroconf import Zeroconf
 
-INSTALL_PATH = "/app"
+INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from plugin_helper import Plugin_Objects

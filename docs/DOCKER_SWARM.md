@@ -44,9 +44,9 @@ services:
     ports:
       - 20211:20211
     volumes:
-      - /mnt/YOUR_SERVER/netalertx/config:/app/config:rw
-      - /mnt/YOUR_SERVER/netalertx/db:/netalertx/app/db:rw
-      - /mnt/YOUR_SERVER/netalertx/logs:/netalertx/app/log:rw
+      - /mnt/YOUR_SERVER/netalertx/config:/data/config:rw
+      - /mnt/YOUR_SERVER/netalertx/db:/netalertx/data/db:rw
+      - /mnt/YOUR_SERVER/netalertx/logs:/netalertx/tmp/log:rw
     environment:
       - TZ=Europe/London
       - PORT=20211

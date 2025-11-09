@@ -9,7 +9,7 @@ NetAlertX comes with several logs that help to identify application issues. Thes
 
 You can find most of the logs exposed in the UI under _Maintenance -> Logs_. 
 
-If the UI is inaccessible, you can access them under `/app/log`.
+If the UI is inaccessible, you can access them under `/tmp/log`.
 
 ![Logs](./img/LOGGING/maintenance_logs.png)
 
@@ -52,18 +52,18 @@ The default logs are erased every time the container restarts because they are s
 
 2. Edit your `docker-compose.yml` file:
 
-   * **Comment out** the `/app/log` line under the `tmpfs:` section.
+   * **Comment out** the `/tmp/log` line under the `tmpfs:` section.
    * **Uncomment** the "Retain logs" line under the `volumes:` section and set your desired host path.
 
    ```yaml
    ...
        tmpfs:
-         # - "/app/log:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+         # - "/tmp/log:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
    ...
        volumes:
    ...
-         # Retain logs - comment out tmpfs /app/log if you want to retain logs between container restarts
-         - /home/adam/netalertx_logs:/app/log
+         # Retain logs - comment out tmpfs /tmp/log if you want to retain logs between container restarts
+         - /home/adam/netalertx_logs:/tmp/log
    ...
    ```
 3. Restart the container:
@@ -72,4 +72,4 @@ The default logs are erased every time the container restarts because they are s
    docker-compose up -d
    ```
 
-This change stops Docker from mounting a temporary in-memory volume at `/app/log`. Instead, it "bind mounts" a persistent folder from your host computer (e.g., `/data/netalertx_logs`) to that *same location* inside the container. 
+This change stops Docker from mounting a temporary in-memory volume at `/tmp/log`. Instead, it "bind mounts" a persistent folder from your host computer (e.g., `/data/netalertx_logs`) to that *same location* inside the container. 

@@ -1,7 +1,18 @@
 <?php
 
 // Constants
-define('CONFIG_PATH', $_SERVER['DOCUMENT_ROOT'] . "/../config/app.conf");
+$configFolderPath = rtrim(getenv('NETALERTX_CONFIG') ?: '/data/config', '/');
+$legacyConfigPath = $_SERVER['DOCUMENT_ROOT'] . "/../config/app.conf";
+
+// Use environment variable path, fallback to legacy
+if (file_exists($configFolderPath . '/app.conf')) {
+    define('CONFIG_PATH', $configFolderPath . '/app.conf');
+} else if (file_exists($legacyConfigPath)) {
+    define('CONFIG_PATH', $legacyConfigPath);
+} else {
+    define('CONFIG_PATH', $configFolderPath . '/app.conf'); // default to new location
+}
+
 define('COOKIE_SAVE_LOGIN_NAME', "NetAlertX_SaveLogin");
 
 // Utility Functions
@@ -48,7 +59,7 @@ if (!empty($_REQUEST['action']) && $_REQUEST['action'] == 'logout') {
 
 // Load configuration
 if (!file_exists(CONFIG_PATH)) {
-    die("Configuration file not found in " . $_SERVER['DOCUMENT_ROOT'] . "/../config/app.conf");
+    die("Configuration file not found in " . CONFIG_PATH);
 }
 $configLines = file(CONFIG_PATH);
 

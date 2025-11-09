@@ -2,25 +2,21 @@
 #!/usr/bin/env python
 
 import json
-import subprocess
-import argparse
 import os
-import pathlib
 import sys
 import requests
-from datetime import datetime
 from base64 import b64encode
 
 # Register NetAlertX directories
-INSTALL_PATH="/app"
+INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 import conf
 from const import confFileName, logPath
 from plugin_helper import Plugin_Objects, handleEmpty
-from logger import mylog, Logger, append_line_to_file
-from helper import get_setting_value
 from utils.datetime_utils import timeNowDB
+from logger import mylog, Logger
+from helper import get_setting_value
 from models.notification_instance import NotificationInstance
 from database import DB
 from pytz import timezone
@@ -64,7 +60,7 @@ def main():
     for notification in new_notifications:
 
         # Send notification
-        response_text, response_status_code = send(notification["HTML"], notification["Text"])    
+        response_text, response_status_code = send(notification["HTML"], notification["Text"])
 
         # Log result
         plugin_objects.add_object(

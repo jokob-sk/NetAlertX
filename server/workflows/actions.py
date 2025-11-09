@@ -1,26 +1,26 @@
-import sys
 import sqlite3
+import os
+import sys
 
 # Register NetAlertX directories
-INSTALL_PATH="/app"
+INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
 sys.path.extend([f"{INSTALL_PATH}/server"])
 
-import conf
 from logger import mylog, Logger
 from helper import get_setting_value
 from models.device_instance import DeviceInstance
 from models.plugin_object_instance import PluginObjectInstance
 
 # Make sure log level is initialized correctly
-Logger(get_setting_value('LOG_LEVEL'))
+Logger(get_setting_value("LOG_LEVEL"))
 
-from workflows.triggers import Trigger
+
 
 class Action:
     """Base class for all actions."""
 
-    def __init__(self, trigger):        
-        self.trigger = trigger    
+    def __init__(self, trigger):
+        self.trigger = trigger
 
     def execute(self, obj):
         """Executes the action on the given object."""
@@ -37,7 +37,10 @@ class UpdateFieldAction(Action):
         self.db = db
 
     def execute(self):
-        mylog('verbose', f"[WF] Updating field '{self.field}' to '{self.value}' for event object {self.trigger.object_type}")
+        mylog(
+            "verbose",
+            f"[WF] Updating field '{self.field}' to '{self.value}' for event object {self.trigger.object_type}",
+        )
 
         obj = self.trigger.object
 
@@ -49,19 +52,19 @@ class UpdateFieldAction(Action):
 
         # currently unused
         if isinstance(obj, dict) and "ObjectGUID" in obj:
-            mylog('debug', f"[WF] Updating Object '{obj}' ")
+            mylog("debug", f"[WF] Updating Object '{obj}' ")
             plugin_instance = PluginObjectInstance(self.db)
             plugin_instance.updateField(obj["ObjectGUID"], self.field, self.value)
             processed = True
 
         elif isinstance(obj, dict) and "devGUID" in obj:
-            mylog('debug', f"[WF] Updating Device '{obj}' ")
+            mylog("debug", f"[WF] Updating Device '{obj}' ")
             device_instance = DeviceInstance(self.db)
             device_instance.updateField(obj["devGUID"], self.field, self.value)
             processed = True
 
         if not processed:
-            mylog('none', f"[WF] Could not process action for object: {obj}")
+            mylog("none", f"[WF] Could not process action for object: {obj}")
 
         return obj
 
@@ -74,7 +77,7 @@ class DeleteObjectAction(Action):
         self.db = db
 
     def execute(self):
-        mylog('verbose', f"[WF] Deleting event object {self.trigger.object_type}")
+        mylog("verbose", f"[WF] Deleting event object {self.trigger.object_type}")
 
         obj = self.trigger.object
 
@@ -84,21 +87,21 @@ class DeleteObjectAction(Action):
 
         processed = False
 
-        # currently unused 
+        # currently unused
         if isinstance(obj, dict) and "ObjectGUID" in obj:
-            mylog('debug', f"[WF] Updating Object '{obj}' ")
+            mylog("debug", f"[WF] Updating Object '{obj}' ")
             plugin_instance = PluginObjectInstance(self.db)
             plugin_instance.delete(obj["ObjectGUID"])
             processed = True
 
         elif isinstance(obj, dict) and "devGUID" in obj:
-            mylog('debug', f"[WF] Updating Device '{obj}' ")
+            mylog("debug", f"[WF] Updating Device '{obj}' ")
             device_instance = DeviceInstance(self.db)
             device_instance.delete(obj["devGUID"])
             processed = True
 
         if not processed:
-            mylog('none', f"[WF] Could not process action for object: {obj}")
+            mylog("none", f"[WF] Could not process action for object: {obj}")
 
         return obj
 
@@ -112,10 +115,14 @@ class RunPluginAction(Action):
         self.params = params
 
     def execute(self):
-        
         obj = self.trigger.object
 
-        mylog('verbose', [f"Executing plugin '{self.plugin_name}' with parameters {self.params} for object {obj}"])
+        mylog(
+            "verbose",
+            [
+                f"Executing plugin '{self.plugin_name}' with parameters {self.params} for object {obj}"
+            ],
+        )
         # PluginManager.run(self.plugin_name, self.parameters)
         return obj
 
@@ -130,7 +137,12 @@ class SendNotificationAction(Action):
 
     def execute(self):
         obj = self.trigger.object
-        mylog('verbose', [f"Sending notification via '{self.method}': {self.message} for object {obj}"])
+        mylog(
+            "verbose",
+            [
+                f"Sending notification via '{self.method}': {self.message} for object {obj}"
+            ],
+        )
         # NotificationManager.send(self.method, self.message)
         return obj
 

@@ -16,7 +16,7 @@ import os
 from unittest.mock import Mock, patch, MagicMock
 
 # Add the server directory to the path for imports
-INSTALL_PATH = "/app"
+INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/server"])
 sys.path.append('/home/dell/coding/bash/10x-agentic-setup/netalertx-sql-fix/server')
 
@@ -339,7 +339,11 @@ class TestSecurityBenchmarks(unittest.TestCase):
 
     def test_memory_usage_parameter_generation(self):
         """Test memory usage of parameter generation."""
-        import psutil
+        try:
+            import psutil
+        except ImportError:  # pragma: no cover - optional dependency
+            self.skipTest("psutil not available")
+            return
         import os
         
         process = psutil.Process(os.getpid())

@@ -17,13 +17,8 @@ services:
 
     volumes:
       - type: volume
-        source: netalertx_config
-        target: /app/config
-        read_only: false
-
-      - type: volume
-        source: netalertx_db
-        target: /app/db
+        source: netalertx_data
+        target: /data
         read_only: false
 
       - type: bind
@@ -51,5 +46,4 @@ services:
     restart: unless-stopped
 
 volumes:
-  netalertx_config:
-  netalertx_db:
+  netalertx_data:

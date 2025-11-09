@@ -43,7 +43,7 @@ A banner message will appear at the top of the web UI reminding you to update yo
 
 
 > [!TIP] 
-> If you have trouble accessing past backups, config or database files you can copy them into the newly mapped directories, for example by running this command in the container:  `cp -r /app/config /home/pi/pialert/config/old_backup_files`. This should create a folder in the `config` directory called `old_backup_files` containing all the files in that location. Another approach is to map the old location and the new one at the same time to copy things over. 
+> If you have trouble accessing past backups, config or database files you can copy them into the newly mapped directories, for example by running this command in the container:  `cp -r /data/config /home/pi/pialert/config/old_backup_files`. This should create a folder in the `config` directory called `old_backup_files` containing all the files in that location. Another approach is to map the old location and the new one at the same time to copy things over. 
 
 #### New Docker mount locations
 
@@ -51,8 +51,8 @@ The internal application path in the container has changed from `/home/pi/pialer
 
  | Old mount point | New mount point | 
  |----------------------|---------------| 
- | `/home/pi/pialert/config` | `/app/config` |
- | `/home/pi/pialert/db` | `/app/db` |
+ | `/home/pi/pialert/config` | `/data/config` |
+ | `/home/pi/pialert/db` | `/data/db` |
 
 
  If you were mounting files directly, please note the file names have changed:
@@ -104,10 +104,10 @@ services:
     network_mode: "host"        
     restart: unless-stopped
     volumes:
-      - local/path/config:/app/config         # 🆕 This has changed  
-      - local/path/db:/app/db                 # 🆕 This has changed  
+      - local/path/config:/data/config         # 🆕 This has changed  
+      - local/path/db:/data/db                 # 🆕 This has changed  
       # (optional) useful for debugging if you have issues setting up the container
-      - local/path/logs:/app/log        # 🆕 This has changed  
+      - local/path/logs:/tmp/log        # 🆕 This has changed  
     environment:
       - TZ=Europe/Berlin      
       - PORT=20211
@@ -150,10 +150,10 @@ services:
     network_mode: "host"        
     restart: unless-stopped
     volumes:
-      - local/path/config/app.conf:/app/config/app.conf # 🆕 This has changed  
-      - local/path/db/app.db:/app/db/app.db             # 🆕 This has changed  
+      - local/path/config/app.conf:/data/config/app.conf # 🆕 This has changed  
+      - local/path/db/app.db:/data/db/app.db             # 🆕 This has changed  
       # (optional) useful for debugging if you have issues setting up the container
-      - local/path/logs:/app/log                  # 🆕 This has changed  
+      - local/path/logs:/tmp/log                  # 🆕 This has changed  
     environment:
       - TZ=Europe/Berlin      
       - PORT=20211
@@ -190,10 +190,10 @@ services:
     network_mode: "host"        
     restart: unless-stopped
     volumes:
-      - local/path/config:/app/config         
-      - local/path/db:/app/db                 
+      - local/path/config:/data/config         
+      - local/path/db:/data/db                 
       # (optional) useful for debugging if you have issues setting up the container
-      - local/path/logs:/app/log        
+      - local/path/logs:/tmp/log        
     environment:
       - TZ=Europe/Berlin      
       - PORT=20211
@@ -207,10 +207,10 @@ services:
     network_mode: "host"        
     restart: unless-stopped
     volumes:
-      - local/path/config:/app/config         
-      - local/path/db:/app/db                 
+      - local/path/config:/data/config         
+      - local/path/db:/data/db                 
       # (optional) useful for debugging if you have issues setting up the container
-      - local/path/logs:/app/log        
+      - local/path/logs:/tmp/log        
     environment:
       - TZ=Europe/Berlin      
       - PORT=20211
@@ -234,10 +234,10 @@ services:
     network_mode: "host"        
     restart: unless-stopped
     volumes:
-      - local/path/config:/app/config         
-      - local/path/db:/app/db                 
+      - local/path/config:/data/config         
+      - local/path/db:/data/db                 
       # (optional) useful for debugging if you have issues setting up the container
-      - local/path/logs:/app/log        
+      - local/path/logs:/tmp/log        
     environment:
       - TZ=Europe/Berlin      
       - PORT=20211
@@ -253,8 +253,8 @@ services:
 
 ```sh
 docker run -it --rm --name netalertx --user "0" \
-  -v local/path/config:/app/config \
-  -v local/path/db:/app/db \
+  -v local/path/config:/data/config \
+  -v local/path/db:/data/db \
   ghcr.io/jokob-sk/netalertx:latest
 ```
 
@@ -273,24 +273,16 @@ services:
       - NET_BIND_SERVICE              # 🆕 New line 
     restart: unless-stopped
     volumes:
-      - local/path/config:/app/config         
-      - local/path/db:/app/db                 
+      - local/path/config:/data/config         
+      - local/path/db:/data/db                 
       # (optional) useful for debugging if you have issues setting up the container
-      #- local/path/logs:/app/log        
+      #- local/path/logs:/tmp/log        
     environment:
       - TZ=Europe/Berlin      
       - PORT=20211
     # 🆕 New "tmpfs" section START 🔽
-    tmpfs: 
-      # Speed up logging. This can be commented out to retain logs between container restarts
-      - "/app/log:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
-      # Speed up API access as frontend/backend API is very chatty
-      - "/app/api:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,sync,noatime,nodiratime"  
-      # Required for customization of the nginx listen addr/port without rebuilding the container
-      - "/services/config/nginx/conf.active:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
-      # /services/config/nginx/conf.d is required for nginx and php to start
-      - "/services/run:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
-      # /tmp is required by php for session save this should be reworked to /services/run/tmp
+    tmpfs:
+      # All writable runtime state resides under /tmp; comment out to persist logs between restarts
       - "/tmp:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
     # 🆕 New "tmpfs" section END  🔼
 ```

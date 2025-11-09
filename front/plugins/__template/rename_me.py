@@ -1,23 +1,18 @@
 #!/usr/bin/env python
 
 import os
-import pathlib
 import sys
-import json
-import sqlite3
 from pytz import timezone
 
 # Define the installation path and extend the system path for plugin imports
-INSTALL_PATH = "/app"
+INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64
-from utils.plugin_utils import get_plugins_configs
+from const import logPath
+from plugin_helper import Plugin_Objects
 from logger import mylog, Logger
-from const import pluginsPath, fullDbPath, logPath
 from helper import get_setting_value 
 
-from messaging.in_app import write_notification
 import conf
 
 # Make sure the TIMEZONE for logging is correct
@@ -54,26 +49,27 @@ def main():
 
         # insert devices into the lats_result.log 
         # make sure the below mapping is mapped in config.json, for example: 
-        #"database_column_definitions": [
+        # "database_column_definitions": [
         # {
-        #   "column": "Object_PrimaryID",                 <--------- the value I save into primaryId
-        #   "mapped_to_column": "cur_MAC",                <--------- gets inserted into the CurrentScan DB table column cur_MAC
+        #   "column": "Object_PrimaryID",    <--------- the value I save into primaryId
+        #   "mapped_to_column": "cur_MAC",   <--------- gets inserted into the CurrentScan DB
+        #                                               table column cur_MAC
         # 
         for device in device_data:
-                plugin_objects.add_object(
-                    primaryId   = device['mac_address'],
-                    secondaryId = device['ip_address'],
-                    watched1    = device['hostname'],
-                    watched2    = device['vendor'],
-                    watched3    = device['device_type'],
-                    watched4    = device['last_seen'],
-                    extra       = '',
-                    foreignKey  = device['mac_address']
-                    # helpVal1  = "Something1",  # Optional Helper values to be passed for mapping into the app 
-                    # helpVal2  = "Something1",  # If you need to use even only 1, add the remaining ones too 
-                    # helpVal3  = "Something1",  # and set them to 'null'. Check the the docs for details:
-                    # helpVal4  = "Something1",  # https://github.com/jokob-sk/NetAlertX/blob/main/docs/PLUGINS_DEV.md
-                    )
+            plugin_objects.add_object(
+                primaryId   = device['mac_address'],
+                secondaryId = device['ip_address'],
+                watched1    = device['hostname'],
+                watched2    = device['vendor'],
+                watched3    = device['device_type'],
+                watched4    = device['last_seen'],
+                extra       = '',
+                foreignKey  = device['mac_address']
+                # helpVal1  = "Something1",  # Optional Helper values to be passed for mapping into the app 
+                # helpVal2  = "Something1",  # If you need to use even only 1, add the remaining ones too 
+                # helpVal3  = "Something1",  # and set them to 'null'. Check the the docs for details:
+                # helpVal4  = "Something1",  # https://github.com/jokob-sk/NetAlertX/blob/main/docs/PLUGINS_DEV.md
+                )
 
         mylog('verbose', [f'[{pluginName}] New entries: "{len(device_data)}"'])
 

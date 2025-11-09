@@ -1,16 +1,18 @@
 import sys
 import sqlite3
+import os
 
 # Register NetAlertX directories
-INSTALL_PATH="/app"
+INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
 sys.path.extend([f"{INSTALL_PATH}/server"])
 
 from helper import if_byte_then_to_str
 from logger import mylog
 
 
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 #  Return the SQL WHERE clause for filtering devices based on their status.
+
 
 def get_device_condition_by_status(device_status):
     """
@@ -31,18 +33,18 @@ def get_device_condition_by_status(device_status):
              Defaults to 'WHERE 1=0' for unrecognized statuses.
     """
     conditions = {
-        'all':        'WHERE devIsArchived=0',
-        'my':         'WHERE devIsArchived=0',
-        'connected':  'WHERE devIsArchived=0 AND devPresentLastScan=1',
-        'favorites':  'WHERE devIsArchived=0 AND devFavorite=1',
-        'new':        'WHERE devIsArchived=0 AND devIsNew=1',
-        'down':       'WHERE devIsArchived=0 AND devAlertDown != 0 AND devPresentLastScan=0',
-        'archived':   'WHERE devIsArchived=1'
+        "all": "WHERE devIsArchived=0",
+        "my": "WHERE devIsArchived=0",
+        "connected": "WHERE devIsArchived=0 AND devPresentLastScan=1",
+        "favorites": "WHERE devIsArchived=0 AND devFavorite=1",
+        "new": "WHERE devIsArchived=0 AND devIsNew=1",
+        "down": "WHERE devIsArchived=0 AND devAlertDown != 0 AND devPresentLastScan=0",
+        "archived": "WHERE devIsArchived=1",
     }
-    return conditions.get(device_status, 'WHERE 1=0')
+    return conditions.get(device_status, "WHERE 1=0")
 
 
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 #  Creates a JSON-like dictionary from a database row
 def row_to_json(names, row):
     """
@@ -57,7 +59,7 @@ def row_to_json(names, row):
         dict: A dictionary where keys are column names and values are the corresponding
               row values. Byte values are automatically converted to strings using
               `if_byte_then_to_str`.
-    
+
     Example:
         names = ['id', 'name', 'data']
         row = {0: 1, 1: b'Example', 2: b'\x01\x02'}
@@ -72,7 +74,7 @@ def row_to_json(names, row):
     return rowEntry
 
 
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 def sanitize_SQL_input(val):
     """
     Sanitize a value for use in SQL queries by replacing single quotes in strings.
@@ -81,19 +83,19 @@ def sanitize_SQL_input(val):
         val (any): The value to sanitize.
 
     Returns:
-        str or any: 
+        str or any:
             - Returns an empty string if val is None.
             - Returns a string with single quotes replaced by underscores if val is a string.
             - Returns val unchanged if it is any other type.
     """
     if val is None:
-        return ''
+        return ""
     if isinstance(val, str):
         return val.replace("'", "_")
     return val  # Return non-string values as they are
 
 
-# -------------------------------------------------------------------------------------------   
+# -------------------------------------------------------------------------------------------
 def get_date_from_period(period):
     """
     Convert a period string into an SQLite date expression.
@@ -105,10 +107,10 @@ def get_date_from_period(period):
         str: An SQLite date expression like "date('now', '-7 day')" corresponding to the period.
     """
     days_map = {
-        '7 days': 7,
-        '1 month': 30,
-        '1 year': 365,
-        '100 years': 3650,  # actually 10 years in original PHP
+        "7 days": 7,
+        "1 month": 30,
+        "1 year": 365,
+        "100 years": 3650,  # actually 10 years in original PHP
     }
 
     days = days_map.get(period, 1)  # default 1 day
@@ -117,7 +119,7 @@ def get_date_from_period(period):
     return period_sql
 
 
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 def print_table_schema(db, table):
     """
     Print the schema of a database table to the log.
@@ -134,20 +136,23 @@ def print_table_schema(db, table):
     result = sql.fetchall()
 
     if not result:
-        mylog('none', f'[Schema] Table "{table}" not found or has no columns.')
+        mylog("none", f'[Schema] Table "{table}" not found or has no columns.')
         return
 
-    mylog('debug', f'[Schema] Structure for table: {table}')
-    header = f"{'cid':<4} {'name':<20} {'type':<10} {'notnull':<8} {'default':<10} {'pk':<2}"
-    mylog('debug', header)
-    mylog('debug', '-' * len(header))
+    mylog("debug", f"[Schema] Structure for table: {table}")
+    header = (
+        f"{'cid':<4} {'name':<20} {'type':<10} {'notnull':<8} {'default':<10} {'pk':<2}"
+    )
+    mylog("debug", header)
+    mylog("debug", "-" * len(header))
 
     for row in result:
         # row = (cid, name, type, notnull, dflt_value, pk)
         line = f"{row[0]:<4} {row[1]:<20} {row[2]:<10} {row[3]:<8} {str(row[4]):<10} {row[5]:<2}"
-        mylog('debug', line)
+        mylog("debug", line)
 
-#-------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------
 # Generate a WHERE condition for SQLite based on a list of values.
 def list_to_where(logical_operator, column_name, condition_operator, values_list):
     """
@@ -177,9 +182,10 @@ def list_to_where(logical_operator, column_name, condition_operator, values_list
     for value in values_list[1:]:
         condition += f" {logical_operator} {column_name} {condition_operator} '{value}'"
 
-    return f'({condition})'
+    return f"({condition})"
 
-#-------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------
 def get_table_json(sql, sql_query, parameters=None):
     """
     Execute a SQL query and return the results as JSON-like dict.
@@ -198,22 +204,23 @@ def get_table_json(sql, sql_query, parameters=None):
         else:
             sql.execute(sql_query)
         rows = sql.fetchall()
-        if (rows):
+        if rows:
             # We only return data if we actually got some out of SQLite
             column_names = [col[0] for col in sql.description]
             data = [row_to_json(column_names, row) for row in rows]
             return json_obj({"data": data}, column_names)
     except sqlite3.Error as e:
         # SQLite error, e.g. malformed query
-        mylog('verbose', ['[Database] - SQL ERROR: ', e])
+        mylog("verbose", ["[Database] - SQL ERROR: ", e])
     except Exception as e:
         # Catch-all for other exceptions, e.g. iteration error
-        mylog('verbose', ['[Database] - Unexpected ERROR: ', e])
-        
+        mylog("verbose", ["[Database] - Unexpected ERROR: ", e])
+
     # In case of any error or no data, return empty object
     return json_obj({"data": []}, [])
 
-#-------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------
 class json_obj:
     """
     A wrapper class for JSON-style objects returned from database queries.

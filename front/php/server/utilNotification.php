@@ -7,6 +7,11 @@
 
 require dirname(__FILE__).'/../templates/globals.php';
 
+function get_notification_store_path(): string {
+    $apiRoot = getenv('NETALERTX_API') ?: '/tmp/api';
+    return rtrim($apiRoot, '/') . '/user_notifications.json';
+}
+
 //------------------------------------------------------------------------------
 // check if authenticated
 require_once  $_SERVER['DOCUMENT_ROOT'] . '/php/templates/security.php';
@@ -69,7 +74,7 @@ function generate_guid() {
 // ----------------------------------------------------------------------------------------
 // Logs a notification in in-app notification system
 function write_notification($content, $level = "interrupt") {
-    $NOTIFICATION_API_FILE = '/app/api/user_notifications.json';
+    $NOTIFICATION_API_FILE = get_notification_store_path();
 
     // Generate GUID
     $guid = generate_guid();
@@ -102,7 +107,7 @@ function write_notification($content, $level = "interrupt") {
 // ----------------------------------------------------------------------------------------
 // Removes a notification based on GUID
 function remove_notification($guid) {
-    $NOTIFICATION_API_FILE = '/app/api/user_notifications.json';
+    $NOTIFICATION_API_FILE = get_notification_store_path();
 
     // Read existing notifications
     $notifications = json_decode(file_get_contents($NOTIFICATION_API_FILE), true);
@@ -119,7 +124,7 @@ function remove_notification($guid) {
 // ----------------------------------------------------------------------------------------
 // Deletes all notifications
 function notifications_clear() {
-    $NOTIFICATION_API_FILE = '/app/api/user_notifications.json';
+    $NOTIFICATION_API_FILE = get_notification_store_path();
 
     // Clear notifications by writing an empty array to the file
     file_put_contents($NOTIFICATION_API_FILE, json_encode(array()));
@@ -128,7 +133,7 @@ function notifications_clear() {
 // ----------------------------------------------------------------------------------------
 // Mark a notification read based on GUID
 function mark_notification_as_read($guid) {
-    $NOTIFICATION_API_FILE = '/app/api/user_notifications.json';
+    $NOTIFICATION_API_FILE = get_notification_store_path();
     $max_attempts = 3;
     $attempts = 0;
 
@@ -177,7 +182,7 @@ function notifications_mark_all_read() {
 
 // ----------------------------------------------------------------------------------------
 function get_unread_notifications() {
-    $NOTIFICATION_API_FILE = '/app/api/user_notifications.json';
+    $NOTIFICATION_API_FILE = get_notification_store_path();
 
     // Read existing notifications
     if (file_exists($NOTIFICATION_API_FILE) && is_readable($NOTIFICATION_API_FILE)) {

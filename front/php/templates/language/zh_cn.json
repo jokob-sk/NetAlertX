@@ -674,7 +674,7 @@
     "Systeminfo_System_Uptime": "正常运行时间：",
     "Systeminfo_This_Client": "此客户",
     "Systeminfo_USB_Devices": "USB 设备",
-    "TICKER_MIGRATE_TO_NETALERTX": "⚠ 检测到旧的挂载位置。请按照<a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/MIGRATION.md\" target=\"_blank\">本指南</a>迁移到新的 <code>/app/config</code> 和 <code>/app/db</code> 文件夹以及 <code>netalertx</code> 容器。",
+    "TICKER_MIGRATE_TO_NETALERTX": "⚠ 检测到旧的挂载位置。请按照<a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/MIGRATION.md\" target=\"_blank\">本指南</a>迁移到新的 <code>/data/config</code> 和 <code>/data/db</code> 文件夹以及 <code>netalertx</code> 容器。",
     "TIMEZONE_description": "时区可正确显示统计数据。在<a target=\"_blank\" href=\"https://en.wikipedia.org/wiki/List_of_tz_database_time_zones\" rel=\"nofollow\">此处</a>查找您的时区。",
     "TIMEZONE_name": "时区",
     "UI_DEV_SECTIONS_description": "选择在设备页面中隐藏哪些 UI 元素。",

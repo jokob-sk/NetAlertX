@@ -1,12 +1,7 @@
 #!/usr/bin/env python
-import json
-import subprocess
-import argparse
 import os
-import pathlib
 import sys
 import re
-from datetime import datetime
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.header import Header
@@ -17,16 +12,16 @@ import socket
 import ssl
 
 # Register NetAlertX directories
-INSTALL_PATH="/app"
+INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 # NetAlertX modules
 import conf
 from const import confFileName, logPath
 from plugin_helper import Plugin_Objects
-from logger import mylog, Logger, append_line_to_file
-from helper import get_setting_value, hide_email
 from utils.datetime_utils import timeNowDB
+from logger import mylog, Logger
+from helper import timeNowTZ, get_setting_value, hide_email
 from models.notification_instance import NotificationInstance
 from database import DB
 from pytz import timezone
@@ -67,15 +62,15 @@ def main():
     new_notifications = notifications.getNew()
 
     # mylog('verbose', [f'[{pluginName}] new_notifications: ', new_notifications])  
-    mylog('verbose', [f'[{pluginName}] SMTP_SERVER: ', get_setting_value("SMTP_SERVER")])  
-    mylog('verbose', [f'[{pluginName}] SMTP_PORT: ', get_setting_value("SMTP_PORT")])  
-    mylog('verbose', [f'[{pluginName}] SMTP_SKIP_LOGIN: ', get_setting_value("SMTP_SKIP_LOGIN")])  
-    # mylog('verbose', [f'[{pluginName}] SMTP_USER: ', get_setting_value("SMTP_USER")])  
+    mylog('verbose', [f'[{pluginName}] SMTP_SERVER: ', get_setting_value("SMTP_SERVER")])
+    mylog('verbose', [f'[{pluginName}] SMTP_PORT: ', get_setting_value("SMTP_PORT")])
+    mylog('verbose', [f'[{pluginName}] SMTP_SKIP_LOGIN: ', get_setting_value("SMTP_SKIP_LOGIN")])
+    # mylog('verbose', [f'[{pluginName}] SMTP_USER: ', get_setting_value("SMTP_USER")])
     # mylog('verbose', [f'[{pluginName}] SMTP_PASS: ', get_setting_value("SMTP_PASS")])
-    mylog('verbose', [f'[{pluginName}] SMTP_SKIP_TLS: ', get_setting_value("SMTP_SKIP_TLS")])  
-    mylog('verbose', [f'[{pluginName}] SMTP_FORCE_SSL: ', get_setting_value("SMTP_FORCE_SSL")])  
-    # mylog('verbose', [f'[{pluginName}] SMTP_REPORT_TO: ', get_setting_value("SMTP_REPORT_TO")])  
-    # mylog('verbose', [f'[{pluginName}] SMTP_REPORT_FROM: ', get_setting_value("SMTP_REPORT_FROM")])  
+    mylog('verbose', [f'[{pluginName}] SMTP_SKIP_TLS: ', get_setting_value("SMTP_SKIP_TLS")])
+    mylog('verbose', [f'[{pluginName}] SMTP_FORCE_SSL: ', get_setting_value("SMTP_FORCE_SSL")])
+    # mylog('verbose', [f'[{pluginName}] SMTP_REPORT_TO: ', get_setting_value("SMTP_REPORT_TO")])
+    # mylog('verbose', [f'[{pluginName}] SMTP_REPORT_FROM: ', get_setting_value("SMTP_REPORT_FROM")])
 
 
     # Process the new notifications (see the Notifications DB table for structure or check the /php/server/query_json.php?file=table_notifications.json endpoint)

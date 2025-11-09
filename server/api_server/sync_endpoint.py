@@ -6,7 +6,8 @@ from helper import get_setting_value
 from utils.datetime_utils import timeNowDB
 from messaging.in_app import write_notification
 
-INSTALL_PATH = "/app"
+INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
+
 
 def handle_sync_get():
     """Handle GET requests for SYNC (NODE → HUB)."""
@@ -43,18 +44,19 @@ def handle_sync_post():
     os.makedirs(storage_path, exist_ok=True)
 
     encoded_files = [
-        f for f in os.listdir(storage_path)
+        f
+        for f in os.listdir(storage_path)
         if f.startswith(f"last_result.{plugin}.encoded.{node_name}")
     ]
     decoded_files = [
-        f for f in os.listdir(storage_path)
+        f
+        for f in os.listdir(storage_path)
         if f.startswith(f"last_result.{plugin}.decoded.{node_name}")
     ]
     file_count = len(encoded_files + decoded_files) + 1
 
     file_path_new = os.path.join(
-        storage_path,
-        f"last_result.{plugin}.encoded.{node_name}.{file_count}.log"
+        storage_path, f"last_result.{plugin}.encoded.{node_name}.{file_count}.log"
     )
 
     try:

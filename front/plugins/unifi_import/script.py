@@ -2,24 +2,19 @@
 # Inspired by https://github.com/stevehoek/Pi.Alert
 
 from __future__ import unicode_literals
-from time import strftime
-import argparse
-import logging
-import pathlib
 import os
 import json
 import sys
-import requests
-from requests import Request, Session, packages
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
+import urllib3
+from urllib3.exceptions import InsecureRequestWarning
 from pyunifi.controller import Controller
 
 
 # Register NetAlertX directories
-INSTALL_PATH="/app"
+INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from plugin_helper import Plugin_Object, Plugin_Objects, rmBadChars, is_typical_router_ip, is_mac
+from plugin_helper import Plugin_Objects, rmBadChars, is_typical_router_ip, is_mac
 from logger import mylog, Logger
 from helper import get_setting_value, normalize_string 
 import conf
@@ -39,7 +34,7 @@ LOG_FILE = os.path.join(LOG_PATH, f'script.{pluginName}.log')
 RESULT_FILE = os.path.join(LOG_PATH, f'last_result.{pluginName}.log')
 LOCK_FILE = os.path.join(LOG_PATH, f'full_run.{pluginName}.lock')
 
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+urllib3.disable_warnings(InsecureRequestWarning)
 
 
 

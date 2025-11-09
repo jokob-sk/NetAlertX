@@ -1,25 +1,20 @@
 #!/usr/bin/env python
 
-import json
-import subprocess
-import argparse
 import os
-import pathlib
 import base64
 import re
 import sys
-from datetime import datetime
+import sqlite3
 from flask import jsonify, request, Response
 import csv
-import io
 from io import StringIO
+from logger import mylog
 
 # Register NetAlertX directories
-INSTALL_PATH="/app"
+INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from database import get_temp_db_connection
-from helper import is_random_mac, get_setting_value
 from db.db_helper import get_table_json, get_device_condition_by_status
 from utils.datetime_utils import format_date
 
@@ -27,6 +22,7 @@ from utils.datetime_utils import format_date
 # --------------------------
 # Device Endpoints Functions
 # --------------------------
+
 
 def get_all_devices():
     """Retrieve all devices from the database."""
@@ -41,6 +37,7 @@ def get_all_devices():
 
     conn.close()
     return jsonify({"success": True, "devices": devices})
+
 
 def delete_devices(macs):
     """
@@ -76,6 +73,7 @@ def delete_devices(macs):
 
     return jsonify({"success": True, "deleted_count": deleted_count})
 
+
 def delete_all_with_empty_macs():
     """Delete devices with empty MAC addresses."""
     conn = get_temp_db_connection()
@@ -86,14 +84,18 @@ def delete_all_with_empty_macs():
     conn.close()
     return jsonify({"success": True, "deleted": deleted})
 
+
 def delete_unknown_devices():
     """Delete devices marked as unknown."""
     conn = get_temp_db_connection()
     cur = conn.cursor()
-    cur.execute("""DELETE FROM Devices WHERE devName='(unknown)' OR devName='(name not found)'""")
+    cur.execute(
+        """DELETE FROM Devices WHERE devName='(unknown)' OR devName='(name not found)'"""
+    )
     conn.commit()
     conn.close()
     return jsonify({"success": True, "deleted": cur.rowcount})
+
 
 def export_devices(export_format):
     """
@@ -113,15 +115,12 @@ def export_devices(export_format):
         list(devices_json["data"][0].keys()) if devices_json["data"] else []
     )
 
-
     if export_format == "json":
         # Convert to standard dict for Flask JSON
-        return jsonify({
-            "data": [row for row in devices_json["data"]],
-            "columns": list(columns)
-        })
+        return jsonify(
+            {"data": [row for row in devices_json["data"]], "columns": list(columns)}
+        )
     elif export_format == "csv":
-    
         si = StringIO()
         writer = csv.DictWriter(si, fieldnames=columns, quoting=csv.QUOTE_ALL)
         writer.writeheader()
@@ -136,6 +135,7 @@ def export_devices(export_format):
     else:
         return jsonify({"error": f"Unsupported format '{export_format}'"}), 400
 
+
 def import_csv(file_storage=None):
     data = ""
     skipped = []
@@ -144,7 +144,9 @@ def import_csv(file_storage=None):
     # 1. Try JSON `content` (base64-encoded CSV)
     if request.is_json and request.json.get("content"):
         try:
-            data = base64.b64decode(request.json["content"], validate=True).decode("utf-8")
+            data = base64.b64decode(request.json["content"], validate=True).decode(
+                "utf-8"
+            )
         except Exception as e:
             return jsonify({"error": f"Base64 decode failed: {e}"}), 400
 
@@ -154,7 +156,8 @@ def import_csv(file_storage=None):
 
     # 3. Fallback: try local file (same as PHP `$file = '../../../config/devices.csv';`)
     else:
-        local_file = "/app/config/devices.csv"
+        config_root = os.environ.get("NETALERTX_CONFIG", "/data/config")
+        local_file = os.path.join(config_root, "devices.csv")
         try:
             with open(local_file, "r", encoding="utf-8") as f:
                 data = f.read()
@@ -165,11 +168,7 @@ def import_csv(file_storage=None):
         return jsonify({"error": "No CSV data found"}), 400
 
     # --- Clean up newlines inside quoted fields ---
-    data = re.sub(
-        r'"([^"]*)"',
-        lambda m: m.group(0).replace("\n", " "), 
-        data
-    )
+    data = re.sub(r'"([^"]*)"', lambda m: m.group(0).replace("\n", " "), data)
 
     # --- Parse CSV ---
     lines = data.splitlines()
@@ -203,11 +202,8 @@ def import_csv(file_storage=None):
     conn.commit()
     conn.close()
 
-    return jsonify({
-        "success": True,
-        "inserted": row_count,
-        "skipped_lines": skipped
-    })
+    return jsonify({"success": True, "inserted": row_count, "skipped_lines": skipped})
+
 
 def devices_totals():
     conn = get_temp_db_connection()
@@ -216,15 +212,17 @@ def devices_totals():
     # Build a combined query with sub-selects for each status
     query = f"""
     SELECT
-        (SELECT COUNT(*) FROM Devices {get_device_condition_by_status('my')}) AS devices,
-        (SELECT COUNT(*) FROM Devices {get_device_condition_by_status('connected')}) AS connected,
-        (SELECT COUNT(*) FROM Devices {get_device_condition_by_status('favorites')}) AS favorites,
-        (SELECT COUNT(*) FROM Devices {get_device_condition_by_status('new')}) AS new,
-        (SELECT COUNT(*) FROM Devices {get_device_condition_by_status('down')}) AS down,
-        (SELECT COUNT(*) FROM Devices {get_device_condition_by_status('archived')}) AS archived
+        (SELECT COUNT(*) FROM Devices {get_device_condition_by_status("my")}) AS devices,
+        (SELECT COUNT(*) FROM Devices {get_device_condition_by_status("connected")}) AS connected,
+        (SELECT COUNT(*) FROM Devices {get_device_condition_by_status("favorites")}) AS favorites,
+        (SELECT COUNT(*) FROM Devices {get_device_condition_by_status("new")}) AS new,
+        (SELECT COUNT(*) FROM Devices {get_device_condition_by_status("down")}) AS down,
+        (SELECT COUNT(*) FROM Devices {get_device_condition_by_status("archived")}) AS archived
     """
     sql.execute(query)
-    row = sql.fetchone()  # returns a tuple like (devices, connected, favorites, new, down, archived)
+    row = (
+        sql.fetchone()
+    )  # returns a tuple like (devices, connected, favorites, new, down, archived)
 
     conn.close()
 
@@ -253,12 +251,13 @@ def devices_by_status(status=None):
         if r.get("devFavorite") == 1:
             dev_name = f'<span class="text-yellow">&#9733</span>&nbsp;{dev_name}'
 
-        table_data.append({
-            "id": r.get("devMac", ""),
-            "title": dev_name,
-            "favorite": r.get("devFavorite", 0)
-        })
+        table_data.append(
+            {
+                "id": r.get("devMac", ""),
+                "title": dev_name,
+                "favorite": r.get("devFavorite", 0),
+            }
+        )
 
     conn.close()
     return jsonify(table_data)
-

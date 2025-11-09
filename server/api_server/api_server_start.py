@@ -1,11 +1,12 @@
 import threading
 import sys
+import os
 
 from flask import Flask, request, jsonify, Response
 from flask_cors import CORS
 
 # Register NetAlertX directories
-INSTALL_PATH = "/app"
+INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
 sys.path.extend([f"{INSTALL_PATH}/server"])
 
 from logger import mylog
@@ -46,7 +47,7 @@ CORS(
         r"/logs/*": {"origins": "*"}
     },
     supports_credentials=True,
-    allow_headers=["Authorization", "Content-Type"]
+    allow_headers=["Authorization", "Content-Type"],
 )
 
 # -------------------------------------------------------------------
@@ -65,11 +66,13 @@ def not_found(error):
 # GraphQL Endpoints
 # --------------------------
 
+
 # Endpoint used when accessed via browser
 @app.route("/graphql", methods=["GET"])
 def graphql_debug():
     # Handles GET requests
     return "NetAlertX GraphQL server running."
+
 
 # Endpoint for GraphQL queries
 @app.route("/graphql", methods=["POST"])
@@ -82,7 +85,7 @@ def graphql_endpoint():
 
     # Retrieve and log request data
     data = request.get_json()
-    mylog('verbose', [f'[graphql_server] data: {data}'])
+    mylog("verbose", [f"[graphql_server] data: {data}"])
 
     # Execute the GraphQL query
     result = devicesSchema.execute(data.get("query"), variables=data.get("variables"))
@@ -97,9 +100,11 @@ def graphql_endpoint():
 
     return jsonify(response)
 
+
 # --------------------------
 # Settings Endpoints
 # --------------------------
+
 
 @app.route("/settings/<setKey>", methods=["GET"])
 def api_get_setting(setKey):
@@ -108,9 +113,11 @@ def api_get_setting(setKey):
     value = get_setting_value(setKey)
     return jsonify({"success": True, "value": value})
 
+
 # --------------------------
 # Device Endpoints
 # --------------------------
+
 
 @app.route("/device/<mac>", methods=["GET"])
 def api_get_device(mac):
@@ -118,11 +125,13 @@ def api_get_device(mac):
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
     return get_device_data(mac)
 
+
 @app.route("/device/<mac>", methods=["POST"])
 def api_set_device(mac):
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
     return set_device_data(mac, request.json)
+
 
 @app.route("/device/<mac>/delete", methods=["DELETE"])
 def api_delete_device(mac):
@@ -130,17 +139,20 @@ def api_delete_device(mac):
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
     return delete_device(mac)
 
+
 @app.route("/device/<mac>/events/delete", methods=["DELETE"])
 def api_delete_device_events(mac):
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
     return delete_device_events(mac)
 
+
 @app.route("/device/<mac>/reset-props", methods=["POST"])
 def api_reset_device_props(mac):
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
     return reset_device_props(mac, request.json)
+
 
 @app.route("/device/copy", methods=["POST"])
 def api_copy_device():
@@ -156,6 +168,7 @@ def api_copy_device():
 
     return copy_device(mac_from, mac_to)
 
+
 @app.route("/device/<mac>/update-column", methods=["POST"])
 def api_update_device_column(mac):
     if not is_authorized():
@@ -170,15 +183,18 @@ def api_update_device_column(mac):
 
     return update_device_column(mac, column_name, column_value)
 
+
 # --------------------------
 # Devices Collections
 # --------------------------
+
 
 @app.route("/devices", methods=["GET"])
 def api_get_devices():
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
     return get_all_devices()
+
 
 @app.route("/devices", methods=["DELETE"])
 def api_delete_devices():
@@ -189,11 +205,13 @@ def api_delete_devices():
 
     return delete_devices(macs)
 
+
 @app.route("/devices/empty-macs", methods=["DELETE"])
 def api_delete_all_empty_macs():
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
     return delete_all_with_empty_macs()
+
 
 @app.route("/devices/unknown", methods=["DELETE"])
 def api_delete_unknown_devices():
@@ -211,17 +229,20 @@ def api_export_devices(format=None):
     export_format = (format or request.args.get("format", "csv")).lower()
     return export_devices(export_format)
 
+
 @app.route("/devices/import", methods=["POST"])
 def api_import_csv():
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
     return import_csv(request.files.get("file"))
 
+
 @app.route("/devices/totals", methods=["GET"])
 def api_devices_totals():
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
     return devices_totals()
+
 
 @app.route("/devices/by-status", methods=["GET"])
 def api_devices_by_status():
@@ -231,6 +252,7 @@ def api_devices_by_status():
     status = request.args.get("status", "") if request.args else None
 
     return devices_by_status(status)
+
 
 # --------------------------
 # Net tools
@@ -243,6 +265,7 @@ def api_wakeonlan():
     mac = request.json.get("devMac")
     return wakeonlan(mac)
 
+
 @app.route("/nettools/traceroute", methods=["POST"])
 def api_traceroute():
     if not is_authorized():
@@ -250,11 +273,13 @@ def api_traceroute():
     ip = request.json.get("devLastIP")
     return traceroute(ip)
 
+
 @app.route("/nettools/speedtest", methods=["GET"])
 def api_speedtest():
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
     return speedtest()
+
 
 @app.route("/nettools/nslookup", methods=["POST"])
 def api_nslookup():
@@ -272,6 +297,7 @@ def api_nslookup():
     ip = data["devLastIP"]
     return nslookup(ip)
 
+
 @app.route("/nettools/nmap", methods=["POST"])
 def api_nmap():
     """
@@ -288,7 +314,7 @@ def api_nmap():
     ip = data["scan"]
     mode = data["mode"]
     return nmap_scan(ip, mode)
-    
+
 
 @app.route("/nettools/internetinfo", methods=["GET"])
 def api_internet_info():
@@ -300,6 +326,7 @@ def api_internet_info():
 # --------------------------
 # DB query
 # --------------------------
+
 
 @app.route("/dbquery/read", methods=["POST"])
 def dbquery_read():
@@ -313,7 +340,7 @@ def dbquery_read():
         return jsonify({"success": False, "message": "ERROR: Missing parameters", "error": "rawSql is required"}), 400
     
     return read_query(raw_sql_b64)
-    
+
 
 @app.route("/dbquery/write", methods=["POST"])
 def dbquery_write():
@@ -339,12 +366,12 @@ def dbquery_update():
         return jsonify({"success": False, "message": "ERROR: Missing parameters", "error": "Missing required 'columnName', 'id', 'dbtable', 'columns', or 'values' query parameter"}), 400
 
     return update_query(
-                column_name=data["columnName"],
-                ids=data["id"],
-                dbtable=data["dbtable"],
-                columns=data["columns"],
-                values=data["values"],
-            )       
+        column_name=data["columnName"],
+        ids=data["id"],
+        dbtable=data["dbtable"],
+        columns=data["columns"],
+        values=data["values"],
+    )
 
 
 @app.route("/dbquery/delete", methods=["POST"])
@@ -357,21 +384,24 @@ def dbquery_delete():
     if not all(data.get(k) for k in required):
         return jsonify({"success": False, "message": "ERROR: Missing parameters", "error": "Missing required 'columnName', 'id', or 'dbtable' query parameter"}), 400
 
-    return  delete_query(
-                column_name=data["columnName"],
-                ids=data["id"],
-                dbtable=data["dbtable"],
-            )
+    return delete_query(
+        column_name=data["columnName"],
+        ids=data["id"],
+        dbtable=data["dbtable"],
+    )
+
 
 # --------------------------
 # Online history
 # --------------------------
+
 
 @app.route("/history", methods=["DELETE"])
 def api_delete_online_history():
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
     return delete_online_history()
+
 
 # --------------------------
 # Logs
@@ -418,6 +448,7 @@ def api_add_to_execution_queue():
 # Device Events
 # --------------------------
 
+
 @app.route("/events/create/<mac>", methods=["POST"])
 def api_create_event(mac):
     if not is_authorized():
@@ -443,11 +474,13 @@ def api_events_by_mac(mac):
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
     return delete_device_events(mac)
 
+
 @app.route("/events", methods=["DELETE"])
 def api_delete_all_events():
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
     return delete_events()
+
 
 @app.route("/events", methods=["GET"])
 def api_get_events():
@@ -456,6 +489,7 @@ def api_get_events():
 
     mac = request.args.get("mac")
     return get_events(mac)
+
 
 @app.route("/events/<int:days>", methods=["DELETE"])
 def api_delete_old_events(days: int):
@@ -468,6 +502,7 @@ def api_delete_old_events(days: int):
     
     return delete_events_older_than(days)
 
+
 @app.route("/sessions/totals", methods=["GET"])
 def api_get_events_totals():
     if not is_authorized():
@@ -476,9 +511,11 @@ def api_get_events_totals():
     period = get_date_from_period(request.args.get("period", "7 days"))
     return get_events_totals(period)
 
+
 # --------------------------
 # Sessions
 # --------------------------
+
 
 @app.route("/sessions/create", methods=["POST"])
 def api_create_session():
@@ -496,7 +533,9 @@ def api_create_session():
     if not mac or not ip or not start_time:
         return jsonify({"success": False, "message": "ERROR: Missing parameters", "error": "Missing required 'mac', 'ip', or 'start_time' query parameter"}), 400
 
-    return create_session(mac, ip, start_time, end_time, event_type_conn, event_type_disc)
+    return create_session(
+        mac, ip, start_time, end_time, event_type_conn, event_type_disc
+    )
 
 
 @app.route("/sessions/delete", methods=["DELETE"])
@@ -522,6 +561,7 @@ def api_get_sessions():
 
     return get_sessions(mac, start_date, end_date)
 
+
 @app.route("/sessions/calendar", methods=["GET"])
 def api_get_sessions_calendar():
     if not is_authorized():
@@ -533,6 +573,7 @@ def api_get_sessions_calendar():
 
     return get_sessions_calendar(start_date, end_date)
 
+
 @app.route("/sessions/<mac>", methods=["GET"])
 def api_device_sessions(mac):
     if not is_authorized():
@@ -540,6 +581,7 @@ def api_device_sessions(mac):
 
     period = request.args.get("period", "1 day")
     return get_device_sessions(mac, period)
+
 
 @app.route("/sessions/session-events", methods=["GET"])
 def api_get_session_events():
@@ -550,6 +592,7 @@ def api_get_session_events():
     period = get_date_from_period(request.args.get("period", "7 days"))
     return get_session_events(session_event_type, period)
 
+
 # --------------------------
 # Prometheus metrics endpoint
 # --------------------------
@@ -559,7 +602,8 @@ def metrics():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
 
     # Return Prometheus metrics as plain text
-    return  Response(get_metric_stats(), mimetype="text/plain")
+    return Response(get_metric_stats(), mimetype="text/plain")
+
 
 # --------------------------
 # In-app notifications
@@ -579,12 +623,14 @@ def api_write_notification():
     write_notification(content, level)
     return jsonify({"success": True})
 
+
 @app.route("/messaging/in-app/unread", methods=["GET"])
 def api_get_unread_notifications():
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
 
     return get_unread_notifications()
+
 
 @app.route("/messaging/in-app/read/all", methods=["POST"])
 def api_mark_all_notifications_read():
@@ -593,12 +639,14 @@ def api_mark_all_notifications_read():
 
     return jsonify(mark_all_notifications_read())
 
+
 @app.route("/messaging/in-app/delete", methods=["DELETE"])
 def api_delete_all_notifications():
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
 
     return delete_notifications()
+
 
 @app.route("/messaging/in-app/delete/<guid>", methods=["DELETE"])
 def api_delete_notification(guid):
@@ -611,6 +659,7 @@ def api_delete_notification(guid):
         return jsonify({"success": True})
     else:
         return jsonify({"success": False, "message": "ERROR", "error": result.get("error")}), 500
+
 
 @app.route("/messaging/in-app/read/<guid>", methods=["POST"])
 def api_mark_notification_read(guid):
@@ -642,6 +691,7 @@ def sync_endpoint():
         mylog("verbose", [msg])
         return jsonify({"success": False, "message": "ERROR: No allowed", "error": "Method Not Allowed"}), 405
 
+
 # --------------------------
 # Background Server Start
 # --------------------------
@@ -650,7 +700,7 @@ def is_authorized():
     is_authorized = token == f"Bearer {get_setting_value('API_TOKEN')}"
 
     if not is_authorized:
-        msg = f"[api] Unauthorized access attempt - make sure your GRAPHQL_PORT and API_TOKEN settings are correct."
+        msg = "[api] Unauthorized access attempt - make sure your GRAPHQL_PORT and API_TOKEN settings are correct."
         write_notification(msg, "alert")
         mylog("verbose", [msg])
 
@@ -661,16 +711,12 @@ def start_server(graphql_port, app_state):
     """Start the GraphQL server in a background thread."""
 
     if app_state.graphQLServerStarted == 0:
-                
-        mylog('verbose', [f'[graphql endpoint] Starting on port: {graphql_port}'])
+        mylog("verbose", [f"[graphql endpoint] Starting on port: {graphql_port}"])
 
         # Start Flask app in a separate thread
         thread = threading.Thread(
             target=lambda: app.run(
-                host="0.0.0.0",
-                port=graphql_port,
-                debug=True,
-                use_reloader=False
+                host="0.0.0.0", port=graphql_port, debug=True, use_reloader=False
             )
         )
         thread.start()

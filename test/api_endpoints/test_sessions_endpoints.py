@@ -4,10 +4,11 @@ import sqlite3
 import random
 import string
 import uuid
+import os
 import pytest
 from datetime import datetime, timedelta
 
-INSTALL_PATH = "/app"
+INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from helper import get_setting_value
@@ -176,7 +177,7 @@ def test_delete_session(client, api_token, test_mac):
     # Confirm deletion
     resp = client.get(f"/sessions/list?mac={test_mac}", headers=auth_headers(api_token))
     sessions = resp.json.get("sessions")
-    assert not any(ev["ses_MAC"] == test_mac for ses in sessions)
+    assert not any(ses["ses_MAC"] == test_mac for ses in sessions)
 
 
 

@@ -11,13 +11,15 @@ NetAlertX requires certain paths to be writable at runtime. These paths should b
 
 | Path                                 | Purpose                             | Notes                                                  |
 | ------------------------------------ | ----------------------------------- | ------------------------------------------------------ |
-| `/app/config`                        | Application configuration           | Persistent volume recommended                          |
-| `/app/db`                            | Database files                      | Persistent volume recommended                          |
-| `/app/log`                           | Logs                                | Can be `tmpfs` for speed or host volume to retain logs |
-| `/app/api`                           | API cache                           | Use `tmpfs` for faster access                          |
-| `/services/config/nginx/conf.active` | Active nginx configuration override | `tmpfs` recommended or customized file mounted        |
-| `/services/run`                      | Runtime directories for nginx & PHP | `tmpfs` required                                       |
-| `/tmp`                               | PHP session save directory          | `tmpfs` required                                       |
+| `/data/config`                        | Application configuration           | Persistent volume recommended                          |
+| `/data/db`                            | Database files                      | Persistent volume recommended                          |
+| `/tmp/log`                           | Logs                                | Lives under `/tmp`; optional host bind to retain logs  |
+| `/tmp/api`                           | API cache                           | Subdirectory of `/tmp`                                 |
+| `/tmp/nginx/active-config` | Active nginx configuration override | Mount `/tmp` (or override specific file)               |
+| `/tmp/run`                      | Runtime directories for nginx & PHP | Subdirectory of `/tmp`                                 |
+| `/tmp`                               | PHP session save directory          | Backed by `tmpfs` for runtime writes                   |
+
+> Mounting `/tmp` as `tmpfs` automatically covers all of its subdirectories (`log`, `api`, `run`, `nginx/active-config`, etc.).
 
 > All these paths will have **UID 20211 / GID 20211** inside the container. Files on the host will appear owned by `20211:20211`.
 
@@ -33,8 +35,8 @@ Sometimes, permission issues arise if your existing host directories were create
 
 ```bash
 docker run -it --rm --name netalertx --user "0" \
-  -v local/path/config:/app/config \
-  -v local/path/db:/app/db \
+  -v local/path/config:/data/config \
+  -v local/path/db:/data/db \
   ghcr.io/jokob-sk/netalertx:latest
 ```
 
@@ -60,16 +62,12 @@ services:
       - NET_BIND_SERVICE
     restart: unless-stopped
     volumes:
-      - local/path/config:/app/config         
-      - local/path/db:/app/db                 
+      - local/path/config:/data/config         
+      - local/path/db:/data/db                 
     environment:
       - TZ=Europe/Berlin      
       - PORT=20211
-    tmpfs: 
-      - "/app/log:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
-      - "/app/api:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,sync,noatime,nodiratime"  
-      - "/services/config/nginx/conf.active:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
-      - "/services/run:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+    tmpfs:
       - "/tmp:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
 ```
 

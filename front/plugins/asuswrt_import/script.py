@@ -2,7 +2,7 @@
 import os
 import sys
 
-INSTALL_PATH = "/app"
+INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 pluginName = "ASUSWRT"
 
@@ -15,8 +15,7 @@ from asusrouter.modules.connection import ConnectionState
 from const import logPath
 from helper import get_setting_value
 from logger import Logger, mylog
-from plugin_helper import (Plugin_Object, Plugin_Objects, decodeBase64,
-                           handleEmpty)
+from plugin_helper import (Plugin_Objects, handleEmpty)
 from pytz import timezone
 
 conf.tz = timezone(get_setting_value("TIMEZONE"))

@@ -1,16 +1,27 @@
 {
   "version": "2.0.0",
+  "inputs": [
+    {
+      "id": "confirmPrune",
+      "type": "promptString",
+      "description": "DANGER! Type YES to confirm pruning all unused Docker resources. This will destroy containers, images, volumes, and networks!",
+      "default": ""
+    }
+  ],
   "tasks": [
     {
       "label": "[Any POSIX] Generate Devcontainer Configs",
       "type": "shell",
       "command": ".devcontainer/scripts/generate-configs.sh",
+      "detail": "Generates devcontainer configs from the template. This must be run after changes to devcontainer to combine/merge them into the final config used by VS Code. Note- this has no bearing on the production or test image.",
       "presentation": {
         "echo": true,
         "reveal": "always",
         "panel": "shared",
-        "showReuseMessage": false
+        "showReuseMessage": false,
+        "group": "POSIX Tasks"
       },
+      
       "problemMatcher": [],
       "group": {
         "kind": "build",
@@ -24,12 +35,19 @@
     {
       "label": "[Any] Docker system and build Prune",
       "type": "shell",
-  "command": ".devcontainer/scripts/confirm-docker-prune.sh",
+      "command": ".devcontainer/scripts/confirm-docker-prune.sh",
+      "detail": "DANGER! Prunes all unused Docker resources (images, containers, volumes, networks). Any stopped container will be wiped and data will be lost.  Use with caution.",
+      "options": {
+        "env": {
+          "CONFIRM_PRUNE": "${input:confirmPrune}"
+        }
+      },
       "presentation": {
         "echo": true,
         "reveal": "always",
         "panel": "shared",
-        "showReuseMessage": false
+        "showReuseMessage": false,
+        "group": "Any"
       },
       "problemMatcher": [],
       "group": {
@@ -45,6 +63,7 @@
       "label": "[Dev Container] Re-Run Startup Script",
       "type": "shell",
       "command": "./isDevContainer.sh || exit 1;/workspaces/NetAlertX/.devcontainer/scripts/setup.sh",
+      "detail": "The startup script runs directly after the container is started. It reprovisions permissions, links folders, and performs other setup tasks. Run this if you have made changes to the setup script or need to reprovision the container.",
       "options": {
         "cwd": "/workspaces/NetAlertX/.devcontainer/scripts"
       },
@@ -65,6 +84,7 @@
       "label": "[Dev Container] Start Backend (Python)",
       "type": "shell",
       "command": "./isDevContainer.sh || exit 1; /services/start-backend.sh",
+      "detail": "Restarts the NetAlertX backend (Python) service in the dev container. This may take 5 seconds to be completely ready.",
       "options": {
         "cwd": "/workspaces/NetAlertX/.devcontainer/scripts"
       },
@@ -73,7 +93,8 @@
         "reveal": "always",
         "panel": "shared",
         "showReuseMessage": false,
-        "clear": false
+        "clear": false,
+        "group": "Devcontainer"
       },
       "problemMatcher": [],
       "icon": {
@@ -85,6 +106,7 @@
       "label": "[Dev Container] Start CronD (Scheduler)",
       "type": "shell",
       "command": "./isDevContainer.sh || exit 1; /services/start-crond.sh",
+      "detail": "Stops and restarts the crond service.",
       "options": {
         "cwd": "/workspaces/NetAlertX/.devcontainer/scripts"
       },
@@ -93,7 +115,8 @@
         "reveal": "always",
         "panel": "shared",
         "showReuseMessage": false,
-        "clear": false
+        "clear": false,
+        "group": "Devcontainer"
       },
       "problemMatcher": [],
       "icon": {
@@ -105,6 +128,7 @@
       "label": "[Dev Container] Start Frontend (nginx and PHP-FPM)",
       "type": "shell",
       "command": "./isDevContainer.sh || exit 1; /services/start-php-fpm.sh & /services/start-nginx.sh  &",
+      "detail": "Stops and restarts the NetAlertX frontend services (nginx and PHP-FPM) in the dev container. This launches almost instantly.",
       "options": {
         "cwd": "/workspaces/NetAlertX/.devcontainer/scripts"
 
@@ -114,7 +138,8 @@
         "reveal": "always",
         "panel": "shared",
         "showReuseMessage": false,
-        "clear": false
+        "clear": false,
+        "group": "Devcontainer"
       },
       "problemMatcher": [],
       "icon": {
@@ -126,6 +151,7 @@
       "label": "[Dev Container] Stop Frontend & Backend Services",
       "type": "shell",
       "command": "./isDevContainer.sh || exit 1; pkill -f 'php-fpm83|nginx|crond|python3' || true",
+      "detail": "Stops all NetAlertX services running in the dev container.",
       "options": {
         "cwd": "/workspaces/NetAlertX/.devcontainer/scripts"
       },
@@ -133,7 +159,8 @@
         "echo": true,
         "reveal": "always",
         "panel": "shared",
-        "showReuseMessage": false
+        "showReuseMessage": false,
+        "group": "Devcontainer"
       },
       "problemMatcher": [],
       "icon": {
@@ -142,29 +169,55 @@
       }
     },
     {
-      "label": "[Dev Container] List NetAlertX Ports",
+      "label": "[Any] Build Unit Test Docker image",
       "type": "shell",
-      "command": "list-ports.sh",
-      "options": {
-        "cwd": "/workspaces/NetAlertX/.devcontainer/scripts"
-      },
+      "command": "docker buildx build -t netalertx-test . && echo '🧪 Unit Test Docker image built: netalertx-test'",
+      "detail": "This must be run after changes to the container.  Unit testing will not register changes until after this image is rebuilt. It takes about 30 seconds to build unless changes to the venv stage are made. venv takes 90s alone.",
       "presentation": {
         "echo": true,
         "reveal": "always",
         "panel": "shared",
-        "showReuseMessage": false
+        "showReuseMessage": false,
+        "group": "Any"
+
+      },
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "icon": {
+        "id": "beaker",
+        "color": "terminal.ansiBlue"
+      }
+    },
+    {
+      "label": "[Dev Container] Wipe and Regenerate Database",
+      "type": "shell",
+      "command": "killall 'python3' || true && sleep 1 && rm -rf /data/db/* /data/config/* && bash /entrypoint.d/15-first-run-config.sh && bash /entrypoint.d/20-first-run-db.sh && echo '✅ Database and config wiped and regenerated'",
+      "detail": "Wipes devcontainer db and config. Provides a fresh start in devcontainer, run this task, then run the Rerun Startup Task",
+      "options": {},
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "panel": "shared",
+        "showReuseMessage": false,
+        "group": "Devcontainer"
       },
       "problemMatcher": [],
       "icon": {
-        "id": "output",
-        "color": "terminal.ansiBlue"
+        "id": "database",
+        "color": "terminal.ansiRed"
       }
-    }
-    ,
+    },
     {
-      "label": "[Any] Build Unit Test Docker image",
+      "label": "Build & Launch Prodcution Docker Container",
       "type": "shell",
-      "command": "docker buildx build -t netalertx-test . && echo '🧪 Unit Test Docker image built: netalertx-test'",
+      "command": "docker compose up -d --build --force-recreate",
+      "detail": "Before launching, ensure VSCode Ports are closed and services are stopped. Tasks: Stop Frontend & Backend Services & Remote: Close Unused Forwarded Ports to ensure proper operation of the new container.",
+      "options": {
+        "cwd": "/workspaces/NetAlertX"
+      },
       "presentation": {
         "echo": true,
         "reveal": "always",
@@ -177,7 +230,7 @@
         "isDefault": false
       },
       "icon": {
-        "id": "beaker",
+        "id": "package",
         "color": "terminal.ansiBlue"
       }
     }

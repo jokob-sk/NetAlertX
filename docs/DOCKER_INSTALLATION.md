@@ -25,9 +25,9 @@ Head to [https://netalertx.com/](https://netalertx.com/) for more gifs and scree
 
 ```yaml
 docker run -d --rm --network=host \
-  -v local_path/config:/app/config \
-  -v local_path/db:/app/db \
-  --mount type=tmpfs,target=/app/api \
+  -v local_path/config:/data/config \
+  -v local_path/db:/data/db \
+  --mount type=tmpfs,target=/tmp/api \
   -e PUID=200 -e PGID=300 \
   -e TZ=Europe/Berlin \
   -e PORT=20211 \
@@ -58,10 +58,10 @@ See alternative [docked-compose examples](https://github.com/jokob-sk/NetAlertX/
 
 | Required | Path | Description |
 | :------------- | :------------- | :-------------| 
-| ✅ | `:/app/config` | Folder which will contain the `app.conf` & `devices.csv` ([read about devices.csv](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEVICES_BULK_EDITING.md)) files  | 
-| ✅ | `:/app/db` | Folder which will contain the `app.db` database file  | 
-| | `:/app/log` |  Logs folder useful for debugging if you have issues setting up the container  | 
-| | `:/app/api` |  A simple [API endpoint](https://github.com/jokob-sk/NetAlertX/blob/main/docs/API.md) containing static (but regularly updated) json and other files.   | 
+| ✅ | `:/data/config` | Folder which will contain the `app.conf` & `devices.csv` ([read about devices.csv](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEVICES_BULK_EDITING.md)) files  | 
+| ✅ | `:/data/db` | Folder which will contain the `app.db` database file  | 
+| | `:/tmp/log` |  Logs folder useful for debugging if you have issues setting up the container  | 
+| | `:/tmp/api` |  A simple [API endpoint](https://github.com/jokob-sk/NetAlertX/blob/main/docs/API.md) containing static (but regularly updated) json and other files. Path configurable via `NETALERTX_API` environment variable.   | 
 | | `:/app/front/plugins/<plugin>/ignore_plugin` | Map a file `ignore_plugin` to ignore a plugin. Plugins can be soft-disabled via settings. More in the [Plugin docs](https://github.com/jokob-sk/NetAlertX/blob/main/docs/PLUGINS.md).  | 
 | | `:/etc/resolv.conf` | Use a custom `resolv.conf` file for [better name resolution](https://github.com/jokob-sk/NetAlertX/blob/main/docs/REVERSE_DNS.md).  | 
 
@@ -70,7 +70,7 @@ See alternative [docked-compose examples](https://github.com/jokob-sk/NetAlertX/
 ### Initial setup
 
 - If unavailable, the app generates a default `app.conf` and `app.db` file on the first run.
-- The preferred way is to manage the configuration via the Settings section in the UI, if UI is inaccessible you can modify [app.conf](https://github.com/jokob-sk/NetAlertX/tree/main/back) in the `/app/config/` folder directly 
+- The preferred way is to manage the configuration via the Settings section in the UI, if UI is inaccessible you can modify [app.conf](https://github.com/jokob-sk/NetAlertX/tree/main/back) in the `/data/config/` folder directly 
 
 #### Setting up scanners
 

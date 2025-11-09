@@ -11,5 +11,5 @@ done
 # Force kill if graceful shutdown failed
 killall -KILL python3 &>/dev/null
 
-echo "Starting python3 $(cat /services/config/python/backend-extra-launch-parameters 2>/dev/null) -m server > /app/log/stdout.log 2> >(tee /app/log/stderr.log >&2)"
-exec python3 $(cat /services/config/python/backend-extra-launch-parameters 2>/dev/null) -m server > /app/log/stdout.log 2> >(tee /app/log/stderr.log >&2)
+echo "Starting python3 $(cat /services/config/python/backend-extra-launch-parameters 2>/dev/null) -m server > ${NETALERTX_LOG}/stdout.log 2> >(tee ${NETALERTX_LOG}/stderr.log >&2)"
+exec python3 $(cat /services/config/python/backend-extra-launch-parameters 2>/dev/null) -m server > ${NETALERTX_LOG}/stdout.log 2> >(tee ${NETALERTX_LOG}/stderr.log >&2)

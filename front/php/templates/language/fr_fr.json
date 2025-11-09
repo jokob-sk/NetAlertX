@@ -674,7 +674,7 @@
     "Systeminfo_System_Uptime": "Durée d'activité :",
     "Systeminfo_This_Client": "Ce client",
     "Systeminfo_USB_Devices": "Appareils USB",
-    "TICKER_MIGRATE_TO_NETALERTX": "⚠ Emplacement de point de montage obsolète détecté. Suivez <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/MIGRATION.md\" target=\"_blank\">ce guide</a> pour migrer vers les nouveaux dossiers <code>/app/config</code> and <code>/app/db</code> et le container <code>netalertx</code>.",
+    "TICKER_MIGRATE_TO_NETALERTX": "⚠ Emplacement de point de montage obsolète détecté. Suivez <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/MIGRATION.md\" target=\"_blank\">ce guide</a> pour migrer vers les nouveaux dossiers <code>/data/config</code> and <code>/data/db</code> et le container <code>netalertx</code>.",
     "TIMEZONE_description": "Fuseau horaire pour afficher correctement les statistiques. Trouvez votre fuseau horaire <a target=\"_blank\" href=\"https://en.wikipedia.org/wiki/List_of_tz_database_time_zones\" rel=\"nofollow\">ici</a>.",
     "TIMEZONE_name": "Fuseau horaire",
     "UI_DEV_SECTIONS_description": "Slecetionnez quels éléments de l'interface graphique masquer dans les pages des appareils.",

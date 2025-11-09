@@ -1,9 +1,15 @@
 #!/usr/bin/env python3
 import subprocess
 import sys
+import os
 
 def run_sqlite_command(command):
-    full_command = f"sudo docker exec -i netalertx sqlite3 /app/db/app.db \"{command}\""
+    # Use environment variable with fallback
+    db_path = os.path.join(
+        os.getenv('NETALERTX_DB', '/data/db'),
+        'app.db'
+    )
+    full_command = f"sudo docker exec -i netalertx sqlite3 {db_path} \"{command}\""
     try:
         result = subprocess.run(full_command, shell=True, text=True, capture_output=True)
         if result.stderr:

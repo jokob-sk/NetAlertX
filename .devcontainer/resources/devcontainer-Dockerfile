@@ -3,11 +3,14 @@
 #   .devcontainer/scripts/generate-configs.sh
 # The generator appends this stage to produce .devcontainer/Dockerfile.
 # Prefer to place dev-only setup here; use setup.sh only for runtime fixes.
+# Permissions in devcontainer should be of a brutalist nature. They will be
+# Open and wide to avoid permission issues during development allowing max
+# flexibility.
 
 FROM runner AS netalertx-devcontainer
 ENV INSTALL_DIR=/app
 
-ENV PYTHONPATH=/workspaces/NetAlertX/test:/workspaces/NetAlertX/server:/app:/app/server:/opt/venv/lib/python3.12/site-packages:/usr/lib/python3.12/site-packages
+ENV PYTHONPATH=${PYTHONPATH}:/workspaces/NetAlertX/test:/workspaces/NetAlertX/server:/usr/lib/python3.12/site-packages
 ENV PATH=/services:${PATH}
 ENV PHP_INI_SCAN_DIR=/services/config/php/conf.d:/etc/php83/conf.d
 ENV LISTEN_ADDR=0.0.0.0
@@ -18,16 +21,28 @@ COPY .devcontainer/resources/devcontainer-overlay/ /
 USER root
 # Install common tools, create user, and set up sudo
 RUN apk add --no-cache git nano vim jq php83-pecl-xdebug py3-pip nodejs sudo gpgconf pytest \
-    pytest-cov fish shfmt github-cli py3-yaml py3-docker-py docker-cli docker-cli-buildx \
+    pytest-cov zsh alpine-zsh-config shfmt github-cli py3-yaml py3-docker-py docker-cli docker-cli-buildx \
     docker-cli-compose
 
 RUN install -d -o netalertx -g netalertx -m 755 /services/php/modules && \
     cp -a /usr/lib/php83/modules/. /services/php/modules/ && \
     echo "${NETALERTX_USER} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
-RUN mkdir /workspaces && \
-    install -d -o netalertx -g netalertx -m 777 /services/run/logs && \
-    install -d -o netalertx -g netalertx -m 777 /app/run/tmp/client_body && \
-    sed -i -e 's|:/app:|:/workspaces:|' /etc/passwd && \
+ENV SHELL=/bin/zsh
+
+RUN mkdir -p /workspaces && \
+    install -d -m 777 /data /data/config /data/db && \
+    install -d -m 777 /tmp/log /tmp/log/plugins /tmp/api /tmp/run /tmp/nginx && \
+    install -d -m 777 /tmp/nginx/active-config /tmp/nginx/client_body /tmp/nginx/config && \
+    install -d -m 777 /tmp/nginx/fastcgi /tmp/nginx/proxy /tmp/nginx/scgi /tmp/nginx/uwsgi && \
+    install -d -m 777 /tmp/run/tmp /tmp/run/logs && \
+    chmod 777 /workspaces && \
+    chown -R netalertx:netalertx /data && \
+    chmod 666 /data/config/app.conf /data/db/app.db && \
+    chmod 1777 /tmp && \
+    install -d -o root -g root -m 1777 /tmp/.X11-unix && \
+    mkdir -p /home/netalertx && \
+    chown netalertx:netalertx /home/netalertx && \
+    sed -i -e 's#/app:#/workspaces:#' /etc/passwd && \
     find /opt/venv -type d -exec chmod o+rwx {} \;
     
 USER netalertx

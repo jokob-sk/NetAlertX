@@ -1,7 +1,12 @@
 import sqlite3
+import os
 
-# Connect to the database
-conn = sqlite3.connect("/app/db/app.db")
+# Connect to the database using environment variable
+db_path = os.path.join(
+    os.getenv('NETALERTX_DB', '/data/db'),
+    'app.db'
+)
+conn = sqlite3.connect(db_path)
 cursor = conn.cursor()
 
 # Get the names of all tables (excluding SQLite internal tables)

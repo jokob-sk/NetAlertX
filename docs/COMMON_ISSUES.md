@@ -14,9 +14,9 @@ The app uses the MAC address as an unique identifier for devices. If a new MAC i
 
 Make sure you [File permissions](./FILE_PERMISSIONS.md) are set correctly.
 
-* If facing issues (AJAX errors, can't write to DB, empty screen, etc,) make sure permissions are set correctly, and check the logs under `/app/log`. 
-* To solve permission issues you can try setting the owner and group of the `app.db` by executing the following on the host system: `docker exec netalertx chown -R www-data:www-data /app/db/app.db`. 
-* If still facing issues, try to map the app.db file (⚠ not folder) to `:/app/db/app.db` (see [docker-compose Examples](./DOCKER_COMPOSE.md) for details)
+* If facing issues (AJAX errors, can't write to DB, empty screen, etc,) make sure permissions are set correctly, and check the logs under `/tmp/log`. 
+* To solve permission issues you can try setting the owner and group of the `app.db` by executing the following on the host system: `docker exec netalertx chown -R www-data:www-data /data/db/app.db`. 
+* If still facing issues, try to map the app.db file (⚠ not folder) to `:/data/db/app.db` (see [docker-compose Examples](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md#-docker-composeyml-examples) for details)
 
 ### Container restarts / crashes
 
@@ -49,7 +49,7 @@ Make sure that the subnet and interface in `SCAN_SUBNETS` are correct. If your d
 
 ### Losing my settings and devices after an update
 
-If you lose your devices and/or settings after an update that means you don't have the `/app/db` and `/app/config` folders mapped to a permanent storage. That means every time you update these folders are re-created. Make sure you have the [volumes specified correctly](./DOCKER_COMPOSE.md) in your `docker-compose.yml` or run command.
+If you lose your devices and/or settings after an update that means you don't have the `/data/db` and `/data/config` folders mapped to a permanent storage. That means every time you update these folders are re-created. Make sure you have the [volumes specified correctly](./DOCKER_COMPOSE.md) in your `docker-compose.yml` or run command.
 
 
 ### The application is slow

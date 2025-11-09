@@ -1,10 +1,7 @@
 #!/usr/bin/env python
 
 import os
-import pathlib
 import sys
-import json
-import sqlite3
 from pytz import timezone
 import asyncio
 from datetime import datetime
@@ -17,15 +14,13 @@ from aiofreepybox.api.lan import Lan
 from aiofreepybox.exceptions import NotOpenError, AuthorizationError
 
 # Define the installation path and extend the system path for plugin imports
-INSTALL_PATH = "/app"
+INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64
-from utils.plugin_utils import get_plugins_configs
+from plugin_helper import Plugin_Objects
 from logger import mylog, Logger
-from const import pluginsPath, fullDbPath, logPath
+from const import logPath
 from helper import get_setting_value
-from messaging.in_app import write_notification
 import conf
 
 # Make sure the TIMEZONE for logging is correct
@@ -86,7 +81,8 @@ def map_device_type(type: str):
 
 async def get_device_data(api_version: int, api_address: str, api_port: int):
     # ensure existence of db path
-    data_dir = Path("/app/config/freeboxdb")
+    config_base = Path(os.getenv("NETALERTX_CONFIG", "/data/config"))
+    data_dir = config_base / "freeboxdb"
     data_dir.mkdir(parents=True, exist_ok=True)
 
     # Instantiate Freepybox class using default application descriptor

@@ -15,9 +15,22 @@
 <?php
 
   require 'php/templates/header.php';
+  
   // check permissions
-  $dbPath = "../db/app.db";
-  $confPath = "../config/app.conf";
+  // Use environment-aware paths with fallback to legacy locations
+  $dbFolderPath = rtrim(getenv('NETALERTX_DB') ?: '/data/db', '/');
+  $configFolderPath = rtrim(getenv('NETALERTX_CONFIG') ?: '/data/config', '/');
+
+  $dbPath = $dbFolderPath . '/app.db';
+  $confPath = $configFolderPath . '/app.conf';
+
+  // Fallback to legacy paths if new locations don't exist
+  if (!file_exists($dbPath) && file_exists('../db/app.db')) {
+      $dbPath = '../db/app.db';
+  }
+  if (!file_exists($confPath) && file_exists('../config/app.conf')) {
+      $confPath = '../config/app.conf';
+  }
 
   checkPermissions([$dbPath, $confPath]);
 ?>

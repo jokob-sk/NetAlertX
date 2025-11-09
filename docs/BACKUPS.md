@@ -1,7 +1,7 @@
 # Backing Things Up
 
 > [!NOTE]
-> To back up 99% of your configuration, back up at least the `/app/config` folder.
+> To back up 99% of your configuration, back up at least the `/data/config` folder.
 > Database definitions can change between releases, so the safest method is to restore backups using the **same app version** they were taken from, then upgrade incrementally.
 
 ---
@@ -25,7 +25,7 @@ Understanding where your data is stored helps you plan your backup strategy.
 
 ### Core Configuration
 
-Stored in `/app/config/app.conf`.
+Stored in `/data/config/app.conf`.
 This includes settings for:
 
 * Notifications
@@ -37,7 +37,7 @@ This includes settings for:
 
 ### Device Data
 
-Stored in `/app/config/devices_<timestamp>.csv` or `/app/config/devices.csv`, created by the [CSV Backup `CSVBCKP` Plugin](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/csv_backup).
+Stored in `/data/config/devices_<timestamp>.csv` or `/data/config/devices.csv`, created by the [CSV Backup `CSVBCKP` Plugin](https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/csv_backup).
 Contains:
 
 * Device names, icons, and categories
@@ -46,7 +46,7 @@ Contains:
 
 ### Historical Data
 
-Stored in `/app/db/app.db` (see [Database Overview](./DATABASE.md)).
+Stored in `/data/db/app.db` (see [Database Overview](./DATABASE.md)).
 Contains:
 
 * Plugin data and historical entries
@@ -77,9 +77,9 @@ You can also download the `app.conf` and `devices.csv` files from the **Maintena
 
 ### 💾 What to Back Up
 
-* `/app/db/app.db` (uncorrupted)
-* `/app/config/app.conf`
-* `/app/config/workflows.json`
+* `/data/db/app.db` (uncorrupted)
+* `/data/config/app.conf`
+* `/data/config/workflows.json`
 
 ### 📥 How to Restore
 
@@ -93,14 +93,14 @@ Map these files into your container as described in the [Setup documentation](./
 
 ### 💾 What to Back Up
 
-* `/app/config/app.conf`
-* `/app/config/workflows.json`
-* `/app/config/devices_<timestamp>.csv` (rename to `devices.csv` during restore)
+* `/data/config/app.conf`
+* `/data/config/workflows.json`
+* `/data/config/devices_<timestamp>.csv` (rename to `devices.csv` during restore)
 
 ### 📥 How to Restore
 
-1. Copy `app.conf` and `workflows.json` into `/app/config/`
-2. Rename and place `devices_<timestamp>.csv` → `/app/config/devices.csv`
+1. Copy `app.conf` and `workflows.json` into `/data/config/`
+2. Rename and place `devices_<timestamp>.csv` → `/data/config/devices.csv`
 3. Restore via the **Maintenance** section under *Devices → Bulk Editing*
 
 This recovers nearly all configuration, workflows, and device metadata.
@@ -157,6 +157,6 @@ For users running NetAlertX via Docker, you can back up or restore directly from
 
 ## Summary
 
-* Back up `/app/config` for configuration and devices; `/app/db` for history
+* Back up `/data/config` for configuration and devices; `/data/db` for history
 * Keep regular backups, especially before upgrades
 * For Docker setups, use the lightweight `alpine`-based backup method for consistency and portability

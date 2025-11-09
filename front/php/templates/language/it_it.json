@@ -674,7 +674,7 @@
     "Systeminfo_System_Uptime": "Tempo di attività:",
     "Systeminfo_This_Client": "Questo client",
     "Systeminfo_USB_Devices": "Dispositivi USB",
-    "TICKER_MIGRATE_TO_NETALERTX": "⚠ Rilevate vecchie posizioni di montaggio. Segui <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/MIGRATION.md\" target=\"_blank\">questa guida</a> per migrare alle nuove cartelle <code> /app/config</code> e <code>/app/db</code> e al contenitore <code>netalertx</code>.",
+    "TICKER_MIGRATE_TO_NETALERTX": "⚠ Rilevate vecchie posizioni di montaggio. Segui <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/MIGRATION.md\" target=\"_blank\">questa guida</a> per migrare alle nuove cartelle <code> /data/config</code> e <code>/data/db</code> e al contenitore <code>netalertx</code>.",
     "TIMEZONE_description": "Fuso orario per visualizzare correttamente le statistiche. Trova il tuo fuso orario <a target=\"_blank\" href=\"https://en.wikipedia.org/wiki/List_of_tz_database_time_zones\" rel=\"nofollow\">qui</a>.",
     "TIMEZONE_name": "Fuso orario",
     "UI_DEV_SECTIONS_description": "Seleziona quali elementi della UI nascondere nella pagina dei dispositivi.",

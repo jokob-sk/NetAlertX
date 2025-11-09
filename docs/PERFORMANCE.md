@@ -62,7 +62,7 @@ For example, the **ICMP plugin** allows you to specify a regular expression to s
 
 ## Storing Temporary Files in Memory
 
-On systems with slower I/O speeds, you can optimize performance by storing temporary files in memory. This primarily applies to the `/app/api` and `/app/log` folders.
+On systems with slower I/O speeds, you can optimize performance by storing temporary files in memory. This primarily applies to the API directory (default: `/tmp/api`, configurable via `NETALERTX_API`) and `/tmp/log` folders.
 
 Using `tmpfs` reduces disk writes and improves performance. However, it should be **disabled** if persistent logs or API data storage are required.
 
@@ -80,15 +80,15 @@ services:
     network_mode: "host"        
     restart: unless-stopped
     volumes:
-      - local/path/config:/app/config
-      - local/path/db:/app/db      
+      - local/path/config:/data/config
+      - local/path/db:/data/db      
       # (Optional) Useful for debugging setup issues
-      - local/path/logs:/app/log
+      - local/path/logs:/tmp/log
       # (API: OPTION 1) Store temporary files in memory (recommended for performance)
       - type: tmpfs              # ◀ 🔺
-        target: /app/api         # ◀ 🔺
+        target: /tmp/api         # ◀ 🔺
       # (API: OPTION 2) Store API data on disk (useful for debugging)
-      # - local/path/api:/app/api
+      # - local/path/api:/tmp/api
     environment:
       - TZ=Europe/Berlin      
       - PORT=20211

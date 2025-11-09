@@ -31,61 +31,46 @@ services:
       - NET_BIND_SERVICE                            # Required to bind to privileged ports (nbtscan)
 
     volumes:
-      - type: volume                                # Persistent Docker-managed Named Volume for storage of config files
-        source: netalertx_config                    # the default name of the volume is netalertx_config
-        target: /app/config                         # inside the container mounted to /app/config
-        read_only: false                            # writable volume
-
-    # Example custom local folder called /home/user/netalertx_config
-    # - type: bind
-    #   source: /home/user/netalertx_config
-    #   target: /app/config
-    #   read_only: false
-    # ... or use the alternative format
-    # - /home/user/netalertx_config:/app/config:rw
-
-      - type: volume                                # NetAlertX Database partiton
-        source: netalertx_db
-        target: /app/db
+      - type: volume                                # Persistent Docker-managed named volume for config + database
+        source: netalertx_data
+        target: /data                               # `/data/config` and `/data/db` live inside this mount
         read_only: false
 
-      - type: volume                                # Future proof mount. During the migration to a
-        source: netalertx_data                      # future version, app and db will be migrated to
-        target: /data                               # the /data partition.  This will reduce the 
-        read_only: false                            # overhead and pain in the upcoming migration.
+    # Example custom local folder called /home/user/netalertx_data
+    # - type: bind
+    #   source: /home/user/netalertx_data
+    #   target: /data
+    #   read_only: false
+    # ... or use the alternative format
+    # - /home/user/netalertx_data:/data:rw
 
       - type: bind                                  # Bind mount for timezone consistency
-        source: /etc/localtime
+        source: /etc/localtime                      # Alternatively add environment TZ: America/New York
         target: /etc/localtime
         read_only: true
 
       # Mount your DHCP server file into NetAlertX for a plugin to access
       # - path/on/host/to/dhcp.file:/resources/dhcp.file
 
-      # Retain logs - comment out tmpfs /app/log if you want to retain logs between container restarts
-      # - /path/on/host/log:/app/log
-
-    # Tempfs mounts for writable directories in a read-only container and improve system performance
-    # All mounts have noexec,nosuid,nodev for security purposes no devices, no suid/sgid and no execution of binaries
-    # async where possible for performance, sync where required for correctness
+    # tmpfs mount consolidates writable state for a read-only container and improves performance
     # uid=20211 and gid=20211 is the netalertx user inside the container
-    # mode=1700 gives rwx------ permissions to the netalertx user only
+    # mode=1700 grants rwx------ permissions to the netalertx user only
     tmpfs:
-      # Speed up logging. This can be commented out to retain logs between container restarts
-      - "/app/log:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
-      # Speed up API access as frontend/backend API is very chatty
-      - "/app/api:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,sync,noatime,nodiratime"  
-      # Required for customization of the nginx listen addr/port without rebuilding the container
-      - "/services/config/nginx/conf.active:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
-      # /services/config/nginx/conf.d is required for nginx and php to start
-      - "/services/run:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
-      # /tmp is required by php for session save this should be reworked to /services/run/tmp
-      - "/tmp:uid=2Key-Value Pairs: 20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      # Comment out to retain logs between container restarts - this has a server performance impact.
+      - "/tmp:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+
+      # Retain logs - comment out tmpfs /tmp if you want to retain logs between container restarts
+      # Please note if you remove the /tmp mount, you must create and maintain sub-folder mounts.
+      # - /path/on/host/log:/tmp/log
+      # - "/tmp/api:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      # - "/tmp/nginx:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      # - "/tmp/run:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+
     environment:
       LISTEN_ADDR: ${LISTEN_ADDR:-0.0.0.0}                   # Listen for connections on all interfaces
       PORT: ${PORT:-20211}                                   # Application port
       GRAPHQL_PORT: ${GRAPHQL_PORT:-20212}                   # GraphQL API port (passed into APP_CONF_OVERRIDE at runtime)
-      NETALERTX_DEBUG: ${NETALERTX_DEBUG:-0}                 # 0=kill all services and restart if any dies. 1 keeps running dead services.
+  #    NETALERTX_DEBUG: ${NETALERTX_DEBUG:-0}                 # 0=kill all services and restart if any dies. 1 keeps running dead services.
 
     # Resource limits to prevent resource exhaustion
     mem_limit: 2048m            # Maximum memory usage
@@ -101,10 +86,8 @@ services:
     # Always restart the container unless explicitly stopped
     restart: unless-stopped
 
-volumes:                        # Persistent volumes for configuration and database storage
-  netalertx_config:             # Configuration files
-  netalertx_db:                 # Database files
-  netalertx_data:               # For future config/db upgrade
+volumes:                        # Persistent volume for configuration and database storage
+  netalertx_data:
 ```
 
 Run or re-run it:
@@ -163,8 +146,8 @@ However, if you prefer to have direct, file-level access to your configuration f
 ```yaml
 ...
     volumes:
-      - netalertx_config:/app/config:rw #short-form volume (no /path is a short volume)
-      - netalertx_db:/app/db:rw
+      - netalertx_config:/data/config:rw #short-form volume (no /path is a short volume)
+      - netalertx_db:/data/db:rw
 ...
 ```
 
@@ -174,14 +157,14 @@ Make sure to replace `/home/adam/netalertx-files` with your actual path. The for
 ```yaml
 ...
     volumes:
-#      - netalertx_config:/app/config:rw
-#      - netalertx_db:/app/db:rw
-      - /home/adam/netalertx-files/config:/app/config:rw
-      - /home/adam/netalertx-files/db:/app/db:rw
+#      - netalertx_config:/data/config:rw
+#      - netalertx_db:/data/db:rw
+      - /home/adam/netalertx-files/config:/data/config:rw
+      - /home/adam/netalertx-files/db:/data/db:rw
 ...
 ```
 
-Now, any files created by NetAlertX in `/app/config` will appear in your `/home/adam/netalertx-files/config` folder.
+Now, any files created by NetAlertX in `/data/config` will appear in your `/home/adam/netalertx-files/config` folder.
 
 This same method works for mounting other things, like custom plugins or enterprise NGINX files, as shown in the commented-out examples in the baseline file.
 
