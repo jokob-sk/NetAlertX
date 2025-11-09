@@ -19,7 +19,6 @@ events {
 }
 
 http {
-
 	# Mapping of temp paths for various nginx modules.
     client_body_temp_path /tmp/nginx/client_body;
     proxy_temp_path /tmp/nginx/proxy;
@@ -101,7 +100,6 @@ http {
         root /app/front;
         index index.php;
         add_header X-Forwarded-Prefix "/app" always;
-
 
         location ~* \.php$ {
             # Set Cache-Control header to prevent caching on the first load
