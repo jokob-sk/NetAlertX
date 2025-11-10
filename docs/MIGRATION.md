@@ -85,10 +85,10 @@ services:
     network_mode: "host"        
     restart: unless-stopped
     volumes:
-      - local/path/config:/home/pi/pialert/config  
-      - local/path/db:/home/pi/pialert/db         
+      - /local/path/config:/home/pi/pialert/config  
+      - /local/path/db:/home/pi/pialert/db         
       # (optional) useful for debugging if you have issues setting up the container
-      - local/path/logs:/home/pi/pialert/front/log
+      - /local/path/logs:/home/pi/pialert/front/log
     environment:
       - TZ=Europe/Berlin      
       - PORT=20211
@@ -104,10 +104,10 @@ services:
     network_mode: "host"        
     restart: unless-stopped
     volumes:
-      - local/path/config:/data/config         # 🆕 This has changed  
-      - local/path/db:/data/db                 # 🆕 This has changed  
+      - /local/path/config:/data/config         # 🆕 This has changed  
+      - /local/path/db:/data/db                 # 🆕 This has changed  
       # (optional) useful for debugging if you have issues setting up the container
-      - local/path/logs:/tmp/log        # 🆕 This has changed  
+      - /local/path/logs:/tmp/log        # 🆕 This has changed  
     environment:
       - TZ=Europe/Berlin      
       - PORT=20211
@@ -131,10 +131,10 @@ services:
     network_mode: "host"        
     restart: unless-stopped
     volumes:
-      - local/path/config/pialert.conf:/home/pi/pialert/config/pialert.conf  
-      - local/path/db/pialert.db:/home/pi/pialert/db/pialert.db         
+      - /local/path/config/pialert.conf:/home/pi/pialert/config/pialert.conf  
+      - /local/path/db/pialert.db:/home/pi/pialert/db/pialert.db         
       # (optional) useful for debugging if you have issues setting up the container
-      - local/path/logs:/home/pi/pialert/front/log
+      - /local/path/logs:/home/pi/pialert/front/log
     environment:
       - TZ=Europe/Berlin      
       - PORT=20211
@@ -150,10 +150,10 @@ services:
     network_mode: "host"        
     restart: unless-stopped
     volumes:
-      - local/path/config/app.conf:/data/config/app.conf # 🆕 This has changed  
-      - local/path/db/app.db:/data/db/app.db             # 🆕 This has changed  
+      - /local/path/config/app.conf:/data/config/app.conf # 🆕 This has changed  
+      - /local/path/db/app.db:/data/db/app.db             # 🆕 This has changed  
       # (optional) useful for debugging if you have issues setting up the container
-      - local/path/logs:/tmp/log                  # 🆕 This has changed  
+      - /local/path/logs:/tmp/log                  # 🆕 This has changed  
     environment:
       - TZ=Europe/Berlin      
       - PORT=20211
@@ -190,10 +190,10 @@ services:
     network_mode: "host"        
     restart: unless-stopped
     volumes:
-      - local/path/config:/data/config         
-      - local/path/db:/data/db                 
+      - /local/path/config:/data/config         
+      - /local/path/db:/data/db                 
       # (optional) useful for debugging if you have issues setting up the container
-      - local/path/logs:/tmp/log        
+      - /local/path/logs:/tmp/log        
     environment:
       - TZ=Europe/Berlin      
       - PORT=20211
@@ -207,10 +207,10 @@ services:
     network_mode: "host"        
     restart: unless-stopped
     volumes:
-      - local/path/config:/data/config         
-      - local/path/db:/data/db                 
+      - /local/path/config:/data/config         
+      - /local/path/db:/data/db                 
       # (optional) useful for debugging if you have issues setting up the container
-      - local/path/logs:/tmp/log        
+      - /local/path/logs:/tmp/log        
     environment:
       - TZ=Europe/Berlin      
       - PORT=20211
@@ -234,10 +234,10 @@ services:
     network_mode: "host"        
     restart: unless-stopped
     volumes:
-      - local/path/config:/data/config         
-      - local/path/db:/data/db                 
+      - /local/path/config:/data/config         
+      - /local/path/db:/data/db                 
       # (optional) useful for debugging if you have issues setting up the container
-      - local/path/logs:/tmp/log        
+      - /local/path/logs:/tmp/log        
     environment:
       - TZ=Europe/Berlin      
       - PORT=20211
@@ -253,9 +253,17 @@ services:
 
 ```sh
 docker run -it --rm --name netalertx --user "0" \
-  -v local/path/config:/data/config \
-  -v local/path/db:/data/db \
+  -v /local/path/config:/data/config \
+  -v /local/path/db:/data/db \
   ghcr.io/jokob-sk/netalertx:latest
+```
+
+..or alternatively execute:
+
+```bash
+sudo chown -R 20211:20211 /local/path/config
+sudo chown -R 20211:20211 /local/path/db
+sudo chmod -R a+rwx /local/path/
 ```
 
 7. Stop the container
@@ -273,10 +281,10 @@ services:
       - NET_BIND_SERVICE              # 🆕 New line 
     restart: unless-stopped
     volumes:
-      - local/path/config:/data/config         
-      - local/path/db:/data/db                 
+      - /local/path/config:/data/config         
+      - /local/path/db:/data/db                 
       # (optional) useful for debugging if you have issues setting up the container
-      #- local/path/logs:/tmp/log        
+      #- /local/path/logs:/tmp/log        
     environment:
       - TZ=Europe/Berlin      
       - PORT=20211
