@@ -14,7 +14,6 @@ from helper import (
     removeDuplicateNewLines,
     write_file,
     get_setting_value,
-    get_timezone_offset,
 )
 from messaging.in_app import write_notification
 from utils.datetime_utils import timeNowDB, get_timezone_offset

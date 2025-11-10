@@ -20,6 +20,9 @@ from logger import mylog
 from utils.datetime_utils import timeNowDB
 
 
+NOTIFICATION_API_FILE = apiPath + 'user_notifications.json'
+
+
 # Show Frontend User Notification
 def write_notification(content, level="alert", timestamp=None):
     """

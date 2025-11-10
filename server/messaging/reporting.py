@@ -19,7 +19,6 @@ INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
 sys.path.extend([f"{INSTALL_PATH}/server"])
 
 from helper import (
-    get_timezone_offset,
     get_setting_value,
 )
 from logger import mylog
