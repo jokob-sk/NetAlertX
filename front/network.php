@@ -462,10 +462,17 @@
 
       switch (orderTopologyBy[0]) {
         case "Name":
-          const nameCompare = a.devName.localeCompare(b.devName);
-          return nameCompare !== 0 ? nameCompare : parsePort(a.devParentPort) - parsePort(b.devParentPort);
+          // ensuring string
+          const nameA = (a.devName ?? "").toString();
+          const nameB = (b.devName ?? "").toString();
+          const nameCompare = nameA.localeCompare(nameB);
+          return nameCompare !== 0
+            ? nameCompare
+            : parsePort(a.devParentPort) - parsePort(b.devParentPort);
+
         case "Port":
           return parsePort(a.devParentPort) - parsePort(b.devParentPort);
+
         default:
           return a.rowid - b.rowid;
       }
