@@ -14,7 +14,7 @@ from const import confFileName, logPath
 from utils.datetime_utils import timeNowDB
 from plugin_helper import Plugin_Objects
 from logger import mylog, Logger
-from helper import timeNowTZ, get_setting_value
+from helper import get_setting_value
 from models.notification_instance import NotificationInstance
 from database import DB
 from pytz import timezone
