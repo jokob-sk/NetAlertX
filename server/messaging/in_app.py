@@ -13,9 +13,6 @@ sys.path.extend([f"{INSTALL_PATH}/server"])
 
 from const import apiPath
 from logger import mylog
-from helper import (
-    timeNowTZ,
-)
 
 import conf
 from const import applicationPath, logPath, apiPath, confFileName, reportTemplatesPath
