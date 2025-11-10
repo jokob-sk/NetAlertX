@@ -33,6 +33,11 @@ Get visibility of what's going on on your WIFI/LAN network and enable presence d
 
 ## 🚀 Quick Start
 
+> [!WARNING]
+> ⚠️ **Important:** The documentation has been recently updated and some instructions may have changed.  
+> If you are using the currently live production image, please follow the instructions on [Docker Hub](https://hub.docker.com/r/jokobsk/netalertx) for building and running the container.  
+> These docs reflect the latest development version and may differ from the production image.
+
 Start NetAlertX in seconds with Docker:
 
 ```bash
