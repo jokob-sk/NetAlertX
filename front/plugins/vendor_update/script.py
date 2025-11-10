@@ -1,23 +1,17 @@
 #!/usr/bin/env python
 
 import os
-import pathlib
-import argparse
 import sys
-import hashlib
 import subprocess
-import csv
 import sqlite3
-from io import StringIO
-from datetime import datetime
 
 # Register NetAlertX directories
-INSTALL_PATH="/app"
+INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64, handleEmpty
-from logger import mylog, Logger, append_line_to_file
-from helper import timeNowTZ, get_setting_value 
+from plugin_helper import Plugin_Objects, handleEmpty
+from logger import mylog, Logger
+from helper import get_setting_value 
 from const import logPath, applicationPath, fullDbPath
 from scan.device_handling import query_MAC_vendor
 import conf

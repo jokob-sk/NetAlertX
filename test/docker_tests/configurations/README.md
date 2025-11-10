@@ -18,7 +18,7 @@ This directory contains docker-compose configurations for different test scenari
 
 The `mount-tests/` subdirectory contains 24 docker-compose configurations that test all possible mount scenarios for each path that NetAlertX monitors:
 
-- **6 paths**: `/app/db`, `/app/config`, `/app/api`, `/app/log`, `/services/run`, `/services/config/nginx/conf.active`
+- **6 paths**: `/data/db`, `/data/config`, `/tmp/api`, `/tmp/log`, `/tmp/run`, `/tmp/nginx/active-config`
 - **4 scenarios per path**: `no-mount`, `ramdisk`, `mounted`, `unwritable`
 - **Total**: 24 comprehensive test configurations
 

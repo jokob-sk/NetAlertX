@@ -27,7 +27,7 @@ Sometimes, the UI might not be accessible. In that case, you can access the logs
 3. **Check the PHP application error log:**
 
    ```bash
-   cat /app/log/app.php_errors.log
+   cat /tmp/log/app.php_errors.log
    ```
 
 These logs will help identify syntax issues, fatal errors, or startup problems when the UI fails to load properly.

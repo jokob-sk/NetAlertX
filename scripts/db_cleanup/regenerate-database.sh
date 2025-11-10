@@ -1,7 +1,7 @@
 #!/bin/sh
 # This script recreates the database from schema code.
-#Database location
-NETALERTX_DB_FILE=/app/db/app.db
+# Database location
+NETALERTX_DB_FILE=${NETALERTX_DB:-/data/db}/app.db
 
 #remove the old database
 rm ${NETALERTX_DB_FILE}

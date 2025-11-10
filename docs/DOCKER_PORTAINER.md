@@ -45,18 +45,18 @@ services:
     restart: unless-stopped
 
     volumes:
-      - ${APP_FOLDER}/netalertx/config:/app/config
-      - ${APP_FOLDER}/netalertx/db:/app/db
+      - ${APP_FOLDER}/netalertx/config:/data/config
+      - ${APP_FOLDER}/netalertx/db:/data/db
       # Optional: logs (useful for debugging setup issues, comment out for performance)
-      - ${APP_FOLDER}/netalertx/log:/app/log
+      - ${APP_FOLDER}/netalertx/log:/tmp/log
 
       # API storage options:
       # (Option 1) tmpfs (default, best performance)
       - type: tmpfs
-        target: /app/api
+        target: /tmp/api
 
       # (Option 2) bind mount (useful for debugging)
-      # - ${APP_FOLDER}/netalertx/api:/app/api
+      # - ${APP_FOLDER}/netalertx/api:/tmp/api
 
     environment:
       - TZ=${TZ}

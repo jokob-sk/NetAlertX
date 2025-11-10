@@ -51,13 +51,13 @@ You want to edit your `app.conf` and other configuration files directly from you
        volumes:
          # - type: volume
          #   source: netalertx_config
-         #   target: /app/config
+         #   target: /data/config
          #   read_only: false
    ...
        # Example custom local folder called /data/netalertx_config
        - type: bind
          source: /data/netalertx_config
-         target: /app/config
+         target: /data/config
          read_only: false
    ...
    ```
@@ -70,7 +70,7 @@ You want to edit your `app.conf` and other configuration files directly from you
 
 ### About This Method
 
-This replaces the Docker-managed volume with a "bind mount." This is a direct mapping between a folder on your host computer (`/data/netalertx_config`) and a folder inside the container (`/app/config`), allowing you to edit the files directly.
+This replaces the Docker-managed volume with a "bind mount." This is a direct mapping between a folder on your host computer (`/data/netalertx_config`) and a folder inside the container (`/data/config`), allowing you to edit the files directly.
 
 ---
 
@@ -97,13 +97,13 @@ You are currently using a local folder (bind mount) for your configuration (e.g.
        volumes:
          - type: volume
            source: netalertx_config
-           target: /app/config
+           target: /data/config
            read_only: false
    ...
        # Example custom local folder called /data/netalertx_config
        # - type: bind
        #   source: /data/netalertx_config
-       #   target: /app/config
+       #   target: /data/config
        #   read_only: false
    ...
    ```
@@ -149,7 +149,7 @@ You need to override the default Nginx configuration to add features like LDAP, 
    ```yaml
    ...
        # Use a custom Enterprise-configured nginx config for ldap or other settings
-       - /data/my-netalertx.conf:/services/config/nginx/conf.active/netalertx.conf:ro
+       - /data/my-netalertx.conf:/tmp/nginx/active-config/netalertx.conf:ro
    ...
    ```
 4. Restart the container:

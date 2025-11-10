@@ -21,7 +21,7 @@ The app can be installed different ways, with the best support of the docker-bas
 
 NetAlertX is fully supported in Docker environments, allowing for easy setup and configuration. Follow the official guide to get started:
 
-- [Docker Installation Guide](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md)
+- [Docker Installation Guide](./DOCKER_INSTALLATION.md)
 
 This guide will take you through the process of setting up NetAlertX using Docker Compose or standalone Docker commands.
 

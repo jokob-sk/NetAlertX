@@ -23,7 +23,7 @@ Limit capabilities to only those required:
     - NET_ADMIN
     - NET_BIND_SERVICE
   ```
-- Remove any unnecessary `--cap-add` flags from docker run commands
+- Remove any unnecessary `--cap-add` or `--privileged` flags from docker run commands
 
 ## Additional Resources
 

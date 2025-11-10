@@ -1,34 +1,56 @@
-""" CONSTANTS for NetAlertX """
+"""CONSTANTS for NetAlertX"""
+
 import os
 
-#===============================================================================
+from config_paths import (
+    API_PATH_STR,
+    API_PATH_WITH_TRAILING_SEP,
+    APP_PATH_STR,
+    CONFIG_PATH_STR,
+    CONFIG_PATH_WITH_TRAILING_SEP,
+    DATA_PATH_STR,
+    DB_PATH_STR,
+    DB_PATH_WITH_TRAILING_SEP,
+    LOG_PATH_STR,
+    LOG_PATH_WITH_TRAILING_SEP,
+    PLUGINS_PATH_WITH_TRAILING_SEP,
+    REPORT_TEMPLATES_PATH_WITH_TRAILING_SEP,
+)
+
+# ===============================================================================
 # PATHS
-#===============================================================================
+# ===============================================================================
+
+applicationPath = APP_PATH_STR
+dataPath = DATA_PATH_STR
+configPath = CONFIG_PATH_STR
+dbFolderPath = DB_PATH_STR
+apiRoot = API_PATH_STR
+logRoot = LOG_PATH_STR
+
+dbFileName = "app.db"
+confFileName = "app.conf"
+
+confPath = CONFIG_PATH_WITH_TRAILING_SEP + confFileName
+dbPath = DB_PATH_WITH_TRAILING_SEP + dbFileName
+pluginsPath = PLUGINS_PATH_WITH_TRAILING_SEP.rstrip(os.sep)
+logPath = LOG_PATH_WITH_TRAILING_SEP.rstrip(os.sep)
+apiPath = API_PATH_WITH_TRAILING_SEP
+reportTemplatesPath = REPORT_TEMPLATES_PATH_WITH_TRAILING_SEP
+fullConfFolder = configPath
+fullConfPath = confPath
+fullDbPath = dbPath
+vendorsPath = os.getenv("VENDORSPATH", "/usr/share/arp-scan/ieee-oui.txt")
+vendorsPathNewest = os.getenv(
+    "VENDORSPATH_NEWEST", "/usr/share/arp-scan/ieee-oui_all_filtered.txt"
+)
+
+default_tz = "Europe/Berlin"
 
 
-applicationPath = '/app'
-dbFileName      = 'app.db'
-confFileName    = 'app.conf'
-confPath        = "/config/" + confFileName
-dbPath          = '/db/' + dbFileName
-
-
-pluginsPath         = applicationPath + '/front/plugins'
-logPath             = applicationPath + '/log'
-apiPath             = applicationPath + '/api/'
-reportTemplatesPath = applicationPath + '/front/report_templates/'
-fullConfFolder      = applicationPath + '/config'
-fullConfPath        = applicationPath + confPath
-fullDbPath          = applicationPath + dbPath
-vendorsPath         = os.getenv('VENDORSPATH', '/usr/share/arp-scan/ieee-oui.txt')
-vendorsPathNewest   = os.getenv('VENDORSPATH_NEWEST', '/usr/share/arp-scan/ieee-oui_all_filtered.txt')
-
-default_tz          = 'Europe/Berlin'
-
-
-#===============================================================================
+# ===============================================================================
 # SQL queries
-#===============================================================================
+# ===============================================================================
 sql_devices_all = """
                     SELECT 
                         rowid,
@@ -78,8 +100,8 @@ sql_devices_all = """
                     """
 
 sql_appevents = """select * from AppEvents order by DateTimeCreated desc"""
-# The below query calculates counts of devices in various categories: 
-#  (connected/online, offline, down, new, archived), 
+# The below query calculates counts of devices in various categories:
+#  (connected/online, offline, down, new, archived),
 #  as well as a combined count for devices that match any status listed in the UI_MY_DEVICES setting
 sql_devices_tiles = """
                         WITH Statuses AS (
@@ -142,7 +164,7 @@ sql_devices_filters = """
                         FROM Devices WHERE devSSID NOT IN ('', 'null') AND devSSID IS NOT NULL
                     ORDER BY columnName;
                     """
-sql_devices_stats =  """SELECT Online_Devices as online, Down_Devices as down, All_Devices as 'all', Archived_Devices as archived, 
+sql_devices_stats = """SELECT Online_Devices as online, Down_Devices as down, All_Devices as 'all', Archived_Devices as archived, 
                         (select count(*) from Devices a where devIsNew = 1 ) as new, 
                         (select count(*) from Devices a where devName = '(unknown)' or devName = '(name not found)' ) as unknown 
                         from Online_History order by Scan_Date desc limit 1"""
@@ -165,7 +187,7 @@ sql_new_devices = """SELECT * FROM (
                         ON t1.devMac = t2.devMac_t2"""
 
 
-sql_generateGuid = '''
+sql_generateGuid = """
                 lower(
                     hex(randomblob(4)) || '-' || hex(randomblob(2)) || '-' || '4' || 
                     substr(hex( randomblob(2)), 2) || '-' || 
@@ -173,4 +195,4 @@ sql_generateGuid = '''
                     substr(hex(randomblob(2)), 2) || '-' || 
                     hex(randomblob(6))
                 )
-            '''
+            """

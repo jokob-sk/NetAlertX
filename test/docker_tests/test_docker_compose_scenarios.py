@@ -17,9 +17,23 @@ import yaml
 CONFIG_DIR = pathlib.Path(__file__).parent / "configurations"
 ANSI_ESCAPE = re.compile(r"\x1B\[[0-9;]*[A-Za-z]")
 
+CONTAINER_PATHS = {
+    "data": "/data",
+    "db": "/data/db",
+    "config": "/data/config",
+    "log": "/tmp/log",
+    "api": os.environ.get("NETALERTX_API", "/tmp/api"),
+    "run": "/tmp/run",
+    "nginx_active": "/tmp/nginx/active-config",
+}
+
+TMPFS_ROOT = "/tmp:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+
 pytestmark = [pytest.mark.docker, pytest.mark.compose]
 
 IMAGE = os.environ.get("NETALERTX_TEST_IMAGE", "netalertx-test")
+
+_CONFLICT_NAME_PATTERN = re.compile(r'The container name "/([^"]+)" is already in use')
 
 # Docker Compose configurations for different test scenarios
 COMPOSE_CONFIGS = {
@@ -32,12 +46,11 @@ COMPOSE_CONFIGS = {
                 "cap_drop": ["ALL"],  # Drop all capabilities
                 "tmpfs": ["/tmp:mode=777"],
                 "volumes": [
-                    "./test_data/app_db:/app/db",
-                    "./test_data/app_config:/app/config",
-                    "./test_data/app_log:/app/log",
-                    "./test_data/app_api:/app/api",
-                    "./test_data/nginx_conf:/services/config/nginx/conf.active",
-                    "./test_data/services_run:/services/run"
+                    f"./test_data/data:{CONTAINER_PATHS['data']}",
+                    f"./test_data/log:{CONTAINER_PATHS['log']}",
+                    f"./test_data/api:{CONTAINER_PATHS['api']}",
+                    f"./test_data/nginx_conf:{CONTAINER_PATHS['nginx_active']}",
+                    f"./test_data/run:{CONTAINER_PATHS['run']}"
                 ],
                 "environment": {
                     "TZ": "UTC"
@@ -54,12 +67,11 @@ COMPOSE_CONFIGS = {
                 "cap_add": ["NET_RAW", "NET_ADMIN", "NET_BIND_SERVICE"],
                 "tmpfs": ["/tmp:mode=777"],
                 "volumes": [
-                    "./test_data/app_db:/app/db",
-                    "./test_data/app_config:/app/config",
-                    "./test_data/app_log:/app/log",
-                    "./test_data/app_api:/app/api",
-                    "./test_data/nginx_conf:/services/config/nginx/conf.active",
-                    "./test_data/services_run:/services/run"
+                    f"./test_data/data:{CONTAINER_PATHS['data']}",
+                    f"./test_data/log:{CONTAINER_PATHS['log']}",
+                    f"./test_data/api:{CONTAINER_PATHS['api']}",
+                    f"./test_data/nginx_conf:{CONTAINER_PATHS['nginx_active']}",
+                    f"./test_data/run:{CONTAINER_PATHS['run']}"
                 ],
                 "environment": {
                     "TZ": "UTC"
@@ -77,24 +89,12 @@ COMPOSE_CONFIGS = {
                 "cap_drop": ["ALL"],
                 "cap_add": ["NET_RAW", "NET_ADMIN", "NET_BIND_SERVICE"],
                 "user": "20211:20211",
-                "tmpfs": [
-                    "/app/log:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime",
-                    "/app/api:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,sync,noatime,nodiratime",
-                    "/services/config/nginx/conf.active:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime",
-                    "/services/run:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime",
-                    "/tmp:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime",
-                ],
+                "tmpfs": [TMPFS_ROOT],
                 "volumes": [
                     {
                         "type": "volume",
-                        "source": "__CONFIG_VOLUME__",
-                        "target": "/app/config",
-                        "read_only": False,
-                    },
-                    {
-                        "type": "volume",
-                        "source": "__DB_VOLUME__",
-                        "target": "/app/db",
+                        "source": "__DATA_VOLUME__",
+                        "target": CONTAINER_PATHS["data"],
                         "read_only": False,
                     },
                     {
@@ -111,28 +111,44 @@ COMPOSE_CONFIGS = {
         }
     }
 }
+
+
 def _create_test_data_dirs(base_dir: pathlib.Path) -> None:
     """Create test data directories and files with write permissions for the container user."""
-    dirs = ["app_db", "app_config", "app_log", "app_api", "nginx_conf", "services_run"]
+    dirs = [
+        "data/db",
+        "data/config",
+        "log",
+        "api",
+        "nginx_conf",
+        "run",
+    ]
     for dir_name in dirs:
         dir_path = base_dir / "test_data" / dir_name
         dir_path.mkdir(parents=True, exist_ok=True)
         dir_path.chmod(0o777)
 
     # Create basic config file
-    config_file = base_dir / "test_data" / "app_config" / "app.conf"
+    config_file = base_dir / "test_data" / "data" / "config" / "app.conf"
     if not config_file.exists():
         config_file.write_text("# Test configuration\n")
     config_file.chmod(0o666)
 
     # Create basic db file
-    db_file = base_dir / "test_data" / "app_db" / "app.db"
+    db_file = base_dir / "test_data" / "data" / "db" / "app.db"
     if not db_file.exists():
         # Create a minimal SQLite database
         import sqlite3
         conn = sqlite3.connect(str(db_file))
         conn.close()
     db_file.chmod(0o666)
+
+
+def _extract_conflict_container_name(output: str) -> str | None:
+    match = _CONFLICT_NAME_PATTERN.search(output)
+    if match:
+        return match.group(1)
+    return None
 
 
 def _run_docker_compose(
@@ -163,18 +179,49 @@ def _run_docker_compose(
     if env_vars:
         env.update(env_vars)
 
-    try:
-        if detached:
-            up_result = subprocess.run(
-                up_cmd,
+    # Ensure no stale containers from previous runs; always clean before starting.
+    subprocess.run(
+        cmd + ["down", "-v"],
+        cwd=compose_file.parent,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        check=False,
+        env=env,
+    )
+
+    def _run_with_conflict_retry(run_cmd: list[str], run_timeout: int) -> subprocess.CompletedProcess:
+        retry_conflict = True
+        while True:
+            proc = subprocess.run(
+                run_cmd,
                 cwd=compose_file.parent,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 text=True,
-                timeout=timeout,
+                timeout=run_timeout,
                 check=False,
                 env=env,
             )
+            combined = (proc.stdout or "") + (proc.stderr or "")
+            if retry_conflict and "is already in use by container" in combined:
+                conflict_name = _extract_conflict_container_name(combined)
+                if conflict_name:
+                    subprocess.run(
+                        ["docker", "rm", "-f", conflict_name],
+                        stdout=subprocess.PIPE,
+                        stderr=subprocess.PIPE,
+                        text=True,
+                        check=False,
+                        env=env,
+                    )
+                    retry_conflict = False
+                    continue
+            return proc
+
+    try:
+        if detached:
+            up_result = _run_with_conflict_retry(up_cmd, timeout)
 
             logs_cmd = cmd + ["logs"]
             logs_result = subprocess.run(
@@ -195,25 +242,16 @@ def _run_docker_compose(
                 stderr=(up_result.stderr or "") + (logs_result.stderr or ""),
             )
         else:
-            result = subprocess.run(
-                up_cmd,
-                cwd=compose_file.parent,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True,
-                timeout=timeout + 10,
-                check=False,
-                env=env,
-            )
+            result = _run_with_conflict_retry(up_cmd, timeout + 10)
     except subprocess.TimeoutExpired:
         # Clean up on timeout
         subprocess.run(["docker", "compose", "-f", str(compose_file), "-p", project_name, "down", "-v"],
-                      cwd=compose_file.parent, check=False, env=env)
+                       cwd=compose_file.parent, check=False, env=env)
         raise
 
     # Always clean up
     subprocess.run(["docker", "compose", "-f", str(compose_file), "-p", project_name, "down", "-v"],
-                  cwd=compose_file.parent, check=False, env=env)
+                   cwd=compose_file.parent, check=False, env=env)
 
     # Combine stdout and stderr
     result.output = result.stdout + result.stderr
@@ -256,8 +294,12 @@ def test_custom_port_with_unwritable_nginx_config_compose() -> None:
     compose_file = CONFIG_DIR / "mount-tests" / "docker-compose.mount-test.active_config_unwritable.yml"
     result = _run_docker_compose(compose_file, "netalertx-custom-port", env_vars={"PORT": "24444"})
 
+    # Keep verbose output for human debugging. Future automation must not remove this print; use
+    # the failedTest tool to trim context instead of stripping logs.
+    print("\n[compose output]", result.output)
+
     # Check for nginx config write failure warning
-    assert "Unable to write to /services/config/nginx/conf.active/netalertx.conf" in result.output
+    assert f"Unable to write to {CONTAINER_PATHS['nginx_active']}/netalertx.conf" in result.output
     # Container should still attempt to start but may fail for other reasons
     # The key is that the nginx config write warning appears
 
@@ -304,11 +346,9 @@ def test_normal_startup_no_warnings_compose(tmp_path: pathlib.Path) -> None:
     compose_config = copy.deepcopy(COMPOSE_CONFIGS["normal_startup"])
     service = compose_config["services"]["netalertx"]
 
-    config_volume_name = f"{project_name}_config"
-    db_volume_name = f"{project_name}_db"
+    data_volume_name = f"{project_name}_data"
 
-    service["volumes"][0]["source"] = config_volume_name
-    service["volumes"][1]["source"] = db_volume_name
+    service["volumes"][0]["source"] = data_volume_name
 
     service.setdefault("environment", {})
     service["environment"].update({
@@ -317,8 +357,7 @@ def test_normal_startup_no_warnings_compose(tmp_path: pathlib.Path) -> None:
     })
 
     compose_config["volumes"] = {
-        config_volume_name: {},
-        db_volume_name: {},
+        data_volume_name: {},
     }
 
     compose_file = base_dir / "docker-compose.yml"
@@ -333,7 +372,25 @@ def test_normal_startup_no_warnings_compose(tmp_path: pathlib.Path) -> None:
     # Check that startup completed without critical issues and mounts table shows success
     assert "Startup pre-checks" in clean_output
     assert "❌" not in clean_output
-    assert "/app/db                            |     ✅" in clean_output
+
+    data_line = ""
+    data_parts: list[str] = []
+    for line in clean_output.splitlines():
+        if CONTAINER_PATHS['data'] not in line or '|' not in line:
+            continue
+        parts = [segment.strip() for segment in line.split('|')]
+        if len(parts) < 2:
+            continue
+        if parts[1] == CONTAINER_PATHS['data']:
+            data_line = line
+            data_parts = parts
+            break
+
+    assert data_line, "Expected /data row in mounts table"
+
+    parts = data_parts
+    assert parts[1] == CONTAINER_PATHS['data'], f"Unexpected path column in /data row: {parts}"
+    assert parts[2] == "✅" and parts[3] == "✅", f"Unexpected mount row values for /data: {parts[2:4]}"
 
     # Ensure no critical errors or permission problems surfaced
     assert "Write permission denied" not in clean_output
@@ -364,14 +421,13 @@ def test_ram_disk_mount_analysis_compose(tmp_path: pathlib.Path) -> None:
                 "user": "20211:20211",
                 "tmpfs": [
                     "/tmp:mode=777",
-                    "/app/db",  # RAM disk for persistent DB
-                    "/app/config"  # RAM disk for persistent config
+                    CONTAINER_PATHS["data"],  # RAM disk for persistent data root
                 ],
                 "volumes": [
-                    f"./test_data/app_log:/app/log",
-                    f"./test_data/app_api:/app/api",
-                    f"./test_data/nginx_conf:/services/config/nginx/conf.active",
-                    f"./test_data/services_run:/services/run"
+                    f"./test_data/log:{CONTAINER_PATHS['log']}",
+                    f"./test_data/api:{CONTAINER_PATHS['api']}",
+                    f"./test_data/nginx_conf:{CONTAINER_PATHS['nginx_active']}",
+                    f"./test_data/run:{CONTAINER_PATHS['run']}"
                 ],
                 "environment": {
                     "TZ": "UTC"
@@ -389,8 +445,7 @@ def test_ram_disk_mount_analysis_compose(tmp_path: pathlib.Path) -> None:
 
     # Check that mounts table shows RAM disk detection and dataloss warnings
     assert "Configuration issues detected" in result.output
-    assert "/app/db" in result.output
-    assert "/app/config" in result.output
+    assert CONTAINER_PATHS["data"] in result.output
     assert result.returncode != 0  # Should fail due to dataloss risk
 
 
@@ -417,14 +472,13 @@ def test_dataloss_risk_mount_analysis_compose(tmp_path: pathlib.Path) -> None:
                 "user": "20211:20211",
                 "tmpfs": [
                     "/tmp:mode=777",
-                    "/app/db:uid=20211,gid=20211",  # Non-persistent for DB
-                    "/app/config:uid=20211,gid=20211"  # Non-persistent for config
+                    f"{CONTAINER_PATHS['data']}:uid=20211,gid=20211",  # Non-persistent for unified data
                 ],
                 "volumes": [
-                    f"./test_data/app_log:/app/log",
-                    f"./test_data/app_api:/app/api",
-                    f"./test_data/nginx_conf:/services/config/nginx/conf.active",
-                    f"./test_data/services_run:/services/run"
+                    f"./test_data/log:{CONTAINER_PATHS['log']}",
+                    f"./test_data/api:{CONTAINER_PATHS['api']}",
+                    f"./test_data/nginx_conf:{CONTAINER_PATHS['nginx_active']}",
+                    f"./test_data/run:{CONTAINER_PATHS['run']}"
                 ],
                 "environment": {
                     "TZ": "UTC"
@@ -442,6 +496,5 @@ def test_dataloss_risk_mount_analysis_compose(tmp_path: pathlib.Path) -> None:
 
     # Check that mounts table shows dataloss risk detection
     assert "Configuration issues detected" in result.output
-    assert "/app/db" in result.output
-    assert "/app/config" in result.output
+    assert CONTAINER_PATHS["data"] in result.output
     assert result.returncode != 0  # Should fail due to dataloss risk

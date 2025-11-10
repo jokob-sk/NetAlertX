@@ -19,6 +19,17 @@ Common workflows (F1->Tasks: Run Task)
   - Backend (GraphQL/Flask): `.devcontainer/scripts/restart-backend.sh` starts it under debugpy and logs to `/app/log/app.log`
   - Frontend (nginx + PHP-FPM): Started via setup.sh; can be restarted by the task "Start Frontend (nginx and PHP-FPM)".
 
+Production Container Evaulation
+1. F1 → Tasks: Shutdown services ([Dev Container] Stop Frontend & Backend Services)
+2. F1 → Tasks: Docker system and build prune ([Any] Docker system and build Prune)
+3. F1 → Remote: Close Unused Forwarded Ports (VS Code command)
+4. F1 → Tasks: Build & Launch Production (Build & Launch Prodcution Docker 
+5. visit http://localhost:20211
+
+Unit tests
+1. F1 → Tasks: Rebuild test container ([Any] Build Unit Test Docker image)
+2. F1 → Test: Run all tests
+
 Testing
 - pytest is installed via Alpine packages (py3-pytest, py3-pytest-cov).
 - PYTHONPATH includes workspace and venv site-packages so tests can import `server/*` modules and third-party libs.

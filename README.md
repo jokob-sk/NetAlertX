@@ -6,7 +6,7 @@
 
 # NetAlertX - Network, presence scanner and alert framework
 
-Get visibility of what's going on on your WIFI/LAN network and enable presence detection of important devices. Schedule scans for devices, port changes and get alerts if unknown devices or changes are found. Write your own [Plugin](https://github.com/jokob-sk/NetAlertX/tree/main/docs/PLUGINS.md#readme) with auto-generated UI and in-build notification system. Build out and easily maintain your network source of truth (NSoT).
+Get visibility of what's going on on your WIFI/LAN network and enable presence detection of important devices. Schedule scans for devices, port changes and get alerts if unknown devices or changes are found. Write your own [Plugin](https://github.com/jokob-sk/NetAlertX/tree/main/docs/PLUGINS.md#readme) with auto-generated UI and in-build notification system. Build out and easily maintain your network source of truth (NSoT) and device inventory.
 
 ## 📋 Table of Contents
 
@@ -33,13 +33,18 @@ Get visibility of what's going on on your WIFI/LAN network and enable presence d
 
 ## 🚀 Quick Start
 
+> [!WARNING]
+> ⚠️ **Important:** The documentation has been recently updated and some instructions may have changed.  
+> If you are using the currently live production image, please follow the instructions on [Docker Hub](https://hub.docker.com/r/jokobsk/netalertx) for building and running the container.  
+> These docs reflect the latest development version and may differ from the production image.
+
 Start NetAlertX in seconds with Docker:
 
 ```bash
 docker run -d --rm --network=host \
-  -v local_path/config:/app/config \
-  -v local_path/db:/app/db \
-  --mount type=tmpfs,target=/app/api \
+  -v local_path/config:/data/config \
+  -v local_path/db:/data/db \
+  --mount type=tmpfs,target=/tmp/api \
   -e PUID=200 -e PGID=300 \
   -e TZ=Europe/Berlin \
   -e PORT=20211 \
@@ -61,7 +66,7 @@ For Home Assistant users: [Click here to add NetAlertX](https://my.home-assistan
 For other install methods, check the [installation docs](#-documentation)
 
 
-| [📑 Docker guide](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md) | [🚀 Releases](https://github.com/jokob-sk/NetAlertX/releases) | [📚 Docs](https://jokob-sk.github.io/NetAlertX/) | [🔌 Plugins](https://github.com/jokob-sk/NetAlertX/blob/main/docs/PLUGINS.md) | [🤖 Ask AI](https://gurubase.io/g/netalertx)
+| [📑 Docker guide](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DOCKER_INSTALLATION.md) | [🚀 Releases](https://github.com/jokob-sk/NetAlertX/releases) | [📚 Docs](https://jokob-sk.github.io/NetAlertX/) | [🔌 Plugins](https://github.com/jokob-sk/NetAlertX/blob/main/docs/PLUGINS.md) | [🤖 Ask AI](https://gurubase.io/g/netalertx)
 |----------------------| ----------------------|  ----------------------| ----------------------| ----------------------| 
 
 ![showcase][showcase] 
@@ -103,7 +108,7 @@ The [workflows module](https://github.com/jokob-sk/NetAlertX/blob/main/docs/WORK
 
 Supported browsers: Chrome, Firefox
 
-- [[Installation] Docker](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md) 
+- [[Installation] Docker](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DOCKER_INSTALLATION.md) 
 - [[Installation] Home Assistant](https://github.com/alexbelgium/hassio-addons/tree/master/netalertx) 
 - [[Installation] Bare metal](https://github.com/jokob-sk/NetAlertX/blob/main/docs/HW_INSTALL.md) 
 - [[Installation] Unraid App](https://unraid.net/community/apps) 
@@ -140,7 +145,7 @@ A: No. All scans and data remain local, unless you set up cloud-based notificati
 A: Yes! You can install it bare-metal. See the [bare metal installation guide](https://github.com/jokob-sk/NetAlertX/blob/main/docs/HW_INSTALL.md).
 
 **Q: Where is the data stored?**  
-A: In the `/config` and `/db` folders, mapped in Docker. Back up these folders regularly.
+A: In the `/data/config` and `/data/db` folders. Back up these folders regularly.
 
 
 ## 🐞 Known Issues

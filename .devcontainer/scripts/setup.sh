@@ -1,184 +1,110 @@
 #!/bin/bash
-# Runtime setup for devcontainer (executed after container starts).
-# Prefer building setup into resources/devcontainer-Dockerfile when possible.
-# Use this script for runtime-only adjustments (permissions, sockets, ownership,
-# and services managed without init) that are difficult at build time.
-id
-
-# Define variables (paths, ports, environment)
-
-export APP_DIR="/app"
-export APP_COMMAND="/workspaces/NetAlertX/.devcontainer/scripts/restart-backend.sh"
-export PHP_FPM_BIN="/usr/sbin/php-fpm83"
-export CROND_BIN="/usr/sbin/crond -f"
-
-
-export ALWAYS_FRESH_INSTALL=false
-export INSTALL_DIR=/app
-export LOGS_LOCATION=/app/logs
-export CONF_FILE="app.conf"
-export DB_FILE="app.db"
-export FULL_FILEDB_PATH="${INSTALL_DIR}/db/${DB_FILE}"
-export OUI_FILE="/usr/share/arp-scan/ieee-oui.txt" # Define the path to ieee-oui.txt and ieee-iab.txt
-export TZ=Europe/Paris
-export PORT=20211
-export SOURCE_DIR="/workspaces/NetAlertX"
+# NetAlertX Devcontainer Setup Script
+#
+# This script forcefully resets all runtime state for a single-user devcontainer.
+# It is intentionally idempotent: every run wipes and recreates all relevant folders,
+# symlinks, and files, so the environment is always fresh and predictable.
+#
+# - No conditional logic: everything is (re)created, overwritten, or reset unconditionally.
+# - No security hardening: this is for disposable, local dev use only.
+# - No checks for existing files, mounts, or processes—just do the work.
+#
+# If you add new runtime files or folders, add them to the creation/reset section below.
+#
+# Do not add if-then logic or error handling for missing/existing files. Simplicity is the goal.
 
 
-ensure_docker_socket_access() {
-  local socket="/var/run/docker.sock"
-  if [ ! -S "${socket}" ]; then
-    echo "docker socket not present; skipping docker group configuration"
-    return
-  fi
+SOURCE_DIR=${SOURCE_DIR:-/workspaces/NetAlertX}
+PY_SITE_PACKAGES="${VIRTUAL_ENV:-/opt/venv}/lib/python3.12/site-packages"
+SOURCE_SERVICES_DIR="${SOURCE_DIR}/install/production-filesystem/services"
 
-  local sock_gid
-  sock_gid=$(stat -c '%g' "${socket}" 2>/dev/null || true)
-  if [ -z "${sock_gid}" ]; then
-    echo "unable to determine docker socket gid; skipping docker group configuration"
-    return
-  fi
+LOG_FILES=(
+  LOG_APP
+  LOG_APP_FRONT
+  LOG_STDOUT
+  LOG_STDERR
+  LOG_EXECUTION_QUEUE
+  LOG_APP_PHP_ERRORS
+  LOG_IP_CHANGES
+  LOG_CROND
+  LOG_REPORT_OUTPUT_TXT
+  LOG_REPORT_OUTPUT_HTML
+  LOG_REPORT_OUTPUT_JSON
+  LOG_DB_IS_LOCKED
+  LOG_NGINX_ERROR
+)
 
-  local group_entry=""
-  if command -v getent >/dev/null 2>&1; then
-    group_entry=$(getent group "${sock_gid}" 2>/dev/null || true)
-  else
-    group_entry=$(grep -E ":${sock_gid}:" /etc/group 2>/dev/null || true)
-  fi
+sudo chmod 666 /var/run/docker.sock 2>/dev/null || true
+sudo chown "$(id -u)":"$(id -g)" /workspaces
+sudo chmod 755 /workspaces
 
-  local group_name=""
-  if [ -n "${group_entry}" ]; then
-    group_name=$(echo "${group_entry}" | cut -d: -f1)
-  else
-    group_name="docker-host"
-    sudo addgroup -g "${sock_gid}" "${group_name}" 2>/dev/null || group_name=$(grep -E ":${sock_gid}:" /etc/group | head -n1 | cut -d: -f1)
-  fi
+killall php-fpm83 nginx crond python3 2>/dev/null || true
 
-  if [ -z "${group_name}" ]; then
-    echo "failed to resolve group for docker socket gid ${sock_gid}; skipping docker group configuration"
-    return
-  fi
+# Mount ramdisks for volatile data
+sudo mount -t tmpfs -o size=100m,mode=0777 tmpfs /tmp/log 2>/dev/null || true
+sudo mount -t tmpfs -o size=50m,mode=0777 tmpfs /tmp/api 2>/dev/null || true
+sudo mount -t tmpfs -o size=50m,mode=0777 tmpfs /tmp/run 2>/dev/null || true
+sudo mount -t tmpfs -o size=50m,mode=0777 tmpfs /tmp/nginx 2>/dev/null || true
 
-  if ! id -nG netalertx | tr ' ' '\n' | grep -qx "${group_name}"; then
-    sudo addgroup netalertx "${group_name}" 2>/dev/null || true
-  fi
-}
+sudo chmod 777 /tmp/log /tmp/api /tmp/run /tmp/nginx
 
 
-main() {
-    echo "=== NetAlertX Development Container Setup ==="
-    killall php-fpm83 nginx crond python3 2>/dev/null
-    sleep 1
-    echo "Setting up ${SOURCE_DIR}..."
-    ensure_docker_socket_access
-    sudo chown $(id -u):$(id -g) /workspaces
-    sudo chmod 755 /workspaces
-    configure_source
-    
-    echo "--- Starting Development Services ---"
-    configure_php
 
+sudo rm -rf "${SYSTEM_NGINX_CONFIG}/conf.active"
+sudo ln -s "${SYSTEM_SERVICES_ACTIVE_CONFIG}" "${SYSTEM_NGINX_CONFIG}/conf.active"
 
-    start_services
-}
+sudo rm -rf /entrypoint.d
+sudo ln -s "${SOURCE_DIR}/install/production-filesystem/entrypoint.d" /entrypoint.d
 
-isRamDisk() {
-  if [ -z "$1" ] || [ ! -d "$1" ]; then
-    echo "Usage: isRamDisk <directory>" >&2
-    return 2
-  fi
+sudo rm -rf "${NETALERTX_APP}"
+sudo ln -s "${SOURCE_DIR}/" "${NETALERTX_APP}"
 
-  local fstype
-  fstype=$(df -T "$1" | awk 'NR==2 {print $2}')
+for dir in "${NETALERTX_DATA}" "${NETALERTX_CONFIG}" "${NETALERTX_DB}"; do
+  sudo install -d -m 777 "${dir}"
+done
 
-  if [ "$fstype" = "tmpfs" ] || [ "$fstype" = "ramfs" ]; then
-    return 0 # Success (is a ramdisk)
-  else
-    return 1 # Failure (is not a ramdisk)
-  fi
-}
+for dir in \
+  "${SYSTEM_SERVICES_RUN_LOG}" \
+  "${SYSTEM_SERVICES_ACTIVE_CONFIG}" \
+  "${NETALERTX_PLUGINS_LOG}" \
+  "/tmp/nginx/client_body" \
+  "/tmp/nginx/proxy" \
+  "/tmp/nginx/fastcgi" \
+  "/tmp/nginx/uwsgi" \
+  "/tmp/nginx/scgi"; do
+  sudo install -d -m 777 "${dir}"
+done
 
-# Setup source directory
-configure_source() {
-    echo "[1/4] Configuring System..."
-    echo "      -> Setting up /services permissions"
-    sudo chown -R netalertx /services
+# Create nginx temp subdirs with permissions
+sudo mkdir -p "${SYSTEM_SERVICES_RUN_TMP}/client_body" "${SYSTEM_SERVICES_RUN_TMP}/proxy" "${SYSTEM_SERVICES_RUN_TMP}/fastcgi" "${SYSTEM_SERVICES_RUN_TMP}/uwsgi" "${SYSTEM_SERVICES_RUN_TMP}/scgi"
+sudo chmod -R 777 "${SYSTEM_SERVICES_RUN_TMP}"
 
-    echo "[2/4] Configuring Source..."
-    echo "      -> Cleaning up previous instances"
+for var in "${LOG_FILES[@]}"; do
+  path=${!var}
+  dir=$(dirname "${path}")
+  sudo install -d -m 777 "${dir}"
+  touch "${path}"
+done
 
-    test -e ${NETALERTX_LOG} && sudo umount "${NETALERTX_LOG}" 2>/dev/null || true
-    test -e ${NETALERTX_API} && sudo umount "${NETALERTX_API}" 2>/dev/null || true
-    test -e ${NETALERTX_APP} && sudo rm -Rf ${NETALERTX_APP}/
+printf '0\n' | sudo tee "${LOG_DB_IS_LOCKED}" >/dev/null
+sudo chmod 777 "${LOG_DB_IS_LOCKED}"
 
-    echo "      -> Linking source to ${NETALERTX_APP}"
-    sudo ln -s ${SOURCE_DIR}/ ${NETALERTX_APP}
+sudo pkill -f python3 2>/dev/null || true
 
-    echo "      -> Mounting ramdisks for /log and /api"
-    mkdir -p ${NETALERTX_LOG} ${NETALERTX_API}
-    sudo mount -o uid=$(id -u netalertx),gid=$(id -g netalertx),mode=775 -t tmpfs -o size=256M tmpfs "${NETALERTX_LOG}"
-    sudo mount -o uid=$(id -u netalertx),gid=$(id -g netalertx),mode=775 -t tmpfs -o size=256M tmpfs "${NETALERTX_API}"
-    mkdir -p ${NETALERTX_PLUGINS_LOG}
-    touch ${NETALERTX_PLUGINS_LOG}/.dockerignore ${NETALERTX_API}/.dockerignore
-    # tmpfs mounts configured with netalertx ownership and 775 permissions above
+sudo chmod 777 "${PY_SITE_PACKAGES}" "${NETALERTX_DATA}" "${NETALERTX_DATA}"/* 2>/dev/null || true
 
-    touch /app/log/nginx_error.log
-    echo "      -> Empty log"|tee ${INSTALL_DIR}/log/app.log \
-        ${INSTALL_DIR}/log/app_front.log \
-        ${INSTALL_DIR}/log/stdout.log
-    touch ${INSTALL_DIR}/log/stderr.log \
-        ${INSTALL_DIR}/log/execution_queue.log
-    echo 0 > ${INSTALL_DIR}/log/db_is_locked.log
-    for f in ${INSTALL_DIR}/log/*.log; do
-        sudo chown netalertx:www-data $f
-        sudo chmod 664 $f
-        echo "" > $f
-    done
+sudo chmod 005 "${PY_SITE_PACKAGES}" 2>/dev/null || true
 
-    mkdir -p /app/log/plugins
-    sudo chown -R netalertx:www-data ${INSTALL_DIR}
+sudo chown -R "${NETALERTX_USER}:${NETALERTX_GROUP}" "${NETALERTX_APP}"
+date +%s | sudo tee "${NETALERTX_FRONT}/buildtimestamp.txt" >/dev/null
 
-    
-    while ps ax | grep -v grep | grep python3 > /dev/null; do
-        killall python3 &>/dev/null
-        sleep 0.2
-    done
-	sudo chmod 777 /opt/venv/lib/python3.12/site-packages/ && \
-  sudo chmod 005 /opt/venv/lib/python3.12/site-packages/
-	sudo chmod 666 /var/run/docker.sock
+sudo chmod 755 "${NETALERTX_APP}"
 
-	echo "      -> Updating build timestamp"
-	date +%s > ${NETALERTX_FRONT}/buildtimestamp.txt
-    
-}
+sudo chmod +x /entrypoint.sh
+setsid bash /entrypoint.sh &
+sleep 1
 
-# configure_php: configure PHP-FPM and enable dev debug options
-configure_php() {
-    echo "[3/4] Configuring PHP-FPM..."
-    sudo chown -R netalertx:netalertx  ${SYSTEM_SERVICES_RUN} 2>/dev/null || true
-
-}
-
-# start_services: start crond, PHP-FPM, nginx and the application
-start_services() {
-    echo "[4/4] Starting services"
-
-    sudo chmod +x /entrypoint.sh
-    setsid bash /entrypoint.sh&
-    sleep 1
-}
-
-
-sudo chmod 755 /app/
-echo "Development $(git rev-parse --short=8 HEAD)"| sudo tee /app/.VERSION
-# Run the main function
-main
-
-# create a services readme file
-echo "This folder is auto-generated by the container and devcontainer setup.sh script." > /services/README.md
-echo "Any changes here will be lost on rebuild. To make permanent changes, edit files in .devcontainer or production filesystem and rebuild the container." >> /services/README.md
-echo "Only make temporary/test changes in this folder, then perform a rebuild to reset." >> /services/README.md
-
+echo "Development $(git rev-parse --short=8 HEAD)" | sudo tee "${NETALERTX_APP}/.VERSION" >/dev/null
 
 
 

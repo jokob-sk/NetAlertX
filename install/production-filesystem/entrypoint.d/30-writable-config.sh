@@ -57,7 +57,7 @@ EOF
         >&2 printf "%s" "${YELLOW}"
         >&2 cat <<EOF
 ══════════════════════════════════════════════════════════════════════════════
-⚠️  ATTENTION: Write permission denied.
+⚠️  ATTENTION: Read permission denied (write permission denied).
 
     The application cannot write to "${path}". This will prevent it from
     saving data, logs, or configuration.

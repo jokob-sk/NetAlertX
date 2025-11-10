@@ -37,8 +37,18 @@
 #
 ################################################################################
 
+# Allow direct command execution (e.g., `docker run -it netalertx bash`).
+if [ "$#" -gt 0 ]; then
+    case "$1" in
+        bash|/bin/bash|sh|/bin/sh)
+            exec "$@"
+            ;;
+    esac
+fi
+
 # Banner display
 RED='\033[1;31m'
+GREY='\033[90m'
 RESET='\033[0m'
 printf "${RED}"
 echo '
@@ -64,25 +74,50 @@ for script in ${ENTRYPOINT_CHECKS}/*; do
         echo "Skipping startup checks as SKIP_TESTS is set."
         break
     fi
-    script_name=$(basename "$script" | sed 's/^[0-9]*-//;s/\.sh$//;s/-/ /g')
-    echo " --> ${script_name}"
+    script_name=$(basename "$script" | sed 's/^[0-9]*-//;s/\.(sh|py)$//;s/-/ /g')
+    echo "--> ${script_name} "
+	if [ -n "${SKIP_STARTUP_CHECKS:-}" ] && echo "${SKIP_STARTUP_CHECKS}" | grep -q "\b${script_name}\b"; then
+		printf "${GREY}skip${RESET}\n"
+		continue
+	fi
 
     "$script"
     NETALERTX_DOCKER_ERROR_CHECK=$?
 
-    if [ ${NETALERTX_DOCKER_ERROR_CHECK} -ne 0 ]; then
+    if [ ${NETALERTX_DOCKER_ERROR_CHECK} -eq 1 ]; then
+        >&2 printf "%s" "${RED}"
+        >&2 cat <<EOF
+══════════════════════════════════════════════════════════════════════════════
+❌ NetAlertX startup aborted: critical failure in ${script_name}.
+https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/troubleshooting.md
+══════════════════════════════════════════════════════════════════════════════
+EOF
+        >&2 printf "%s" "${RESET}"
+
+        if [ "${NETALERTX_DEBUG:-0}" -eq 1 ]; then
+		
+            FAILED_STATUS="1"
+            echo "NETALERTX_DEBUG=1, continuing despite critical failure in ${script_name}."
+        else
+            exit 1
+        fi
+    elif [ ${NETALERTX_DOCKER_ERROR_CHECK} -ne 0 ]; then
         # fail but continue checks so user can see all issues
         FAILED_STATUS="${NETALERTX_DOCKER_ERROR_CHECK}"
         echo "${script_name}: FAILED with ${FAILED_STATUS}"
         echo "Failure detected in: ${script}"
         # Continue to next check instead of exiting immediately
-    fi
+	fi
 done
 
 
 if [ -n "${FAILED_STATUS}" ]; then
     echo "Container startup checks failed with exit code ${FAILED_STATUS}."
-    # Continue with startup despite failures for testing purposes
+    if [ "${NETALERTX_DEBUG:-0}" -eq 1 ]; then
+        echo "NETALERTX_DEBUG=1, continuing despite failed pre-checks."
+    else
+        exit "${FAILED_STATUS}"
+    fi
 fi
 
 # Set APP_CONF_OVERRIDE based on GRAPHQL_PORT if not already set

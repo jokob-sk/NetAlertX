@@ -8,12 +8,12 @@ from datetime import datetime
 import sys
 
 # Register NetAlertX directories
-INSTALL_PATH="/app"
+INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from plugin_helper import Plugin_Objects, Plugin_Object
 from logger import mylog, Logger
-from helper import timeNowTZ, get_setting_value 
+from helper import get_setting_value 
 import conf
 from pytz import timezone
 from const import logPath
@@ -44,8 +44,11 @@ def main():
     nmapArgs = ['sudo', 'nmap', '--privileged', '--script', 'broadcast-dhcp-discover']
 
     try:
+        # Number of DHCP discovery probes to send
         dhcp_probes = 1
-        newLines = [datetime.now().strftime("%Y-%m-%d %H:%M:%S")]
+        
+        # Initialize a list to store output lines from the scan
+        newLines = []
         
         for _ in range(dhcp_probes):
             output = subprocess.check_output(nmapArgs, universal_newlines=True, stderr=subprocess.STDOUT, timeout=timeoutSec)

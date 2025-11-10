@@ -1,25 +1,25 @@
 import sys
+import os
 import re
-import subprocess
-import socket
-import dns.resolver
 
 # Register NetAlertX directories
-INSTALL_PATH = "/app"
+INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
 sys.path.extend([f"{INSTALL_PATH}/server"])
 
-import conf
-from const import *
 from logger import mylog
 from helper import get_setting_value
 
+
 class ResolvedName:
-    def __init__(self, raw: str = "(name not found)", cleaned: str = "(name not found)"):
+    def __init__(
+        self, raw: str = "(name not found)", cleaned: str = "(name not found)"
+    ):
         self.raw = raw
         self.cleaned = cleaned
 
     def __str__(self):
         return self.cleaned
+
 
 class NameResolver:
     def __init__(self, db):
@@ -66,18 +66,19 @@ class NameResolver:
         return self.resolve_from_plugin("DIGSCAN", pMAC, pIP)
 
     def clean_device_name(self, name: str, match_ip: bool) -> str:
-        mylog('debug', [f"[cleanDeviceName] input: {name}"])
+        mylog("debug", [f"[cleanDeviceName] input: {name}"])
 
         if match_ip:
             name += " (IP match)"
 
         regexes = get_setting_value('NEWDEV_NAME_CLEANUP_REGEX') or []
+        mylog('trace', [f"[cleanDeviceName] applying regexes: {regexes}"])
         for rgx in regexes:
-            mylog('trace', [f"[cleanDeviceName] applying regex: {rgx}"])
+            mylog("trace", [f"[cleanDeviceName] applying regex: {rgx}"])
             name = re.sub(rgx, "", name)
 
-        name = re.sub(r'\.$', '', name)
+        name = re.sub(r"\.$", "", name)
         name = name.replace(". (IP match)", " (IP match)")
 
-        mylog('debug', [f"[cleanDeviceName] output: {name}"])
+        mylog("debug", [f"[cleanDeviceName] output: {name}"])
         return name

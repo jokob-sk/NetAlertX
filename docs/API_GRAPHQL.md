@@ -1,9 +1,10 @@
 # GraphQL API Endpoint
 
-GraphQL queries are **read-optimized for speed**. Data may be slightly out of date until the file system cache refreshes. The GraphQL endpoints allows you to access the following objects:
+GraphQL queries are **read-optimized for speed**. Data may be slightly out of date until the file system cache refreshes. The GraphQL endpoints allow you to access the following objects:
 
-- Devices
-- Settings
+* Devices
+* Settings
+* Language Strings (LangStrings)
 
 ## Endpoints
 
@@ -190,11 +191,74 @@ curl 'http://host:GRAPHQL_PORT/graphql' \
 }
 ```
 
+
+---
+
+## LangStrings Query
+
+The **LangStrings query** provides access to localized strings. Supports filtering by `langCode` and `langStringKey`. If the requested string is missing or empty, you can optionally fallback to `en_us`.
+
+### Sample Query
+
+```graphql
+query GetLangStrings {
+  langStrings(langCode: "de_de", langStringKey: "settings_other_scanners") {
+    langStrings {
+      langCode
+      langStringKey
+      langStringText
+    }
+    count
+  }
+}
+```
+
+### Query Parameters
+
+| Parameter        | Type    | Description                                                                              |
+| ---------------- | ------- | ---------------------------------------------------------------------------------------- |
+| `langCode`       | String  | Optional language code (e.g., `en_us`, `de_de`). If omitted, all languages are returned. |
+| `langStringKey`  | String  | Optional string key to retrieve a specific entry.                                        |
+| `fallback_to_en` | Boolean | Optional (default `true`). If `true`, empty or missing strings fallback to `en_us`.      |
+
+### `curl` Example
+
+```sh
+curl 'http://host:GRAPHQL_PORT/graphql' \
+  -X POST \
+  -H 'Authorization: Bearer API_TOKEN' \
+  -H 'Content-Type: application/json' \
+  --data '{
+    "query": "query GetLangStrings { langStrings(langCode: \"de_de\", langStringKey: \"settings_other_scanners\") { langStrings { langCode langStringKey langStringText } count } }"
+  }'
+```
+
+### Sample Response
+
+```json
+{
+  "data": {
+    "langStrings": {
+      "count": 1,
+      "langStrings": [
+        {
+          "langCode": "de_de",
+          "langStringKey": "settings_other_scanners",
+          "langStringText": "Other, non-device scanner plugins that are currently enabled."  // falls back to en_us if empty
+        }
+      ]
+    }
+  }
+}
+```
+
 ---
 
 ## Notes
 
-* Device and settings queries can be combined in one request since GraphQL supports batching.
+* Device, settings, and LangStrings queries can be combined in **one request** since GraphQL supports batching.
+* The `fallback_to_en` feature ensures UI always has a value even if a translation is missing.
+* Data is **cached in memory** per JSON file; changes to language or plugin files will only refresh after the cache detects a file modification.
 * The `setOverriddenByEnv` flag helps identify setting values that are locked at container runtime.
 * The schema is **read-only** — updates must be performed through other APIs or configuration management. See the other [API](API.md) endpoints for details. 
 

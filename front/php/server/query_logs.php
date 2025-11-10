@@ -16,8 +16,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
     // Check if file parameter is provided
     if ($file) {
-        // Define the folder where files are located
-        $filePath = "/app/log/" . basename($file);
+    // Define the folder where files are located
+    $logBasePath = rtrim(getenv('NETALERTX_LOG') ?: '/tmp/log', '/');
+    $filePath = $logBasePath . '/' . basename($file);
 
         // Check if the file exists
         if (file_exists($filePath)) {

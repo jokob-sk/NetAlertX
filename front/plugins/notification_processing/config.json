@@ -149,7 +149,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "You can specify a SQL where condition to filter out Events from notifications. For example <code>AND devLastIP NOT LIKE '192.168.3.%'</code> will always exclude New Device notifications for all devices with the IP starting with <code>192.168.3.%</code>."
+          "string": "You can specify a SQL where condition to filter out Events from notifications. For example <code>AND devLastIP NOT LIKE '192.168.3.%'</code> will always exclude any Event notifications for all devices with the IP starting with <code>192.168.3.%</code>."
         }
       ]
     }

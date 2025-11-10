@@ -10,7 +10,7 @@ on:
     branches:
       - next_release
 
-jobs: 
+jobs:
   docker_dev:
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -19,7 +19,8 @@ jobs:
       packages: write
     if: >
       contains(github.event.head_commit.message, 'PUSHPROD') != 'True' &&
-      github.repository == 'jokob-sk/NetAlertX'  
+      github.repository == 'jokob-sk/NetAlertX'
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -30,26 +31,36 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      # --- Generate timestamped dev version
+      - name: Generate timestamp version
+        id: timestamp
+        run: |
+          ts=$(date -u +'%Y%m%d-%H%M%S')
+          echo "version=dev-${ts}" >> $GITHUB_OUTPUT
+          echo "Generated version: dev-${ts}"
+
       - name: Set up dynamic build ARGs
-        id: getargs        
+        id: getargs
         run: echo "version=$(cat ./stable/VERSION)" >> $GITHUB_OUTPUT
 
       - name: Get release version
         id: get_version
         run: echo "version=Dev" >> $GITHUB_OUTPUT
 
+      # --- Write the timestamped version to .VERSION file
       - name: Create .VERSION file
-        run: echo "${{ steps.get_version.outputs.version }}" >> .VERSION
+        run: echo "${{ steps.timestamp.outputs.version }}" > .VERSION
 
       - name: Docker meta
         id: meta
-        uses: docker/metadata-action@v4
+        uses: docker/metadata-action@v5
         with:
           images: |
             ghcr.io/jokob-sk/netalertx-dev
             jokobsk/netalertx-dev
           tags: |
             type=raw,value=latest
+            type=raw,value=${{ steps.timestamp.outputs.version }}
             type=ref,event=branch
             type=ref,event=pr
             type=semver,pattern={{version}}

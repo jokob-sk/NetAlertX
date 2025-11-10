@@ -1,18 +1,16 @@
 import sys
+import os
 import re
 import json
 import base64
 from pathlib import Path
-from typing import Optional, List, Tuple, Dict
+from typing import Optional, Tuple
 
 # Register NetAlertX directories
-INSTALL_PATH = "/app"
+INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
 sys.path.extend([f"{INSTALL_PATH}/server"])
 
-import conf
-from const import *
 from logger import mylog
-from helper import timeNowTZ, get_setting_value
 
 # Load MAC/device-type/icon rules from external file
 MAC_TYPE_ICON_PATH = Path(f"{INSTALL_PATH}/back/device_heuristics_rules.json")
@@ -30,15 +28,16 @@ try:
             rule["icon_base64"] = ""
 except Exception as e:
     MAC_TYPE_ICON_RULES = []
-    mylog('none', f"[guess_device_attributes] Failed to load device_heuristics_rules.json: {e}")
+    mylog(
+        "none",
+        f"[guess_device_attributes] Failed to load device_heuristics_rules.json: {e}",
+    )
+
 
 # -----------------------------------------
 # Match device type and base64-encoded icon using MAC prefix and vendor patterns.
 def match_mac_and_vendor(
-    mac_clean: str,
-    vendor: str,
-    default_type: str,
-    default_icon: str
+    mac_clean: str, vendor: str, default_type: str, default_icon: str
 ) -> Tuple[str, str]:
     """
     Match device type and base64-encoded icon using MAC prefix and vendor patterns.
@@ -63,8 +62,7 @@ def match_mac_and_vendor(
 
             if mac_clean.startswith(mac_prefix):
                 if not vendor_pattern or vendor_pattern in vendor:
-                    
-                    mylog('debug', f"[guess_device_attributes] Matched via MAC+Vendor")
+                    mylog("debug", "[guess_device_attributes] Matched via MAC+Vendor")
 
                     type_ = dev_type
                     icon = base64_icon or default_icon
@@ -72,14 +70,10 @@ def match_mac_and_vendor(
 
     return default_type, default_icon
 
+
 # ---------------------------------------------------
 # Match device type and base64-encoded icon using vendor patterns.
-def match_vendor(
-    vendor: str, 
-    default_type: str,
-    default_icon: str
-) -> Tuple[str, str]:
-
+def match_vendor(vendor: str, default_type: str, default_icon: str) -> Tuple[str, str]:
     vendor_lc = vendor.lower()
 
     for rule in MAC_TYPE_ICON_RULES:
@@ -92,9 +86,8 @@ def match_vendor(
             mac_prefix = pattern.get("mac_prefix", "")
             vendor_pattern = pattern.get("vendor", "").lower()
 
-            if vendor_pattern and vendor_pattern in vendor_lc:                
-
-                mylog('debug', f"[guess_device_attributes] Matched via Vendor")
+            if vendor_pattern and vendor_pattern in vendor_lc:
+                mylog("debug", "[guess_device_attributes] Matched via Vendor")
 
                 icon = base64_icon or default_icon
 
@@ -102,13 +95,10 @@ def match_vendor(
 
     return default_type, default_icon
 
+
 # ---------------------------------------------------
 # Match device type and base64-encoded icon using name patterns.
-def match_name(
-    name: str,
-    default_type: str,
-    default_icon: str
-) -> Tuple[str, str]:
+def match_name(name: str, default_type: str, default_icon: str) -> Tuple[str, str]:
     """
     Match device type and base64-encoded icon using name patterns from global MAC_TYPE_ICON_RULES.
 
@@ -130,8 +120,7 @@ def match_name(
         for pattern in name_patterns:
             # Use regex search to allow pattern substrings
             if re.search(pattern, name_lower, re.IGNORECASE):
-
-                mylog('debug', f"[guess_device_attributes] Matched via Name")
+                mylog("debug", "[guess_device_attributes] Matched via Name")
 
                 type_ = dev_type
                 icon = base64_icon or default_icon
@@ -139,13 +128,10 @@ def match_name(
 
     return default_type, default_icon
 
-#-------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------
 #
-def match_ip(
-    ip: str,
-    default_type: str,
-    default_icon: str
-) -> Tuple[str, str]:
+def match_ip(ip: str, default_type: str, default_icon: str) -> Tuple[str, str]:
     """
     Match device type and base64-encoded icon using IP regex patterns from global JSON.
 
@@ -167,8 +153,7 @@ def match_ip(
 
         for pattern in ip_patterns:
             if re.match(pattern, ip):
-                
-                mylog('debug', f"[guess_device_attributes] Matched via IP")
+                mylog("debug", "[guess_device_attributes] Matched via IP")
 
                 type_ = dev_type
                 icon = base64_icon or default_icon
@@ -176,7 +161,8 @@ def match_ip(
 
     return default_type, default_icon
 
-#-------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------
 # Guess device attributes such as type of device and associated device icon
 def guess_device_attributes(
     vendor: Optional[str],
@@ -184,16 +170,19 @@ def guess_device_attributes(
     ip: Optional[str],
     name: Optional[str],
     default_icon: str,
-    default_type: str
+    default_type: str,
 ) -> Tuple[str, str]:
-    mylog('debug', f"[guess_device_attributes] Guessing attributes for (vendor|mac|ip|name): ('{vendor}'|'{mac}'|'{ip}'|'{name}')")
+    mylog(
+        "debug",
+        f"[guess_device_attributes] Guessing attributes for (vendor|mac|ip|name): ('{vendor}'|'{mac}'|'{ip}'|'{name}')",
+    )
 
     # --- Normalize inputs ---
     vendor = str(vendor).lower().strip() if vendor else "unknown"
     mac = str(mac).upper().strip() if mac else "00:00:00:00:00:00"
     ip = str(ip).strip() if ip else "169.254.0.0"
     name = str(name).lower().strip() if name else "(unknown)"
-    mac_clean = mac.replace(':', '').replace('-', '').upper()
+    mac_clean = mac.replace(":", "").replace("-", "").upper()
 
     # # Internet shortcut
     # if mac == "INTERNET":
@@ -221,7 +210,10 @@ def guess_device_attributes(
     type_ = type_ or default_type
     icon = icon or default_icon
 
-    mylog('debug', f"[guess_device_attributes] Guessed attributes (icon|type_): ('{icon}'|'{type_}')")
+    mylog(
+        "debug",
+        f"[guess_device_attributes] Guessed attributes (icon|type_): ('{icon}'|'{type_}')",
+    )
     return icon, type_
 
 
@@ -231,8 +223,8 @@ def guess_icon(
     mac: Optional[str],
     ip: Optional[str],
     name: Optional[str],
-    default: str
-    ) -> str:
+    default: str,
+) -> str:
     """
     [DEPRECATED] Guess the appropriate FontAwesome icon for a device based on its attributes.
     Use guess_device_attributes instead.
@@ -247,17 +239,18 @@ def guess_icon(
     Returns:
         str: Base64-encoded FontAwesome icon HTML string.
     """
-    
+
     icon, _ = guess_device_attributes(vendor, mac, ip, name, default, "unknown_type")
     return icon
+
 
 def guess_type(
     vendor: Optional[str],
     mac: Optional[str],
     ip: Optional[str],
     name: Optional[str],
-    default: str
-    ) -> str:
+    default: str,
+) -> str:
     """
     [DEPRECATED] Guess the device type based on its attributes.
     Use guess_device_attributes instead.
@@ -272,11 +265,11 @@ def guess_type(
     Returns:
         str: Device type.
     """
-    
+
     _, type_ = guess_device_attributes(vendor, mac, ip, name, "unknown_icon", default)
     return type_
 
+
 # Handler for when this is run as a program instead of called as a module.
 if __name__ == "__main__":
-    mylog('error', "This module is not intended to be run directly.")
-    
+    mylog("error", "This module is not intended to be run directly.")

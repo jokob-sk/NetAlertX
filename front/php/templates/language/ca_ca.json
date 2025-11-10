@@ -674,7 +674,7 @@
     "Systeminfo_System_Uptime": "Uptime:",
     "Systeminfo_This_Client": "Aquest Client",
     "Systeminfo_USB_Devices": "Dispositius USB",
-    "TICKER_MIGRATE_TO_NETALERTX": "⚠ S'han detectat punts muntatge antics. Ves a <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/MIGRATION.md\" target=\"_blank\">aquesta guia</a> per migrar les noves <code>/app/config</code> i <code>/app/db</code> carpetes i al <code>netalertx</code> contenidor.",
+    "TICKER_MIGRATE_TO_NETALERTX": "⚠ S'han detectat punts muntatge antics. Ves a <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/MIGRATION.md\" target=\"_blank\">aquesta guia</a> per migrar les noves <code>/data/config</code> i <code>/data/db</code> carpetes i al <code>netalertx</code> contenidor.",
     "TIMEZONE_description": "Fus horari per mostrar les estadístiques correctament. <a target=\"_blank\" href=\"https://en.wikipedia.org/wiki/List_of_tz_database_time_zones\" rel=\"nofollow\">aquí</a>.",
     "TIMEZONE_name": "Fus horari",
     "UI_DEV_SECTIONS_description": "Seleccioneu quins elements de la interfície d'usuari per ocultar a les pàgines de dispositius.",

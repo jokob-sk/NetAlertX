@@ -1,39 +1,44 @@
 #!/usr/bin/env python
 
-import json
-import subprocess
-import argparse
 import os
-import pathlib
 import sqlite3
-import time
 import sys
-from datetime import datetime
-from flask import jsonify, request
+from flask import jsonify
 
 # Register NetAlertX directories
-INSTALL_PATH="/app"
+INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from database import get_temp_db_connection
-from helper import is_random_mac, format_date, get_setting_value, format_date_iso, format_event_date, mylog, timeNowTZ, format_date_diff, format_ip_long, parse_datetime
+from helper import is_random_mac, get_setting_value, mylog, format_ip_long
 from db.db_helper import row_to_json, get_date_from_period
+from utils.datetime_utils import format_date_iso, format_event_date, format_date_diff, parse_datetime, format_date
 
 
 # --------------------------
 # Sessions Endpoints Functions
 # --------------------------
 # -------------------------------------------------------------------------------------------
-def create_session(mac, ip, start_time, end_time=None, event_type_conn="Connected", event_type_disc="Disconnected"):
+def create_session(
+    mac,
+    ip,
+    start_time,
+    end_time=None,
+    event_type_conn="Connected",
+    event_type_disc="Disconnected",
+):
     """Insert a new session into Sessions table"""
     conn = get_temp_db_connection()
     cur = conn.cursor()
 
-    cur.execute("""
+    cur.execute(
+        """
         INSERT INTO Sessions (ses_MAC, ses_IP, ses_DateTimeConnection, ses_DateTimeDisconnection, 
                               ses_EventTypeConnection, ses_EventTypeDisconnection)
         VALUES (?, ?, ?, ?, ?, ?)
-    """, (mac, ip, start_time, end_time, event_type_conn, event_type_disc))
+    """,
+        (mac, ip, start_time, end_time, event_type_conn, event_type_disc),
+    )
 
     conn.commit()
     conn.close()
@@ -81,7 +86,6 @@ def get_sessions(mac=None, start_date=None, end_date=None):
     table_data = [dict(r) for r in rows]
 
     return jsonify({"success": True, "sessions": table_data})
-
 
 
 def get_sessions_calendar(start_date, end_date):
@@ -137,7 +141,19 @@ def get_sessions_calendar(start_date, end_date):
            OR SES1.ses_StillConnected = 1
     """
 
-    cur.execute(sql, (start_date, end_date, start_date, end_date, start_date, end_date, start_date, end_date))
+    cur.execute(
+        sql,
+        (
+            start_date,
+            end_date,
+            start_date,
+            end_date,
+            start_date,
+            end_date,
+            start_date,
+            end_date,
+        ),
+    )
     rows = cur.fetchall()
 
     table_data = []
@@ -145,7 +161,10 @@ def get_sessions_calendar(start_date, end_date):
         row = dict(r)
 
         # Determine color
-        if row["ses_EventTypeConnection"] == "<missing event>" or row["ses_EventTypeDisconnection"] == "<missing event>":
+        if (
+            row["ses_EventTypeConnection"] == "<missing event>"
+            or row["ses_EventTypeDisconnection"] == "<missing event>"
+        ):
             color = "#f39c12"
         elif row["ses_StillConnected"] == 1:
             color = "#00a659"
@@ -160,19 +179,20 @@ def get_sessions_calendar(start_date, end_date):
         )
 
         # Append calendar entry
-        table_data.append({
-            "resourceId": row["ses_MAC"],
-            "title": "",
-            "start": format_date_iso(row["ses_DateTimeConnectionCorrected"]),
-            "end": format_date_iso(row["ses_DateTimeDisconnectionCorrected"]),
-            "color": color,
-            "tooltip": tooltip,
-            "className": "no-border"
-        })
+        table_data.append(
+            {
+                "resourceId": row["ses_MAC"],
+                "title": "",
+                "start": format_date_iso(row["ses_DateTimeConnectionCorrected"]),
+                "end": format_date_iso(row["ses_DateTimeDisconnectionCorrected"]),
+                "color": color,
+                "tooltip": tooltip,
+                "className": "no-border",
+            }
+        )
 
     conn.close()
     return jsonify({"success": True, "sessions": table_data})
-
 
 
 def get_device_sessions(mac, period):
@@ -203,10 +223,10 @@ def get_device_sessions(mac, period):
           )
     """
 
-
     cur.execute(sql, (mac,))
     rows = cur.fetchall()
     conn.close()
+    tz_name = get_setting_value("TIMEZONE") or "UTC"
 
     table_data = {"data": []}
 
@@ -226,12 +246,14 @@ def get_device_sessions(mac, period):
             end = format_date(row["ses_DateTimeDisconnection"])
 
         # Duration
-        if row["ses_EventTypeConnection"] in ("<missing event>", None) or row["ses_EventTypeDisconnection"] in ("<missing event>", None):
+        if row["ses_EventTypeConnection"] in ("<missing event>", None) or row[
+            "ses_EventTypeDisconnection"
+        ] in ("<missing event>", None):
             dur = "..."
         elif row["ses_StillConnected"]:
-            dur = format_date_diff(row["ses_DateTimeConnection"], None)["text"]
+            dur = format_date_diff(row["ses_DateTimeConnection"], None, tz_name)["text"]
         else:
-            dur = format_date_diff(row["ses_DateTimeConnection"], row["ses_DateTimeDisconnection"])["text"]
+            dur = format_date_diff(row["ses_DateTimeConnection"], row["ses_DateTimeDisconnection"], tz_name)["text"]
 
         # Additional Info
         info = row["ses_AdditionalInfo"]
@@ -239,15 +261,17 @@ def get_device_sessions(mac, period):
             info = f"{row['ses_EventTypeConnection']}:   {info}"
 
         # Push row data
-        table_data["data"].append({
-            "ses_MAC": mac,
-            "ses_DateTimeOrder": row["ses_DateTimeOrder"],
-            "ses_Connection": ini,
-            "ses_Disconnection": end,
-            "ses_Duration": dur,
-            "ses_IP": row["ses_IP"],
-            "ses_Info": info,
-        })
+        table_data["data"].append(
+            {
+                "ses_MAC": mac,
+                "ses_DateTimeOrder": row["ses_DateTimeOrder"],
+                "ses_Connection": ini,
+                "ses_Disconnection": end,
+                "ses_Duration": dur,
+                "ses_IP": row["ses_IP"],
+                "ses_Info": info,
+            }
+        )
 
     # Control no rows
     if not table_data["data"]:
@@ -255,10 +279,7 @@ def get_device_sessions(mac, period):
 
     sessions = table_data["data"]
 
-    return jsonify({
-        "success": True,
-        "sessions": sessions
-    })
+    return jsonify({"success": True, "sessions": sessions})
 
 
 def get_session_events(event_type, period_date):
@@ -268,6 +289,7 @@ def get_session_events(event_type, period_date):
     conn = get_temp_db_connection()
     conn.row_factory = sqlite3.Row
     cur = conn.cursor()
+    tz_name = get_setting_value("TIMEZONE") or "UTC"
 
     # Base SQLs
     sql_events = f"""
@@ -291,7 +313,7 @@ def get_session_events(event_type, period_date):
         WHERE eve_DateTime >= {period_date}
     """
 
-    sql_sessions = f"""
+    sql_sessions = """
         SELECT 
             IFNULL(ses_DateTimeConnection, ses_DateTimeDisconnection) AS ses_DateTimeOrder,
             devName,
@@ -314,20 +336,26 @@ def get_session_events(event_type, period_date):
     if event_type == "all":
         sql = sql_events
     elif event_type == "sessions":
-        sql = sql_sessions + f"""
+        sql = (
+            sql_sessions
+            + f"""
             WHERE (
                 ses_DateTimeConnection >= {period_date}
                 OR ses_DateTimeDisconnection >= {period_date}
                 OR ses_StillConnected = 1
             )
         """
+        )
     elif event_type == "missing":
-        sql = sql_sessions + f"""
+        sql = (
+            sql_sessions
+            + f"""
             WHERE (
                 (ses_DateTimeConnection IS NULL AND ses_DateTimeDisconnection >= {period_date})
                 OR (ses_DateTimeDisconnection IS NULL AND ses_StillConnected = 0 AND ses_DateTimeConnection >= {period_date})
             )
         """
+        )
     elif event_type == "voided":
         sql = sql_events + ' AND eve_EventType LIKE "VOIDED%"'
     elif event_type == "new":
@@ -335,7 +363,7 @@ def get_session_events(event_type, period_date):
     elif event_type == "down":
         sql = sql_events + ' AND eve_EventType = "Device Down"'
     else:
-        sql = sql_events + ' AND 1=0'
+        sql = sql_events + " AND 1=0"
 
     cur.execute(sql)
     rows = cur.fetchall()
@@ -349,11 +377,11 @@ def get_session_events(event_type, period_date):
         if event_type in ("sessions", "missing"):
             # Duration
             if row[5] and row[6]:
-                delta = format_date_diff(row[5], row[6])
+                delta = format_date_diff(row[5], row[6], tz_name)
                 row[7] = delta["text"]
                 row[8] = int(delta["total_minutes"] * 60)  # seconds
             elif row[12] == 1:
-                delta = format_date_diff(row[5], None)
+                delta = format_date_diff(row[5], None, tz_name)
                 row[7] = delta["text"]
                 row[8] = int(delta["total_minutes"] * 60)  # seconds
             else:

@@ -15,7 +15,7 @@ The **Web UI** is served by an **nginx** server, while the **API backend** runs 
   APP_CONF_OVERRIDE={"GRAPHQL_PORT":"20212"}
   ```
 
-For more information, check the [Docker installation guide](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md).
+For more information, check the [Docker installation guide](./DOCKER_INSTALLATION.md).
 
 ## Possible issues and troubleshooting
 
@@ -62,11 +62,11 @@ In the container execute and investigate:
 
 `cat /var/log/nginx/error.log`
 
-`cat /app/log/app.php_errors.log`
+`cat /tmp/log/app.php_errors.log`
 
 ### 8. Make sure permissions are correct
 
 > [!TIP]
-> You can try to start the container without mapping the `/app/config` and `/app/db` dirs and if the UI shows up then the issue is most likely related to your file system permissions or file ownership. 
+> You can try to start the container without mapping the `/data/config` and `/data/db` dirs and if the UI shows up then the issue is most likely related to your file system permissions or file ownership. 
 
-Please read the [Permissions troubleshooting guide](./FILE_PERMISSIONS.md) and provide a screesnhot of the permissions and ownership in the `/app/db` and `app/config` directories. 
+Please read the [Permissions troubleshooting guide](./FILE_PERMISSIONS.md) and provide a screesnhot of the permissions and ownership in the `/data/db` and `app/config` directories. 

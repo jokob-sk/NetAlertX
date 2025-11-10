@@ -13,12 +13,13 @@ RESET=$(printf '\033[0m')
 
 # Define paths that need read-write access
 READ_WRITE_PATHS="
+${NETALERTX_DATA}
+${NETALERTX_DB}
 ${NETALERTX_API}
 ${NETALERTX_LOG}
 ${SYSTEM_SERVICES_RUN}
 ${NETALERTX_CONFIG}
 ${NETALERTX_CONFIG_FILE}
-${NETALERTX_DB}
 ${NETALERTX_DB_FILE}
 "
 
@@ -39,7 +40,7 @@ if [ "$(id -u)" -eq 0 ]; then
       * switch to the default USER in the image (20211:20211)
 
     IMPORTANT: This corrective mode automatically adjusts ownership of
-    /app/db and /app/config directories to the netalertx user, ensuring
+    /data/db and /data/config directories to the netalertx user, ensuring
     proper operation in subsequent runs.
 
     Remember: Never operate security-critical tools as root unless you're 
@@ -54,8 +55,8 @@ EOF
     chown -R netalertx ${READ_WRITE_PATHS} 2>/dev/null || true
 
     # Set directory and file permissions for all read-write paths
-    find ${READ_WRITE_PATHS} -type d -exec chmod u+rwx {}
-    find ${READ_WRITE_PATHS} -type f -exec chmod u+rw {}
+    find ${READ_WRITE_PATHS} -type d -exec chmod u+rwx {} \;
+    find ${READ_WRITE_PATHS} -type f -exec chmod u+rw {} \;
     echo Permissions fixed for read-write paths. Please restart the container as user 20211.
     sleep infinity & wait $!
 fi

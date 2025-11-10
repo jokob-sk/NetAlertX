@@ -1,13 +1,10 @@
 import os
-import sys
+import uuid
 
-# Register NetAlertX directories
-INSTALL_PATH="/app"
-sys.path.extend([f"{INSTALL_PATH}/server"])
-
-# Register NetAlertX modules
-from const import pluginsPath, logPath, applicationPath, reportTemplatesPath
+from const import logPath
 from logger import mylog
+from utils.datetime_utils import timeNowDB
+
 
 class UserEventsQueueInstance:
     """
@@ -19,12 +16,11 @@ class UserEventsQueueInstance:
         self.log_path = logPath
         self.log_file = os.path.join(self.log_path, "execution_queue.log")
 
-
     def has_update_devices(self):
         lines = self.read_log()
 
         for line in lines:
-            if 'update_api|devices' in line:
+            if "update_api|devices" in line:
                 return True
 
         return False
@@ -35,7 +31,10 @@ class UserEventsQueueInstance:
         Returns an empty list if the file doesn't exist.
         """
         if not os.path.exists(self.log_file):
-            mylog('none', ['[UserEventsQueueInstance] Log file not found: ', self.log_file])
+            mylog(
+                "none",
+                ["[UserEventsQueueInstance] Log file not found: ", self.log_file],
+            )
             return []  # No log file, return empty list
         with open(self.log_file, "r") as file:
             return file.readlines()
@@ -64,7 +63,9 @@ class UserEventsQueueInstance:
         # Process the log file line by line
         with open(self.log_file, "r") as file:
             for line in file:
-                columns = line.strip().split('|')[2:4]  # Extract event and param columns
+                columns = line.strip().split("|")[
+                    2:4
+                ]  # Extract event and param columns
                 if len(columns) == 2:
                     event_name, _ = columns
                     if event_name == event and not removed:
@@ -76,10 +77,47 @@ class UserEventsQueueInstance:
         # Write back the remaining lines
         self.write_log(updated_lines)
 
-
-        mylog('minimal', ['[UserEventsQueueInstance] Processed event: ', event])
+        mylog("minimal", ["[UserEventsQueueInstance] Processed event: ", event])
 
         return removed
+
+    def add_event(self, action):
+        """
+        Append an action to the execution queue log file.
+
+        Args:
+            action (str): Description of the action to queue.
+
+        Returns:
+            tuple: (success: bool, message: str)
+                success - True if the event was successfully added.
+                message - Log message describing the result.
+        """
+        timestamp = timeNowDB()
+        # Generate GUID
+        guid = str(uuid.uuid4())
+
+        if not action or not isinstance(action, str):
+            msg = "[UserEventsQueueInstance] Invalid or missing action"
+            mylog('none', [msg])
+            
+            return False, msg
+
+        try:
+            with open(self.log_file, "a") as f:
+                f.write(f"[{timestamp}]|{guid}|{action}\n")
+
+            msg = f'[UserEventsQueueInstance] Action "{action}" added to the execution queue.'
+            mylog('minimal', [msg])
+            
+            return True, msg
+
+        except Exception as e:
+            msg = f"[UserEventsQueueInstance] ERROR Failed to write to {self.log_file}: {e}"
+            mylog('none', [msg])
+            
+            return False, msg
+    
 
 
 

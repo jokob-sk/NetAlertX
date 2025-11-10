@@ -17,53 +17,38 @@ services:
 
     volumes:
 
-      - type: volume                                # Persistent Docker-managed Named Volume for storage of config files
-        source: netalertx_config                    # the default name of the volume is netalertx_config
-        target: /app/config                         # inside the container mounted to /app/config
+      - type: volume                                # Persistent Docker-managed Named Volume for storage
+        source: netalertx_data                      # the default name of the volume is netalertx_data
+        target: /data                               # consolidated configuration and database storage
         read_only: false                            # writable volume
 
-    # Example custom local folder called /home/user/netalertx_config
+    # Example custom local folder called /home/user/netalertx_data
     # - type: bind
-    #   source: /home/user/netalertx_config
-    #   target: /app/config
+    #   source: /home/user/netalertx_data
+    #   target: /data
     #   read_only: false
     # ... or use the alternative format
-    # - /home/user/netalertx_config:/app/config:rw
-
-      - type: volume
-        source: netalertx_db
-        target: /app/db
-        read_only: false
+    # - /home/user/netalertx_data:/data:rw
 
       - type: bind                           # Bind mount for timezone consistency
         source: /etc/localtime
         target: /etc/localtime
         read_only: true
 
-      # Use a custom Enterprise-configured nginx config for ldap or other settings
-      # - /custom-enterprise.conf:/services/config/nginx/conf.active/netalertx.conf:ro
+  # Use a custom Enterprise-configured nginx config for ldap or other settings
+  # - /custom-enterprise.conf:/tmp/nginx/active-config/netalertx.conf:ro
 
       # Test your plugin on the production container
       # - /path/on/host:/app/front/plugins/custom
 
-      # Retain logs - comment out tmpfs /app/log if you want to retain logs between container restarts
-      # - /path/on/host/log:/app/log
+  # Retain logs - comment out tmpfs /tmp/log if you want to retain logs between container restarts
+  # - /path/on/host/log:/tmp/log
 
-    # Tempfs mounts for writable directories in a read-only container and improve system performance
-    # All mounts have noexec,nosuid,nodev for security purposes no devices, no suid/sgid and no execution of binaries
-    # async where possible for performance, sync where required for correctness
+    # tmpfs mounts for writable directories in a read-only container and improve system performance
+    # All writes now live under /tmp/* subdirectories which are created dynamically by entrypoint.d scripts
     # uid=20211 and gid=20211 is the netalertx user inside the container
     # mode=1700 gives rwx------ permissions to the netalertx user only
     tmpfs:
-      # Speed up logging. This can be commented out to retain logs between container restarts
-      - "/app/log:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
-      # Speed up API access as frontend/backend API is very chatty
-      - "/app/api:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,sync,noatime,nodiratime"  
-      # Required for customization of the nginx listen addr/port without rebuilding the container
-      - "/services/config/nginx/conf.active:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
-      # /services/config/nginx/conf.d is required for nginx and php to start
-      - "/services/run:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
-      # /tmp is required by php for session save this should be reworked to /services/run/tmp
       - "/tmp:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
     environment:
       LISTEN_ADDR: ${LISTEN_ADDR:-0.0.0.0}                      # Listen for connections on all interfaces
@@ -86,6 +71,5 @@ services:
     # Always restart the container unless explicitly stopped
     restart: unless-stopped
 
-volumes:                        # Persistent volumes for configuration and database storage
-  netalertx_config:             # Configuration files
-  netalertx_db:                 # Database files
+volumes:                        # Persistent volume for configuration and database storage
+  netalertx_data:

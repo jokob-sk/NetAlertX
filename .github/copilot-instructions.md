@@ -18,7 +18,7 @@ Backend loop phases (see `server/__main__.py` and `server/plugin.py`): `once`, `
 ## Plugin patterns that matter
 - Manifest lives at `front/plugins/<code_name>/config.json`; `code_name` == folder, `unique_prefix` drives settings and filenames (e.g., `ARPSCAN`).
 - Control via settings: `<PREF>_RUN` (phase), `<PREF>_RUN_SCHD` (cron-like), `<PREF>_CMD` (script path), `<PREF>_RUN_TIMEOUT`, `<PREF>_WATCH` (diff columns).
-- Data contract: scripts write `/app/log/plugins/last_result.<PREF>.log` (pipe‑delimited: 9 required cols + optional 4). Use `front/plugins/plugin_helper.py`’s `Plugin_Objects` to sanitize text and normalize MACs, then `write_result_file()`.
+- Data contract: scripts write `/tmp/log/plugins/last_result.<PREF>.log` (pipe‑delimited: 9 required cols + optional 4). Use `front/plugins/plugin_helper.py`’s `Plugin_Objects` to sanitize text and normalize MACs, then `write_result_file()`.
 - Device import: define `database_column_definitions` when creating/updating devices; watched fields trigger notifications.
 
 ### Standard Plugin Formats
@@ -30,6 +30,7 @@ Backend loop phases (see `server/__main__.py` and `server/plugin.py`): `once`, `
 * other: Miscellaneous plugins. Runs at various times. Data source: self / Template.
 
 ### Plugin logging & outputs
+- Always check relevant logs first.
 - Use logging as shown in other plugins.
 - Collect results with `Plugin_Objects.add_object(...)` during processing and call `plugin_objects.write_result_file()` exactly once at the end of the script.
 - Prefer to log a brief summary before writing (e.g., total objects added) to aid troubleshooting; keep logs concise at `info` level and use `verbose` or `debug` for extra context.
@@ -42,22 +43,32 @@ Backend loop phases (see `server/__main__.py` and `server/plugin.py`): `once`, `
 ## Conventions & helpers to reuse
 - Settings: add/modify via `ccd()` in `server/initialise.py` or per‑plugin manifest. Never hardcode ports or secrets; use `get_setting_value()`.
 - Logging: use `logger.mylog(level, [message])`; levels: none/minimal/verbose/debug/trace.
-- Time/MAC/strings: `helper.py` (`timeNowTZ`, `normalize_mac`, sanitizers). Validate MACs before DB writes.
+- Time/MAC/strings: `helper.py` (`timeNowDB`, `normalize_mac`, sanitizers). Validate MACs before DB writes.
 - DB helpers: prefer `server/db/db_helper.py` functions (e.g., `get_table_json`, device condition helpers) over raw SQL in new paths.
 
 ## Dev workflow (devcontainer)
+- **Devcontainer philosophy: brutal simplicity.** One user, everything writable, completely idempotent. No permission checks, no conditional logic, no sudo needed. If something doesn't work, tear down the wall and rebuild - don't patch. We unit test permissions in the hardened build.
+- **Permissions:** Never `chmod` or `chown` during operations. Everything is already writable. If you need permissions, the devcontainer setup is broken - fix `.devcontainer/scripts/setup.sh` or `.devcontainer/resources/devcontainer-Dockerfile` instead.
+- **Files & Paths:** Use environment variables (`NETALERTX_DB`, `NETALERTX_LOG`, etc.) everywhere. `/data` for persistent config/db, `/tmp` for runtime logs/api/nginx state. Never hardcode `/data/db` or relative paths.
+- **Database reset:** Use the `[Dev Container] Wipe and Regenerate Database` task. Kills backend, deletes `/data/{db,config}/*`, runs first-time setup scripts. Clean slate, no questions.
 - Services: use tasks to (re)start backend and nginx/PHP-FPM. Backend runs with debugpy on 5678; attach a Python debugger if needed.
 - Run a plugin manually: `python3 front/plugins/<code_name>/script.py` (ensure `sys.path` includes `/app/front/plugins` and `/app/server` like the template).
 - Testing: pytest available via Alpine packages. Tests live in `test/`; app code is under `server/`. PYTHONPATH is preconfigured to include workspace and `/opt/venv` site‑packages.
+- **Subprocess calls:** ALWAYS set explicit timeouts. Default to 60s minimum unless plugin config specifies otherwise. Nested subprocess calls (e.g., plugins calling external tools) need their own timeout - outer plugin timeout won't save you.
 
 ## What “done right” looks like
-- When adding a plugin, start from `front/plugins/__template`, implement with `plugin_helper`, define manifest settings, and wire phase via `<PREF>_RUN`. Verify logs in `/app/log/plugins/` and data in `api/*.json`.
+- When adding a plugin, start from `front/plugins/__template`, implement with `plugin_helper`, define manifest settings, and wire phase via `<PREF>_RUN`. Verify logs in `/tmp/log/plugins/` and data in `api/*.json`.
 - When introducing new config, define it once (core `ccd()` or plugin manifest) and read it via helpers everywhere.
 - When exposing new server functionality, add endpoints in `server/api_server/*` and keep authorization consistent; update UI by reading/writing JSON cache rather than bypassing the pipeline.
 
 ## Useful references
 - Docs: `docs/PLUGINS_DEV.md`, `docs/SETTINGS_SYSTEM.md`, `docs/API_*.md`, `docs/DEBUG_*.md`
-- Logs: backend `/app/log/app.log`, plugin logs under `/app/log/plugins/`, nginx/php logs under `/var/log/*`
+- Logs: All logs are under `/tmp/log/`. Plugin logs are very shortly under `/tmp/log/plugins/` until picked up by the server.
+    - plugin logs: `/tmp/log/app.log`
+	- backend logs: `/tmp/log/stdout.log` and `/tmp/log/stderr.log`
+	- frontend commands logs: `/tmp/log/app_front.log`
+	- php errors: `/tmp/log/app.php_errors.log`
+	- nginx logs: `/tmp/log/nginx-access.log` and `/tmp/log/nginx-error.log`
 
 ## Assistant expectations:
 - Be concise, opinionated, and biased toward security and simplicity.

@@ -1,20 +1,12 @@
 #!/usr/bin/env python
 
-import json
-import argparse
 import os
-import pathlib
 import base64
-import re
 import sys
-from datetime import datetime
-from flask import jsonify, request, Response
-import csv
-import io
-from io import StringIO
+from flask import jsonify
 
 # Register NetAlertX directories
-INSTALL_PATH="/app"
+INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from database import get_temp_db_connection

@@ -1,20 +1,25 @@
-""" all things database to support NetAlertX """
+"""all things database to support NetAlertX"""
 
 import sqlite3
 
-# Register NetAlertX modules 
+# Register NetAlertX modules
 from const import fullDbPath, sql_devices_stats, sql_devices_all
 
 from logger import mylog
 from db.db_helper import get_table_json, json_obj
 from workflows.app_events import AppEvent_obj
-from db.db_upgrade import ensure_column, \
-    ensure_views, ensure_CurrentScan, \
-    ensure_plugins_tables, ensure_Parameters, \
-    ensure_Settings, ensure_Indexes
+from db.db_upgrade import (
+    ensure_column,
+    ensure_views,
+    ensure_CurrentScan,
+    ensure_plugins_tables,
+    ensure_Parameters,
+    ensure_Settings,
+    ensure_Indexes,
+)
 
 
-class DB():
+class DB:
     """
     DB Class to provide the basic database interactions.
     Open / Commit / Close / read / write
@@ -50,31 +55,30 @@ class DB():
         """
         # Check if DB is open
         if self.sql_connection is not None:
-            mylog('debug', ['[Database] - open: DB already open'])
+            mylog("debug", ["[Database] - open: DB already open"])
             return
 
-        mylog('verbose', '[Database] Opening DB')
+        mylog("verbose", "[Database] Opening DB")
         # Open DB and Cursor
         try:
-            self.sql_connection = sqlite3.connect(fullDbPath,
-                                                  isolation_level=None)
+            self.sql_connection = sqlite3.connect(fullDbPath, isolation_level=None)
 
             # The WAL journaling mode uses a write-ahead log instead of a
             # rollback journal to implement transactions.
-            self.sql_connection.execute('pragma journal_mode=WAL;')
+            self.sql_connection.execute("pragma journal_mode=WAL;")
             # When synchronous is NORMAL (1), the SQLite database engine will
             # still sync at the most critical moments,
             # but less often than in FULL mode.
-            self.sql_connection.execute('PRAGMA synchronous=NORMAL;')
+            self.sql_connection.execute("PRAGMA synchronous=NORMAL;")
             # When temp_store is MEMORY (2) temporary tables and indices
             # are kept as if they were in pure in-memory databases.
-            self.sql_connection.execute('PRAGMA temp_store=MEMORY;')
+            self.sql_connection.execute("PRAGMA temp_store=MEMORY;")
 
             self.sql_connection.text_factory = str
             self.sql_connection.row_factory = sqlite3.Row
             self.sql = self.sql_connection.cursor()
         except sqlite3.Error as e:
-            mylog('minimal', ['[Database] - Open DB Error: ', e])
+            mylog("minimal", ["[Database] - Open DB Error: ", e])
 
     def commitDB(self):
         """
@@ -83,7 +87,7 @@ class DB():
             bool: True if the commit was successful, False if the database connection is not open.
         """
         if self.sql_connection is None:
-            mylog('debug', 'commitDB: database is not open')
+            mylog("debug", "commitDB: database is not open")
             return False
 
         # Commit changes to DB
@@ -109,7 +113,7 @@ class DB():
                         Returns None if the database connection is not open.
         """
         if self.sql_connection is None:
-            mylog('debug', 'getQueryArray: database is not open')
+            mylog("debug", "getQueryArray: database is not open")
             return
 
         self.sql.execute(query)
@@ -138,7 +142,7 @@ class DB():
 
         try:
             # Start transactional upgrade
-            self.sql_connection.execute('BEGIN IMMEDIATE;')
+            self.sql_connection.execute("BEGIN IMMEDIATE;")
 
             # Add Devices fields if missing
             if not ensure_column(self.sql, "Devices", "devFQDN", "TEXT"):
@@ -169,13 +173,12 @@ class DB():
             # commit changes
             self.commitDB()
         except Exception as e:
-            mylog('minimal', ['[Database] - initDB ERROR:', e])
+            mylog("minimal", ["[Database] - initDB ERROR:", e])
             self.rollbackDB()  # rollback any changes on error
             raise  # re-raise the exception
 
         # Init the AppEvent database table
         AppEvent_obj(self)
-
 
     # #-------------------------------------------------------------------------------
     # def get_table_as_json(self, sqlQuery):
@@ -201,7 +204,7 @@ class DB():
     def get_table_as_json(self, sqlQuery, parameters=None):
         """
         Wrapper to use the central get_table_as_json helper.
-        
+
         Args:
             sqlQuery (str): The SQL query to execute.
             parameters (dict, optional): Named parameters for the SQL query.
@@ -209,7 +212,7 @@ class DB():
         try:
             result = get_table_json(self.sql, sqlQuery, parameters)
         except Exception as e:
-            mylog('minimal', ['[Database] - get_table_as_json ERROR:', e])
+            mylog("minimal", ["[Database] - get_table_as_json ERROR:", e])
             return json_obj({}, [])  # return empty object on failure
 
         # mylog('debug',[ '[Database] - get_table_as_json - returning ', len(rows), " rows with columns: ", columnNames])
@@ -217,22 +220,30 @@ class DB():
 
         return result
 
-    #-------------------------------------------------------------------------------
+    # -------------------------------------------------------------------------------
     # referece from here: https://codereview.stackexchange.com/questions/241043/interface-class-for-sqlite-databases
-    #-------------------------------------------------------------------------------
+    # -------------------------------------------------------------------------------
     def read(self, query, *args):
         """check the query and arguments are aligned and are read only"""
         # mylog('debug',[ '[Database] - Read All: SELECT Query: ', query, " params: ", args])
         try:
-            assert query.count('?') == len(args)
-            assert query.upper().strip().startswith('SELECT')
+            assert query.count("?") == len(args)
+            assert query.upper().strip().startswith("SELECT")
             self.sql.execute(query, args)
             rows = self.sql.fetchall()
             return rows
         except AssertionError:
-            mylog('minimal', [ '[Database] - ERROR: inconsistent query and/or arguments.', query, " params: ", args])
+            mylog(
+                "minimal",
+                [
+                    "[Database] - ERROR: inconsistent query and/or arguments.",
+                    query,
+                    " params: ",
+                    args,
+                ],
+            )
         except sqlite3.Error as e:
-            mylog('minimal', [ '[Database] - SQL ERROR: ', e])
+            mylog("minimal", ["[Database] - SQL ERROR: ", e])
         return None
 
     def read_one(self, query, *args):
@@ -240,14 +251,22 @@ class DB():
         call read() with the same arguments but only returns the first row.
         should only be used when there is a single row result expected
         """
-        mylog('debug', ['[Database] - Read One: ', query, " params: ", args])
+        mylog("debug", ["[Database] - Read One: ", query, " params: ", args])
         rows = self.read(query, *args)
         if not rows:
             return None
         if len(rows) == 1:
             return rows[0]
         if len(rows) > 1:
-            mylog('verbose', ['[Database] - Warning!: query returns multiple rows, only first row is passed on!', query, " params: ", args])
+            mylog(
+                "verbose",
+                [
+                    "[Database] - Warning!: query returns multiple rows, only first row is passed on!",
+                    query,
+                    " params: ",
+                    args,
+                ],
+            )
             return rows[0]
         # empty result set
         return None
@@ -298,7 +317,10 @@ def get_array_from_sql_rows(rows):
         list: A list of lists, where each inner list represents a row of data.
     """
     # Convert result into list of lists
-    return [list(row) if isinstance(row, (sqlite3.Row, tuple, list)) else [row] for row in rows]
+    return [
+        list(row) if isinstance(row, (sqlite3.Row, tuple, list)) else [row]
+        for row in rows
+    ]
 
 
 def get_temp_db_connection():

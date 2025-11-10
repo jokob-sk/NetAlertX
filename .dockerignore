@@ -1,4 +1,5 @@
 .dockerignore
+**/.dockerignore
 .env
 .git
 .github

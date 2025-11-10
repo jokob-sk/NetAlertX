@@ -1,19 +1,20 @@
-from time import strftime
 import pytz
-from pytz import timezone, all_timezones, UnknownTimeZoneError
+from pytz import all_timezones
 import sys
+import os
 import re
 import base64
 import json
 from datetime import datetime
 
-INSTALL_PATH = "/app"
+INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 
 sys.path.append(f"{INSTALL_PATH}/front/plugins")
 sys.path.append(f'{INSTALL_PATH}/server') 
 
 from logger import mylog, Logger
-from const import confFileName, default_tz
+from utils.datetime_utils import timeNowDB
+from const import default_tz, fullConfPath
 
 #-------------------------------------------------------------------------------
 def read_config_file():
@@ -22,7 +23,7 @@ def read_config_file():
     config_dir[key]
     """
 
-    filename = f'{INSTALL_PATH}/config/' + confFileName
+    filename = fullConfPath
 
 
     print('[plugin_helper] reading config file')
@@ -205,7 +206,7 @@ class Plugin_Object:
         self.pluginPref = ""
         self.primaryId = primaryId
         self.secondaryId = secondaryId
-        self.created = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.created = timeNowDB()
         self.changed = ""
         self.watched1 = watched1
         self.watched2 = watched2

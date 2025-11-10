@@ -3,54 +3,52 @@ import io
 import datetime
 import threading
 import queue
-import time
 import logging
+from zoneinfo import ZoneInfo
+
+# Register NetAlertX directories
+INSTALL_PATH="/app"
+
+sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 # NetAlertX imports
 import conf
 from const import *
+from utils.datetime_utils import timeNowTZ
 
-#-------------------------------------------------------------------------------
-# duplication from helper to avoid circle
-#-------------------------------------------------------------------------------
-def timeNowTZ():
-    if conf.tz:
-        return datetime.datetime.now(conf.tz).replace(microsecond=0)
-    else:
-        return datetime.datetime.now().replace(microsecond=0)
 
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 # Map custom debug levels to Python logging levels
 custom_to_logging_levels = {
-    'none': logging.NOTSET,
-    'minimal': logging.WARNING,
-    'verbose': logging.INFO,
-    'debug': logging.DEBUG,
-    'trace': logging.DEBUG,  # Can map to DEBUG or lower custom level if needed
+    "none": logging.NOTSET,
+    "minimal": logging.WARNING,
+    "verbose": logging.INFO,
+    "debug": logging.DEBUG,
+    "trace": logging.DEBUG,  # Can map to DEBUG or lower custom level if needed
 }
 
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 # More verbose as the numbers go up
-debugLevels = [
-    ('none', 0), ('minimal', 1), ('verbose', 2), ('debug', 3), ('trace', 4)
-]
+debugLevels = [("none", 0), ("minimal", 1), ("verbose", 2), ("debug", 3), ("trace", 4)]
 
 # use the LOG_LEVEL from the config, may be overridden
 currentLevel = conf.LOG_LEVEL
 
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 # Queue for log messages
 log_queue = queue.Queue(maxsize=1000)  # Increase size to handle spikes
 log_thread = None  # Will hold the thread reference
 
-#-------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------
 # Custom logging handler
 class MyLogHandler(logging.Handler):
     def emit(self, record):
         log_entry = self.format(record)
         log_queue.put(log_entry)
 
-#-------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------
 # Logger class
 class Logger:
     def __init__(self, LOG_LEVEL):
@@ -77,14 +75,13 @@ class Logger:
             root_logger.handlers.clear()
 
         my_log_handler = MyLogHandler()
-        formatter = logging.Formatter('%(message)s', datefmt='%H:%M:%S')
+        formatter = logging.Formatter("%(message)s", datefmt="%H:%M:%S")
         my_log_handler.setFormatter(formatter)
 
         root_logger.addHandler(my_log_handler)
         root_logger.setLevel(custom_to_logging_levels.get(currentLevel, logging.NOTSET))
 
     def mylog(self, requestedDebugLevel, *args):
-        
         self.reqLvl = self._to_num(requestedDebugLevel)
         self.setLvl = self._to_num(currentLevel)
 
@@ -93,9 +90,10 @@ class Logger:
 
     def isAbove(self, requestedDebugLevel):
         reqLvl = self._to_num(requestedDebugLevel)
-        return reqLvl is not None and self.setLvl  is not None and self.setLvl >= reqLvl
+        return reqLvl is not None and self.setLvl is not None and self.setLvl >= reqLvl
 
-#-------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------
 # Dedicated thread for writing logs
 def log_writer():
     buffer = []
@@ -106,14 +104,15 @@ def log_writer():
                 break
             buffer.append(log_entry)
             if len(buffer) >= 10:
-                with open(logPath + "/app.log", 'a') as log_file:
-                    log_file.write('\n'.join(buffer) + '\n')
+                with open(logPath + "/app.log", "a") as log_file:
+                    log_file.write("\n".join(buffer) + "\n")
                 buffer.clear()
         except queue.Empty:
             if buffer:
-                with open(logPath + "/app.log", 'a') as log_file:
-                    log_file.write('\n'.join(buffer) + '\n')
+                with open(logPath + "/app.log", "a") as log_file:
+                    log_file.write("\n".join(buffer) + "\n")
                 buffer.clear()
+
 
 def start_log_writer_thread():
     global log_thread
@@ -121,12 +120,15 @@ def start_log_writer_thread():
         log_thread = threading.Thread(target=log_writer, daemon=True)
         log_thread.start()
 
-#-------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------
 def file_print(*args):
-    result = timeNowTZ().strftime('%H:%M:%S') + ' '
+    result = timeNowTZ().strftime("%H:%M:%S") + " "
     for arg in args:
         if isinstance(arg, list):
-            arg = ' '.join(str(a) for a in arg) # so taht new lines are handled correctly also when passing a list
+            arg = " ".join(
+                str(a) for a in arg
+            )  # so taht new lines are handled correctly also when passing a list
         result += str(arg)
 
     logging.log(custom_to_logging_levels.get(currentLevel, logging.NOTSET), result)
@@ -134,30 +136,34 @@ def file_print(*args):
 
     start_log_writer_thread()
 
-#-------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------
 def append_file_binary(file_path, input_data):
-    with open(file_path, 'ab') as file:
+    with open(file_path, "ab") as file:
         if isinstance(input_data, str):
-            input_data = input_data.encode('utf-8')
+            input_data = input_data.encode("utf-8")
         file.write(input_data)
+
 
 def logResult(stdout, stderr):
     if stderr is not None:
-        append_file_binary(logPath + '/stderr.log', stderr)
+        append_file_binary(logPath + "/stderr.log", stderr)
     if stdout is not None:
-        append_file_binary(logPath + '/stdout.log', stdout)
+        append_file_binary(logPath + "/stdout.log", stdout)
+
 
 def append_line_to_file(pPath, pText):
     if sys.version_info < (3, 0):
-        file = io.open(pPath, mode='a', encoding='utf-8')
-        file.write(pText.decode('unicode_escape'))
+        file = io.open(pPath, mode="a", encoding="utf-8")
+        file.write(pText.decode("unicode_escape"))
         file.close()
     else:
-        file = open(pPath, 'a', encoding='utf-8')
+        file = open(pPath, "a", encoding="utf-8")
         file.write(pText)
         file.close()
 
-#-------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------
 # Create default logger instance and backward-compatible global mylog
 logger = Logger(conf.LOG_LEVEL)
 mylog = logger.mylog

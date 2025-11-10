@@ -13,8 +13,35 @@
 // $DBFILE = dirname(__FILE__).'/../../../db/app.db';
 // $DBFILE_LOCKED_FILE = dirname(__FILE__).'/../../../log/db_is_locked.log';
 $scriptDir = realpath(dirname(__FILE__)); // Resolves symlinks to the actual physical path
-$DBFILE = $scriptDir . '/../../../db/app.db';
-$DBFILE_LOCKED_FILE = $scriptDir . '/../../../log/db_is_locked.log';
+$legacyDbPath = $scriptDir . '/../../../db/app.db';
+$legacyLogDir = $scriptDir . '/../../../log';
+
+$dbFolderPath = rtrim(getenv('NETALERTX_DB') ?: '/data/db', '/');
+$logFolderPath = rtrim(getenv('NETALERTX_LOG') ?: '/tmp/log', '/');
+
+// Fallback to legacy layout if the new location is missing but the legacy file still exists
+if (!is_dir($dbFolderPath) && file_exists($legacyDbPath)) {
+    $dbFolderPath = dirname($legacyDbPath);
+}
+
+if (!is_dir($dbFolderPath)) {
+    @mkdir($dbFolderPath, 0775, true);
+}
+
+$DBFILE = rtrim($dbFolderPath, '/') . '/app.db';
+if (!file_exists($DBFILE) && file_exists($legacyDbPath)) {
+    $DBFILE = $legacyDbPath;
+}
+
+if (!is_dir($logFolderPath) && is_dir($legacyLogDir)) {
+    $logFolderPath = $legacyLogDir;
+}
+
+if (!is_dir($logFolderPath)) {
+    @mkdir($logFolderPath, 0775, true);
+}
+
+$DBFILE_LOCKED_FILE = rtrim($logFolderPath, '/') . '/db_is_locked.log';
 
 
 //------------------------------------------------------------------------------
@@ -39,8 +66,10 @@ function SQLite3_connect($trytoreconnect = true, $retryCount = 0) {
         if (!file_exists($DBFILE)) {
             die("Database file not found: $DBFILE");
         }
-        if (!file_exists(dirname($DBFILE_LOCKED_FILE))) {
-            die("Log directory not found: " . dirname($DBFILE_LOCKED_FILE));
+
+        $lockDir = dirname($DBFILE_LOCKED_FILE);
+        if (!is_dir($lockDir) && !@mkdir($lockDir, 0775, true)) {
+            die("Log directory not found and could not be created: $lockDir");
         }
        
 
@@ -130,6 +159,7 @@ class CustomDatabaseWrapper {
         $message = 'Error executing query (attempts: ' . $attempts . '), query: ' . $query;        
         // write_notification($message);
         error_log("Query failed after {$this->maxRetries} attempts: " . $this->sqlite->lastErrorMsg());        
+        return false;
     }
 
     public function query_log_add($query)
@@ -187,7 +217,7 @@ function OpenDB($DBPath = null) {
 
     if (strlen($DBFILE) == 0) {
         $message = 'Database not available';
-        echo '<script>alert('.$message.')</script>';
+        echo '<script>alert("'.$message.'")</script>';
         write_notification($message);
         
         die('<div style="padding-left:150px">'.$message.'</div>');
@@ -197,7 +227,7 @@ function OpenDB($DBPath = null) {
         $db = new CustomDatabaseWrapper($DBFILE);
     } catch (Exception $e) {
         $message = "Error connecting to the database";
-        echo '<script>alert('.$message.'": ' . $e->getMessage() . '")</script>';
+        echo '<script>alert("'.$message.': '.$e->getMessage().'")</script>';
         write_notification($message);
         die('<div style="padding-left:150px">'.$message.'</div>');
     }

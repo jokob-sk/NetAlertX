@@ -1,51 +1,54 @@
 import json
 import sys
+import os
 
 # Register NetAlertX directories
-INSTALL_PATH = "/app"
+INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
 sys.path.extend([f"{INSTALL_PATH}/server"])
 
 from logger import mylog
 from const import apiPath
-from helper import is_random_mac, get_number_of_children, format_ip_long, get_setting_value
+
 
 def escape_label_value(val):
     """
     Escape special characters for Prometheus labels.
     """
-    return str(val).replace('\\', '\\\\').replace('\n', '\\n').replace('"', '\\"')
+    return str(val).replace("\\", "\\\\").replace("\n", "\\n").replace('"', '\\"')
+
 
 # Define a base URL with the user's home directory
 folder = apiPath
+
 
 def get_metric_stats():
     output = []
 
     # 1. Dashboard totals
     try:
-        with open(folder + 'table_devices_tiles.json', 'r') as f:
+        with open(folder + "table_devices_tiles.json", "r") as f:
             tiles_data = json.load(f)["data"]
 
         if isinstance(tiles_data, list) and tiles_data:
             totals = tiles_data[0]
-            output.append(f'netalertx_connected_devices {totals.get("connected", 0)}')
-            output.append(f'netalertx_offline_devices {totals.get("offline", 0)}')
-            output.append(f'netalertx_down_devices {totals.get("down", 0)}')
-            output.append(f'netalertx_new_devices {totals.get("new", 0)}')
-            output.append(f'netalertx_archived_devices {totals.get("archived", 0)}')
-            output.append(f'netalertx_favorite_devices {totals.get("favorites", 0)}')
-            output.append(f'netalertx_my_devices {totals.get("my_devices", 0)}')
+            output.append(f"netalertx_connected_devices {totals.get('connected', 0)}")
+            output.append(f"netalertx_offline_devices {totals.get('offline', 0)}")
+            output.append(f"netalertx_down_devices {totals.get('down', 0)}")
+            output.append(f"netalertx_new_devices {totals.get('new', 0)}")
+            output.append(f"netalertx_archived_devices {totals.get('archived', 0)}")
+            output.append(f"netalertx_favorite_devices {totals.get('favorites', 0)}")
+            output.append(f"netalertx_my_devices {totals.get('my_devices', 0)}")
         else:
             output.append("# Unexpected format in table_devices_tiles.json")
     except (FileNotFoundError, json.JSONDecodeError) as e:
-        mylog('none', f'[metrics] Error loading tiles data: {e}')
+        mylog("none", f"[metrics] Error loading tiles data: {e}")
         output.append(f"# Error loading tiles data: {e}")
     except Exception as e:
         output.append(f"# General error loading dashboard totals: {e}")
 
     # 2. Device-level metrics
     try:
-        with open(folder + 'table_devices.json', 'r') as f:
+        with open(folder + "table_devices.json", "r") as f:
             data = json.load(f)
 
         devices = data.get("data", [])
@@ -68,7 +71,7 @@ def get_metric_stats():
             )
 
     except (FileNotFoundError, json.JSONDecodeError) as e:
-        mylog('none', f'[metrics] Error loading devices data: {e}')
+        mylog("none", f"[metrics] Error loading devices data: {e}")
         output.append(f"# Error loading devices data: {e}")
     except Exception as e:
         output.append(f"# General error processing device metrics: {e}")

@@ -11,13 +11,23 @@
     // Let the Python extension invoke pytest via the interpreter; avoid hardcoded paths
     // Removed python.testing.pytestPath and legacy pytest.command overrides
     
-    "terminal.integrated.defaultProfile.linux": "fish",
+    "terminal.integrated.defaultProfile.linux": "zsh",
     "terminal.integrated.profiles.linux": {
-      "fish": {
-        "path": "/usr/bin/fish"
+      "zsh": {
+        "path": "/bin/zsh"
       }
     }
     ,
     // Fallback for older VS Code versions or schema validators that don't accept custom profiles
-    "terminal.integrated.shell.linux": "/usr/bin/fish"
+    "terminal.integrated.shell.linux": "/usr/bin/zsh"
+  ,
+  "python.linting.flake8Enabled": true,
+  "python.linting.enabled": true,
+  "python.linting.flake8Args": [
+    "--config=.flake8"
+  ],
+  "python.formatting.provider": "black",
+  "python.formatting.blackArgs": [
+    "--line-length=180"
+  ]
 }

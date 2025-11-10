@@ -1,37 +1,28 @@
-import datetime
-import json
-import uuid
+import os
 import sys
-import pytz
 
 # Register NetAlertX directories
-INSTALL_PATH="/app"
+INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
 sys.path.extend([f"{INSTALL_PATH}/server"])
 
-# Register NetAlertX modules 
-import conf
-from helper import get_setting_value, timeNowTZ
-# Make sure the TIMEZONE for logging is correct
-# conf.tz = pytz.timezone(get_setting_value('TIMEZONE'))
-
-from logger import mylog, Logger, logResult
+from helper import get_setting_value
+from logger import Logger
+from const import sql_generateGuid
 
 # Make sure log level is initialized correctly
-Logger(get_setting_value('LOG_LEVEL'))
+Logger(get_setting_value("LOG_LEVEL"))
 
-from const import applicationPath, logPath, apiPath, confFileName, sql_generateGuid
-from helper import  timeNowTZ
 
 class AppEvent_obj:
     def __init__(self, db):
         self.db = db
 
-        # Drop existing table 
+        # Drop existing table
         self.db.sql.execute("""DROP TABLE IF EXISTS "AppEvents" """)
 
         # Drop all triggers
         self.drop_all_triggers()
- 
+
         # Create the AppEvents table if missing
         self.create_app_events_table()
 
@@ -47,7 +38,7 @@ class AppEvent_obj:
                     "ObjectStatusColumn": "'devPresentLastScan'",
                     "ObjectIsNew": "NEW.devIsNew",
                     "ObjectIsArchived": "NEW.devIsArchived",
-                    "ObjectPlugin": "'DEVICES'"                   
+                    "ObjectPlugin": "'DEVICES'",
                 }
             }
             # ,
@@ -66,7 +57,6 @@ class AppEvent_obj:
             # }
         }
 
-                
         # Re-Create triggers dynamically
         for table, config in self.object_mapping.items():
             self.create_trigger(table, "insert", config)
@@ -130,8 +120,8 @@ class AppEvent_obj:
                 SELECT 1 FROM AppEvents 
                 WHERE AppEventProcessed = 0 
                 AND ObjectType = '{table_name}'
-                AND ObjectGUID = {manage_prefix(config['fields']['ObjectGUID'], event)}
-                AND ObjectStatus = {manage_prefix(config['fields']['ObjectStatus'], event)} 
+                AND ObjectGUID = {manage_prefix(config["fields"]["ObjectGUID"], event)}
+                AND ObjectStatus = {manage_prefix(config["fields"]["ObjectStatus"], event)} 
                 AND AppEventType = '{event.lower()}'
             )
             BEGIN
@@ -156,15 +146,15 @@ class AppEvent_obj:
                     DATETIME('now'), 
                     FALSE, 
                     '{table_name}', 
-                    {manage_prefix(config['fields']['ObjectGUID'], event)},  -- ObjectGUID
-                    {manage_prefix(config['fields']['ObjectPrimaryID'], event)},  -- ObjectPrimaryID
-                    {manage_prefix(config['fields']['ObjectSecondaryID'], event)},  -- ObjectSecondaryID
-                    {manage_prefix(config['fields']['ObjectStatus'], event)},  -- ObjectStatus
-                    {manage_prefix(config['fields']['ObjectStatusColumn'], event)},  -- ObjectStatusColumn
-                    {manage_prefix(config['fields']['ObjectIsNew'], event)},  -- ObjectIsNew
-                    {manage_prefix(config['fields']['ObjectIsArchived'], event)},  -- ObjectIsArchived
-                    {manage_prefix(config['fields']['ObjectForeignKey'], event)},  -- ObjectForeignKey
-                    {manage_prefix(config['fields']['ObjectPlugin'], event)},  -- ObjectForeignKey
+                    {manage_prefix(config["fields"]["ObjectGUID"], event)},  -- ObjectGUID
+                    {manage_prefix(config["fields"]["ObjectPrimaryID"], event)},  -- ObjectPrimaryID
+                    {manage_prefix(config["fields"]["ObjectSecondaryID"], event)},  -- ObjectSecondaryID
+                    {manage_prefix(config["fields"]["ObjectStatus"], event)},  -- ObjectStatus
+                    {manage_prefix(config["fields"]["ObjectStatusColumn"], event)},  -- ObjectStatusColumn
+                    {manage_prefix(config["fields"]["ObjectIsNew"], event)},  -- ObjectIsNew
+                    {manage_prefix(config["fields"]["ObjectIsArchived"], event)},  -- ObjectIsArchived
+                    {manage_prefix(config["fields"]["ObjectForeignKey"], event)},  -- ObjectForeignKey
+                    {manage_prefix(config["fields"]["ObjectPlugin"], event)},  -- ObjectForeignKey
                     '{event.lower()}'
                 );
             END;
@@ -178,9 +168,9 @@ class AppEvent_obj:
         # Commit changes
         self.db.commitDB()
 
+
 # Manage prefixes of column names
 def manage_prefix(field, event):
     if event == "delete":
         return field.replace("NEW.", "OLD.")
-    return field 
-
+    return field

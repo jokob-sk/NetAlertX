@@ -1,22 +1,19 @@
 #!/usr/bin/env python
 
 import os
-import pathlib
 import argparse
 import sys
-import re
-import base64
 import subprocess
-from time import strftime
 
 # Register NetAlertX directories
-INSTALL_PATH="/app"
+INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from plugin_helper import Plugin_Object, Plugin_Objects, decodeBase64
+from plugin_helper import Plugin_Objects, decodeBase64
 from logger import mylog, Logger, append_line_to_file
-from helper import timeNowTZ, get_setting_value 
-from const import logPath, applicationPath
+from utils.datetime_utils import timeNowDB
+from helper import get_setting_value 
+from const import logPath
 import conf
 from pytz import timezone
 
@@ -128,7 +125,7 @@ def performNmapScan(deviceIPs, deviceMACs, timeoutSec, args):
                 # An error occured, handle it
                 mylog('none', ["[NMAP Scan] " ,e.output])
                 mylog('none', ["[NMAP Scan] ⚠ ERROR - Nmap Scan - check logs", progress])            
-            except subprocess.TimeoutExpired as timeErr:
+            except subprocess.TimeoutExpired:
                 mylog('verbose', [f'[{pluginName}] Nmap TIMEOUT - the process forcefully terminated as timeout reached for ', ip, progress]) 
 
             if output == "": # check if the subprocess failed                    
@@ -159,7 +156,7 @@ def performNmapScan(deviceIPs, deviceMACs, timeoutSec, args):
                 elif 'PORT' in line and 'STATE' in line and 'SERVICE' in line:    
                     startCollecting = False # end reached
                 elif startCollecting and len(line.split()) == 3:                                    
-                    newEntriesTmp.append(nmap_entry(ip, deviceMACs[devIndex], timeNowTZ(), line.split()[0], line.split()[1], line.split()[2]))
+                    newEntriesTmp.append(nmap_entry(ip, deviceMACs[devIndex], timeNowDB(), line.split()[0], line.split()[1], line.split()[2]))
                     newPortsPerDevice += 1
                 elif 'Nmap done' in line:
                     duration = line.split('scanned in ')[1]            

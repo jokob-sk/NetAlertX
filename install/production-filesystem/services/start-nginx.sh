@@ -4,13 +4,12 @@ set -euo pipefail
 
 LOG_DIR=${NETALERTX_LOG}
 RUN_DIR=${SYSTEM_SERVICES_RUN}
-TMP_DIR=${SYSTEM_SERVICES_RUN_TMP}
+TMP_DIR=/tmp/nginx
 SYSTEM_NGINX_CONFIG_TEMPLATE="/services/config/nginx/netalertx.conf.template"
 SYSTEM_NGINX_CONFIG_FILE="/services/config/nginx/conf.active/netalertx.conf"
 
 # Create directories if they don't exist
 mkdir -p "${LOG_DIR}" "${RUN_DIR}" "${TMP_DIR}"
-
 
 nginx_pid=""
 
@@ -43,15 +42,18 @@ fi
 trap cleanup EXIT
 trap forward_signal INT TERM
 
+# Ensure temp dirs have correct permissions
+chmod -R 777 "/tmp/nginx" 2>/dev/null || true
+
 
 
 # Execute nginx with overrides
 # echo the full nginx command then run it
-echo "Starting /usr/sbin/nginx -p \"${RUN_DIR}/\" -c \"${SYSTEM_NGINX_CONFIG_FILE}\" -g \"error_log /dev/stderr; error_log ${NETALERTX_LOG}/nginx-error.log; pid ${RUN_DIR}/nginx.pid; daemon off;\" &"
+echo "Starting /usr/sbin/nginx -p \"${RUN_DIR}/\" -c \"${SYSTEM_NGINX_CONFIG_FILE}\" -g \"error_log /dev/stderr; error_log ${NETALERTX_LOG}/nginx-error.log; daemon off;\" &"
 /usr/sbin/nginx \
 	-p "${RUN_DIR}/" \
 	-c "${SYSTEM_NGINX_CONFIG_FILE}" \
-	-g "error_log /dev/stderr; error_log ${NETALERTX_LOG}/nginx-error.log; pid ${RUN_DIR}/nginx.pid; daemon off;" &
+	-g "error_log /dev/stderr; error_log ${NETALERTX_LOG}/nginx-error.log; daemon off;" &
 nginx_pid=$!
 
 wait "${nginx_pid}"

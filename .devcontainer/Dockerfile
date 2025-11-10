@@ -46,14 +46,16 @@ ARG INSTALL_DIR=/app
 
 # NetAlertX app directories
 ENV NETALERTX_APP=${INSTALL_DIR}
-ENV NETALERTX_CONFIG=${NETALERTX_APP}/config
+ENV NETALERTX_DATA=/data
+ENV NETALERTX_CONFIG=${NETALERTX_DATA}/config
 ENV NETALERTX_FRONT=${NETALERTX_APP}/front
+ENV NETALERTX_PLUGINS=${NETALERTX_FRONT}/plugins
 ENV NETALERTX_SERVER=${NETALERTX_APP}/server
-ENV NETALERTX_API=${NETALERTX_APP}/api
-ENV NETALERTX_DB=${NETALERTX_APP}/db
+ENV NETALERTX_API=/tmp/api
+ENV NETALERTX_DB=${NETALERTX_DATA}/db
 ENV NETALERTX_DB_FILE=${NETALERTX_DB}/app.db
 ENV NETALERTX_BACK=${NETALERTX_APP}/back
-ENV NETALERTX_LOG=${NETALERTX_APP}/log
+ENV NETALERTX_LOG=/tmp/log
 ENV NETALERTX_PLUGINS_LOG=${NETALERTX_LOG}/plugins
 ENV NETALERTX_CONFIG_FILE=${NETALERTX_CONFIG}/app.conf
 
@@ -70,6 +72,7 @@ ENV LOG_EXECUTION_QUEUE=${NETALERTX_LOG}/execution_queue.log
 ENV LOG_REPORT_OUTPUT_JSON=${NETALERTX_LOG}/report_output.json
 ENV LOG_STDOUT=${NETALERTX_LOG}/stdout.log
 ENV LOG_CROND=${NETALERTX_LOG}/crond.log
+ENV LOG_NGINX_ERROR=${NETALERTX_LOG}/nginx-error.log
 
 # System Services configuration files
 ENV ENTRYPOINT_CHECKS=/entrypoint.d
@@ -78,25 +81,26 @@ ENV SYSTEM_SERVICES_SCRIPTS=${SYSTEM_SERVICES}/scripts
 ENV SYSTEM_SERVICES_CONFIG=${SYSTEM_SERVICES}/config
 ENV SYSTEM_NGINX_CONFIG=${SYSTEM_SERVICES_CONFIG}/nginx
 ENV SYSTEM_NGINX_CONFIG_FILE=${SYSTEM_NGINX_CONFIG}/nginx.conf
-ENV SYSTEM_SERVICES_ACTIVE_CONFIG=${SYSTEM_NGINX_CONFIG}/conf.active
+ENV SYSTEM_SERVICES_ACTIVE_CONFIG=/tmp/nginx/active-config
 ENV SYSTEM_SERVICES_PHP_FOLDER=${SYSTEM_SERVICES_CONFIG}/php
 ENV SYSTEM_SERVICES_PHP_FPM_D=${SYSTEM_SERVICES_PHP_FOLDER}/php-fpm.d
 ENV SYSTEM_SERVICES_CROND=${SYSTEM_SERVICES_CONFIG}/crond
-ENV SYSTEM_SERVICES_RUN=${SYSTEM_SERVICES}/run
+ENV SYSTEM_SERVICES_RUN=/tmp/run
 ENV SYSTEM_SERVICES_RUN_TMP=${SYSTEM_SERVICES_RUN}/tmp
 ENV SYSTEM_SERVICES_RUN_LOG=${SYSTEM_SERVICES_RUN}/logs
 ENV PHP_FPM_CONFIG_FILE=${SYSTEM_SERVICES_PHP_FOLDER}/php-fpm.conf
 ENV READ_ONLY_FOLDERS="${NETALERTX_BACK} ${NETALERTX_FRONT} ${NETALERTX_SERVER} ${SYSTEM_SERVICES} \
                        ${SYSTEM_SERVICES_CONFIG} ${ENTRYPOINT_CHECKS}"
-ENV READ_WRITE_FOLDERS="${NETALERTX_CONFIG} ${NETALERTX_DB} ${NETALERTX_API} ${NETALERTX_LOG} \
-                       ${NETALERTX_PLUGINS_LOG} ${SYSTEM_SERVICES_RUN} ${SYSTEM_SERVICES_RUN_TMP} \
-                       ${SYSTEM_SERVICES_RUN_LOG}"
+ENV READ_WRITE_FOLDERS="${NETALERTX_DATA} ${NETALERTX_CONFIG} ${NETALERTX_DB} ${NETALERTX_API} \
+                       ${NETALERTX_LOG} ${NETALERTX_PLUGINS_LOG} ${SYSTEM_SERVICES_RUN} \
+                       ${SYSTEM_SERVICES_RUN_TMP} ${SYSTEM_SERVICES_RUN_LOG} \
+                       ${SYSTEM_SERVICES_ACTIVE_CONFIG}"
 
 #Python environment
 ENV PYTHONUNBUFFERED=1 
 ENV VIRTUAL_ENV=/opt/venv
 ENV VIRTUAL_ENV_BIN=/opt/venv/bin
-ENV PYTHONPATH=${NETALERTX_APP}:${NETALERTX_SERVER}:${VIRTUAL_ENV}/lib/python3.12/site-packages
+ENV PYTHONPATH=${NETALERTX_APP}:${NETALERTX_SERVER}:${NETALERTX_PLUGINS}:${VIRTUAL_ENV}/lib/python3.12/site-packages
 ENV PATH="${SYSTEM_SERVICES}:${VIRTUAL_ENV_BIN}:$PATH" 
 
 # App Environment
@@ -104,7 +108,7 @@ ENV LISTEN_ADDR=0.0.0.0
 ENV PORT=20211
 ENV NETALERTX_DEBUG=0
 ENV VENDORSPATH=/app/back/ieee-oui.txt
-ENV VENDORSPATH_NEWEST=/services/run/tmp/ieee-oui.txt
+ENV VENDORSPATH_NEWEST=${SYSTEM_SERVICES_RUN_TMP}/ieee-oui.txt
 ENV ENVIRONMENT=alpine
 ENV READ_ONLY_USER=readonly READ_ONLY_GROUP=readonly
 ENV NETALERTX_USER=netalertx NETALERTX_GROUP=netalertx
@@ -128,8 +132,9 @@ COPY --chown=${NETALERTX_USER}:${NETALERTX_GROUP} install/production-filesystem/
 COPY --chown=${NETALERTX_USER}:${NETALERTX_GROUP} --chmod=755 back ${NETALERTX_BACK}
 COPY --chown=${NETALERTX_USER}:${NETALERTX_GROUP} --chmod=755 front ${NETALERTX_FRONT}
 COPY --chown=${NETALERTX_USER}:${NETALERTX_GROUP} --chmod=755 server ${NETALERTX_SERVER}
-RUN install -d -o ${NETALERTX_USER} -g ${NETALERTX_GROUP} -m 755 ${NETALERTX_API}  \
-    ${NETALERTX_LOG} ${SYSTEM_SERVICES_RUN_TMP} ${SYSTEM_SERVICES_RUN_LOG} && \
+
+# Create required folders with correct ownership and permissions
+RUN install -d -o ${NETALERTX_USER} -g ${NETALERTX_GROUP} -m 700 ${READ_WRITE_FOLDERS} && \
     sh -c "find ${NETALERTX_APP} -type f \( -name '*.sh' -o -name 'speedtest-cli' \) \
     -exec chmod 750 {} \;"
 
@@ -211,11 +216,14 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
 #   .devcontainer/scripts/generate-configs.sh
 # The generator appends this stage to produce .devcontainer/Dockerfile.
 # Prefer to place dev-only setup here; use setup.sh only for runtime fixes.
+# Permissions in devcontainer should be of a brutalist nature. They will be
+# Open and wide to avoid permission issues during development allowing max
+# flexibility.
 
 FROM runner AS netalertx-devcontainer
 ENV INSTALL_DIR=/app
 
-ENV PYTHONPATH=/workspaces/NetAlertX/test:/workspaces/NetAlertX/server:/app:/app/server:/opt/venv/lib/python3.12/site-packages:/usr/lib/python3.12/site-packages
+ENV PYTHONPATH=${PYTHONPATH}:/workspaces/NetAlertX/test:/workspaces/NetAlertX/server:/usr/lib/python3.12/site-packages
 ENV PATH=/services:${PATH}
 ENV PHP_INI_SCAN_DIR=/services/config/php/conf.d:/etc/php83/conf.d
 ENV LISTEN_ADDR=0.0.0.0
@@ -226,16 +234,28 @@ COPY .devcontainer/resources/devcontainer-overlay/ /
 USER root
 # Install common tools, create user, and set up sudo
 RUN apk add --no-cache git nano vim jq php83-pecl-xdebug py3-pip nodejs sudo gpgconf pytest \
-    pytest-cov fish shfmt github-cli py3-yaml py3-docker-py docker-cli docker-cli-buildx \
+    pytest-cov zsh alpine-zsh-config shfmt github-cli py3-yaml py3-docker-py docker-cli docker-cli-buildx \
     docker-cli-compose
 
 RUN install -d -o netalertx -g netalertx -m 755 /services/php/modules && \
     cp -a /usr/lib/php83/modules/. /services/php/modules/ && \
     echo "${NETALERTX_USER} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
-RUN mkdir /workspaces && \
-    install -d -o netalertx -g netalertx -m 777 /services/run/logs && \
-    install -d -o netalertx -g netalertx -m 777 /app/run/tmp/client_body && \
-    sed -i -e 's|:/app:|:/workspaces:|' /etc/passwd && \
+ENV SHELL=/bin/zsh
+
+RUN mkdir -p /workspaces && \
+    install -d -m 777 /data /data/config /data/db && \
+    install -d -m 777 /tmp/log /tmp/log/plugins /tmp/api /tmp/run /tmp/nginx && \
+    install -d -m 777 /tmp/nginx/active-config /tmp/nginx/client_body /tmp/nginx/config && \
+    install -d -m 777 /tmp/nginx/fastcgi /tmp/nginx/proxy /tmp/nginx/scgi /tmp/nginx/uwsgi && \
+    install -d -m 777 /tmp/run/tmp /tmp/run/logs && \
+    chmod 777 /workspaces && \
+    chown -R netalertx:netalertx /data && \
+    chmod 666 /data/config/app.conf /data/db/app.db && \
+    chmod 1777 /tmp && \
+    install -d -o root -g root -m 1777 /tmp/.X11-unix && \
+    mkdir -p /home/netalertx && \
+    chown netalertx:netalertx /home/netalertx && \
+    sed -i -e 's#/app:#/workspaces:#' /etc/passwd && \
     find /opt/venv -type d -exec chmod o+rwx {} \;
     
 USER netalertx

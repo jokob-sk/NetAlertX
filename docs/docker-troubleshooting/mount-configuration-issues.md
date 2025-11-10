@@ -24,9 +24,9 @@ Review and correct your volume mounts in docker-compose.yml:
 Example volume configuration:
 ```yaml
 volumes:
-  - ./data/db:/app/db
-  - ./data/config:/app/config
-  - ./data/log:/app/log
+  - ./data/db:/data/db
+  - ./data/config:/data/config
+  - ./data/log:/tmp/log
 ```
 
 ## Additional Resources

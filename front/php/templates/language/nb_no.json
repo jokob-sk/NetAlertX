@@ -674,7 +674,7 @@
     "Systeminfo_System_Uptime": "Oppetid:",
     "Systeminfo_This_Client": "Denne klienten",
     "Systeminfo_USB_Devices": "USB-enheter",
-    "TICKER_MIGRATE_TO_NETALERTX": "⚠ Eldre Mount-lokasjoner oppdaget. Følg <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/MIGRATION.md\" target=\"_blank\">denne guiden</a> for å migrere til den nye <code>/app/config</code> og <code>/app/db </code> mappene og <code>netalertx</code> containeren.",
+    "TICKER_MIGRATE_TO_NETALERTX": "⚠ Eldre Mount-lokasjoner oppdaget. Følg <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/MIGRATION.md\" target=\"_blank\">denne guiden</a> for å migrere til den nye <code>/data/config</code> og <code>/data/db </code> mappene og <code>netalertx</code> containeren.",
     "TIMEZONE_description": "Tidssone for å vise statistikk riktig. Finn din tidssone <a target=\"_blank\" href=\"https://en.wikipedia.org/wiki/List_of_tz_database_time_zones\" rel=\"nofollow\">her</a>.",
     "TIMEZONE_name": "Tidssone",
     "UI_DEV_SECTIONS_description": "Velg hvilke UI -elementer du vil skjule på enhetssiden.",

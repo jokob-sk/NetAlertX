@@ -3,6 +3,43 @@
 # These must exist before services start to avoid permission/write errors
 
 check_mandatory_folders() {
+    # Base volatile directories live on /tmp mounts and must always exist
+    if [ ! -d "${NETALERTX_LOG}" ]; then
+        echo "    * Creating NetAlertX log directory."
+        if ! mkdir -p "${NETALERTX_LOG}"; then
+            echo "Error: Failed to create log directory: ${NETALERTX_LOG}"
+            return 1
+        fi
+        chmod 700 "${NETALERTX_LOG}" 2>/dev/null || true
+    fi
+
+    if [ ! -d "${NETALERTX_API}" ]; then
+        echo "    * Creating NetAlertX API cache."
+        if ! mkdir -p "${NETALERTX_API}"; then
+            echo "Error: Failed to create API cache directory: ${NETALERTX_API}"
+            return 1
+        fi
+        chmod 700 "${NETALERTX_API}" 2>/dev/null || true
+    fi
+
+    if [ ! -d "${SYSTEM_SERVICES_RUN}" ]; then
+        echo "    * Creating System services runtime directory."
+        if ! mkdir -p "${SYSTEM_SERVICES_RUN}"; then
+            echo "Error: Failed to create System services runtime directory: ${SYSTEM_SERVICES_RUN}"
+            return 1
+        fi
+        chmod 700 "${SYSTEM_SERVICES_RUN}" 2>/dev/null || true
+    fi
+
+    if [ ! -d "${SYSTEM_SERVICES_ACTIVE_CONFIG}" ]; then
+        echo "    * Creating nginx active configuration directory."
+        if ! mkdir -p "${SYSTEM_SERVICES_ACTIVE_CONFIG}"; then
+            echo "Error: Failed to create nginx active configuration directory: ${SYSTEM_SERVICES_ACTIVE_CONFIG}"
+            return 1
+        fi
+        chmod 700 "${SYSTEM_SERVICES_ACTIVE_CONFIG}" 2>/dev/null || true
+    fi
+
     # Check and create plugins log directory
     if [ ! -d "${NETALERTX_PLUGINS_LOG}" ]; then
         echo "    * Creating Plugins log."
@@ -10,6 +47,7 @@ check_mandatory_folders() {
             echo "Error: Failed to create plugins log directory: ${NETALERTX_PLUGINS_LOG}"
             return 1
         fi
+        chmod 700 "${NETALERTX_PLUGINS_LOG}" 2>/dev/null || true
     fi
 
     # Check and create system services run log directory
@@ -19,6 +57,7 @@ check_mandatory_folders() {
             echo "Error: Failed to create system services run log directory: ${SYSTEM_SERVICES_RUN_LOG}"
             return 1
         fi
+        chmod 700 "${SYSTEM_SERVICES_RUN_LOG}" 2>/dev/null || true
     fi
 
     # Check and create system services run tmp directory
@@ -28,6 +67,7 @@ check_mandatory_folders() {
             echo "Error: Failed to create system services run tmp directory: ${SYSTEM_SERVICES_RUN_TMP}"
             return 1
         fi
+        chmod 700 "${SYSTEM_SERVICES_RUN_TMP}" 2>/dev/null || true
     fi
 
     # Check and create DB locked log file

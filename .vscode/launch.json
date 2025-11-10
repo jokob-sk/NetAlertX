@@ -29,6 +29,14 @@
             "pathMappings": {
                 "/app": "${workspaceFolder}"
             }
+        },
+        {
+            "name": "Python: Current File",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": true
         }
     ]
 }
