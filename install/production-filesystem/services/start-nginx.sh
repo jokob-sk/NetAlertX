@@ -5,8 +5,6 @@ set -euo pipefail
 LOG_DIR=${NETALERTX_LOG}
 RUN_DIR=${SYSTEM_SERVICES_RUN}
 TMP_DIR=/tmp/nginx
-SYSTEM_NGINX_CONFIG_TEMPLATE="/services/config/nginx/netalertx.conf.template"
-SYSTEM_NGINX_CONFIG_FILE="/services/config/nginx/conf.active/netalertx.conf"
 
 # Create directories if they don't exist
 mkdir -p "${LOG_DIR}" "${RUN_DIR}" "${TMP_DIR}"
@@ -33,9 +31,9 @@ done
 
 TEMP_CONFIG_FILE=$(mktemp "${TMP_DIR}/netalertx.conf.XXXXXX")
 if envsubst '${LISTEN_ADDR} ${PORT}' < "${SYSTEM_NGINX_CONFIG_TEMPLATE}" > "${TEMP_CONFIG_FILE}" 2>/dev/null; then
-	mv "${TEMP_CONFIG_FILE}" "${SYSTEM_NGINX_CONFIG_FILE}" 
+	mv "${TEMP_CONFIG_FILE}" "${SYSTEM_SERVICES_ACTIVE_CONFIG_FILE}"
 else
-	echo "Note: Unable to write to ${SYSTEM_NGINX_CONFIG_FILE}. Using default configuration."
+	echo "Note: Unable to write to ${SYSTEM_SERVICES_ACTIVE_CONFIG_FILE}. Using default configuration."
 	rm -f "${TEMP_CONFIG_FILE}" 
 fi
 
@@ -49,10 +47,10 @@ chmod -R 777 "/tmp/nginx" 2>/dev/null || true
 
 # Execute nginx with overrides
 # echo the full nginx command then run it
-echo "Starting /usr/sbin/nginx -p \"${RUN_DIR}/\" -c \"${SYSTEM_NGINX_CONFIG_FILE}\" -g \"error_log /dev/stderr; error_log ${NETALERTX_LOG}/nginx-error.log; daemon off;\" &"
+echo "Starting /usr/sbin/nginx -p \"${RUN_DIR}/\" -c \"${SYSTEM_SERVICES_ACTIVE_CONFIG_FILE}\" -g \"error_log /dev/stderr; error_log ${NETALERTX_LOG}/nginx-error.log; daemon off;\" &"
 /usr/sbin/nginx \
 	-p "${RUN_DIR}/" \
-	-c "${SYSTEM_NGINX_CONFIG_FILE}" \
+	-c "${SYSTEM_SERVICES_ACTIVE_CONFIG_FILE}" \
 	-g "error_log /dev/stderr; error_log ${NETALERTX_LOG}/nginx-error.log; daemon off;" &
 nginx_pid=$!
 

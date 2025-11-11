@@ -50,9 +50,6 @@ sudo chmod 777 /tmp/log /tmp/api /tmp/run /tmp/nginx
 
 
 
-sudo rm -rf "${SYSTEM_NGINX_CONFIG}/conf.active"
-sudo ln -s "${SYSTEM_SERVICES_ACTIVE_CONFIG}" "${SYSTEM_NGINX_CONFIG}/conf.active"
-
 sudo rm -rf /entrypoint.d
 sudo ln -s "${SOURCE_DIR}/install/production-filesystem/entrypoint.d" /entrypoint.d
 
@@ -67,6 +64,7 @@ for dir in \
   "${SYSTEM_SERVICES_RUN_LOG}" \
   "${SYSTEM_SERVICES_ACTIVE_CONFIG}" \
   "${NETALERTX_PLUGINS_LOG}" \
+  "${SYSTEM_SERVICES_RUN_TMP}" \
   "/tmp/nginx/client_body" \
   "/tmp/nginx/proxy" \
   "/tmp/nginx/fastcgi" \
@@ -75,9 +73,6 @@ for dir in \
   sudo install -d -m 777 "${dir}"
 done
 
-# Create nginx temp subdirs with permissions
-sudo mkdir -p "${SYSTEM_SERVICES_RUN_TMP}/client_body" "${SYSTEM_SERVICES_RUN_TMP}/proxy" "${SYSTEM_SERVICES_RUN_TMP}/fastcgi" "${SYSTEM_SERVICES_RUN_TMP}/uwsgi" "${SYSTEM_SERVICES_RUN_TMP}/scgi"
-sudo chmod -R 777 "${SYSTEM_SERVICES_RUN_TMP}"
 
 for var in "${LOG_FILES[@]}"; do
   path=${!var}
