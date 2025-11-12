@@ -673,7 +673,7 @@ def importConfigs(pm, db, all_plugins):
     # Check if app was upgraded
         
     buildTimestamp, new_version = getBuildTimeStampAndVersion()
-    prev_version = conf.VERSION 
+    prev_version = conf.VERSION if conf.VERSION != '' else "unknown"
     
     mylog('debug', [f"[Config] buildTimestamp | prev_version | .VERSION file: '{buildTimestamp}|{prev_version}|{new_version}'"])
     
@@ -684,7 +684,7 @@ def importConfigs(pm, db, all_plugins):
         # ccd(key, default, config_dir, name, inputtype, options, group, events=None, desc="", setJsonMetadata=None, overrideTemplate=None, forceDefault=False)
         ccd('VERSION', new_version , c_d, '_KEEP_', '_KEEP_', '_KEEP_', '_KEEP_', None, "_KEEP_", None, None, True)
         
-        write_notification(f'[Upgrade] : App upgraded from {prev_version} to {new_version} 🚀 Please clear the cache: <ol> <li>Click OK below</li>  <li>Clear the browser cache (shift + browser refresh button)</li> <li> Clear app cache with the <i class="fa-solid fa-rotate"></i> (reload) button in the header</li><li>Go to Settings and click Save</li> </ol> Check out new features and what has changed in the <a href="https://github.com/jokob-sk/NetAlertX/releases" target="_blank">📓 release notes</a>.', 'interrupt', timeNowDB())
+        write_notification(f'[Upgrade] : App upgraded from <code>{prev_version}</code> to <code>{new_version}</code> 🚀 Please clear the cache: <ol> <li>Click OK below</li>  <li>Clear the browser cache (shift + browser refresh button)</li> <li> Clear app cache with the <i class="fa-solid fa-rotate"></i> (reload) button in the header</li><li>Go to Settings and click Save</li> </ol> Check out new features and what has changed in the <a href="https://github.com/jokob-sk/NetAlertX/releases" target="_blank">📓 release notes</a>.', 'interrupt', timeNowDB())
     
 
     # -----------------

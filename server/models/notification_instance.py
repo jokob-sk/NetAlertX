@@ -14,6 +14,7 @@ from helper import (
     removeDuplicateNewLines,
     write_file,
     get_setting_value,
+    getBuildTimeStampAndVersion,
 )
 from messaging.in_app import write_notification
 from utils.datetime_utils import timeNowDB, get_timezone_offset
@@ -25,6 +26,7 @@ from utils.datetime_utils import timeNowDB, get_timezone_offset
 class NotificationInstance:
     def __init__(self, db):
         self.db = db
+        self.serverUrl = get_setting_value("REPORT_DASHBOARD_URL")
 
         # Create Notifications table if missing
         self.db.sql.execute("""CREATE TABLE IF NOT EXISTS "Notifications" (
@@ -108,83 +110,71 @@ class NotificationInstance:
             if conf.newVersionAvailable:
                 newVersionText = "🚀A new version is available."
 
-            mail_text = mail_text.replace("<NEW_VERSION>", newVersionText)
-            mail_html = mail_html.replace("<NEW_VERSION>", newVersionText)
+            mail_text = mail_text.replace("NEW_VERSION", newVersionText)
+            mail_html = mail_html.replace("NEW_VERSION", newVersionText)
 
             # Report "REPORT_DATE" in Header & footer
             timeFormated = timeNowDB()
-            mail_text = mail_text.replace('<REPORT_DATE>', timeFormated)
-            mail_html = mail_html.replace('<REPORT_DATE>', timeFormated)
+            mail_text = mail_text.replace("REPORT_DATE", timeFormated)
+            mail_html = mail_html.replace("REPORT_DATE", timeFormated)
 
             # Report "SERVER_NAME" in Header & footer
-            mail_text = mail_text.replace("<SERVER_NAME>", socket.gethostname())
-            mail_html = mail_html.replace("<SERVER_NAME>", socket.gethostname())
+            mail_text = mail_text.replace("SERVER_NAME", socket.gethostname())
+            mail_html = mail_html.replace("SERVER_NAME", socket.gethostname())
 
             # Report "VERSION" in Header & footer
-            try:
-                VERSIONFILE = subprocess.check_output(
-                    ["php", applicationPath + "/front/php/templates/version.php"],
-                    timeout=5,
-                ).decode("utf-8")
-            except Exception as e:
-                mylog("debug", [f"[Notification] Unable to read version.php: {e}"])
-                VERSIONFILE = "unknown"
+            buildTimestamp, newBuildVersion = getBuildTimeStampAndVersion()
 
-            mail_text = mail_text.replace("<BUILD_VERSION>", VERSIONFILE)
-            mail_html = mail_html.replace("<BUILD_VERSION>", VERSIONFILE)
+            mail_text = mail_text.replace("BUILD_VERSION", newBuildVersion)
+            mail_html = mail_html.replace("BUILD_VERSION", newBuildVersion)
 
             # Report "BUILD" in Header & footer
-            try:
-                BUILDFILE = subprocess.check_output(
-                    ["php", applicationPath + "/front/php/templates/build.php"],
-                    timeout=5,
-                ).decode("utf-8")
-            except Exception as e:
-                mylog("debug", [f"[Notification] Unable to read build.php: {e}"])
-                BUILDFILE = "unknown"
+            mail_text = mail_text.replace("BUILD_DATE", str(buildTimestamp))
+            mail_html = mail_html.replace("BUILD_DATE", str(buildTimestamp))
 
-            mail_text = mail_text.replace("<BUILD_DATE>", BUILDFILE)
-            mail_html = mail_html.replace("<BUILD_DATE>", BUILDFILE)
+            # Report "REPORT_DASHBOARD_URL" in footer
+            mail_text = mail_text.replace("REPORT_DASHBOARD_URL", self.serverUrl)
+            mail_html = mail_html.replace("REPORT_DASHBOARD_URL", self.serverUrl)
 
             # Start generating the TEXT & HTML notification messages
             # new_devices
             # ---
             html, text = construct_notifications(self.JSON, "new_devices")
 
-            mail_text = mail_text.replace("<NEW_DEVICES_TABLE>", text + "\n")
-            mail_html = mail_html.replace("<NEW_DEVICES_TABLE>", html)
+            mail_text = mail_text.replace("NEW_DEVICES_TABLE", text + "\n")
+            mail_html = mail_html.replace("NEW_DEVICES_TABLE", html)
             mylog("verbose", ["[Notification] New Devices sections done."])
 
             # down_devices
             # ---
             html, text = construct_notifications(self.JSON, "down_devices")
 
-            mail_text = mail_text.replace("<DOWN_DEVICES_TABLE>", text + "\n")
-            mail_html = mail_html.replace("<DOWN_DEVICES_TABLE>", html)
+            mail_text = mail_text.replace("DOWN_DEVICES_TABLE", text + "\n")
+            mail_html = mail_html.replace("DOWN_DEVICES_TABLE", html)
             mylog("verbose", ["[Notification] Down Devices sections done."])
 
             # down_reconnected
             # ---
             html, text = construct_notifications(self.JSON, "down_reconnected")
 
-            mail_text = mail_text.replace("<DOWN_RECONNECTED_TABLE>", text + "\n")
-            mail_html = mail_html.replace("<DOWN_RECONNECTED_TABLE>", html)
+            mail_text = mail_text.replace("DOWN_RECONNECTED_TABLE", text + "\n")
+            mail_html = mail_html.replace("DOWN_RECONNECTED_TABLE", html)
             mylog("verbose", ["[Notification] Reconnected Down Devices sections done."])
 
             # events
             # ---
             html, text = construct_notifications(self.JSON, "events")
 
-            mail_text = mail_text.replace("<EVENTS_TABLE>", text + "\n")
-            mail_html = mail_html.replace("<EVENTS_TABLE>", html)
+            mail_text = mail_text.replace("EVENTS_TABLE", text + "\n")
+            mail_html = mail_html.replace("EVENTS_TABLE", html)
             mylog("verbose", ["[Notification] Events sections done."])
 
             # plugins
             # ---
             html, text = construct_notifications(self.JSON, "plugins")
 
-            mail_text = mail_text.replace("<PLUGINS_TABLE>", text + "\n")
-            mail_html = mail_html.replace("<PLUGINS_TABLE>", html)
+            mail_text = mail_text.replace("PLUGINS_TABLE", text + "\n")
+            mail_html = mail_html.replace("PLUGINS_TABLE", html)
 
             mylog("verbose", ["[Notification] Plugins sections done."])
 
