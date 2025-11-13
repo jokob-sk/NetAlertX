@@ -40,16 +40,18 @@ class NameResolver:
             raw = result[0][0]
             return ResolvedName(raw, self.clean_device_name(raw, False))
 
-        # Check by IP
-        sql.execute(f"""
-            SELECT Watched_Value2 FROM Plugins_Objects 
-            WHERE Plugin = '{plugin}' AND Object_SecondaryID = '{pIP}'
-        """)
-        result = sql.fetchall()
-        # self.db.commitDB() # Issue #1251: Optimize name resolution lookup
-        if result:
-            raw = result[0][0]
-            return ResolvedName(raw, self.clean_device_name(raw, True))
+        # Check name by IP if enabled
+        if get_setting_value('NEWDEV_IP_MATCH_NAME'):
+            
+            sql.execute(f"""
+                SELECT Watched_Value2 FROM Plugins_Objects 
+                WHERE Plugin = '{plugin}' AND Object_SecondaryID = '{pIP}'
+            """)
+            result = sql.fetchall()
+            # self.db.commitDB() # Issue #1251: Optimize name resolution lookup
+            if result:
+                raw = result[0][0]
+                return ResolvedName(raw, self.clean_device_name(raw, True))
 
         return nameNotFound
 
