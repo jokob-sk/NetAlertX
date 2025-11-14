@@ -39,7 +39,7 @@ jobs:
           echo "🔍 Checking Python syntax..."
           find . -name "*.py" -print0 | xargs -0 -n1 python3 -m py_compile
 
-test:
+  test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
