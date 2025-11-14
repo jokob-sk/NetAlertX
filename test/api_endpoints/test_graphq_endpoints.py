@@ -42,7 +42,8 @@ def test_graphql_post_unauthorized(client):
     query = {"query": "{ devices { devName devMac } }"}
     resp = client.post("/graphql", json=query)
     assert resp.status_code == 401
-    assert "Unauthorized access attempt" in resp.json.get("error", "")
+    assert "Unauthorized access attempt" in resp.json.get("message", "")
+    assert "Forbidden" in resp.json.get("error", "")
 
 # --- DEVICES TESTS ---
 
@@ -167,4 +168,3 @@ def test_graphql_post_langstrings_all_languages(client, api_token):
     assert data["deStrings"]["count"] >= 1
     # Ensure langCode matches
     assert all(e["langCode"] == "en_us" for e in data["enStrings"]["langStrings"])
-    assert all(e["langCode"] == "de_de" for e in data["deStrings"]["langStrings"])

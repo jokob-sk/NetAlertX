@@ -81,7 +81,7 @@ def graphql_endpoint():
     if not is_authorized():
         msg = '[graphql_server] Unauthorized access attempt - make sure your GRAPHQL_PORT and API_TOKEN settings are correct.'
         mylog('verbose', [msg])
-        return jsonify({"success": False, "message": msg}), 401
+        return jsonify({"success": False, "message": msg, "error": "Forbidden"}), 401
 
     # Retrieve and log request data
     data = request.get_json()

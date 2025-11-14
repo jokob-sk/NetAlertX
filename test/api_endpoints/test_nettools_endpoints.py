@@ -64,7 +64,7 @@ def test_wakeonlan_device(client, api_token, test_mac):
 
     # 5. Conditional assertions based on MAC
     if device_mac.lower() == 'internet' or device_mac == test_mac:
-        # For athe dummy "internet" or test MAC, expect a 400 response
+        # For the dummy "internet" or test MAC, expect a 400 response
         assert resp.status_code == 400
     else:
         # For any other MAC, expect a 200 response

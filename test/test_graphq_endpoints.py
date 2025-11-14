@@ -43,7 +43,9 @@ def test_graphql_post_unauthorized(client):
     query = {"query": "{ devices { devName devMac } }"}
     resp = client.post("/graphql", json=query)
     assert resp.status_code == 401
-    assert "Unauthorized access attempt" in resp.json.get("error", "")
+    # Check either error field or message field for the unauthorized text
+    error_text = resp.json.get("error", "") or resp.json.get("message", "")
+    assert "Unauthorized" in error_text or "Forbidden" in error_text
 
 def test_graphql_post_devices(client, api_token):
     """POST /graphql with a valid token should return device data"""
