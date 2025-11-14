@@ -39,3 +39,23 @@ jobs:
           echo "🔍 Checking Python syntax..."
           find . -name "*.py" -print0 | xargs -0 -n1 python3 -m py_compile
 
+test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pytest
+
+      - name: Run unit tests
+        run: |
+          echo "🧪 Running unit tests..."
+          pytest -m "not (docker or compose or feature_complete)"
