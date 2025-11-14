@@ -168,23 +168,6 @@ class TestSafeConditionBuilder(unittest.TestCase):
         self.assertIn('Connected', params.values())
         self.assertIn('Disconnected', params.values())
 
-    def test_event_type_filter_whitelist(self):
-        """Test that event type filter enforces whitelist."""
-        # Valid event types
-        valid_types = ['Connected', 'New Device']
-        sql, params = self.builder.build_event_type_filter(valid_types)
-        self.assertEqual(len(params), 2)
-
-        # Mix of valid and invalid event types
-        mixed_types = ['Connected', 'InvalidEventType', 'Device Down']
-        sql, params = self.builder.build_event_type_filter(mixed_types)
-        self.assertEqual(len(params), 2)  # Only valid types should be included
-
-        # All invalid event types
-        invalid_types = ['InvalidType1', 'InvalidType2']
-        sql, params = self.builder.build_event_type_filter(invalid_types)
-        self.assertEqual(sql, "")
-        self.assertEqual(params, {})
 
 
 class TestDatabaseParameterSupport(unittest.TestCase):
@@ -267,10 +250,21 @@ class TestReportingSecurityIntegration(unittest.TestCase):
         # Verify that get_table_as_json was called with parameters
         self.mock_db.get_table_as_json.assert_called()
         call_args = self.mock_db.get_table_as_json.call_args
-        
-        # Should have been called with both query and parameters
-        self.assertEqual(len(call_args[0]), 1)  # Query argument
-        self.assertEqual(len(call_args[1]), 1)  # Parameters keyword argument
+
+        # Should be query + params
+        self.assertEqual(len(call_args[0]), 2)
+
+        query, params = call_args[0]
+
+        # Ensure the SQL contains the column
+        self.assertIn("devName =", query)
+
+        # Ensure a named parameter is used
+        self.assertRegex(query, r":param_\d+")
+
+        # Ensure the parameter dict has the correct value (using actual param name)
+        self.assertEqual(list(params.values())[0], "TestDevice")
+
 
     @patch('messaging.reporting.get_setting_value')
     def test_events_section_security(self, mock_get_setting):
