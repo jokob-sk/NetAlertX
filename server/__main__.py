@@ -154,25 +154,23 @@ def main():
             # Name resolution
             # --------------------------------------------
 
-            # run plugins before notification processing (e.g. Plugins to discover device names)
-            pm.run_plugin_scripts("before_name_updates")
-
-            # Resolve devices names
-            mylog("debug", "[Main] Resolve devices names")
-            update_devices_names(pm)
-
-            # --------
-            # Reporting
-
-            # Check if new devices found
+            # Check if new devices found (created by process_scan)
             sql.execute(sql_new_devices)
             newDevices = sql.fetchall()
             db.commitDB()
 
-            #  new devices were found
+            # If new devices were found, run all plugins registered to be run when new devices are found
+            # Run these before name resolution so plugins like NSLOOKUP that are configured
+            # for `on_new_device` can populate names used in the notifications below.
             if len(newDevices) > 0:
-                #  run all plugins registered to be run when new devices are found
                 pm.run_plugin_scripts("on_new_device")
+
+            # run plugins before notification processing (e.g. Plugins to discover device names)
+            pm.run_plugin_scripts("before_name_updates")
+
+            # Resolve devices names (will pick up results from on_new_device plugins above)
+            mylog("debug", "[Main] Resolve devices names")
+            update_devices_names(pm)
 
             # Notification handling
             # ----------------------------------------
