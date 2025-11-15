@@ -17,7 +17,7 @@ sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 pluginName = 'PIHOLEAPI'
 
-from plugin_helper import Plugin_Objects
+from plugin_helper import Plugin_Objects, is_mac
 from logger import mylog, Logger
 from helper import get_setting_value
 from const import logPath
@@ -266,19 +266,22 @@ def main():
         else:
             for entry in device_entries:
 
-                # Map to Plugin_Objects fields                
-                mylog('verbose', [f'[{pluginName}] found: {entry['name']}|{entry['mac']}|{entry['ip']}'])
+                if is_mac(entry['mac']):
+                    # Map to Plugin_Objects fields                
+                    mylog('verbose', [f'[{pluginName}] found: {entry['name']}|{entry['mac']}|{entry['ip']}'])
 
-                plugin_objects.add_object(
-                    primaryId=str(entry['mac']),
-                    secondaryId=str(entry['ip']),
-                    watched1=str(entry['name']),
-                    watched2=str(entry['macVendor']),
-                    watched3=str(entry['lastQuery']),
-                    watched4="",
-                    extra=pluginName,
-                    foreignKey=str(entry['mac'])
-                )
+                    plugin_objects.add_object(
+                        primaryId=str(entry['mac']),
+                        secondaryId=str(entry['ip']),
+                        watched1=str(entry['name']),
+                        watched2=str(entry['macVendor']),
+                        watched3=str(entry['lastQuery']),
+                        watched4="",
+                        extra=pluginName,
+                        foreignKey=str(entry['mac'])
+                    )
+                else:
+                    mylog('verbose', [f'[{pluginName}] Skipping invalid MAC: {entry['name']}|{entry['mac']}|{entry['ip']}'])
 
         # Write result file for NetAlertX to ingest
         plugin_objects.write_result_file()
