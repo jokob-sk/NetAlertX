@@ -47,8 +47,8 @@ services:
       - /mnt/YOUR_SERVER/netalertx/config:/data/config:rw
       - /mnt/YOUR_SERVER/netalertx/db:/netalertx/data/db:rw
       - /mnt/YOUR_SERVER/netalertx/logs:/netalertx/tmp/log:rw
+      - /etc/localtime:/etc/localtime:ro
     environment:
-      - TZ=Europe/London
       - PORT=20211
     networks:
       swarm-ipvlan:

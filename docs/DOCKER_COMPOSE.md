@@ -45,7 +45,7 @@ services:
     # - /home/user/netalertx_data:/data:rw
 
       - type: bind                                  # Bind mount for timezone consistency
-        source: /etc/localtime                      # Alternatively add environment TZ: America/New York
+        source: /etc/localtime                      
         target: /etc/localtime
         read_only: true
 
@@ -131,9 +131,9 @@ However, if you prefer to have direct, file-level access to your configuration f
 
 **How to make the change:**
 
-1. Choose a location on your computer. For example, `/home/adam/netalertx-files`.
+1. Choose a location on your computer. For example, `/local_data_dir`.
 
-2. Create the subfolders: `mkdir -p /home/adam/netalertx-files/config` and `mkdir -p /home/adam/netalertx-files/db`.
+2. Create the subfolders: `mkdir -p /local_data_dir/config` and `mkdir -p /local_data_dir/db`.
 
 3. Edit your `docker-compose.yml` and find the `volumes:` section (the one *inside* the `netalertx:` service).
 
@@ -152,19 +152,19 @@ However, if you prefer to have direct, file-level access to your configuration f
 ```
 
 **After (Using a Local Folder / Bind Mount):**
-Make sure to replace `/home/adam/netalertx-files` with your actual path. The format is `<path_on_your_computer>:<path_inside_container>:<options>`.
+Make sure to replace `/local_data_dir` with your actual path. The format is `<path_on_your_computer>:<path_inside_container>:<options>`.
 
 ```yaml
 ...
     volumes:
 #      - netalertx_config:/data/config:rw
 #      - netalertx_db:/data/db:rw
-      - /home/adam/netalertx-files/config:/data/config:rw
-      - /home/adam/netalertx-files/db:/data/db:rw
+      - /local_data_dir/config:/data/config:rw
+      - /local_data_dir/db:/data/db:rw
 ...
 ```
 
-Now, any files created by NetAlertX in `/data/config` will appear in your `/home/adam/netalertx-files/config` folder.
+Now, any files created by NetAlertX in `/data/config` will appear in your `/local_data_dir/config` folder.
 
 This same method works for mounting other things, like custom plugins or enterprise NGINX files, as shown in the commented-out examples in the baseline file.
 
@@ -183,8 +183,8 @@ This method is useful for keeping your paths and other settings separate from yo
 services:
   netalertx:
     environment:
-      - TZ=${TZ}
       - PORT=${PORT}
+      - GRAPHQL_PORT=${GRAPHQL_PORT}
       
 ...
 ```
@@ -192,11 +192,9 @@ services:
 **`.env` file contents:**
 
 ```sh
-TZ=Europe/Paris
 PORT=20211
 NETALERTX_NETWORK_MODE=host
 LISTEN_ADDR=0.0.0.0
-PORT=20211
 GRAPHQL_PORT=20212
 ```
 

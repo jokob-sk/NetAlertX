@@ -52,7 +52,7 @@ query GetDevices($options: PageQueryOptionsInput) {
 }
 ```
 
-See also: [Debugging GraphQL issues](./DEBUG_GRAPHQL.md)
+See also: [Debugging GraphQL issues](./DEBUG_API_SERVER.md)
 
 ### `curl` Command
 

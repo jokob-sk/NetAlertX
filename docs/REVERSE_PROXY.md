@@ -501,8 +501,8 @@ docker run -d --rm --network=host \
   --name=netalertx \
   -v /appl/docker/netalertx/config:/data/config \
   -v /appl/docker/netalertx/db:/data/db \
+  -v /etc/localtime:/etc/localtime \
   -v /appl/docker/netalertx/default:/etc/nginx/sites-available/default \
-  -e TZ=Europe/Amsterdam \
   -e PORT=20211 \
   ghcr.io/jokob-sk/netalertx:latest
 

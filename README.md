@@ -42,12 +42,12 @@ Start NetAlertX in seconds with Docker:
 
 ```bash
 docker run -d --rm --network=host \
-  -v local_path/config:/data/config \
-  -v local_path/db:/data/db \
+  -v /local_data_dir/config:/data/config \
+  -v /local_data_dir/db:/data/db \
+  -v /etc/localtime:/etc/localtime \
   --mount type=tmpfs,target=/tmp/api \
-  -e PUID=200 -e PGID=300 \
-  -e TZ=Europe/Berlin \
   -e PORT=20211 \
+  -e APP_CONF_OVERRIDE={"GRAPHQL_PORT":"20214"} \
   ghcr.io/jokob-sk/netalertx:latest
 ```
 

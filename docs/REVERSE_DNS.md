@@ -3,7 +3,7 @@
 If you are running a DNS server, such as **AdGuard**, set up **Private reverse DNS servers** for a better name resolution on your network. Enabling this setting will enable NetAlertX to execute dig and nslookup commands to automatically resolve device names based on their IP addresses.
 
 > [!TIP]  
-> Before proceeding, ensure that [name resolution plugins](./NAME_RESOLUTION.md) are enabled.  
+> Before proceeding, ensure that [name resolution plugins](/local_data_dir/NAME_RESOLUTION.md) are enabled.  
 > You can customize how names are cleaned using the `NEWDEV_NAME_CLEANUP_REGEX` setting.  
 > To auto-update Fully Qualified Domain Names (FQDN), enable the `REFRESH_FQDN` setting.
 
@@ -42,11 +42,12 @@ services:
     image: "ghcr.io/jokob-sk/netalertx:latest"
     restart: unless-stopped
     volumes:
-      -  /home/netalertx/config:/data/config
-      -  /home/netalertx/db:/data/db
-      -  /home/netalertx/log:/tmp/log
+      -  /local_data_dir/config:/data/config
+      -  /local_data_dir/db:/data/db
+      # -  /local_data_dir/log:/tmp/log
+      # Ensuring the timezone is the same as on the server - make sure also the TIMEZONE setting is configured
+      - /etc/localtime:/etc/localtime:ro    
     environment:
-      - TZ=Europe/Berlin
       - PORT=20211
     network_mode: host
     dns:           # specifying the DNS servers used for the container
@@ -68,19 +69,18 @@ services:
     image: "ghcr.io/jokob-sk/netalertx:latest"
     restart: unless-stopped
     volumes:
-      - ./config/app.conf:/data/config/app.conf
-      - ./db:/data/db
-      - ./log:/tmp/log
-      - ./config/resolv.conf:/etc/resolv.conf                          # Mapping the /resolv.conf file for better name resolution
+      - /local_data_dir/config/app.conf:/data/config/app.conf
+      - /local_data_dir/db:/data/db
+      - /local_data_dir/log:/tmp/log
+      - /local_data_dir/config/resolv.conf:/etc/resolv.conf                          # ⚠ Mapping the /resolv.conf file for better name resolution
+      # Ensuring the timezone is the same as on the server - make sure also the TIMEZONE setting is configured
+      - /etc/localtime:/etc/localtime:ro    
     environment:
-      - TZ=Europe/Berlin
       - PORT=20211
-    ports:
-      - "20211:20211"
     network_mode: host
 ```
 
-#### ./config/resolv.conf:
+#### /local_data_dir/config/resolv.conf:
 
 The most important below is the `nameserver` entry (you can add multiple):
 

@@ -14,9 +14,9 @@ Start the container via the **terminal** with a command similar to this one:
 
 ```bash
 docker run --rm --network=host \
-  -v local/path/netalertx/config:/data/config \
-  -v local/path/netalertx/db:/data/db \
-  -e TZ=Europe/Berlin \
+  -v /local_data_dir/netalertx/config:/data/config \
+  -v /local_data_dir/netalertx/db:/data/db \
+  -v /etc/localtime:/etc/localtime \
   -e PORT=20211 \
   ghcr.io/jokob-sk/netalertx:latest
 

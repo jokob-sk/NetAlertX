@@ -44,8 +44,9 @@ services:
       - local/path/db:/data/db      
       # (optional) useful for debugging if you have issues setting up the container
       - local/path/logs:/tmp/log
+      # Ensuring the timezone is the same as on the server - make sure also the TIMEZONE setting is configured
+      - /etc/localtime:/etc/localtime:ro    
     environment:
-      - TZ=Europe/Berlin      
       - PORT=20211
 ```
 

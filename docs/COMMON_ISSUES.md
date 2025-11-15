@@ -2,6 +2,15 @@
 
 Often if the application is misconfigured the `Loading...` dialog is continuously displayed. This is most likely caused by the backed failing to start. The **Maintenance -> Logs** section should give you more details on what's happening. If there is no exception, check the Portainer log, or start the container in the foreground (without the `-d` parameter) to observe any exceptions. It's advisable to enable `trace` or `debug`. Check the [Debug tips](./DEBUG_TIPS.md) on detailed instructions. 
 
+The issue might be related to the backend server, so please check [Debugging GraphQL issues](./DEBUG_API_SERVER.md). 
+
+Please also check the browser logs (usually accessible by pressing `F12`):
+
+1. Switch to the Console tab and refresh the page
+2. Switch to teh Network tab and refresh the page
+
+If you are not sure how to resolve the errors yourself, please post screenshots of the above into the issue, or discord discussion, where your problem is being solved. 
+
 ### Incorrect SCAN_SUBNETS
 
 One of the most common issues is not configuring `SCAN_SUBNETS` correctly. If this setting is misconfigured you will only see one or two devices in your devices list after a scan. Please read the [subnets docs](./SUBNETS.md) carefully to resolve this.

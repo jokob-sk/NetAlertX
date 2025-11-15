@@ -12,7 +12,7 @@ As a first troubleshooting step try changing the default `GRAPHQL_PORT` setting.
 
 Ideally use the Settings UI to update the setting under General -> Core -> GraphQL port:
 
-![GrapQL settings](./img/DEBUG_GRAPHQL/graphql_settings_port_token.png)
+![GrapQL settings](./img/DEBUG_API_SERVER/graphql_settings_port_token.png)
 
 You might need to temporarily stop other applications or NetAlertX instances causing conflicts to update the setting. The `API_TOKEN` is used to authenticate any API calls, including GraphQL requests. 
 
@@ -20,7 +20,7 @@ You might need to temporarily stop other applications or NetAlertX instances cau
 
 If the UI is not accessible, you can directly edit the `app.conf` file in your `/config` folder:
 
-![Editing app.conf](./img/DEBUG_GRAPHQL/app_conf_graphql_port.png)
+![Editing app.conf](./img/DEBUG_API_SERVER/app_conf_graphql_port.png)
 
 ### Using a docker variable
 
@@ -29,7 +29,6 @@ All application settings can also be initialized via the `APP_CONF_OVERRIDE` doc
 ```yaml
 ...
  environment:
-      - TZ=Europe/Berlin      
       - PORT=20213
       - APP_CONF_OVERRIDE={"GRAPHQL_PORT":"20214"}
 ...
@@ -43,22 +42,22 @@ There are several ways to check if the GraphQL server is running.
 
 You can navigate to Maintenance -> Init Check to see if `isGraphQLServerRunning` is ticked:
 
-![Init Check](./img/DEBUG_GRAPHQL/Init_check.png)
+![Init Check](./img/DEBUG_API_SERVER/Init_check.png)
 
 ### Checking the Logs
 
 You can navigate to Maintenance -> Logs and search for `graphql` to see if it started correctly and serving requests:
 
-![GraphQL Logs](./img/DEBUG_GRAPHQL/graphql_running_logs.png)
+![GraphQL Logs](./img/DEBUG_API_SERVER/graphql_running_logs.png)
 
 ### Inspecting the Browser console
 
 In your browser open the dev console (usually F12) and navigate to the Network tab where you can filter GraphQL requests (e.g., reload the Devices page).
 
-![Browser Network Tab](./img/DEBUG_GRAPHQL/network_graphql.png)
+![Browser Network Tab](./img/DEBUG_API_SERVER/network_graphql.png)
 
 You can then inspect any of the POST requests by opening them in a new tab.
 
-![Browser GraphQL Json](./img/DEBUG_GRAPHQL/dev_console_graphql_json.png)
+![Browser GraphQL Json](./img/DEBUG_API_SERVER/dev_console_graphql_json.png)
 
 

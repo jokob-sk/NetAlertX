@@ -80,17 +80,18 @@ services:
     network_mode: "host"        
     restart: unless-stopped
     volumes:
-      - local/path/config:/data/config
-      - local/path/db:/data/db      
+      - /local_data_dir/config:/data/config
+      - /local_data_dir/db:/data/db      
       # (Optional) Useful for debugging setup issues
-      - local/path/logs:/tmp/log
+      - /local_data_dir/logs:/tmp/log
       # (API: OPTION 1) Store temporary files in memory (recommended for performance)
       - type: tmpfs              # ◀ 🔺
         target: /tmp/api         # ◀ 🔺
       # (API: OPTION 2) Store API data on disk (useful for debugging)
-      # - local/path/api:/tmp/api
-    environment:
-      - TZ=Europe/Berlin      
+      # - /local_data_dir/api:/tmp/api
+      # Ensuring the timezone is the same as on the server - make sure also the TIMEZONE setting is configured
+      - /etc/localtime:/etc/localtime:ro    
+    environment: 
       - PORT=20211
 
 ```

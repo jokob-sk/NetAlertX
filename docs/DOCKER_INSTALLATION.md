@@ -23,28 +23,32 @@ Head to [https://netalertx.com/](https://netalertx.com/) for more gifs and scree
 > [!WARNING]
 > You will have to run the container on the `host` network and specify `SCAN_SUBNETS` unless you use other [plugin scanners](https://github.com/jokob-sk/NetAlertX/blob/main/docs/PLUGINS.md). The initial scan can take a few minutes, so please wait 5-10 minutes for the initial discovery to finish.
 
-```yaml
+```bash
 docker run -d --rm --network=host \
-  -v local_path/config:/data/config \
-  -v local_path/db:/data/db \
+  -v /local_data_dir/config:/data/config \
+  -v /local_data_dir/db:/data/db \
+  -v /etc/localtime:/etc/localtime \
   --mount type=tmpfs,target=/tmp/api \
-  -e PUID=200 -e PGID=300 \
-  -e TZ=Europe/Berlin \
   -e PORT=20211 \
+  -e APP_CONF_OVERRIDE={"GRAPHQL_PORT":"20214"} \
   ghcr.io/jokob-sk/netalertx:latest
 ```
 
 See alternative [docked-compose examples](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DOCKER_COMPOSE.md).
+
+### Default ports
+
+| Default        | Description                    | How to override                                                                    |
+| :------------- |:-------------------------------| ----------------------------------------------------------------------------------:|
+| `20211`        |Port of the web interface       |  `-e PORT=20222`                                                                   |
+| `20212`        |Port of the backend API server  |  `-e APP_CONF_OVERRIDE={"GRAPHQL_PORT":"20214"}` or via the `GRAPHQL_PORT` Setting |
 
 ### Docker environment variables
 
 | Variable | Description | Example Value |
 | :------------- |:------------------------| -----:|
 | `PORT`      |Port of the web interface  |  `20211` |
-| `PUID`      |Application User UID  |  `102` |
-| `PGID`      |Application User GID  |  `82` |
 | `LISTEN_ADDR`      |Set the specific IP Address for the listener address for the nginx webserver (web interface). This could be useful when using multiple subnets to hide the web interface from all untrusted networks. |  `0.0.0.0` |
-|`TZ` |Time zone to display stats correctly. Find your time zone [here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)  |  `Europe/Berlin` |
 |`LOADED_PLUGINS` | Default [plugins](https://github.com/jokob-sk/NetAlertX/blob/main/docs/PLUGINS.md) to load. Plugins cannot be loaded with `APP_CONF_OVERRIDE`, you need to use this variable instead and then specify the plugins settings with `APP_CONF_OVERRIDE`. |  `["PIHOLE","ASUSWRT"]` |
 |`APP_CONF_OVERRIDE` | JSON override for settings (except `LOADED_PLUGINS`).   |  `{"SCAN_SUBNETS":"['192.168.1.0/24 --interface=eth1']","GRAPHQL_PORT":"20212"}` |
 |`ALWAYS_FRESH_INSTALL` | ⚠ If `true` will delete the content of the `/db` & `/config` folders. For testing purposes. Can be coupled with [watchtower](https://github.com/containrrr/watchtower) to have an always freshly installed `netalertx`/`netalertx-dev` image.   |    `true` |
@@ -60,8 +64,9 @@ See alternative [docked-compose examples](https://github.com/jokob-sk/NetAlertX/
 | :------------- | :------------- | :-------------| 
 | ✅ | `:/data/config` | Folder which will contain the `app.conf` & `devices.csv` ([read about devices.csv](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEVICES_BULK_EDITING.md)) files  | 
 | ✅ | `:/data/db` | Folder which will contain the `app.db` database file  | 
+| ✅ | `/etc/localtime:/etc/localtime:ro` | Ensuring the timezone is teh same as on teh server.  | 
 | | `:/tmp/log` |  Logs folder useful for debugging if you have issues setting up the container  | 
-| | `:/tmp/api` |  A simple [API endpoint](https://github.com/jokob-sk/NetAlertX/blob/main/docs/API.md) containing static (but regularly updated) json and other files. Path configurable via `NETALERTX_API` environment variable.   | 
+| | `:/tmp/api` |  The [API endpoint](https://github.com/jokob-sk/NetAlertX/blob/main/docs/API.md) containing static (but regularly updated) json and other files. Path configurable via `NETALERTX_API` environment variable.   | 
 | | `:/app/front/plugins/<plugin>/ignore_plugin` | Map a file `ignore_plugin` to ignore a plugin. Plugins can be soft-disabled via settings. More in the [Plugin docs](https://github.com/jokob-sk/NetAlertX/blob/main/docs/PLUGINS.md).  | 
 | | `:/etc/resolv.conf` | Use a custom `resolv.conf` file for [better name resolution](https://github.com/jokob-sk/NetAlertX/blob/main/docs/REVERSE_DNS.md).  | 
 
