@@ -497,10 +497,38 @@ function isValidBase64(str) {
 // -------------------------------------------------------------------
 // Utility function to check if the value is already Base64
 function isBase64(value) {
-  const base64Regex =
-    /^(?:[A-Za-z0-9+\/]{4})*?(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=)?$/;
-  return base64Regex.test(value);
+  if (typeof value !== "string" || value.trim() === "") return false;
+
+  // Must have valid length
+  if (value.length % 4 !== 0) return false;
+
+  // Valid Base64 characters
+  const base64Regex = /^[A-Za-z0-9+/]+={0,2}$/;
+  if (!base64Regex.test(value)) return false;
+
+  
+  try {
+    const decoded = atob(value);
+
+    // Re-encode
+    const reencoded = btoa(decoded);
+
+    if (reencoded !== value) return false;
+
+    // Extra verification:
+    // Ensure decoding didn't silently drop bytes (atob bug)
+    // Encode raw bytes: check if large char codes exist (invalid UTF-16)
+    for (let i = 0; i < decoded.length; i++) {
+      const code = decoded.charCodeAt(i);
+      if (code > 255) return false; // invalid binary byte
+    }
+
+    return true;
+  } catch (e) {
+    return false;
+  }
 }
+
 
 // ----------------------------------------------------
 function isValidJSON(jsonString) {
