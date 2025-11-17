@@ -209,7 +209,8 @@ def test_case_variations_injection(builder):
         condition, params = builder.get_safe_condition_legacy(malicious_input)
         # Should handle case variations safely
         if "union" in condition.lower() or "select" in condition.lower():
-            assert False, f"Injection not blocked: {malicious_input}"
+            if "union" in condition.lower() or "select" in condition.lower():
+                pytest.fail(f"Injection not blocked: {malicious_input}")
 
 
 def test_time_based_injection_attempt(builder):
