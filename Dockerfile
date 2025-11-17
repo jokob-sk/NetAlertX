@@ -137,7 +137,7 @@ RUN install -d -o ${NETALERTX_USER} -g ${NETALERTX_GROUP} -m 700 ${READ_WRITE_FO
     -exec chmod 750 {} \;"
 
 # Copy version information into the image
-COPY --chown=${NETALERTX_USER}:${NETALERTX_GROUP} .VERSION ${NETALERTX_APP}/.VERSION
+COPY --chown=${NETALERTX_USER}:${NETALERTX_GROUP} .[V]ERSION ${NETALERTX_APP}/.VERSION
 
 # Copy the virtualenv from the builder stage
 COPY --from=builder --chown=20212:20212 ${VIRTUAL_ENV} ${VIRTUAL_ENV}
@@ -147,7 +147,14 @@ COPY --from=builder --chown=20212:20212 ${VIRTUAL_ENV} ${VIRTUAL_ENV}
 # This is done after the copy of the venv to ensure the venv is in place
 # although it may be quicker to do it before the copy, it keeps the image
 # layers smaller to do it after.
-RUN apk add libcap && \
+RUN if [ -f .VERSION ]; then \
+    cp .VERSION ${NETALERTX_APP}/.VERSION && \
+    chown ${NETALERTX_USER}:${NETALERTX_GROUP} ${NETALERTX_APP}/.VERSION; \
+    else \
+    echo "DEVELOPMENT $(cd /app && git rev-parse --short HEAD 2>/dev/null || echo '00000000')" > ${NETALERTX_APP}/.VERSION && \
+    chown ${NETALERTX_USER}:${NETALERTX_GROUP} ${NETALERTX_APP}/.VERSION; \
+    fi && \
+    apk add libcap && \
     setcap cap_net_raw+ep /bin/busybox && \
     setcap cap_net_raw,cap_net_admin+eip /usr/bin/nmap && \
     setcap cap_net_raw,cap_net_admin+eip /usr/bin/arp-scan && \
