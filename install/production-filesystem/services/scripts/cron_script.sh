@@ -1,10 +1,16 @@
 #!/bin/bash
+export INSTALL_DIR=/app
 
-# If cron_restart_backend exists in the file LOG_EXECUTION_QUEUE, then
-# call the restart backend script and remove the line from the file
-# and remove the entry
 
+
+# Check if there are any entries with cron_restart_backend
 if grep -q "cron_restart_backend" "${LOG_EXECUTION_QUEUE}"; then
+  killall python3
+  sleep 2
   /services/start-backend.sh &
-  sed -i '/cron_restart_backend/d' "${LOG_EXECUTION_QUEUE}"
+
+  # Remove all lines containing cron_restart_backend from the log file
+  # Atomic replacement with temp file
+  grep -v "cron_restart_backend" "${LOG_EXECUTION_QUEUE}" > "${LOG_EXECUTION_QUEUE}.tmp" && \
+    mv "${LOG_EXECUTION_QUEUE}.tmp" "${LOG_EXECUTION_QUEUE}"
 fi

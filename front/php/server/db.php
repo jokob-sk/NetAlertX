@@ -28,8 +28,6 @@ if (!is_dir($dbFolderPath)) {
     @mkdir($dbFolderPath, 0775, true);
 }
 
-$dbFolderPath = rtrim($dbFolderPath, '/') . '/';
-
 $DBFILE = rtrim($dbFolderPath, '/') . '/app.db';
 if (!file_exists($DBFILE) && file_exists($legacyDbPath)) {
     $DBFILE = $legacyDbPath;
@@ -42,8 +40,6 @@ if (!is_dir($logFolderPath) && is_dir($legacyLogDir)) {
 if (!is_dir($logFolderPath)) {
     @mkdir($logFolderPath, 0775, true);
 }
-
-$logFolderPath = rtrim($logFolderPath, '/') . '/';
 
 $DBFILE_LOCKED_FILE = rtrim($logFolderPath, '/') . '/db_is_locked.log';
 
