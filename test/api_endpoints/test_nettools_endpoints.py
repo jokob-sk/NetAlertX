@@ -149,8 +149,8 @@ def test_nslookup_endpoint(client, api_token, ip, expected_status):
 
 @pytest.mark.parametrize("ip,mode,expected_status", [
     ("127.0.0.1", "fast", 200),
-    ("127.0.0.1", "normal", 200),
-    ("127.0.0.1", "detail", 200),
+    pytest.param("127.0.0.1", "normal", 200, marks=pytest.mark.feature_complete),
+    pytest.param("127.0.0.1", "detail", 200, marks=pytest.mark.feature_complete),
     ("127.0.0.1", "skipdiscovery", 200),
     ("127.0.0.1", "invalidmode", 400),
     ("999.999.999.999", "fast", 400),
