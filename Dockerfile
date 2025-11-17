@@ -150,7 +150,7 @@ COPY --from=builder --chown=20212:20212 ${VIRTUAL_ENV} ${VIRTUAL_ENV}
 RUN if [ -f .VERSION ]; then \
         cp .VERSION ${NETALERTX_APP}/.VERSION; \
     else \
-        echo "DEVELOPMENT $(cd /app && git rev-parse --short HEAD 2>/dev/null || echo '00000000')" > ${NETALERTX_APP}/.VERSION; \
+        echo "DEVELOPMENT 00000000" > ${NETALERTX_APP}/.VERSION; \
     fi && \
     chown ${READ_ONLY_USER}:${READ_ONLY_GROUP} ${NETALERTX_APP}/.VERSION && \
     apk add libcap && \
