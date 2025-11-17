@@ -6,10 +6,11 @@ This test file has minimal dependencies to ensure it can run in any environment.
 import sys
 import unittest
 import re
-from unittest.mock import Mock, patch
+from unittest.mock import Mock
 
 # Mock the logger module to avoid dependency issues
 sys.modules['logger'] = Mock()
+
 
 # Standalone version of SafeConditionBuilder for testing
 class TestSafeConditionBuilder:
@@ -92,7 +93,7 @@ class TestSafeConditionBuilder:
 
         try:
             return self._parse_condition(condition_string)
-        except Exception as e:
+        except Exception:
             raise ValueError(f"Invalid condition format: {condition_string}")
 
     def _parse_condition(self, condition):
@@ -261,7 +262,6 @@ class TestSafeConditionBuilderSecurity(unittest.TestCase):
 
         # Ensure no leakage between calls
         self.assertNotEqual(params1, params2)
-
 
     def test_xss_prevention(self):
         """Test that XSS-like payloads in device names are handled safely."""
