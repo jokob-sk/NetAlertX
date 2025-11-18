@@ -38,3 +38,72 @@ jobs:
           set -e
           echo "🔍 Checking Python syntax..."
           find . -name "*.py" -print0 | xargs -0 -n1 python3 -m py_compile
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install linting tools
+        run: |
+          # Python linting
+          pip install flake8
+          # Docker linting
+          wget -O /tmp/hadolint https://github.com/hadolint/hadolint/releases/latest/download/hadolint-Linux-x86_64
+          chmod +x /tmp/hadolint
+          # PHP and shellcheck for syntax checking
+          sudo apt-get update && sudo apt-get install -y php-cli shellcheck
+
+      - name: Shell check
+        continue-on-error: true
+        run: |
+          echo "🔍 Checking shell scripts..."
+          find . -name "*.sh" -exec shellcheck {} \;
+
+      - name: Python lint
+        continue-on-error: true
+        run: |
+          echo "🔍 Linting Python code..."
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+      - name: PHP check
+        continue-on-error: true
+        run: |
+          echo "🔍 Checking PHP syntax..."
+          find . -name "*.php" -exec php -l {} \;
+
+      - name: Docker lint
+        continue-on-error: true
+        run: |
+          echo "🔍 Linting Dockerfiles..."
+          /tmp/hadolint Dockerfile* || true
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pytest pyyaml
+
+      - name: Run unit tests
+        run: |
+          echo "🧪 Running unit tests..."
+          export PYTHONPATH=$PYTHONPATH:./server
+          pytest -m "not (docker or compose or feature_complete)"
+
