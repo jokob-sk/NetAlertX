@@ -44,7 +44,7 @@ body:
     required: false
 - type: textarea
   attributes:
-    label: app.conf
+    label: Relevant `app.conf` settings 
     description: |
       Paste relevant `app.conf`settings (remove sensitive info)    
     render: python
@@ -55,7 +55,7 @@ body:
     label: docker-compose.yml
     description: |
       Paste your `docker-compose.yml`    
-    render: python
+    render: yaml
   validations:
     required: false
 - type: dropdown
@@ -79,7 +79,11 @@ body:
       required: true
 - type: textarea
   attributes:
-    label: app.log
+    label: Relevant `app.log` section
+    value: |
+        ```
+          PASTE LOG HERE. Using the triple backticks preserves format. 
+        ```
     description: |
       Logs with debug enabled (https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEBUG_TIPS.md) ⚠
       ***Generally speaking, all bug reports should have logs provided.***
