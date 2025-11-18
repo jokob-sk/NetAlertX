@@ -93,6 +93,10 @@ body:
     label: Docker Logs
     description: |
      You can retrieve the logs from Portainer -> Containers -> your NetAlertX container -> Logs or by running `sudo docker logs netalertx`.
+    value: |
+        ```
+          PASTE DOCKER LOG HERE. Using the triple backticks preserves format. 
+        ```
   validations:
     required: true
 
