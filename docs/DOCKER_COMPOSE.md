@@ -125,7 +125,9 @@ docker compose up
 
 ### Modification 1: Use a Local Folder (Bind Mount)
 
-By default, the baseline compose file uses "named volumes" (`netalertx_config`, `netalertx_db`). **This is the preferred method** because NetAlertX is designed to manage all configuration and database settings directly from its web UI. Named volumes let Docker handle this data cleanly without you needing to manage local file permissions or paths.
+By default, the baseline compose file uses a single named volume (netalertx_data) mounted at /data. This single-volume layout is preferred because NetAlertX manages both configuration and the database under /data (for example, /data/config and /data/db) via its web UI. Using one named volume simplifies permissions and portability: Docker manages the storage and NetAlertX manages the files inside /data.
+
+A two-volume layout that mounts /data/config and /data/db separately (for example, netalertx_config and netalertx_db) is supported for backward compatibility and some advanced workflows, but it is an abnormal/legacy layout and not recommended for new deployments. 
 
 However, if you prefer to have direct, file-level access to your configuration for manual editing, a "bind mount" is a simple alternative. This tells Docker to use a specific folder from your computer (the "host") inside the container.
 
