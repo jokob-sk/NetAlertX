@@ -448,7 +448,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "When scanning remote networks, NMAP can only retrieve the IP address, not the MAC address. Enabling this setting generates a fake MAC address from the IP address to track devices, but it may cause inconsistencies if IPs change or devices are rediscovered. Static IPs are recommended. Device type and icon will not be detected correctly. When unchecked, devices with empty MAC addresses are skipped."
+          "string": "When scanning remote networks, NMAP can only retrieve the IP address, not the MAC address. Enabling the FAKE_MAC setting generates a fake MAC address from the IP address to track devices, but it may cause inconsistencies if IPs change or devices are re-discovered with a different MAC. Static IPs are recommended. Device type and icon might not be detected correctly and some plugins might fail if they depend on a valid MAC address. When unchecked, devices with empty MAC addresses are skipped."
         }
       ]
     }
