@@ -21,7 +21,8 @@ jobs:
         run: |
           echo "🔍 Checking for incorrect absolute '/php/' URLs (should be 'php/' or './php/')..."
 
-          MATCHES=$(grep -rE "['\"]\/php\/" --include=\*.{js,php,html} ./front | grep -E "\.get|\.post|\.ajax|fetch|url\s*:") || true
+          MATCHES=$(grep -rE "['\"]/php/" --include=\*.{js,php,html} ./front \
+            | grep -E "\.get|\.post|\.ajax|fetch|url\s*:") || true
 
           if [ -n "$MATCHES" ]; then
             echo "$MATCHES"
@@ -85,25 +86,14 @@ jobs:
           echo "🔍 Linting Dockerfiles..."
           /tmp/hadolint Dockerfile* || true
 
-  test:
+  docker-tests:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install dependencies
+      - name: Run Docker-based tests
         run: |
-          pip install -r requirements.txt
-          pip install pytest pyyaml
-
-      - name: Run unit tests
-        run: |
-          echo "🧪 Running unit tests..."
-          export PYTHONPATH=$PYTHONPATH:./server
-          pytest -m "not (docker or compose or feature_complete)"
-
+          echo "🐳 Running Docker-based tests..."
+          chmod +x ./run_docker_tests.sh
+          ./run_docker_tests.sh
