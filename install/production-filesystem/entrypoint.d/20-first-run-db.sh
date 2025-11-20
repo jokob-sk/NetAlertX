@@ -66,6 +66,7 @@ CREATE TABLE Devices (
               devIsArchived BOOLEAN NOT NULL DEFAULT (0) CHECK (devIsArchived IN (0, 1)),
               devParentMAC TEXT,
               devParentPort INTEGER,
+              devParentRelType TEXT,
               devIcon TEXT,
               devGUID TEXT,
               devSite TEXT,
