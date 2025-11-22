@@ -9,3 +9,10 @@ markers = [
 	"compose: Tests docker compose files. Slow.",
 	"feature_complete: extended coverage suite not run by default",
 ]
+[tool.ruff]
+line-length = 180
+
+[tool.ruff.lint]
+select = ["E", "F"]
+extend-select = ["E402"]
+ignore = ["E203", "C901"]
