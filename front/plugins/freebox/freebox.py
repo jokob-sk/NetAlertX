@@ -22,7 +22,7 @@ from logger import mylog, Logger  # noqa: E402 [flake8 lint suppression]
 from const import logPath  # noqa: E402 [flake8 lint suppression]
 from helper import get_setting_value  # noqa: E402 [flake8 lint suppression]
 import conf  # noqa: E402 [flake8 lint suppression]
-from utils.datetime_utils import timeNowDB  # noqa: E402 [flake8 lint suppression]
+from utils.datetime_utils import timeNowDB, DATETIME_PATTERN  # noqa: E402 [flake8 lint suppression]
 
 # Make sure the TIMEZONE for logging is correct
 conf.tz = timezone(get_setting_value("TIMEZONE"))
@@ -167,7 +167,7 @@ def main():
                         watched1=host.get("primary_name", "(unknown)"),
                         watched2=host.get("vendor_name", "(unknown)"),
                         watched3=map_device_type(host.get("host_type", "")),
-                        watched4=datetime.fromtimestamp(ip.get("last_time_reachable", 0)),
+                        watched4=datetime.fromtimestamp(ip.get("last_time_reachable", 0)).strftime(DATETIME_PATTERN),
                         extra="",
                         foreignKey=mac,
                     )

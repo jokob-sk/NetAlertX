@@ -11,8 +11,8 @@ markers = [
 ]
 [tool.ruff]
 line-length = 180
+ignore = ["E203", "C901"]  # global ignores
 
 [tool.ruff.lint]
 select = ["E", "F"]
 extend-select = ["E402"]
-ignore = ["E203", "C901"]

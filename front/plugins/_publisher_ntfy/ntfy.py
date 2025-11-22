@@ -119,7 +119,8 @@ def send(html, text):
             get_setting_value('NTFY_TOPIC')),
             data    = text,
             headers = headers,
-            verify  = verify_ssl
+            verify  = verify_ssl,
+            timeout = get_setting_value('NTFY_RUN_TIMEOUT')
         )
 
         response_status_code = response.status_code
