@@ -89,11 +89,8 @@ def get_notifications(db):
                         WHERE eve_PendingAlertEmail = 1
                             AND eve_EventType = 'New Device' {}
                         ORDER BY eve_DateTime""".format(safe_condition)
-        except Exception as e:
-            mylog(
-                "verbose",
-                ["[Notification] Error building safe condition for new devices: ", e],
-            )
+        except (ValueError, KeyError, TypeError) as e:
+            mylog("verbose", ["[Notification] Error building safe condition for new devices: ", e])
             # Fall back to safe default (no additional conditions)
             sqlQuery = """SELECT
                             eve_MAC as MAC,
@@ -150,10 +147,7 @@ def get_notifications(db):
         }
         json_down_devices = json_obj.json["data"]
 
-        mylog(
-            "debug",
-            ["[Notification] json_down_devices: ", json.dumps(json_down_devices)],
-        )
+        mylog("debug", f"[Notification] json_down_devices: {json.dumps(json_down_devices)}")
 
     if "down_reconnected" in sections:
         # Compose Reconnected Down Section
@@ -175,13 +169,7 @@ def get_notifications(db):
         }
         json_down_reconnected = json_obj.json["data"]
 
-        mylog(
-            "debug",
-            [
-                "[Notification] json_down_reconnected: ",
-                json.dumps(json_down_reconnected),
-            ],
-        )
+        mylog("debug", f"[Notification] json_down_reconnected: {json.dumps(json_down_reconnected)}")
 
     if "events" in sections:
         # Compose Events Section (no empty lines in SQL queries!)
@@ -204,10 +192,7 @@ def get_notifications(db):
                             AND eve_EventType IN ('Connected', 'Down Reconnected', 'Disconnected','IP Changed') {}
                         ORDER BY eve_DateTime""".format(safe_condition)
         except Exception as e:
-            mylog(
-                "verbose",
-                ["[Notification] Error building safe condition for events: ", e],
-            )
+            mylog("verbose", f"[Notification] Error building safe condition for events: {e}")
             # Fall back to safe default (no additional conditions)
             sqlQuery = """SELECT
                             eve_MAC as MAC,

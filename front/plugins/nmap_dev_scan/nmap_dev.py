@@ -112,7 +112,11 @@ def execute_scan_on_interface(interface, timeout, args):
     mylog('verbose', [f'[{pluginName}] scan_args: ', scan_args])
 
     try:
-        result = subprocess.check_output(scan_args, universal_newlines=True)
+        result = subprocess.check_output(
+            scan_args,
+            universal_newlines=True,
+            timeout=timeout
+        )
     except subprocess.CalledProcessError as e:
         error_type = type(e).__name__
         result = ""
