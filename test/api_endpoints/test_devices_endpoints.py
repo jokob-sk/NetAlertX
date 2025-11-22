@@ -199,7 +199,7 @@ def test_devices_by_status(client, api_token, test_mac):
     assert "&#9733" in fav_data["title"]
 
 
-def test_delete_test_devices(client, api_token, test_mac):
+def test_delete_test_devices(client, api_token):
 
     # Delete by MAC
     resp = client.delete("/devices", json={"macs": ["AA:BB:CC:*"]}, headers=auth_headers(api_token))

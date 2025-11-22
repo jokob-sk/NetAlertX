@@ -1,4 +1,4 @@
-# !/usr/bin/env python
+#!/usr/bin/env python
 # Inspired by https://github.com/stevehoek/Pi.Alert
 
 from __future__ import unicode_literals

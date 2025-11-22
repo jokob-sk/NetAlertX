@@ -1,4 +1,4 @@
-# !/usr/bin/env python
+#!/usr/bin/env python
 
 """
 This plugin imports devices and clients from Omada Controller using their OpenAPI.
@@ -296,7 +296,7 @@ class OmadaAPI:
             OmadaHelper.verbose(f"{method} request error: {str(ex)}")
             return OmadaHelper.response("error", f"{method} request failed to endpoint '{endpoint}' with error: {str(ex)}")
 
-    def authenticate(self) -> Dict[str, any]:
+    def authenticate(self) -> Dict[str, Any]:
         """Make an endpoint request to get access token."""
         OmadaHelper.verbose("Starting authentication process")
 

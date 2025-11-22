@@ -624,6 +624,11 @@ def extract_ip_addresses(text):
 # Helper function to determine if a MAC address is random
 def is_random_mac(mac):
     """Determine if a MAC address is random, respecting user-defined prefixes not to mark as random."""
+
+    # Validate input
+    if not mac or len(mac) < 2:
+        return False
+
     # Check if second character matches "2", "6", "A", "E" (case insensitive)
     is_random = mac[1].upper() in ["2", "6", "A", "E"]
 
@@ -631,7 +636,7 @@ def is_random_mac(mac):
     if is_random:
         not_random_prefixes = get_setting_value("UI_NOT_RANDOM_MAC")
         for prefix in not_random_prefixes:
-            if mac.startswith(prefix):
+            if mac.upper().startswith(prefix.upper()):
                 is_random = False
                 break
     return is_random

@@ -1,4 +1,4 @@
-# !/usr/bin/env python3
+#!/usr/bin/env python3
 import conf
 from const import confFileName, logPath
 from pytz import timezone

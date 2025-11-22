@@ -19,7 +19,8 @@ from messaging.reporting import get_notifications  # noqa: E402 [flake8 lint sup
 
 @pytest.fixture
 def test_db_path():
-    path = tempfile.mktemp(suffix=".db")
+    with tempfile.NamedTemporaryFile(suffix=".db", delete=False) as tmp:
+        path = tmp.name
     yield path
     if os.path.exists(path):
         os.remove(path)

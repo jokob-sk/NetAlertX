@@ -1,4 +1,4 @@
-# !/usr/bin/env python
+#!/usr/bin/env python
 # Just a testing library plugin for development purposes
 import os
 import sys

@@ -30,7 +30,8 @@ def parse_timestamp(date_str):
         dt = datetime.strptime(clean_date, '%Y/%m/%d %H:%M:%S')
         return int(dt.timestamp())
     except Exception as e:
-        logger.error(f"Failed to parse timestamp: {date_str} ({e})")
+        if logger:
+            logger.error(f"Failed to parse timestamp: {date_str} ({e})")
         return None
 
 
@@ -83,9 +84,8 @@ def get_lease_file(hostname, username, password=None, key_filename=None, port=22
 
         # Clean up the output by removing the command echo and shell prompts
         lines = output.split('\n')
+
         # Remove first line (command echo) and any lines containing shell prompts
-        # cleaned_lines = [line for line in lines
-        #     if not line.strip().startswith(command.strip()) and not line.strip().endswith('> ') and not line.strip().endswith('# ')]
         cmd = command.strip()
 
         cleaned_lines = []

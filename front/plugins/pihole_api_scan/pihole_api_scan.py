@@ -1,4 +1,4 @@
-# !/usr/bin/env python
+#!/usr/bin/env python
 """
 NetAlertX plugin: PIHOLEAPI
 Imports devices from Pi-hole v6 API (Network endpoints) into NetAlertX plugin results.

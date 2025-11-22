@@ -210,7 +210,6 @@ class TestDatabaseParameterSupport(unittest.TestCase):
         # This should not cause SQL injection
         malicious_input = "'; DROP TABLE test_table; --"
         cursor.execute("SELECT * FROM test_table WHERE name = :name", {'name': malicious_input})
-        # results = cursor.fetchall()
 
         # The table should still exist and be queryable
         cursor.execute("SELECT COUNT(*) FROM test_table")

@@ -1,0 +1,4 @@
+[lint]
+select = ["E", "F"]  # or whatever you are using
+# Add E402 so Ruff knows the noqa is legitimate
+extend-select = ["E402"]

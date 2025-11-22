@@ -10,7 +10,7 @@ import re
 # Register NetAlertX libraries
 import conf
 from const import fullConfPath, fullConfFolder, default_tz
-from helper import getBuildTimeStampAndVersion, fixPermissions, collect_lang_strings, updateSubnets, generate_random_string
+from helper import getBuildTimeStampAndVersion, collect_lang_strings, updateSubnets, generate_random_string
 from utils.datetime_utils import timeNowDB
 from app_state import updateState
 from logger import mylog
@@ -680,10 +680,11 @@ def importConfigs(pm, db, all_plugins):
         ccd('VERSION', new_version , c_d, '_KEEP_', '_KEEP_', '_KEEP_', '_KEEP_', None, "_KEEP_", None, None, True)
 
         write_notification(f'[Upgrade]: App upgraded from <code>{prev_version}</code> to \
-            <code>{new_version}</ code> 🚀 Please clear the cache: \
-            <ol> <li>Click OK below</li>  <li>Clear the browser cache (shift + \
-             browser refresh button)</li> <li> Clear app cache with the <i class="fa-solid fa-rotate"></i> \
-            (reload) button in the header</li><li>Go to Settings and click Save</li> </ol>\
+            <code>{new_version}</code> 🚀 Please clear the cache: \
+            <ol> <li>Click OK below</li>  \
+                <li>Clear the browser cache (shift + browser refresh button)</li> \
+                <li> Clear app cache with the <i class="fa-solid fa-rotate"></i> (reload) button in the header</li>\
+                <li>Go to Settings and click Save</li> </ol>\
             Check out new features and what has changed in the \
             <a href="https://github.com/jokob-sk/NetAlertX/releases" target="_blank">📓 release notes</a>.',
             'interrupt',
@@ -804,8 +805,6 @@ def renameSettings(config_file):
             str(config_file) + "_temp", str(config_file)
         )  # Convert config_file to a string
 
-        # ensure correct ownership
-        fixPermissions()
     else:
         mylog(
             "debug", "[Config] No old setting names found in the file. No changes made."

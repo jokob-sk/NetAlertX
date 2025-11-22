@@ -1,4 +1,4 @@
-# !/usr/bin/env python
+#!/usr/bin/env python
 __author__ = "ffsb"
 __version__ = "0.1"  # initial
 __version__ = "0.2"  # added logic to retry omada api call once as it seems to sometimes fail for some reasons, and error handling logic...
@@ -134,7 +134,7 @@ def callomada(myargs):
 
     omada_output = ""
     retries = 2
-    while omada_output == "" and retries > 1:
+    while omada_output == "" and retries > 0:
         retries = retries - 1
         try:
             mf = io.StringIO()
@@ -183,51 +183,71 @@ def add_uplink(
     sadevices_linksbymac,
     port_byswitchmac_byclientmac,
 ):
-    # Ensure switch_mac exists in device_data_bymac
+    # Ensure switch exists
     if switch_mac not in device_data_bymac:
         mylog("none", [f"[{pluginName}] switch_mac '{switch_mac}' not found in device_data_bymac"])
         return
 
-    # Ensure SWITCH_AP key exists in the dictionary
-    if SWITCH_AP not in device_data_bymac[switch_mac]:
-        mylog("none", [f"[{pluginName}] Missing key '{SWITCH_AP}' in device_data_bymac[{switch_mac}]"])
+    dev_switch = device_data_bymac[switch_mac]
+
+    # Ensure list is long enough to contain SWITCH_AP index
+    if len(dev_switch) <= SWITCH_AP:
+        mylog("none", [f"[{pluginName}] SWITCH_AP index {SWITCH_AP} missing in record for {switch_mac}"])
         return
 
-    # Check if uplink should be added
-    if device_data_bymac[switch_mac][SWITCH_AP] in [None, "null"]:
-        device_data_bymac[switch_mac][SWITCH_AP] = uplink_mac
+    # Add uplink only if empty
+    if dev_switch[SWITCH_AP] in (None, "null"):
+        dev_switch[SWITCH_AP] = uplink_mac
 
-        # Ensure uplink_mac exists in device_data_bymac
+        # Validate uplink_mac exists
         if uplink_mac not in device_data_bymac:
             mylog("none", [f"[{pluginName}] uplink_mac '{uplink_mac}' not found in device_data_bymac"])
             return
 
-        # Determine port to uplink
-        if (
-            device_data_bymac[switch_mac].get(TYPE) == "Switch" and device_data_bymac[uplink_mac].get(TYPE) == "Switch"
-        ):
+        dev_uplink = device_data_bymac[uplink_mac]
+
+        # Get TYPE safely
+        switch_type = dev_switch[TYPE] if len(dev_switch) > TYPE else None
+        uplink_type = dev_uplink[TYPE] if len(dev_uplink) > TYPE else None
+
+        # Switch-to-switch link → use port mapping
+        if switch_type == "Switch" and uplink_type == "Switch":
             port_to_uplink = port_byswitchmac_byclientmac.get(switch_mac, {}).get(uplink_mac)
             if port_to_uplink is None:
-                mylog("none", [f"[{pluginName}] Missing port info for switch_mac '{switch_mac}' and uplink_mac '{uplink_mac}'"])
+                mylog("none", [
+                    f"[{pluginName}] Missing port info for {switch_mac} → {uplink_mac}"
+                ])
                 return
         else:
-            port_to_uplink = device_data_bymac[uplink_mac].get(PORT_SSID)
+            # Other device types → read PORT_SSID index
+            if len(dev_uplink) <= PORT_SSID:
+                mylog("none", [
+                    f"[{pluginName}] PORT_SSID index missing for uplink {uplink_mac}"
+                ])
+                return
+            port_to_uplink = dev_uplink[PORT_SSID]
 
-        # Assign port to switch_mac
-        device_data_bymac[switch_mac][PORT_SSID] = port_to_uplink
+        # Assign port to switch
+        if len(dev_switch) > PORT_SSID:
+            dev_switch[PORT_SSID] = port_to_uplink
+        else:
+            mylog("none", [
+                f"[{pluginName}] PORT_SSID index missing in switch {switch_mac}"
+            ])
 
-    # Recursively add uplinks for linked devices
+    # Process children recursively
     for link in sadevices_linksbymac.get(switch_mac, []):
         if (
-            link in device_data_bymac and device_data_bymac[link].get(SWITCH_AP) in [None, "null"] and device_data_bymac[switch_mac].get(TYPE) == "Switch"
+            link in device_data_bymac and len(device_data_bymac[link]) > SWITCH_AP and device_data_bymac[link][SWITCH_AP] in (None, "null") and len(dev_switch) > TYPE
         ):
-            add_uplink(
-                switch_mac,
-                link,
-                device_data_bymac,
-                sadevices_linksbymac,
-                port_byswitchmac_byclientmac,
-            )
+            if dev_switch[TYPE] == "Switch":
+                add_uplink(
+                    switch_mac,
+                    link,
+                    device_data_bymac,
+                    sadevices_linksbymac,
+                    port_byswitchmac_byclientmac,
+                )
 
 
 # ----------------------------------------------

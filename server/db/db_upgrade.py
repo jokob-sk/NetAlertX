@@ -136,23 +136,6 @@ def ensure_views(sql) -> bool:
         """CREATE VIEW Sessions_Devices AS SELECT * FROM Sessions LEFT JOIN "Devices" ON ses_MAC = devMac;"""
     )
 
-    sql.execute(""" CREATE VIEW IF NOT EXISTS LatestEventsPerMAC AS
-                                WITH RankedEvents AS (
-                                    SELECT
-                                        e.*,
-                                        ROW_NUMBER() OVER (PARTITION BY e.eve_MAC ORDER BY e.eve_DateTime DESC) AS row_num
-                                    FROM Events AS e
-                                )
-                                SELECT
-                                    e.*,
-                                    d.*,
-                                    c.*
-                                FROM RankedEvents AS e
-                                LEFT JOIN Devices AS d ON e.eve_MAC = d.devMac
-                                INNER JOIN CurrentScan AS c ON e.eve_MAC = c.cur_MAC
-                                WHERE e.row_num = 1;
-                            """)
-
     # handling the Convert_Events_to_Sessions / Sessions screens
     sql.execute("""DROP VIEW IF EXISTS Convert_Events_to_Sessions;""")
     sql.execute("""CREATE VIEW Convert_Events_to_Sessions AS  SELECT EVE1.eve_MAC,
