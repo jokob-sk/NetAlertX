@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 import paramiko
-import re
 from datetime import datetime
 import argparse
 import sys
 from pathlib import Path
 import time
 import logging
+
+logger = None
+
 
 def setup_logging(debug=False):
     """Configure logging based on debug flag."""
@@ -18,6 +20,7 @@ def setup_logging(debug=False):
     )
     return logging.getLogger(__name__)
 
+
 def parse_timestamp(date_str):
     """Convert OPNsense timestamp to Unix epoch time."""
     try:
@@ -27,7 +30,8 @@ def parse_timestamp(date_str):
         dt = datetime.strptime(clean_date, '%Y/%m/%d %H:%M:%S')
         return int(dt.timestamp())
     except Exception as e:
-        logger.error(f"Failed to parse timestamp: {date_str}")
+        if logger:
+            logger.error(f"Failed to parse timestamp: {date_str} ({e})")
         return None
 
 
@@ -39,8 +43,14 @@ def get_lease_file(hostname, username, password=None, key_filename=None, port=22
 
     try:
         logger.debug(f"Attempting to connect to {hostname}:{port} as {username}")
-        ssh.connect(hostname, port=port, username=username,
-                   password=password, key_filename=key_filename)
+
+        ssh.connect(
+            hostname,
+            port=port,
+            username=username,
+            password=password,
+            key_filename=key_filename
+        )
 
         # Get an interactive shell session
         logger.debug("Opening interactive SSH channel")
@@ -74,11 +84,23 @@ def get_lease_file(hostname, username, password=None, key_filename=None, port=22
 
         # Clean up the output by removing the command echo and shell prompts
         lines = output.split('\n')
+
         # Remove first line (command echo) and any lines containing shell prompts
-        cleaned_lines = [line for line in lines
-                        if not line.strip().startswith(command.strip())
-                        and not line.strip().endswith('> ')
-                        and not line.strip().endswith('# ')]
+        cmd = command.strip()
+
+        cleaned_lines = []
+        for line in lines:
+            stripped = line.strip()
+
+            if stripped.startswith(cmd):
+                continue
+            if stripped.endswith('> '):
+                continue
+            if stripped.endswith('# '):
+                continue
+
+            cleaned_lines.append(line)
+
         cleaned_output = '\n'.join(cleaned_lines)
 
         logger.debug(f"Final cleaned output length: {len(cleaned_output)} characters")
@@ -156,9 +178,7 @@ def parse_lease_file(lease_content):
 
     # Filter only active leases
     active_leases = [lease for lease in leases
-                     if lease.get('state') == 'active'
-                     and 'mac' in lease
-                     and 'ip' in lease]
+                     if lease.get('state') == 'active' and 'mac' in lease and 'ip' in lease]
 
     logger.debug(f"Found {len(active_leases)} active leases out of {len(leases)} total leases")
     logger.debug("Active leases:")
@@ -206,6 +226,7 @@ def convert_to_dnsmasq(leases):
 
     return dnsmasq_lines
 
+
 def main():
     parser = argparse.ArgumentParser(description='Convert OPNsense DHCP leases to dnsmasq format')
     parser.add_argument('--host', required=True, help='OPNsense hostname or IP')
@@ -219,6 +240,7 @@ def main():
     args = parser.parse_args()
 
     # Setup logging
+    global logger
     logger = setup_logging(args.debug)
 
     try:
@@ -254,6 +276,7 @@ def main():
     except Exception as e:
         logger.error(f"Error: {str(e)}")
         sys.exit(1)
+
 
 if __name__ == '__main__':
     main()

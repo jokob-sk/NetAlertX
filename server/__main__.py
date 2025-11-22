@@ -22,9 +22,9 @@ from pathlib import Path
 
 # Register NetAlertX modules
 import conf
-from const import *
-from logger import  mylog
-from helper import  filePermissions
+from const import fullConfPath, sql_new_devices
+from logger import mylog
+from helper import filePermissions
 from utils.datetime_utils import timeNowTZ
 from app_state import updateState
 from api import update_api
@@ -48,12 +48,12 @@ main structure of NetAlertX
     Initialise All
     Rename old settings
     start Loop forever
-        initialise loop 
+        initialise loop
             (re)import config
             (re)import plugin config
         run plugins (once)
         run frontend events
-        update API         
+        update API
         run plugins (scheduled)
         processing scan results
         run plugins (after Scan)
@@ -111,7 +111,7 @@ def main():
         loop_start_time = conf.loop_start_time  # TODO fix
 
         # Handle plugins executed ONCE
-        if conf.plugins_once_run == False:
+        if conf.plugins_once_run is False:
             pm.run_plugin_scripts("once")
             conf.plugins_once_run = True
 
@@ -146,7 +146,7 @@ def main():
             processScan = updateState("Check scan").processScan
             mylog("debug", [f"[MAIN] processScan: {processScan}"])
 
-            if processScan == True:
+            if processScan is True:
                 mylog("debug", "[MAIN] start processing scan results")
                 process_scan(db)
                 updateState("Scan processed", None, None, None, None, False)

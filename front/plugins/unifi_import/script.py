@@ -14,12 +14,12 @@ from pyunifi.controller import Controller
 INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from plugin_helper import Plugin_Objects, rmBadChars, is_typical_router_ip, is_mac
-from logger import mylog, Logger
-from helper import get_setting_value, normalize_string 
-import conf
-from pytz import timezone
-from const import logPath
+from plugin_helper import Plugin_Objects, rmBadChars, is_typical_router_ip, is_mac  # noqa: E402 [flake8 lint suppression]
+from logger import mylog, Logger  # noqa: E402 [flake8 lint suppression]
+from helper import get_setting_value, normalize_string   # noqa: E402 [flake8 lint suppression]
+import conf  # noqa: E402 [flake8 lint suppression]
+from pytz import timezone  # noqa: E402 [flake8 lint suppression]
+from const import logPath  # noqa: E402 [flake8 lint suppression]
 
 # Make sure the TIMEZONE for logging is correct
 conf.tz = timezone(get_setting_value('TIMEZONE'))
@@ -37,21 +37,16 @@ LOCK_FILE = os.path.join(LOG_PATH, f'full_run.{pluginName}.lock')
 urllib3.disable_warnings(InsecureRequestWarning)
 
 
-
-
-# Workflow
-
 def main():
-    
+
     mylog('verbose', [f'[{pluginName}] In script'])
 
-    
     # init global variables
     global UNIFI_USERNAME, UNIFI_PASSWORD, UNIFI_HOST, UNIFI_SITES, PORT, VERIFYSSL, VERSION, FULL_IMPORT
 
     # parse output
-    plugin_objects = Plugin_Objects(RESULT_FILE)    
-    
+    plugin_objects = Plugin_Objects(RESULT_FILE)
+
     UNIFI_USERNAME  = get_setting_value("UNFIMP_username")
     UNIFI_PASSWORD  = get_setting_value("UNFIMP_password")
     UNIFI_HOST      = get_setting_value("UNFIMP_host")
@@ -64,12 +59,11 @@ def main():
     plugin_objects = get_entries(plugin_objects)
 
     plugin_objects.write_result_file()
-    
 
     mylog('verbose', [f'[{pluginName}] Scan finished, found {len(plugin_objects)} devices'])
 
-# .............................................
 
+# .............................................
 def get_entries(plugin_objects: Plugin_Objects) -> Plugin_Objects:
     global VERIFYSSL
 
@@ -79,27 +73,26 @@ def get_entries(plugin_objects: Plugin_Objects) -> Plugin_Objects:
 
     mylog('verbose', [f'[{pluginName}] sites: {UNIFI_SITES}'])
 
-
     if (VERIFYSSL.upper() == "TRUE"):
         VERIFYSSL = True
     else:
         VERIFYSSL = False
-        
+
     # mylog('verbose', [f'[{pluginName}] sites: {sites}'])
-    
+
     for site in UNIFI_SITES:
-    
+
         mylog('verbose', [f'[{pluginName}] site: {site}'])
 
         c = Controller(
-            UNIFI_HOST, 
-            UNIFI_USERNAME, 
-            UNIFI_PASSWORD, 
-            port=PORT, 
-            version=VERSION, 
-            ssl_verify=VERIFYSSL, 
+            UNIFI_HOST,
+            UNIFI_USERNAME,
+            UNIFI_PASSWORD,
+            port=PORT,
+            version=VERSION,
+            ssl_verify=VERIFYSSL,
             site_id=site)
-        
+
         online_macs = set()
         processed_macs = []
 
@@ -114,7 +107,7 @@ def get_entries(plugin_objects: Plugin_Objects) -> Plugin_Objects:
             plugin_objects=plugin_objects,
             device_label='client',
             device_vendor="",
-            force_import=True # These are online clients, force import
+            force_import=True  # These are online clients, force import
         )
 
         mylog('verbose', [f'[{pluginName}] Found {len(plugin_objects)} Online Devices'])
@@ -154,10 +147,8 @@ def get_entries(plugin_objects: Plugin_Objects) -> Plugin_Objects:
 
         mylog('verbose', [f'[{pluginName}] Found {len(plugin_objects)} Users'])
 
-    
     mylog('verbose', [f'[{pluginName}] check if Lock file needs to be modified'])
     set_lock_file_value(FULL_IMPORT, lock_file_value)
-
 
     mylog('verbose', [f'[{pluginName}] Found {len(plugin_objects)} Clients overall'])
 
@@ -173,19 +164,19 @@ def collect_details(device_type, devices, online_macs, processed_macs, plugin_ob
         name = get_name(get_unifi_val(device, 'name'), get_unifi_val(device, 'hostname'))
         ipTmp = get_ip(get_unifi_val(device, 'lan_ip'), get_unifi_val(device, 'last_ip'), get_unifi_val(device, 'fixed_ip'), get_unifi_val(device, 'ip'))
         macTmp = device['mac']
-        
+
         # continue only if valid MAC address
         if is_mac(macTmp):
             status = 1 if macTmp in online_macs else device.get('state', 0)
             deviceType = device_type.get(device.get('type'), '')
             parentMac = get_parent_mac(get_unifi_val(device, 'uplink_mac'), get_unifi_val(device, 'ap_mac'), get_unifi_val(device, 'sw_mac'))
-            
+
             # override parent MAC if this is a router
             if parentMac == 'null' and is_typical_router_ip(ipTmp):
-                parentMac = 'Internet'            
+                parentMac = 'Internet'
 
             # Add object only if not processed
-            if macTmp not in processed_macs and ( status == 1 or force_import is True ):
+            if macTmp not in processed_macs and (status == 1 or force_import is True):
                 plugin_objects.add_object(
                     primaryId=macTmp,
                     secondaryId=ipTmp,
@@ -203,7 +194,8 @@ def collect_details(device_type, devices, online_macs, processed_macs, plugin_ob
                 processed_macs.append(macTmp)
         else:
             mylog('verbose', [f'[{pluginName}] Skipping, not a valid MAC address: {macTmp}'])
-            
+
+
 # -----------------------------------------------------------------------------
 def get_unifi_val(obj, key, default='null'):
     if isinstance(obj, dict):
@@ -212,9 +204,9 @@ def get_unifi_val(obj, key, default='null'):
         for k, v in obj.items():
             if isinstance(v, dict):
                 result = get_unifi_val(v, key, default)
-                if result not in ['','None', None, 'null']:
+                if result not in ['', 'None', None, 'null']:
                     return result
-    
+
     mylog('trace', [f'[{pluginName}] Value not found for key "{key}" in obj "{json.dumps(obj)}"'])
     return default
 
@@ -226,12 +218,14 @@ def get_name(*names: str) -> str:
             return rmBadChars(name)
     return 'null'
 
+
 # -----------------------------------------------------------------------------
 def get_parent_mac(*macs: str) -> str:
     for mac in macs:
         if mac and mac != 'null':
             return mac
     return 'null'
+
 
 # -----------------------------------------------------------------------------
 def get_port(*ports: str) -> str:
@@ -240,12 +234,6 @@ def get_port(*ports: str) -> str:
             return port
     return 'null'
 
-# -----------------------------------------------------------------------------
-def get_port(*macs: str) -> str:
-    for mac in macs:
-        if mac and mac != 'null':
-            return mac
-    return 'null'
 
 # -----------------------------------------------------------------------------
 def get_ip(*ips: str) -> str:
@@ -271,7 +259,7 @@ def set_lock_file_value(config_value: str, lock_file_value: bool) -> None:
 
     mylog('verbose', [f'[{pluginName}] Setting lock value for "full import" to {out}'])
     with open(LOCK_FILE, 'w') as lock_file:
-            lock_file.write(str(out))
+        lock_file.write(str(out))
 
 
 # -----------------------------------------------------------------------------
@@ -286,15 +274,16 @@ def read_lock_file() -> bool:
 
 # -----------------------------------------------------------------------------
 def check_full_run_state(config_value: str, lock_file_value: bool) -> bool:
-    if config_value == 'always' or (config_value == 'once' and lock_file_value == False):
+    if config_value == 'always' or (config_value == 'once' and lock_file_value is False):
         mylog('verbose', [f'[{pluginName}] Full import needs to be done: config_value: {config_value} and lock_file_value: {lock_file_value}'])
         return True
     else:
         mylog('verbose', [f'[{pluginName}] Full import NOT needed: config_value: {config_value} and lock_file_value: {lock_file_value}'])
         return False
 
-#===============================================================================
+
+# ===============================================================================
 # BEGIN
-#===============================================================================
+# ===============================================================================
 if __name__ == '__main__':
     main()

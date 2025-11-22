@@ -9,12 +9,21 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 # Register NetAlertX modules
 import conf
 from const import pluginsPath, logPath, applicationPath, reportTemplatesPath
-from logger import mylog, Logger 
-from helper import get_file_content, write_file, get_setting, get_setting_value
+from logger import mylog, Logger
+from helper import get_file_content, get_setting, get_setting_value
 from utils.datetime_utils import timeNowTZ, timeNowDB
 from app_state import updateState
 from api import update_api
-from utils.plugin_utils import logEventStatusCounts, get_plugin_string, get_plugin_setting_obj, print_plugin_info, list_to_csv, combine_plugin_objects, resolve_wildcards_arr, handle_empty, custom_plugin_decoder, decode_and_rename_files
+from utils.plugin_utils import (
+    logEventStatusCounts,
+    get_plugin_setting_obj,
+    print_plugin_info,
+    list_to_csv,
+    combine_plugin_objects,
+    resolve_wildcards_arr,
+    handle_empty,
+    decode_and_rename_files
+)
 from models.notification_instance import NotificationInstance
 from messaging.in_app import write_notification
 from models.user_events_queue_instance import UserEventsQueueInstance
@@ -57,13 +66,7 @@ class plugin_manager:
         # Header
         updateState("Run: Plugins")
 
-        mylog(
-            "debug",
-            [
-                "[Plugins] Check if any plugins need to be executed on run type: ",
-                runType,
-            ],
-        )
+        mylog("debug", f"[Plugins] Check if any plugins need to be executed on run type: {runType}")
 
         for plugin in self.all_plugins:
             shouldRun = False
@@ -72,7 +75,7 @@ class plugin_manager:
             # 🔹 Lookup RUN setting from cache instead of calling get_plugin_setting_obj each time
             run_setting = self._cache["settings"].get(prefix, {}).get("RUN")
 
-            if run_setting != None and run_setting["value"] == runType:
+            if run_setting is not None and run_setting["value"] == runType:
                 if runType != "schedule":
                     shouldRun = True
                 elif runType == "schedule":
@@ -91,10 +94,10 @@ class plugin_manager:
 
                 # 🔹 CMD also retrieved from cache
                 cmd_setting = self._cache["settings"].get(prefix, {}).get("CMD")
-                mylog(
-                    "debug",
-                    ["[Plugins] CMD: ", cmd_setting["value"] if cmd_setting else None],
-                )
+
+                print_str = cmd_setting["value"] if cmd_setting else None
+
+                mylog("debug", f"[Plugins] CMD: {print_str}")
 
                 execute_plugin(self.db, self.all_plugins, plugin)
 
@@ -130,13 +133,7 @@ class plugin_manager:
             mylog("debug", ["[check_and_run_user_event] User Execution Queue is empty"])
             return  # Exit early if the log file is empty
         else:
-            mylog(
-                "debug",
-                [
-                    "[check_and_run_user_event] Process User Execution Queue:"
-                    + ", ".join(map(str, lines))
-                ],
-            )
+            mylog("debug", "[check_and_run_user_event] Process User Execution Queue:" + ", ".join(map(str, lines)))
 
         for line in lines:
             # Extract event name and parameters from the log line
@@ -160,15 +157,7 @@ class plugin_manager:
                 update_api(self.db, self.all_plugins, False, param.split(","), True)
 
             else:
-                mylog(
-                    "minimal",
-                    [
-                        "[check_and_run_user_event] WARNING: Unhandled event in execution queue: ",
-                        event,
-                        " | ",
-                        param,
-                    ],
-                )
+                mylog("minimal", f"[check_and_run_user_event] WARNING: Unhandled event in execution queue: {event} | {param}")
                 execution_log.finalize_event(
                     event
                 )  # Finalize unknown events to remove them
@@ -183,9 +172,9 @@ class plugin_manager:
 
     # -------------------------------------------------------------------------------
     def handle_run(self, runType):
-        
+
         mylog('minimal', ['[', timeNowDB(), '] START Run: ', runType])
-        
+
         # run the plugin
         for plugin in self.all_plugins:
             if plugin["unique_prefix"] == runType:
@@ -201,7 +190,7 @@ class plugin_manager:
                     pluginsStates={pluginName: current_plugin_state.get(pluginName, {})}
                 )
 
-        mylog('minimal', ['[', timeNowDB(), '] END Run: ', runType])        
+        mylog('minimal', ['[', timeNowDB(), '] END Run: ', runType])
 
         return
 
@@ -210,7 +199,7 @@ class plugin_manager:
         mylog("minimal", ["[", timeNowTZ(), "] [Test] START Test: ", runType])
 
         mylog('minimal', ['[', timeNowDB(), '] [Test] START Test: ', runType])
-        
+
         # Prepare test samples
         sample_json = json.loads(
             get_file_content(reportTemplatesPath + "webhook_json_sample.json")
@@ -312,7 +301,7 @@ class plugin_param:
         if param["type"] == "setting":
             inputValue = get_setting(param["value"])
 
-            if inputValue != None:
+            if inputValue is not None:
                 setVal = inputValue["setValue"]  # setting value
                 setTyp = inputValue["setType"]  # setting type
 
@@ -337,9 +326,7 @@ class plugin_param:
                     resolved = list_to_csv(setVal)
 
                 else:
-                    mylog(
-                        "none", ["[Plugins] ⚠ ERROR: Parameter probably not converted."]
-                    )
+                    mylog("none", "[Plugins] ⚠ ERROR: Parameter probably not converted.")
                     return json.dumps(setVal)
 
         #  Get SQL result
@@ -390,15 +377,10 @@ def run_plugin(command, set_RUN_TIMEOUT, plugin):
         )
     except subprocess.CalledProcessError as e:
         mylog("none", [e.output])
-        mylog("none", ["[Plugins] ⚠ ERROR - enable LOG_LEVEL=debug and check logs"])
+        mylog("none", "[Plugins] ⚠ ERROR - enable LOG_LEVEL=debug and check logs")
         return None
     except subprocess.TimeoutExpired:
-        mylog(
-            "none",
-            [
-                f"[Plugins] ⚠ ERROR - TIMEOUT - the plugin {plugin['unique_prefix']} forcefully terminated as timeout reached. Increase TIMEOUT setting and scan interval."
-            ],
-        )
+        mylog("none", f"[Plugins] ⚠ ERROR - TIMEOUT - the plugin {plugin['unique_prefix']} forcefully terminated as timeout reached. Increase TIMEOUT setting and scan interval.")
         return None
 
 
@@ -411,11 +393,11 @@ def execute_plugin(db, all_plugins, plugin):
     set = get_plugin_setting_obj(plugin, "CMD")
 
     #  handle missing "function":"CMD" setting
-    if set == None:
+    if set is None:
         return
 
     set_CMD = set["value"]
-    
+
     # Replace hardcoded /app paths with environment-aware path
     if "/app/front/plugins" in set_CMD:
         set_CMD = set_CMD.replace("/app/front/plugins", str(pluginsPath))
@@ -441,13 +423,8 @@ def execute_plugin(db, all_plugins, plugin):
         for param in plugin["params"]:
             tempParam = plugin_param(param, plugin, db)
 
-            if tempParam.resolved == None:
-                mylog(
-                    "none",
-                    [
-                        f'[Plugins] The parameter "name":"{tempParam.name}" for "value": {tempParam.value} was resolved as None'
-                    ],
-                )
+            if tempParam.resolved is None:
+                mylog("none", f'[Plugins] The parameter "name":"{tempParam.name}" for "value": {tempParam.value} was resolved as None')
 
             else:
                 # params.append( [param["name"], resolved] )
@@ -456,14 +433,9 @@ def execute_plugin(db, all_plugins, plugin):
                 if tempParam.multiplyTimeout:
                     set_RUN_TIMEOUT = set_RUN_TIMEOUT * tempParam.paramValuesCount
 
-                    mylog(
-                        "debug",
-                        [
-                            f'[Plugins] The parameter "name":"{param["name"]}" will multiply the timeout {tempParam.paramValuesCount} times. Total timeout: {set_RUN_TIMEOUT}s'
-                        ],
-                    )
+                    mylog("debug", f'[Plugins] The parameter "name":"{param["name"]}" will multiply timeout {tempParam.paramValuesCount}x. Total timeout: {set_RUN_TIMEOUT}s')
 
-    mylog("debug", ["[Plugins] Timeout: ", set_RUN_TIMEOUT])
+    mylog("debug", f"[Plugins] Timeout: {set_RUN_TIMEOUT}")
 
     # build SQL query parameters to insert into the DB
     sqlParams = []
@@ -475,8 +447,8 @@ def execute_plugin(db, all_plugins, plugin):
         command = resolve_wildcards_arr(set_CMD.split(), params)
 
         # Execute command
-        mylog("verbose", ["[Plugins] Executing: ", set_CMD])
-        mylog("debug", ["[Plugins] Resolved : ", command])
+        mylog("verbose", f"[Plugins] Executing: {set_CMD}")
+        mylog("debug", f"[Plugins] Resolved : {command}")
 
         # Using ThreadPoolExecutor to handle concurrent subprocesses
         with ThreadPoolExecutor(max_workers=5) as executor:
@@ -521,12 +493,7 @@ def execute_plugin(db, all_plugins, plugin):
                     columns = line.split("|")
                     # There have to be 9 or 13 columns
                     if len(columns) not in [9, 13]:
-                        mylog(
-                            "none",
-                            [
-                                f"[Plugins] Wrong number of input values, must be 9 or 13, got {len(columns)} from: {line}"
-                            ],
-                        )
+                        mylog("none", f"[Plugins] Wrong number of input values, must be 9 or 13, got {len(columns)} from: {line}")
                         continue  # Skip lines with incorrect number of columns
 
                     # Common part of the SQL parameters
@@ -581,9 +548,7 @@ def execute_plugin(db, all_plugins, plugin):
             # keep current instance log file, delete all from other nodes
             if filename != "last_result.log" and os.path.exists(full_path):
                 os.remove(full_path)  # DEBUG:TODO uncomment 🐛
-                mylog(
-                    "verbose", [f"[Plugins] Processed and deleted file: {full_path} "]
-                )
+                mylog("verbose", f"[Plugins] Processed and deleted file: {full_path} ")
 
     # app-db-query
     if plugin["data_source"] == "app-db-query":
@@ -591,7 +556,7 @@ def execute_plugin(db, all_plugins, plugin):
         q = set_CMD.replace("{s-quote}", "'")
 
         # Execute command
-        mylog("verbose", ["[Plugins] Executing: ", q])
+        mylog("verbose", f"[Plugins] Executing: {q}")
 
         # set_CMD should contain a SQL query
         arr = db.get_sql_array(q)
@@ -650,7 +615,7 @@ def execute_plugin(db, all_plugins, plugin):
                 # Append the final parameters to sqlParams
                 sqlParams.append(tuple(base_params))
             else:
-                mylog("none", ["[Plugins] Skipped invalid sql result"])
+                mylog("none", "[Plugins] Skipped invalid sql result")
 
     # app-db-query
     if plugin["data_source"] == "sqlite-db-query":
@@ -659,19 +624,14 @@ def execute_plugin(db, all_plugins, plugin):
         q = set_CMD.replace("{s-quote}", "'")
 
         # Execute command
-        mylog("verbose", ["[Plugins] Executing: ", q])
+        mylog("verbose", f"[Plugins] Executing: {q}")
 
         # ------- necessary settings check  --------
         set = get_plugin_setting_obj(plugin, "DB_PATH")
 
         #  handle missing "function":"DB_PATH" setting
-        if set == None:
-            mylog(
-                "none",
-                [
-                    "[Plugins] ⚠ ERROR: DB_PATH setting for plugin type sqlite-db-query missing."
-                ],
-            )
+        if set is None:
+            mylog("none", "[Plugins] ⚠ ERROR: DB_PATH setting for plugin type sqlite-db-query missing.")
             return
 
         fullSqlitePath = set["value"]
@@ -679,25 +639,14 @@ def execute_plugin(db, all_plugins, plugin):
         #  try attaching the sqlite DB
         try:
             sql.execute(
-                "ATTACH DATABASE '"
-                + fullSqlitePath
-                + "' AS EXTERNAL_"
-                + plugin["unique_prefix"]
+                "ATTACH DATABASE '" + fullSqlitePath + "' AS EXTERNAL_" + plugin["unique_prefix"]
             )
             arr = db.get_sql_array(q)
             sql.execute("DETACH DATABASE EXTERNAL_" + plugin["unique_prefix"])
 
         except sqlite3.Error as e:
-            mylog(
-                "none",
-                [
-                    f"[Plugins] ⚠ ERROR: DB_PATH setting ({fullSqlitePath}) for plugin {plugin['unique_prefix']}. Did you mount it correctly?"
-                ],
-            )
-            mylog(
-                "none",
-                ["[Plugins] ⚠ ERROR: ATTACH DATABASE failed with SQL ERROR: ", e],
-            )
+            mylog("none", f"[Plugins] ⚠ ERROR: DB_PATH setting ({fullSqlitePath}) for plugin {plugin['unique_prefix']}. Did you mount it correctly?")
+            mylog("none", f"[Plugins] ⚠ ERROR: ATTACH DATABASE failed with SQL ERROR: {e}")
             return
 
         for row in arr:
@@ -748,24 +697,14 @@ def execute_plugin(db, all_plugins, plugin):
                 # Append the final parameters to sqlParams
                 sqlParams.append(tuple(base_params))
             else:
-                mylog("none", ["[Plugins] Skipped invalid sql result"])
+                mylog("none", "[Plugins] Skipped invalid sql result")
 
     # check if the subprocess / SQL query failed / there was no valid output
     if len(sqlParams) == 0:
-        mylog(
-            "none",
-            [
-                f'[Plugins] No output received from the plugin "{plugin["unique_prefix"]}"'
-            ],
-        )
+        mylog("none", f'[Plugins] No output received from the plugin "{plugin["unique_prefix"]}"')
 
     else:
-        mylog(
-            "verbose",
-            [
-                f"[Plugins] SUCCESS for {plugin['unique_prefix']} received {len(sqlParams)} entries"
-            ],
-        )
+        mylog("verbose", f"[Plugins] SUCCESS for {plugin['unique_prefix']} received {len(sqlParams)} entries")
         # mylog('debug',   ['[Plugins] sqlParam entries: ', sqlParams])
 
         # create objects
@@ -782,12 +721,7 @@ def execute_plugin(db, all_plugins, plugin):
         # check if we need to update devices api endpoint as well to prevent long user waits on Loading...
         userUpdatedDevices = UserEventsQueueInstance().has_update_devices()
 
-        mylog(
-            "verbose",
-            [
-                f"[Plugins] Should I update API (userUpdatedDevices): {userUpdatedDevices}"
-            ],
-        )
+        mylog("verbose", f"[Plugins] Should I update API (userUpdatedDevices): {userUpdatedDevices}")
 
         if userUpdatedDevices:
             endpoints += ["devices"]
@@ -807,7 +741,7 @@ def process_plugin_events(db, plugin, plugEventsArr):
 
     pluginPref = plugin["unique_prefix"]
 
-    mylog("verbose", ["[Plugins] Processing        : ", pluginPref])
+    mylog("verbose", f"[Plugins] Processing        : {pluginPref}")
 
     try:
         # Begin a transaction
@@ -827,20 +761,8 @@ def process_plugin_events(db, plugin, plugEventsArr):
             for eve in plugEventsArr:
                 pluginEvents.append(plugin_object_class(plugin, eve))
 
-            mylog(
-                "debug",
-                [
-                    "[Plugins] Existing objects from Plugins_Objects: ",
-                    len(pluginObjects),
-                ],
-            )
-            mylog(
-                "debug",
-                [
-                    "[Plugins] Logged events from the plugin run    : ",
-                    len(pluginEvents),
-                ],
-            )
+            mylog("debug", f"[Plugins] Existing objects from Plugins_Objects: {len(pluginObjects)}")
+            mylog("debug", f"[Plugins] Logged events from the plugin run    : {len(pluginEvents)}")
 
             #  Loop thru all current events and update the status to "exists" if the event matches an existing object
             index = 0
@@ -857,8 +779,7 @@ def process_plugin_events(db, plugin, plugEventsArr):
                 if tmpObjFromEvent.status == "exists":
                     #  compare hash of the changed watched columns for uniqueness - make sure you compare the values with the same idsHash before checking watchedHash
                     if any(
-                        x.idsHash == tmpObjFromEvent.idsHash
-                        and x.watchedHash != tmpObjFromEvent.watchedHash
+                        x.idsHash == tmpObjFromEvent.idsHash and x.watchedHash != tmpObjFromEvent.watchedHash
                         for x in pluginObjects
                     ):
                         pluginEvents[index].status = "watched-changed"
@@ -879,7 +800,7 @@ def process_plugin_events(db, plugin, plugEventsArr):
                     # if wasn't missing before, mark as changed
                     if tmpObj.status != "missing-in-last-scan":
                         tmpObj.changed = timeNowDB()
-                        tmpObj.status = "missing-in-last-scan"                    
+                        tmpObj.status = "missing-in-last-scan"
                     # mylog('debug', [f'[Plugins] Missing from last scan (PrimaryID | SecondaryID): {tmpObj.primaryId} | {tmpObj.secondaryId}'])
 
             # Merge existing plugin objects with newly discovered ones and update existing ones with new values
@@ -955,25 +876,17 @@ def process_plugin_events(db, plugin, plugEventsArr):
                 # combine all DB insert and update events into one for history
                 history_to_insert.append(values)
 
-            mylog("debug", ["[Plugins] pluginEvents      count: ", len(pluginEvents)])
-            mylog("debug", ["[Plugins] pluginObjects     count: ", len(pluginObjects)])
+            mylog("debug", f"[Plugins] pluginEvents      count: {len(pluginEvents)}")
+            mylog("debug", f"[Plugins] pluginObjects     count: {len(pluginObjects)}")
 
-            mylog(
-                "debug", ["[Plugins] events_to_insert  count: ", len(events_to_insert)]
-            )
-            mylog(
-                "debug", ["[Plugins] history_to_insert count: ", len(history_to_insert)]
-            )
-            mylog(
-                "debug", ["[Plugins] objects_to_insert count: ", len(objects_to_insert)]
-            )
-            mylog(
-                "debug", ["[Plugins] objects_to_update count: ", len(objects_to_update)]
-            )
+            mylog("debug", f"[Plugins] events_to_insert  count: {len(events_to_insert)}")
+            mylog("debug", f"[Plugins] history_to_insert count: {len(history_to_insert)}")
+            mylog("debug", f"[Plugins] objects_to_insert count: {len(objects_to_insert)}")
+            mylog("debug", f"[Plugins] objects_to_update count: {len(objects_to_update)}")
 
-            mylog("trace", ["[Plugins] objects_to_update: ", objects_to_update])
-            mylog("trace", ["[Plugins] events_to_insert: ", events_to_insert])
-            mylog("trace", ["[Plugins] history_to_insert: ", history_to_insert])
+            mylog("trace", f"[Plugins] objects_to_update: {objects_to_update}")
+            mylog("trace", f"[Plugins] events_to_insert: {events_to_insert}")
+            mylog("trace", f"[Plugins] history_to_insert: {history_to_insert}")
 
             logEventStatusCounts("pluginEvents", pluginEvents)
             logEventStatusCounts("pluginObjects", pluginObjects)
@@ -982,12 +895,12 @@ def process_plugin_events(db, plugin, plugEventsArr):
             if objects_to_insert:
                 sql.executemany(
                     """
-                    INSERT INTO Plugins_Objects 
-                    ("Plugin", "Object_PrimaryID", "Object_SecondaryID", "DateTimeCreated", 
-                    "DateTimeChanged", "Watched_Value1", "Watched_Value2", "Watched_Value3", 
+                    INSERT INTO Plugins_Objects
+                    ("Plugin", "Object_PrimaryID", "Object_SecondaryID", "DateTimeCreated",
+                    "DateTimeChanged", "Watched_Value1", "Watched_Value2", "Watched_Value3",
                     "Watched_Value4", "Status", "Extra", "UserData", "ForeignKey", "SyncHubNodeName",
-                    "HelpVal1", "HelpVal2", "HelpVal3", "HelpVal4", 
-                    "ObjectGUID") 
+                    "HelpVal1", "HelpVal2", "HelpVal3", "HelpVal4",
+                    "ObjectGUID")
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """,
                     objects_to_insert,
@@ -998,10 +911,10 @@ def process_plugin_events(db, plugin, plugEventsArr):
                 sql.executemany(
                     """
                     UPDATE Plugins_Objects
-                    SET "Plugin" = ?, "Object_PrimaryID" = ?, "Object_SecondaryID" = ?, "DateTimeCreated" = ?, 
-                        "DateTimeChanged" = ?, "Watched_Value1" = ?, "Watched_Value2" = ?, "Watched_Value3" = ?, 
-                        "Watched_Value4" = ?, "Status" = ?, "Extra" = ?, "UserData" = ?, "ForeignKey" = ?, "SyncHubNodeName" = ?, 
-                        "HelpVal1" = ?, "HelpVal2" = ?, "HelpVal3" = ?, "HelpVal4" = ?, 
+                    SET "Plugin" = ?, "Object_PrimaryID" = ?, "Object_SecondaryID" = ?, "DateTimeCreated" = ?,
+                        "DateTimeChanged" = ?, "Watched_Value1" = ?, "Watched_Value2" = ?, "Watched_Value3" = ?,
+                        "Watched_Value4" = ?, "Status" = ?, "Extra" = ?, "UserData" = ?, "ForeignKey" = ?, "SyncHubNodeName" = ?,
+                        "HelpVal1" = ?, "HelpVal2" = ?, "HelpVal3" = ?, "HelpVal4" = ?,
                         "ObjectGUID" = ?
                     WHERE "Index" = ?
                     """,
@@ -1012,12 +925,12 @@ def process_plugin_events(db, plugin, plugEventsArr):
             if events_to_insert:
                 sql.executemany(
                     """
-                    INSERT INTO Plugins_Events 
-                    ("Plugin", "Object_PrimaryID", "Object_SecondaryID", "DateTimeCreated", 
-                    "DateTimeChanged", "Watched_Value1", "Watched_Value2", "Watched_Value3", 
+                    INSERT INTO Plugins_Events
+                    ("Plugin", "Object_PrimaryID", "Object_SecondaryID", "DateTimeCreated",
+                    "DateTimeChanged", "Watched_Value1", "Watched_Value2", "Watched_Value3",
                     "Watched_Value4", "Status", "Extra", "UserData", "ForeignKey", "SyncHubNodeName",
                     "HelpVal1", "HelpVal2", "HelpVal3", "HelpVal4",
-                    "ObjectGUID")  
+                    "ObjectGUID")
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """,
                     events_to_insert,
@@ -1027,12 +940,12 @@ def process_plugin_events(db, plugin, plugEventsArr):
             if history_to_insert:
                 sql.executemany(
                     """
-                    INSERT INTO Plugins_History 
-                    ("Plugin", "Object_PrimaryID", "Object_SecondaryID", "DateTimeCreated", 
-                    "DateTimeChanged", "Watched_Value1", "Watched_Value2", "Watched_Value3", 
+                    INSERT INTO Plugins_History
+                    ("Plugin", "Object_PrimaryID", "Object_SecondaryID", "DateTimeCreated",
+                    "DateTimeChanged", "Watched_Value1", "Watched_Value2", "Watched_Value3",
                     "Watched_Value4", "Status", "Extra", "UserData", "ForeignKey", "SyncHubNodeName",
                     "HelpVal1", "HelpVal2", "HelpVal3", "HelpVal4",
-                    "ObjectGUID")    
+                    "ObjectGUID")
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """,
                     history_to_insert,
@@ -1044,7 +957,7 @@ def process_plugin_events(db, plugin, plugEventsArr):
     except Exception as e:
         # Rollback the transaction in case of an error
         conn.rollback()
-        mylog("none", ["[Plugins] ⚠ ERROR: ", e])
+        mylog("none", f"[Plugins] ⚠ ERROR: {e}")
         raise e
 
     # Perform database table mapping if enabled for the plugin
@@ -1056,7 +969,7 @@ def process_plugin_events(db, plugin, plugEventsArr):
         dbTable = plugin["mapped_to_table"]
 
         # Log a debug message indicating the mapping of objects to the database table.
-        mylog("debug", ["[Plugins] Mapping objects to database table: ", dbTable])
+        mylog("debug", f"[Plugins] Mapping objects to database table: {dbTable}")
 
         # Initialize lists to hold mapped column names, columnsStr, and valuesStr for SQL query.
         mappedCols = []
@@ -1121,8 +1034,7 @@ def process_plugin_events(db, plugin, plugEventsArr):
 
                 # Check if there's a default value specified for this column in the JSON.
                 if (
-                    "mapped_to_column_data" in col
-                    and "value" in col["mapped_to_column_data"]
+                    "mapped_to_column_data" in col and "value" in col["mapped_to_column_data"]
                 ):
                     tmpList.append(col["mapped_to_column_data"]["value"])
 
@@ -1133,8 +1045,8 @@ def process_plugin_events(db, plugin, plugEventsArr):
         q = f"INSERT OR IGNORE INTO {dbTable} ({columnsStr}) VALUES ({valuesStr})"
 
         # Log a debug message showing the generated SQL query for mapping.
-        mylog("debug", ["[Plugins] SQL query for mapping: ", q])
-        mylog("debug", ["[Plugins] SQL sqlParams for mapping: ", sqlParams])
+        mylog("debug", f"[Plugins] SQL query for mapping: {q}")
+        mylog("debug", f"[Plugins] SQL sqlParams for mapping: {sqlParams}")
 
         # Execute the SQL query using 'sql.executemany()' and the 'sqlParams' list of tuples.
         # This will insert multiple rows into the database in one go.

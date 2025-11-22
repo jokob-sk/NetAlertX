@@ -1,10 +1,3 @@
-import sys
-import os
-
-# Register NetAlertX directories
-INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
-sys.path.extend([f"{INSTALL_PATH}/server"])
-
 from scan.device_handling import (
     create_new_devices,
     print_scan_stats,
@@ -14,7 +7,7 @@ from scan.device_handling import (
 )
 from helper import get_setting_value
 from db.db_helper import print_table_schema
-from utils.datetime_utils import timeNowDB, timeNowTZ
+from utils.datetime_utils import timeNowDB
 from logger import mylog, Logger
 from messaging.reporting import skip_repeated_notifications
 
@@ -133,20 +126,20 @@ def create_sessions_snapshot(db):
     db.commitDB()
 
 
-#-------------------------------------------------------------------------------
-def insert_events (db):
-    sql = db.sql #TO-DO
-    startTime = timeNowDB()    
-    
+# -------------------------------------------------------------------------------
+def insert_events(db):
+    sql = db.sql  # TO-DO
+    startTime = timeNowDB()
+
     # Check device down
     mylog("debug", "[Events] - 1 - Devices down")
     sql.execute(f"""INSERT INTO Events (eve_MAC, eve_IP, eve_DateTime,
                         eve_EventType, eve_AdditionalInfo,
                         eve_PendingAlertEmail)
                     SELECT devMac, devLastIP, '{startTime}', 'Device Down', '', 1
-                    FROM Devices 
+                    FROM Devices
                     WHERE devAlertDown != 0
-                      AND devPresentLastScan = 1                      
+                      AND devPresentLastScan = 1
                       AND NOT EXISTS (SELECT 1 FROM CurrentScan
                                       WHERE devMac = cur_MAC
                                          ) """)
@@ -156,15 +149,15 @@ def insert_events (db):
     sql.execute(f"""    INSERT INTO Events (eve_MAC, eve_IP, eve_DateTime,
                                             eve_EventType, eve_AdditionalInfo,
                                             eve_PendingAlertEmail)
-                        SELECT DISTINCT c.cur_MAC, c.cur_IP, '{startTime}', 
-                                        CASE 
-                                            WHEN last_event.eve_EventType = 'Device Down' and  last_event.eve_PendingAlertEmail = 0 THEN 'Down Reconnected' 
-                                            ELSE 'Connected' 
+                        SELECT DISTINCT c.cur_MAC, c.cur_IP, '{startTime}',
+                                        CASE
+                                            WHEN last_event.eve_EventType = 'Device Down' and  last_event.eve_PendingAlertEmail = 0 THEN 'Down Reconnected'
+                                            ELSE 'Connected'
                                         END,
                                         '',
                                         1
-                        FROM CurrentScan AS c 
-                        LEFT JOIN LatestEventsPerMAC AS last_event ON c.cur_MAC = last_event.eve_MAC 
+                        FROM CurrentScan AS c
+                        LEFT JOIN LatestEventsPerMAC AS last_event ON c.cur_MAC = last_event.eve_MAC
                         WHERE last_event.devPresentLastScan = 0 OR last_event.eve_MAC IS NULL
                         """)
 
@@ -190,7 +183,7 @@ def insert_events (db):
                     SELECT cur_MAC, cur_IP, '{startTime}', 'IP Changed',
                         'Previous IP: '|| devLastIP, devAlertEvents
                     FROM Devices, CurrentScan
-                    WHERE devMac = cur_MAC                        
+                    WHERE devMac = cur_MAC
                       AND devLastIP <> cur_IP """)
     mylog("debug", "[Events] - Events end")
 

@@ -1,5 +1,7 @@
 import graphene
-from graphene import ObjectType, String, Int, Boolean, List, Field, InputObjectType, Argument
+from graphene import (
+    ObjectType, String, Int, Boolean, List, Field, InputObjectType, Argument
+)
 import json
 import sys
 import os
@@ -8,9 +10,9 @@ import os
 INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
 sys.path.extend([f"{INSTALL_PATH}/server"])
 
-from logger import mylog
-from const import apiPath
-from helper import (
+from logger import mylog  # noqa: E402 [flake8 lint suppression]
+from const import apiPath  # noqa: E402 [flake8 lint suppression]
+from helper import (  # noqa: E402 [flake8 lint suppression]
     is_random_mac,
     get_number_of_children,
     format_ip_long,
@@ -111,11 +113,13 @@ class SettingResult(ObjectType):
     settings = List(Setting)
     count = Int()
 
-# --- LANGSTRINGS --- 
+# --- LANGSTRINGS ---
+
 
 # In-memory cache for lang strings
 _langstrings_cache = {}        # caches lists per file (core JSON or plugin)
 _langstrings_cache_mtime = {}  # tracks last modified times
+
 
 # LangString ObjectType
 class LangString(ObjectType):
@@ -127,6 +131,7 @@ class LangString(ObjectType):
 class LangStringResult(ObjectType):
     langStrings = List(LangString)
     count = Int()
+
 
 # Define Query Type with Pagination Support
 class Query(ObjectType):
@@ -184,31 +189,39 @@ class Query(ObjectType):
                         if (device.get("devParentRelType") not in hidden_relationships)
                     ]
 
-                    devices_data = [
-                        device
-                        for device in devices_data
-                        if (
-                            (
-                                device["devPresentLastScan"] == 1
-                                and "online" in allowed_statuses
-                            )
-                            or (device["devIsNew"] == 1 and "new" in allowed_statuses)
-                            or (
-                                device["devPresentLastScan"] == 0
-                                and device["devAlertDown"]
-                                and "down" in allowed_statuses
-                            )
-                            or (
-                                device["devPresentLastScan"] == 0
-                                and "offline" in allowed_statuses
-                            )
-                            and device["devIsArchived"] == 0
-                            or (
-                                device["devIsArchived"] == 1
-                                and "archived" in allowed_statuses
-                            )
+                    filtered = []
+
+                    for device in devices_data:
+                        is_online = (
+                            device["devPresentLastScan"] == 1 and "online" in allowed_statuses
                         )
-                    ]
+
+                        is_new = (
+                            device["devIsNew"] == 1 and "new" in allowed_statuses
+                        )
+
+                        is_down = (
+                            device["devPresentLastScan"] == 0 and device["devAlertDown"] and "down" in allowed_statuses
+                        )
+
+                        is_offline = (
+                            device["devPresentLastScan"] == 0 and "offline" in allowed_statuses
+                        )
+
+                        is_archived = (
+                            device["devIsArchived"] == 1 and "archived" in allowed_statuses
+                        )
+
+                        # Matches if not archived and status matches OR it is archived and allowed
+                        matches = (
+                            (is_online or is_new or is_down or is_offline) and device["devIsArchived"] == 0
+                        ) or is_archived
+
+                        if matches:
+                            filtered.append(device)
+
+                    devices_data = filtered
+
                 elif status == "connected":
                     devices_data = [
                         device
@@ -257,8 +270,7 @@ class Query(ObjectType):
                         devices_data = [
                             device
                             for device in devices_data
-                            if str(device.get(filter.filterColumn, "")).lower()
-                            == str(filter.filterValue).lower()
+                            if str(device.get(filter.filterColumn, "")).lower() == str(filter.filterValue).lower()
                         ]
 
             # Search data if a search term is provided
@@ -340,7 +352,7 @@ class Query(ObjectType):
 
         return SettingResult(settings=settings, count=len(settings))
 
-    # --- LANGSTRINGS --- 
+    # --- LANGSTRINGS ---
     langStrings = Field(
         LangStringResult,
         langCode=Argument(String, required=False),
@@ -352,7 +364,6 @@ class Query(ObjectType):
         Collect language strings, optionally filtered by language code and/or string key.
         Caches in memory for performance. Can fallback to 'en_us' if a string is missing.
         """
-        global _langstrings_cache, _langstrings_cache_mtime
 
         langStrings = []
 
@@ -437,10 +448,10 @@ class Query(ObjectType):
                     if en_fallback:
                         langStrings[i] = en_fallback[0]
 
-        mylog('trace', f'[graphql_schema] Collected {len(langStrings)} language strings '
-                    f'(langCode={langCode}, key={langStringKey}, fallback_to_en={fallback_to_en})')
+        mylog('trace', f'[graphql_schema] Collected {len(langStrings)} language strings (langCode={langCode}, key={langStringKey}, fallback_to_en={fallback_to_en})')
 
         return LangStringResult(langStrings=langStrings, count=len(langStrings))
+
 
 # helps sorting inconsistent dataset mixed integers and strings
 def mixed_type_sort_key(value):

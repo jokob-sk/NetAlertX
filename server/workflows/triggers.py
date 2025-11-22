@@ -1,11 +1,4 @@
 import json
-import os
-import sys
-
-# Register NetAlertX directories
-INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
-sys.path.extend([f"{INSTALL_PATH}/server"])
-
 from logger import mylog, Logger
 from helper import get_setting_value
 from database import get_array_from_sql_rows
@@ -28,8 +21,7 @@ class Trigger:
         self.event_type = triggerJson["event_type"]
         self.event = event  # Store the triggered event context, if provided
         self.triggered = (
-            self.object_type == event["ObjectType"]
-            and self.event_type == event["AppEventType"]
+            self.object_type == event["ObjectType"] and self.event_type == event["AppEventType"]
         )
 
         mylog(
@@ -53,9 +45,9 @@ class Trigger:
                 raise ValueError(m)
 
             query = f"""
-                    SELECT * FROM 
+                    SELECT * FROM
                     {db_table}
-                    WHERE {refField} = '{event["ObjectGUID"]}'                    
+                    WHERE {refField} = '{event["ObjectGUID"]}'
                 """
 
             mylog("debug", [query])

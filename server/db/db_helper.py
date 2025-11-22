@@ -6,8 +6,8 @@ import os
 INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
 sys.path.extend([f"{INSTALL_PATH}/server"])
 
-from helper import if_byte_then_to_str
-from logger import mylog
+from helper import if_byte_then_to_str  # noqa: E402 [flake8 lint suppression]
+from logger import mylog  # noqa: E402 [flake8 lint suppression]
 
 
 # -------------------------------------------------------------------------------

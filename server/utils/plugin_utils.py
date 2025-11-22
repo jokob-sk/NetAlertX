@@ -1,6 +1,6 @@
 import os
 import json
-
+from collections import namedtuple
 import conf
 from logger import mylog
 from utils.crypto_utils import decrypt_data
@@ -220,9 +220,7 @@ def get_plugins_configs(loadAll):
                     # Load all plugins if `loadAll` is True, the plugin is in the enabled list,
                     # or no specific plugins are enabled (enabledPlugins is empty)
                     if (
-                        loadAll
-                        or plugJson["unique_prefix"] in enabledPlugins
-                        or enabledPlugins == []
+                        loadAll or plugJson["unique_prefix"] in enabledPlugins or enabledPlugins == []
                     ):
                         # Load the contents of the config.json file as a JSON object and append it to pluginsList
                         pluginsList.append(plugJson)

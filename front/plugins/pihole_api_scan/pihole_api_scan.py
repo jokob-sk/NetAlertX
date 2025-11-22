@@ -17,12 +17,12 @@ sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 pluginName = 'PIHOLEAPI'
 
-from plugin_helper import Plugin_Objects, is_mac
-from logger import mylog, Logger
-from helper import get_setting_value
-from const import logPath
-import conf
-from pytz import timezone
+from plugin_helper import Plugin_Objects, is_mac  # noqa: E402 [flake8 lint suppression]
+from logger import mylog, Logger  # noqa: E402 [flake8 lint suppression]
+from helper import get_setting_value  # noqa: E402 [flake8 lint suppression]
+from const import logPath  # noqa: E402 [flake8 lint suppression]
+import conf  # noqa: E402 [flake8 lint suppression]
+from pytz import timezone  # noqa: E402 [flake8 lint suppression]
 
 # Setup timezone & logger using standard NAX helpers
 conf.tz = timezone(get_setting_value('TIMEZONE'))
@@ -179,7 +179,7 @@ def get_pihole_network_devices():
         resp = requests.get(PIHOLEAPI_URL + 'api/network/devices', headers=headers, params=params, verify=PIHOLEAPI_VERIFY_SSL, timeout=PIHOLEAPI_RUN_TIMEOUT)
         resp.raise_for_status()
         data = resp.json()
-        
+
         mylog('debug', [f'[{pluginName}] Pi-hole API returned data: {json.dumps(data)}'])
 
     except Exception as e:
@@ -267,8 +267,8 @@ def main():
             for entry in device_entries:
 
                 if is_mac(entry['mac']):
-                    # Map to Plugin_Objects fields                
-                    mylog('verbose', [f'[{pluginName}] found: {entry['name']}|{entry['mac']}|{entry['ip']}'])
+                    # Map to Plugin_Objects fields
+                    mylog('verbose', [f"[{pluginName}] found: {entry['name']}|{entry['mac']}|{entry['ip']}"])
 
                     plugin_objects.add_object(
                         primaryId=str(entry['mac']),
@@ -281,7 +281,7 @@ def main():
                         foreignKey=str(entry['mac'])
                     )
                 else:
-                    mylog('verbose', [f'[{pluginName}] Skipping invalid MAC: {entry['name']}|{entry['mac']}|{entry['ip']}'])
+                    mylog('verbose', [f"[{pluginName}] Skipping invalid MAC: {entry['name']}|{entry['mac']}|{entry['ip']}"])
 
         # Write result file for NetAlertX to ingest
         plugin_objects.write_result_file()

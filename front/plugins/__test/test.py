@@ -11,10 +11,10 @@ INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 # NetAlertX modules
-from const import logPath
-from plugin_helper import Plugin_Objects
-from logger import mylog
-from helper import get_setting_value
+from const import logPath  # noqa: E402 [flake8 lint suppression]
+from plugin_helper import Plugin_Objects  # noqa: E402 [flake8 lint suppression]
+from logger import mylog  # noqa: E402 [flake8 lint suppression]
+from helper import get_setting_value  # noqa: E402 [flake8 lint suppression]
 
 pluginName = 'TESTONLY'
 
@@ -28,14 +28,11 @@ plugin_objects = Plugin_Objects(RESULT_FILE)
 md5_hash = hashlib.md5()
 
 
-
 # globals
-
-
 def main():
     # START
-    mylog('verbose', [f'[{pluginName}] In script'])   
-    
+    mylog('verbose', [f'[{pluginName}] In script'])
+
     # SPACE FOR TESTING 🔽
 
     str = "ABC-MBP._another.localdomain."
@@ -43,28 +40,23 @@ def main():
     # result = cleanDeviceName(str, True)
 
     regexes = get_setting_value('NEWDEV_NAME_CLEANUP_REGEX')
-    
     print(regexes)
     subnets = get_setting_value('SCAN_SUBNETS')
-    
+
     print(subnets)
 
-    for rgx in regexes: 
+    for rgx in regexes:
         mylog('trace', ["[cleanDeviceName] applying regex    : " + rgx])
         mylog('trace', ["[cleanDeviceName] name before regex : " + str])
-        
+
         str = re.sub(rgx, "", str)
         mylog('trace', ["[cleanDeviceName] name after regex  : " + str])
 
     mylog('debug', ["[cleanDeviceName] output: " + str])
-    
-
     # SPACE FOR TESTING 🔼
 
     # END
-    mylog('verbose', [f'[{pluginName}] result "{str}"'])   
-     
-
+    mylog('verbose', [f'[{pluginName}] result "{str}"'])
 
 
 #  -------------INIT---------------------

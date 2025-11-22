@@ -15,10 +15,9 @@ __version__ = "1.3"  # fix detection of the default gateway IP address that woul
 # try to identify and populate their connections by switch/accesspoints and ports/SSID
 # try to differentiate root bridges from accessory
 
-
-#
 # sample code to update unbound on opnsense - for reference...
-# curl -X POST -d '{"host":{"enabled":"1","hostname":"test","domain":"testdomain.com","rr":"A","mxprio":"","mx":"","server":"10.0.1.1","description":""}}' -H "Content-Type: application/json" -k -u $OPNS_KEY:$OPNS_SECRET https://$IPFW/api/unbound/settings/AddHostOverride
+# curl -X POST -d '{"host":{"enabled":"1","hostname":"test","domain":"testdomain.com","rr":"A","mxprio":"","mx":"","server":"10.0.1.1","description":""}}'\
+#  -H "Content-Type: application/json" -k -u $OPNS_KEY:$OPNS_SECRET https://$IPFW/api/unbound/settings/AddHostOverride
 #
 import os
 import sys
@@ -35,12 +34,12 @@ import multiprocessing
 INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from plugin_helper import Plugin_Objects
-from logger import mylog, Logger
-from const import logPath
-from helper import get_setting_value
-from pytz import timezone
-import conf
+from plugin_helper import Plugin_Objects  # noqa: E402 [flake8 lint suppression]
+from logger import mylog, Logger  # noqa: E402 [flake8 lint suppression]
+from const import logPath  # noqa: E402 [flake8 lint suppression]
+from helper import get_setting_value  # noqa: E402 [flake8 lint suppression]
+from pytz import timezone  # noqa: E402 [flake8 lint suppression]
+import conf  # noqa: E402 [flake8 lint suppression]
 
 # Make sure the TIMEZONE for logging is correct
 conf.tz = timezone(get_setting_value('TIMEZONE'))
@@ -87,8 +86,6 @@ cMAC, cIP, cNAME, cSWITCH_AP, cPORT_SSID = range(5)
 OMDLOGLEVEL = "debug"
 
 
-
-#
 # translate MAC address from standard ieee model to ietf draft
 # AA-BB-CC-DD-EE-FF to aa:bb:cc:dd:ee:ff
 # tplink adheres to ieee,  Nax adheres to ietf
@@ -137,12 +134,12 @@ def callomada(myargs):
 
     omada_output = ""
     retries = 2
-    while omada_output == "" and retries > 1:
+    while omada_output == "" and retries > 0:
         retries = retries - 1
         try:
             mf = io.StringIO()
             with redirect_stdout(mf):
-                bar = omada(myargs)
+                omada(myargs)
             omada_output = mf.getvalue()
         except Exception:
             mylog(
@@ -186,55 +183,71 @@ def add_uplink(
     sadevices_linksbymac,
     port_byswitchmac_byclientmac,
 ):
-    # Ensure switch_mac exists in device_data_bymac
+    # Ensure switch exists
     if switch_mac not in device_data_bymac:
         mylog("none", [f"[{pluginName}] switch_mac '{switch_mac}' not found in device_data_bymac"])
         return
-    
-    # Ensure SWITCH_AP key exists in the dictionary
-    if SWITCH_AP not in device_data_bymac[switch_mac]:
-        mylog("none", [f"[{pluginName}] Missing key '{SWITCH_AP}' in device_data_bymac[{switch_mac}]"])
-        return
-    
-    # Check if uplink should be added
-    if device_data_bymac[switch_mac][SWITCH_AP] in [None, "null"]:
-        device_data_bymac[switch_mac][SWITCH_AP] = uplink_mac
 
-        # Ensure uplink_mac exists in device_data_bymac
+    dev_switch = device_data_bymac[switch_mac]
+
+    # Ensure list is long enough to contain SWITCH_AP index
+    if len(dev_switch) <= SWITCH_AP:
+        mylog("none", [f"[{pluginName}] SWITCH_AP index {SWITCH_AP} missing in record for {switch_mac}"])
+        return
+
+    # Add uplink only if empty
+    if dev_switch[SWITCH_AP] in (None, "null"):
+        dev_switch[SWITCH_AP] = uplink_mac
+
+        # Validate uplink_mac exists
         if uplink_mac not in device_data_bymac:
             mylog("none", [f"[{pluginName}] uplink_mac '{uplink_mac}' not found in device_data_bymac"])
             return
-        
-        # Determine port to uplink
-        if (
-            device_data_bymac[switch_mac].get(TYPE) == "Switch"
-            and device_data_bymac[uplink_mac].get(TYPE) == "Switch"
-        ):
+
+        dev_uplink = device_data_bymac[uplink_mac]
+
+        # Get TYPE safely
+        switch_type = dev_switch[TYPE] if len(dev_switch) > TYPE else None
+        uplink_type = dev_uplink[TYPE] if len(dev_uplink) > TYPE else None
+
+        # Switch-to-switch link → use port mapping
+        if switch_type == "Switch" and uplink_type == "Switch":
             port_to_uplink = port_byswitchmac_byclientmac.get(switch_mac, {}).get(uplink_mac)
             if port_to_uplink is None:
-                mylog("none", [f"[{pluginName}] Missing port info for switch_mac '{switch_mac}' and uplink_mac '{uplink_mac}'"])
+                mylog("none", [
+                    f"[{pluginName}] Missing port info for {switch_mac} → {uplink_mac}"
+                ])
                 return
         else:
-            port_to_uplink = device_data_bymac[uplink_mac].get(PORT_SSID)
-        
-        # Assign port to switch_mac
-        device_data_bymac[switch_mac][PORT_SSID] = port_to_uplink
-    
-    # Recursively add uplinks for linked devices
+            # Other device types → read PORT_SSID index
+            if len(dev_uplink) <= PORT_SSID:
+                mylog("none", [
+                    f"[{pluginName}] PORT_SSID index missing for uplink {uplink_mac}"
+                ])
+                return
+            port_to_uplink = dev_uplink[PORT_SSID]
+
+        # Assign port to switch
+        if len(dev_switch) > PORT_SSID:
+            dev_switch[PORT_SSID] = port_to_uplink
+        else:
+            mylog("none", [
+                f"[{pluginName}] PORT_SSID index missing in switch {switch_mac}"
+            ])
+
+    # Process children recursively
     for link in sadevices_linksbymac.get(switch_mac, []):
         if (
-            link in device_data_bymac
-            and device_data_bymac[link].get(SWITCH_AP) in [None, "null"]
-            and device_data_bymac[switch_mac].get(TYPE) == "Switch"
+            link in device_data_bymac and len(device_data_bymac[link]) > SWITCH_AP and device_data_bymac[link][SWITCH_AP] in (None, "null") and len(dev_switch) > TYPE
         ):
-            add_uplink(
-                switch_mac,
-                link,
-                device_data_bymac,
-                sadevices_linksbymac,
-                port_byswitchmac_byclientmac,
-            )
-
+            if dev_switch[TYPE] == "Switch":
+                add_uplink(
+                    switch_mac,
+                    link,
+                    device_data_bymac,
+                    sadevices_linksbymac,
+                    port_byswitchmac_byclientmac,
+                )
 
 
 # ----------------------------------------------
@@ -324,16 +337,16 @@ def main():
             )
             mymac = ieee2ietf_mac_formater(device[MAC])
             plugin_objects.add_object(
-                primaryId=mymac,  #  MAC
-                secondaryId=device[IP],  #  IP
-                watched1=device[NAME],  #  NAME/HOSTNAME
-                watched2=ParentNetworkNode,  #  PARENT NETWORK NODE MAC
-                watched3=myport,  #  PORT
-                watched4=myssid,  #  SSID
+                primaryId=mymac,  # MAC
+                secondaryId=device[IP],  # IP
+                watched1=device[NAME],  # NAME/HOSTNAME
+                watched2=ParentNetworkNode,  # PARENT NETWORK NODE MAC
+                watched3=myport,  # PORT
+                watched4=myssid,  # SSID
                 extra=device[TYPE],
                 # omada_site,    #  SITENAME (cur_NetworkSite) or VENDOR (cur_Vendor) (PICK one and adjust config.json -> "column": "Extra")
                 foreignKey=device[MAC].lower().replace("-", ":"),
-            )  #  usually MAC
+            )  # usually MAC
 
             mylog(
                 "verbose",
@@ -369,7 +382,6 @@ def get_omada_devices_details(msadevice_data):
         mswitch_dump = callomada(["-t", "myomada", "switch", "-d", mthisswitch])
     else:
         mswitch_detail = ""
-        nswitch_dump = ""
     return mswitch_detail, mswitch_dump
 
 
@@ -414,7 +426,6 @@ def get_device_data(omada_clients_output, switches_and_aps, device_handler):
     # 17:27:10 [<unique_prefix>] token: "['1A-2B-3C-4D-5E-6F', '192.168.0.217', '1A-2B-3C-4D-5E-6F', '17', '40-AE-30-A5-A7-50, 'Switch']"
     # constants
     sadevices_macbyname = {}
-    sadevices_macbymac = {}
     sadevices_linksbymac = {}
     port_byswitchmac_byclientmac = {}
     device_data_bymac = {}
@@ -427,7 +438,7 @@ def get_device_data(omada_clients_output, switches_and_aps, device_handler):
     def run_command(command, index):
         result = subprocess.run(command, capture_output=True, text=True, shell=True)
         return str(index), result.stdout.strip()
-    
+
     myindex, command_output= run_command(command, 2)
     mylog('verbose', [f'[{pluginName}] command={command} index={myindex} results={command_output}'])
     """
@@ -556,11 +567,11 @@ def get_device_data(omada_clients_output, switches_and_aps, device_handler):
         #
 
         naxname = real_naxname
-        if real_naxname != None:
+        if real_naxname is not None:
             if "(" in real_naxname:
                 # removing parenthesis and domains from the name
                 naxname = real_naxname.split("(")[0]
-            if naxname != None and "." in naxname:
+            if naxname is not None and "." in naxname:
                 naxname = naxname.split(".")[0]
         if naxname in (None, "null", ""):
             naxname = (

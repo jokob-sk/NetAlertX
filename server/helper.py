@@ -7,23 +7,20 @@ import os
 import re
 import unicodedata
 import subprocess
-import pytz
 import json
 import requests
 import base64
 import hashlib
 import random
-import email
 import string
 import ipaddress
 
 import conf
-from const import *
+from const import applicationPath, fullConfPath, fullDbPath, dbPath, confPath, apiPath
 from logger import mylog, logResult
 
 # Register NetAlertX directories using runtime configuration
 INSTALL_PATH = applicationPath
-
 
 
 # -------------------------------------------------------------------------------
@@ -59,21 +56,13 @@ def checkPermissionsOK():
 
 
 # -------------------------------------------------------------------------------
-def fixPermissions():
-    # Try fixing access rights if needed
-    chmodCommands = []
-
-
-# -------------------------------------------------------------------------------
 def initialiseFile(pathToCheck, defaultFile):
     # if file not readable (missing?) try to copy over the backed-up (default) one
     if str(os.access(pathToCheck, os.R_OK)) == "False":
         mylog(
             "none",
             [
-                "[Setup] ("
-                + pathToCheck
-                + ") file is not readable or missing. Trying to copy over the default one."
+                "[Setup] (" + pathToCheck + ") file is not readable or missing. Trying to copy over the default one."
             ],
         )
         try:
@@ -89,22 +78,14 @@ def initialiseFile(pathToCheck, defaultFile):
                 mylog(
                     "none",
                     [
-                        "[Setup] ⚠ ERROR copying ("
-                        + defaultFile
-                        + ") to ("
-                        + pathToCheck
-                        + "). Make sure the app has Read & Write access to the parent directory."
+                        "[Setup] ⚠ ERROR copying (" + defaultFile + ") to (" + pathToCheck + "). Make sure the app has Read & Write access to the parent directory."
                     ],
                 )
             else:
                 mylog(
                     "none",
                     [
-                        "[Setup] ("
-                        + defaultFile
-                        + ") copied over successfully to ("
-                        + pathToCheck
-                        + ")."
+                        "[Setup] (" + defaultFile + ") copied over successfully to (" + pathToCheck + ")."
                     ],
                 )
 
@@ -116,10 +97,7 @@ def initialiseFile(pathToCheck, defaultFile):
             mylog(
                 "none",
                 [
-                    "[Setup] ⚠ ERROR copying ("
-                    + defaultFile
-                    + "). Make sure the app has Read & Write access to "
-                    + pathToCheck
+                    "[Setup] ⚠ ERROR copying (" + defaultFile + "). Make sure the app has Read & Write access to " + pathToCheck
                 ],
             )
             mylog("none", [e.output])
@@ -130,15 +108,12 @@ def filePermissions():
     # check and initialize .conf
     (confR_access, dbR_access) = checkPermissionsOK()  # Initial check
 
-    if confR_access == False:
+    if confR_access is False:
         initialiseFile(fullConfPath, f"{INSTALL_PATH}/back/app.conf")
 
     # check and initialize .db
-    if dbR_access == False:
+    if dbR_access is False:
         initialiseFile(fullDbPath, f"{INSTALL_PATH}/back/app.db")
-
-    # last attempt
-    fixPermissions()
 
 
 # -------------------------------------------------------------------------------
@@ -273,8 +248,6 @@ def get_setting_value(key):
         Any: The Python-typed setting value, or an empty string if not found.
     """
 
-    global SETTINGS_SECONDARYCACHE
-
     # Returns empty string if not found
     value = ""
 
@@ -292,7 +265,7 @@ def get_setting_value(key):
                     value = setting_value_to_python_type(set_type, set_value)
                 else:
                     value = setting_value_to_python_type(set_type, str(set_value))
-            
+
                 SETTINGS_SECONDARYCACHE[key] = value
 
                 return value
@@ -382,7 +355,7 @@ def setting_value_to_python_type(set_type, set_value):
         if isinstance(set_value, str):
             try:
                 value = json.loads(set_value.replace("'", "\""))
-                    
+
             except json.JSONDecodeError as e:
                 mylog(
                     "none",
@@ -413,17 +386,12 @@ def setting_value_to_python_type(set_type, set_value):
             value = set_value
 
     elif (
-        dataType == "string"
-        and elementType == "input"
-        and any(opt.get("readonly") == "true" for opt in elementOptions)
+        dataType == "string" and elementType == "input" and any(opt.get("readonly") == "true" for opt in elementOptions)
     ):
         value = reverseTransformers(str(set_value), transformers)
 
     elif (
-        dataType == "string"
-        and elementType == "input"
-        and any(opt.get("type") == "password" for opt in elementOptions)
-        and "sha256" in transformers
+        dataType == "string" and elementType == "input" and any(opt.get("type") == "password" for opt in elementOptions) and "sha256" in transformers
     ):
         value = hashlib.sha256(set_value.encode()).hexdigest()
 
@@ -602,23 +570,23 @@ def normalize_string(text):
 # -------------------------------------------------------------------------------
 
 
-# -------------------------------------------------------------------------------------------
-def is_random_mac(mac: str) -> bool:
-    """Determine if a MAC address is random, respecting user-defined prefixes not to mark as random."""
+# # -------------------------------------------------------------------------------------------
+# def is_random_mac(mac: str) -> bool:
+#     """Determine if a MAC address is random, respecting user-defined prefixes not to mark as random."""
 
-    is_random = mac[1].upper() in ["2", "6", "A", "E"]
+#     is_random = mac[1].upper() in ["2", "6", "A", "E"]
 
-    # Get prefixes from settings
-    prefixes = get_setting_value("UI_NOT_RANDOM_MAC")
+#     # Get prefixes from settings
+#     prefixes = get_setting_value("UI_NOT_RANDOM_MAC")
 
-    # If detected as random, make sure it doesn't start with a prefix the user wants to exclude
-    if is_random:
-        for prefix in prefixes:
-            if mac.upper().startswith(prefix.upper()):
-                is_random = False
-                break
+#     # If detected as random, make sure it doesn't start with a prefix the user wants to exclude
+#     if is_random:
+#         for prefix in prefixes:
+#             if mac.upper().startswith(prefix.upper()):
+#                 is_random = False
+#                 break
 
-    return is_random
+#     return is_random
 
 
 # -------------------------------------------------------------------------------------------
@@ -653,6 +621,12 @@ def extract_ip_addresses(text):
 # -------------------------------------------------------------------------------
 # Helper function to determine if a MAC address is random
 def is_random_mac(mac):
+    """Determine if a MAC address is random, respecting user-defined prefixes not to mark as random."""
+
+    # Validate input
+    if not mac or len(mac) < 2:
+        return False
+
     # Check if second character matches "2", "6", "A", "E" (case insensitive)
     is_random = mac[1].upper() in ["2", "6", "A", "E"]
 
@@ -660,7 +634,7 @@ def is_random_mac(mac):
     if is_random:
         not_random_prefixes = get_setting_value("UI_NOT_RANDOM_MAC")
         for prefix in not_random_prefixes:
-            if mac.startswith(prefix):
+            if mac.upper().startswith(prefix.upper()):
                 is_random = False
                 break
     return is_random
@@ -771,7 +745,6 @@ def getBuildTimeStampAndVersion():
             results.append(value)
 
     return tuple(results)
-
 
 
 # -------------------------------------------------------------------------------

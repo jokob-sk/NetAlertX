@@ -8,9 +8,9 @@ import shutil
 import re
 
 # Register NetAlertX libraries
-import conf 
-from const import fullConfPath, applicationPath, fullConfFolder, default_tz
-from helper import getBuildTimeStampAndVersion, fixPermissions, collect_lang_strings, updateSubnets, isJsonObject, setting_value_to_python_type, get_setting_value, generate_random_string
+import conf
+from const import fullConfPath, fullConfFolder, default_tz
+from helper import getBuildTimeStampAndVersion, collect_lang_strings, updateSubnets, generate_random_string
 from utils.datetime_utils import timeNowDB
 from app_state import updateState
 from logger import mylog
@@ -19,7 +19,6 @@ from scheduler import schedule_class
 from plugin import plugin_manager, print_plugin_info
 from utils.plugin_utils import get_plugins_configs, get_set_value_for_init
 from messaging.in_app import write_notification
-from utils.crypto_utils import get_random_bytes
 
 # ===============================================================================
 # Initialise user defined values
@@ -59,7 +58,7 @@ def ccd(
     result = default
 
     # Use existing value if already supplied, otherwise default value is used
-    if forceDefault == False and key in config_dir:
+    if forceDefault is False and key in config_dir:
         result = config_dir[key]
 
     # Single quotes might break SQL queries, replacing them
@@ -216,7 +215,7 @@ def importConfigs(pm, db, all_plugins):
         [],
         c_d,
         "Loaded plugins",
-        '{"dataType":"array","elements":[{"elementType":"select","elementHasInputValue":1,"elementOptions":[{"multiple":"true","ordeable":"true"}],"transformers":[]},{"elementType":"button","elementOptions":[{"sourceSuffixes":[]},{"separator":""},{"cssClasses":"col-xs-12"},{"onClick":"selectChange(this)"},{"getStringKey":"Gen_Change"}],"transformers":[]}]}',
+        '{"dataType":"array","elements":[{"elementType":"select","elementHasInputValue":1,"elementOptions":[{"multiple":"true","ordeable":"true"}],"transformers":[]},{"elementType":"button","elementOptions":[{"sourceSuffixes":[]},{"separator":""},{"cssClasses":"col-xs-12"},{"onClick":"selectChange(this)"},{"getStringKey":"Gen_Change"}],"transformers":[]}]}',  # noqa: E501
         "[]",
         "General",
     )
@@ -234,7 +233,7 @@ def importConfigs(pm, db, all_plugins):
         ["192.168.1.0/24 --interface=eth1", "192.168.1.0/24 --interface=eth0"],
         c_d,
         "Subnets to scan",
-        """{"dataType": "array","elements": [{"elementType": "input","elementOptions": [{"placeholder": "192.168.1.0/24 --interface=eth1"},{"suffix": "_in"},{"cssClasses": "col-sm-10"},{"prefillValue": "null"}],"transformers": []},{"elementType": "button","elementOptions": [{"sourceSuffixes": ["_in"]},{"separator": ""},{"cssClasses": "col-xs-12"},{"onClick": "addList(this, false)"},{"getStringKey": "Gen_Add"}],"transformers": []},{"elementType": "select","elementHasInputValue": 1,"elementOptions": [{"multiple": "true"},{"readonly": "true"},{"editable": "true"}],"transformers": []},{"elementType": "button","elementOptions": [{"sourceSuffixes": []},{"separator": ""},{"cssClasses": "col-xs-6"},{"onClick": "removeAllOptions(this)"},{"getStringKey": "Gen_Remove_All"}],"transformers": []},{"elementType": "button","elementOptions": [{"sourceSuffixes": []},{"separator": ""},{"cssClasses": "col-xs-6"},{"onClick": "removeFromList(this)"},{"getStringKey": "Gen_Remove_Last"}],"transformers": []}]}""",
+        """{"dataType": "array","elements": [{"elementType": "input","elementOptions": [{"placeholder": "192.168.1.0/24 --interface=eth1"},{"suffix": "_in"},{"cssClasses": "col-sm-10"},{"prefillValue": "null"}],"transformers": []},{"elementType": "button","elementOptions": [{"sourceSuffixes": ["_in"]},{"separator": ""},{"cssClasses": "col-xs-12"},{"onClick": "addList(this, false)"},{"getStringKey": "Gen_Add"}],"transformers": []},{"elementType": "select","elementHasInputValue": 1,"elementOptions": [{"multiple": "true"},{"readonly": "true"},{"editable": "true"}],"transformers": []},{"elementType": "button","elementOptions": [{"sourceSuffixes": []},{"separator": ""},{"cssClasses": "col-xs-6"},{"onClick": "removeAllOptions(this)"},{"getStringKey": "Gen_Remove_All"}],"transformers": []},{"elementType": "button","elementOptions": [{"sourceSuffixes": []},{"separator": ""},{"cssClasses": "col-xs-6"},{"onClick": "removeFromList(this)"},{"getStringKey": "Gen_Remove_Last"}],"transformers": []}]}""",   # noqa: E501 - inline JSON
         "[]",
         "General",
     )
@@ -356,7 +355,7 @@ def importConfigs(pm, db, all_plugins):
         ],
         c_d,
         "Network device types",
-        '{"dataType":"array","elements":[{"elementType":"input","elementOptions":[{"placeholder":"Enter value"},{"suffix":"_in"},{"cssClasses":"col-sm-10"},{"prefillValue":"null"}],"transformers":[]},{"elementType":"button","elementOptions":[{"sourceSuffixes":["_in"]},{"separator":""},{"cssClasses":"col-xs-12"},{"onClick":"addList(this,false)"},{"getStringKey":"Gen_Add"}],"transformers":[]},{"elementType":"select",	"elementHasInputValue":1,"elementOptions":[{"multiple":"true"},{"readonly":"true"},{"editable":"true"}],"transformers":[]},{"elementType":"button","elementOptions":[{"sourceSuffixes":[]},{"separator":""},{"cssClasses":"col-xs-6"},{"onClick":"removeAllOptions(this)"},{"getStringKey":"Gen_Remove_All"}],"transformers":[]},{"elementType":"button","elementOptions":[{"sourceSuffixes":[]},{"separator":""},{"cssClasses":"col-xs-6"},{"onClick":"removeFromList(this)"},{"getStringKey":"Gen_Remove_Last"}],"transformers":[]}]}',
+        '{"dataType":"array","elements":[{"elementType":"input","elementOptions":[{"placeholder":"Enter value"},{"suffix":"_in"},{"cssClasses":"col-sm-10"},{"prefillValue":"null"}],"transformers":[]},{"elementType":"button","elementOptions":[{"sourceSuffixes":["_in"]},{"separator":""},{"cssClasses":"col-xs-12"},{"onClick":"addList(this,false)"},{"getStringKey":"Gen_Add"}],"transformers":[]},{"elementType":"select",	"elementHasInputValue":1,"elementOptions":[{"multiple":"true"},{"readonly":"true"},{"editable":"true"}],"transformers":[]},{"elementType":"button","elementOptions":[{"sourceSuffixes":[]},{"separator":""},{"cssClasses":"col-xs-6"},{"onClick":"removeAllOptions(this)"},{"getStringKey":"Gen_Remove_All"}],"transformers":[]},{"elementType":"button","elementOptions":[{"sourceSuffixes":[]},{"separator":""},{"cssClasses":"col-xs-6"},{"onClick":"removeFromList(this)"},{"getStringKey":"Gen_Remove_Last"}],"transformers":[]}]}',   # noqa: E501 - inline JSON
         "[]",
         "General",
     )
@@ -374,7 +373,7 @@ def importConfigs(pm, db, all_plugins):
         "t_" + generate_random_string(20),
         c_d,
         "API token",
-        '{"dataType": "string","elements": [{"elementType": "input","elementHasInputValue": 1,"elementOptions": [{ "cssClasses": "col-xs-12" }],"transformers": []},{"elementType": "button","elementOptions": [{ "getStringKey": "Gen_Generate" },{ "customParams": "API_TOKEN" },{ "onClick": "generateApiToken(this, 20)" },{ "cssClasses": "col-xs-12" }],"transformers": []}]}',
+        '{"dataType": "string","elements": [{"elementType": "input","elementHasInputValue": 1,"elementOptions": [{ "cssClasses": "col-xs-12" }],"transformers": []},{"elementType": "button","elementOptions": [{ "getStringKey": "Gen_Generate" },{ "customParams": "API_TOKEN" },{ "onClick": "generateApiToken(this, 20)" },{ "cssClasses": "col-xs-12" }],"transformers": []}]}',   # noqa: E501 - inline JSON
         "[]",
         "General",
     )
@@ -386,7 +385,7 @@ def importConfigs(pm, db, all_plugins):
         c_d,
         "Language Interface",
         '{"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]}',
-        "['English (en_us)', 'Arabic (ar_ar)', 'Catalan (ca_ca)', 'Czech (cs_cz)', 'German (de_de)', 'Spanish (es_es)', 'Farsi (fa_fa)', 'French (fr_fr)', 'Italian (it_it)', 'Japanese (ja_jp)', 'Norwegian (nb_no)', 'Polish (pl_pl)', 'Portuguese (pt_br)', 'Portuguese (pt_pt)', 'Russian (ru_ru)', 'Swedish (sv_sv)', 'Turkish (tr_tr)', 'Ukrainian (uk_ua)', 'Chinese (zh_cn)']",
+        "['English (en_us)', 'Arabic (ar_ar)', 'Catalan (ca_ca)', 'Czech (cs_cz)', 'German (de_de)', 'Spanish (es_es)', 'Farsi (fa_fa)', 'French (fr_fr)', 'Italian (it_it)', 'Japanese (ja_jp)', 'Norwegian (nb_no)', 'Polish (pl_pl)', 'Portuguese (pt_br)', 'Portuguese (pt_pt)', 'Russian (ru_ru)', 'Swedish (sv_sv)', 'Turkish (tr_tr)', 'Ukrainian (uk_ua)', 'Chinese (zh_cn)']",   # noqa: E501 - inline JSON
         "UI",
     )
 
@@ -483,9 +482,7 @@ def importConfigs(pm, db, all_plugins):
 
         # only include loaded plugins, and the ones that are enabled
         if (
-            pref in conf.LOADED_PLUGINS
-            or plugin_run != "disabled"
-            or plugin_run is None
+            pref in conf.LOADED_PLUGINS or plugin_run != "disabled" or plugin_run is None
         ):
             print_plugin_info(plugin, ["display_name", "description"])
 
@@ -524,9 +521,7 @@ def importConfigs(pm, db, all_plugins):
                         if "popupForm" in option:
                             for popup_entry in option["popupForm"]:
                                 popup_pref = (
-                                    key
-                                    + "_popupform_"
-                                    + popup_entry.get("function", "")
+                                    key + "_popupform_" + popup_entry.get("function", "")
                                 )
                                 stringSqlParams = collect_lang_strings(
                                     popup_entry, popup_pref, stringSqlParams
@@ -606,7 +601,7 @@ def importConfigs(pm, db, all_plugins):
                 # Loop through settings_override dictionary
                 for setting_name, value in settings_override.items():
                     # Ensure the value is treated as a string and passed directly
-                    if isinstance(value, str) == False:
+                    if isinstance(value, str) is False:
                         value = str(value)
 
                     # Log the value being passed
@@ -669,23 +664,33 @@ def importConfigs(pm, db, all_plugins):
 
     # -----------------
     # HANDLE APP was upgraded message - clear cache
-    
+
     # Check if app was upgraded
-        
+
     buildTimestamp, new_version = getBuildTimeStampAndVersion()
     prev_version = conf.VERSION if conf.VERSION != '' else "unknown"
-    
+
     mylog('debug', [f"[Config] buildTimestamp | prev_version | .VERSION file: '{buildTimestamp}|{prev_version}|{new_version}'"])
-    
+
     if str(prev_version) != str(new_version):
-        
-        mylog('none', ['[Config] App upgraded 🚀'])      
-                
+
+        mylog('none', ['[Config] App upgraded 🚀'])
+
         # ccd(key, default, config_dir, name, inputtype, options, group, events=None, desc="", setJsonMetadata=None, overrideTemplate=None, forceDefault=False)
         ccd('VERSION', new_version , c_d, '_KEEP_', '_KEEP_', '_KEEP_', '_KEEP_', None, "_KEEP_", None, None, True)
-        
-        write_notification(f'[Upgrade] : App upgraded from <code>{prev_version}</code> to <code>{new_version}</code> 🚀 Please clear the cache: <ol> <li>Click OK below</li>  <li>Clear the browser cache (shift + browser refresh button)</li> <li> Clear app cache with the <i class="fa-solid fa-rotate"></i> (reload) button in the header</li><li>Go to Settings and click Save</li> </ol> Check out new features and what has changed in the <a href="https://github.com/jokob-sk/NetAlertX/releases" target="_blank">📓 release notes</a>.', 'interrupt', timeNowDB())
-    
+
+        write_notification(
+            f"""[Upgrade]: App upgraded from <code>{prev_version}</code> to \
+            <code>{new_version}</code> 🚀 Please clear the cache: \
+            <ol> <li>Click OK below</li>  \
+            <li>Clear the browser cache (shift + browser refresh button)</li> \
+            <li> Clear app cache with the <i class="fa-solid fa-rotate"></i> (reload) button in the header</li>\
+            <li>Go to Settings and click Save</li> </ol>\
+            Check out new features and what has changed in the \
+            <a href="https://github.com/jokob-sk/NetAlertX/releases" target="_blank">📓 release notes</a>.""",
+            'interrupt',
+            timeNowDB()
+        )
 
     # -----------------
     # Initialization finished, update DB and API endpoints
@@ -717,13 +722,13 @@ def importConfigs(pm, db, all_plugins):
     #             settingsImported = None (timestamp),
     #             showSpinner = False (1/0),
     #             graphQLServerStarted = 1 (1/0))
-    updateState("Config imported", conf.lastImportedConfFile, conf.lastImportedConfFile, False, 1, None, None, new_version)   
-    
+    updateState("Config imported", conf.lastImportedConfFile, conf.lastImportedConfFile, False, 1, None, None, new_version)
+
     msg = '[Config] Imported new settings config'
     mylog('minimal', msg)
-    
+
     # front end app log loggging
-    write_notification(msg, 'info', timeNowDB())    
+    write_notification(msg, 'info', timeNowDB())
 
     return pm, all_plugins, True
 
@@ -801,8 +806,6 @@ def renameSettings(config_file):
             str(config_file) + "_temp", str(config_file)
         )  # Convert config_file to a string
 
-        # ensure correct ownership
-        fixPermissions()
     else:
         mylog(
             "debug", "[Config] No old setting names found in the file. No changes made."

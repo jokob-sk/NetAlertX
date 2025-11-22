@@ -9,22 +9,27 @@ import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'server'))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'server', 'db'))
 
-from db.sql_safe_builder import SafeConditionBuilder, create_safe_condition_builder
-from messaging.reporting import get_notifications
+from db.sql_safe_builder import create_safe_condition_builder  # noqa: E402 [flake8 lint suppression]
+from messaging.reporting import get_notifications  # noqa: E402 [flake8 lint suppression]
 
 # -----------------------------
 # Fixtures
 # -----------------------------
+
+
 @pytest.fixture
 def test_db_path():
-    path = tempfile.mktemp(suffix=".db")
+    with tempfile.NamedTemporaryFile(suffix=".db", delete=False) as tmp:
+        path = tmp.name
     yield path
     if os.path.exists(path):
         os.remove(path)
 
+
 @pytest.fixture
 def builder():
     return create_safe_condition_builder()
+
 
 @pytest.fixture
 def test_db(test_db_path):
@@ -96,6 +101,7 @@ def test_db(test_db_path):
 # Tests
 # -----------------------------
 
+
 def test_fresh_install_compatibility(builder):
     condition, params = builder.get_safe_condition_legacy("")
     assert condition == ""
@@ -104,6 +110,7 @@ def test_fresh_install_compatibility(builder):
     condition, params = builder.get_safe_condition_legacy("AND devName = 'TestDevice'")
     assert "devName = :" in condition
     assert 'TestDevice' in params.values()
+
 
 def test_existing_db_compatibility():
     mock_db = Mock()
@@ -129,6 +136,7 @@ def test_existing_db_compatibility():
     assert 'events_meta' in result
     assert mock_db.get_table_as_json.called
 
+
 def test_notification_system_integration(builder):
     email_condition = "AND devName = 'EmailTestDevice'"
     condition, params = builder.get_safe_condition_legacy(email_condition)
@@ -150,6 +158,7 @@ def test_notification_system_integration(builder):
     assert "eve_MAC = :" in condition
     assert 'aa:bb:cc:dd:ee:ff' in params.values()
 
+
 def test_settings_persistence(builder):
     test_settings = [
         "AND devName = 'Persistent Device'",
@@ -163,6 +172,7 @@ def test_settings_persistence(builder):
         assert isinstance(condition, str)
         assert isinstance(params, dict)
 
+
 def test_device_operations(builder):
     device_conditions = [
         "AND devName = 'Updated Device'",
@@ -175,6 +185,7 @@ def test_device_operations(builder):
         assert len(params) > 0 or safe_condition == ""
         assert "'" not in safe_condition
 
+
 def test_plugin_functionality(builder):
     plugin_conditions = [
         "AND Plugin = 'TestPlugin'",
@@ -186,6 +197,7 @@ def test_plugin_functionality(builder):
         if safe_condition:
             assert ":" in safe_condition
             assert len(params) > 0
+
 
 def test_sql_injection_prevention(builder):
     malicious_inputs = [
@@ -200,6 +212,7 @@ def test_sql_injection_prevention(builder):
         assert condition == ""
         assert params == {}
 
+
 def test_error_handling(builder):
     invalid_condition = "INVALID SQL SYNTAX HERE"
     condition, params = builder.get_safe_condition_legacy(invalid_condition)
@@ -213,6 +226,7 @@ def test_error_handling(builder):
             assert isinstance(condition, str)
             assert isinstance(params, dict)
 
+
 def test_backward_compatibility(builder):
     legacy_conditions = [
         "AND devName = {s-quote}Legacy Device{s-quote}",
@@ -225,6 +239,7 @@ def test_backward_compatibility(builder):
             assert "{s-quote}" not in condition
             assert ":" in condition
             assert len(params) > 0
+
 
 def test_performance_impact(builder):
     import time

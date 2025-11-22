@@ -1,13 +1,12 @@
 import json
 import uuid
 import socket
-import subprocess
 from yattag import indent
 from json2table import convert
 
 # Register NetAlertX modules
 import conf
-from const import applicationPath, logPath, apiPath, reportTemplatesPath
+from const import logPath, apiPath, reportTemplatesPath
 from logger import mylog, Logger
 from helper import (
     generate_mac_links,
@@ -62,11 +61,7 @@ class NotificationInstance:
 
         # Check if nothing to report, end
         if (
-            JSON["new_devices"] == []
-            and JSON["down_devices"] == []
-            and JSON["events"] == []
-            and JSON["plugins"] == []
-            and JSON["down_reconnected"] == []
+            JSON["new_devices"] == [] and JSON["down_devices"] == [] and JSON["events"] == [] and JSON["plugins"] == [] and JSON["down_reconnected"] == []
         ):
             self.HasNotifications = False
         else:
@@ -88,8 +83,6 @@ class NotificationInstance:
             # else:
             #     mylog('debug', ['[Notification] notiStruc:', json.dumps(notiStruc.__dict__, indent=4)])
 
-            Text = ""
-            HTML = ""
             template_file_path = reportTemplatesPath + "report_template.html"
 
             # Open text Template
@@ -274,7 +267,7 @@ class NotificationInstance:
     # Clear the Pending Email flag from all events and devices
     def clearPendingEmailFlag(self):
 
-    # Clean Pending Alert Events
+        # Clean Pending Alert Events
         self.db.sql.execute("""
             UPDATE Devices SET devLastNotification = ?
                 WHERE devMac IN (
