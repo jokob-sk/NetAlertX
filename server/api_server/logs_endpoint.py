@@ -3,17 +3,17 @@ import sys
 from flask import jsonify
 
 # Register NetAlertX directories
-INSTALL_PATH="/app"
+INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from const import logPath
-from logger import mylog, Logger
-from helper import  get_setting_value
-from utils.datetime_utils import timeNowDB
-from messaging.in_app import write_notification
+from const import logPath  # noqa: E402 [flake8 lint suppression]
+from logger import mylog, Logger  # noqa: E402 [flake8 lint suppression]
+from helper import get_setting_value  # noqa: E402 [flake8 lint suppression]
+from messaging.in_app import write_notification  # noqa: E402 [flake8 lint suppression]
 
 # Make sure log level is initialized correctly
 Logger(get_setting_value('LOG_LEVEL'))
+
 
 def clean_log(log_file):
     """
@@ -55,4 +55,3 @@ def clean_log(log_file):
         mylog('none', [msg])
         write_notification(msg, 'interrupt')
         return jsonify({"success": False, "message": msg}), 500
-

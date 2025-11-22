@@ -1,9 +1,8 @@
-#!/usr/bin/env python
+# !/usr/bin/env python
 # Based on the work of https://github.com/leiweibau/Pi.Alert
 
 import subprocess
 import os
-from datetime import datetime
 
 import sys
 
@@ -11,12 +10,12 @@ import sys
 INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from plugin_helper import Plugin_Objects, Plugin_Object
-from logger import mylog, Logger
-from helper import get_setting_value 
-import conf
-from pytz import timezone
-from const import logPath
+from plugin_helper import Plugin_Objects, Plugin_Object  # noqa: E402 [flake8 lint suppression]
+from logger import mylog, Logger  # noqa: E402 [flake8 lint suppression]
+from helper import get_setting_value  # noqa: E402 [flake8 lint suppression]
+import conf  # noqa: E402 [flake8 lint suppression]
+from pytz import timezone  # noqa: E402 [flake8 lint suppression]
+from const import logPath  # noqa: E402 [flake8 lint suppression]
 
 
 # Make sure the TIMEZONE for logging is correct
@@ -31,13 +30,14 @@ LOG_PATH = logPath + '/plugins'
 LOG_FILE = os.path.join(LOG_PATH, f'script.{pluginName}.log')
 RESULT_FILE = os.path.join(LOG_PATH, f'last_result.{pluginName}.log')
 
+
 def main():
 
     mylog('verbose', ['[DHCPSRVS] In script'])
-    
-    last_run_logfile = open(RESULT_FILE, 'a') 
+
+    last_run_logfile = open(RESULT_FILE, 'a')
     last_run_logfile.write("")
-    
+
     plugin_objects = Plugin_Objects(RESULT_FILE)
     timeoutSec = get_setting_value('DHCPSRVS_RUN_TIMEOUT')
 
@@ -46,10 +46,10 @@ def main():
     try:
         # Number of DHCP discovery probes to send
         dhcp_probes = 1
-        
+
         # Initialize a list to store output lines from the scan
         newLines = []
-        
+
         for _ in range(dhcp_probes):
             output = subprocess.check_output(nmapArgs, universal_newlines=True, stderr=subprocess.STDOUT, timeout=timeoutSec)
             newLines += output.split("\n")
@@ -57,9 +57,9 @@ def main():
         newEntries = []
 
         for line in newLines:
-            
+
             mylog('verbose', [f'[DHCPSRVS] Processing line: {line} '])
-            
+
             if 'Response ' in line and ' of ' in line:
                 newEntries.append(Plugin_Object())
             elif 'Server Identifier' in line:
@@ -85,7 +85,7 @@ def main():
                     newEntries[-1].extra += ',' + newVal
 
         for e in newEntries:
-            
+
             plugin_objects.add_object(
                 primaryId=e.primaryId,
                 secondaryId=e.secondaryId,
@@ -100,6 +100,7 @@ def main():
         plugin_objects.write_result_file()
     except Exception as e:
         mylog('verbose', ['[DHCPSRVS] Error in main:', str(e)])
+
 
 if __name__ == '__main__':
     main()

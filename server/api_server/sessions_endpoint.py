@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+# !/usr/bin/env python
 
 import os
 import sqlite3
@@ -9,10 +9,10 @@ from flask import jsonify
 INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from database import get_temp_db_connection
-from helper import is_random_mac, get_setting_value, mylog, format_ip_long
-from db.db_helper import row_to_json, get_date_from_period
-from utils.datetime_utils import format_date_iso, format_event_date, format_date_diff, parse_datetime, format_date
+from database import get_temp_db_connection  # noqa: E402 [flake8 lint suppression]
+from helper import get_setting_value, format_ip_long  # noqa: E402 [flake8 lint suppression]
+from db.db_helper import get_date_from_period  # noqa: E402 [flake8 lint suppression]
+from utils.datetime_utils import format_date_iso, format_event_date, format_date_diff, format_date   # noqa: E402 [flake8 lint suppression]
 
 
 # --------------------------
@@ -33,7 +33,7 @@ def create_session(
 
     cur.execute(
         """
-        INSERT INTO Sessions (ses_MAC, ses_IP, ses_DateTimeConnection, ses_DateTimeDisconnection, 
+        INSERT INTO Sessions (ses_MAC, ses_IP, ses_DateTimeConnection, ses_DateTimeDisconnection,
                               ses_EventTypeConnection, ses_EventTypeDisconnection)
         VALUES (?, ?, ?, ?, ?, ?)
     """,
@@ -105,7 +105,7 @@ def get_sessions_calendar(start_date, end_date):
         -- If ses_EventTypeConnection is missing, backfill from last disconnection
         -- If ses_EventTypeDisconnection is missing, forward-fill from next connection
 
-        SELECT 
+        SELECT
             SES1.ses_MAC, SES1.ses_EventTypeConnection, SES1.ses_DateTimeConnection,
             SES1.ses_EventTypeDisconnection, SES1.ses_DateTimeDisconnection, SES1.ses_IP,
             SES1.ses_AdditionalInfo, SES1.ses_StillConnected,
@@ -113,9 +113,9 @@ def get_sessions_calendar(start_date, end_date):
             CASE
               WHEN SES1.ses_EventTypeConnection = '<missing event>' THEN
                 IFNULL(
-                  (SELECT MAX(SES2.ses_DateTimeDisconnection) 
-                   FROM Sessions AS SES2 
-                   WHERE SES2.ses_MAC = SES1.ses_MAC 
+                  (SELECT MAX(SES2.ses_DateTimeDisconnection)
+                   FROM Sessions AS SES2
+                   WHERE SES2.ses_MAC = SES1.ses_MAC
                      AND SES2.ses_DateTimeDisconnection < SES1.ses_DateTimeDisconnection
                      AND SES2.ses_DateTimeDisconnection BETWEEN Date(?) AND Date(?)
                   ),
@@ -126,9 +126,9 @@ def get_sessions_calendar(start_date, end_date):
 
             CASE
               WHEN SES1.ses_EventTypeDisconnection = '<missing event>' THEN
-                (SELECT MIN(SES2.ses_DateTimeConnection) 
-                 FROM Sessions AS SES2 
-                 WHERE SES2.ses_MAC = SES1.ses_MAC 
+                (SELECT MIN(SES2.ses_DateTimeConnection)
+                 FROM Sessions AS SES2
+                 WHERE SES2.ses_MAC = SES1.ses_MAC
                    AND SES2.ses_DateTimeConnection > SES1.ses_DateTimeConnection
                    AND SES2.ses_DateTimeConnection BETWEEN Date(?) AND Date(?)
                 )
@@ -162,8 +162,7 @@ def get_sessions_calendar(start_date, end_date):
 
         # Determine color
         if (
-            row["ses_EventTypeConnection"] == "<missing event>"
-            or row["ses_EventTypeDisconnection"] == "<missing event>"
+            row["ses_EventTypeConnection"] == "<missing event>" or row["ses_EventTypeDisconnection"] == "<missing event>"
         ):
             color = "#f39c12"
         elif row["ses_StillConnected"] == 1:
@@ -205,7 +204,7 @@ def get_device_sessions(mac, period):
     cur = conn.cursor()
 
     sql = f"""
-        SELECT 
+        SELECT
             IFNULL(ses_DateTimeConnection, ses_DateTimeDisconnection) AS ses_DateTimeOrder,
             ses_EventTypeConnection,
             ses_DateTimeConnection,
@@ -293,7 +292,7 @@ def get_session_events(event_type, period_date):
 
     # Base SQLs
     sql_events = f"""
-        SELECT 
+        SELECT
             eve_DateTime AS eve_DateTimeOrder,
             devName,
             devOwner,
@@ -314,7 +313,7 @@ def get_session_events(event_type, period_date):
     """
 
     sql_sessions = """
-        SELECT 
+        SELECT
             IFNULL(ses_DateTimeConnection, ses_DateTimeDisconnection) AS ses_DateTimeOrder,
             devName,
             devOwner,
@@ -337,8 +336,7 @@ def get_session_events(event_type, period_date):
         sql = sql_events
     elif event_type == "sessions":
         sql = (
-            sql_sessions
-            + f"""
+            sql_sessions + f"""
             WHERE (
                 ses_DateTimeConnection >= {period_date}
                 OR ses_DateTimeDisconnection >= {period_date}
@@ -348,8 +346,7 @@ def get_session_events(event_type, period_date):
         )
     elif event_type == "missing":
         sql = (
-            sql_sessions
-            + f"""
+            sql_sessions + f"""
             WHERE (
                 (ses_DateTimeConnection IS NULL AND ses_DateTimeDisconnection >= {period_date})
                 OR (ses_DateTimeDisconnection IS NULL AND ses_StillConnected = 0 AND ses_DateTimeConnection >= {period_date})

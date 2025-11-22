@@ -18,7 +18,7 @@ from typing import Dict, List, Tuple, Any, Optional
 INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
 sys.path.extend([f"{INSTALL_PATH}/server"])
 
-from logger import mylog
+from logger import mylog  # noqa: E402 [flake8 lint suppression]
 
 
 class SafeConditionBuilder:
@@ -494,8 +494,6 @@ class SafeConditionBuilder:
         if logical_op and not self._validate_logical_operator(logical_op):
             raise ValueError(f"Invalid logical operator: {logical_op}")
 
-        # Parse values from the IN clause
-        values = []
         # Simple regex to extract quoted values
         value_pattern = r"'([^']*)'"
         matches = re.findall(value_pattern, values_str)

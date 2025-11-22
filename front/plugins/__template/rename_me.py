@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+# !/usr/bin/env python
 
 import os
 import sys
@@ -8,12 +8,12 @@ from pytz import timezone
 INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from const import logPath
-from plugin_helper import Plugin_Objects
-from logger import mylog, Logger
-from helper import get_setting_value 
+from const import logPath # noqa: E402, E261 [flake8 lint suppression]
+from plugin_helper import Plugin_Objects # noqa: E402, E261 [flake8 lint suppression]
+from logger import mylog, Logger # noqa: E402, E261 [flake8 lint suppression]
+from helper import get_setting_value # noqa: E402, E261 [flake8 lint suppression]
 
-import conf
+import conf # noqa: E402, E261 [flake8 lint suppression]
 
 # Make sure the TIMEZONE for logging is correct
 conf.tz = timezone(get_setting_value('TIMEZONE'))
@@ -32,9 +32,8 @@ RESULT_FILE = os.path.join(LOG_PATH, f'last_result.{pluginName}.log')
 plugin_objects = Plugin_Objects(RESULT_FILE)
 
 
-
 def main():
-    mylog('verbose', [f'[{pluginName}] In script']) 
+    mylog('verbose', [f'[{pluginName}] In script'])
 
     # Retrieve configuration settings
     some_setting = get_setting_value('SYNC_plugins')
@@ -47,14 +46,14 @@ def main():
     #  Process the data into native application tables
     if len(device_data) > 0:
 
-        # insert devices into the lats_result.log 
-        # make sure the below mapping is mapped in config.json, for example: 
+        # insert devices into the lats_result.log
+        # make sure the below mapping is mapped in config.json, for example:
         # "database_column_definitions": [
         # {
         #   "column": "Object_PrimaryID",    <--------- the value I save into primaryId
         #   "mapped_to_column": "cur_MAC",   <--------- gets inserted into the CurrentScan DB
         #                                               table column cur_MAC
-        # 
+        #
         for device in device_data:
             plugin_objects.add_object(
                 primaryId   = device['mac_address'],
@@ -65,11 +64,11 @@ def main():
                 watched4    = device['last_seen'],
                 extra       = '',
                 foreignKey  = device['mac_address']
-                # helpVal1  = "Something1",  # Optional Helper values to be passed for mapping into the app 
-                # helpVal2  = "Something1",  # If you need to use even only 1, add the remaining ones too 
+                # helpVal1  = "Something1",  # Optional Helper values to be passed for mapping into the app
+                # helpVal2  = "Something1",  # If you need to use even only 1, add the remaining ones too
                 # helpVal3  = "Something1",  # and set them to 'null'. Check the the docs for details:
                 # helpVal4  = "Something1",  # https://github.com/jokob-sk/NetAlertX/blob/main/docs/PLUGINS_DEV.md
-                )
+            )
 
         mylog('verbose', [f'[{pluginName}] New entries: "{len(device_data)}"'])
 
@@ -78,14 +77,15 @@ def main():
 
     return 0
 
+
 #  retrieve data
 def get_device_data(some_setting):
-    
+
     device_data = []
 
     # do some processing, call exteranl APIs, and return a device_data list
     #  ...
-    # 
+    #
     # Sample data for testing purposes, you can adjust the processing in main() as needed
     # ... before adding it to the plugin_objects.add_object(...)
     device_data = [
@@ -113,8 +113,9 @@ def get_device_data(some_setting):
         }
     ]
 
-    # Return the data to be detected by the main application 
+    # Return the data to be detected by the main application
     return device_data
+
 
 if __name__ == '__main__':
     main()

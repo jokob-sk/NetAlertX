@@ -52,7 +52,7 @@ default_tz = "Europe/Berlin"
 # SQL queries
 # ===============================================================================
 sql_devices_all = """
-                    SELECT 
+                    SELECT
                         rowid,
                         IFNULL(devMac, '') AS devMac,
                         IFNULL(devName, '') AS devName,
@@ -88,7 +88,7 @@ sql_devices_all = """
                         IFNULL(devFQDN, '') AS devFQDN,
                         IFNULL(devParentRelType, '') AS devParentRelType,
                         IFNULL(devReqNicsOnline, '') AS devReqNicsOnline,
-                        CASE 
+                        CASE
                             WHEN devIsNew = 1 THEN 'New'
                             WHEN devPresentLastScan = 1 THEN 'On-line'
                             WHEN devPresentLastScan = 0 AND devAlertDown != 0 THEN 'Down'
@@ -133,7 +133,7 @@ sql_devices_tiles = """
                             (SELECT COUNT(*) FROM Devices) AS "all_devices",
                             -- My Devices count
                             (SELECT COUNT(*) FROM MyDevicesFilter) AS my_devices
-                        FROM Statuses; 
+                        FROM Statuses;
                     """
 sql_devices_filters = """
                     SELECT DISTINCT 'devSite' AS columnName, devSite AS columnValue
@@ -164,9 +164,9 @@ sql_devices_filters = """
                         FROM Devices WHERE devSSID NOT IN ('', 'null') AND devSSID IS NOT NULL
                     ORDER BY columnName;
                     """
-sql_devices_stats = """SELECT Online_Devices as online, Down_Devices as down, All_Devices as 'all', Archived_Devices as archived, 
-                        (select count(*) from Devices a where devIsNew = 1 ) as new, 
-                        (select count(*) from Devices a where devName = '(unknown)' or devName = '(name not found)' ) as unknown 
+sql_devices_stats = """SELECT Online_Devices as online, Down_Devices as down, All_Devices as 'all', Archived_Devices as archived,
+                        (select count(*) from Devices a where devIsNew = 1 ) as new,
+                        (select count(*) from Devices a where devName = '(unknown)' or devName = '(name not found)' ) as unknown
                         from Online_History order by Scan_Date desc limit 1"""
 sql_events_pending_alert = "SELECT  * FROM Events where eve_PendingAlertEmail is not 0"
 sql_settings = "SELECT  * FROM Settings"
@@ -176,23 +176,23 @@ sql_notifications_all = "SELECT  * FROM Notifications"
 sql_online_history = "SELECT  * FROM Online_History"
 sql_plugins_events = "SELECT  * FROM Plugins_Events"
 sql_plugins_history = "SELECT  * FROM Plugins_History ORDER BY DateTimeChanged DESC"
-sql_new_devices = """SELECT * FROM ( 
-                        SELECT eve_IP as devLastIP, eve_MAC as devMac 
+sql_new_devices = """SELECT * FROM (
+                        SELECT eve_IP as devLastIP, eve_MAC as devMac
                         FROM Events_Devices
                         WHERE eve_PendingAlertEmail = 1
                         AND eve_EventType = 'New Device'
                         ORDER BY eve_DateTime ) t1
-                        LEFT JOIN 
-                        ( SELECT devName, devMac as devMac_t2 FROM Devices) t2 
+                        LEFT JOIN
+                        ( SELECT devName, devMac as devMac_t2 FROM Devices) t2
                         ON t1.devMac = t2.devMac_t2"""
 
 
 sql_generateGuid = """
                 lower(
-                    hex(randomblob(4)) || '-' || hex(randomblob(2)) || '-' || '4' || 
-                    substr(hex( randomblob(2)), 2) || '-' || 
+                    hex(randomblob(4)) || '-' || hex(randomblob(2)) || '-' || '4' ||
+                    substr(hex( randomblob(2)), 2) || '-' ||
                     substr('AB89', 1 + (abs(random()) % 4) , 1)  ||
-                    substr(hex(randomblob(2)), 2) || '-' || 
+                    substr(hex(randomblob(2)), 2) || '-' ||
                     hex(randomblob(6))
                 )
             """

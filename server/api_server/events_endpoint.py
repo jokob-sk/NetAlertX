@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+# !/usr/bin/env python
 
 import os
 import sys
@@ -9,10 +9,10 @@ from flask import jsonify
 INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from database import get_temp_db_connection
-from helper import is_random_mac, mylog
-from db.db_helper import row_to_json, get_date_from_period
-from utils.datetime_utils import format_date, format_date_iso, format_event_date, ensure_datetime
+from database import get_temp_db_connection  # noqa: E402 [flake8 lint suppression]
+from helper import mylog  # noqa: E402 [flake8 lint suppression]
+from db.db_helper import row_to_json, get_date_from_period  # noqa: E402 [flake8 lint suppression]
+from utils.datetime_utils import ensure_datetime  # noqa: E402 [flake8 lint suppression]
 
 
 # --------------------------
@@ -120,14 +120,14 @@ def get_events_totals(period: str = "7 days"):
     cur = conn.cursor()
 
     sql = f"""
-        SELECT 
+        SELECT
             (SELECT COUNT(*) FROM Events WHERE eve_DateTime >= {period_date_sql}) AS all_events,
-            (SELECT COUNT(*) FROM Sessions WHERE 
+            (SELECT COUNT(*) FROM Sessions WHERE
                 ses_DateTimeConnection >= {period_date_sql}
                 OR ses_DateTimeDisconnection >= {period_date_sql}
                 OR ses_StillConnected = 1
             ) AS sessions,
-            (SELECT COUNT(*) FROM Sessions WHERE 
+            (SELECT COUNT(*) FROM Sessions WHERE
                 (ses_DateTimeConnection IS NULL AND ses_DateTimeDisconnection >= {period_date_sql})
                 OR (ses_DateTimeDisconnection IS NULL AND ses_StillConnected = 0 AND ses_DateTimeConnection >= {period_date_sql})
             ) AS missing,

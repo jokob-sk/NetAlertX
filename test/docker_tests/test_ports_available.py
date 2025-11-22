@@ -38,7 +38,7 @@ def dummy_container(tmp_path):
         f.write("    network_mode: host\n")
         f.write("    userns_mode: host\n")
         f.write("    command: sh -c \"while true; do nc -l -p 20211 < /dev/null > /dev/null; done & while true; do nc -l -p 20212 < /dev/null > /dev/null; done & sleep 30\"\n")
-    
+
     # Start the dummy container
     import subprocess
     result = subprocess.run(
@@ -47,12 +47,12 @@ def dummy_container(tmp_path):
     )
     if result.returncode != 0:
         pytest.fail(f"Failed to start dummy container: {result.stderr}")
-    
+
     # Wait a bit for the container to start listening
     time.sleep(3)
-    
+
     yield "dummy"
-    
+
     # Cleanup
     subprocess.run(["docker-compose", "-f", str(compose_file), "down"], capture_output=True)
 
@@ -139,10 +139,10 @@ def _run_container(
     # Copy the script content and run it
     script_path = pathlib.Path("install/production-filesystem/entrypoint.d/99-ports-available.sh")
     with script_path.open('r', encoding='utf-8') as f:
-        script_content = f.read()
+        script_cont = f.read()
 
     # Use printf to avoid shell interpretation issues
-    script = f"printf '%s\\n' '{script_content.replace(chr(39), chr(39)+chr(92)+chr(39)+chr(39))}' > /tmp/ports-check.sh && chmod +x /tmp/ports-check.sh && sh /tmp/ports-check.sh"
+    script = f"printf '%s\\n' '{script_cont.replace(chr(39), chr(39) + chr(92) + chr(39) + chr(39))}' > /tmp/ports-check.sh && chmod +x /tmp/ports-check.sh && sh /tmp/ports-check.sh"  # noqa: E501 - inline script
     cmd.extend(["--entrypoint", "/bin/sh", IMAGE, "-c", script])
 
     print(f"\n--- DOCKER CMD ---\n{' '.join(cmd)}\n--- END CMD ---\n")
@@ -157,8 +157,7 @@ def _run_container(
 
     # Combine and clean stdout and stderr
     stdouterr = (
-        re.sub(r'\x1b\[[0-9;]*m', '', result.stdout or '') +
-        re.sub(r'\x1b\[[0-9;]*m', '', result.stderr or '')
+        re.sub(r'\x1b\[[0-9;]*m', '', result.stdout or '') + re.sub(r'\x1b\[[0-9;]*m', '', result.stderr or '')
     )
     result.output = stdouterr
     print(f"\n--- CONTAINER stdout ---\n{result.stdout}")

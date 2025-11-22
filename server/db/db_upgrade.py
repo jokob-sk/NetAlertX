@@ -5,8 +5,8 @@ import os
 INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
 sys.path.extend([f"{INSTALL_PATH}/server"])
 
-from logger import mylog
-from messaging.in_app import write_notification
+from logger import mylog  # noqa: E402 [flake8 lint suppression]
+from messaging.in_app import write_notification  # noqa: E402 [flake8 lint suppression]
 
 
 def ensure_column(sql, table: str, column_name: str, column_type: str) -> bool:
@@ -108,23 +108,23 @@ def ensure_views(sql) -> bool:
     - sql: database cursor or connection wrapper (must support execute() and fetchall()).
     """
     sql.execute(""" DROP VIEW IF EXISTS Events_Devices;""")
-    sql.execute(""" CREATE VIEW Events_Devices AS 
-                            SELECT * 
-                            FROM Events 
+    sql.execute(""" CREATE VIEW Events_Devices AS
+                            SELECT *
+                            FROM Events
                             LEFT JOIN Devices ON eve_MAC = devMac;
                           """)
 
     sql.execute(""" DROP VIEW IF EXISTS LatestEventsPerMAC;""")
     sql.execute("""CREATE VIEW LatestEventsPerMAC AS
                                 WITH RankedEvents AS (
-                                    SELECT 
+                                    SELECT
                                         e.*,
                                         ROW_NUMBER() OVER (PARTITION BY e.eve_MAC ORDER BY e.eve_DateTime DESC) AS row_num
                                     FROM Events AS e
                                 )
-                                SELECT 
-                                    e.*, 
-                                    d.*, 
+                                SELECT
+                                    e.*,
+                                    d.*,
                                     c.*
                                 FROM RankedEvents AS e
                                 LEFT JOIN Devices AS d ON e.eve_MAC = d.devMac
@@ -138,14 +138,14 @@ def ensure_views(sql) -> bool:
 
     sql.execute(""" CREATE VIEW IF NOT EXISTS LatestEventsPerMAC AS
                                 WITH RankedEvents AS (
-                                    SELECT 
+                                    SELECT
                                         e.*,
                                         ROW_NUMBER() OVER (PARTITION BY e.eve_MAC ORDER BY e.eve_DateTime DESC) AS row_num
                                     FROM Events AS e
                                 )
-                                SELECT 
-                                    e.*, 
-                                    d.*, 
+                                SELECT
+                                    e.*,
+                                    d.*,
                                     c.*
                                 FROM RankedEvents AS e
                                 LEFT JOIN Devices AS d ON e.eve_MAC = d.devMac
@@ -272,7 +272,7 @@ def ensure_CurrentScan(sql) -> bool:
     """
     # 🐛 CurrentScan DEBUG: comment out below when debugging to keep the CurrentScan table after restarts/scan finishes
     sql.execute("DROP TABLE IF EXISTS CurrentScan;")
-    sql.execute(""" CREATE TABLE IF NOT EXISTS CurrentScan (                                
+    sql.execute(""" CREATE TABLE IF NOT EXISTS CurrentScan (
                                 cur_MAC STRING(50) NOT NULL COLLATE NOCASE,
                                 cur_IP STRING(50) NOT NULL COLLATE NOCASE,
                                 cur_Vendor STRING(250),
@@ -354,7 +354,7 @@ def ensure_plugins_tables(sql) -> bool:
     # Plugin state
     sql_Plugins_Objects = """ CREATE TABLE IF NOT EXISTS Plugins_Objects(
                                     "Index"	          INTEGER,
-                                    Plugin TEXT NOT NULL,                                    
+                                    Plugin TEXT NOT NULL,
                                     Object_PrimaryID TEXT NOT NULL,
                                     Object_SecondaryID TEXT NOT NULL,
                                     DateTimeCreated TEXT NOT NULL,

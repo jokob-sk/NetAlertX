@@ -1,19 +1,14 @@
 import sys
 import io
-import datetime
+# import datetime
 import threading
 import queue
 import logging
-from zoneinfo import ZoneInfo
-
-# Register NetAlertX directories
-INSTALL_PATH="/app"
-
-sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
+# from zoneinfo import ZoneInfo
 
 # NetAlertX imports
 import conf
-from const import *
+from const import logPath
 from utils.datetime_utils import timeNowTZ
 
 

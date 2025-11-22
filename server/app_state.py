@@ -1,7 +1,7 @@
 import os
 import json
 
-from const import *
+from const import applicationPath, apiPath
 from logger import mylog
 from helper import checkNewVersion
 from utils.datetime_utils import timeNowDB, timeNow
@@ -32,14 +32,17 @@ class app_state_class:
         isNewVersionChecked (int): Timestamp of last version check.
     """
 
-    def __init__(self, currentState=None, 
-                       settingsSaved=None, 
-                       settingsImported=None, 
-                       showSpinner=None, 
-                       graphQLServerStarted=0, 
-                       processScan=False,
-                       pluginsStates=None,
-                       appVersion=None):
+    def __init__(
+        self,
+        currentState=None,
+        settingsSaved=None,
+        settingsImported=None,
+        showSpinner=None,
+        graphQLServerStarted=0,
+        processScan=False,
+        pluginsStates=None,
+        appVersion=None
+    ):
         """
         Initialize the application state, optionally overwriting previous values.
 
@@ -62,7 +65,7 @@ class app_state_class:
 
         # Update self
         self.lastUpdated = str(timeNowDB())
-        
+
         if os.path.exists(stateFile):
             try:
                 with open(stateFile, "r") as json_file:
@@ -73,7 +76,7 @@ class app_state_class:
                 )
 
         # Check if the file exists and recover previous values
-        if previousState != "":            
+        if previousState != "":
             self.settingsSaved          = previousState.get("settingsSaved", 0)
             self.settingsImported       = previousState.get("settingsImported", 0)
             self.processScan            = previousState.get("processScan", False)
@@ -82,9 +85,9 @@ class app_state_class:
             self.isNewVersionChecked    = previousState.get("isNewVersionChecked", 0)
             self.graphQLServerStarted   = previousState.get("graphQLServerStarted", 0)
             self.currentState           = previousState.get("currentState", "Init")
-            self.pluginsStates          = previousState.get("pluginsStates", {}) 
-            self.appVersion             = previousState.get("appVersion", "") 
-        else: # init first time values
+            self.pluginsStates          = previousState.get("pluginsStates", {})
+            self.appVersion             = previousState.get("appVersion", "")
+        else:  # init first time values
             self.settingsSaved          = 0
             self.settingsImported       = 0
             self.showSpinner            = False
@@ -158,12 +161,12 @@ class app_state_class:
 
 # -------------------------------------------------------------------------------
 # method to update the state
-def updateState(newState = None, 
-                settingsSaved = None, 
-                settingsImported = None, 
-                showSpinner = None, 
-                graphQLServerStarted = None, 
-                processScan = None, 
+def updateState(newState = None,
+                settingsSaved = None,
+                settingsImported = None,
+                showSpinner = None,
+                graphQLServerStarted = None,
+                processScan = None,
                 pluginsStates=None,
                 appVersion=None):
     """
@@ -182,14 +185,16 @@ def updateState(newState = None,
     Returns:
         app_state_class: Updated state object.
     """
-    return app_state_class( newState, 
-                            settingsSaved, 
-                            settingsImported, 
-                            showSpinner, 
-                            graphQLServerStarted, 
-                            processScan, 
-                            pluginsStates,
-                            appVersion)
+    return app_state_class(
+        newState,
+        settingsSaved,
+        settingsImported,
+        showSpinner,
+        graphQLServerStarted,
+        processScan,
+        pluginsStates,
+        appVersion
+    )
 
 
 # -------------------------------------------------------------------------------

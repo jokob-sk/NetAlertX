@@ -137,7 +137,7 @@ def test_unicode_support(builder, unicode_str):
 
 
 @pytest.mark.parametrize("case", [
-    "", "   ", "AND devName = ''", "AND devName = 'a'", "AND devName = '" + "x"*500 + "'"
+    "", "   ", "AND devName = ''", "AND devName = 'a'", "AND devName = '" + "x" * 500 + "'"
 ])
 def test_edge_cases(builder, case):
     try:

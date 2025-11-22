@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+# !/usr/bin/env python
 
 import os
 import sys
@@ -10,12 +10,11 @@ from unifi_sm_api.api import SiteManagerAPI
 INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from plugin_helper import Plugin_Objects, decode_settings_base64
-from logger import mylog, Logger
-from const import logPath
-from helper import get_setting_value 
-
-import conf
+from plugin_helper import Plugin_Objects, decode_settings_base64  # noqa: E402 [flake8 lint suppression]
+from logger import mylog, Logger  # noqa: E402 [flake8 lint suppression]
+from const import logPath  # noqa: E402 [flake8 lint suppression]
+from helper import get_setting_value  # noqa: E402 [flake8 lint suppression]
+import conf  # noqa: E402 [flake8 lint suppression]
 
 # Make sure the TIMEZONE for logging is correct
 conf.tz = timezone(get_setting_value('TIMEZONE'))
@@ -35,13 +34,13 @@ plugin_objects = Plugin_Objects(RESULT_FILE)
 
 
 def main():
-    mylog('verbose', [f'[{pluginName}] In script']) 
+    mylog('verbose', [f'[{pluginName}] In script'])
 
     # Retrieve configuration settings
     unifi_sites_configs = get_setting_value('UNIFIAPI_sites')
 
     mylog('verbose', [f'[{pluginName}] number of unifi_sites_configs: {len(unifi_sites_configs)}'])
-    
+
     for site_config in unifi_sites_configs:
 
         siteDict = decode_settings_base64(site_config)
@@ -50,11 +49,11 @@ def main():
         mylog('none', [f'[{pluginName}] Connecting to: {siteDict["UNIFIAPI_site_name"]}'])
 
         api = SiteManagerAPI(
-                api_key=siteDict["UNIFIAPI_api_key"], 
-                version=siteDict["UNIFIAPI_api_version"], 
-                base_url=siteDict["UNIFIAPI_base_url"], 
-                verify_ssl=siteDict["UNIFIAPI_verify_ssl"]
-            )
+            api_key=siteDict["UNIFIAPI_api_key"],
+            version=siteDict["UNIFIAPI_api_version"],
+            base_url=siteDict["UNIFIAPI_base_url"],
+            verify_ssl=siteDict["UNIFIAPI_verify_ssl"]
+        )
 
         sites_resp = api.get_sites()
         sites = sites_resp.get("data", [])
@@ -67,18 +66,18 @@ def main():
             #  Process the data into native application tables
             if len(device_data) > 0:
 
-                # insert devices into the lats_result.log 
+                # insert devices into the lats_result.log
                 for device in device_data:
-                        plugin_objects.add_object(
-                                primaryId   = device['dev_mac'],       # mac
-                                secondaryId = device['dev_ip'],        # IP
-                                watched1    = device['dev_name'],      # name
-                                watched2    = device['dev_type'],      # device_type (AP/Switch etc)
-                                watched3    = device['dev_connected'], # connectedAt or empty
-                                watched4    = device['dev_parent_mac'],# parent_mac or "Internet"
-                                extra       = '',
-                                foreignKey  = device['dev_mac']
-                            )
+                    plugin_objects.add_object(
+                        primaryId   = device['dev_mac'],         # mac
+                        secondaryId = device['dev_ip'],          # IP
+                        watched1    = device['dev_name'],        # name
+                        watched2    = device['dev_type'],        # device_type (AP/Switch etc)
+                        watched3    = device['dev_connected'],   # connectedAt or empty
+                        watched4    = device['dev_parent_mac'],  # parent_mac or "Internet"
+                        extra       = '',
+                        foreignKey  = device['dev_mac']
+                    )
 
                 mylog('verbose', [f'[{pluginName}] New entries: "{len(device_data)}"'])
 
@@ -86,6 +85,7 @@ def main():
         plugin_objects.write_result_file()
 
     return 0
+
 
 #  retrieve data
 def get_device_data(site, api):
@@ -146,8 +146,8 @@ def get_device_data(site, api):
         dev_parent_mac = resolve_parent_mac(uplinkDeviceId)
 
         device_data.append({
-            "dev_mac":  dev_mac,
-            "dev_ip":   dev_ip,
+            "dev_mac": dev_mac,
+            "dev_ip": dev_ip,
             "dev_name": dev_name,
             "dev_type": dev_type,
             "dev_connected": dev_connected,

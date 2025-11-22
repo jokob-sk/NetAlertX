@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 import os
 import sys
 import socket
@@ -8,14 +8,14 @@ from zeroconf import Zeroconf
 INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from plugin_helper import Plugin_Objects
-from logger import mylog, Logger
-from const import logPath
-from helper import get_setting_value
-from database import DB
-from models.device_instance import DeviceInstance
-import conf
-from pytz import timezone
+from plugin_helper import Plugin_Objects  # noqa: E402 [flake8 lint suppression]
+from logger import mylog, Logger  # noqa: E402 [flake8 lint suppression]
+from const import logPath  # noqa: E402 [flake8 lint suppression]
+from helper import get_setting_value  # noqa: E402 [flake8 lint suppression]
+from database import DB  # noqa: E402 [flake8 lint suppression]
+from models.device_instance import DeviceInstance  # noqa: E402 [flake8 lint suppression]
+import conf  # noqa: E402 [flake8 lint suppression]
+from pytz import timezone  # noqa: E402 [flake8 lint suppression]
 
 # Configure timezone and logging
 conf.tz = timezone(get_setting_value("TIMEZONE"))
@@ -67,7 +67,7 @@ def resolve_mdns_name(ip: str, timeout: int = 5) -> str:
         hostname = socket.getnameinfo((ip, 0), socket.NI_NAMEREQD)[0]
         zeroconf.close()
         if hostname and hostname != ip:
-            mylog("debug", [f"[{pluginName}] Found mDNS name: {hostname}"])
+            mylog("debug", [f"[{pluginName}] Found mDNS name (rev_name): {hostname} ({rev_name})"])
             return hostname
     except Exception as e:
         mylog("debug", [f"[{pluginName}] Zeroconf lookup failed for {ip}: {e}"])
@@ -89,7 +89,7 @@ def main():
 
     timeout = get_setting_value("AVAHISCAN_RUN_TIMEOUT")
     use_mock = "--mockdata" in sys.argv
-    
+
     if use_mock:
         mylog("verbose", [f"[{pluginName}] Running in MOCK mode"])
         devices = [

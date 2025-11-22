@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+# !/usr/bin/env python
 
 import subprocess
 import os
@@ -8,15 +8,15 @@ import sys
 INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-import conf
-from const import confFileName, logPath
-from plugin_helper import Plugin_Objects
-from utils.datetime_utils import timeNowDB
-from logger import mylog, Logger
-from helper import get_setting_value
-from models.notification_instance import NotificationInstance
-from database import DB
-from pytz import timezone
+import conf  # noqa: E402 [flake8 lint suppression]
+from const import confFileName, logPath  # noqa: E402 [flake8 lint suppression]
+from plugin_helper import Plugin_Objects  # noqa: E402 [flake8 lint suppression]
+from utils.datetime_utils import timeNowDB  # noqa: E402 [flake8 lint suppression]
+from logger import mylog, Logger  # noqa: E402 [flake8 lint suppression]
+from helper import get_setting_value  # noqa: E402 [flake8 lint suppression]
+from models.notification_instance import NotificationInstance  # noqa: E402 [flake8 lint suppression]
+from database import DB  # noqa: E402 [flake8 lint suppression]
+from pytz import timezone  # noqa: E402 [flake8 lint suppression]
 
 # Make sure the TIMEZONE for logging is correct
 conf.tz = timezone(get_setting_value('TIMEZONE'))
@@ -30,13 +30,11 @@ LOG_PATH = logPath + '/plugins'
 RESULT_FILE = os.path.join(LOG_PATH, f'last_result.{pluginName}.log')
 
 
-
-
 def main():
     mylog('verbose', [f'[{pluginName}](publisher) In script'])
 
     # Check if basic config settings supplied
-    if check_config() == False:
+    if check_config() is False:
         mylog('none', [
             f'[{pluginName}] ⚠ ERROR: Publisher notification gateway not set up correctly. Check your {confFileName} {pluginName}_* variables.'])
         return

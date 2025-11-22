@@ -1,5 +1,5 @@
 
-#!/usr/bin/env python
+# !/usr/bin/env python
 
 import json
 import os
@@ -10,15 +10,15 @@ import requests
 INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-import conf
-from const import confFileName, logPath
-from plugin_helper import Plugin_Objects, handleEmpty
-from logger import mylog, Logger
-from helper import get_setting_value, hide_string
-from utils.datetime_utils import timeNowDB
-from models.notification_instance import NotificationInstance
-from database import DB
-from pytz import timezone
+import conf  # noqa: E402 [flake8 lint suppression]
+from const import confFileName, logPath  # noqa: E402 [flake8 lint suppression]
+from plugin_helper import Plugin_Objects, handleEmpty  # noqa: E402 [flake8 lint suppression]
+from logger import mylog, Logger  # noqa: E402 [flake8 lint suppression]
+from helper import get_setting_value, hide_string  # noqa: E402 [flake8 lint suppression]
+from utils.datetime_utils import timeNowDB  # noqa: E402 [flake8 lint suppression]
+from models.notification_instance import NotificationInstance  # noqa: E402 [flake8 lint suppression]
+from database import DB  # noqa: E402 [flake8 lint suppression]
+from pytz import timezone  # noqa: E402 [flake8 lint suppression]
 
 # Make sure the TIMEZONE for logging is correct
 conf.tz = timezone(get_setting_value('TIMEZONE'))
@@ -32,13 +32,12 @@ LOG_PATH = logPath + '/plugins'
 RESULT_FILE = os.path.join(LOG_PATH, f'last_result.{pluginName}.log')
 
 
-
 def main():
-    
-    mylog('verbose', [f'[{pluginName}](publisher) In script'])    
-    
+
+    mylog('verbose', [f'[{pluginName}](publisher) In script'])
+
     # Check if basic config settings supplied
-    if check_config() == False:
+    if check_config() is False:
         mylog('none', [f'[{pluginName}] ⚠ ERROR: Publisher notification gateway not set up correctly. Check your {confFileName} {pluginName}_* variables.'])
         return
 
@@ -59,14 +58,14 @@ def main():
     for notification in new_notifications:
 
         # Send notification
-        response_text, response_status_code = send(notification["Text"])    
+        response_text, response_status_code = send(notification["Text"])
 
         # Log result
         plugin_objects.add_object(
             primaryId   = pluginName,
-            secondaryId = timeNowDB(),            
+            secondaryId = timeNowDB(),
             watched1    = notification["GUID"],
-            watched2    = handleEmpty(response_text),            
+            watched2    = handleEmpty(response_text),
             watched3    = response_status_code,
             watched4    = 'null',
             extra       = 'null',
@@ -76,8 +75,7 @@ def main():
     plugin_objects.write_result_file()
 
 
-    
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 def send(text):
 
     response_text = ''
@@ -85,8 +83,7 @@ def send(text):
 
     token = get_setting_value('PUSHSAFER_TOKEN')
 
-    mylog('verbose', [f'[{pluginName}] PUSHSAFER_TOKEN: "{hide_string(token)}"'])    
-    
+    mylog('verbose', [f'[{pluginName}] PUSHSAFER_TOKEN: "{hide_string(token)}"'])
 
     try:
         url = 'https://www.pushsafer.com/api'
@@ -101,40 +98,34 @@ def send(text):
             "u" : get_setting_value('REPORT_DASHBOARD_URL'),
             "ut" : 'Open NetAlertX',
             "k" : token,
-            }
+        }
         response = requests.post(url, data=post_fields)
-        
         response_status_code = response.status_code
-
 
         # Check if the request was successful (status code 200)
         if response_status_code == 200:
-            response_text = response.text  # This captures the response body/message      
+            response_text = response.text  # This captures the response body/message
         else:
-            response_text = json.dumps(response.text) 
+            response_text = json.dumps(response.text)
 
-    except requests.exceptions.RequestException as e:  
+    except requests.exceptions.RequestException as e:
         mylog('none', [f'[{pluginName}] ⚠ ERROR: ', e])
 
         response_text = e
 
         return response_text, response_status_code
-    
 
-    return response_text, response_status_code    
-
+    return response_text, response_status_code
 
 
-
-
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 def check_config():
-        if get_setting_value('PUSHSAFER_TOKEN') == 'ApiKey':           
-            return False
-        else:
-            return True
+    if get_setting_value('PUSHSAFER_TOKEN') == 'ApiKey':
+        return False
+    else:
+        return True
+
 
 #  -------------------------------------------------------
 if __name__ == '__main__':
     sys.exit(main())
-

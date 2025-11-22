@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+# !/usr/bin/env python
 
 import os
 import sys
@@ -12,16 +12,16 @@ import base64
 INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from plugin_helper import Plugin_Objects
-from utils.plugin_utils import get_plugins_configs, decode_and_rename_files
-from logger import mylog, Logger
-from const import fullDbPath, logPath
-from helper import get_setting_value 
-from utils.datetime_utils import timeNowDB
-from utils.crypto_utils import encrypt_data
-from messaging.in_app import write_notification
-import conf
-from pytz import timezone
+from plugin_helper import Plugin_Objects  # noqa: E402 [flake8 lint suppression]
+from utils.plugin_utils import get_plugins_configs, decode_and_rename_files  # noqa: E402 [flake8 lint suppression]
+from logger import mylog, Logger  # noqa: E402 [flake8 lint suppression]
+from const import fullDbPath, logPath  # noqa: E402 [flake8 lint suppression]
+from helper import get_setting_value  # noqa: E402 [flake8 lint suppression]
+from utils.datetime_utils import timeNowDB  # noqa: E402 [flake8 lint suppression]
+from utils.crypto_utils import encrypt_data  # noqa: E402 [flake8 lint suppression]
+from messaging.in_app import write_notification  # noqa: E402 [flake8 lint suppression]
+import conf  # noqa: E402 [flake8 lint suppression]
+from pytz import timezone  # noqa: E402 [flake8 lint suppression]
 
 # Make sure the TIMEZONE for logging is correct
 conf.tz = timezone(get_setting_value('TIMEZONE'))
@@ -41,21 +41,21 @@ plugin_objects = Plugin_Objects(RESULT_FILE)
 
 
 def main():
-    mylog('verbose', [f'[{pluginName}] In script']) 
+    mylog('verbose', [f'[{pluginName}] In script'])
 
     # Retrieve configuration settings
     plugins_to_sync = get_setting_value('SYNC_plugins')
-    api_token = get_setting_value('API_TOKEN')  
+    api_token = get_setting_value('API_TOKEN')
     encryption_key = get_setting_value('SYNC_encryption_key')
     hub_url = get_setting_value('SYNC_hub_url')
     node_name = get_setting_value('SYNC_node_name')
     send_devices = get_setting_value('SYNC_devices')
     pull_nodes = get_setting_value('SYNC_nodes')
-    
+
     # variables to determine operation mode
     is_hub  = False
     is_node = False
-    
+
     # Check if api_token set
     if not api_token:
         mylog('verbose', [f'[{pluginName}] ⚠ ERROR api_token not defined - quitting.'])
@@ -63,23 +63,23 @@ def main():
 
     #  check if this is a hub or a node
     if len(hub_url) > 0 and (send_devices or plugins_to_sync):
-        is_node = True   
-        mylog('verbose', [f'[{pluginName}] Mode 1: PUSH (NODE) - This is a NODE as SYNC_hub_url, SYNC_devices or SYNC_plugins are set'])    
-    if len(pull_nodes) > 0: 
+        is_node = True
+        mylog('verbose', [f'[{pluginName}] Mode 1: PUSH (NODE) - This is a NODE as SYNC_hub_url, SYNC_devices or SYNC_plugins are set'])
+    if len(pull_nodes) > 0:
         is_hub = True
-        mylog('verbose', [f'[{pluginName}] Mode 2: PULL (HUB) - This is a HUB as SYNC_nodes is set'])    
+        mylog('verbose', [f'[{pluginName}] Mode 2: PULL (HUB) - This is a HUB as SYNC_nodes is set'])
 
-    # Mode 1: PUSH/SEND (NODE)        
+    # Mode 1: PUSH/SEND (NODE)
     if is_node:
-        # PUSHING/SENDING Plugins    
-        
+        # PUSHING/SENDING Plugins
+
         # Get all plugin configurations
         all_plugins = get_plugins_configs(False)
 
         mylog('verbose', [f'[{pluginName}] plugins_to_sync {plugins_to_sync}'])
-        
+
         for plugin in all_plugins:
-            pref = plugin["unique_prefix"]  
+            pref = plugin["unique_prefix"]
 
             index = 0
             if pref in plugins_to_sync:
@@ -100,9 +100,8 @@ def main():
                         send_data(api_token, file_content, encryption_key, file_path, node_name, pref, hub_url)
 
                 else:
-                    mylog('verbose', [f'[{pluginName}] {file_path} not found'])  
-                    
-                    
+                    mylog('verbose', [f'[{pluginName}] {file_path} not found'])
+
         # PUSHING/SENDING devices
         if send_devices:
 
@@ -117,27 +116,27 @@ def main():
                     mylog('verbose', [f'[{pluginName}] Sending file_content: "{file_content}"'])
                     send_data(api_token, file_content, encryption_key, file_path, node_name, pref, hub_url)
         else:
-            mylog('verbose', [f'[{pluginName}] SYNC_hub_url not defined, skipping posting "Devices" data']) 
+            mylog('verbose', [f'[{pluginName}] SYNC_hub_url not defined, skipping posting "Devices" data'])
     else:
-        mylog('verbose', [f'[{pluginName}] SYNC_hub_url not defined, skipping posting "Plugins" and "Devices" data'])  
+        mylog('verbose', [f'[{pluginName}] SYNC_hub_url not defined, skipping posting "Plugins" and "Devices" data'])
 
     # Mode 2: PULL/GET (HUB)
-    
-    # PULLING DEVICES 
+
+    # PULLING DEVICES
     file_prefix = 'last_result'
-    
+
     # pull data from nodes if specified
     if is_hub:
         for node_url in pull_nodes:
             response_json = get_data(api_token, node_url)
-            
+
             # Extract node_name and base64 data
             node_name = response_json.get('node_name', 'unknown_node')
             data_base64 = response_json.get('data_base64', '')
 
             # Decode base64 data
             decoded_data = base64.b64decode(data_base64)
-            
+
             # Create log file name using node name
             log_file_name = f'{file_prefix}.{node_name}.log'
 
@@ -148,18 +147,17 @@ def main():
             message = f'[{pluginName}] Device data from node "{node_name}" written to {log_file_name}'
             mylog('verbose', [message])
             if lggr.isAbove('verbose'):
-                write_notification(message, 'info', timeNowDB())           
-        
+                write_notification(message, 'info', timeNowDB())
 
     # Process any received data for the Device DB table (ONLY JSON)
     # Create the file path
 
     # Get all "last_result" files from the sync folder, decode, rename them, and get the list of files
     files_to_process = decode_and_rename_files(LOG_PATH, file_prefix)
-    
+
     if len(files_to_process) > 0:
-                
-        mylog('verbose', [f'[{pluginName}] Mode 3: RECEIVE (HUB) - This is a HUB as received data found']) 
+
+        mylog('verbose', [f'[{pluginName}] Mode 3: RECEIVE (HUB) - This is a HUB as received data found'])
 
         # Connect to the App database
         conn    = sqlite3.connect(fullDbPath)
@@ -176,24 +174,24 @@ def main():
             # only process received .log files, skipping the one logging the progress of this plugin
             if file_name != 'last_result.log':
                 mylog('verbose', [f'[{pluginName}] Processing: "{file_name}"'])
-                
+
                 # make sure the file has the correct name (e.g last_result.encoded.Node_1.1.log) to skip any otehr plugin files
                 if len(file_name.split('.')) > 2:
                     # Extract node name from either last_result.decoded.Node_1.1.log or last_result.Node_1.log
                     parts = file_name.split('.')
                     # If decoded/encoded file, node name is at index 2; otherwise at index 1
-                    syncHubNodeName = parts[2] if 'decoded' in file_name or 'encoded' in file_name else parts[1]   
+                    syncHubNodeName = parts[2] if 'decoded' in file_name or 'encoded' in file_name else parts[1]
 
                     file_path = f"{LOG_PATH}/{file_name}"
-                    
+
                     with open(file_path, 'r') as f:
                         data = json.load(f)
                         for device in data['data']:
                             if device['devMac'] not in unique_mac_addresses:
                                 device['devSyncHubNode'] = syncHubNodeName
                                 unique_mac_addresses.add(device['devMac'])
-                                device_data.append(device)    
-                                
+                                device_data.append(device)
+
                     # Rename the file to "processed_" + current name
                     new_file_name = f"processed_{file_name}"
                     new_file_path = os.path.join(LOG_PATH, new_file_name)
@@ -209,7 +207,6 @@ def main():
             placeholders = ', '.join('?' for _ in unique_mac_addresses)
             cursor.execute(f'SELECT devMac FROM Devices WHERE devMac IN ({placeholders})', tuple(unique_mac_addresses))
             existing_mac_addresses = set(row[0] for row in cursor.fetchall())
-            
 
             # insert devices into the last_result.log and thus CurrentScan table to manage state
             for device in device_data:
@@ -228,7 +225,7 @@ def main():
             # Filter out existing devices
             new_devices = [device for device in device_data if device['devMac'] not in existing_mac_addresses]
 
-            #  Remove 'rowid' key if it exists 
+            #  Remove 'rowid' key if it exists
             for device in new_devices:
                 device.pop('rowid', None)
                 device.pop('devStatus', None)
@@ -257,7 +254,6 @@ def main():
 
                 mylog('verbose', [message])
                 write_notification(message, 'info', timeNowDB())
-            
 
         # Commit and close the connection
         conn.commit()
@@ -268,12 +264,14 @@ def main():
 
     return 0
 
+
 # ------------------------------------------------------------------
 # Data retrieval methods
 api_endpoints = [
     "/sync",  # New Python-based endpoint
     "/plugins/sync/hub.php"  # Legacy PHP endpoint
 ]
+
 
 # send data to the HUB
 def send_data(api_token, file_content, encryption_key, file_path, node_name, pref, hub_url):
@@ -343,7 +341,6 @@ def get_data(api_token, node_url):
     mylog('verbose', [message])
     write_notification(message, 'alert', timeNowDB())
     return ""
-
 
 
 if __name__ == '__main__':

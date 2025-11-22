@@ -1,10 +1,3 @@
-import os
-import sys
-
-# Register NetAlertX directories
-INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
-sys.path.extend([f"{INSTALL_PATH}/server"])
-
 from helper import get_setting_value
 from logger import Logger
 from const import sql_generateGuid
@@ -96,11 +89,11 @@ class AppEvent_obj:
                 "ObjectPrimaryID" TEXT,
                 "ObjectSecondaryID" TEXT,
                 "ObjectForeignKey" TEXT,
-                "ObjectIndex" TEXT,            
-                "ObjectIsNew" BOOLEAN, 
-                "ObjectIsArchived" BOOLEAN, 
+                "ObjectIndex" TEXT,
+                "ObjectIsNew" BOOLEAN,
+                "ObjectIsArchived" BOOLEAN,
                 "ObjectStatusColumn" TEXT,
-                "ObjectStatus" TEXT,            
+                "ObjectStatus" TEXT,
                 "AppEventType" TEXT,
                 "Helper1" TEXT,
                 "Helper2" TEXT,
@@ -117,11 +110,11 @@ class AppEvent_obj:
          CREATE TRIGGER IF NOT EXISTS "{trigger_name}"
             AFTER {event.upper()} ON "{table_name}"
             WHEN NOT EXISTS (
-                SELECT 1 FROM AppEvents 
-                WHERE AppEventProcessed = 0 
+                SELECT 1 FROM AppEvents
+                WHERE AppEventProcessed = 0
                 AND ObjectType = '{table_name}'
                 AND ObjectGUID = {manage_prefix(config["fields"]["ObjectGUID"], event)}
-                AND ObjectStatus = {manage_prefix(config["fields"]["ObjectStatus"], event)} 
+                AND ObjectStatus = {manage_prefix(config["fields"]["ObjectStatus"], event)}
                 AND AppEventType = '{event.lower()}'
             )
             BEGIN
@@ -142,10 +135,10 @@ class AppEvent_obj:
                     "AppEventType"
                 )
                 VALUES (
-                    {sql_generateGuid}, 
-                    DATETIME('now'), 
-                    FALSE, 
-                    '{table_name}', 
+                    {sql_generateGuid},
+                    DATETIME('now'),
+                    FALSE,
+                    '{table_name}',
                     {manage_prefix(config["fields"]["ObjectGUID"], event)},  -- ObjectGUID
                     {manage_prefix(config["fields"]["ObjectPrimaryID"], event)},  -- ObjectPrimaryID
                     {manage_prefix(config["fields"]["ObjectSecondaryID"], event)},  -- ObjectSecondaryID

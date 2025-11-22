@@ -1,32 +1,31 @@
 import sys
-import pathlib
-import sqlite3
-import base64
 import random
-import string
-import uuid
 import os
 import pytest
 
 INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from helper import get_setting_value
-from api_server.api_server_start import app
+from helper import get_setting_value   # noqa: E402 [flake8 lint suppression]
+from api_server.api_server_start import app   # noqa: E402 [flake8 lint suppression]
+
 
 @pytest.fixture(scope="session")
 def api_token():
     return get_setting_value("API_TOKEN")
+
 
 @pytest.fixture
 def client():
     with app.test_client() as client:
         yield client
 
+
 @pytest.fixture
 def test_mac():
     # Generate a unique MAC for each test run
-    return "AA:BB:CC:" + ":".join(f"{random.randint(0,255):02X}" for _ in range(3))
+    return "AA:BB:CC:" + ":".join(f"{random.randint(0, 255):02X}" for _ in range(3))
+
 
 def auth_headers(token):
     return {"Authorization": f"Bearer {token}"}
@@ -40,7 +39,8 @@ def create_dummy(client, api_token, test_mac):
         "devType": "Router",
         "devVendor": "TestVendor",
     }
-    resp = client.post(f"/device/{test_mac}", json=payload, headers=auth_headers(api_token))
+    client.post(f"/device/{test_mac}", json=payload, headers=auth_headers(api_token))
+
 
 def test_wakeonlan_device(client, api_token, test_mac):
     # 1. Ensure at least one device exists
@@ -73,6 +73,7 @@ def test_wakeonlan_device(client, api_token, test_mac):
         assert data.get("success") is True
         assert "WOL packet sent" in data.get("message", "")
 
+
 def test_speedtest_endpoint(client, api_token):
     # 1. Call the speedtest endpoint
     resp = client.get("/nettools/speedtest", headers=auth_headers(api_token))
@@ -92,7 +93,8 @@ def test_speedtest_endpoint(client, api_token):
         assert isinstance(data["output"], list)
         # Optionally check that output lines are strings
         assert all(isinstance(line, str) for line in data["output"])
-        
+
+
 def test_traceroute_device(client, api_token, test_mac):
     # 1. Ensure at least one device exists
     create_dummy(client, api_token, test_mac)
@@ -127,6 +129,7 @@ def test_traceroute_device(client, api_token, test_mac):
         assert "output" in data
         assert isinstance(data["output"], str)
 
+
 @pytest.mark.parametrize("ip,expected_status", [
     ("8.8.8.8", 200),
     ("256.256.256.256", 400),  # Invalid IP
@@ -146,6 +149,7 @@ def test_nslookup_endpoint(client, api_token, ip, expected_status):
     else:
         assert data.get("success") is False
         assert "error" in data
+
 
 @pytest.mark.parametrize("ip,mode,expected_status", [
     ("127.0.0.1", "fast", 200),
@@ -172,6 +176,7 @@ def test_nmap_endpoint(client, api_token, ip, mode, expected_status):
         assert data.get("success") is False
         assert "error" in data
 
+
 def test_nslookup_unauthorized(client):
     # No auth headers
     resp = client.post("/nettools/nslookup", json={"devLastIP": "8.8.8.8"})
@@ -179,6 +184,7 @@ def test_nslookup_unauthorized(client):
     data = resp.json
     assert data.get("success") is False
     assert data.get("error") == "Forbidden"
+
 
 def test_nmap_unauthorized(client):
     # No auth headers

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+# !/usr/bin/env python
 # test script by running:
 # tbc
 
@@ -11,14 +11,14 @@ import re
 INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from plugin_helper import Plugin_Objects
-from logger import mylog, Logger
-from helper import get_setting_value
-from const import logPath
-from database import DB
-from models.device_instance import DeviceInstance
-import conf
-from pytz import timezone
+from plugin_helper import Plugin_Objects  # noqa: E402 [flake8 lint suppression]
+from logger import mylog, Logger  # noqa: E402 [flake8 lint suppression]
+from helper import get_setting_value  # noqa: E402 [flake8 lint suppression]
+from const import logPath  # noqa: E402 [flake8 lint suppression]
+from database import DB  # noqa: E402 [flake8 lint suppression]
+from models.device_instance import DeviceInstance  # noqa: E402 [flake8 lint suppression]
+import conf  # noqa: E402 [flake8 lint suppression]
+from pytz import timezone  # noqa: E402 [flake8 lint suppression]
 
 # Make sure the TIMEZONE for logging is correct
 conf.tz = timezone(get_setting_value('TIMEZONE'))
@@ -33,11 +33,9 @@ LOG_FILE = os.path.join(LOG_PATH, f'script.{pluginName}.log')
 RESULT_FILE = os.path.join(LOG_PATH, f'last_result.{pluginName}.log')
 
 
-
 def main():
 
-    mylog('verbose', [f'[{pluginName}] In script'])     
-
+    mylog('verbose', [f'[{pluginName}] In script'])
 
     timeout = get_setting_value('NSLOOKUP_RUN_TIMEOUT')
 
@@ -52,13 +50,13 @@ def main():
     device_handler = DeviceInstance(db)
 
     # Retrieve devices
-    if get_setting_value("REFRESH_FQDN"): 
+    if get_setting_value("REFRESH_FQDN"):
         devices = device_handler.getAll()
-    else:        
+    else:
         devices = device_handler.getUnknown()
 
-    mylog('verbose', [f'[{pluginName}] Devices count: {len(devices)}'])   
-    
+    mylog('verbose', [f'[{pluginName}] Devices count: {len(devices)}'])
+
     # TEST - below is a WINDOWS host IP
     # execute_name_lookup('192.168.1.121', timeout)
 
@@ -67,31 +65,32 @@ def main():
 
         if domain_name != '':
             plugin_objects.add_object(
-            # "MAC", "IP", "Server", "Name"
-            primaryId   = device['devMac'],
-            secondaryId = device['devLastIP'],
-            watched1    = dns_server,
-            watched2    = domain_name,
-            watched3    = '',
-            watched4    = '',
-            extra       = '',
-            foreignKey  = device['devMac'])
+                # "MAC", "IP", "Server", "Name"
+                primaryId   = device['devMac'],
+                secondaryId = device['devLastIP'],
+                watched1    = dns_server,
+                watched2    = domain_name,
+                watched3    = '',
+                watched4    = '',
+                extra       = '',
+                foreignKey  = device['devMac']
+            )
 
     plugin_objects.write_result_file()
-    
-    
-    mylog('verbose', [f'[{pluginName}] Script finished'])   
-    
+
+    mylog('verbose', [f'[{pluginName}] Script finished'])
+
     return 0
 
-#===============================================================================
+
+# ===============================================================================
 # Execute scan
-#===============================================================================
-def execute_nslookup (ip, timeout):
+# ===============================================================================
+def execute_nslookup(ip, timeout):
     """
     Execute the NSLOOKUP command on IP.
     """
-    
+
     nslookup_args = ['nslookup', ip]
 
     # Execute command
@@ -99,7 +98,13 @@ def execute_nslookup (ip, timeout):
 
     try:
         # try runnning a subprocess with a forced (timeout)  in case the subprocess hangs
-        output = subprocess.check_output (nslookup_args, universal_newlines=True,  stderr=subprocess.STDOUT, timeout=(timeout), text=True)
+        output = subprocess.check_output(
+            nslookup_args,
+            universal_newlines=True,
+            stderr=subprocess.STDOUT,
+            timeout=(timeout),
+            text=True
+        )
 
         domain_name = ''
         dns_server = ''
@@ -110,8 +115,7 @@ def execute_nslookup (ip, timeout):
         domain_pattern = re.compile(r'name\s*=\s*([^\s]+)', re.IGNORECASE)
         server_pattern = re.compile(r'Server:\s+(.+)', re.IGNORECASE)
 
-
-        domain_match = domain_pattern.search(output)        
+        domain_match = domain_pattern.search(output)
         server_match = server_pattern.search(output)
 
         if domain_match:
@@ -131,24 +135,20 @@ def execute_nslookup (ip, timeout):
         else:
             mylog('verbose', [f'[{pluginName}]', e.output])
             # Handle other errors here
-        # mylog('verbose', [f'[{pluginName}] ⚠ ERROR - check logs'])            
-        
-    except subprocess.TimeoutExpired:
-        mylog('verbose', [f'[{pluginName}] TIMEOUT - the process forcefully terminated as timeout reached']) 
+        # mylog('verbose', [f'[{pluginName}] ⚠ ERROR - check logs'])
 
-    if output == "": # check if the subprocess failed      
-        tmp = 1   # can't have empty            
-        # mylog('verbose', [f'[{pluginName}] Scan: FAIL - check logs']) 
-    else: 
+    except subprocess.TimeoutExpired:
+        mylog('verbose', [f'[{pluginName}] TIMEOUT - the process forcefully terminated as timeout reached'])
+
+    if output != "":  # check if the subprocess failed
+
         mylog('verbose', [f'[{pluginName}] Scan: SUCCESS'])
 
-    return '', ''   
-          
-    
-    
+    return '', ''
 
-#===============================================================================
+
+# ===============================================================================
 # BEGIN
-#===============================================================================
+# ===============================================================================
 if __name__ == '__main__':
     main()

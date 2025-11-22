@@ -1,5 +1,5 @@
 
-#!/usr/bin/env python
+# !/usr/bin/env python
 
 import json
 import os
@@ -11,15 +11,15 @@ from base64 import b64encode
 INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-import conf
-from const import confFileName, logPath
-from plugin_helper import Plugin_Objects, handleEmpty
-from utils.datetime_utils import timeNowDB
-from logger import mylog, Logger
-from helper import get_setting_value
-from models.notification_instance import NotificationInstance
-from database import DB
-from pytz import timezone
+import conf  # noqa: E402 [flake8 lint suppression]
+from const import confFileName, logPath  # noqa: E402 [flake8 lint suppression]
+from plugin_helper import Plugin_Objects, handleEmpty  # noqa: E402 [flake8 lint suppression]
+from utils.datetime_utils import timeNowDB  # noqa: E402 [flake8 lint suppression]
+from logger import mylog, Logger  # noqa: E402 [flake8 lint suppression]
+from helper import get_setting_value  # noqa: E402 [flake8 lint suppression]
+from models.notification_instance import NotificationInstance  # noqa: E402 [flake8 lint suppression]
+from database import DB  # noqa: E402 [flake8 lint suppression]
+from pytz import timezone  # noqa: E402 [flake8 lint suppression]
 
 # Make sure the TIMEZONE for logging is correct
 conf.tz = timezone(get_setting_value('TIMEZONE'))
@@ -33,13 +33,12 @@ LOG_PATH = logPath + '/plugins'
 RESULT_FILE = os.path.join(LOG_PATH, f'last_result.{pluginName}.log')
 
 
-
 def main():
-    
-    mylog('verbose', [f'[{pluginName}](publisher) In script'])    
-    
+
+    mylog('verbose', [f'[{pluginName}](publisher) In script'])
+
     # Check if basic config settings supplied
-    if check_config() == False:
+    if check_config() is False:
         mylog('none', [f'[{pluginName}] ⚠ ERROR: Publisher notification gateway not set up correctly. Check your {confFileName} {pluginName}_* variables.'])
         return
 
@@ -65,9 +64,9 @@ def main():
         # Log result
         plugin_objects.add_object(
             primaryId   = pluginName,
-            secondaryId = timeNowDB(),            
+            secondaryId = timeNowDB(),
             watched1    = notification["GUID"],
-            watched2    = handleEmpty(response_text),            
+            watched2    = handleEmpty(response_text),
             watched3    = response_status_code,
             watched4    = 'null',
             extra       = 'null',
@@ -77,15 +76,15 @@ def main():
     plugin_objects.write_result_file()
 
 
-
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 def check_config():
-    if get_setting_value('NTFY_HOST') == '' or get_setting_value('NTFY_TOPIC') == '':        
+    if get_setting_value('NTFY_HOST') == '' or get_setting_value('NTFY_TOPIC') == '':
         return False
     else:
         return True
-    
-#-------------------------------------------------------------------------------
+
+
+# -------------------------------------------------------------------------------
 def send(html, text):
 
     response_text = ''
@@ -100,7 +99,7 @@ def send(html, text):
     # prepare request headers
     headers = {
         "Title": "NetAlertX Notification",
-        "Actions": "view, Open Dashboard, "+ get_setting_value('REPORT_DASHBOARD_URL'),
+        "Actions": "view, Open Dashboard, " + get_setting_value('REPORT_DASHBOARD_URL'),
         "Priority": get_setting_value('NTFY_PRIORITY'),
         "Tags": "warning"
     }
@@ -109,37 +108,38 @@ def send(html, text):
     if token != '':
         headers["Authorization"] = "Bearer {}".format(token)
     elif user != "" and pwd != "":
-	    # Generate hash for basic auth
+        # Generate hash for basic auth
         basichash = b64encode(bytes(user + ':' + pwd, "utf-8")).decode("ascii")
-	    # add authorization header with hash
+        # add authorization header with hash
         headers["Authorization"] = "Basic {}".format(basichash)
 
     # call NTFY service
     try:
-        response = requests.post("{}/{}".format(   get_setting_value('NTFY_HOST'), 
-                                        get_setting_value('NTFY_TOPIC')),
-                                        data    = text,
-                                        headers = headers,
-                                        verify  = verify_ssl)
+        response = requests.post("{}/{}".format(
+            get_setting_value('NTFY_HOST'),
+            get_setting_value('NTFY_TOPIC')),
+            data    = text,
+            headers = headers,
+            verify  = verify_ssl
+        )
 
         response_status_code = response.status_code
 
         # Check if the request was successful (status code 200)
         if response_status_code == 200:
-            response_text = response.text  # This captures the response body/message      
+            response_text = response.text  # This captures the response body/message
         else:
-            response_text = json.dumps(response.text) 
+            response_text = json.dumps(response.text)
 
-    except requests.exceptions.RequestException as e:  
+    except requests.exceptions.RequestException as e:
         mylog('none', [f'[{pluginName}] ⚠ ERROR: ', e])
 
         response_text = e
 
         return response_text, response_status_code
 
-    return response_text, response_status_code    
+    return response_text, response_status_code
 
 
 if __name__ == '__main__':
     sys.exit(main())
-

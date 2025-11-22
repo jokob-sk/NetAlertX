@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+# !/usr/bin/env python
 
 import os
 import argparse
@@ -11,11 +11,11 @@ from datetime import datetime
 INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from logger import mylog, Logger
-from helper import get_setting_value 
-from const import logPath, fullDbPath
-import conf
-from pytz import timezone
+from logger import mylog, Logger  # noqa: E402 [flake8 lint suppression]
+from helper import get_setting_value   # noqa: E402 [flake8 lint suppression]
+from const import logPath, fullDbPath  # noqa: E402 [flake8 lint suppression]
+import conf  # noqa: E402 [flake8 lint suppression]
+from pytz import timezone  # noqa: E402 [flake8 lint suppression]
 
 # Make sure the TIMEZONE for logging is correct
 conf.tz = timezone(get_setting_value('TIMEZONE'))
@@ -28,6 +28,7 @@ pluginName = 'CSVBCKP'
 LOG_PATH = logPath + '/plugins'
 LOG_FILE = os.path.join(LOG_PATH, f'script.{pluginName}.log')
 RESULT_FILE = os.path.join(LOG_PATH, f'last_result.{pluginName}.log')
+
 
 def main():
 
@@ -44,7 +45,7 @@ def main():
     else:
         overwrite = False
 
-    mylog('verbose', ['[CSVBCKP] In script'])     
+    mylog('verbose', ['[CSVBCKP] In script'])
 
     # Connect to the App database
     conn = sqlite3.connect(fullDbPath)
@@ -64,7 +65,7 @@ def main():
 
     fullPath = os.path.join(values.location.split('=')[1], filename)
 
-    mylog('verbose', ['[CSVBCKP] Writing file ', fullPath])   
+    mylog('verbose', ['[CSVBCKP] Writing file ', fullPath])
 
     # Create a CSV file in the specified location
     with open(fullPath, 'w', newline='') as csvfile:
@@ -72,7 +73,7 @@ def main():
         csv_writer = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
 
         # Wrap the header values in double quotes and write the header row
-        csv_writer.writerow([ '"' + col + '"' for col in columns])
+        csv_writer.writerow(['"' + col + '"' for col in columns])
 
         # Fetch and write data rows
         for row in cursor.fetchall():
@@ -96,8 +97,8 @@ def main():
     return 0
 
 
-#===============================================================================
+# ===============================================================================
 # BEGIN
-#===============================================================================
+# ===============================================================================
 if __name__ == '__main__':
     main()

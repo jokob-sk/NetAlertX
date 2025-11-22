@@ -1,3 +1,4 @@
+# !/usr/bin/env python
 import json
 import time
 import threading
@@ -145,8 +146,7 @@ class api_endpoint_class:
                     self.needsUpdate = True
                     # Only update changeDetectedWhen if it hasn't been set recently
                     if not self.changeDetectedWhen or current_time > (
-                        self.changeDetectedWhen
-                        + datetime.timedelta(seconds=self.debounce_interval)
+                        self.changeDetectedWhen + datetime.timedelta(seconds=self.debounce_interval)
                     ):
                         self.changeDetectedWhen = (
                             current_time  # Set timestamp for change detection
@@ -164,8 +164,7 @@ class api_endpoint_class:
             self.needsUpdate = True
             # Only update changeDetectedWhen if it hasn't been set recently
             if not self.changeDetectedWhen or current_time > (
-                self.changeDetectedWhen
-                + datetime.timedelta(seconds=self.debounce_interval)
+                self.changeDetectedWhen + datetime.timedelta(seconds=self.debounce_interval)
             ):
                 self.changeDetectedWhen = (
                     current_time  # Initialize timestamp for new endpoint
@@ -180,17 +179,15 @@ class api_endpoint_class:
         current_time = timeNowTZ()
 
         # Debugging info to understand the issue
-        # mylog('debug', [f'[API] api_endpoint_class: {self.fileName} is_ad_hoc_user_event {self.is_ad_hoc_user_event} last_update_time={self.last_update_time}, debounce time={self.last_update_time + datetime.timedelta(seconds=self.debounce_interval)}.'])
+        # mylog('debug', [f'[API] api_endpoint_class: {self.fileName} is_ad_hoc_user_event
+        # {self.is_ad_hoc_user_event} last_update_time={self.last_update_time},
+        # debounce time={self.last_update_time + datetime.timedelta(seconds=self.debounce_interval)}.'])
 
         # Only attempt to write if the debounce time has passed
-        if forceUpdate == True or (
-            self.needsUpdate
-            and (
-                self.changeDetectedWhen is None
-                or current_time
-                > (
-                    self.changeDetectedWhen
-                    + datetime.timedelta(seconds=self.debounce_interval)
+        if forceUpdate is True or (
+            self.needsUpdate and (
+                self.changeDetectedWhen is None or current_time > (
+                    self.changeDetectedWhen + datetime.timedelta(seconds=self.debounce_interval)
                 )
             )
         ):

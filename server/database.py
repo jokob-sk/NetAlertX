@@ -180,7 +180,7 @@ class DB:
         # Init the AppEvent database table
         AppEvent_obj(self)
 
-    # #-------------------------------------------------------------------------------
+    # # -------------------------------------------------------------------------------
     # def get_table_as_json(self, sqlQuery):
 
     #     # mylog('debug',[ '[Database] - get_table_as_json - Query: ', sqlQuery])

@@ -6,16 +6,17 @@ Tests the fix for Issue #1210 - compound conditions with multiple AND/OR clauses
 
 import sys
 import pytest
+import os
 from unittest.mock import MagicMock
 
 # Mock the logger module before importing SafeConditionBuilder
 sys.modules['logger'] = MagicMock()
 
 # Add parent directory to path for imports
-import os
+
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from server.db.sql_safe_builder import SafeConditionBuilder
+from server.db.sql_safe_builder import SafeConditionBuilder   # noqa: E402 [flake8 lint suppression]
 
 
 @pytest.fixture
@@ -99,6 +100,7 @@ def test_multiple_or_clauses(builder):
     assert 'Device1' in param_values
     assert 'Device2' in param_values
     assert 'Device3' in param_values
+
 
 def test_mixed_and_or_clauses(builder):
     """Test mixed AND/OR logical operators."""

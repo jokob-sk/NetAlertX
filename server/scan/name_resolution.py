@@ -1,11 +1,4 @@
-import sys
-import os
 import re
-
-# Register NetAlertX directories
-INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
-sys.path.extend([f"{INSTALL_PATH}/server"])
-
 from logger import mylog
 from helper import get_setting_value
 
@@ -31,7 +24,7 @@ class NameResolver:
 
         # Check by MAC
         sql.execute(f"""
-            SELECT Watched_Value2 FROM Plugins_Objects 
+            SELECT Watched_Value2 FROM Plugins_Objects
             WHERE Plugin = '{plugin}' AND Object_PrimaryID = '{pMAC}'
         """)
         result = sql.fetchall()
@@ -42,9 +35,9 @@ class NameResolver:
 
         # Check name by IP if enabled
         if get_setting_value('NEWDEV_IP_MATCH_NAME'):
-            
+
             sql.execute(f"""
-                SELECT Watched_Value2 FROM Plugins_Objects 
+                SELECT Watched_Value2 FROM Plugins_Objects
                 WHERE Plugin = '{plugin}' AND Object_SecondaryID = '{pIP}'
             """)
             result = sql.fetchall()

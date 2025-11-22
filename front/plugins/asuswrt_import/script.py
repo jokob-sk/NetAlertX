@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+# !/usr/bin/env python
 import os
 import sys
 
@@ -6,17 +6,16 @@ INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 pluginName = "ASUSWRT"
 
-import asyncio
-
-import aiohttp
-import conf
-from asusrouter import AsusData, AsusRouter
-from asusrouter.modules.connection import ConnectionState
-from const import logPath
-from helper import get_setting_value
-from logger import Logger, mylog
-from plugin_helper import (Plugin_Objects, handleEmpty)
-from pytz import timezone
+import asyncio  # noqa: E402 [flake8 lint suppression]
+import aiohttp  # noqa: E402 [flake8 lint suppression]
+import conf  # noqa: E402 [flake8 lint suppression]
+from asusrouter import AsusData, AsusRouter  # noqa: E402 [flake8 lint suppression]
+from asusrouter.modules.connection import ConnectionState  # noqa: E402 [flake8 lint suppression]
+from const import logPath  # noqa: E402 [flake8 lint suppression]
+from helper import get_setting_value  # noqa: E402 [flake8 lint suppression]
+from logger import Logger, mylog  # noqa: E402 [flake8 lint suppression]
+from plugin_helper import (Plugin_Objects, handleEmpty)  # noqa: E402 [flake8 lint suppression]
+from pytz import timezone  # noqa: E402 [flake8 lint suppression]
 
 conf.tz = timezone(get_setting_value("TIMEZONE"))
 

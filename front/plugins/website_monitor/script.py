@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+# !/usr/bin/env python
 # Based on the work of https://github.com/leiweibau/Pi.Alert
 
 import requests
@@ -12,12 +12,12 @@ from urllib3.exceptions import InsecureRequestWarning
 INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from plugin_helper import Plugin_Objects
-from const import logPath
-from helper import get_setting_value 
-import conf
-from pytz import timezone
-from logger import mylog, Logger
+from plugin_helper import Plugin_Objects  # noqa: E402 [flake8 lint suppression]
+from const import logPath  # noqa: E402 [flake8 lint suppression]
+from helper import get_setting_value   # noqa: E402 [flake8 lint suppression]
+import conf  # noqa: E402 [flake8 lint suppression]
+from pytz import timezone  # noqa: E402 [flake8 lint suppression]
+from logger import mylog, Logger  # noqa: E402 [flake8 lint suppression]
 
 # Make sure the TIMEZONE for logging is correct
 conf.tz = timezone(get_setting_value('TIMEZONE'))
@@ -30,15 +30,14 @@ pluginName = 'WEBMON'
 LOG_PATH = logPath + '/plugins'
 RESULT_FILE = os.path.join(LOG_PATH, f'last_result.{pluginName}.log')
 
-
 mylog('verbose', [f'[{pluginName}] In script'])
+
 
 def main():
 
     values = get_setting_value('WEBMON_urls_to_check')
 
     mylog('verbose', [f'[{pluginName}] Checking URLs: {values}'])
-   
 
     if len(values) > 0:
         plugin_objects = Plugin_Objects(RESULT_FILE)
@@ -48,12 +47,13 @@ def main():
     else:
         return
 
+
 def check_services_health(site):
 
     mylog('verbose', [f'[{pluginName}] Checking {site}'])
 
     urllib3.disable_warnings(InsecureRequestWarning)
-    
+
     try:
         resp = requests.get(site, verify=False, timeout=get_setting_value('WEBMON_RUN_TIMEOUT'), headers={"User-Agent": "NetAlertX"})
         latency = resp.elapsed.total_seconds()
@@ -79,12 +79,13 @@ def check_services_health(site):
 
     return status, latency
 
+
 def service_monitoring(urls, plugin_objects):
     for site in urls:
         status, latency = check_services_health(site)
         plugin_objects.add_object(
             primaryId=site,
-            secondaryId='null',            
+            secondaryId='null',
             watched1=status,
             watched2=latency,
             watched3='null',
@@ -94,7 +95,6 @@ def service_monitoring(urls, plugin_objects):
         )
     return plugin_objects
 
+
 if __name__ == '__main__':
     sys.exit(main())
-
-

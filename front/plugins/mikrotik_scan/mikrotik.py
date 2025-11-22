@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+# !/usr/bin/env python
 
 import os
 import sys
@@ -7,14 +7,14 @@ import sys
 INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from plugin_helper import Plugin_Objects
-from logger import mylog, Logger
-from helper import get_setting_value
-from const import logPath
-import conf
-from pytz import timezone
-from librouteros import connect
-from librouteros.exceptions import TrapError
+from plugin_helper import Plugin_Objects  # noqa: E402 [flake8 lint suppression]
+from logger import mylog, Logger  # noqa: E402 [flake8 lint suppression]
+from helper import get_setting_value  # noqa: E402 [flake8 lint suppression]
+from const import logPath  # noqa: E402 [flake8 lint suppression]
+import conf  # noqa: E402 [flake8 lint suppression]
+from pytz import timezone  # noqa: E402 [flake8 lint suppression]
+from librouteros import connect  # noqa: E402 [flake8 lint suppression]
+from librouteros.exceptions import TrapError  # noqa: E402 [flake8 lint suppression]
 
 # Make sure the TIMEZONE for logging is correct
 conf.tz = timezone(get_setting_value('TIMEZONE'))
@@ -27,7 +27,6 @@ pluginName = 'MTSCAN'
 LOG_PATH = logPath + '/plugins'
 LOG_FILE = os.path.join(LOG_PATH, f'script.{pluginName}.log')
 RESULT_FILE = os.path.join(LOG_PATH, f'last_result.{pluginName}.log')
-
 
 
 def main():
@@ -49,7 +48,7 @@ def main():
     plugin_objects = get_entries(plugin_objects)
 
     plugin_objects.write_result_file()
-    
+
     mylog('verbose', [f'[{pluginName}] Scan finished, found {len(plugin_objects)} devices'])
 
 
@@ -58,10 +57,10 @@ def get_entries(plugin_objects: Plugin_Objects) -> Plugin_Objects:
     try:
         # connect router
         api = connect(username=MT_USER, password=MT_PASS, host=MT_HOST, port=MT_PORT)
-    
+
         # get dhcp leases
         leases = api('/ip/dhcp-server/lease/print')
-    
+
         for lease in leases:
             lease_id = lease.get('.id')
             address = lease.get('address')
@@ -71,8 +70,11 @@ def get_entries(plugin_objects: Plugin_Objects) -> Plugin_Objects:
             last_seen = lease.get('last-seen')
             status = lease.get('status')
             device_name = comment or host_name or "(unknown)"
-    
-            mylog('verbose', [f"ID: {lease_id}, Address: {address}, MAC Address: {mac_address}, Host Name: {host_name}, Comment: {comment}, Last Seen: {last_seen}, Status: {status}"])
+
+            mylog(
+                'verbose',
+                [f"ID: {lease_id}, Address: {address}, MAC Address: {mac_address}, Host Name: {host_name}, Comment: {comment}, Last Seen: {last_seen}, Status: {status}"]
+            )
 
             if (status == "bound"):
                 plugin_objects.add_object(
@@ -83,7 +85,7 @@ def get_entries(plugin_objects: Plugin_Objects) -> Plugin_Objects:
                     watched3    = host_name,
                     watched4    = last_seen,
                     extra       = '',
-                    helpVal1    = comment, 
+                    helpVal1    = comment,
                     foreignKey  = mac_address)
 
     except TrapError as e:
@@ -91,13 +93,13 @@ def get_entries(plugin_objects: Plugin_Objects) -> Plugin_Objects:
     except Exception as e:
         mylog('error', [f"Failed to connect to MikroTik API: {e}"])
 
-    mylog('verbose', [f'[{pluginName}] Script finished'])   
-    
+    mylog('verbose', [f'[{pluginName}] Script finished'])
+
     return plugin_objects
 
 
-#===============================================================================
+# ===============================================================================
 # BEGIN
-#===============================================================================
+# ===============================================================================
 if __name__ == '__main__':
     main()

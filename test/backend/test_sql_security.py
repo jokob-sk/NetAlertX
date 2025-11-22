@@ -13,16 +13,15 @@ import unittest
 import sqlite3
 import tempfile
 import os
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
 
 # Add the server directory to the path for imports
 INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/server"])
 sys.path.append('/home/dell/coding/bash/10x-agentic-setup/netalertx-sql-fix/server')
 
-from db.sql_safe_builder import SafeConditionBuilder, create_safe_condition_builder
-from database import DB
-from messaging.reporting import get_notifications
+from db.sql_safe_builder import SafeConditionBuilder  # noqa: E402 [flake8 lint suppression]
+from messaging.reporting import get_notifications  # noqa: E402 [flake8 lint suppression]
 
 
 class TestSafeConditionBuilder(unittest.TestCase):
@@ -83,7 +82,7 @@ class TestSafeConditionBuilder(unittest.TestCase):
     def test_build_simple_condition_valid(self):
         """Test building valid simple conditions."""
         sql, params = self.builder._build_simple_condition('AND', 'devName', '=', 'TestDevice')
-        
+
         self.assertIn('AND devName = :param_', sql)
         self.assertEqual(len(params), 1)
         self.assertIn('TestDevice', params.values())
@@ -92,20 +91,20 @@ class TestSafeConditionBuilder(unittest.TestCase):
         """Test that invalid column names are rejected."""
         with self.assertRaises(ValueError) as context:
             self.builder._build_simple_condition('AND', 'invalid_column', '=', 'value')
-        
+
         self.assertIn('Invalid column name', str(context.exception))
 
     def test_build_simple_condition_invalid_operator(self):
         """Test that invalid operators are rejected."""
         with self.assertRaises(ValueError) as context:
             self.builder._build_simple_condition('AND', 'devName', 'UNION', 'value')
-        
+
         self.assertIn('Invalid operator', str(context.exception))
 
     def test_build_in_condition_valid(self):
         """Test building valid IN conditions."""
         sql, params = self.builder._build_in_condition('AND', 'eve_EventType', 'IN', "'Connected', 'Disconnected'")
-        
+
         self.assertIn('AND eve_EventType IN', sql)
         self.assertEqual(len(params), 2)
         self.assertIn('Connected', params.values())
@@ -114,7 +113,7 @@ class TestSafeConditionBuilder(unittest.TestCase):
     def test_build_null_condition(self):
         """Test building NULL check conditions."""
         sql, params = self.builder._build_null_condition('AND', 'devComments', 'IS NULL')
-        
+
         self.assertEqual(sql, 'AND devComments IS NULL')
         self.assertEqual(len(params), 0)
 
@@ -154,7 +153,7 @@ class TestSafeConditionBuilder(unittest.TestCase):
     def test_device_name_filter(self):
         """Test the device name filter helper method."""
         sql, params = self.builder.build_device_name_filter("TestDevice")
-        
+
         self.assertIn('AND devName = :device_name_', sql)
         self.assertIn('TestDevice', params.values())
 
@@ -162,12 +161,11 @@ class TestSafeConditionBuilder(unittest.TestCase):
         """Test the event type filter helper method."""
         event_types = ['Connected', 'Disconnected']
         sql, params = self.builder.build_event_type_filter(event_types)
-        
+
         self.assertIn('AND eve_EventType IN', sql)
         self.assertEqual(len(params), 2)
         self.assertIn('Connected', params.values())
         self.assertIn('Disconnected', params.values())
-
 
 
 class TestDatabaseParameterSupport(unittest.TestCase):
@@ -177,7 +175,7 @@ class TestDatabaseParameterSupport(unittest.TestCase):
         """Set up test database."""
         self.temp_db = tempfile.NamedTemporaryFile(delete=False, suffix='.db')
         self.temp_db.close()
-        
+
         # Create test database
         self.conn = sqlite3.connect(self.temp_db.name)
         self.conn.execute('''CREATE TABLE test_table (
@@ -197,23 +195,23 @@ class TestDatabaseParameterSupport(unittest.TestCase):
     def test_parameterized_query_execution(self):
         """Test that parameterized queries work correctly."""
         cursor = self.conn.cursor()
-        
+
         # Test named parameters
         cursor.execute("SELECT * FROM test_table WHERE name = :name", {'name': 'test1'})
         results = cursor.fetchall()
-        
+
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0][1], 'test1')
 
     def test_parameterized_query_prevents_injection(self):
         """Test that parameterized queries prevent SQL injection."""
         cursor = self.conn.cursor()
-        
+
         # This should not cause SQL injection
         malicious_input = "'; DROP TABLE test_table; --"
         cursor.execute("SELECT * FROM test_table WHERE name = :name", {'name': malicious_input})
-        results = cursor.fetchall()
-        
+        # results = cursor.fetchall()
+
         # The table should still exist and be queryable
         cursor.execute("SELECT COUNT(*) FROM test_table")
         count = cursor.fetchone()[0]
@@ -228,7 +226,7 @@ class TestReportingSecurityIntegration(unittest.TestCase):
         self.mock_db = Mock()
         self.mock_db.sql = Mock()
         self.mock_db.get_table_as_json = Mock()
-        
+
         # Mock successful JSON response
         mock_json_obj = Mock()
         mock_json_obj.columnNames = ['MAC', 'Datetime', 'IP', 'Event Type', 'Device name', 'Comments']
@@ -245,7 +243,7 @@ class TestReportingSecurityIntegration(unittest.TestCase):
         }.get(key, '')
 
         # Call the function
-        result = get_notifications(self.mock_db)
+        get_notifications(self.mock_db)
 
         # Verify that get_table_as_json was called with parameters
         self.mock_db.get_table_as_json.assert_called()
@@ -265,7 +263,6 @@ class TestReportingSecurityIntegration(unittest.TestCase):
         # Ensure the parameter dict has the correct value (using actual param name)
         self.assertEqual(list(params.values())[0], "TestDevice")
 
-
     @patch('messaging.reporting.get_setting_value')
     def test_events_section_security(self, mock_get_setting):
         """Test that events section uses safe SQL building."""
@@ -276,7 +273,7 @@ class TestReportingSecurityIntegration(unittest.TestCase):
         }.get(key, '')
 
         # Call the function
-        result = get_notifications(self.mock_db)
+        get_notifications(self.mock_db)
 
         # Verify that get_table_as_json was called with parameters
         self.mock_db.get_table_as_json.assert_called()
@@ -291,7 +288,7 @@ class TestReportingSecurityIntegration(unittest.TestCase):
         }.get(key, '')
 
         # Call the function - should not raise an exception
-        result = get_notifications(self.mock_db)
+        get_notifications(self.mock_db)
 
         # Should still call get_table_as_json (with safe fallback query)
         self.mock_db.get_table_as_json.assert_called()
@@ -306,7 +303,7 @@ class TestReportingSecurityIntegration(unittest.TestCase):
         }.get(key, '')
 
         # Call the function
-        result = get_notifications(self.mock_db)
+        get_notifications(self.mock_db)
 
         # Should call get_table_as_json
         self.mock_db.get_table_as_json.assert_called()
@@ -322,12 +319,12 @@ class TestSecurityBenchmarks(unittest.TestCase):
     def test_performance_simple_condition(self):
         """Test performance of simple condition building."""
         import time
-        
+
         start_time = time.time()
         for _ in range(1000):
             sql, params = self.builder.build_safe_condition("AND devName = 'TestDevice'")
         end_time = time.time()
-        
+
         execution_time = end_time - start_time
         self.assertLess(execution_time, 1.0, "Simple condition building should be fast")
 
@@ -339,7 +336,7 @@ class TestSecurityBenchmarks(unittest.TestCase):
             self.skipTest("psutil not available")
             return
         import os
-        
+
         process = psutil.Process(os.getpid())
         initial_memory = process.memory_info().rss
 
@@ -350,7 +347,7 @@ class TestSecurityBenchmarks(unittest.TestCase):
 
         final_memory = process.memory_info().rss
         memory_increase = final_memory - initial_memory
-        
+
         # Memory increase should be reasonable (less than 10MB)
         self.assertLess(memory_increase, 10 * 1024 * 1024, "Memory usage should be reasonable")
 

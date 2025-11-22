@@ -1,12 +1,5 @@
 import re
 import json
-import os
-import sys
-
-# Register NetAlertX directories
-INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
-sys.path.extend([f"{INSTALL_PATH}/server"])
-
 from logger import mylog, Logger
 from helper import get_setting_value
 

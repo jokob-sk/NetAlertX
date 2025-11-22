@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+# !/usr/bin/env python
 
 import os
 import base64
@@ -14,16 +14,13 @@ from logger import mylog
 INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from database import get_temp_db_connection
-from db.db_helper import get_table_json, get_device_condition_by_status
-from utils.datetime_utils import format_date
+from database import get_temp_db_connection  # noqa: E402 [flake8 lint suppression]
+from db.db_helper import get_table_json, get_device_condition_by_status  # noqa: E402 [flake8 lint suppression]
 
 
 # --------------------------
 # Device Endpoints Functions
 # --------------------------
-
-
 def get_all_devices():
     """Retrieve all devices from the database."""
     conn = get_temp_db_connection()
@@ -139,7 +136,6 @@ def export_devices(export_format):
 def import_csv(file_storage=None):
     data = ""
     skipped = []
-    error = None
 
     # 1. Try JSON `content` (base64-encoded CSV)
     if request.is_json and request.json.get("content"):

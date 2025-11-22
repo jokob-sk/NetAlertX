@@ -9,25 +9,68 @@ from flask_cors import CORS
 INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
 sys.path.extend([f"{INSTALL_PATH}/server"])
 
-from logger import mylog
-from helper import get_setting_value
-from db.db_helper import get_date_from_period
-from app_state import updateState
+from logger import mylog  # noqa: E402 [flake8 lint suppression]
+from helper import get_setting_value  # noqa: E402 [flake8 lint suppression]
+from db.db_helper import get_date_from_period  # noqa: E402 [flake8 lint suppression]
+from app_state import updateState  # noqa: E402 [flake8 lint suppression]
 
-
-from .graphql_endpoint import devicesSchema
-from .device_endpoint import get_device_data, set_device_data, delete_device, delete_device_events, reset_device_props, copy_device, update_device_column
-from .devices_endpoint import get_all_devices, delete_unknown_devices, delete_all_with_empty_macs, delete_devices, export_devices, import_csv, devices_totals, devices_by_status
-from .events_endpoint import delete_events, delete_events_older_than, get_events, create_event, get_events_totals
-from .history_endpoint import delete_online_history
-from .prometheus_endpoint import get_metric_stats
-from .sessions_endpoint import get_sessions, delete_session, create_session, get_sessions_calendar, get_device_sessions, get_session_events
-from .nettools_endpoint import wakeonlan, traceroute, speedtest, nslookup, nmap_scan, internet_info
-from .dbquery_endpoint import read_query, write_query, update_query, delete_query
-from .sync_endpoint import handle_sync_post, handle_sync_get
-from .logs_endpoint import clean_log
-from models.user_events_queue_instance import UserEventsQueueInstance
-from messaging.in_app import write_notification, mark_all_notifications_read, delete_notifications, get_unread_notifications, delete_notification, mark_notification_as_read
+from .graphql_endpoint import devicesSchema  # noqa: E402 [flake8 lint suppression]
+from .device_endpoint import (  # noqa: E402 [flake8 lint suppression]
+    get_device_data,
+    set_device_data,
+    delete_device,
+    delete_device_events,
+    reset_device_props,
+    copy_device,
+    update_device_column
+)
+from .devices_endpoint import (  # noqa: E402 [flake8 lint suppression]
+    get_all_devices,
+    delete_unknown_devices,
+    delete_all_with_empty_macs,
+    delete_devices,
+    export_devices,
+    import_csv,
+    devices_totals,
+    devices_by_status
+)
+from .events_endpoint import (  # noqa: E402 [flake8 lint suppression]
+    delete_events,
+    delete_events_older_than,
+    get_events,
+    create_event,
+    get_events_totals
+)
+from .history_endpoint import delete_online_history  # noqa: E402 [flake8 lint suppression]
+from .prometheus_endpoint import get_metric_stats  # noqa: E402 [flake8 lint suppression]
+from .sessions_endpoint import (  # noqa: E402 [flake8 lint suppression]
+    get_sessions,
+    delete_session,
+    create_session,
+    get_sessions_calendar,
+    get_device_sessions,
+    get_session_events
+)
+from .nettools_endpoint import (  # noqa: E402 [flake8 lint suppression]
+    wakeonlan,
+    traceroute,
+    speedtest,
+    nslookup,
+    nmap_scan,
+    internet_info
+)
+from .dbquery_endpoint import read_query, write_query, update_query, delete_query  # noqa: E402 [flake8 lint suppression]
+from .sync_endpoint import handle_sync_post, handle_sync_get  # noqa: E402 [flake8 lint suppression]
+from .logs_endpoint import clean_log  # noqa: E402 [flake8 lint suppression]
+from models.user_events_queue_instance import UserEventsQueueInstance  # noqa: E402 [flake8 lint suppression]
+from messaging.in_app import (  # noqa: E402 [flake8 lint suppression]
+    write_notification,
+    mark_all_notifications_read,
+    delete_notifications,
+    get_unread_notifications,
+    delete_notification,
+    mark_notification_as_read
+)
 
 # Flask application
 app = Flask(__name__)
@@ -50,13 +93,14 @@ CORS(
     allow_headers=["Authorization", "Content-Type"],
 )
 
+
 # -------------------------------------------------------------------
 # Custom handler for 404 - Route not found
 # -------------------------------------------------------------------
 @app.errorhandler(404)
 def not_found(error):
     response = {
-        "success": False, 
+        "success": False,
         "error": "API route not found",
         "message": f"The requested URL {error.description if hasattr(error, 'description') else ''} was not found on the server.",
     }
@@ -200,7 +244,7 @@ def api_get_devices():
 def api_delete_devices():
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
-    
+
     macs = request.json.get("macs") if request.is_json else None
 
     return delete_devices(macs)
@@ -338,7 +382,7 @@ def dbquery_read():
 
     if not raw_sql_b64:
         return jsonify({"success": False, "message": "ERROR: Missing parameters", "error": "rawSql is required"}), 400
-    
+
     return read_query(raw_sql_b64)
 
 
@@ -350,7 +394,7 @@ def dbquery_write():
     data = request.get_json() or {}
     raw_sql_b64 = data.get("rawSql")
     if not raw_sql_b64:
-        return jsonify({"success": False, "message": "ERROR: Missing parameters",  "error": "rawSql is required"}), 400
+        return jsonify({"success": False, "message": "ERROR: Missing parameters", "error": "rawSql is required"}), 400
 
     return write_query(raw_sql_b64)
 
@@ -363,7 +407,13 @@ def dbquery_update():
     data = request.get_json() or {}
     required = ["columnName", "id", "dbtable", "columns", "values"]
     if not all(data.get(k) for k in required):
-        return jsonify({"success": False, "message": "ERROR: Missing parameters", "error": "Missing required 'columnName', 'id', 'dbtable', 'columns', or 'values' query parameter"}), 400
+        return jsonify(
+            {
+                "success": False,
+                "message": "ERROR: Missing parameters",
+                "error": "Missing required 'columnName', 'id', 'dbtable', 'columns', or 'values' query parameter"
+            }
+        ), 400
 
     return update_query(
         column_name=data["columnName"],
@@ -418,12 +468,13 @@ def api_clean_log():
 
     return clean_log(file)
 
+
 @app.route("/logs/add-to-execution-queue", methods=["POST"])
 def api_add_to_execution_queue():
 
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
-        
+
     queue = UserEventsQueueInstance()
 
     # Get JSON payload safely
@@ -499,7 +550,7 @@ def api_delete_old_events(days: int):
     """
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
-    
+
     return delete_events_older_than(days)
 
 
@@ -619,7 +670,7 @@ def api_write_notification():
 
     if not content:
         return jsonify({"success": False, "message": "ERROR: Missing parameters", "error": "Missing content"}), 400
-    
+
     write_notification(content, level)
     return jsonify({"success": True})
 
@@ -672,7 +723,8 @@ def api_mark_notification_read(guid):
         return jsonify({"success": True})
     else:
         return jsonify({"success": False, "message": "ERROR", "error": result.get("error")}), 500
-    
+
+
 # --------------------------
 # SYNC endpoint
 # --------------------------
