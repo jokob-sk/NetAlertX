@@ -274,7 +274,7 @@ trap on_signal INT TERM
 # Only start crond scheduler on Alpine (non-Debian) environments
 # Debian typically uses systemd or other schedulers
 if [ "${ENVIRONMENT:-}" ] && [ "${ENVIRONMENT:-}" != "debian" ]; then
-    add_service "/services/start-crond.sh" "crond"
+    add_service "/services/start-cron.sh" "supercronic"
 fi
 
 # Start core frontend and backend services

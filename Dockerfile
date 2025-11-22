@@ -61,6 +61,7 @@ ENV LOG_IP_CHANGES=${NETALERTX_LOG}/IP_changes.log
 ENV LOG_APP=${NETALERTX_LOG}/app.log
 ENV LOG_APP_FRONT=${NETALERTX_LOG}/app_front.log
 ENV LOG_REPORT_OUTPUT_TXT=${NETALERTX_LOG}/report_output.txt
+ENV LOG_CRON=${NETALERTX_LOG}/supercronic
 ENV LOG_DB_IS_LOCKED=${NETALERTX_LOG}/db_is_locked.log
 ENV LOG_REPORT_OUTPUT_HTML=${NETALERTX_LOG}/report_output.html
 ENV LOG_STDERR=${NETALERTX_LOG}/stderr.log
@@ -68,7 +69,7 @@ ENV LOG_APP_PHP_ERRORS=${NETALERTX_LOG}/app.php_errors.log
 ENV LOG_EXECUTION_QUEUE=${NETALERTX_LOG}/execution_queue.log
 ENV LOG_REPORT_OUTPUT_JSON=${NETALERTX_LOG}/report_output.json
 ENV LOG_STDOUT=${NETALERTX_LOG}/stdout.log
-ENV LOG_CROND=${NETALERTX_LOG}/crond.log
+ENV LOG_CRON=${NETALERTX_LOG}/cron.log
 ENV LOG_NGINX_ERROR=${NETALERTX_LOG}/nginx-error.log
 
 # System Services configuration files
@@ -78,11 +79,11 @@ ENV SYSTEM_SERVICES_SCRIPTS=${SYSTEM_SERVICES}/scripts
 ENV SYSTEM_SERVICES_CONFIG=${SYSTEM_SERVICES}/config
 ENV SYSTEM_NGINX_CONFIG=${SYSTEM_SERVICES_CONFIG}/nginx
 ENV SYSTEM_NGINX_CONFIG_TEMPLATE=${SYSTEM_NGINX_CONFIG}/netalertx.conf.template
+ENV SYSTEM_SERVICES_CONFIG_CRON=${SYSTEM_SERVICES_CONFIG}/cron
 ENV SYSTEM_SERVICES_ACTIVE_CONFIG=/tmp/nginx/active-config
 ENV SYSTEM_SERVICES_ACTIVE_CONFIG_FILE=${SYSTEM_SERVICES_ACTIVE_CONFIG}/nginx.conf
 ENV SYSTEM_SERVICES_PHP_FOLDER=${SYSTEM_SERVICES_CONFIG}/php
 ENV SYSTEM_SERVICES_PHP_FPM_D=${SYSTEM_SERVICES_PHP_FOLDER}/php-fpm.d
-ENV SYSTEM_SERVICES_CROND=${SYSTEM_SERVICES_CONFIG}/crond
 ENV SYSTEM_SERVICES_RUN=/tmp/run
 ENV SYSTEM_SERVICES_RUN_TMP=${SYSTEM_SERVICES_RUN}/tmp
 ENV SYSTEM_SERVICES_RUN_LOG=${SYSTEM_SERVICES_RUN}/logs
@@ -116,7 +117,7 @@ ENV LANG=C.UTF-8
 RUN apk add --no-cache bash mtr libbsd zip lsblk tzdata curl arp-scan iproute2 iproute2-ss nmap \
     nmap-scripts traceroute nbtscan net-tools net-snmp-tools bind-tools awake ca-certificates \
     sqlite php83 php83-fpm php83-cgi php83-curl php83-sqlite3 php83-session python3 envsubst \
-    nginx shadow && \
+    nginx supercronic shadow && \
     rm -Rf /var/cache/apk/*  && \
     rm -Rf /etc/nginx && \
     addgroup -g 20211 ${NETALERTX_GROUP} && \
@@ -162,7 +163,7 @@ RUN if [ -f .VERSION ]; then \
     setcap cap_net_raw,cap_net_admin+eip $(readlink -f ${VIRTUAL_ENV_BIN}/python) && \
     /bin/sh /build/init-nginx.sh && \
     /bin/sh /build/init-php-fpm.sh && \
-    /bin/sh /build/init-crond.sh && \
+    /bin/sh /build/init-cron.sh && \
     /bin/sh /build/init-backend.sh && \
     rm -rf /build && \
     apk del libcap && \

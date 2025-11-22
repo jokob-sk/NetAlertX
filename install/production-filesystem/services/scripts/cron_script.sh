@@ -7,10 +7,10 @@ export INSTALL_DIR=/app
 if grep -q "cron_restart_backend" "${LOG_EXECUTION_QUEUE}"; then
   killall python3
   sleep 2
-  /services/start-backend.sh &
+  /services/start-backend.sh >/dev/null 2>&1 &
 
   # Remove all lines containing cron_restart_backend from the log file
   # Atomic replacement with temp file
-  grep -v "cron_restart_backend" "${LOG_EXECUTION_QUEUE}" > "${LOG_EXECUTION_QUEUE}.tmp" && \
-    mv "${LOG_EXECUTION_QUEUE}.tmp" "${LOG_EXECUTION_QUEUE}"
+  grep -v "cron_restart_backend" "${LOG_EXECUTION_QUEUE}" > "${LOG_EXECUTION_QUEUE}.tmp"
+  mv "${LOG_EXECUTION_QUEUE}.tmp" "${LOG_EXECUTION_QUEUE}"
 fi
