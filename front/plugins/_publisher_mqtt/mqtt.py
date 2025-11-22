@@ -233,7 +233,6 @@ class sensor_config:
         Store the sensor configuration in the global plugin_objects, which tracks sensors based on a unique combination
         of attributes including deviceId, sensorName, hash, and MAC.
         """
-        global plugin_objects
 
         # Add the sensor to the global plugin_objects
         plugin_objects.add_object(
@@ -318,7 +317,6 @@ def create_generic_device(mqtt_client, deviceId, deviceName):
 # ------------------------------------------------------------------------------
 # Register sensor config on the broker
 def create_sensor(mqtt_client, deviceId, deviceName, sensorType, sensorName, icon, mac=""):
-    global mqtt_sensors
 
     #  check previous configs
     sensorConfig = sensor_config(deviceId, deviceName, sensorType, sensorName, icon, mac)
@@ -429,7 +427,7 @@ def mqtt_create_client():
 # -----------------------------------------------------------------------------
 def mqtt_start(db):
 
-    global mqtt_client, mqtt_connected_to_broker
+    global mqtt_client
 
     if not mqtt_connected_to_broker:
         mqtt_client = mqtt_create_client()

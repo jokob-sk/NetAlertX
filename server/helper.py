@@ -248,8 +248,6 @@ def get_setting_value(key):
         Any: The Python-typed setting value, or an empty string if not found.
     """
 
-    global SETTINGS_SECONDARYCACHE
-
     # Returns empty string if not found
     value = ""
 

@@ -94,7 +94,10 @@ class plugin_manager:
 
                 # 🔹 CMD also retrieved from cache
                 cmd_setting = self._cache["settings"].get(prefix, {}).get("CMD")
-                mylog("debug", f"[Plugins] CMD: {cmd_setting["value"] if cmd_setting else None}")
+
+                print_str = cmd_setting["value"] if cmd_setting else None
+
+                mylog("debug", f"[Plugins] CMD: {print_str}")
 
                 execute_plugin(self.db, self.all_plugins, plugin)
 

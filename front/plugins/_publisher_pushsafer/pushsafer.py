@@ -1,6 +1,4 @@
-
 #!/usr/bin/env python
-
 import json
 import os
 import sys
@@ -99,7 +97,7 @@ def send(text):
             "ut" : 'Open NetAlertX',
             "k" : token,
         }
-        response = requests.post(url, data=post_fields)
+        response = requests.post(url, data=post_fields, timeout=get_setting_value("PUSHSAFER_RUN_TIMEOUT"))
         response_status_code = response.status_code
 
         # Check if the request was successful (status code 200)

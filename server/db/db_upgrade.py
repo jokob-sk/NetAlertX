@@ -30,7 +30,7 @@ def ensure_column(sql, table: str, column_name: str, column_type: str) -> bool:
         if column_name in actual_columns:
             return True  # Already exists
 
-        # Define the expected columns (hardcoded base schema) [v25.5.24] - available in teh default app.db
+        # Define the expected columns (hardcoded base schema) [v25.5.24] - available in the default app.db
         expected_columns = [
             "devMac",
             "devName",

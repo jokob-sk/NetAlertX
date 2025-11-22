@@ -268,7 +268,7 @@ def main():
 
                 if is_mac(entry['mac']):
                     # Map to Plugin_Objects fields
-                    mylog('verbose', [f'[{pluginName}] found: {entry['name']}|{entry['mac']}|{entry['ip']}'])
+                    mylog('verbose', [f"[{pluginName}] found: {entry['name']}|{entry['mac']}|{entry['ip']}"])
 
                     plugin_objects.add_object(
                         primaryId=str(entry['mac']),
@@ -281,7 +281,7 @@ def main():
                         foreignKey=str(entry['mac'])
                     )
                 else:
-                    mylog('verbose', [f'[{pluginName}] Skipping invalid MAC: {entry['name']}|{entry['mac']}|{entry['ip']}'])
+                    mylog('verbose', [f"[{pluginName}] Skipping invalid MAC: {entry['name']}|{entry['mac']}|{entry['ip']}"])
 
         # Write result file for NetAlertX to ingest
         plugin_objects.write_result_file()

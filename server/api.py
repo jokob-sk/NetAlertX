@@ -111,7 +111,6 @@ def update_api(
 # -------------------------------------------------------------------------------
 class api_endpoint_class:
     def __init__(self, db, forceUpdate, query, path, is_ad_hoc_user_event=False):
-        global apiEndpoints
 
         current_time = timeNowTZ()
 
@@ -222,7 +221,7 @@ periodic_write_thread = None
 
 def periodic_write(interval=1):
     """Periodically checks all endpoints for pending writes."""
-    global apiEndpoints
+
     while not stop_event.is_set():
         with api_lock:
             for endpoint in apiEndpoints:

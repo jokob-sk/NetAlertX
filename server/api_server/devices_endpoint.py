@@ -96,7 +96,7 @@ def delete_unknown_devices():
 
 def export_devices(export_format):
     """
-    Export devices from the Devices table in teh desired format.
+    Export devices from the Devices table in the desired format.
     - If `macs` is None → delete ALL devices.
     - If `macs` is a list → delete only matching MACs (supports wildcard '*').
     """

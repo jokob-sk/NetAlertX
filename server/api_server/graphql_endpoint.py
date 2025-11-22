@@ -364,7 +364,6 @@ class Query(ObjectType):
         Collect language strings, optionally filtered by language code and/or string key.
         Caches in memory for performance. Can fallback to 'en_us' if a string is missing.
         """
-        global _langstrings_cache, _langstrings_cache_mtime
 
         langStrings = []
 

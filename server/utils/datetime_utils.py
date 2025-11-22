@@ -5,7 +5,7 @@ from dateutil import parser
 import datetime
 import re
 import pytz
-from typing import Union
+from typing import Union, Optional
 from zoneinfo import ZoneInfo
 import email.utils
 import conf
@@ -112,9 +112,9 @@ def normalizeTimeStamp(inputTimeStamp):
 
 
 # -------------------------------------------------------------------------------------------
-def format_date_iso(date1: str) -> str:
+def format_date_iso(date1: str) -> Optional[str]:
     """Return ISO 8601 string for a date or None if empty"""
-    if date1 is None:
+    if not date1:
         return None
     dt = datetime.datetime.fromisoformat(date1) if isinstance(date1, str) else date1
     return dt.isoformat()
