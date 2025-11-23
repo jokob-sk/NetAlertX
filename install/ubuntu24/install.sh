@@ -22,7 +22,6 @@ NGINX_CONF_FILE=netalertx.conf
 WEB_UI_DIR=/var/www/html/netalertx
 NGINX_CONFIG_FILE=/etc/nginx/conf.d/$NGINX_CONF_FILE
 OUI_FILE="/usr/share/arp-scan/ieee-oui.txt" # Define the path to ieee-oui.txt and ieee-iab.txt
-SCRIPT_DIR="$(cd -- "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 FILEDB=${INSTALL_DIR}/db/${DB_FILE}
 PHPVERSION="8.3"
 VENV_DIR="/opt/netalertx-python"
@@ -106,7 +105,7 @@ if [ -d "${INSTALL_DIR}" ]; then
   if [ "$1" == "install" ] || [ "$1" == "update" ] || [ "$1" == "start" ]; then
     confirmation=$1
   else
-    read -p "Enter your choice: " confirmation
+    read -rp "Enter your choice: " confirmation
   fi
   if [ "$confirmation" == "install" ]; then
     # Ensure INSTALL_DIR is safe to wipe
@@ -118,7 +117,7 @@ if [ -d "${INSTALL_DIR}" ]; then
       mountpoint -q "${INSTALL_DIR}/front" && umount "${INSTALL_DIR}/front" 2>/dev/null
 
       # Remove all contents safely
-      rm -rf -- "${INSTALL_DIR}"/* "${INSTALL_DIR}"/.[!.]* "${INSTALL_DIR}"/..?* 2>/dev/null
+      rm -rf -- "${INSTALL_DIR:?}"/* "${INSTALL_DIR}"/.[!.]* "${INSTALL_DIR}"/..?* 2>/dev/null
 
       # Re-clone repository
       git clone "${GITHUB_REPO}" "${INSTALL_DIR}/"
@@ -152,6 +151,8 @@ echo "---------------------------------------------------------"
 echo
 # update-alternatives --install /usr/bin/python python /usr/bin/python3 10
 python3 -m venv "${VENV_DIR}"
+# Shell check doesn't recognize source command because it's not in the repo, it is in the system at runtime
+# shellcheck disable=SC1091
 source "${VENV_DIR}/bin/activate"
 
 if [[ ! -f "${REQUIREMENTS_FILE}" ]]; then

@@ -11,11 +11,15 @@ mkdir -p "${LOG_DIR}" "${RUN_DIR}" "${TMP_DIR}"
 
 nginx_pid=""
 
+# Called externally, but shellcheck does not see that and claims it is unused.
+# shellcheck disable=SC2329,SC2317
 cleanup() {
 	status=$?
 	echo "nginx stopped! (exit ${status})"
 }
 
+# Called externally, but shellcheck does not see that and claims it is unused.
+# shellcheck disable=SC2329,SC2317
 forward_signal() {
 	if [[ -n "${nginx_pid}" ]]; then
 		kill -TERM "${nginx_pid}" 2>/dev/null || true
@@ -24,12 +28,15 @@ forward_signal() {
 
 
 # When in devcontainer we must kill any existing nginx processes
-while ps ax | grep -v -e "grep" -e "nginx.sh" | grep nginx >/dev/null 2>&1; do
+while pgrep -x nginx >/dev/null 2>&1; do
 	killall nginx &>/dev/null || true
 	sleep 0.2
 done
 
 TEMP_CONFIG_FILE=$(mktemp "${TMP_DIR}/netalertx.conf.XXXXXX")
+
+# Shell check doesn't recognize envsubst variables
+# shellcheck disable=SC2016
 if envsubst '${LISTEN_ADDR} ${PORT}' < "${SYSTEM_NGINX_CONFIG_TEMPLATE}" > "${TEMP_CONFIG_FILE}" 2>/dev/null; then
 	mv "${TEMP_CONFIG_FILE}" "${SYSTEM_SERVICES_ACTIVE_CONFIG_FILE}"
 else

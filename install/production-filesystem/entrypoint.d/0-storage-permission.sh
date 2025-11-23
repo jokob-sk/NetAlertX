@@ -52,11 +52,11 @@ EOF
     >&2 printf "%s" "${RESET}"
 
     # Set ownership to netalertx user for all read-write paths
-    chown -R netalertx ${READ_WRITE_PATHS} 2>/dev/null || true
+    chown -R netalertx "${READ_WRITE_PATHS}" 2>/dev/null || true
 
     # Set directory and file permissions for all read-write paths
-    find ${READ_WRITE_PATHS} -type d -exec chmod u+rwx {} \;
-    find ${READ_WRITE_PATHS} -type f -exec chmod u+rw {} \;
+    find "${READ_WRITE_PATHS}" -type d -exec chmod u+rwx {} \;
+    find "${READ_WRITE_PATHS}" -type f -exec chmod u+rw {} \;
     echo Permissions fixed for read-write paths. Please restart the container as user 20211.
     sleep infinity & wait $!
 fi

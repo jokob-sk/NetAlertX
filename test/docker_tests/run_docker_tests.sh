@@ -57,7 +57,7 @@ for i in $(seq 1 $WAIT_SECONDS); do
         echo "--- Services are healthy! ---"
         break
     fi
-    if [ $i -eq $WAIT_SECONDS ]; then
+    if [ "$i" -eq "$WAIT_SECONDS" ]; then
         echo "--- Timeout: Services did not become healthy after $WAIT_SECONDS seconds. ---"
         docker logs netalertx-test-container
         exit 1

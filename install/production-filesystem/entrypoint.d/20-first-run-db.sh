@@ -441,7 +441,9 @@ CREATE TRIGGER "trg_delete_devices"
             END;
 end-of-database-schema
 
-if [ $? -ne 0 ]; then
+database_creation_status=$?
+
+if [ $database_creation_status -ne 0 ]; then
   RED=$(printf '\033[1;31m')
   RESET=$(printf '\033[0m')
   >&2 printf "%s" "${RED}"

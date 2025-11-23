@@ -4,18 +4,22 @@ set -euo pipefail
 
 crond_pid=""
 
+# Called externally, but shellcheck does not see that and claims it is unused.
+# shellcheck disable=SC2329,SC2317
 cleanup() {
 	status=$?
 	echo "Supercronic stopped! (exit ${status})"
 }
 
+# Called externally, but shellcheck does not see that and claims it is unused.
+# shellcheck disable=SC2329,SC2317
 forward_signal() {
 	if [[ -n "${crond_pid}" ]]; then
 		kill -TERM "${crond_pid}" 2>/dev/null || true
 	fi
 }
 
-while ps ax | grep -v -e grep -e '.sh' | grep crond >/dev/null 2>&1; do
+while pgrep -x crond >/dev/null 2>&1; do
 	killall crond &>/dev/null
 	sleep 0.2
 done

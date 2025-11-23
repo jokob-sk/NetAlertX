@@ -24,7 +24,7 @@ apt-get install sudo -y
 apt-get install -y git
 
 # Clean the directory
-rm -R $INSTALL_DIR/
+rm -R ${INSTALL_DIR:?}/
 
 # Clone the application repository
 git clone https://github.com/jokob-sk/NetAlertX "$INSTALL_DIR/"
