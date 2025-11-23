@@ -21,10 +21,10 @@ log_success() {
 }
 
 # 1. Check if crond is running
-if pgrep -f "crond" > /dev/null; then
-    log_success "crond is running"
+if pgrep -f "supercronic" > /dev/null; then
+    log_success "supercronic is running"
 else
-    log_error "crond is not running"
+    log_error "supercronic is not running"
 fi
 
 # 2. Check if php-fpm is running

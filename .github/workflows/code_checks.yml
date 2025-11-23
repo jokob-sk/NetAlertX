@@ -95,5 +95,5 @@ jobs:
       - name: Run Docker-based tests
         run: |
           echo "🐳 Running Docker-based tests..."
-          chmod +x ./run_docker_tests.sh
-          ./run_docker_tests.sh
+          chmod +x ./test/docker_tests/run_docker_tests.sh
+          ./test/docker_tests/run_docker_tests.sh

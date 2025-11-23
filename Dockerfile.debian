@@ -72,7 +72,7 @@ ENV LOG_APP_PHP_ERRORS=${NETALERTX_LOG}/app.php_errors.log
 ENV LOG_EXECUTION_QUEUE=${NETALERTX_LOG}/execution_queue.log
 ENV LOG_REPORT_OUTPUT_JSON=${NETALERTX_LOG}/report_output.json
 ENV LOG_STDOUT=${NETALERTX_LOG}/stdout.log
-ENV LOG_CROND=${NETALERTX_LOG}/crond.log
+ENV LOG_CRON=${NETALERTX_LOG}/cron.log
 ENV LOG_NGINX_ERROR=${NETALERTX_LOG}/nginx-error.log
 
 # System Services configuration files
