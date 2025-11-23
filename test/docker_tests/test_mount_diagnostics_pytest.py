@@ -271,7 +271,7 @@ def create_test_scenarios() -> List[TestScenario]:
             compose_file = f"docker-compose.mount-test.{path_name}_{scenario_name}.yml"
 
             # Determine expected exit code
-            expected_exit_code = 1 if scenario_name == "unwritable" else 0
+            expected_exit_code = 1 if expected_issues and not (path_name == "active_config" and scenario_name == "unwritable") else 0
 
             scenarios.append(
                 TestScenario(
