@@ -290,8 +290,6 @@ add_service "${SYSTEM_SERVICES}/start-backend.sh" "python3"
 # Useful for devcontainer debugging where individual services need to be debugged
 if [ "${NETALERTX_DEBUG:-0}" -eq 1 ]; then
 	echo "NETALERTX_DEBUG is set to 1, will not shut down other services if one fails."
-	wait
-	exit $?
 fi
 
 ################################################################################
@@ -316,10 +314,25 @@ while [ -n "${SERVICES}" ]; do
         if ! is_pid_active "${pid}"; then
             wait "${pid}" 2>/dev/null
             status=$?
+
+            # Handle intentional backend restart
+            if [ "${name}" = "python3" ] && [ -f "/tmp/backend_restart_pending" ]; then
+                echo "🔄 Backend restart requested via marker file."
+                rm -f "/tmp/backend_restart_pending"
+                remove_service "${pid}"
+                add_service "${SYSTEM_SERVICES}/start-backend.sh" "python3"
+                continue
+            fi
+
             FAILED_STATUS=$status
             FAILED_NAME="${name}"
             remove_service "${pid}"
-            handle_exit
+            
+            if [ "${NETALERTX_DEBUG:-0}" -eq 1 ]; then
+                echo "⚠️ Service ${name} exited with status ${status}. Debug mode active - continuing."
+            else
+                handle_exit
+            fi
         fi
 
     done
