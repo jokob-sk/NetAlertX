@@ -123,9 +123,7 @@ def update_devices_data_from_scan(db):
                 )""")
 
     # Update only devices with empty or NULL devParentMAC
-    mylog(
-        "debug", "[Update Devices] - (if not empty) cur_NetworkNodeMAC -> devParentMAC"
-    )
+    mylog("debug", "[Update Devices] - (if not empty) cur_NetworkNodeMAC -> devParentMAC")
     sql.execute("""UPDATE Devices
                     SET devParentMAC = (
                         SELECT cur_NetworkNodeMAC
@@ -144,10 +142,7 @@ def update_devices_data_from_scan(db):
                 """)
 
     # Update only devices with empty or NULL devSite
-    mylog(
-        "debug",
-        "[Update Devices] - (if not empty) cur_NetworkSite -> (if empty) devSite",
-    )
+    mylog("debug", "[Update Devices] - (if not empty) cur_NetworkSite -> (if empty) devSite",)
     sql.execute("""UPDATE Devices
                     SET devSite = (
                         SELECT cur_NetworkSite
@@ -325,9 +320,7 @@ def save_scanned_devices(db):
         .strip()
     )
 
-    mylog(
-        "debug", ["[Save Devices] Saving this IP into the CurrentScan table:", local_ip]
-    )
+    mylog("debug", ["[Save Devices] Saving this IP into the CurrentScan table:", local_ip])
 
     if check_IP_format(local_ip) == "":
         local_ip = "0.0.0.0"
@@ -361,23 +354,12 @@ def print_scan_stats(db):
     sql.execute(query)
     stats = sql.fetchall()
 
-    mylog(
-        "verbose",
-        f"[Scan Stats] Devices Detected.......: {stats[0]['devices_detected']}",
-    )
+    mylog("verbose", f"[Scan Stats] Devices Detected.......: {stats[0]['devices_detected']}",)
     mylog("verbose", f"[Scan Stats] New Devices............: {stats[0]['new_devices']}")
     mylog("verbose", f"[Scan Stats] Down Alerts............: {stats[0]['down_alerts']}")
-    mylog(
-        "verbose",
-        f"[Scan Stats] New Down Alerts........: {stats[0]['new_down_alerts']}",
-    )
-    mylog(
-        "verbose",
-        f"[Scan Stats] New Connections........: {stats[0]['new_connections']}",
-    )
-    mylog(
-        "verbose", f"[Scan Stats] Disconnections.........: {stats[0]['disconnections']}"
-    )
+    mylog("verbose", f"[Scan Stats] New Down Alerts........: {stats[0]['new_down_alerts']}",)
+    mylog("verbose", f"[Scan Stats] New Connections........: {stats[0]['new_connections']}",)
+    mylog("verbose", f"[Scan Stats] Disconnections.........: {stats[0]['disconnections']}")
     mylog("verbose", f"[Scan Stats] IP Changes.............: {stats[0]['ip_changes']}")
 
     # if str(stats[0]["new_devices"]) != '0':
@@ -395,10 +377,7 @@ def print_scan_stats(db):
         row_dict = dict(row)
         mylog("trace", f"    {row_dict}")
 
-    mylog(
-        "trace",
-        "   ================ Events table content where eve_PendingAlertEmail = 1  ================",
-    )
+    mylog("trace", "   ================ Events table content where eve_PendingAlertEmail = 1  ================",)
     sql.execute("select * from Events where eve_PendingAlertEmail = 1")
     rows = sql.fetchall()
     for row in rows:
@@ -654,10 +633,7 @@ def check_plugin_data_changed(pm, plugins_to_check):
 
     # Continue if changes detected
     for p in plugins_changed:
-        mylog(
-            'debug',
-            f'[check_plugin_data_changed] {p} changed (last_data_change|last_data_check): ({pm.plugin_states.get(p, {}).get("lastDataChange")}|{pm.plugin_checks.get(p)})'
-        )
+        mylog('debug', f'[check_plugin_data_changed] {p} changed (last_change|last_check): ({pm.plugin_states.get(p, {}).get("lastDataChange")}|{pm.plugin_checks.get(p)})')
 
     return True
 
@@ -741,10 +717,7 @@ def update_devices_names(pm):
     # --- Step 1: Update device names for unknown devices ---
     unknownDevices = device_handler.getUnknown()
     if unknownDevices:
-        mylog(
-            "verbose",
-            f"[Update Device Name] Trying to resolve devices without name. Unknown devices count: {len(unknownDevices)}",
-        )
+        mylog("verbose", f"[Update Device Name] Trying to resolve devices without name. Unknown devices count: {len(unknownDevices)}",)
 
         # Try resolving both name and FQDN
         recordsToUpdate, recordsNotFound, fs, notFound = resolve_devices(
@@ -752,10 +725,8 @@ def update_devices_names(pm):
         )
 
         # Log summary
-        mylog(
-            "verbose",
-            f"[Update Device Name] Names Found (DIGSCAN/AVAHISCAN/NSLOOKUP/NBTSCAN): {len(recordsToUpdate)} ({fs['DIGSCAN']}/{fs['AVAHISCAN']}/{fs['NSLOOKUP']}/{fs['NBTSCAN']})",
-        )
+        res_string = f"{fs['DIGSCAN']}/{fs['AVAHISCAN']}/{fs['NSLOOKUP']}/{fs['NBTSCAN']}"
+        mylog("verbose", f"[Update Device Name] Names Found (DIGSCAN/AVAHISCAN/NSLOOKUP/NBTSCAN): {len(recordsToUpdate)} ({res_string})",)
         mylog("verbose", f"[Update Device Name] Names Not Found         : {notFound}")
 
         # Apply updates to database
@@ -771,10 +742,7 @@ def update_devices_names(pm):
     if get_setting_value("REFRESH_FQDN"):
         allDevices = device_handler.getAll()
         if allDevices:
-            mylog(
-                "verbose",
-                f"[Update FQDN] Trying to resolve FQDN. Devices count: {len(allDevices)}",
-            )
+            mylog("verbose", f"[Update FQDN] Trying to resolve FQDN. Devices count: {len(allDevices)}",)
 
             # Try resolving only FQDN
             recordsToUpdate, _, fs, notFound = resolve_devices(
@@ -782,10 +750,8 @@ def update_devices_names(pm):
             )
 
             # Log summary
-            mylog(
-                "verbose",
-                f"[Update FQDN] Names Found (DIGSCAN/AVAHISCAN/NSLOOKUP/NBTSCAN): {len(recordsToUpdate)}({fs['DIGSCAN']}/{fs['AVAHISCAN']}/{fs['NSLOOKUP']}/{fs['NBTSCAN']})",
-            )
+            res_string = f"{fs['DIGSCAN']}/{fs['AVAHISCAN']}/{fs['NSLOOKUP']}/{fs['NBTSCAN']}"
+            mylog("verbose", f"[Update FQDN] Names Found (DIGSCAN/AVAHISCAN/NSLOOKUP/NBTSCAN): {len(recordsToUpdate)}({res_string})",)
             mylog("verbose", f"[Update FQDN] Names Not Found         : {notFound}")
 
             # Apply FQDN-only updates
@@ -907,25 +873,13 @@ def query_MAC_vendor(pMAC):
                     parts = line.split("\t", 1)
                     if len(parts) > 1:
                         vendor = parts[1].strip()
-                        mylog(
-                            "debug",
-                            [
-                                f"[Vendor Check] Found '{vendor}' for '{pMAC}' in {vendorsPath}"
-                            ],
-                        )
+                        mylog("debug", [f"[Vendor Check] Found '{vendor}' for '{pMAC}' in {vendorsPath}"], )
                         return vendor
                     else:
-                        mylog(
-                            "debug",
-                            [
-                                f'[Vendor Check] ⚠ ERROR: Match found, but line could not be processed: "{line_lower}"'
-                            ],
-                        )
+                        mylog("debug", [f'[Vendor Check] ⚠ ERROR: Match found, but line could not be processed: "{line_lower}"'],)
                         return -1
 
         return -1  # MAC address not found in the database
     except FileNotFoundError:
-        mylog(
-            "none", [f"[Vendor Check] ⚠ ERROR: Vendors file {vendorsPath} not found."]
-        )
+        mylog("none", [f"[Vendor Check] ⚠ ERROR: Vendors file {vendorsPath} not found."])
         return -1

@@ -88,10 +88,7 @@ def ensure_column(sql, table: str, column_name: str, column_type: str) -> bool:
             mylog("none", [msg])
 
         # Add missing column
-        mylog(
-            "verbose",
-            [f"[db_upgrade] Adding '{column_name}' ({column_type}) to {table} table"],
-        )
+        mylog("verbose", [f"[db_upgrade] Adding '{column_name}' ({column_type}) to {table} table"],)
         sql.execute(f'ALTER TABLE "{table}" ADD "{column_name}" {column_type}')
         return True
 

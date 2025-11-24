@@ -50,9 +50,7 @@ def process_scan(db):
     update_devices_data_from_scan(db)
 
     # Pair session events (Connection / Disconnection)
-    mylog(
-        "verbose", "[Process Scan] Pairing session events (connection / disconnection) "
-    )
+    mylog("verbose", "[Process Scan] Pairing session events (connection / disconnection) ")
     pair_sessions_events(db)
 
     # Sessions snapshot
@@ -221,10 +219,7 @@ def insertOnlineHistory(db):
         VALUES (?, ?, ?, ?, ?, ?)
     """
 
-    mylog(
-        "debug",
-        f"[Presence graph] Sql query: {insert_query} with values: {scanTimestamp}, {onlineDevices}, {downDevices}, {allDevices}, {archivedDevices}, {offlineDevices}",
-    )
+    mylog("debug", f"[Presence graph] Sql query: {insert_query} with values: {scanTimestamp}, {onlineDevices}, {downDevices}, {allDevices}, {archivedDevices}, {offlineDevices}",)
 
     # Debug output
     print_table_schema(db, "Online_History")

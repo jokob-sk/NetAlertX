@@ -53,21 +53,13 @@ class WorkflowManager:
             # Ensure workflow is enabled before proceeding
             if workflow.get("enabled", "No").lower() == "yes":
                 wfName = workflow["name"]
-                mylog(
-                    "debug",
-                    [f"[WF] Checking if '{evGuid}' triggers the workflow '{wfName}'"],
-                )
+                mylog("debug", f"[WF] Checking if '{evGuid}' triggers the workflow '{wfName}'")
 
                 # construct trigger object which also evaluates if the current event triggers it
                 trigger = Trigger(workflow["trigger"], event, self.db)
 
                 if trigger.triggered:
-                    mylog(
-                        "verbose",
-                        [
-                            f"[WF] Event with GUID '{evGuid}' triggered the workflow '{wfName}'"
-                        ],
-                    )
+                    mylog("verbose", f"[WF] Event with GUID '{evGuid}' triggered the workflow '{wfName}'")
 
                     self.execute_workflow(workflow, trigger)
 
@@ -98,12 +90,7 @@ class WorkflowManager:
             evaluator = ConditionGroup(condition_group)
 
             if evaluator.evaluate(trigger):  # If any group evaluates to True
-                mylog(
-                    "none",
-                    [
-                        f"[WF] Workflow {wfName} will be executed - conditions were evaluated as TRUE"
-                    ],
-                )
+                mylog("none", f"[WF] Workflow {wfName} will be executed - conditions were evaluated as TRUE")
                 mylog("debug", [f"[WF] Workflow condition_group: {condition_group}"])
 
                 self.execute_actions(workflow["actions"], trigger)

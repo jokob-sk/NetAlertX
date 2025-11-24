@@ -25,10 +25,7 @@ try:
             rule["icon_base64"] = ""
 except Exception as e:
     MAC_TYPE_ICON_RULES = []
-    mylog(
-        "none",
-        f"[guess_device_attributes] Failed to load device_heuristics_rules.json: {e}",
-    )
+    mylog("none", f"[guess_device_attributes] Failed to load device_heuristics_rules.json: {e}",)
 
 
 # -----------------------------------------
@@ -169,10 +166,8 @@ def guess_device_attributes(
     default_icon: str,
     default_type: str,
 ) -> Tuple[str, str]:
-    mylog(
-        "debug",
-        f"[guess_device_attributes] Guessing attributes for (vendor|mac|ip|name): ('{vendor}'|'{mac}'|'{ip}'|'{name}')",
-    )
+
+    mylog("debug", f"[guess_device_attributes] Guessing attributes for (vendor|mac|ip|name): ('{vendor}'|'{mac}'|'{ip}'|'{name}')",)
 
     # --- Normalize inputs ---
     vendor = str(vendor).lower().strip() if vendor else "unknown"
@@ -207,10 +202,7 @@ def guess_device_attributes(
     type_ = type_ or default_type
     icon = icon or default_icon
 
-    mylog(
-        "debug",
-        f"[guess_device_attributes] Guessed attributes (icon|type_): ('{icon}'|'{type_}')",
-    )
+    mylog("debug", f"[guess_device_attributes] Guessed attributes (icon|type_): ('{icon}'|'{type_}')",)
     return icon, type_
 
 

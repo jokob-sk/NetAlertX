@@ -36,12 +36,7 @@ def checkPermissionsOK():
     dbW_access = os.access(fullDbPath, os.W_OK)
 
     mylog("none", ["\n"])
-    mylog(
-        "none",
-        [
-            "The backend restarted (started). If this is unexpected check https://bit.ly/NetAlertX_debug for troubleshooting tips."
-        ],
-    )
+    mylog("none", "The backend restarted (started). If this is unexpected check https://bit.ly/NetAlertX_debug for troubleshooting tips.")
     mylog("none", ["\n"])
     mylog("none", ["Permissions check (All should be True)"])
     mylog("none", ["------------------------------------------------"])
@@ -59,12 +54,7 @@ def checkPermissionsOK():
 def initialiseFile(pathToCheck, defaultFile):
     # if file not readable (missing?) try to copy over the backed-up (default) one
     if str(os.access(pathToCheck, os.R_OK)) == "False":
-        mylog(
-            "none",
-            [
-                "[Setup] (" + pathToCheck + ") file is not readable or missing. Trying to copy over the default one."
-            ],
-        )
+        mylog("none", ["[Setup] (" + pathToCheck + ") file is not readable or missing. Trying to copy over the default one."],)
         try:
             # try runnning a subprocess
             p = subprocess.Popen(
@@ -75,31 +65,16 @@ def initialiseFile(pathToCheck, defaultFile):
             stdout, stderr = p.communicate()
 
             if str(os.access(pathToCheck, os.R_OK)) == "False":
-                mylog(
-                    "none",
-                    [
-                        "[Setup] ⚠ ERROR copying (" + defaultFile + ") to (" + pathToCheck + "). Make sure the app has Read & Write access to the parent directory."
-                    ],
-                )
+                mylog("none", "[Setup] ⚠ ERROR copying (" + defaultFile + ") to (" + pathToCheck + "). Ensure Read & Write access to the parent directory.")
             else:
-                mylog(
-                    "none",
-                    [
-                        "[Setup] (" + defaultFile + ") copied over successfully to (" + pathToCheck + ")."
-                    ],
-                )
+                mylog("none", ["[Setup] (" + defaultFile + ") copied over successfully to (" + pathToCheck + ")."],)
 
             # write stdout and stderr into .log files for debugging if needed
             logResult(stdout, stderr)  # TO-DO should be changed to mylog
 
         except subprocess.CalledProcessError as e:
             # An error occured, handle it
-            mylog(
-                "none",
-                [
-                    "[Setup] ⚠ ERROR copying (" + defaultFile + "). Make sure the app has Read & Write access to " + pathToCheck
-                ],
-            )
+            mylog("none", ["[Setup] ⚠ ERROR copying (" + defaultFile + "). Make sure the app has Read & Write access to " + pathToCheck],)
             mylog("none", [e.output])
 
 
@@ -187,14 +162,7 @@ def get_setting(key):
         mylog("none", [f"[Settings] ⚠ File not found: {settingsFile}"])
         return None
 
-    mylog(
-        "trace",
-        [
-            "[Import table_settings.json] checking table_settings.json file",
-            f"SETTINGS_LASTCACHEDATE: {SETTINGS_LASTCACHEDATE}",
-            f"fileModifiedTime: {fileModifiedTime}",
-        ],
-    )
+    mylog("trace", f"[Import table_settings.json] checking table_settings.json file SETTINGS_LASTCACHEDATE: {SETTINGS_LASTCACHEDATE} fileModifiedTime: {fileModifiedTime}")
 
     # Use cache if file hasn't changed
     if fileModifiedTime == SETTINGS_LASTCACHEDATE and SETTINGS_CACHE:
@@ -221,10 +189,7 @@ def get_setting(key):
     SETTINGS_LASTCACHEDATE = fileModifiedTime
 
     if key not in SETTINGS_CACHE:
-        mylog(
-            "none",
-            [f"[Settings] ⚠ ERROR - setting_missing - {key} not in {settingsFile}"],
-        )
+        mylog("none", [f"[Settings] ⚠ ERROR - setting_missing - {key} not in {settingsFile}"],)
         return None
 
     return SETTINGS_CACHE[key]
@@ -357,10 +322,7 @@ def setting_value_to_python_type(set_type, set_value):
                 value = json.loads(set_value.replace("'", "\""))
 
             except json.JSONDecodeError as e:
-                mylog(
-                    "none",
-                    [f"[setting_value_to_python_type] Error decoding JSON object: {e}"],
-                )
+                mylog("none", [f"[setting_value_to_python_type] Error decoding JSON object: {e}"],)
                 mylog("none", [set_value])
                 value = []
 
@@ -375,10 +337,7 @@ def setting_value_to_python_type(set_type, set_value):
             try:
                 value = reverseTransformers(json.loads(set_value), transformers)
             except json.JSONDecodeError as e:
-                mylog(
-                    "none",
-                    [f"[setting_value_to_python_type] Error decoding JSON object: {e}"],
-                )
+                mylog("none", [f"[setting_value_to_python_type] Error decoding JSON object: {e}"],)
                 mylog("none", [{set_value}])
                 value = {}
 
@@ -766,9 +725,7 @@ def checkNewVersion():
     try:
         data = json.loads(text)
     except json.JSONDecodeError:
-        mylog(
-            "minimal", ["[Version check] ⚠ ERROR: Invalid JSON response from GitHub."]
-        )
+        mylog("minimal", ["[Version check] ⚠ ERROR: Invalid JSON response from GitHub."])
         return False
 
     # make sure we received a valid response and not an API rate limit exceeded message
@@ -784,10 +741,7 @@ def checkNewVersion():
         else:
             mylog("none", ["[Version check] Running the latest version."])
     else:
-        mylog(
-            "minimal",
-            ["[Version check] ⚠ ERROR: Received unexpected response from GitHub."],
-        )
+        mylog("minimal", ["[Version check] ⚠ ERROR: Received unexpected response from GitHub."],)
 
     return False
 

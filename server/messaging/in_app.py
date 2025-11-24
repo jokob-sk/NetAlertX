@@ -119,10 +119,7 @@ def remove_old(keepNumberOfEntries):
     try:
         with open(NOTIFICATION_API_FILE, "w") as file:
             json.dump(trimmed, file, indent=4)
-        mylog(
-            "verbose",
-            f"[Notification] Trimmed notifications to latest {keepNumberOfEntries}",
-        )
+        mylog("verbose", f"[Notification] Trimmed notifications to latest {keepNumberOfEntries}",)
     except Exception as e:
         mylog("none", f"Error writing trimmed notifications file: {e}")
 

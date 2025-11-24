@@ -33,10 +33,7 @@ def main():
 
     device_data = get_device_data()
 
-    mylog(
-        "verbose",
-        [f"[{pluginName}] Found '{len(device_data)}' devices"],
-    )
+    mylog("verbose", f"[{pluginName}] Found '{len(device_data)}' devices")
 
     filtered_devices = [
         (key, device)
@@ -44,10 +41,7 @@ def main():
         if device.state == ConnectionState.CONNECTED
     ]
 
-    mylog(
-        "verbose",
-        [f"[{pluginName}] Processing '{len(filtered_devices)}' connected devices"],
-    )
+    mylog("verbose", f"[{pluginName}] Processing '{len(filtered_devices)}' connected devices")
 
     for mac, device in filtered_devices:
         entry_mac = str(device.description.mac).lower()

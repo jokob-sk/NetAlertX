@@ -180,10 +180,7 @@ def importConfigs(pm, db, all_plugins):
     fileModifiedTime = os.path.getmtime(config_file)
 
     mylog("debug", ["[Import Config] checking config file "])
-    mylog(
-        "debug",
-        ["[Import Config] lastImportedConfFile     :", conf.lastImportedConfFile],
-    )
+    mylog("debug", ["[Import Config] lastImportedConfFile     :", conf.lastImportedConfFile],)
     mylog("debug", ["[Import Config] fileModifiedTime         :", fileModifiedTime])
 
     if (fileModifiedTime == conf.lastImportedConfFile) and all_plugins is not None:
@@ -399,12 +396,7 @@ def importConfigs(pm, db, all_plugins):
         conf.TIMEZONE = ccd(
             "TIMEZONE", conf.tz, c_d, "_KEEP_", "_KEEP_", "[]", "General"
         )
-        mylog(
-            "none",
-            [
-                f"[Config] Invalid timezone '{conf.TIMEZONE}', defaulting to {default_tz}."
-            ],
-        )
+        mylog("none", [f"[Config] Invalid timezone '{conf.TIMEZONE}', defaulting to {default_tz}."],)
 
     # TODO cleanup later ----------------------------------------------------------------------------------
     # init all time values as we have timezone - all this shoudl be moved into plugin/plugin settings
@@ -450,13 +442,7 @@ def importConfigs(pm, db, all_plugins):
 
     all_plugins = get_plugins_configs(conf.DISCOVER_PLUGINS)
 
-    mylog(
-        "none",
-        [
-            "[Config] Plugins: Number of all plugins (including not loaded): ",
-            len(all_plugins),
-        ],
-    )
+    mylog("none", ["[Config] Plugins: Number of all plugins (including not loaded): ", len(all_plugins),],)
 
     plugin_indexes_to_remove = []
     all_plugins_prefixes = []  # to init the LOADED_PLUGINS setting with correct options
@@ -580,9 +566,7 @@ def importConfigs(pm, db, all_plugins):
         "General",
     )
 
-    mylog(
-        "none", ["[Config] Number of Plugins to load: ", len(loaded_plugins_prefixes)]
-    )
+    mylog("none", ["[Config] Number of Plugins to load: ", len(loaded_plugins_prefixes)])
     mylog("none", ["[Config] Plugins to load: ", loaded_plugins_prefixes])
 
     conf.plugins_once_run = False
@@ -606,12 +590,7 @@ def importConfigs(pm, db, all_plugins):
 
                     # Log the value being passed
                     # ccd(key, default, config_dir, name, inputtype, options, group, events=None, desc="", setJsonMetadata=None, overrideTemplate=None, forceDefault=False)
-                    mylog(
-                        "verbose",
-                        [
-                            f"[Config] Setting override {setting_name} with value: {value}"
-                        ],
-                    )
+                    mylog("verbose", [f"[Config] Setting override {setting_name} with value: {value}"],)
                     ccd(
                         setting_name,
                         value,
@@ -630,12 +609,7 @@ def importConfigs(pm, db, all_plugins):
                     )
 
             except json.JSONDecodeError:
-                mylog(
-                    "none",
-                    [
-                        f"[Config] [ERROR] Setting override decoding JSON from {app_conf_override_path}"
-                    ],
-                )
+                mylog("none", [f"[Config] [ERROR] Setting override decoding JSON from {app_conf_override_path}"],)
     else:
         mylog("debug", [f"[Config] File {app_conf_override_path} does not exist."])
 
@@ -777,10 +751,7 @@ def renameSettings(config_file):
         timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
         backup_file = f"{config_file}_old_setting_names_{timestamp}.bak"
 
-        mylog(
-            "debug",
-            f"[Config] Old setting names will be replaced and a backup ({backup_file}) of the config created.",
-        )
+        mylog("debug", f"[Config] Old setting names will be replaced and a backup ({backup_file}) of the config created.",)
 
         shutil.copy(str(config_file), backup_file)  # Convert config_file to a string
 
@@ -807,6 +778,4 @@ def renameSettings(config_file):
         )  # Convert config_file to a string
 
     else:
-        mylog(
-            "debug", "[Config] No old setting names found in the file. No changes made."
-        )
+        mylog("debug", "[Config] No old setting names found in the file. No changes made.")

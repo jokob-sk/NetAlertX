@@ -295,9 +295,7 @@ class NotificationInstance:
             (f"-{minutes} minutes", tz_offset),
         )
 
-        mylog(
-            "minimal", ["[Notification] Notifications changes: ", self.db.sql.rowcount]
-        )
+        mylog("minimal", ["[Notification] Notifications changes: ", self.db.sql.rowcount])
 
         # clear plugin events
         self.clearPluginEvents()

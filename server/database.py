@@ -233,15 +233,7 @@ class DB:
             rows = self.sql.fetchall()
             return rows
         except AssertionError:
-            mylog(
-                "minimal",
-                [
-                    "[Database] - ERROR: inconsistent query and/or arguments.",
-                    query,
-                    " params: ",
-                    args,
-                ],
-            )
+            mylog("minimal", ["[Database] - ERROR: inconsistent query and/or arguments.", query, " params: ", args,],)
         except sqlite3.Error as e:
             mylog("minimal", ["[Database] - SQL ERROR: ", e])
         return None
@@ -258,15 +250,7 @@ class DB:
         if len(rows) == 1:
             return rows[0]
         if len(rows) > 1:
-            mylog(
-                "verbose",
-                [
-                    "[Database] - Warning!: query returns multiple rows, only first row is passed on!",
-                    query,
-                    " params: ",
-                    args,
-                ],
-            )
+            mylog("verbose", ["[Database] - Warning!: query returns multiple rows, only first row is passed on!", query, " params: ", args,],)
             return rows[0]
         # empty result set
         return None

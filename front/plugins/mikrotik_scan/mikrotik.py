@@ -71,10 +71,7 @@ def get_entries(plugin_objects: Plugin_Objects) -> Plugin_Objects:
             status = lease.get('status')
             device_name = comment or host_name or "(unknown)"
 
-            mylog(
-                'verbose',
-                [f"ID: {lease_id}, Address: {address}, MAC Address: {mac_address}, Host Name: {host_name}, Comment: {comment}, Last Seen: {last_seen}, Status: {status}"]
-            )
+            mylog('verbose', f"ID: {lease_id}, Address: {address}, MAC: {mac_address}, Host Name: {host_name}, Comment: {comment}, Last Seen: {last_seen}, Status: {status}")
 
             if (status == "bound"):
                 plugin_objects.add_object(

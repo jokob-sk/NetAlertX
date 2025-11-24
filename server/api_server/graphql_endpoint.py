@@ -173,13 +173,8 @@ class Query(ObjectType):
                 network_dev_types = get_setting_value("NETWORK_DEVICE_TYPES")
 
                 mylog("trace", f"[graphql_schema] allowed_statuses: {allowed_statuses}")
-                mylog(
-                    "trace",
-                    f"[graphql_schema] hidden_relationships: {hidden_relationships}",
-                )
-                mylog(
-                    "trace", f"[graphql_schema] network_dev_types: {network_dev_types}"
-                )
+                mylog("trace", f"[graphql_schema] hidden_relationships: {hidden_relationships}",)
+                mylog("trace", f"[graphql_schema] network_dev_types: {network_dev_types}")
 
                 # Filtering based on the "status"
                 if status == "my_devices":

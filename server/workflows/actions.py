@@ -29,10 +29,7 @@ class UpdateFieldAction(Action):
         self.db = db
 
     def execute(self):
-        mylog(
-            "verbose",
-            f"[WF] Updating field '{self.field}' to '{self.value}' for event object {self.trigger.object_type}",
-        )
+        mylog("verbose", f"[WF] Updating field '{self.field}' to '{self.value}' for event object {self.trigger.object_type}")
 
         obj = self.trigger.object
 
@@ -109,12 +106,7 @@ class RunPluginAction(Action):
     def execute(self):
         obj = self.trigger.object
 
-        mylog(
-            "verbose",
-            [
-                f"Executing plugin '{self.plugin_name}' with parameters {self.params} for object {obj}"
-            ],
-        )
+        mylog("verbose", f"Executing plugin '{self.plugin_name}' with parameters {self.params} for object {obj}")
         # PluginManager.run(self.plugin_name, self.parameters)
         return obj
 
@@ -129,12 +121,7 @@ class SendNotificationAction(Action):
 
     def execute(self):
         obj = self.trigger.object
-        mylog(
-            "verbose",
-            [
-                f"Sending notification via '{self.method}': {self.message} for object {obj}"
-            ],
-        )
+        mylog("verbose", f"Sending notification via '{self.method}': {self.message} for object {obj}")
         # NotificationManager.send(self.method, self.message)
         return obj
 

@@ -31,10 +31,7 @@ class UserEventsQueueInstance:
         Returns an empty list if the file doesn't exist.
         """
         if not os.path.exists(self.log_file):
-            mylog(
-                "none",
-                ["[UserEventsQueueInstance] Log file not found: ", self.log_file],
-            )
+            mylog("none", ["[UserEventsQueueInstance] Log file not found: ", self.log_file],)
             return []  # No log file, return empty list
         with open(self.log_file, "r") as file:
             return file.readlines()

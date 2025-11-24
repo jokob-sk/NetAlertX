@@ -63,9 +63,7 @@ main structure of NetAlertX
 
 
 def main():
-    mylog(
-        "none", ["[MAIN] Setting up ..."]
-    )  # has to be level 'none' as user config not loaded yet
+    mylog("none", ["[MAIN] Setting up ..."])  # has to be level 'none' as user config not loaded yet
 
     mylog("none", [f"[conf.tz] Setting up ...{conf.tz}"])
 
@@ -221,22 +219,14 @@ def main():
         # Fetch new unprocessed events
         new_events = workflow_manager.get_new_app_events()
 
-        mylog(
-            "debug",
-            [
-                f"[MAIN] Processing WORKFLOW new_events from get_new_app_events: {len(new_events)}"
-            ],
-        )
+        mylog("debug", [f"[MAIN] Processing WORKFLOW new_events from get_new_app_events: {len(new_events)}"],)
 
         # Process each new event and check triggers
         if len(new_events) > 0:
             updateState("Workflows: Start")
             update_api_flag = False
             for event in new_events:
-                mylog(
-                    "debug",
-                    [f"[MAIN] Processing WORKFLOW app event with GUID {event['GUID']}"],
-                )
+                mylog("debug", [f"[MAIN] Processing WORKFLOW app event with GUID {event['GUID']}"],)
 
                 # proceed to process events
                 workflow_manager.process_event(event)
@@ -253,12 +243,7 @@ def main():
         # check if devices list needs updating
         userUpdatedDevices = UserEventsQueueInstance().has_update_devices()
 
-        mylog(
-            "debug",
-            [
-                f"[Plugins] Should I update API (userUpdatedDevices): {userUpdatedDevices}"
-            ],
-        )
+        mylog("debug", [f"[Plugins] Should I update API (userUpdatedDevices): {userUpdatedDevices}"],)
 
         if userUpdatedDevices:
             update_api(db, all_plugins, True, ["devices"], userUpdatedDevices)

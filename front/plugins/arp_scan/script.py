@@ -138,10 +138,7 @@ def execute_arpscan(userSubnets):
     mylog("verbose", [f"[{pluginName}] All devices List len:", len(devices_list)])
     mylog("verbose", [f"[{pluginName}] Devices List:", devices_list])
 
-    mylog(
-        "verbose",
-        [f"[{pluginName}] Found: Devices without duplicates ", len(unique_devices)],
-    )
+    mylog("verbose", [f"[{pluginName}] Found: Devices without duplicates ", len(unique_devices)],)
 
     return unique_devices
 
@@ -174,10 +171,7 @@ def execute_arpscan_on_interface(interface):
         except subprocess.CalledProcessError:
             result = ""
         except subprocess.TimeoutExpired:
-            mylog(
-                "warning",
-                [f"[{pluginName}] arp-scan timed out after {timeout_seconds}s"],
-            )
+            mylog("warning", [f"[{pluginName}] arp-scan timed out after {timeout_seconds}s"],)
             result = ""
         # stop looping if duration not set or expired
         if scan_duration == 0 or (time.time() - start_time) > scan_duration:

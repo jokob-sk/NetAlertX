@@ -96,16 +96,9 @@ def update_api(
                 )  # Ensure port is an integer
                 start_server(graphql_port_value, app_state)  # Start the server
             except ValueError:
-                mylog(
-                    "none",
-                    [
-                        f"[API] Invalid GRAPHQL_PORT value, must be an integer: {graphql_port_value}"
-                    ],
-                )
+                mylog("none", [f"[API] Invalid GRAPHQL_PORT value, must be an integer: {graphql_port_value}"],)
         else:
-            mylog(
-                "none", ["[API] GRAPHQL_PORT or API_TOKEN is not set, will try later."]
-            )
+            mylog("none", ["[API] GRAPHQL_PORT or API_TOKEN is not set, will try later."])
 
 
 # -------------------------------------------------------------------------------
@@ -135,12 +128,7 @@ class api_endpoint_class:
             # Match SQL and API endpoint path
             if endpoint.query == self.query and endpoint.path == self.path:
                 found = True
-                mylog(
-                    "trace",
-                    [
-                        f"[API] api_endpoint_class: Hashes  (file|old|new): ({self.fileName}|{endpoint.hash}|{self.hash})"
-                    ],
-                )
+                mylog("trace", [f"[API] api_endpoint_class: Hashes  (file|old|new): ({self.fileName}|{endpoint.hash}|{self.hash})"],)
                 if endpoint.hash != self.hash:
                     self.needsUpdate = True
                     # Only update changeDetectedWhen if it hasn't been set recently
@@ -190,10 +178,7 @@ class api_endpoint_class:
                 )
             )
         ):
-            mylog(
-                "debug",
-                [f"[API] api_endpoint_class: Writing {self.fileName} after debounce."],
-            )
+            mylog("debug", [f"[API] api_endpoint_class: Writing {self.fileName} after debounce."],)
 
             write_file(self.path, json.dumps(self.jsonData))
 

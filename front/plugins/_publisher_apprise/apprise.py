@@ -36,12 +36,7 @@ def main():
 
     # Check if basic config settings supplied
     if check_config() is False:
-        mylog(
-            "none",
-            [
-                f"[{pluginName}] ⚠ ERROR: Publisher notification gateway not set up correctly. Check your {confFileName} {pluginName}_* variables."
-            ],
-        )
+        mylog("none", f"[{pluginName}] ⚠ ERROR: Publisher notification gateway not set up correctly. Check your {confFileName} {pluginName}_* variables.")
         return
 
     # Create a database connection

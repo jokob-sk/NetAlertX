@@ -24,12 +24,7 @@ class Trigger:
             self.object_type == event["ObjectType"] and self.event_type == event["AppEventType"]
         )
 
-        mylog(
-            "debug",
-            [
-                f"""[WF] self.triggered '{self.triggered}' for event '{get_array_from_sql_rows(event)} and trigger {json.dumps(triggerJson)}' """
-            ],
-        )
+        mylog("debug", f"""[WF] self.triggered '{self.triggered}' for event '{get_array_from_sql_rows(event)} and trigger {json.dumps(triggerJson)}' """)
 
         if self.triggered:
             # object type corresponds with the DB table name

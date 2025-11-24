@@ -75,10 +75,7 @@ def cleanup_database(
 
     # -----------------------------------------------------
     # Cleanup Online History
-    mylog(
-        "verbose",
-        [f"[{pluginName}] Online_History: Delete all but keep latest 150 entries"],
-    )
+    mylog("verbose", [f"[{pluginName}] Online_History: Delete all but keep latest 150 entries"],)
     cursor.execute(
         """DELETE from Online_History where "Index" not in (
                             SELECT "Index" from Online_History
@@ -87,24 +84,14 @@ def cleanup_database(
 
     # -----------------------------------------------------
     # Cleanup Events
-    mylog(
-        "verbose",
-        [
-            f"[{pluginName}] Events: Delete all older than {str(DAYS_TO_KEEP_EVENTS)} days (DAYS_TO_KEEP_EVENTS setting)"
-        ],
-    )
+    mylog("verbose", f"[{pluginName}] Events: Delete all older than {str(DAYS_TO_KEEP_EVENTS)} days (DAYS_TO_KEEP_EVENTS setting)")
     cursor.execute(
         f"""DELETE FROM Events
                             WHERE eve_DateTime <= date('now', '-{str(DAYS_TO_KEEP_EVENTS)} day')"""
     )
     # -----------------------------------------------------
     # Trim Plugins_History entries to less than PLUGINS_KEEP_HIST setting per unique "Plugin" column entry
-    mylog(
-        "verbose",
-        [
-            f"[{pluginName}] Plugins_History: Trim Plugins_History entries to less than {str(PLUGINS_KEEP_HIST)} per Plugin (PLUGINS_KEEP_HIST setting)"
-        ],
-    )
+    mylog("verbose", f"[{pluginName}] Plugins_History: Trim Plugins_History entries to less than {str(PLUGINS_KEEP_HIST)} per Plugin (PLUGINS_KEEP_HIST setting)")
 
     # Build the SQL query to delete entries that exceed the limit per unique "Plugin" column entry
     delete_query = f"""DELETE FROM Plugins_History
@@ -125,12 +112,7 @@ def cleanup_database(
 
     histCount = get_setting_value("DBCLNP_NOTIFI_HIST")
 
-    mylog(
-        "verbose",
-        [
-            f"[{pluginName}] Plugins_History: Trim Notifications entries to less than {histCount}"
-        ],
-    )
+    mylog("verbose", f"[{pluginName}] Plugins_History: Trim Notifications entries to less than {histCount}")
 
     # Build the SQL query to delete entries
     delete_query = f"""DELETE FROM Notifications
@@ -170,12 +152,7 @@ def cleanup_database(
     # -----------------------------------------------------
     # Cleanup New Devices
     if HRS_TO_KEEP_NEWDEV != 0:
-        mylog(
-            "verbose",
-            [
-                f"[{pluginName}] Devices: Delete all New Devices older than {str(HRS_TO_KEEP_NEWDEV)} hours (HRS_TO_KEEP_NEWDEV setting)"
-            ],
-        )
+        mylog("verbose", f"[{pluginName}] Devices: Delete all New Devices older than {str(HRS_TO_KEEP_NEWDEV)} hours (HRS_TO_KEEP_NEWDEV setting)")
         query = f"""DELETE FROM Devices WHERE devIsNew = 1 AND devFirstConnection < date('now', '-{str(HRS_TO_KEEP_NEWDEV)} hour')"""
         mylog("verbose", [f"[{pluginName}] Query: {query} "])
         cursor.execute(query)
@@ -183,12 +160,7 @@ def cleanup_database(
     # -----------------------------------------------------
     # Cleanup Offline Devices
     if HRS_TO_KEEP_OFFDEV != 0:
-        mylog(
-            "verbose",
-            [
-                f"[{pluginName}] Devices: Delete all New Devices older than {str(HRS_TO_KEEP_OFFDEV)} hours (HRS_TO_KEEP_OFFDEV setting)"
-            ],
-        )
+        mylog("verbose", f"[{pluginName}] Devices: Delete all New Devices older than {str(HRS_TO_KEEP_OFFDEV)} hours (HRS_TO_KEEP_OFFDEV setting)")
         query = f"""DELETE FROM Devices WHERE devPresentLastScan = 0 AND devLastConnection < date('now', '-{str(HRS_TO_KEEP_OFFDEV)} hour')"""
         mylog("verbose", [f"[{pluginName}] Query: {query} "])
         cursor.execute(query)
@@ -196,12 +168,7 @@ def cleanup_database(
     # -----------------------------------------------------
     # Clear New Flag
     if CLEAR_NEW_FLAG != 0:
-        mylog(
-            "verbose",
-            [
-                f'[{pluginName}] Devices: Clear "New Device" flag for all devices older than {str(CLEAR_NEW_FLAG)} hours (CLEAR_NEW_FLAG setting)'
-            ],
-        )
+        mylog("verbose", f'[{pluginName}] Devices: Clear "New Device" flag for all devices older than {str(CLEAR_NEW_FLAG)} hours (CLEAR_NEW_FLAG setting)')
         query = f"""UPDATE Devices SET devIsNew = 0 WHERE devIsNew = 1 AND date(devFirstConnection, '+{str(CLEAR_NEW_FLAG)} hour') < date('now')"""
         #  select * from Devices where devIsNew = 1 AND date(devFirstConnection, '+3 hour' ) < date('now')
         mylog("verbose", [f"[{pluginName}] Query: {query} "])

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import conf
-from const import confFileName, logPath
+from const import logPath
 from pytz import timezone
 
 import os
@@ -36,11 +36,7 @@ def main():
 
     # Check if basic config settings supplied
     if not validate_config():
-        mylog(
-            "none",
-            f"[{pluginName}] ⚠ ERROR: Publisher notification gateway not set up correctly. "
-            f"Check your {confFileName} {pluginName}_* variables.",
-        )
+        mylog("none", f"[{pluginName}] ⚠ ERROR: Publisher not set up correctly. Check your {pluginName}_* variables.",)
         return
 
     # Create a database connection

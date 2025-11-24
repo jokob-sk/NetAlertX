@@ -71,9 +71,7 @@ class app_state_class:
                 with open(stateFile, "r") as json_file:
                     previousState = json.load(json_file)
             except json.decoder.JSONDecodeError as e:
-                mylog(
-                    "none", [f"[app_state_class] Failed to handle app_state.json: {e}"]
-                )
+                mylog("none", [f"[app_state_class] Failed to handle app_state.json: {e}"])
 
         # Check if the file exists and recover previous values
         if previousState != "":
@@ -151,10 +149,7 @@ class app_state_class:
                 with open(stateFile, "w") as json_file:
                     json_file.write(json_data)
             except (TypeError, ValueError) as e:
-                mylog(
-                    "none",
-                    [f"[app_state_class] Failed to serialize object to JSON: {e}"],
-                )
+                mylog("none", [f"[app_state_class] Failed to serialize object to JSON: {e}"],)
 
         return
 

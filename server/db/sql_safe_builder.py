@@ -586,16 +586,11 @@ class SafeConditionBuilder:
 
                 # Validate each component
                 if not self._validate_column_name(column):
-                    mylog(
-                        "verbose", [f"[SafeConditionBuilder] Invalid column: {column}"]
-                    )
+                    mylog("verbose", [f"[SafeConditionBuilder] Invalid column: {column}"])
                     return "", {}
 
                 if not self._validate_operator(operator):
-                    mylog(
-                        "verbose",
-                        [f"[SafeConditionBuilder] Invalid operator: {operator}"],
-                    )
+                    mylog("verbose", [f"[SafeConditionBuilder] Invalid operator: {operator}"])
                     return "", {}
 
                 # Create parameter binding
@@ -607,10 +602,7 @@ class SafeConditionBuilder:
                 condition_parts.append(condition_part)
 
             except Exception as e:
-                mylog(
-                    "verbose",
-                    [f"[SafeConditionBuilder] Error processing condition: {e}"],
-                )
+                mylog("verbose", [f"[SafeConditionBuilder] Error processing condition: {e}"],)
                 return "", {}
 
         if not condition_parts:
@@ -644,10 +636,7 @@ class SafeConditionBuilder:
             if event_type in self.ALLOWED_EVENT_TYPES:
                 valid_types.append(event_type)
             else:
-                mylog(
-                    "verbose",
-                    f"[SafeConditionBuilder] Invalid event type filtered out: {event_type}",
-                )
+                mylog("verbose", f"[SafeConditionBuilder] Invalid event type filtered out: {event_type}",)
 
         if not valid_types:
             return "", {}
@@ -682,10 +671,7 @@ class SafeConditionBuilder:
             return self.build_safe_condition(condition_setting)
         except ValueError as e:
             # Log the error and return empty condition for safety
-            mylog(
-                "verbose",
-                f"[SafeConditionBuilder] Unsafe condition rejected: {condition_setting}, Error: {e}",
-            )
+            mylog("verbose", f"[SafeConditionBuilder] Unsafe condition rejected: {condition_setting}, Error: {e}",)
             return "", {}
 
 
