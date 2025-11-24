@@ -34,6 +34,8 @@ sudo phpenmod -v 8.2 sqlite3
 # setup virtual python environment so we can use pip3 to install packages
 apt-get install python3-venv -y
 python3 -m venv /opt/venv
+# Shell check doesn't recognize source command because it's not in the repo, it is in the system at runtime
+# shellcheck disable=SC1091
 source /opt/venv/bin/activate
 
 update-alternatives --install /usr/bin/python python /usr/bin/python3 10

@@ -1,8 +1,6 @@
 #!/bin/bash
 export INSTALL_DIR=/app
 
-LOG_FILE="${INSTALL_DIR}/log/execution_queue.log"
-
 if [ -f "${LOG_EXECUTION_QUEUE}" ] && grep -q "cron_restart_backend" "${LOG_EXECUTION_QUEUE}"; then
   echo "$(date): Restarting backend triggered by cron_restart_backend"
   killall python3 || echo "killall python3 failed or no process found"

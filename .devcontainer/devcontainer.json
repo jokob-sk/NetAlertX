@@ -76,7 +76,8 @@
         "mkhl.shfmt",
         "charliermarsh.ruff",
         "ms-python.flake8",
-        "exiasr.hadolint"
+        "exiasr.hadolint",
+        "timonwong.shellcheck"
       ],
       "settings": {
         "terminal.integrated.cwd": "${containerWorkspaceFolder}",

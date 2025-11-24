@@ -64,7 +64,6 @@ ENV LOG_IP_CHANGES=${NETALERTX_LOG}/IP_changes.log
 ENV LOG_APP=${NETALERTX_LOG}/app.log
 ENV LOG_APP_FRONT=${NETALERTX_LOG}/app_front.log
 ENV LOG_REPORT_OUTPUT_TXT=${NETALERTX_LOG}/report_output.txt
-ENV LOG_CRON=${NETALERTX_LOG}/supercronic
 ENV LOG_DB_IS_LOCKED=${NETALERTX_LOG}/db_is_locked.log
 ENV LOG_REPORT_OUTPUT_HTML=${NETALERTX_LOG}/report_output.html
 ENV LOG_STDERR=${NETALERTX_LOG}/stderr.log
@@ -250,7 +249,7 @@ USER root
 
 RUN apk add --no-cache git nano vim jq php83-pecl-xdebug py3-pip nodejs sudo gpgconf pytest \
     pytest-cov zsh alpine-zsh-config shfmt github-cli py3-yaml py3-docker-py docker-cli docker-cli-buildx \
-    docker-cli-compose
+    docker-cli-compose shellcheck
 
 # Install hadolint (Dockerfile linter)
 RUN curl -L https://github.com/hadolint/hadolint/releases/latest/download/hadolint-Linux-x86_64 -o /usr/local/bin/hadolint && \

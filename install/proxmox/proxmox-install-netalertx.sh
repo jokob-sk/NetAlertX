@@ -127,6 +127,8 @@ apt-get install -y --no-install-recommends \
     ca-certificates lsb-release curl gnupg
 
 # Detect OS
+# Shell check doesn't recognize source command because it's not in the repo, it is in the system at runtime
+# shellcheck disable=SC1091
 . /etc/os-release
 OS_ID="${ID:-}"
 OS_VER="${VERSION_ID:-}"
@@ -203,6 +205,8 @@ printf "%b\n" "-----------------------------------------------------------------
 printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}Setting up Python environment"
 printf "%b\n" "--------------------------------------------------------------------------"
 python3 -m venv /opt/myenv
+# Shell check doesn't recognize source command because it's not in the repo, it is in the system at runtime
+# shellcheck disable=SC1091
 source /opt/myenv/bin/activate
 python -m pip install --upgrade pip
 python -m pip install -r "${INSTALLER_DIR}/requirements.txt"
