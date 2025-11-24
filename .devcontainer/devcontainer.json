@@ -75,7 +75,8 @@
         "alexcvzz.vscode-sqlite",
         "mkhl.shfmt",
         "charliermarsh.ruff",
-        "ms-python.flake8"
+        "ms-python.flake8",
+        "exiasr.hadolint"
       ],
       "settings": {
         "terminal.integrated.cwd": "${containerWorkspaceFolder}",

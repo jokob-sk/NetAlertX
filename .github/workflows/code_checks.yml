@@ -84,7 +84,7 @@ jobs:
         continue-on-error: true
         run: |
           echo "🔍 Linting Dockerfiles..."
-          /tmp/hadolint Dockerfile* || true
+          /tmp/hadolint --config .hadolint.yaml Dockerfile* || true
 
   docker-tests:
     runs-on: ubuntu-latest

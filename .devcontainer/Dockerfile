@@ -35,7 +35,7 @@ RUN apk add --no-cache bash shadow python3 python3-dev gcc musl-dev libffi-dev o
 # Create virtual environment owned by root, but readable by everyone else. This makes it easy to copy 
 # into hardened stage without worrying about permissions and keeps image size small. Keeping the commands
 # together makes for a slightly smaller image size.
-RUN pip install -r /tmp/requirements.txt && \
+RUN pip install --no-cache-dir -r /tmp/requirements.txt && \
     chmod -R u-rwx,g-rwx /opt
 
 # second stage is the main runtime stage with just the minimum required to run the application
@@ -151,26 +151,26 @@ COPY --from=builder --chown=20212:20212 ${VIRTUAL_ENV} ${VIRTUAL_ENV}
 # This is done after the copy of the venv to ensure the venv is in place
 # although it may be quicker to do it before the copy, it keeps the image
 # layers smaller to do it after.
-RUN if [ -f .VERSION ]; then \
-        cp .VERSION ${NETALERTX_APP}/.VERSION; \
+RUN if [ -f '.VERSION' ]; then \
+        cp '.VERSION' "${NETALERTX_APP}/.VERSION"; \
     else \
-        echo "DEVELOPMENT 00000000" > ${NETALERTX_APP}/.VERSION; \
+        echo "DEVELOPMENT 00000000" > "${NETALERTX_APP}/.VERSION"; \
     fi && \
-    chown 20212:20212 ${NETALERTX_APP}/.VERSION && \
-    apk add libcap && \
+    chown 20212:20212 "${NETALERTX_APP}/.VERSION" && \
+    apk add --no-cache libcap && \
     setcap cap_net_raw+ep /bin/busybox && \
     setcap cap_net_raw,cap_net_admin+eip /usr/bin/nmap && \
     setcap cap_net_raw,cap_net_admin+eip /usr/bin/arp-scan && \
     setcap cap_net_raw,cap_net_admin,cap_net_bind_service+eip /usr/bin/nbtscan && \
     setcap cap_net_raw,cap_net_admin+eip /usr/bin/traceroute && \
-    setcap cap_net_raw,cap_net_admin+eip $(readlink -f ${VIRTUAL_ENV_BIN}/python) && \
+    setcap cap_net_raw,cap_net_admin+eip "$(readlink -f ${VIRTUAL_ENV_BIN}/python)" && \
     /bin/sh /build/init-nginx.sh && \
     /bin/sh /build/init-php-fpm.sh && \
     /bin/sh /build/init-cron.sh && \
     /bin/sh /build/init-backend.sh && \
     rm -rf /build && \
     apk del libcap && \
-    date +%s > ${NETALERTX_FRONT}/buildtimestamp.txt
+    date +%s > "${NETALERTX_FRONT}/buildtimestamp.txt"
 
 
 ENTRYPOINT ["/bin/sh","/entrypoint.sh"]
@@ -187,13 +187,15 @@ ENV UMASK=0077
 # AI may claim this is stupid, but it's actually least possible permissions as 
 # read-only user cannot login, cannot sudo, has no write permission, and cannot even
 # read the files it owns. The read-only user is ownership-as-a-lock hardening pattern.
-RUN addgroup -g 20212 ${READ_ONLY_GROUP} && \
-    adduser -u 20212 -G ${READ_ONLY_GROUP} -D -h /app ${READ_ONLY_USER}
+RUN addgroup -g 20212 "${READ_ONLY_GROUP}" && \
+    adduser -u 20212 -G "${READ_ONLY_GROUP}" -D -h /app "${READ_ONLY_USER}"
 
 
 # reduce permissions to minimum necessary for all NetAlertX files and folders
 # Permissions 005 and 004 are not typos, they enable read-only. Everyone can
 # read the read-only files, and nobody can write to them, even the readonly user.
+
+# hadolint ignore=SC2114
 RUN chown -R ${READ_ONLY_USER}:${READ_ONLY_GROUP} ${READ_ONLY_FOLDERS} && \
     chmod -R 004 ${READ_ONLY_FOLDERS} && \
     find ${READ_ONLY_FOLDERS} -type d -exec chmod 005 {} + && \
@@ -212,7 +214,7 @@ RUN chown -R ${READ_ONLY_USER}:${READ_ONLY_GROUP} ${READ_ONLY_FOLDERS} && \
     /srv /media && \
     sed -i "/^\(${READ_ONLY_USER}\|${NETALERTX_USER}\):/!d" /etc/passwd && \
     sed -i "/^\(${READ_ONLY_GROUP}\|${NETALERTX_GROUP}\):/!d" /etc/group && \
-    echo -ne '#!/bin/sh\n"$@"\n' > /usr/bin/sudo && chmod +x /usr/bin/sudo
+    printf '#!/bin/sh\n"$@"\n' > /usr/bin/sudo && chmod +x /usr/bin/sudo
 
 USER netalertx
 
@@ -231,6 +233,7 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
 # Open and wide to avoid permission issues during development allowing max
 # flexibility.
 
+# hadolint ignore=DL3006
 FROM runner AS netalertx-devcontainer
 ENV INSTALL_DIR=/app
 
@@ -244,9 +247,14 @@ ENV PYDEVD_DISABLE_FILE_VALIDATION=1
 COPY .devcontainer/resources/devcontainer-overlay/ /
 USER root
 # Install common tools, create user, and set up sudo
+
 RUN apk add --no-cache git nano vim jq php83-pecl-xdebug py3-pip nodejs sudo gpgconf pytest \
     pytest-cov zsh alpine-zsh-config shfmt github-cli py3-yaml py3-docker-py docker-cli docker-cli-buildx \
     docker-cli-compose
+
+# Install hadolint (Dockerfile linter)
+RUN curl -L https://github.com/hadolint/hadolint/releases/latest/download/hadolint-Linux-x86_64 -o /usr/local/bin/hadolint && \
+    chmod +x /usr/local/bin/hadolint
 
 RUN install -d -o netalertx -g netalertx -m 755 /services/php/modules && \
     cp -a /usr/lib/php83/modules/. /services/php/modules/ && \
