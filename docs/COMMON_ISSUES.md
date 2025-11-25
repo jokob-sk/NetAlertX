@@ -1,66 +1,114 @@
-### Loading...
+# Troubleshooting Common Issues
 
-Often if the application is misconfigured the `Loading...` dialog is continuously displayed. This is most likely caused by the backed failing to start. The **Maintenance -> Logs** section should give you more details on what's happening. If there is no exception, check the Portainer log, or start the container in the foreground (without the `-d` parameter) to observe any exceptions. It's advisable to enable `trace` or `debug`. Check the [Debug tips](./DEBUG_TIPS.md) on detailed instructions. 
+> [!TIP]
+> Before troubleshooting, ensure you have set the correct [Debugging and LOG_LEVEL](./DEBUG_TIPS.md).
 
-The issue might be related to the backend server, so please check [Debugging GraphQL issues](./DEBUG_API_SERVER.md). 
+---
 
-Please also check the browser logs (usually accessible by pressing `F12`):
+## Docker Container Doesn't Start
 
-1. Switch to the Console tab and refresh the page
-2. Switch to teh Network tab and refresh the page
-
-If you are not sure how to resolve the errors yourself, please post screenshots of the above into the issue, or discord discussion, where your problem is being solved. 
-
-### Incorrect SCAN_SUBNETS
-
-One of the most common issues is not configuring `SCAN_SUBNETS` correctly. If this setting is misconfigured you will only see one or two devices in your devices list after a scan. Please read the [subnets docs](./SUBNETS.md) carefully to resolve this.
-
-### Duplicate devices and notifications
-
-The app uses the MAC address as an unique identifier for devices. If a new MAC is detected a new device is added to the application and corresponding notifications are triggered. This means that if the MAC of an existing device changes, the device will be logged as a new device. You can usually prevent this from happening by changing the device configuration (in Android, iOS, or Windows) for your network. See the [Random Macs](./RANDOM_MAC.md) guide for details. 
+Initial setup issues are often caused by **missing permissions** or **incorrectly mapped volumes**. Always double-check your `docker run` or `docker-compose.yml` against the [official setup guide](./DOCKER_INSTALLATION.md) before proceeding.
 
 ### Permissions
 
-Make sure you [File permissions](./FILE_PERMISSIONS.md) are set correctly.
+Make sure your [file permissions](./FILE_PERMISSIONS.md) are correctly set:
 
-* If facing issues (AJAX errors, can't write to DB, empty screen, etc,) make sure permissions are set correctly, and check the logs under `/tmp/log`. 
-* To solve permission issues you can try setting the owner and group of the `app.db` by executing the following on the host system: `docker exec netalertx chown -R www-data:www-data /data/db/app.db`. 
-* If still facing issues, try to map the app.db file (⚠ not folder) to `:/data/db/app.db` (see [docker-compose Examples](https://github.com/jokob-sk/NetAlertX/blob/main/dockerfiles/README.md#-docker-composeyml-examples) for details)
+* If you encounter AJAX errors, cannot write to the database, or see an empty screen, check that permissions are correct and review the logs under `/tmp/log`.
+* To fix permission issues with the database, update the owner and group of `app.db` as described in the [File Permissions guide](./FILE_PERMISSIONS.md).
 
-### Container restarts / crashes
+### Container Restarts / Crashes
 
-* Check the logs for details. Often a required setting for a notification method is missing. 
+* Check the logs for details. Often, required settings are missing.
+* For more detailed troubleshooting, see [Debug and Troubleshooting Tips](./DEBUG_TIPS.md).
+* To observe errors directly, run the container in the foreground instead of `-d`:
 
-### unable to resolve host
+```bash
+docker run --rm -it <your_image>
+```
 
-* Check that your `SCAN_SUBNETS` variable is using the correct mask and `--interface`. See the [subnets docs for details](./SUBNETS.md).  
+---
 
-### Invalid JSON
+## Docker Container Starts, But the Application Misbehaves
 
-Check the [Invalid JSON errors debug help](./DEBUG_INVALID_JSON.md) docs on how to proceed.
+If the container starts but the app shows unexpected behavior, the cause is often **data corruption**, **incorrect configuration**, or **unexpected input data**.
 
-### sudo execution failing (e.g.: on arpscan) on a Raspberry Pi 4 
+### Continuous "Loading..." Screen
 
-> sudo: unexpected child termination condition: 0
+A misconfigured application may display a persistent `Loading...` dialog. This is usually caused by the backend failing to start.
 
-Resolution based on [this issue](https://github.com/linuxserver/docker-papermerge/issues/4#issuecomment-1003657581)
+**Steps to troubleshoot:**
+
+1. Check **Maintenance → Logs** for exceptions.
+2. If no exception is visible, check the Portainer logs.
+3. Start the container in the foreground to observe exceptions.
+4. Enable `trace` or `debug` logging for detailed output (see [Debug Tips](./DEBUG_TIPS.md)).
+5. Verify that `GRAPHQL_PORT` is correctly configured.
+6. Check browser logs (press `F12`):
+
+   * **Console tab** → refresh the page
+   * **Network tab** → refresh the page
+
+If you are unsure how to resolve errors, provide screenshots or log excerpts in your issue report or Discord discussion.
+
+---
+
+### Common Configuration Issues
+
+#### Incorrect `SCAN_SUBNETS`
+
+If `SCAN_SUBNETS` is misconfigured, you may see only a few devices in your device list after a scan. See the [Subnets Documentation](./SUBNETS.md) for proper configuration.
+
+#### Duplicate Devices and Notifications
+
+* Devices are identified by their **MAC address**.
+* If a device's MAC changes, it will be treated as a new device, triggering notifications.
+* Prevent this by adjusting your device configuration for Android, iOS, or Windows. See the [Random MACs Guide](./RANDOM_MAC.md).
+
+#### Unable to Resolve Host
+
+* Ensure `SCAN_SUBNETS` uses the correct mask and `--interface`.
+* Refer to the [Subnets Documentation](./SUBNETS.md) for detailed guidance.
+
+#### Invalid JSON Errors
+
+* Follow the steps in [Invalid JSON Errors Debug Help](./DEBUG_INVALID_JSON.md).
+
+#### Sudo Execution Fails (e.g., on arpscan on Raspberry Pi 4)
+
+Error:
 
 ```
+sudo: unexpected child termination condition: 0
+```
+
+**Resolution**:
+
+```bash
 wget ftp.us.debian.org/debian/pool/main/libs/libseccomp/libseccomp2_2.5.3-2_armhf.deb
 sudo dpkg -i libseccomp2_2.5.3-2_armhf.deb
 ```
 
-The link above will probably break in time too. Go to https://packages.debian.org/sid/armhf/libseccomp2/download to find the new version number and put that in the url.
+> ⚠️ The link may break over time. Check [Debian Packages](https://packages.debian.org/sid/armhf/libseccomp2/download) for the latest version.
 
-### Only Router and own device show up
+#### Only Router and Own Device Show Up
 
-Make sure that the subnet and interface in `SCAN_SUBNETS` are correct. If your device/NAS has multiple ethernet ports, you probably need to change `eth0` to something else.
+* Verify the subnet and interface in `SCAN_SUBNETS`.
+* On devices with multiple Ethernet ports, you may need to change `eth0` to the correct interface.
 
-### Losing my settings and devices after an update
+#### Losing Settings or Devices After Update
 
-If you lose your devices and/or settings after an update that means you don't have the `/data/db` and `/data/config` folders mapped to a permanent storage. That means every time you update these folders are re-created. Make sure you have the [volumes specified correctly](./DOCKER_COMPOSE.md) in your `docker-compose.yml` or run command.
+* Ensure `/data/db` and `/data/config` are mapped to persistent storage.
+* Without persistent volumes, these folders are recreated on every update.
+* See [Docker Volumes Setup](./DOCKER_COMPOSE.md) for proper configuration.
 
+#### Application Performance Issues
 
-### The application is slow
+Slowness can be caused by:
 
-Slowness is usually caused by incorrect settings (the app might restart, so check the `app.log`), too many background processes (disable unnecessary scanners), too long scans (limit the number of scanned devices), too many disk operations, or some maintenance plugins might have failed. See the [Performance tips](./PERFORMANCE.md) docs for details.
+* Incorrect settings (causing app restarts) → check `app.log`.
+* Too many background processes → disable unnecessary scanners.
+* Long scans → limit the number of scanned devices.
+* Excessive disk operations or failing maintenance plugins.
+
+> See [Performance Tips](./PERFORMANCE.md) for detailed optimization steps.
+

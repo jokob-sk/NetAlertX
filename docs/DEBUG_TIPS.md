@@ -55,15 +55,7 @@ services:
 
 ## 5. TMP mount directories to rule host out permission issues
 
-Try starting the container with all data to be in non-persistent volumes. If this works, the issue might be related to the permissions of your persistent data mount locations on your server.
-
-```bash
-docker run --rm --network=host \
-  -v /etc/localtime:/etc/localtime:ro \
-  --tmpfs /tmp:uid=20211,gid=20211,mode=1700 \
-  -e PORT=20211 \
-  ghcr.io/jokob-sk/netalertx:latest
-```
+Try starting the container with all data to be in non-persistent volumes. If this works, the issue might be related to the permissions of your persistent data mount locations on your server. See teh [Permissions guide](./FILE_PERMISSIONS.md) for details.
 
 
 ## 6. Sharing application state
@@ -79,4 +71,4 @@ Sometimes specific log sections are needed to debug issues. The Devices and Curr
 
 ## Common issues
 
-See [Common issues](./COMMON_ISSUES.md) for details.
+See [Common issues](./COMMON_ISSUES.md) for additional troubleshooting tips.

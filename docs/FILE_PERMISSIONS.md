@@ -1,7 +1,22 @@
 # Managing File Permissions for NetAlertX on a Read-Only Container
 
+Sometimes, permission issues arise if your existing host directories were created by a previous container running as root or another UID. The container will fail to start with "Permission Denied" errors.
+
 > [!TIP]
 > NetAlertX runs in a **secure, read-only Alpine-based container** under a dedicated `netalertx` user (UID 20211, GID 20211). All writable paths are either mounted as **persistent volumes** or **`tmpfs` filesystems**. This ensures consistent file ownership and prevents privilege escalation.
+
+Try starting the container with all data to be in non-persistent volumes. If this works, the issue might be related to the permissions of your persistent data mount locations on your server.
+
+```bash
+docker run --rm --network=host \
+  -v /etc/localtime:/etc/localtime:ro \
+  --tmpfs /tmp:uid=20211,gid=20211,mode=1700 \
+  -e PORT=20211 \
+  ghcr.io/jokob-sk/netalertx:latest
+```
+
+> [!WARNING]
+> The above should be only used as a test - once the container restarts, all data is lost.
 
 ---
 
@@ -24,10 +39,6 @@ NetAlertX requires certain paths to be writable at runtime. These paths should b
 > All these paths will have **UID 20211 / GID 20211** inside the container. Files on the host will appear owned by `20211:20211`.
 
 ---
-
-## Fixing Permission Problems
-
-Sometimes, permission issues arise if your existing host directories were created by a previous container running as root or another UID. The container will fail to start with "Permission Denied" errors.
 
 ### Solution
 

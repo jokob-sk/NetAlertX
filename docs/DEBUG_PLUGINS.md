@@ -1,5 +1,8 @@
 # Troubleshooting plugins
 
+> [!TIP]
+> Before troubleshooting, please ensure you have the right [Debugging and LOG_LEVEL set](./DEBUG_TIPS.md).
+
 ## High-level overview
 
 If a Plugin supplies data to the main app it's done either vie a SQL query or via a script that updates the `last_result.log` file in the plugin log folder (`app/log/plugins/`).
@@ -9,7 +12,7 @@ For a more in-depth overview on how plugins work check the [Plugins development 
 ### Prerequisites
 
 - Make sure you read and followed the specific plugin setup instructions.
-- Ensure you have [debug enabled (see More Logging)](./DEBUG_TIPS.md) 
+- Ensure you have [debug enabled (see More Logging)](./DEBUG_TIPS.md)
 
 ### Potential issues
 
@@ -47,9 +50,9 @@ Input data from the plugin might cause mapping issues in specific edge cases. Lo
 17:31:05 [Plugins] history_to_insert count: 4
 17:31:05 [Plugins] objects_to_insert count: 0
 17:31:05 [Plugins] objects_to_update count: 4
-17:31:05 [Plugin utils] In pluginEvents there are 2 events with the status "watched-not-changed" 
-17:31:05 [Plugin utils] In pluginObjects there are 2 events with the status "missing-in-last-scan" 
-17:31:05 [Plugin utils] In pluginObjects there are 2 events with the status "watched-not-changed" 
+17:31:05 [Plugin utils] In pluginEvents there are 2 events with the status "watched-not-changed"
+17:31:05 [Plugin utils] In pluginObjects there are 2 events with the status "missing-in-last-scan"
+17:31:05 [Plugin utils] In pluginObjects there are 2 events with the status "watched-not-changed"
 17:31:05 [Plugins] Mapping objects to database table: CurrentScan
 17:31:05 [Plugins] SQL query for mapping: INSERT into CurrentScan ( "cur_MAC", "cur_IP", "cur_LastQuery", "cur_Name", "cur_Vendor", "cur_ScanMethod") VALUES ( ?, ?, ?, ?, ?, ?)
 17:31:05 [Plugins] SQL sqlParams for mapping: [('01:01:01:01:01:01', '172.30.0.1', 0, 'aaaa', 'vvvvvvvvv', 'PIHOLE'), ('02:42:ac:1e:00:02', '172.30.0.2', 0, 'dddd', 'vvvvv2222', 'PIHOLE')]
@@ -80,7 +83,7 @@ These values, if formatted correctly, will also show up in the UI:
 
 ### Sharing application state
 
-Sometimes specific log sections are needed to debug issues. The Devices and CurrentScan table data is sometimes needed to figure out what's wrong. 
+Sometimes specific log sections are needed to debug issues. The Devices and CurrentScan table data is sometimes needed to figure out what's wrong.
 
 1. Please set `LOG_LEVEL` to `trace` (Disable it once you have the info as this produces big log files).
 2. Wait for the issue to occur.
