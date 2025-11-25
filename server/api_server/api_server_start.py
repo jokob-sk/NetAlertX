@@ -71,6 +71,7 @@ from messaging.in_app import (  # noqa: E402 [flake8 lint suppression]
     delete_notification,
     mark_notification_as_read
 )
+from .tools_routes import tools_bp  # noqa: E402 [flake8 lint suppression]
 
 # Flask application
 app = Flask(__name__)
@@ -87,7 +88,8 @@ CORS(
         r"/dbquery/*": {"origins": "*"},
         r"/messaging/*": {"origins": "*"},
         r"/events/*": {"origins": "*"},
-        r"/logs/*": {"origins": "*"}
+        r"/logs/*": {"origins": "*"},
+        r"/api/tools/*": {"origins": "*"}
     },
     supports_credentials=True,
     allow_headers=["Authorization", "Content-Type"],
@@ -97,6 +99,17 @@ CORS(
 # -------------------------------------------------------------------
 # Custom handler for 404 - Route not found
 # -------------------------------------------------------------------
+@app.before_request
+def log_request_info():
+    """Log details of every incoming request."""
+    # Filter out noisy requests if needed, but user asked for drastic logging
+    mylog("none", [f"[HTTP] {request.method} {request.path} from {request.remote_addr}"])
+    mylog("none", [f"[HTTP] Headers: {dict(request.headers)}"])
+    if request.method == "POST":
+        # Be careful with large bodies, but log first 1000 chars
+        data = request.get_data(as_text=True)
+        mylog("none", [f"[HTTP] Body: {data[:1000]}"])
+
 @app.errorhandler(404)
 def not_found(error):
     response = {
@@ -775,3 +788,10 @@ def start_server(graphql_port, app_state):
 
         # Update the state to indicate the server has started
         app_state = updateState("Process: Idle", None, None, None, 1)
+# Register Blueprints
+app.register_blueprint(tools_bp, url_prefix='/api/tools')
+
+if __name__ == "__main__":
+    # This block is for running the server directly for testing purposes
+    # In production, start_server is called from api.py
+    pass
