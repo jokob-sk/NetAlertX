@@ -37,6 +37,7 @@ Sometimes, permission issues arise if your existing host directories were create
 docker run -it --rm --name netalertx --user "0" \
   -v /local_data_dir/config:/data/config \
   -v /local_data_dir/db:/data/db \
+  --tmpfs /tmp:uid=20211,gid=20211,mode=1700 \
   ghcr.io/jokob-sk/netalertx:latest
 ```
 
@@ -47,7 +48,7 @@ docker run -it --rm --name netalertx --user "0" \
 > The container startup script detects `root` and runs `chown -R 20211:20211` on all volumes, fixing ownership for the secure `netalertx` user.
 
 > [!TIP]
-> If you are facing permissions issues run the following commands on your server. This will change the owner and assure sufficient access to the database and config files that are stored in the `/local_data_dir/db` and `/local_data_dir/config` folders (replace `local_data_dir` with the location where your `/db` and `/config` folders are located). 
+> If you are facing permissions issues run the following commands on your server. This will change the owner and assure sufficient access to the database and config files that are stored in the `/local_data_dir/db` and `/local_data_dir/config` folders (replace `local_data_dir` with the location where your `/db` and `/config` folders are located).
 >  ```bash
 >  sudo chown -R 20211:20211 /local_data_dir
 >  sudo chmod -R a+rwx  /local_data_dir
@@ -59,22 +60,22 @@ docker run -it --rm --name netalertx --user "0" \
 
 ```yaml
 services:
-  netalertx:                                  
-    container_name: netalertx                
-    image: "ghcr.io/jokob-sk/netalertx"  
-    network_mode: "host"      
+  netalertx:
+    container_name: netalertx
+    image: "ghcr.io/jokob-sk/netalertx"
+    network_mode: "host"
     cap_drop:                                       # Drop all capabilities for enhanced security
-      - ALL 
+      - ALL
     cap_add:                                        # Add only the necessary capabilities
       - NET_ADMIN                                   # Required for ARP scanning
       - NET_RAW                                     # Required for raw socket operations
       - NET_BIND_SERVICE                            # Required to bind to privileged ports (nbtscan)
     restart: unless-stopped
     volumes:
-      - /local_data_dir/config:/data/config         
-      - /local_data_dir/db:/data/db       
-      - /etc/localtime:/etc/localtime          
-    environment: 
+      - /local_data_dir/config:/data/config
+      - /local_data_dir/db:/data/db
+      - /etc/localtime:/etc/localtime
+    environment:
       - PORT=20211
     tmpfs:
       - "/tmp:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
