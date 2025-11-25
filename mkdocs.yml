@@ -63,9 +63,9 @@ nav:
         - Icons: ICONS.md
         - Network Topology: NETWORK_TREE.md
   - Troubleshooting:
-      - Common issues: COMMON_ISSUES.md
-      - Inspecting Logs: LOGGING.md
       - General Tips: DEBUG_TIPS.md
+      - Common Issues: COMMON_ISSUES.md
+      - Inspecting Logs: LOGGING.md
       - API Server Issues: DEBUG_API_SERVER.md
       - Invalid JSON Issues: DEBUG_INVALID_JSON.md
       - PHP Issues: DEBUG_PHP.md
