@@ -61,10 +61,10 @@ docker run -it --rm --name netalertx --user "0" \
 > [!TIP]
 > If you are facing permissions issues run the following commands on your server. This will change the owner and assure sufficient access to the database and config files that are stored in the `/local_data_dir/db` and `/local_data_dir/config` folders (replace `local_data_dir` with the location where your `/db` and `/config` folders are located).
 >
->  ```bash
->  sudo chown -R 20211:20211 /local_data_dir
->  sudo chmod -R a+rwx  /local_data_dir
->  ```
+>  `sudo chown -R 20211:20211 /local_data_dir`
+>
+>  `sudo chmod -R a+rwx  /local_data_dir1`
+>
 
 ---
 
