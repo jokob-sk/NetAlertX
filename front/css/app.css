@@ -72,7 +72,7 @@ a[target="_blank"] {
 
 [data-is-valid="0"] {
     /* border: 1px solid red;  */
-    background-color: #ff4b4b;
+    background-color: #ff4b4b !important;
 }
 
 /* -----------------------------------------------------------------------------
