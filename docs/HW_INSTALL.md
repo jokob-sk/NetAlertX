@@ -5,7 +5,7 @@ To download and install NetAlertX on the hardware/server directly use the `curl`
 > [!NOTE]
 > This is an Experimental feature 🧪 and it relies on community support.
 >
-> 🙏 Looking for maintainers for this installation method 🙂 Current community volunteers: 
+> 🙏 Looking for maintainers for this installation method 🙂 Current community volunteers:
 >   - [slammingprogramming](https://github.com/slammingprogramming)
 >   - [ingoratsdorf](https://github.com/ingoratsdorf)
 >
@@ -13,8 +13,7 @@ To download and install NetAlertX on the hardware/server directly use the `curl`
 > Data loss is a possibility, **it is recommended to install NetAlertX using the supplied Docker image**.
 
 > [!WARNING]
-> A warning to the installation method below: Piping to bash is [controversial](https://pi-hole.net/2016/07/25/curling-and-piping-to-bash) and may
-be dangerous, as you cannot see the code that's about to be executed on your system.
+> A warning to the installation method below: Piping to bash is [controversial](https://pi-hole.net/2016/07/25/curling-and-piping-to-bash) and may be dangerous, as you cannot see the code that's about to be executed on your system.
 
 If you trust this repo, you can download the install script via one of the methods (curl/wget) below and it will fo its best to install NetAlertX on your system.
 
@@ -40,7 +39,7 @@ Some facts about what and where something will be changed/installed by the HW in
 - Only tested to work on the system listed in the install directory.
 - **EXPERIMENTAL** and not recommended way to install NetAlertX.
 
-> [!TIP]  
+> [!TIP]
 > If the below fails try grabbing and installing one of the [previous releases](https://github.com/jokob-sk/NetAlertX/releases) and run the installation from the zip package.
 
 These commands will download the `install.debian12.sh` script from the GitHub repository, make it executable with `chmod`, and then run it using `./install.debian12.sh`.
@@ -81,7 +80,7 @@ wget https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/install/ubuntu24/
 
 > [!NOTE]
 > Use this on a clean LXC/VM for Debian 13 OR Ubuntu 24.
-> The Scipt will detect OS and build acordingly. 
+> The Scipt will detect OS and build acordingly.
 > Maintained by [JVKeller](https://github.com/JVKeller)
 
 ### Installation via wget

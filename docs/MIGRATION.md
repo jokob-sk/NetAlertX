@@ -218,7 +218,7 @@ services:
 
 ### 1.3 Migration from NetAlertX `v25.10.1`
 
-Starting from v25.10.1, the container uses a [more secure, read-only runtime environment](./SECURITY_FEATURES.md), which requires all writable paths (e.g., logs, API cache, temporary data) to be mounted as `tmpfs` or permanent writable volumes, with sufficient access [permissions](./FILE_PERMISSIONS.md).
+Starting from v25.10.1, the container uses a [more secure, read-only runtime environment](./SECURITY_FEATURES.md), which requires all writable paths (e.g., logs, API cache, temporary data) to be mounted as `tmpfs` or permanent writable volumes, with sufficient access [permissions](./FILE_PERMISSIONS.md). The data location has also hanged from `/app/db` and `/app/config` to `/data/db` and `/data/config`. See detailed steps below.
 
 #### STEPS:
 
@@ -234,8 +234,8 @@ services:
     network_mode: "host"
     restart: unless-stopped
     volumes:
-      - /local_data_dir/config:/data/config
-      - /local_data_dir/db:/data/db
+      - /local_data_dir/config:/app/config
+      - /local_data_dir/db:/app/db
       # (optional) useful for debugging if you have issues setting up the container
       - /local_data_dir/logs:/tmp/log
     environment:
@@ -284,10 +284,8 @@ services:
       - NET_BIND_SERVICE     # 🆕 New line
     restart: unless-stopped
     volumes:
-      - /local_data_dir/config:/data/config
-      - /local_data_dir/db:/data/db
-      # (optional) useful for debugging if you have issues setting up the container
-      #- /local_data_dir/logs:/tmp/log
+      - /local_data_dir/config:/data/config  # 🆕 This has changed from /app to /data
+      - /local_data_dir/db:/data/db          # 🆕 This has changed from /app to /data
       # Ensuring the timezone is the same as on the server - make sure also the TIMEZONE setting is configured
       - /etc/localtime:/etc/localtime:ro    # 🆕 New line
     environment:

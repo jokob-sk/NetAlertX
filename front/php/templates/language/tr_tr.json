@@ -311,6 +311,7 @@
     "Gen_Filter": "Filtre",
     "Gen_Generate": "Oluştur",
     "Gen_InvalidMac": "",
+    "Gen_Invalid_Value": "",
     "Gen_LockedDB": "HATA - Veritabanı kilitlenmiş olabilir - F12 Geliştirici araçlarını -> Konsol kısmını kontrol edin veya daha sonra tekrar deneyin.",
     "Gen_NetworkMask": "",
     "Gen_Offline": "Çevrimdışı",

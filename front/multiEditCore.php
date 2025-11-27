@@ -18,19 +18,19 @@
 
       </div>
     <div class="deviceSelector col-md-11 col-sm-11" style="z-index:5">
-      <div class="db_info_table_row  col-sm-12" > 
-        <div class="form-group" > 
-          <div class="input-group col-sm-12 " > 
+      <div class="db_info_table_row  col-sm-12" >
+        <div class="form-group" >
+          <div class="input-group col-sm-12 " >
             <select class="form-control select2 select2-hidden-accessible" multiple=""  style="width: 100%;"  tabindex="-1" aria-hidden="true">
-            
+
             </select>
           </div>
         </div>
       </div>
-    </div> 
-    <div class="col-md-1 hoverHighlight">       
-        <i class="fa-solid fa-circle-check hoverHighlight pointer" onclick="markAllSelected()" title="<?= lang('Gen_Add_All');?>"></i>        
-        <i class="fa-solid fa-circle-xmark hoverHighlight pointer" onclick="markAllNotSelected()" title="<?= lang('Gen_Remove_All');?>"></i>        
+    </div>
+    <div class="col-md-1 hoverHighlight">
+        <i class="fa-solid fa-circle-check hoverHighlight pointer" onclick="markAllSelected()" title="<?= lang('Gen_Add_All');?>"></i>
+        <i class="fa-solid fa-circle-xmark hoverHighlight pointer" onclick="markAllNotSelected()" title="<?= lang('Gen_Remove_All');?>"></i>
     </div>
   </div>
 
@@ -69,19 +69,19 @@
 
 
 <script defer>
-  
-  // -------------------------------------------------------------------  
+
+  // -------------------------------------------------------------------
   // Get plugin and settings data from API endpoints
   function getData(){
 
     // some race condition, need to implement delay
     setTimeout(() => {
-      $.get('php/server/query_json.php', { file: 'table_settings.json', nocache: Date.now() }, function(res) {    
-        
+      $.get('php/server/query_json.php', { file: 'table_settings.json', nocache: Date.now() }, function(res) {
+
         settingsData = res["data"];
 
         excludedColumns = ["NEWDEV_devMac", "NEWDEV_devFirstConnection", "NEWDEV_devLastConnection", "NEWDEV_devLastNotification", "NEWDEV_devScan", "NEWDEV_devPresentLastScan", "NEWDEV_devCustomProps", "NEWDEV_devChildrenNicsDynamic", "NEWDEV_devChildrenDynamic" ]
-        
+
         const relevantColumns = settingsData.filter(set =>
             set.setGroup === "NEWDEV" &&
             set.setKey.includes("_dev") &&
@@ -103,7 +103,7 @@
                 // Append form groups to the column
                 for (let j = i * elementsPerColumn; j < Math.min((i + 1) * elementsPerColumn, multiEditColumns.length); j++) {
 
-                  const setTypeObject  = JSON.parse(multiEditColumns[j].setType.replace(/'/g, '"'));         
+                  const setTypeObject  = JSON.parse(multiEditColumns[j].setType.replace(/'/g, '"'));
 
                   // get the element with the input value(s)
                   let elements = setTypeObject.elements.filter(element => element.elementHasInputValue === 1);
@@ -118,7 +118,7 @@
                   }
 
                   const { elementType, elementOptions = [], transformers = [] } = elementWithInputValue;
-                  const { 
+                  const {
                     inputType,
                     readOnly,
                     isMultiSelect,
@@ -137,10 +137,11 @@
                     customId,
                     columns,
                     base64Regex,
-                    elementOptionsBase64
+                    elementOptionsBase64,
+                    focusout
                   } = handleElementOptions('none', elementOptions, transformers, val = "");
 
-                  //  render based on element type 
+                  //  render based on element type
                   if (elementType === 'select') {
 
                     targetLocation = multiEditColumns[j].setKey + "_generateSetOptions"
@@ -148,7 +149,7 @@
                     generateOptionsOrSetOptions(multiEditColumns[j].setKey, [], targetLocation, generateOptions, null)
 
                     console.log(multiEditColumns[j].setKey)
-                    //  Handle Icons as they need a preview                 
+                    //  Handle Icons as they need a preview
                     if(multiEditColumns[j].setKey == 'NEWDEV_devIcon')
                     {
                       input = `
@@ -157,37 +158,37 @@
                                       onChange="updateIconPreview(this)"
                                       my-customparams="NEWDEV_devIcon,NEWDEV_devIcon_preview"
                                       id="${multiEditColumns[j].setKey}"
-                                      data-my-column="${multiEditColumns[j].setKey}" 
+                                      data-my-column="${multiEditColumns[j].setKey}"
                                       data-my-targetColumns="${multiEditColumns[j].setKey.replace('NEWDEV_','')}" >
                               <option id="${targetLocation}"></option>
                             </select>`
-                      
-                    } else{                      
+
+                    } else{
 
                       input = `<select  class="form-control"
                                       id="${multiEditColumns[j].setKey}"
-                                      data-my-column="${multiEditColumns[j].setKey}" 
+                                      data-my-column="${multiEditColumns[j].setKey}"
                                       data-my-targetColumns="${multiEditColumns[j].setKey.replace('NEWDEV_','')}" >
                               <option id="${targetLocation}"></option>
                             </select>`
                     }
 
 
-                  } else if (elementType === 'input'){ 
-                    
+                  } else if (elementType === 'input'){
+
                     // Add classes specifically for checkboxes
                     inputType === 'checkbox' ?  inputClass = 'checkbox' : inputClass = 'form-control';
-                    
 
-                    input =  `<input  class="${inputClass}" 
-                                      id="${multiEditColumns[j].setKey}"  
-                                      my-customid="${multiEditColumns[j].setKey}"  
-                                      data-my-column="${multiEditColumns[j].setKey}" 
-                                      data-my-targetColumns="${multiEditColumns[j].setKey.replace('NEWDEV_','')}" 
+
+                    input =  `<input  class="${inputClass}"
+                                      id="${multiEditColumns[j].setKey}"
+                                      my-customid="${multiEditColumns[j].setKey}"
+                                      data-my-column="${multiEditColumns[j].setKey}"
+                                      data-my-targetColumns="${multiEditColumns[j].setKey.replace('NEWDEV_','')}"
                                       type="${inputType}">`
                   }
 
-          
+
                   const inputEntry  = `<div class="form-group col-sm-12" >
                                           <label class="col-sm-3 control-label">${multiEditColumns[j].setName}</label>
                                           <div class="col-sm-9">
@@ -200,7 +201,7 @@
                                           </div>
                                         </div>`
 
-                  
+
                   column.append(inputEntry);
                 }
 
@@ -215,11 +216,11 @@
         initSelect2();
         initDeviceSelectors();
 
-        
+
     })
-      
+
     }, 100);
-    
+
   }
 
   // -----------------------------------------------------------------------------
@@ -262,10 +263,10 @@
               var option = new Option($('.deviceSelector select option[value="' + mac + '"]').html(), mac, true, true);
 
               $('.deviceSelector select').append(option).trigger('change');
-            });       
+            });
 
-          }        
-      
+          }
+
       }, 10);
   }
 
@@ -282,7 +283,7 @@
   function markAllSelected() {
     // Get the <select> element with the class 'deviceSelector'
     var selectElement = $('.deviceSelector select');
-    
+
     // Iterate over each option within the select element
     selectElement.find('option').each(function() {
       // Mark each option as selected
@@ -298,13 +299,13 @@
   function markAllNotSelected() {
     // Get the <select> element with the class 'deviceSelector'
     var selectElement = $('.deviceSelector select');
-    
+
     // Iterate over each option within the select element
     selectElement.find('option').each(function() {
       // Unselect each option
       $(this).prop('selected', false);
     });
-    
+
     // Trigger the 'change' event to notify Bootstrap Select of the changes
     selectElement.trigger('change');
   }
@@ -341,13 +342,13 @@
 
     // update selected
     if(selectorMacs() != "")
-    { 
+    {
       executeAction('update', 'devMac', selectorMacs(), targetColumns, columnValue )
     }
     else
     {
-      showModalWarning(getString("Gen_Error"), getString('Device_MultiEdit_No_Devices')); 
-    }    
+      showModalWarning(getString("Gen_Error"), getString('Device_MultiEdit_No_Devices'));
+    }
 }
 
 // -----------------------------------------------------------------------------
@@ -380,21 +381,21 @@ function executeAction(action, whereColumnName, key, targetColumns, newTargetCol
 
 
 // -----------------------------------------------------------------------------
-// Ask to delete selected devices 
+// Ask to delete selected devices
 function askDeleteSelectedDevices () {
-  // Ask 
+  // Ask
   showModalWarning(
-    getString('Maintenance_Tool_del_alldev_noti'), 
+    getString('Maintenance_Tool_del_alldev_noti'),
     getString('Gen_AreYouSure'),
-    getString('Gen_Cancel'), 
-    getString('Gen_Delete'), 
+    getString('Gen_Cancel'),
+    getString('Gen_Delete'),
     'deleteSelectedDevices');
 }
 
 // -----------------------------------------------------------------------------
-// Delete selected devices 
+// Delete selected devices
 function deleteSelectedDevices()
-{ 
+{
   macs_tmp = selectorMacs()
   executeAction('delete', 'devMac', macs_tmp )
   write_notification('[Multi edit] Manually deleted devices with MACs:' + macs_tmp, 'info')

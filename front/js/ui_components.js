@@ -1,6 +1,6 @@
 /* -----------------------------------------------------------------------------
 *  NetAlertX
-*  Open Source Network Guard / WIFI & LAN intrusion detector 
+*  Open Source Network Guard / WIFI & LAN intrusion detector
 *
 *  ui_components.js - Front module. Common UI components
 *-------------------------------------------------------------------------------
@@ -56,7 +56,7 @@ function getRandomBytes(elem, length) {
   window.crypto.getRandomValues(array);
 
   // Convert bytes to hexadecimal string
-  let hexString = Array.from(array, byte => 
+  let hexString = Array.from(array, byte =>
     byte.toString(16).padStart(2, '0')
   ).join('');
 
@@ -71,7 +71,7 @@ function getRandomBytes(elem, length) {
 }
 
 // ----------------------------------------------
-// Updates the icon preview  
+// Updates the icon preview
 function updateAllIconPreviews() {
   $(".iconInputVal").each((index, el)=>{
     updateIconPreview(el)
@@ -79,7 +79,7 @@ function updateAllIconPreviews() {
 }
 
 // ----------------------------------------------
-// Updates the icon preview  
+// Updates the icon preview
 function updateIconPreview(elem) {
 
   const previewSpan =  $(elem).parent().find(".iconPreview");
@@ -97,7 +97,7 @@ function updateIconPreview(elem) {
         previewSpan.html(atob(newValue));
       });
       return; // Stop retrying if successful
-    } 
+    }
 
     attempts++;
     if (attempts < 10) {
@@ -119,9 +119,9 @@ function validateRegex(elem) {
   const iconSpan  = $(elem).parent().find(".validityCheck");
   const inputElem = $(elem);
   const regexTmp  = atob($(inputElem).attr("my-base64Regex")); // Decode base64 regex
-  
+
   const regex = new RegExp(regexTmp); // Convert to a valid RegExp object
-  
+
   let attempts = 0;
 
   function tryUpdateValidityResultIcon() {
@@ -140,8 +140,11 @@ function validateRegex(elem) {
       // Validate against regex
       if (regex.test(value)) {
           iconSpan.html("<i class='fa fa-check'></i>");
+          inputElem.attr("data-is-valid", "1");
       } else {
           iconSpan.html("<i class='fa fa-xmark'></i>");
+          showModalOk('WARNING', getString("Gen_Invalid_Value"));
+          inputElem.attr("data-is-valid", "0"); 
       }
   }
 
@@ -175,7 +178,7 @@ function initializeiCheck () {
    increaseArea:  '20%'
  });
 
- 
+
 }
 
 
@@ -206,7 +209,7 @@ function copyToClipboard(buttonElement) {
 }
 
 // -----------------------------------------------------------------------------
-// Simple Sortable Table columns 
+// Simple Sortable Table columns
 // -----------------------------------------------------------------------------
 
 // Function to handle column sorting when a user clicks on a table header
@@ -268,9 +271,9 @@ function ipToNum(ip) {
 }
 
 
-// ----------------------------------------------------------------------------- 
-// handling events 
-// ----------------------------------------------------------------------------- 
+// -----------------------------------------------------------------------------
+// handling events
+// -----------------------------------------------------------------------------
 
 modalEventStatusId = 'modal-message-front-event'
 
@@ -301,41 +304,41 @@ function execute_settingEvent(element) {
           updateModalState()
       }
     })
-    
+
   } else if (["add_option"].includes(feEvent)) {
     showModalFieldInput (
       '<i class="fa fa-square-plus pointer"></i> ' + getString('Gen_Add'),
       getString('Gen_Add'),
-      getString('Gen_Cancel'), 
-      getString('Gen_Okay'), 
+      getString('Gen_Cancel'),
+      getString('Gen_Okay'),
       '', // curValue
       'addOptionFromModalInput',
       feSourceId // triggered by id
     );
   } else if (["add_icon"].includes(feEvent)) {
 
-      // Add new icon as base64 string 
+      // Add new icon as base64 string
     showModalInput (
       '<i class="fa fa-square-plus pointer"></i> ' + getString('DevDetail_button_AddIcon'),
       getString('DevDetail_button_AddIcon_Help'),
-      getString('Gen_Cancel'), 
-      getString('Gen_Okay'), 
+      getString('Gen_Cancel'),
+      getString('Gen_Okay'),
       () => addIconAsBase64(element), // Wrap in an arrow function
       feSourceId // triggered by id
     );
   } else if (["select_icon"].includes(feEvent)) {
 
     showIconSelection(feSetKey)
-    // myparam-setkey  
+    // myparam-setkey
 
   } else if (["copy_icons"].includes(feEvent)) {
 
-    // Ask overwrite icon types 
+    // Ask overwrite icon types
     showModalWarning (
-      getString('DevDetail_button_OverwriteIcons'), 
+      getString('DevDetail_button_OverwriteIcons'),
       getString('DevDetail_button_OverwriteIcons_Warning'),
-      getString('Gen_Cancel'), 
-      getString('Gen_Okay'), 
+      getString('Gen_Cancel'),
+      getString('Gen_Okay'),
       'overwriteIconType',
       feSourceId // triggered by id
     );
@@ -343,30 +346,30 @@ function execute_settingEvent(element) {
 
     goToDevice(feValue);
   } else if (["go_to_node"].includes(feEvent)) {
-    
+
     goToNetworkNode(feValue);
 
   } else {
     console.warn(`🔺Not implemented: ${feEvent}`)
-  } 
-  
+  }
+
 }
 
 
 // -----------------------------------------------------------------------------
 // Go to the correct network node in the Network section
 function overwriteIconType()
-{ 
+{
   const mac = getMac();
 
   if (!isValidMac(mac)) {
-    showModalOK("Error", getString("Gen_InvalidMac")) 
+    showModalOK("Error", getString("Gen_InvalidMac"))
     return;
   }
 
   // Construct SQL query
   const rawSql = `
-   UPDATE Devices 
+   UPDATE Devices
     SET devIcon = (
       SELECT devIcon FROM Devices WHERE devMac = "${mac}"
     )
@@ -391,24 +394,24 @@ function overwriteIconType()
 // -----------------------------------------------------------------------------
 // Go to the correct network node in the Network section
 function goToNetworkNode(mac)
-{ 
+{
   setCache('activeNetworkTab', mac.replaceAll(":","_")+'_id');
   window.location.href = './network.php';
-  
+
 }
 
 // -----------------------------------------------------------------------------
-// Go to the device 
+// Go to the device
 function goToDevice(mac, newtab = false) {
   const url = './deviceDetails.php?mac=' + encodeURIComponent(mac);
-  
+
   if (newtab) {
     window.open(url, '_blank');
   } else {
     window.location.href = url;
   }
 }
-  
+
 
 // --------------------------------------------------------
 // Updating the execution queue in in modal pop-up
@@ -437,7 +440,7 @@ function updateModalState() {
 function addOptionFromModalInput() {
   var inputVal = $(`#modal-field-input-field`).val();
   console.log($('#modal-field-input-field'));
-  
+
   var triggeredBy = $('#modal-field-input').attr("data-myparam-triggered-by");
   var targetId = $('#' + triggeredBy).attr("data-myparam-setkey");
 
@@ -475,16 +478,16 @@ function addIconAsBase64 (el) {
 
 
   console.log($('#modal-field-input-field'));
-  
+
   var triggeredBy = $('#modal-input').attr("data-myparam-triggered-by");
   var targetId = $('#' + triggeredBy).attr("data-myparam-setkey");
 
-  // $('#'+targetId).val(iconHtmlBase64); 
+  // $('#'+targetId).val(iconHtmlBase64);
 
   // Add new option and set it as selected
   $('#' + targetId).append(new Option(iconHtmlBase64, iconHtmlBase64)).val(iconHtmlBase64);
 
-  updateIconPreview(el)  
+  updateIconPreview(el)
 
 }
 
@@ -522,8 +525,8 @@ function showIconSelection(setKey) {
   // Populate the icon list
   Array.from(selectElement.options).forEach(option => {
     if (option.value != "") {
-        
-      
+
+
       const value = option.value;
 
       // Decode the base64 value
@@ -566,7 +569,7 @@ function showIconSelection(setKey) {
   });
 
   //
-  
+
 }
 
 
@@ -661,7 +664,7 @@ function getRelationshipConf(relType) {
   // --color-red: #dd4b39;
 
   switch (relType) {
-        
+
     case "child":
       color = "#f39c12"; // yellow
       cssClass = "text-yellow";
@@ -673,11 +676,11 @@ function getRelationshipConf(relType) {
     case "virtual":
       color = "#0060df"; // blue
       cssClass = "text-blue";
-      break;      
+      break;
     case "logical":
       color = "#00a65a"; // green
       cssClass = "text-green";
-      break;      
+      break;
     default:
       color = "#5B5B66"; // grey
       cssClass = "text-light-grey";
@@ -703,13 +706,13 @@ function initSelect2() {
   //  check if cache ready
   if(isValidJSON(devicesListAll_JSON))
   {
-    
+
     // --------------------------------------------------------
     //Initialize Select2 Elements and make them sortable
-    
+
     $(function () {
       // Iterate over each Select2 dropdown
-      $('.select2').each(function() {          
+      $('.select2').each(function() {
           // handle Device chips, if my-transformers="deviceChip"
           if($(this).attr("my-transformers") == "deviceChip")
           {
@@ -721,7 +724,7 @@ function initSelect2() {
                 return m; // Allow HTML
               }
             });
-            
+
           } else if($(this).attr("my-transformers") == "deviceRelType") // handling dropdown for relationships
           {
             var selectEl = $(this).select2({
@@ -730,26 +733,26 @@ function initSelect2() {
                 if (!data.id) return data.text; // default for placeholder etc.
 
                 const relConf = getRelationshipConf(data.text);
-                                
+
                 // Custom HTML
-                const html = $(`                  
-                    <span class="custom-chip ${relConf.cssClass}" >                      
-                      ${data.text}                      
-                    </span>                  
+                const html = $(`
+                    <span class="custom-chip ${relConf.cssClass}" >
+                      ${data.text}
+                    </span>
                 `);
-          
+
                 return html;
               },
               escapeMarkup: function (m) {
                 return m; // Allow HTML
               }
             });
-            
+
           } else // default handling - default template
           {
             var selectEl = $(this).select2();
           }
-    
+
           // Apply sortable functionality to the dropdown's dropdown-container
           selectEl.next().children().children().children().sortable({
               containment: 'parent',
@@ -757,14 +760,14 @@ function initSelect2() {
                   var sortedValues = $(this).children().map(function() {
                       return $(this).attr('title');
                   }).get();
-    
+
                   var sortedOptions = selectEl.find('option').sort(function(a, b) {
                       return sortedValues.indexOf($(a).text()) - sortedValues.indexOf($(b).text());
                   });
-    
+
                   // Replace all options in selectEl
                   selectEl.empty().append(sortedOptions);
-    
+
                   // Trigger change event on Select2
                   selectEl.trigger('change');
               }
@@ -776,7 +779,7 @@ function initSelect2() {
     setTimeout(() => {
       initSelect2()
     }, 1000);
-  }  
+  }
 }
 
 // ------------------------------------------
@@ -816,7 +819,7 @@ function renderDeviceLink(data, container, useName = false) {
       'data-alert': device.devAlertDown,
       'data-icon': device.devIcon
     });
-  
+
   return `
     <a href="${badge.url}" target="_blank">
       <span class="custom-chip">
@@ -866,7 +869,7 @@ function initHoverNodeInfo() {
   $(document).on('mouseenter', '.hover-node-info', function (e) {
     const $el = $(this);
     lastTarget = this;
-    
+
     // use timeout to prevent a quick hover and exit toi flash a card when navigating to a target node with your mouse
     clearTimeout(hoverTimeout);
 
@@ -893,25 +896,25 @@ function initHoverNodeInfo() {
         <div class="line">
           <b>Status:</b> <span>${status}</span><br>
         </div>
-        <div class="line">  
+        <div class="line">
           <b>IP:</b> <span>${ip}</span><br>
         </div>
-        <div class="line">  
+        <div class="line">
           <b>MAC:</b> <span>${mac}</span><br>
         </div>
-        <div class="line">  
+        <div class="line">
           <b>Vendor:</b> <span>${vendor}</span><br>
         </div>
-        <div class="line">  
+        <div class="line">
           <b>Type:</b> <span>${type}</span><br>
         </div>
-        <div class="line">  
+        <div class="line">
           <b>First seen:</b> <span>${firstseen}</span><br>
         </div>
-        <div class="line">  
+        <div class="line">
           <b>Last seen:</b> <span>${lastseen}</span><br>
         </div>
-        <div class="line">  
+        <div class="line">
           <b>Relationship:</b> <span class="${getRelationshipConf(relationship).cssClass}">${relationship}</span>
         </div>
       `;

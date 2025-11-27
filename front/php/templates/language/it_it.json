@@ -311,6 +311,7 @@
     "Gen_Filter": "Filtro",
     "Gen_Generate": "Genera",
     "Gen_InvalidMac": "Indirizzo Mac non valido.",
+    "Gen_Invalid_Value": "",
     "Gen_LockedDB": "ERRORE: il DB potrebbe essere bloccato, controlla F12 Strumenti di sviluppo -> Console o riprova più tardi.",
     "Gen_NetworkMask": "Maschera di rete",
     "Gen_Offline": "Offline",
