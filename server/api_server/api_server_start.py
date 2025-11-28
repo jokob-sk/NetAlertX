@@ -72,9 +72,17 @@ from messaging.in_app import (  # noqa: E402 [flake8 lint suppression]
     mark_notification_as_read
 )
 from .tools_routes import tools_bp  # noqa: E402 [flake8 lint suppression]
+from .mcp_routes import mcp_bp  # noqa: E402 [flake8 lint suppression]
 
 # Flask application
 app = Flask(__name__)
+# ... (CORS settings) ...
+
+# ... (rest of file) ...
+
+# Register Blueprints
+app.register_blueprint(tools_bp, url_prefix='/api/tools')
+app.register_blueprint(mcp_bp, url_prefix='/api/mcp')
 CORS(
     app,
     resources={
@@ -788,8 +796,6 @@ def start_server(graphql_port, app_state):
 
         # Update the state to indicate the server has started
         app_state = updateState("Process: Idle", None, None, None, 1)
-# Register Blueprints
-app.register_blueprint(tools_bp, url_prefix='/api/tools')
 
 if __name__ == "__main__":
     # This block is for running the server directly for testing purposes

@@ -30,3 +30,4 @@ urllib3
 httplib2
 gunicorn
 git+https://github.com/foreign-sub/aiofreepybox.git
+mcp
