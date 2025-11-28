@@ -118,6 +118,7 @@ def log_request_info():
         data = request.get_data(as_text=True)
         mylog("none", [f"[HTTP] Body: {data[:1000]}"])
 
+
 @app.errorhandler(404)
 def not_found(error):
     response = {
@@ -796,6 +797,7 @@ def start_server(graphql_port, app_state):
 
         # Update the state to indicate the server has started
         app_state = updateState("Process: Idle", None, None, None, 1)
+
 
 if __name__ == "__main__":
     # This block is for running the server directly for testing purposes

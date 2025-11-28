@@ -1,6 +1,4 @@
 import subprocess
-import shutil
-import os
 import re
 from datetime import datetime, timedelta
 from flask import Blueprint, request, jsonify
@@ -39,25 +37,25 @@ def trigger_scan():
     cmd = []
     if scan_type == 'arp':
         # ARP scan usually requires sudo or root, assuming container runs as root or has caps
-        cmd = ["arp-scan", "--localnet", "--interface=eth0"] # Defaulting to eth0, might need detection
+        cmd = ["arp-scan", "--localnet", "--interface=eth0"]  # Defaulting to eth0, might need detection
         if target:
-             cmd = ["arp-scan", target]
+            cmd = ["arp-scan", target]
     elif scan_type == 'nmap_fast':
         cmd = ["nmap", "-F"]
         if target:
             cmd.append(target)
         else:
             # Default to local subnet if possible, or error if not easily determined
-            # For now, let's require target for nmap if not easily deducible, 
-            # or try to get it from settings. 
+            # For now, let's require target for nmap if not easily deducible,
+            # or try to get it from settings.
             # NetAlertX usually knows its subnet.
             # Let's try to get the scan subnet from settings if not provided.
             scan_subnets = get_setting_value("SCAN_SUBNETS")
             if scan_subnets:
-                 # Take the first one for now
-                 cmd.append(scan_subnets.split(',')[0].strip())
+                # Take the first one for now
+                cmd.append(scan_subnets.split(',')[0].strip())
             else:
-                 return jsonify({"error": "Target is required and no default SCAN_SUBNETS found"}), 400
+                return jsonify({"error": "Target is required and no default SCAN_SUBNETS found"}), 400
     elif scan_type == 'nmap_deep':
         cmd = ["nmap", "-A", "-T4"]
         if target:
@@ -65,9 +63,9 @@ def trigger_scan():
         else:
             scan_subnets = get_setting_value("SCAN_SUBNETS")
             if scan_subnets:
-                 cmd.append(scan_subnets.split(',')[0].strip())
+                cmd.append(scan_subnets.split(',')[0].strip())
             else:
-                 return jsonify({"error": "Target is required and no default SCAN_SUBNETS found"}), 400
+                return jsonify({"error": "Target is required and no default SCAN_SUBNETS found"}), 400
 
     try:
         # Run the command
@@ -212,7 +210,7 @@ def get_open_ports():
             text=True,
             check=True
         )
-        
+
         # Parse output for open ports
         open_ports = []
         for line in result.stdout.split('\n'):
@@ -250,10 +248,10 @@ def get_network_topology():
     try:
         cur.execute("SELECT devName, devMac, devParentMAC, devParentPort, devVendor FROM Devices")
         rows = cur.fetchall()
-        
+
         nodes = []
         links = []
-        
+
         for row in rows:
             nodes.append({
                 "id": row['devMac'],
@@ -299,16 +297,16 @@ def get_recent_alerts():
         cutoff_str = cutoff.strftime('%Y-%m-%d %H:%M:%S')
 
         cur.execute("""
-            SELECT eve_DateTime, eve_EventType, eve_MAC, eve_IP, devName 
-            FROM Events 
+            SELECT eve_DateTime, eve_EventType, eve_MAC, eve_IP, devName
+            FROM Events
             LEFT JOIN Devices ON Events.eve_MAC = Devices.devMac
-            WHERE eve_DateTime > ? 
+            WHERE eve_DateTime > ?
             ORDER BY eve_DateTime DESC
         """, (cutoff_str,))
-        
+
         rows = cur.fetchall()
         alerts = [dict(row) for row in rows]
-        
+
         return jsonify(alerts)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -338,10 +336,10 @@ def set_device_alias():
     try:
         cur.execute("UPDATE Devices SET devName = ? WHERE devMac = ?", (alias, mac))
         conn.commit()
-        
+
         if cur.rowcount == 0:
             return jsonify({"error": "Device not found"}), 404
-            
+
         return jsonify({"success": True, "message": f"Device {mac} renamed to {alias}"})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -379,7 +377,7 @@ def wol_wake_device():
             else:
                 return jsonify({"error": f"Could not resolve MAC for IP {ip}"}), 404
         except Exception as e:
-             return jsonify({"error": f"Database error: {str(e)}"}), 500
+            return jsonify({"error": f"Database error: {str(e)}"}), 500
         finally:
             conn.close()
 
