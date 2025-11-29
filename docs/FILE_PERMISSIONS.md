@@ -62,7 +62,7 @@ docker run -it --rm --name netalertx --user "0" \
 >
 >  `sudo chown -R 20211:20211 /local_data_dir`
 >
->  `sudo chmod -R a+rwx  /local_data_dir1`
+>  `sudo chmod -R a+rwx  /local_data_dir`
 >
 
 ---

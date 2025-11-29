@@ -1,11 +1,5 @@
 # Migration
 
-> [!WARNING]
-> ⚠️ **Important:** The documentation has been recently updated and some instructions may have changed.
-> If you are using the currently live production image, please follow the instructions on [Docker Hub](https://hub.docker.com/r/jokobsk/netalertx) for building and running the container.
-> These docs reflect the latest development version and may differ from the production image.
-
-
 When upgrading from older versions of NetAlertX (or PiAlert by jokob-sk), follow the migration steps below to ensure your data and configuration are properly transferred.
 
 > [!TIP]
@@ -262,8 +256,7 @@ docker run -it --rm --name netalertx --user "0" \
 ..or alternatively execute:
 
 ```bash
-sudo chown -R 20211:20211 /local_data_dir/config
-sudo chown -R 20211:20211 /local_data_dir/db
+sudo chown -R 20211:20211 /local_data_dir
 sudo chmod -R a+rwx /local_data_dir/
 ```
 
