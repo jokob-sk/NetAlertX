@@ -61,8 +61,7 @@ See alternative [docked-compose examples](https://github.com/jokob-sk/NetAlertX/
 
 | Required | Path | Description |
 | :------------- | :------------- | :-------------|
-| ✅ | `:/data/config` | Folder which will contain the `app.conf` & `devices.csv` ([read about devices.csv](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEVICES_BULK_EDITING.md)) files  |
-| ✅ | `:/data/db` | Folder which will contain the `app.db` database file  |
+| ✅ | `:/data` | Folder which will contain the `/db/app.db`, `/config/app.conf` & `/config/devices.csv` ([read about devices.csv](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEVICES_BULK_EDITING.md)) files  |
 | ✅ | `/etc/localtime:/etc/localtime:ro` | Ensuring the timezone is teh same as on teh server.  |
 | | `:/tmp/log` |  Logs folder useful for debugging if you have issues setting up the container  |
 | | `:/tmp/api` |  The [API endpoint](https://github.com/jokob-sk/NetAlertX/blob/main/docs/API.md) containing static (but regularly updated) json and other files. Path configurable via `NETALERTX_API` environment variable.   |
