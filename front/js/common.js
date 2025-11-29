@@ -378,7 +378,7 @@ function localizeTimestamp(input) {
   let tz = getSetting("TIMEZONE") || 'Europe/Berlin';
   input = String(input || '').trim();
 
-  // ✅ 1. Unix timestamps (10 or 13 digits)
+  // 1. Unix timestamps (10 or 13 digits)
   if (/^\d+$/.test(input)) {
     const ms = input.length === 10 ? parseInt(input, 10) * 1000 : parseInt(input, 10);
     return new Intl.DateTimeFormat('default', {
@@ -389,39 +389,53 @@ function localizeTimestamp(input) {
     }).format(new Date(ms));
   }
 
-  // ✅ 2. European DD/MM/YYYY
+  // 2. European DD/MM/YYYY
   let match = input.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:[ ,]+(\d{1,2}:\d{2}(?::\d{2})?))?(.*)$/);
   if (match) {
-    let [ , d, m, y, t = "00:00:00", tzPart = "" ] = match;
+    let [, d, m, y, t = "00:00:00", tzPart = ""] = match;
     const iso = `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}T${t.length===5?t+":00":t}${tzPart}`;
     return formatSafe(iso, tz);
   }
 
-  // ✅ 3. US MM/DD/YYYY
+  // 3. US MM/DD/YYYY
   match = input.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:[ ,]+(\d{1,2}:\d{2}(?::\d{2})?))?(.*)$/);
   if (match) {
-    let [ , m, d, y, t = "00:00:00", tzPart = "" ] = match;
+    let [, m, d, y, t = "00:00:00", tzPart = ""] = match;
     const iso = `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}T${t.length===5?t+":00":t}${tzPart}`;
     return formatSafe(iso, tz);
   }
 
-  // ✅ 4. ISO-style (with T, Z, offsets)
-  match = input.match(/^(\d{4}-\d{1,2}-\d{1,2})[ T](\d{1,2}:\d{2}(?::\d{2})?)(Z|[+-]\d{2}:?\d{2})?$/);
+  // 4. ISO YYYY-MM-DD with optional Z/+offset
+  match = input.match(/^(\d{4})-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])[ T](\d{1,2}:\d{2}(?::\d{2})?)(Z|[+-]\d{2}:?\d{2})?$/);
   if (match) {
-    let [ , ymd, time, offset = "" ] = match;
-    // normalize to YYYY-MM-DD
-    let [y, m, d] = ymd.split('-').map(x => x.padStart(2,'0'));
+    let [, y, m, d, time, offset = ""] = match;
     const iso = `${y}-${m}-${d}T${time.length===5?time+":00":time}${offset}`;
     return formatSafe(iso, tz);
   }
 
-  // ✅ 5. RFC2822 / "25 Aug 2025 13:45:22 +0200"
+  // 5. RFC2822 / "25 Aug 2025 13:45:22 +0200"
   match = input.match(/^\d{1,2} [A-Za-z]{3,} \d{4}/);
   if (match) {
     return formatSafe(input, tz);
   }
 
-  // ✅ 6. Fallback (whatever Date() can parse)
+  // 6. DD-MM-YYYY with optional time
+  match = input.match(/^(\d{1,2})-(\d{1,2})-(\d{4})(?:[ T](\d{1,2}:\d{2}(?::\d{2})?))?$/);
+  if (match) {
+    let [, d, m, y, time = "00:00:00"] = match;
+    const iso = `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}T${time.length===5?time+":00":time}`;
+    return formatSafe(iso, tz);
+  }
+
+  // 7. Strict YYYY-DD-MM with optional time
+  match = input.match(/^(\d{4})-(0[1-9]|[12]\d|3[01])-(0[1-9]|1[0-2])(?:[ T](\d{1,2}:\d{2}(?::\d{2})?))?$/);
+  if (match) {
+    let [, y, d, m, time = "00:00:00"] = match;
+    const iso = `${y}-${m}-${d}T${time.length === 5 ? time + ":00" : time}`;
+    return formatSafe(iso, tz);
+  }
+
+  // 8. Fallback
   return formatSafe(input, tz);
 
   function formatSafe(str, tz) {
@@ -438,6 +452,7 @@ function localizeTimestamp(input) {
     }).format(date);
   }
 }
+
 
 
 // ----------------------------------------------------
@@ -1629,7 +1644,7 @@ async function executeOnce() {
       await cacheSettings();
       await cacheStrings();
 
-      console.log("✅ All AJAX callbacks have completed");
+      console.log("All AJAX callbacks have completed");
       onAllCallsComplete();
     } catch (error) {
       console.error("Error:", error);
