@@ -32,17 +32,8 @@ No additional Pi-hole configuration is required.
 | **PIHOLEAPI_SSL_VERIFY**     | Whether to verify HTTPS certificates. Disable only for self-signed certificates. |
 | **PIHOLEAPI_RUN_TIMEOUT**    | Request timeout in seconds.                                                      |
 | **PIHOLEAPI_API_MAXCLIENTS** | Maximum number of devices to request from Pi-hole. Defaults are usually fine.    |
-| **PIHOLEAPI_FAKE_MAC**       | Generate FAKE AMC from IP.                                                       |
+| **PIHOLEAPI_FAKE_MAC**       | Generate FAKE MAC from IP.                                                       |
 
-### Example Configuration
-
-| Setting Key                  | Sample Value                                       |
-| ---------------------------- | -------------------------------------------------- |
-| **PIHOLEAPI_URL**            | `http://pi.hole/`                                  |
-| **PIHOLEAPI_PASSWORD**       | `passw0rd`                                         |
-| **PIHOLEAPI_SSL_VERIFY**     | `true`                                             |
-| **PIHOLEAPI_RUN_TIMEOUT**    | `30`                                               |
-| **PIHOLEAPI_API_MAXCLIENTS** | `500`                                              |
 
 ### ⚠️ Troubleshooting
 
