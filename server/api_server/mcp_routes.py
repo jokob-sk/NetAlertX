@@ -5,7 +5,9 @@ import uuid
 import queue
 import requests
 import threading
+import logging
 from flask import Blueprint, request, Response, stream_with_context, jsonify
+from helper import get_setting_value
 
 mcp_bp = Blueprint('mcp', __name__)
 
@@ -16,7 +18,9 @@ sessions_lock = threading.Lock()
 # Cache for OpenAPI spec to avoid fetching on every request
 openapi_spec_cache = None
 
-API_BASE_URL = "http://localhost:20212/api/tools"
+BACKEND_PORT = get_setting_value("GRAPHQL_PORT")
+
+API_BASE_URL = f"http://localhost:{BACKEND_PORT}/api/tools"
 
 
 def get_openapi_spec():
@@ -28,7 +32,7 @@ def get_openapi_spec():
     try:
         # Fetch from local server
         # We use localhost because this code runs on the server
-        response = requests.get(f"{API_BASE_URL}/openapi.json")
+        response = requests.get(f"{API_BASE_URL}/openapi.json", timeout=10)
         response.raise_for_status()
         openapi_spec_cache = response.json()
         return openapi_spec_cache
@@ -61,7 +65,11 @@ def map_openapi_to_mcp_tools(spec):
                     content = details["requestBody"].get("content", {})
                     if "application/json" in content:
                         schema = content["application/json"].get("schema", {})
-                        tool["inputSchema"] = schema
+                        tool["inputSchema"] = schema.copy()
+                        if "properties" not in tool["inputSchema"]:
+                            tool["inputSchema"]["properties"] = {}
+                        if "required" not in tool["inputSchema"]:
+                            tool["inputSchema"]["required"] = []
 
                 # Extract parameters from 'parameters' list (query/path params) - simplistic support
                 if "parameters" in details:
@@ -145,15 +153,16 @@ def process_mcp_request(data):
                 headers = {
                     "Content-Type": "application/json"
                 }
+
                 if "Authorization" in request.headers:
                     headers["Authorization"] = request.headers["Authorization"]
 
                 url = f"{API_BASE_URL}{target_path}"
 
                 if target_method == "POST":
-                    api_res = requests.post(url, json=tool_args, headers=headers)
+                    api_res = requests.post(url, json=tool_args, headers=headers, timeout=30)
                 elif target_method == "GET":
-                    api_res = requests.get(url, params=tool_args, headers=headers)
+                    api_res = requests.get(url, params=tool_args, headers=headers, timeout=30)
                 else:
                     api_res = None
 
@@ -236,8 +245,9 @@ def handle_sse():
                 else:
                     # Notification or no response needed
                     return "", 202
-        except Exception:
-            pass
+        except Exception as e:
+            # Log but don't fail - malformed requests shouldn't crash the endpoint
+            logging.getLogger(__name__).debug(f"SSE POST processing error: {e}")
 
         return jsonify({"status": "ok", "message": "MCP SSE endpoint active"}), 200
 

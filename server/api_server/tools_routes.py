@@ -208,7 +208,8 @@ def get_open_ports():
             cmd,
             capture_output=True,
             text=True,
-            check=True
+            check=True,
+            timeout=120
         )
 
         # Parse output for open ports
@@ -388,7 +389,7 @@ def wol_wake_device():
     try:
         # Using wakeonlan command
         result = subprocess.run(
-            ["wakeonlan", mac], capture_output=True, text=True, check=True
+            ["wakeonlan", mac], capture_output=True, text=True, check=True, timeout=10 
         )
         return jsonify(
             {

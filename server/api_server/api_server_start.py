@@ -76,9 +76,6 @@ from .mcp_routes import mcp_bp  # noqa: E402 [flake8 lint suppression]
 
 # Flask application
 app = Flask(__name__)
-# ... (CORS settings) ...
-
-# ... (rest of file) ...
 
 # Register Blueprints
 app.register_blueprint(tools_bp, url_prefix='/api/tools')
@@ -111,12 +108,14 @@ CORS(
 def log_request_info():
     """Log details of every incoming request."""
     # Filter out noisy requests if needed, but user asked for drastic logging
-    mylog("none", [f"[HTTP] {request.method} {request.path} from {request.remote_addr}"])
-    mylog("none", [f"[HTTP] Headers: {dict(request.headers)}"])
+    mylog("verbose", [f"[HTTP] {request.method} {request.path} from {request.remote_addr}"])
+    # Filter sensitive headers before logging  
+    safe_headers = {k: v for k, v in request.headers if k.lower() not in ('authorization', 'cookie', 'x-api-key')}  
+    mylog("debug", [f"[HTTP] Headers: {safe_headers}"]) 
     if request.method == "POST":
         # Be careful with large bodies, but log first 1000 chars
         data = request.get_data(as_text=True)
-        mylog("none", [f"[HTTP] Body: {data[:1000]}"])
+        mylog("debug", [f"[HTTP] Body length: {len(data)} chars"])  
 
 
 @app.errorhandler(404)
