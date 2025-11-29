@@ -253,11 +253,11 @@ docker run -it --rm --name netalertx --user "0" \
   ghcr.io/jokob-sk/netalertx:latest
 ```
 
-..or alternatively execute:
+...or alternatively execute:
 
 ```bash
 sudo chown -R 20211:20211 /local_data_dir
-sudo chmod -R a+rwx /local_data_dir/
+sudo chmod -R a+rwx /local_data_dir
 ```
 
 7. Stop the container
