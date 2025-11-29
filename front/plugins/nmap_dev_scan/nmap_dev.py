@@ -5,7 +5,6 @@
 import os
 import subprocess
 import sys
-import hashlib
 import re
 import nmap
 
@@ -17,6 +16,7 @@ from plugin_helper import Plugin_Objects  # noqa: E402 [flake8 lint suppression]
 from logger import mylog, Logger  # noqa: E402 [flake8 lint suppression]
 from helper import get_setting_value  # noqa: E402 [flake8 lint suppression]
 from const import logPath  # noqa: E402 [flake8 lint suppression]
+from utils.crypto_utils import string_to_mac_hash  # noqa: E402 [flake8 lint suppression]
 import conf  # noqa: E402 [flake8 lint suppression]
 from pytz import timezone  # noqa: E402 [flake8 lint suppression]
 
@@ -175,16 +175,6 @@ def parse_nmap_xml(xml_output, interface, fakeMac):
         mylog('verbose', [f"[{pluginName}] Error parsing nmap XML: ", str(e)])
 
     return devices_list
-
-
-def string_to_mac_hash(input_string):
-    # Calculate a hash using SHA-256
-    sha256_hash = hashlib.sha256(input_string.encode()).hexdigest()
-
-    # Take the first 12 characters of the hash and format as a MAC address
-    mac_hash = ':'.join(sha256_hash[i:i + 2] for i in range(0, 12, 2))
-
-    return mac_hash
 
 
 # ===============================================================================

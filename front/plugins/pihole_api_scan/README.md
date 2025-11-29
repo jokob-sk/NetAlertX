@@ -13,9 +13,6 @@ The plugin connects to your Pi-hole’s API and retrieves:
 
 NetAlertX then uses this information to match or create devices in your system.
 
-> [!TIP]
-> Some tip.
-
 ### Quick setup guide
 
 * You are running **Pi-hole v6** or newer.
@@ -30,17 +27,18 @@ No additional Pi-hole configuration is required.
 
 | Setting Key                  | Description                                                                      |
 | ---------------------------- | -------------------------------------------------------------------------------- |
-| **PIHOLEAPI_URL**            | Your Pi-hole base URL.                           |
+| **PIHOLEAPI_URL**            | Your Pi-hole base URL.                                                           |
 | **PIHOLEAPI_PASSWORD**       | The Web UI base64 encoded (en-/decoding handled by the app) admin password.      |
 | **PIHOLEAPI_SSL_VERIFY**     | Whether to verify HTTPS certificates. Disable only for self-signed certificates. |
 | **PIHOLEAPI_RUN_TIMEOUT**    | Request timeout in seconds.                                                      |
 | **PIHOLEAPI_API_MAXCLIENTS** | Maximum number of devices to request from Pi-hole. Defaults are usually fine.    |
+| **PIHOLEAPI_FAKE_MAC**       | Generate FAKE AMC from IP.                                                       |
 
-### Example Configuration 
+### Example Configuration
 
 | Setting Key                  | Sample Value                                       |
 | ---------------------------- | -------------------------------------------------- |
-| **PIHOLEAPI_URL**            | `http://pi.hole/`                            |
+| **PIHOLEAPI_URL**            | `http://pi.hole/`                                  |
 | **PIHOLEAPI_PASSWORD**       | `passw0rd`                                         |
 | **PIHOLEAPI_SSL_VERIFY**     | `true`                                             |
 | **PIHOLEAPI_RUN_TIMEOUT**    | `30`                                               |
@@ -110,6 +108,32 @@ Then re-run the plugin.
 
 ---
 
+#### ❌ Some devices are missing
+
+Check:
+
+* Pi-hole shows devices under **Settings → Network**
+* NetAlertX logs contain:
+
+```
+[PIHOLEAPI] Skipping invalid MAC (see PIHOLEAPI_FAKE_MAC setting) ...
+```
+
+If devices are missing:
+
+* The app skipps devices with invalid MACs
+* Enable PIHOLEAPI_FAKE_MAC if you want to import these devices with a fake mac and you are not concerned with data inconsistencies later on
+
+Try enabling PIHOLEAPI_FAKE_MAC:
+
+```
+PIHOLEAPI_FAKE_MAC = 1
+```
+
+Then re-run the plugin.
+
+---
+
 #### ❌ Wrong or missing hostnames
 
 Pi-hole only reports names it knows from:
@@ -122,7 +146,7 @@ If names are missing, confirm they appear in Pi-hole’s own UI first.
 
 ### Notes
 
-- Additional notes, limitations, Author info. 
+- Additional notes, limitations, Author info.
 
 - Version: 1.0.0
 - Author: `jokob-sk`, `leiweibau`

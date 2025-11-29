@@ -23,6 +23,7 @@ from helper import get_setting_value  # noqa: E402 [flake8 lint suppression]
 from const import logPath  # noqa: E402 [flake8 lint suppression]
 import conf  # noqa: E402 [flake8 lint suppression]
 from pytz import timezone  # noqa: E402 [flake8 lint suppression]
+from utils.crypto_utils import string_to_mac_hash  # noqa: E402 [flake8 lint suppression]
 
 # Setup timezone & logger using standard NAX helpers
 conf.tz = timezone(get_setting_value('TIMEZONE'))
@@ -42,6 +43,7 @@ PIHOLEAPI_SES_CSRF = None
 PIHOLEAPI_API_MAXCLIENTS = None
 PIHOLEAPI_VERIFY_SSL = True
 PIHOLEAPI_RUN_TIMEOUT = 10
+PIHOLEAPI_FAKE_MAC = get_setting_value('PIHOLEAPI_FAKE_MAC')
 VERSION_DATE = "NAX-PIHOLEAPI-1.0"
 
 
@@ -222,8 +224,14 @@ def gather_device_entries():
                 if ip in iplist:
                     lastQuery = str(now_ts)
 
+            tmpMac = hwaddr.lower()
+
+            # ensure fake mac if enabled
+            if PIHOLEAPI_FAKE_MAC and is_mac(tmpMac) is False:
+                tmpMac = string_to_mac_hash(ip)
+
             entries.append({
-                'mac': hwaddr.lower(),
+                'mac': tmpMac,
                 'ip': ip,
                 'name': name,
                 'macVendor': macVendor,
@@ -281,7 +289,7 @@ def main():
                         foreignKey=str(entry['mac'])
                     )
                 else:
-                    mylog('verbose', [f"[{pluginName}] Skipping invalid MAC: {entry['name']}|{entry['mac']}|{entry['ip']}"])
+                    mylog('verbose', [f"[{pluginName}] Skipping invalid MAC (see PIHOLEAPI_FAKE_MAC setting): {entry['name']}|{entry['mac']}|{entry['ip']}"])
 
         # Write result file for NetAlertX to ingest
         plugin_objects.write_result_file()

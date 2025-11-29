@@ -279,6 +279,41 @@
           "string": "Maximum time in seconds to wait for the script to finish. If this time is exceeded the script is aborted."
         }
       ]
+    },
+    {
+      "function": "FAKE_MAC",
+      "type": {
+        "dataType": "boolean",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "type": "checkbox"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": false,
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Fake MAC if empty"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Some PiHole devices don't have a MAC assigned. Enabling the FAKE_MAC setting generates a fake MAC address from the IP address to track devices, but it may cause inconsistencies if IPs change or devices are re-discovered with a different MAC. Static IPs are recommended. Device type and icon might not be detected correctly and some plugins might fail if they depend on a valid MAC address. When unchecked, devices with empty MAC addresses are skipped."
+        }
+      ]
     }
   ],
   "database_column_definitions": [
