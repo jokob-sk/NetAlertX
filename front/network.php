@@ -521,13 +521,17 @@ function getChildren(node, list, path, visited = [])
 
     // Loop through all items to find children of the current node
     for (var i in list) {
-        if (list[i].devParentMAC.toLowerCase() == node.devMac.toLowerCase() && !hiddenMacs.includes(list[i].devParentMAC)) {
+      const item = list[i];
+      const parentMac = item.devParentMAC || "";       // null-safe
+      const nodeMac = node.devMac || "";               // null-safe
 
-            visibleNodesCount++;
+      if (parentMac != "" && parentMac.toLowerCase() == nodeMac.toLowerCase() && !hiddenMacs.includes(parentMac)) {
 
-            // Process children recursively, passing a copy of the visited list
-            children.push(getChildren(list[i], list, path + ((path == "") ? "" : '|') + list[i].devParentMAC, visited));
-        }
+        visibleNodesCount++;
+
+        // Process children recursively, passing a copy of the visited list
+        children.push(getChildren(list[i], list, path + ((path == "") ? "" : '|') + parentMac, visited));
+      }
     }
 
     // Track leaf and parent node counts
