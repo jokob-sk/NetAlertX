@@ -284,8 +284,7 @@ services:
       - NET_BIND_SERVICE     # 🆕 New line
     restart: unless-stopped
     volumes:
-      - /local_data_dir/config:/data/config  # 🆕 This has changed from /app to /data
-      - /local_data_dir/db:/data/db          # 🆕 This has changed from /app to /data
+      - /local_data_dir:/data  # 🆕 This folder contains your /db and /config directories and the parent changed from /app to /data
       # Ensuring the timezone is the same as on the server - make sure also the TIMEZONE setting is configured
       - /etc/localtime:/etc/localtime:ro    # 🆕 New line
     environment:

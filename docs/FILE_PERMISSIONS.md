@@ -46,8 +46,7 @@ NetAlertX requires certain paths to be writable at runtime. These paths should b
 
 ```bash
 docker run -it --rm --name netalertx --user "0" \
-  -v /local_data_dir/config:/data/config \
-  -v /local_data_dir/db:/data/db \
+  -v /local_data_dir:/data \
   --tmpfs /tmp:uid=20211,gid=20211,mode=1700 \
   ghcr.io/jokob-sk/netalertx:latest
 ```
@@ -84,8 +83,7 @@ services:
       - NET_BIND_SERVICE                            # Required to bind to privileged ports (nbtscan)
     restart: unless-stopped
     volumes:
-      - /local_data_dir/config:/data/config
-      - /local_data_dir/db:/data/db
+      - /local_data_dir:/data
       - /etc/localtime:/etc/localtime
     environment:
       - PORT=20211

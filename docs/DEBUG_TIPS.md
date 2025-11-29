@@ -16,8 +16,7 @@ Start the container via the **terminal** with a command similar to this one:
 docker run \
   --network=host \
   --restart unless-stopped \
-  -v /local_data_dir/config:/data/config \
-  -v /local_data_dir/db:/data/db \
+  -v /local_data_dir:/data \
   -v /etc/localtime:/etc/localtime:ro \
   --tmpfs /tmp:uid=20211,gid=20211,mode=1700 \
   -e PORT=20211 \
@@ -25,6 +24,8 @@ docker run \
   ghcr.io/jokob-sk/netalertx:latest
 
 ```
+
+Note: Your `/local_data_dir` should contain a `config` and `db` folder.
 
 > [!NOTE]
 > ⚠ The most important part is NOT to use the `-d` parameter so you see the error when the container crashes. Use this error in your issue description.

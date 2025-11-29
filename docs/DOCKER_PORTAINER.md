@@ -78,7 +78,7 @@ In the **Environment variables** section of Portainer, add the following:
 >
 >  `sudo chown -R 20211:20211 /local_data_dir`
 >
->  `sudo chmod -R a+rwx  /local_data_dir1`
+>  `sudo chmod -R a+rwx  /local_data_dir`
 >
 
 

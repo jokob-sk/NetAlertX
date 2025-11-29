@@ -25,8 +25,7 @@ Head to [https://netalertx.com/](https://netalertx.com/) for more gifs and scree
 
 ```bash
 docker run -d --rm --network=host \
-  -v /local_data_dir/config:/data/config \
-  -v /local_data_dir/db:/data/db \
+  -v /local_data_dir:/data \
   -v /etc/localtime:/etc/localtime \
   --tmpfs /tmp:uid=20211,gid=20211,mode=1700 \
   -e PORT=20211 \

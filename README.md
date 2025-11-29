@@ -44,14 +44,15 @@ Start NetAlertX in seconds with Docker:
 docker run -d \
   --network=host \
   --restart unless-stopped \
-  -v /local_data_dir/config:/data/config \
-  -v /local_data_dir/db:/data/db \
+  -v /local_data_dir:/data \
   -v /etc/localtime:/etc/localtime:ro \
   --tmpfs /tmp:uid=20211,gid=20211,mode=1700 \
   -e PORT=20211 \
   -e APP_CONF_OVERRIDE='{"GRAPHQL_PORT":"20214"}' \
   ghcr.io/jokob-sk/netalertx:latest
 ```
+
+Note: Your `/local_data_dir` should contain a `config` and `db` folder.
 
 To deploy a containerized instance directly from the source repository, execute the following BASH sequence:
 ```bash

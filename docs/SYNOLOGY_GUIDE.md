@@ -47,8 +47,7 @@ services:
       - NET_ADMIN
       - NET_BIND_SERVICE
     volumes:
-      - /app_storage/netalertx/config:/data/config
-      - /app_storage/netalertx/db:/data/db
+      - /app_storage/netalertx:/data
       # to sync with system time
       - /etc/localtime:/etc/localtime:ro
     tmpfs:
@@ -66,10 +65,7 @@ services:
 
 ```yaml
  volumes:
-      - /volume1/app_storage/netalertx/config:/data/config
-      - /volume1/app_storage/netalertx/db:/data/db
-      # (optional) useful for debugging if you have issues setting up the container
-      # - local/path/logs:/tmp/log <- commented out with # ⚠
+      - /volume1/app_storage/netalertx:/data
 ```
 
 ![Adjusting docker-compose](./img/SYNOLOGY/08_Adjust_docker_compose_volumes.png)
