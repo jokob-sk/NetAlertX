@@ -311,7 +311,7 @@
     "Gen_Filter": "Filtrer",
     "Gen_Generate": "Générer",
     "Gen_InvalidMac": "Adresse MAC invalide.",
-    "Gen_Invalid_Value": "",
+    "Gen_Invalid_Value": "Une valeur invalide a été renseignée",
     "Gen_LockedDB": "Erreur - La base de données est peut-être verrouillée - Vérifier avec les outils de dév via F12 -> Console ou essayer plus tard.",
     "Gen_NetworkMask": "Masque réseau",
     "Gen_Offline": "Hors ligne",
