@@ -389,12 +389,18 @@ function localizeTimestamp(input) {
     }).format(new Date(ms));
   }
 
-  // 2. European DD/MM/YYYY
-  let match = input.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:[ ,]+(\d{1,2}:\d{2}(?::\d{2})?))?(.*)$/);
+ // 2. European DD/MM/YYYY
+  let match = input.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:[ ,]+(\d{1,2}:\d{2}(?::\d{2})?))?$/);
   if (match) {
     let [, d, m, y, t = "00:00:00", tzPart = ""] = match;
-    const iso = `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}T${t.length===5?t+":00":t}${tzPart}`;
-    return formatSafe(iso, tz);
+    const dNum = parseInt(d, 10);
+    const mNum = parseInt(m, 10);
+
+    if (dNum <= 12 && mNum > 12) {
+    } else {
+      const iso = `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}T${t.length===5 ? t + ":00" : t}${tzPart}`;
+      return formatSafe(iso, tz);
+    }
   }
 
   // 3. US MM/DD/YYYY
