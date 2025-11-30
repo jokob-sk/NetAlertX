@@ -1,16 +1,16 @@
 # The NetAlertX Dockerfile has 3 stages:
 #
 # Stage 1. Builder - NetAlertX Requires special tools and packages to build our virtual environment, but
-# which are not needed in future stages.  We build the builder and extract the venv for runner to use as 
+# which are not needed in future stages.  We build the builder and extract the venv for runner to use as
 # a base.
 #
 # Stage 2. Runner builds the bare minimum requirements to create an operational NetAlertX. The primary
 # reason for breaking at this stage is it leaves the system in a proper state for devcontainer operation
-# This image also provides a break-out point for uses who wish to execute the anti-pattern of using a 
+# This image also provides a break-out point for uses who wish to execute the anti-pattern of using a
 # docker container as a VM for experimentation and various development patterns.
 #
 # Stage 3. Hardened removes root, sudoers, folders, permissions, and locks the system down into a read-only
-# compatible image. While NetAlertX does require some read-write operations, this image can guarantee the 
+# compatible image. While NetAlertX does require some read-write operations, this image can guarantee the
 # code pushed out by the project is the only code which will run on the system after each container restart.
 # It reduces the chance of system hijacking and operates with all modern security protocols in place as is
 # expected from a security appliance.
@@ -29,7 +29,7 @@ COPY requirements.txt /tmp/requirements.txt
 RUN apk add --no-cache bash shadow python3 python3-dev gcc musl-dev libffi-dev openssl-dev git \
     && python -m venv /opt/venv
 
-# Create virtual environment owned by root, but readable by everyone else. This makes it easy to copy 
+# Create virtual environment owned by root, but readable by everyone else. This makes it easy to copy
 # into hardened stage without worrying about permissions and keeps image size small. Keeping the commands
 # together makes for a slightly smaller image size.
 RUN pip install --no-cache-dir -r /tmp/requirements.txt && \
@@ -95,11 +95,11 @@ ENV READ_WRITE_FOLDERS="${NETALERTX_DATA} ${NETALERTX_CONFIG} ${NETALERTX_DB} ${
                        ${SYSTEM_SERVICES_ACTIVE_CONFIG}"
 
 #Python environment
-ENV PYTHONUNBUFFERED=1 
+ENV PYTHONUNBUFFERED=1
 ENV VIRTUAL_ENV=/opt/venv
 ENV VIRTUAL_ENV_BIN=/opt/venv/bin
 ENV PYTHONPATH=${NETALERTX_APP}:${NETALERTX_SERVER}:${NETALERTX_PLUGINS}:${VIRTUAL_ENV}/lib/python3.12/site-packages
-ENV PATH="${SYSTEM_SERVICES}:${VIRTUAL_ENV_BIN}:$PATH" 
+ENV PATH="${SYSTEM_SERVICES}:${VIRTUAL_ENV_BIN}:$PATH"
 
 # App Environment
 ENV LISTEN_ADDR=0.0.0.0
@@ -110,7 +110,7 @@ ENV VENDORSPATH_NEWEST=${SYSTEM_SERVICES_RUN_TMP}/ieee-oui.txt
 ENV ENVIRONMENT=alpine
 ENV READ_ONLY_USER=readonly READ_ONLY_GROUP=readonly
 ENV NETALERTX_USER=netalertx NETALERTX_GROUP=netalertx
-ENV LANG=C.UTF-8 
+ENV LANG=C.UTF-8
 
 
 RUN apk add --no-cache bash mtr libbsd zip lsblk tzdata curl arp-scan iproute2 iproute2-ss nmap \
@@ -138,6 +138,7 @@ RUN install -d -o ${NETALERTX_USER} -g ${NETALERTX_GROUP} -m 700 ${READ_WRITE_FO
 
 # Copy version information into the image
 COPY --chown=${NETALERTX_USER}:${NETALERTX_GROUP} .[V]ERSION ${NETALERTX_APP}/.VERSION
+COPY --chown=${NETALERTX_USER}:${NETALERTX_GROUP} .[V]ERSION ${NETALERTX_APP}/.VERSION_PREV
 
 # Copy the virtualenv from the builder stage
 COPY --from=builder --chown=20212:20212 ${VIRTUAL_ENV} ${VIRTUAL_ENV}
@@ -147,12 +148,12 @@ COPY --from=builder --chown=20212:20212 ${VIRTUAL_ENV} ${VIRTUAL_ENV}
 # This is done after the copy of the venv to ensure the venv is in place
 # although it may be quicker to do it before the copy, it keeps the image
 # layers smaller to do it after.
-RUN if [ -f '.VERSION' ]; then \
-        cp '.VERSION' "${NETALERTX_APP}/.VERSION"; \
-    else \
-        echo "DEVELOPMENT 00000000" > "${NETALERTX_APP}/.VERSION"; \
-    fi && \
-    chown 20212:20212 "${NETALERTX_APP}/.VERSION" && \
+RUN for vfile in .VERSION .VERSION_PREV; do \
+        if [ ! -f "${NETALERTX_APP}/${vfile}" ]; then \
+            echo "DEVELOPMENT 00000000" > "${NETALERTX_APP}/${vfile}"; \
+        fi; \
+        chown 20212:20212 "${NETALERTX_APP}/${vfile}"; \
+    done && \
     apk add --no-cache libcap && \
     setcap cap_net_raw+ep /bin/busybox && \
     setcap cap_net_raw,cap_net_admin+eip /usr/bin/nmap && \
@@ -180,7 +181,7 @@ ENV UMASK=0077
 
 # Create readonly user and group with no shell access.
 # Readonly user marks folders that are created by NetAlertX, but should not be modified.
-# AI may claim this is stupid, but it's actually least possible permissions as 
+# AI may claim this is stupid, but it's actually least possible permissions as
 # read-only user cannot login, cannot sudo, has no write permission, and cannot even
 # read the files it owns. The read-only user is ownership-as-a-lock hardening pattern.
 RUN addgroup -g 20212 "${READ_ONLY_GROUP}" && \

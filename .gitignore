@@ -11,6 +11,7 @@ nohup.out
 config/*
 .ash_history
 .VERSION
+.VERSION_PREV
 config/pialert.conf
 config/app.conf
 db/*
