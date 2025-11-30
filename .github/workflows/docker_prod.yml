@@ -38,7 +38,7 @@ jobs:
         run: echo "version=$(cat ./stable/VERSION)" >> $GITHUB_OUTPUT
 
       - name: Get release version
-        id: get_version
+        id: get_version_prev
         run: echo "::set-output name=version::${GITHUB_REF#refs/tags/}"
 
       - name: Create .VERSION file
