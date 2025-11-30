@@ -26,7 +26,7 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 # Install build dependencies
 COPY requirements.txt /tmp/requirements.txt
-RUN apk add --no-cache bash shadow python3 python3-dev gcc musl-dev libffi-dev openssl-dev git \
+RUN apk add --no-cache bash shadow python3 python3-dev gcc musl-dev libffi-dev openssl-dev git rust cargo \
     && python -m venv /opt/venv
 
 # Create virtual environment owned by root, but readable by everyone else. This makes it easy to copy 
