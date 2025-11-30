@@ -1,11 +1,4 @@
 import sqlite3
-import os
-import sys
-
-# Register NetAlertX directories
-INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
-sys.path.extend([f"{INSTALL_PATH}/server"])
-
 from logger import mylog, Logger
 from helper import get_setting_value
 from models.device_instance import DeviceInstance
@@ -13,7 +6,6 @@ from models.plugin_object_instance import PluginObjectInstance
 
 # Make sure log level is initialized correctly
 Logger(get_setting_value("LOG_LEVEL"))
-
 
 
 class Action:
@@ -37,10 +29,7 @@ class UpdateFieldAction(Action):
         self.db = db
 
     def execute(self):
-        mylog(
-            "verbose",
-            f"[WF] Updating field '{self.field}' to '{self.value}' for event object {self.trigger.object_type}",
-        )
+        mylog("verbose", f"[WF] Updating field '{self.field}' to '{self.value}' for event object {self.trigger.object_type}")
 
         obj = self.trigger.object
 
@@ -117,12 +106,7 @@ class RunPluginAction(Action):
     def execute(self):
         obj = self.trigger.object
 
-        mylog(
-            "verbose",
-            [
-                f"Executing plugin '{self.plugin_name}' with parameters {self.params} for object {obj}"
-            ],
-        )
+        mylog("verbose", f"Executing plugin '{self.plugin_name}' with parameters {self.params} for object {obj}")
         # PluginManager.run(self.plugin_name, self.parameters)
         return obj
 
@@ -137,12 +121,7 @@ class SendNotificationAction(Action):
 
     def execute(self):
         obj = self.trigger.object
-        mylog(
-            "verbose",
-            [
-                f"Sending notification via '{self.method}': {self.message} for object {obj}"
-            ],
-        )
+        mylog("verbose", f"Sending notification via '{self.method}': {self.message} for object {obj}")
         # NotificationManager.send(self.method, self.message)
         return obj
 

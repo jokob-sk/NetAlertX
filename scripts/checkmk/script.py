@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
@@ -19,11 +18,12 @@ import subprocess
 import json
 import os
 
+
 def check_new_devices():
     # Get API path from environment variable, fallback to /tmp/api
     api_path = os.environ.get('NETALERTX_API', '/tmp/api')
     table_devices_path = f'{api_path}/table_devices.json'
-    
+
     try:
         # Rufe die JSON-Datei aus dem Docker-Container ab
         result = subprocess.run(
@@ -73,6 +73,6 @@ def check_new_devices():
         )
         print(f"1 NetAlertX_New_Devices - WARNING - Found {len(new_devices)} new device(s): {device_list_str}")
 
+
 if __name__ == "__main__":
     check_new_devices()
-

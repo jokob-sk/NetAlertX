@@ -1,4 +1,4 @@
-# NetAlertX Community Helper Scripts Overview
+# Community Helper Scripts Overview
 
 This page provides an overview of community-contributed scripts for NetAlertX. These scripts are not actively maintained and are provided as-is.
 
@@ -14,8 +14,8 @@ You can find all scripts in this [scripts GitHub folder](https://github.com/joko
 
 ## Important Notes
 
-> [!NOTE]  
-> These scripts are community-supplied and not actively maintained. Use at your own discretion.  
+> [!NOTE]
+> These scripts are community-supplied and not actively maintained. Use at your own discretion.
 
 For detailed usage instructions, refer to each script's documentation in each [scripts GitHub folder](https://github.com/jokob-sk/NetAlertX/tree/main/scripts).
 

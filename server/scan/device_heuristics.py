@@ -1,16 +1,13 @@
-import sys
 import os
 import re
 import json
 import base64
 from pathlib import Path
 from typing import Optional, Tuple
+from logger import mylog
 
 # Register NetAlertX directories
 INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
-sys.path.extend([f"{INSTALL_PATH}/server"])
-
-from logger import mylog
 
 # Load MAC/device-type/icon rules from external file
 MAC_TYPE_ICON_PATH = Path(f"{INSTALL_PATH}/back/device_heuristics_rules.json")
@@ -28,10 +25,7 @@ try:
             rule["icon_base64"] = ""
 except Exception as e:
     MAC_TYPE_ICON_RULES = []
-    mylog(
-        "none",
-        f"[guess_device_attributes] Failed to load device_heuristics_rules.json: {e}",
-    )
+    mylog("none", f"[guess_device_attributes] Failed to load device_heuristics_rules.json: {e}",)
 
 
 # -----------------------------------------
@@ -83,7 +77,7 @@ def match_vendor(vendor: str, default_type: str, default_icon: str) -> Tuple[str
 
         for pattern in patterns:
             # Only apply fallback when no MAC prefix is specified
-            mac_prefix = pattern.get("mac_prefix", "")
+            # mac_prefix = pattern.get("mac_prefix", "")
             vendor_pattern = pattern.get("vendor", "").lower()
 
             if vendor_pattern and vendor_pattern in vendor_lc:
@@ -172,10 +166,8 @@ def guess_device_attributes(
     default_icon: str,
     default_type: str,
 ) -> Tuple[str, str]:
-    mylog(
-        "debug",
-        f"[guess_device_attributes] Guessing attributes for (vendor|mac|ip|name): ('{vendor}'|'{mac}'|'{ip}'|'{name}')",
-    )
+
+    mylog("debug", f"[guess_device_attributes] Guessing attributes for (vendor|mac|ip|name): ('{vendor}'|'{mac}'|'{ip}'|'{name}')",)
 
     # --- Normalize inputs ---
     vendor = str(vendor).lower().strip() if vendor else "unknown"
@@ -210,10 +202,7 @@ def guess_device_attributes(
     type_ = type_ or default_type
     icon = icon or default_icon
 
-    mylog(
-        "debug",
-        f"[guess_device_attributes] Guessed attributes (icon|type_): ('{icon}'|'{type_}')",
-    )
+    mylog("debug", f"[guess_device_attributes] Guessed attributes (icon|type_): ('{icon}'|'{type_}')",)
     return icon, type_
 
 

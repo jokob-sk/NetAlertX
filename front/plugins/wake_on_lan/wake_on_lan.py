@@ -9,13 +9,13 @@ from wakeonlan import send_magic_packet
 INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from plugin_helper import Plugin_Objects
-from logger import mylog, Logger
-from const import logPath
-from helper import get_setting_value 
-from database import DB
-from models.device_instance import DeviceInstance
-import conf
+from plugin_helper import Plugin_Objects  # noqa: E402 [flake8 lint suppression]
+from logger import mylog, Logger  # noqa: E402 [flake8 lint suppression]
+from const import logPath  # noqa: E402 [flake8 lint suppression]
+from helper import get_setting_value   # noqa: E402 [flake8 lint suppression]
+from database import DB  # noqa: E402 [flake8 lint suppression]
+from models.device_instance import DeviceInstance  # noqa: E402 [flake8 lint suppression]
+import conf  # noqa: E402 [flake8 lint suppression]
 
 # Make sure the TIMEZONE for logging is correct
 conf.tz = timezone(get_setting_value('TIMEZONE'))
@@ -34,9 +34,8 @@ RESULT_FILE = os.path.join(LOG_PATH, f'last_result.{pluginName}.log')
 plugin_objects = Plugin_Objects(RESULT_FILE)
 
 
-
 def main():
-    mylog('none', [f'[{pluginName}] In script']) 
+    mylog('none', [f'[{pluginName}] In script'])
 
     # Retrieve configuration settings
     broadcast_ips = get_setting_value('WOL_broadcast_ips')
@@ -58,7 +57,7 @@ def main():
         devices_to_wake = device_handler.getOffline()
 
     elif 'down' in devices_to_wake:
-        
+
         devices_to_wake = device_handler.getDown()
 
     else:
@@ -89,15 +88,16 @@ def main():
         # log result
         plugin_objects.write_result_file()
     else:
-        mylog('none', [f'[{pluginName}] No devices to wake'])     
+        mylog('none', [f'[{pluginName}] No devices to wake'])
 
-    mylog('none', [f'[{pluginName}] Script finished']) 
+    mylog('none', [f'[{pluginName}] Script finished'])
 
     return 0
 
+
 #  wake
 def execute(port, ip, mac, name):
-    
+
     result = 'null'
     try:
         # Send the magic packet to wake up the device
@@ -105,13 +105,14 @@ def execute(port, ip, mac, name):
         mylog('verbose', [f'[{pluginName}] Magic packet sent to {mac} ({name})'])
 
         result = 'success'
-        
+
     except Exception as e:
         result = str(e)
         mylog('verbose', [f'[{pluginName}] Failed to send magic packet to {mac} ({name}): {e}'])
 
     # Return the data result
     return result
+
 
 if __name__ == '__main__':
     main()

@@ -55,7 +55,6 @@ The file content should be following, with your custom values.
 #--------------------------------
 #NETALERTX
 #--------------------------------
-TZ=Europe/Berlin
 PORT=22222    # make sure this port is unique on your whole network
 DEV_LOCATION=/development/NetAlertX
 APP_DATA_LOCATION=/volume/docker_appdata

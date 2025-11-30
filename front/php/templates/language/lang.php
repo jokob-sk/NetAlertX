@@ -5,7 +5,7 @@
 // ###################################
 
 $defaultLang = "en_us";
-$allLanguages = [ "ar_ar", "ca_ca", "cs_cz", "de_de", "en_us", "es_es", "fa_fa", "fr_fr", "it_it", "nb_no", "pl_pl", "pt_br", "pt_pt", "ru_ru", "sv_sv", "tr_tr", "uk_ua", "zh_cn"];
+$allLanguages = [ "ar_ar", "ca_ca", "cs_cz", "de_de", "en_us", "es_es", "fa_fa", "fr_fr", "it_it", "ja_jp", "nb_no", "pl_pl", "pt_br", "pt_pt", "ru_ru", "sv_sv", "tr_tr", "uk_ua", "zh_cn"];
 
 
 global $db;
@@ -23,6 +23,7 @@ switch($result){
     case 'Farsi (fa_fa)': $pia_lang_selected = 'fa_fa'; break;
     case 'French (fr_fr)': $pia_lang_selected = 'fr_fr'; break;
     case 'Italian (it_it)': $pia_lang_selected = 'it_it'; break;
+    case 'Japanese (ja_jp)': $pia_lang_selected = 'ja_jp'; break;
     case 'Norwegian (nb_no)': $pia_lang_selected = 'nb_no'; break;
     case 'Polish (pl_pl)': $pia_lang_selected = 'pl_pl'; break;
     case 'Portuguese (pt_br)': $pia_lang_selected = 'pt_br'; break;

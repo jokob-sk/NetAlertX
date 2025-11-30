@@ -1,33 +1,24 @@
 #!/usr/bin/env python
 
-import os
-import pathlib
-import sys
-from datetime import datetime
+# from datetime import datetime
 from dateutil import parser
 import datetime
 import re
 import pytz
-from pytz import timezone
-from typing import Union
+from typing import Union, Optional
 from zoneinfo import ZoneInfo
 import email.utils
-
-# Register NetAlertX directories
-INSTALL_PATH="/app"
-sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
-
 import conf
-from const import *
+# from const import *
 
 
-
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 # DateTime
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 
 DATETIME_PATTERN = "%Y-%m-%d %H:%M:%S"
 DATETIME_REGEX = re.compile(r'^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$')
+
 
 def timeNowTZ():
     if conf.tz:
@@ -35,14 +26,17 @@ def timeNowTZ():
     else:
         return datetime.datetime.now().replace(microsecond=0)
 
+
 def timeNow():
     return datetime.datetime.now().replace(microsecond=0)
 
-def get_timezone_offset():    
+
+def get_timezone_offset():
     now = datetime.datetime.now(conf.tz)
-    offset_hours = now.utcoffset().total_seconds() / 3600        
+    offset_hours = now.utcoffset().total_seconds() / 3600
     offset_formatted =  "{:+03d}:{:02d}".format(int(offset_hours), int((offset_hours % 1) * 60))
     return offset_formatted
+
 
 def timeNowDB(local=True):
     """
@@ -67,9 +61,9 @@ def timeNowDB(local=True):
         return datetime.datetime.now(datetime.UTC).strftime(DATETIME_PATTERN)
 
 
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 #  Date and time methods
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 
 def normalizeTimeStamp(inputTimeStamp):
     """
@@ -91,7 +85,7 @@ def normalizeTimeStamp(inputTimeStamp):
 
     # Epoch timestamp (integer or float)
     if isinstance(inputTimeStamp, (int, float)):
-        try:            
+        try:
             return datetime.datetime.fromtimestamp(inputTimeStamp)
         except (OSError, OverflowError, ValueError):
             return None
@@ -118,12 +112,13 @@ def normalizeTimeStamp(inputTimeStamp):
 
 
 # -------------------------------------------------------------------------------------------
-def format_date_iso(date1: str) -> str:
+def format_date_iso(date1: str) -> Optional[str]:
     """Return ISO 8601 string for a date or None if empty"""
-    if date1 is None:
+    if not date1:
         return None
     dt = datetime.datetime.fromisoformat(date1) if isinstance(date1, str) else date1
     return dt.isoformat()
+
 
 # -------------------------------------------------------------------------------------------
 def format_event_date(date_str: str, event_type: str) -> str:
@@ -134,6 +129,7 @@ def format_event_date(date_str: str, event_type: str) -> str:
         return "<missing event>"
     else:
         return "<still connected>"
+
 
 # -------------------------------------------------------------------------------------------
 def ensure_datetime(dt: Union[str, datetime.datetime, None]) -> datetime.datetime:
@@ -157,6 +153,7 @@ def parse_datetime(dt_str):
         except ValueError:
             return None
 
+
 def format_date(date_str: str) -> str:
     try:
         dt = parse_datetime(date_str)
@@ -168,13 +165,14 @@ def format_date(date_str: str) -> str:
     except (ValueError, AttributeError, TypeError):
         return "invalid"
 
+
 def format_date_diff(date1, date2, tz_name):
     """
     Return difference between two datetimes as 'Xd   HH:MM'.
     Uses app timezone if datetime is naive.
     date2 can be None (uses now).
     """
-    # Get timezone from settings    
+    # Get timezone from settings
     tz = pytz.timezone(tz_name)
 
     def parse_dt(dt):
@@ -184,8 +182,8 @@ def format_date_diff(date1, date2, tz_name):
             try:
                 dt_parsed = email.utils.parsedate_to_datetime(dt)
             except (ValueError, TypeError):
-             # fallback: parse ISO string
-             dt_parsed = datetime.datetime.fromisoformat(dt)
+                # fallback: parse ISO string
+                dt_parsed = datetime.datetime.fromisoformat(dt)
             # convert naive GMT/UTC to app timezone
             if dt_parsed.tzinfo is None:
                 dt_parsed = tz.localize(dt_parsed)

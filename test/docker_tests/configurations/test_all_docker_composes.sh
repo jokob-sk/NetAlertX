@@ -11,26 +11,29 @@ echo "==========================================" >> "$LOG_FILE"
 # Function to extract comments from docker-compose file
 extract_comments() {
     local file="$1"
-    echo "File: $(basename "$file")" >> "$LOG_FILE"
-    echo "----------------------------------------" >> "$LOG_FILE"
+	{
 
-    # Extract lines starting with # until we hit a non-comment line
-    awk '
-    /^#/ {
-        # Remove the # and any leading/trailing whitespace
-        comment = substr($0, 2)
-        sub(/^ */, "", comment)
-        sub(/ *$/, "", comment)
-        if (comment != "") {
-            print comment
-        }
-    }
-    /^[^#]/ && !/^$/ {
-        exit
-    }
-    ' "$file" >> "$LOG_FILE"
+		echo "File: $(basename "$file")"
+		echo "----------------------------------------"
 
-    echo "" >> "$LOG_FILE"
+		# Extract lines starting with # until we hit a non-comment line
+		awk '
+		/^#/ {
+			# Remove the # and any leading/trailing whitespace
+			comment = substr($0, 2)
+			sub(/^ */, "", comment)
+			sub(/ *$/, "", comment)
+			if (comment != "") {
+				print comment
+			}
+		}
+		/^[^#]/ && !/^$/ {
+			exit
+		}
+		' "$file"
+
+		echo "" 
+	} >> "$LOG_FILE"
 }
 
 # Function to run docker-compose test
@@ -40,16 +43,17 @@ run_test() {
     dirname=$(dirname "$file")
     local basename
     basename=$(basename "$file")
-
-    echo "Testing: $basename" >> "$LOG_FILE"
-    echo "Directory: $dirname" >> "$LOG_FILE"
-    echo "" >> "$LOG_FILE"
-    echo "Running docker-compose up..." >> "$LOG_FILE"
-    timeout 10s docker-compose -f "$file" up 2>&1 >> "$LOG_FILE"
-
+     {
+		echo "Testing: $basename"
+		echo "Directory: $dirname" 
+		echo ""
+		echo "Running docker-compose up..."
+		timeout 10s docker-compose -f "$file" up 2>&1 
+	 } >> "$LOG_FILE"
     # Clean up
     docker-compose -f "$file" down -v 2>/dev/null || true
     docker volume prune -f 2>/dev/null || true
+}
 
 find "$SCRIPT_DIR" -name "docker-compose*.yml" -type f -print0 | sort -z | while IFS= read -r -d '' file; do
     extract_comments "$file"

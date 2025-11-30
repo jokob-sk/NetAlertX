@@ -22,9 +22,9 @@ from pathlib import Path
 
 # Register NetAlertX modules
 import conf
-from const import *
-from logger import  mylog
-from helper import  filePermissions
+from const import fullConfPath, sql_new_devices
+from logger import mylog
+from helper import filePermissions
 from utils.datetime_utils import timeNowTZ
 from app_state import updateState
 from api import update_api
@@ -48,12 +48,12 @@ main structure of NetAlertX
     Initialise All
     Rename old settings
     start Loop forever
-        initialise loop 
+        initialise loop
             (re)import config
             (re)import plugin config
         run plugins (once)
         run frontend events
-        update API         
+        update API
         run plugins (scheduled)
         processing scan results
         run plugins (after Scan)
@@ -63,9 +63,7 @@ main structure of NetAlertX
 
 
 def main():
-    mylog(
-        "none", ["[MAIN] Setting up ..."]
-    )  # has to be level 'none' as user config not loaded yet
+    mylog("none", ["[MAIN] Setting up ..."])  # has to be level 'none' as user config not loaded yet
 
     mylog("none", [f"[conf.tz] Setting up ...{conf.tz}"])
 
@@ -111,7 +109,7 @@ def main():
         loop_start_time = conf.loop_start_time  # TODO fix
 
         # Handle plugins executed ONCE
-        if conf.plugins_once_run == False:
+        if conf.plugins_once_run is False:
             pm.run_plugin_scripts("once")
             conf.plugins_once_run = True
 
@@ -146,7 +144,7 @@ def main():
             processScan = updateState("Check scan").processScan
             mylog("debug", [f"[MAIN] processScan: {processScan}"])
 
-            if processScan == True:
+            if processScan is True:
                 mylog("debug", "[MAIN] start processing scan results")
                 process_scan(db)
                 updateState("Scan processed", None, None, None, None, False)
@@ -154,25 +152,23 @@ def main():
             # Name resolution
             # --------------------------------------------
 
-            # run plugins before notification processing (e.g. Plugins to discover device names)
-            pm.run_plugin_scripts("before_name_updates")
-
-            # Resolve devices names
-            mylog("debug", "[Main] Resolve devices names")
-            update_devices_names(pm)
-
-            # --------
-            # Reporting
-
-            # Check if new devices found
+            # Check if new devices found (created by process_scan)
             sql.execute(sql_new_devices)
             newDevices = sql.fetchall()
             db.commitDB()
 
-            #  new devices were found
+            # If new devices were found, run all plugins registered to be run when new devices are found
+            # Run these before name resolution so plugins like NSLOOKUP that are configured
+            # for `on_new_device` can populate names used in the notifications below.
             if len(newDevices) > 0:
-                #  run all plugins registered to be run when new devices are found
                 pm.run_plugin_scripts("on_new_device")
+
+            # run plugins before notification processing (e.g. Plugins to discover device names)
+            pm.run_plugin_scripts("before_name_updates")
+
+            # Resolve devices names (will pick up results from on_new_device plugins above)
+            mylog("debug", "[Main] Resolve devices names")
+            update_devices_names(pm)
 
             # Notification handling
             # ----------------------------------------
@@ -223,22 +219,14 @@ def main():
         # Fetch new unprocessed events
         new_events = workflow_manager.get_new_app_events()
 
-        mylog(
-            "debug",
-            [
-                f"[MAIN] Processing WORKFLOW new_events from get_new_app_events: {len(new_events)}"
-            ],
-        )
+        mylog("debug", [f"[MAIN] Processing WORKFLOW new_events from get_new_app_events: {len(new_events)}"],)
 
         # Process each new event and check triggers
         if len(new_events) > 0:
             updateState("Workflows: Start")
             update_api_flag = False
             for event in new_events:
-                mylog(
-                    "debug",
-                    [f"[MAIN] Processing WORKFLOW app event with GUID {event['GUID']}"],
-                )
+                mylog("debug", [f"[MAIN] Processing WORKFLOW app event with GUID {event['GUID']}"],)
 
                 # proceed to process events
                 workflow_manager.process_event(event)
@@ -255,12 +243,7 @@ def main():
         # check if devices list needs updating
         userUpdatedDevices = UserEventsQueueInstance().has_update_devices()
 
-        mylog(
-            "debug",
-            [
-                f"[Plugins] Should I update API (userUpdatedDevices): {userUpdatedDevices}"
-            ],
-        )
+        mylog("debug", [f"[Plugins] Should I update API (userUpdatedDevices): {userUpdatedDevices}"],)
 
         if userUpdatedDevices:
             update_api(db, all_plugins, True, ["devices"], userUpdatedDevices)

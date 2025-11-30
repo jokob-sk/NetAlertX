@@ -96,7 +96,7 @@ function showModalInput(
   btnOK = getString("Gen_Okay"),
   callbackFunction = null,
   triggeredBy = null,
-  defaultValue = ""  
+  defaultValue = ""
 ) {
   prefix = "modal-input";
 
@@ -121,7 +121,7 @@ function showModalInput(
   setTimeout(function () {
     $(`#${prefix}-textarea`).focus();
   }, 500);
-  
+
 }
 
 // -----------------------------------------------------------------------------
@@ -143,7 +143,7 @@ function showModalFieldInput(
   $(`#${prefix}-OK`).html(btnOK);
 
   if (callbackFunction != null) {
-    
+
     modalCallbackFunction = callbackFunction;
   }
 
@@ -181,11 +181,11 @@ function showModalPopupForm(
   $(`#${prefix}-cancel`).html(btnCancel);
   $(`#${prefix}-OK`).html(btnOK);
 
-  // if curValue not null 
+  // if curValue not null
 
   if (curValue)
   {
-    initialValues = JSON.parse(atob(curValue));    
+    initialValues = JSON.parse(atob(curValue));
   }
 
   outputHtml = "";
@@ -193,7 +193,7 @@ function showModalPopupForm(
   if (Array.isArray(popupFormJson)) {
     popupFormJson.forEach((field, index) => {
         // You'll need to define these or map them from `field`
-        const setKey = field.function || `field_${index}`;        
+        const setKey = field.function || `field_${index}`;
         const setName = getString(`${parentSettingKey}_popupform_${setKey}_name`);
         const labelClasses = "col-sm-2"; // example, or from your obj.labelClasses
         const inputClasses = "col-sm-10"; // example, or from your obj.inputClasses
@@ -207,9 +207,9 @@ function showModalPopupForm(
           }
         }
 
-        const fieldOptionsOverride = field.type?.elements[0]?.elementOptions || [];        
+        const fieldOptionsOverride = field.type?.elements[0]?.elementOptions || [];
         const setValue = initialValue;
-        const setType = JSON.stringify(field.type); 
+        const setType = JSON.stringify(field.type);
         const setEvents = field.events || [];  // default to empty array if missing
         const setObj = { setKey, setValue, setType, setEvents };
 
@@ -218,17 +218,17 @@ function showModalPopupForm(
                               <div class="form-group col-xs-12">
                                   <label id="${setKey}_label" class="${labelClasses}"> ${setName}
                                       <i my-set-key="${parentSettingKey}_popupform_${setKey}"
-                                          title="${getString("Settings_Show_Description")}" 
-                                          class="fa fa-circle-info pointer helpIconSmallTopRight" 
+                                          title="${getString("Settings_Show_Description")}"
+                                          class="fa fa-circle-info pointer helpIconSmallTopRight"
                                           onclick="showDescriptionPopup(this)">
                                       </i>
                                   </label>
                                   <div class="${inputClasses}">
                                       ${generateFormHtml(
                                         null, // settingsData only required for datatables
-                                        setObj, 
-                                        null, 
-                                        fieldOptionsOverride, 
+                                        setObj,
+                                        null,
+                                        fieldOptionsOverride,
                                         null
                                       )}
                                   </div>
@@ -239,7 +239,7 @@ function showModalPopupForm(
         outputHtml += inputFormHtml;
     });
   }
-  
+
   $(`#modal-form-plc`).html(outputHtml);
 
   // Bind OK button click event
@@ -247,12 +247,19 @@ function showModalPopupForm(
     let settingsArray = [];
     if (Array.isArray(popupFormJson)) {
         popupFormJson.forEach(field => {
-            collectSetting(
+            const result = collectSetting(
                 `${parentSettingKey}_popupform`, // prefix
                 field.function,                  // setCodeName
                 field.type,                      // setType (object)
                 settingsArray
             );
+            settingsArray = result.settingsArray;
+
+            if (!result.dataIsValid) {
+                msg = getString("Gen_Invalid_Value") + ":" + result.failedSettingKey;
+                console.error(msg);
+                showModalOk("ERROR", msg);
+            }
         });
     }
 
@@ -276,7 +283,7 @@ function showModalPopupForm(
       const newOption = $("<option class='interactable-option'></option>")
           .attr("value", encodedValue)
           .text(label);
-  
+
       $("#" + selectId).append(newOption);
       initListInteractionOptions(newOption);
     }
@@ -429,10 +436,10 @@ function safeDecodeURIComponent(content) {
     return content;  // Return the original content if decoding fails
   }
   }
-  
+
 
 // -----------------------------------------------------------------------------
-// Backend notification Polling 
+// Backend notification Polling
 // -----------------------------------------------------------------------------
 // Function to check for notifications
 function checkNotification() {
@@ -440,7 +447,7 @@ function checkNotification() {
   const phpEndpoint = 'php/server/utilNotification.php';
 
   $.ajax({
-    url: notificationEndpoint, 
+    url: notificationEndpoint,
     type: 'GET',
     success: function(response) {
       // console.log(response);
@@ -492,7 +499,7 @@ function checkNotification() {
     },
     error: function() {
       console.warn(`🟥 Error checking ${notificationEndpoint}`)
-      
+
     }
   });
 }
@@ -582,7 +589,7 @@ const phpEndpoint = 'php/server/utilNotification.php';
 
 // --------------------------------------------------
 // Write a notification
-function write_notification(content, level) {  
+function write_notification(content, level) {
 
   $.ajax({
     url: phpEndpoint, // Change this to the path of your PHP script
@@ -603,8 +610,8 @@ function write_notification(content, level) {
 
 // --------------------------------------------------
 // Write a notification
-function markNotificationAsRead(guid) {  
-  
+function markNotificationAsRead(guid) {
+
   $.ajax({
     url: phpEndpoint,
     type: 'GET',
@@ -628,8 +635,8 @@ function markNotificationAsRead(guid) {
 
 // --------------------------------------------------
 // Remove a notification
-function removeNotification(guid) {  
-  
+function removeNotification(guid) {
+
   $.ajax({
     url: phpEndpoint,
     type: 'GET',

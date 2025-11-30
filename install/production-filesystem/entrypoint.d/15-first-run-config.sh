@@ -2,7 +2,7 @@
 # first-run-check.sh - Checks and initializes configuration files on first run
 
 # Check for app.conf and deploy if required
-if [ ! -f ${NETALERTX_CONFIG}/app.conf ]; then
+if [ ! -f "${NETALERTX_CONFIG}/app.conf" ]; then
     mkdir -p "${NETALERTX_CONFIG}" || {
         >&2 echo "ERROR: Failed to create config directory ${NETALERTX_CONFIG}"
         exit 1

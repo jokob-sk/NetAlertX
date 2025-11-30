@@ -18,15 +18,14 @@ INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 # NetAlertX modules
-import conf
-from const import confFileName, logPath
-from utils.plugin_utils import getPluginObject
-from plugin_helper import Plugin_Objects
-from logger import mylog, Logger
+import conf  # noqa: E402 [flake8 lint suppression]
+from const import confFileName, logPath  # noqa: E402 [flake8 lint suppression]
+from utils.plugin_utils import getPluginObject  # noqa: E402 [flake8 lint suppression]
+from plugin_helper import Plugin_Objects  # noqa: E402 [flake8 lint suppression]
+from logger import mylog, Logger  # noqa: E402 [flake8 lint suppression]
 from helper import get_setting_value, bytes_to_string, \
-    sanitize_string, normalize_string
-from utils.datetime_utils import timeNowDB
-from database import DB, get_device_stats
+    sanitize_string, normalize_string  # noqa: E402 [flake8 lint suppression]
+from database import DB, get_device_stats  # noqa: E402 [flake8 lint suppression]
 
 
 # Make sure the TIMEZONE for logging is correct
@@ -234,7 +233,6 @@ class sensor_config:
         Store the sensor configuration in the global plugin_objects, which tracks sensors based on a unique combination
         of attributes including deviceId, sensorName, hash, and MAC.
         """
-        global plugin_objects
 
         # Add the sensor to the global plugin_objects
         plugin_objects.add_object(
@@ -287,11 +285,11 @@ def publish_mqtt(mqtt_client, topic, message):
         # mylog('verbose', [f"[{pluginName}]  mqtt_client.is_connected(): {mqtt_client.is_connected()} "])
 
         result = mqtt_client.publish(
-                topic=topic,
-                payload=message,
-                qos=qos,
-                retain=True,
-            )
+            topic=topic,
+            payload=message,
+            qos=qos,
+            retain=True,
+        )
 
         status = result[0]
 
@@ -302,6 +300,7 @@ def publish_mqtt(mqtt_client, topic, message):
             mylog('debug', [f"[{pluginName}] Waiting to reconnect to MQTT broker"])
             time.sleep(0.1)
     return True
+
 
 # ------------------------------------------------------------------------------
 # Create a generic device for overal stats
@@ -318,7 +317,6 @@ def create_generic_device(mqtt_client, deviceId, deviceName):
 # ------------------------------------------------------------------------------
 # Register sensor config on the broker
 def create_sensor(mqtt_client, deviceId, deviceName, sensorType, sensorName, icon, mac=""):
-    global mqtt_sensors
 
     #  check previous configs
     sensorConfig = sensor_config(deviceId, deviceName, sensorType, sensorName, icon, mac)
@@ -429,11 +427,10 @@ def mqtt_create_client():
 # -----------------------------------------------------------------------------
 def mqtt_start(db):
 
-    global mqtt_client, mqtt_connected_to_broker
+    global mqtt_client
 
     if not mqtt_connected_to_broker:
         mqtt_client = mqtt_create_client()
-
 
     deviceName      = get_setting_value('MQTT_DEVICE_NAME')
     deviceId        = get_setting_value('MQTT_DEVICE_ID')
@@ -449,16 +446,18 @@ def mqtt_start(db):
         row = get_device_stats(db)
 
         # Publish (wrap into {} and remove last ',' from above)
-        publish_mqtt(mqtt_client, f"{topic_root}/sensor/{deviceId}/state",
-                {
-                    "online": row[0],
-                    "down": row[1],
-                    "all": row[2],
-                    "archived": row[3],
-                    "new": row[4],
-                    "unknown": row[5]
-                }
-            )
+        publish_mqtt(
+            mqtt_client,
+            f"{topic_root}/sensor/{deviceId}/state",
+            {
+                "online": row[0],
+                "down": row[1],
+                "all": row[2],
+                "archived": row[3],
+                "new": row[4],
+                "unknown": row[5]
+            }
+        )
 
     # Generate device-specific MQTT messages if enabled
     if get_setting_value('MQTT_SEND_DEVICES'):
@@ -466,11 +465,11 @@ def mqtt_start(db):
         # Specific devices processing
 
         # Get all devices
-        devices = db.read(get_setting_value('MQTT_DEVICES_SQL').replace('{s-quote}',"'"))
+        devices = db.read(get_setting_value('MQTT_DEVICES_SQL').replace('{s-quote}', "'"))
 
-        sec_delay = len(devices) * int(get_setting_value('MQTT_DELAY_SEC'))*5
+        sec_delay = len(devices) * int(get_setting_value('MQTT_DELAY_SEC')) * 5
 
-        mylog('verbose', [f"[{pluginName}]         Estimated delay: ", (sec_delay), 's ', '(', round(sec_delay/60, 1), 'min)'])
+        mylog('verbose', [f"[{pluginName}]         Estimated delay: ", (sec_delay), 's ', '(', round(sec_delay / 60, 1), 'min)'])
 
         for device in devices:
 
@@ -495,27 +494,29 @@ def mqtt_start(db):
             # handle device_tracker
             # IMPORTANT: shared payload - device_tracker attributes and individual sensors
             devJson = {
-                        "last_ip": device["devLastIP"],
-                        "is_new": str(device["devIsNew"]),
-                        "alert_down": str(device["devAlertDown"]),
-                        "vendor": sanitize_string(device["devVendor"]),
-                        "mac_address": str(device["devMac"]),
-                        "model": devDisplayName,
-                        "last_connection": prepTimeStamp(str(device["devLastConnection"])),
-                        "first_connection": prepTimeStamp(str(device["devFirstConnection"])),
-                        "sync_node": device["devSyncHubNode"],
-                        "group": device["devGroup"],
-                        "location": device["devLocation"],
-                        "network_parent_mac": device["devParentMAC"],
-                        "network_parent_name": next((dev["devName"] for dev in devices if dev["devMAC"] == device["devParentMAC"]), "")
-                        }
+                "last_ip": device["devLastIP"],
+                "is_new": str(device["devIsNew"]),
+                "alert_down": str(device["devAlertDown"]),
+                "vendor": sanitize_string(device["devVendor"]),
+                "mac_address": str(device["devMac"]),
+                "model": devDisplayName,
+                "last_connection": prepTimeStamp(str(device["devLastConnection"])),
+                "first_connection": prepTimeStamp(str(device["devFirstConnection"])),
+                "sync_node": device["devSyncHubNode"],
+                "group": device["devGroup"],
+                "location": device["devLocation"],
+                "network_parent_mac": device["devParentMAC"],
+                "network_parent_name": next((dev["devName"] for dev in devices if dev["devMAC"] == device["devParentMAC"]), "")
+            }
 
             # bulk update device sensors in home assistant
             publish_mqtt(mqtt_client, sensorConfig.state_topic, devJson)  # REQUIRED, DON'T DELETE
 
             #  create and update is_present sensor
             sensorConfig = create_sensor(mqtt_client, deviceId, devDisplayName, 'binary_sensor', 'is_present', 'wifi', device["devMac"])
-            publish_mqtt(mqtt_client, sensorConfig.state_topic,
+            publish_mqtt(
+                mqtt_client,
+                sensorConfig.state_topic,
                 {
                     "is_present": to_binary_sensor(str(device["devPresentLastScan"]))
                 }
@@ -547,7 +548,7 @@ def to_binary_sensor(input):
     elif isinstance(input, bool) and input:
         return "ON"
     elif isinstance(input, str) and input == "1":
-        return "ON"  
+        return "ON"
     elif isinstance(input, bytes) and bytes_to_string(input) == "1":
         return "ON"
     return "OFF"

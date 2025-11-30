@@ -50,7 +50,7 @@ fi
 RED='\033[1;31m'
 GREY='\033[90m'
 RESET='\033[0m'
-printf "${RED}"
+printf "%s" "${RED}"
 echo '
  _   _      _    ___  _           _  __   __
 | \ | |    | |  / _ \| |         | | \ \ / /
@@ -60,7 +60,7 @@ echo '
 \_| \_/\___|\__\_| |_/_|\___|_|   \__\/   \/
 '
 
-printf "\033[0m"
+printf "%s" "${RESET}"
 echo '   Network intruder and presence detector. 
    https://netalertx.com
 
@@ -69,7 +69,7 @@ set -u
 
 FAILED_STATUS=""
 echo "Startup pre-checks"
-for script in ${ENTRYPOINT_CHECKS}/*; do
+for script in "${ENTRYPOINT_CHECKS}"/*; do
     if [ -n "${SKIP_TESTS:-}" ]; then
         echo "Skipping startup checks as SKIP_TESTS is set."
         break
@@ -77,7 +77,7 @@ for script in ${ENTRYPOINT_CHECKS}/*; do
     script_name=$(basename "$script" | sed 's/^[0-9]*-//;s/\.(sh|py)$//;s/-/ /g')
     echo "--> ${script_name} "
 	if [ -n "${SKIP_STARTUP_CHECKS:-}" ] && echo "${SKIP_STARTUP_CHECKS}" | grep -q "\b${script_name}\b"; then
-		printf "${GREY}skip${RESET}\n"
+    printf "%sskip%s\n" "${GREY}" "${RESET}"
 		continue
 	fi
 
@@ -134,7 +134,7 @@ fi
 
 # Update vendor data (MAC address OUI database) in the background
 # This happens concurrently with service startup to avoid blocking container readiness
-bash ${SYSTEM_SERVICES_SCRIPTS}/update_vendors.sh &
+bash "${SYSTEM_SERVICES_SCRIPTS}/update_vendors.sh" &
 
 
 
@@ -274,7 +274,7 @@ trap on_signal INT TERM
 # Only start crond scheduler on Alpine (non-Debian) environments
 # Debian typically uses systemd or other schedulers
 if [ "${ENVIRONMENT:-}" ] && [ "${ENVIRONMENT:-}" != "debian" ]; then
-    add_service "/services/start-crond.sh" "crond"
+    add_service "/services/start-cron.sh" "supercronic"
 fi
 
 # Start core frontend and backend services
@@ -290,8 +290,6 @@ add_service "${SYSTEM_SERVICES}/start-backend.sh" "python3"
 # Useful for devcontainer debugging where individual services need to be debugged
 if [ "${NETALERTX_DEBUG:-0}" -eq 1 ]; then
 	echo "NETALERTX_DEBUG is set to 1, will not shut down other services if one fails."
-	wait
-	exit $?
 fi
 
 ################################################################################
@@ -316,10 +314,25 @@ while [ -n "${SERVICES}" ]; do
         if ! is_pid_active "${pid}"; then
             wait "${pid}" 2>/dev/null
             status=$?
+
+            # Handle intentional backend restart
+            if [ "${name}" = "python3" ] && [ -f "/tmp/backend_restart_pending" ]; then
+                echo "🔄 Backend restart requested via marker file."
+                rm -f "/tmp/backend_restart_pending"
+                remove_service "${pid}"
+                add_service "${SYSTEM_SERVICES}/start-backend.sh" "python3"
+                continue
+            fi
+
             FAILED_STATUS=$status
             FAILED_NAME="${name}"
             remove_service "${pid}"
-            handle_exit
+            
+            if [ "${NETALERTX_DEBUG:-0}" -eq 1 ]; then
+                echo "⚠️ Service ${name} exited with status ${status}. Debug mode active - continuing."
+            else
+                handle_exit
+            fi
         fi
 
     done

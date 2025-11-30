@@ -16,11 +16,11 @@ LEGACY_DB=/app/db
 MARKER_NAME=.migration
 
 is_mounted() {
-    local path="$1"
-    if [ ! -d "${path}" ]; then
+    my_path="$1"
+    if [ ! -d "${my_path}" ]; then
         return 1
     fi
-    mountpoint -q "${path}" 2>/dev/null
+    mountpoint -q "${my_path}" 2>/dev/null
 }
 
 warn_unmount_legacy() {

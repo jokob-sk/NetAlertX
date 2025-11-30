@@ -1,32 +1,36 @@
 import sys
-import pathlib
-import sqlite3
+# import pathlib
+# import sqlite3
 import base64
 import random
-import string
-import uuid
+# import string
+# import uuid
 import os
 import pytest
 
 INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from helper import get_setting_value
-from api_server.api_server_start import app
+from helper import get_setting_value  # noqa: E402 [flake8 lint suppression]
+from api_server.api_server_start import app  # noqa: E402 [flake8 lint suppression]
+
 
 @pytest.fixture(scope="session")
 def api_token():
     return get_setting_value("API_TOKEN")
+
 
 @pytest.fixture
 def client():
     with app.test_client() as client:
         yield client
 
+
 @pytest.fixture
 def test_mac():
     # Generate a unique MAC for each test run
-    return "AA:BB:CC:" + ":".join(f"{random.randint(0,255):02X}" for _ in range(3))
+    return "AA:BB:CC:" + ":".join(f"{random.randint(0, 255):02X}" for _ in range(3))
+
 
 def auth_headers(token):
     return {"Authorization": f"Bearer {token}"}
@@ -40,12 +44,13 @@ def create_dummy(client, api_token, test_mac):
         "devType": "Router",
         "devVendor": "TestVendor",
     }
-    resp = client.post(f"/device/{test_mac}", json=payload, headers=auth_headers(api_token))
+    client.post(f"/device/{test_mac}", json=payload, headers=auth_headers(api_token))
+
 
 def test_get_all_devices(client, api_token, test_mac):
     # Ensure there is at least one device
     create_dummy(client, api_token, test_mac)
-    
+
     # Fetch all devices
     resp = client.get("/devices", headers=auth_headers(api_token))
     assert resp.status_code == 200
@@ -59,13 +64,14 @@ def test_get_all_devices(client, api_token, test_mac):
 def test_delete_devices_with_macs(client, api_token, test_mac):
     # First create device so it exists
     create_dummy(client, api_token, test_mac)
-    
+
     client.post(f"/device/{test_mac}", json={"createNew": True}, headers=auth_headers(api_token))
 
     # Delete by MAC
     resp = client.delete("/devices", json={"macs": [test_mac]}, headers=auth_headers(api_token))
     assert resp.status_code == 200
     assert resp.json.get("success") is True
+
 
 def test_delete_all_empty_macs(client, api_token):
     resp = client.delete("/devices/empty-macs", headers=auth_headers(api_token))
@@ -78,6 +84,7 @@ def test_delete_unknown_devices(client, api_token):
     resp = client.delete("/devices/unknown", headers=auth_headers(api_token))
     assert resp.status_code == 200
     assert resp.json.get("success") is True
+
 
 def test_export_devices_csv(client, api_token, test_mac):
     # Create a device first
@@ -92,6 +99,7 @@ def test_export_devices_csv(client, api_token, test_mac):
     # CSV should contain test_mac
     assert test_mac in resp.data.decode()
 
+
 def test_export_devices_json(client, api_token, test_mac):
     # Create a device first
     create_dummy(client, api_token, test_mac)
@@ -101,7 +109,7 @@ def test_export_devices_json(client, api_token, test_mac):
     assert resp.status_code == 200
     assert resp.is_json
     data = resp.get_json()
-    assert  any(dev.get("devMac") == test_mac for dev in data["data"])
+    assert any(dev.get("devMac") == test_mac for dev in data["data"])
 
 
 def test_export_devices_invalid_format(client, api_token):
@@ -142,6 +150,7 @@ def test_export_import_cycle_base64(client, api_token, test_mac):
     # 5. Verify import results
     assert resp.json.get("inserted") >= 1
     assert resp.json.get("skipped_lines") == []
+
 
 def test_devices_totals(client, api_token, test_mac):
     # 1. Create a dummy device
@@ -189,7 +198,8 @@ def test_devices_by_status(client, api_token, test_mac):
     assert fav_data is not None
     assert "&#9733" in fav_data["title"]
 
-def test_delete_test_devices(client, api_token, test_mac):
+
+def test_delete_test_devices(client, api_token):
 
     # Delete by MAC
     resp = client.delete("/devices", json={"macs": ["AA:BB:CC:*"]}, headers=auth_headers(api_token))

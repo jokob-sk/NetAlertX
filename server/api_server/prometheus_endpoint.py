@@ -6,8 +6,8 @@ import os
 INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
 sys.path.extend([f"{INSTALL_PATH}/server"])
 
-from logger import mylog
-from const import apiPath
+from logger import mylog  # noqa: E402 [flake8 lint suppression]
+from const import apiPath  # noqa: E402 [flake8 lint suppression]
 
 
 def escape_label_value(val):

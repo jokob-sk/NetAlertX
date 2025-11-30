@@ -31,10 +31,7 @@ class UserEventsQueueInstance:
         Returns an empty list if the file doesn't exist.
         """
         if not os.path.exists(self.log_file):
-            mylog(
-                "none",
-                ["[UserEventsQueueInstance] Log file not found: ", self.log_file],
-            )
+            mylog("none", ["[UserEventsQueueInstance] Log file not found: ", self.log_file],)
             return []  # No log file, return empty list
         with open(self.log_file, "r") as file:
             return file.readlines()
@@ -100,7 +97,7 @@ class UserEventsQueueInstance:
         if not action or not isinstance(action, str):
             msg = "[UserEventsQueueInstance] Invalid or missing action"
             mylog('none', [msg])
-            
+
             return False, msg
 
         try:
@@ -109,15 +106,11 @@ class UserEventsQueueInstance:
 
             msg = f'[UserEventsQueueInstance] Action "{action}" added to the execution queue.'
             mylog('minimal', [msg])
-            
+
             return True, msg
 
         except Exception as e:
             msg = f"[UserEventsQueueInstance] ERROR Failed to write to {self.log_file}: {e}"
             mylog('none', [msg])
-            
+
             return False, msg
-    
-
-
-

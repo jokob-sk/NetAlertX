@@ -83,3 +83,9 @@ Backend loop phases (see `server/__main__.py` and `server/plugin.py`): `once`, `
 - Be sure to offer choices when appropriate.
 - Always understand the intent of the user's request and undo/redo as needed.
 - Above all, use the simplest possible code that meets the need so it can be easily audited and maintained.
+- Always leave logging enabled. If there is a possiblity it will be difficult to debug with current logging, add more logging.
+- Always run the testFailure tool before executing any tests to gather current failure information and avoid redundant runs.
+- Always prioritize using the appropriate tools in the environment first. As an example if a test is failing use `testFailure` then `runTests`. Never `runTests` first. 
+- Docker tests take an extremely long time to run.  Avoid changes to docker or tests until you've examined the exisiting testFailures and runTests results.
+- Environment tools are designed specifically for your use in this project and running them in this order will give you the best results. 
+

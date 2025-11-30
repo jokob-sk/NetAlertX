@@ -1,7 +1,7 @@
 <?php
 //------------------------------------------------------------------------------
 //  NetAlertX
-//  Open Source Network Guard / WIFI & LAN intrusion detector 
+//  Open Source Network Guard / WIFI & LAN intrusion detector
 //
 //  util.php - Front module. Server side. Common generic functions
 //------------------------------------------------------------------------------
@@ -22,8 +22,8 @@ $ACTION   = "";
 
 // init request params
 if(array_key_exists('function', $_REQUEST) != FALSE)
-{  
-  $FUNCTION = $_REQUEST['function']; 
+{
+  $FUNCTION = $_REQUEST['function'];
 }
 if(array_key_exists('settings', $_REQUEST) != FALSE)
 {
@@ -33,13 +33,13 @@ if(array_key_exists('settings', $_REQUEST) != FALSE)
 
 // call functions based on requested params
 switch ($FUNCTION) {
-  
+
   case 'savesettings':
-      
+
       saveSettings();
       break;
 
-  case 'cleanLog':      
+  case 'cleanLog':
 
       cleanLog($SETTINGS);
       break;
@@ -66,7 +66,7 @@ switch ($FUNCTION) {
 // Creates a PHP array from a string representing a python array (input format ['...','...'])
 // Only supports:
 //      - one level arrays, not nested ones
-//      - single quotes 
+//      - single quotes
 function createArray($input){
 
   // empty array
@@ -81,9 +81,9 @@ function createArray($input){
   $replacement = '';
 
   // remove brackets
-  $noBrackets = preg_replace($patternBrackets, $replacement, $input); 
-  
-  $options = array(); 
+  $noBrackets = preg_replace($patternBrackets, $replacement, $input);
+
+  $options = array();
 
   // create array
   $optionsTmp = explode(",", $noBrackets);
@@ -99,7 +99,7 @@ function createArray($input){
   {
     array_push($options, preg_replace($patternQuotes, $replacement, $item) );
   }
-  
+
   return $options;
 }
 
@@ -117,7 +117,7 @@ function printArray ($array) {
     {
       echo $val.', ';
     }
-  }  
+  }
   echo ']<br/>';
 }
 
@@ -171,9 +171,9 @@ function checkPermissions($files)
     if(file_exists($file) != 1)
     {
       $message = "File '".$file."' not found or inaccessible. Correct file permissions, create one yourself or generate a new one in 'Settings' by clicking the 'Save' button.";
-      displayMessage($message, TRUE);      
+      displayMessage($message, TRUE);
     }
-  } 
+  }
 }
 
 // ----------------------------------------------------------------------------------------
@@ -189,8 +189,8 @@ function displayMessage($message, $logAlert = FALSE, $logConsole = TRUE, $logFil
   $message = str_replace(array("\n", "\r", PHP_EOL), '', $message);
 
   echo "<script>function escape(html, encode) {
-    return html.replace(!encode ? /&(?!#?\w+;)/g : /&/g, '&amp;')  
-      .replace(/\t/g, '')    
+    return html.replace(!encode ? /&(?!#?\w+;)/g : /&/g, '&amp;')
+      .replace(/\t/g, '')
   }</script>";
 
   // Javascript Alert pop-up
@@ -210,7 +210,7 @@ function displayMessage($message, $logAlert = FALSE, $logConsole = TRUE, $logFil
   {
 
     if (is_writable($logFolderPath.$log_file)) {
-        
+
 
         if(file_exists($logFolderPath.$log_file) != 1) // file doesn't exist, create one
         {
@@ -219,7 +219,7 @@ function displayMessage($message, $logAlert = FALSE, $logConsole = TRUE, $logFil
         {
           $log = fopen($logFolderPath.$log_file, "a") or die("Unable to open file - Permissions issue!");
         }
-    
+
         fwrite($log, "[".$timestamp. "] " . str_replace('<br>',"\n   ",str_replace('<br/>',"\n   ",$message)).PHP_EOL."" );
         fclose($log);
 
@@ -269,13 +269,13 @@ function addToExecutionQueue($action)
 // equivalent: /logs DELETE
 // 🔺----- API ENDPOINTS SUPERSEDED -----🔺
 function cleanLog($logFile)
-{  
+{
   global $logFolderPath, $timestamp;
 
   $path = "";
 
-  $allowedFiles = ['app.log', 'app_front.log', 'IP_changes.log', 'stdout.log', 'stderr.log', 'app.php_errors.log', 'execution_queue.log', 'db_is_locked.log', 'nginx-error.log', 'crond.log'];
-  
+  $allowedFiles = ['app.log', 'app_front.log', 'IP_changes.log', 'stdout.log', 'stderr.log', 'app.php_errors.log', 'execution_queue.log', 'db_is_locked.log', 'nginx-error.log', 'cron.log'];
+
   if(in_array($logFile, $allowedFiles))
   {
     $path = $logFolderPath.$logFile;
@@ -287,11 +287,11 @@ function cleanLog($logFile)
     $file = fopen($path, "w") or die("Unable to open file!");
     fwrite($file, "");
     fclose($file);
-    displayMessage('File <code>'.$logFile.'</code> purged.', FALSE, TRUE, TRUE, TRUE);      
+    displayMessage('File <code>'.$logFile.'</code> purged.', FALSE, TRUE, TRUE, TRUE);
   } else
   {
-    displayMessage('File <code>'.$logFile.'</code> is not allowed to be purged.', FALSE, TRUE, TRUE, TRUE);      
-  } 
+    displayMessage('File <code>'.$logFile.'</code> is not allowed to be purged.', FALSE, TRUE, TRUE, TRUE);
+  }
 }
 
 
@@ -299,23 +299,23 @@ function cleanLog($logFile)
 // ----------------------------------------------------------------------------------------
 function saveSettings()
 {
-  global $SETTINGS, $FUNCTION, $config_file, $fullConfPath, $configFolderPath, $timestamp;   
+  global $SETTINGS, $FUNCTION, $config_file, $fullConfPath, $configFolderPath, $timestamp;
 
   // save to the file
   $new_name = $config_file.'_'.$timestamp.'.backup';
-  $new_location = $configFolderPath.$new_name;
+  $new_location = $configFolderPath.'/'.$new_name;
 
   if(file_exists( $fullConfPath) != 1)
-  {    
-    displayMessage('File "'.$fullConfPath.'" not found or missing read permissions. Creating a new <code>'.$config_file.'</code> file.', FALSE, TRUE, TRUE, TRUE);      
+  {
+    displayMessage('File "'.$fullConfPath.'" not found or missing read permissions. Creating a new <code>'.$config_file.'</code> file.', FALSE, TRUE, TRUE, TRUE);
   }
-  // create a backup copy    
+  // create a backup copy
   elseif (!copy($fullConfPath, $new_location))
-  {      
-    displayMessage("Failed to copy file ".$fullConfPath." to ".$new_location." <br/> Check your permissions to allow read/write access to the /config folder.", FALSE, TRUE, TRUE, TRUE);      
+  {
+    displayMessage("Failed to copy file ".$fullConfPath." to ".$new_location." <br/> Check your permissions to allow read/write access to the /config folder.", FALSE, TRUE, TRUE, TRUE);
   }
-  
-       
+
+
   // generate a clean .conf file
   $groups = [];
 
@@ -339,12 +339,12 @@ function saveSettings()
       return;
   }
 
-  foreach ($decodedSettings as $setting) { 
+  foreach ($decodedSettings as $setting) {
     if( in_array($setting[0] , $groups) == false) {
       array_push($groups ,$setting[0]);
     }
   }
-  
+
   // go thru the groups and prepare settings to write to file
   foreach ($groups as $group) {
     $txt .= "\n\n# " . $group;
@@ -353,20 +353,20 @@ function saveSettings()
     foreach ($decodedSettings as $setting) {
       $settingGroup = $setting[0];
       $setKey   = $setting[1];
-      $dataType     = $setting[2]; 
+      $dataType     = $setting[2];
       $settingValue = $setting[3];
-  
+
       // // Parse the settingType JSON
       // $settingType = json_decode($settingTypeJson, true);
-  
+
       // Sanity check
       if($setKey == "UI_LANG" && $settingValue == "") {
           echo "🔴 Error: important settings missing. Refresh the page with 🔃 on the top and try again.";
           return;
       }
-  
-      if ($group == $settingGroup) {          
-  
+
+      if ($group == $settingGroup) {
+
           if ($dataType == 'string' ) {
               $val = encode_single_quotes($settingValue);
               $txt .= $setKey . "='" . $val . "'\n";
@@ -381,7 +381,7 @@ function saveSettings()
               $txt .= $setKey . "=" . $val . "\n";
           } elseif ($dataType == 'array' ) {
               $temp = '';
-              
+
               if(is_array($settingValue) == FALSE)
               {
                 $settingValue =  json_decode($settingValue);
@@ -397,22 +397,22 @@ function saveSettings()
 
               $temp = '['.$temp.']'; // wrap brackets
               $txt .= $setKey . "=" . $temp . "\n";
- 
+
           } else  {
               $txt .= $setKey . "='⭕Not handled⭕'\n";
           }
       }
   }
-  
+
   }
 
   $txt = $txt."\n\n";
   $txt = $txt."#-------------------IMPORTANT INFO-------------------#\n";
-  $txt = $txt."#   This file is ingested by a python script, so if  #\n";      
-  $txt = $txt."#        modified it needs to use python syntax      #\n";      
+  $txt = $txt."#   This file is ingested by a python script, so if  #\n";
+  $txt = $txt."#        modified it needs to use python syntax      #\n";
   $txt = $txt."#-------------------IMPORTANT INFO-------------------#\n";
 
-  // open new file and write the new configuration      
+  // open new file and write the new configuration
   // Create a temporary file
   $tempConfPath = $fullConfPath . ".tmp";
 
@@ -426,8 +426,8 @@ function saveSettings()
   fwrite($file, $txt);
   fclose($file);
 
-  // displayMessage(lang('settings_saved'), 
-  //   FALSE, TRUE, TRUE, TRUE);    
+  // displayMessage(lang('settings_saved'),
+  //   FALSE, TRUE, TRUE, TRUE);
 
   echo "OK";
 
@@ -445,7 +445,7 @@ function getString ($setKey, $default) {
   if ($result )
   {
     return $result;
-  }   
+  }
 
   return $default;
 }
@@ -520,14 +520,14 @@ function getDateFromPeriod () {
       $days = "3650"; //10 years
       break;
     default:
-      $days = "1";    
-  }  
+      $days = "1";
+  }
 
-  $periodDateSQL = "-".$days." day"; 
+  $periodDateSQL = "-".$days." day";
 
   return " date('now', '".$periodDateSQL."') ";
- 
-  // $period = $_REQUEST['period'];    
+
+  // $period = $_REQUEST['period'];
   // return '"'. date ('Y-m-d', strtotime ('+2 day -'. $period) ) .'"';
 }
 
@@ -537,13 +537,13 @@ function getDateFromPeriod () {
 function quotes ($text) {
   return str_replace ('"','""',$text);
 }
-    
+
 // -------------------------------------------------------------------------------------------
 function logServerConsole ($text) {
   $x = array();
   $y = $x['__________'. $text .'__________'];
 }
-    
+
 // -------------------------------------------------------------------------------------------
 function handleNull ($text, $default = "") {
   if($text == NULL || $text == 'NULL')
@@ -553,7 +553,7 @@ function handleNull ($text, $default = "") {
   {
     return $text;
   }
-  
+
 }
 
 // -------------------------------------------------------------------------------------------
@@ -581,14 +581,14 @@ function decodeSpecialChars($str) {
 // used in Export CSV
 function getDevicesColumns(){
 
-  $columns = ["devMac", 
+  $columns = ["devMac",
               "devName",
               "devOwner",
               "devType",
               "devVendor",
               "devFavorite",
               "devGroup",
-              "devComments", 
+              "devComments",
               "devFirstConnection",
               "devLastConnection",
               "devLastIP",
@@ -615,8 +615,8 @@ function getDevicesColumns(){
               "devFQDN",
               "devParentRelType",
               "devReqNicsOnline"
-            ]; 
-              
+            ];
+
   return $columns;
 }
 
@@ -646,7 +646,7 @@ function getCache($key) {
 }
 // -------------------------------------------------------------------------------------------
 function setCache($key, $value, $expireMinutes = 5) {
-  setcookie($key,  $value, time()+$expireMinutes*60, "/","", 0); 
+  setcookie($key,  $value, time()+$expireMinutes*60, "/","", 0);
 }
 
 

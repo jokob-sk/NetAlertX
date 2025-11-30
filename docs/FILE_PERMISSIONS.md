@@ -1,7 +1,22 @@
 # Managing File Permissions for NetAlertX on a Read-Only Container
 
+Sometimes, permission issues arise if your existing host directories were created by a previous container running as root or another UID. The container will fail to start with "Permission Denied" errors.
+
 > [!TIP]
 > NetAlertX runs in a **secure, read-only Alpine-based container** under a dedicated `netalertx` user (UID 20211, GID 20211). All writable paths are either mounted as **persistent volumes** or **`tmpfs` filesystems**. This ensures consistent file ownership and prevents privilege escalation.
+
+Try starting the container with all data to be in non-persistent volumes. If this works, the issue might be related to the permissions of your persistent data mount locations on your server.
+
+```bash
+docker run --rm --network=host \
+  -v /etc/localtime:/etc/localtime:ro \
+  --tmpfs /tmp:uid=20211,gid=20211,mode=1700 \
+  -e PORT=20211 \
+  ghcr.io/jokob-sk/netalertx:latest
+```
+
+> [!WARNING]
+> The above should be only used as a test - once the container restarts, all data is lost.
 
 ---
 
@@ -25,18 +40,14 @@ NetAlertX requires certain paths to be writable at runtime. These paths should b
 
 ---
 
-## Fixing Permission Problems
-
-Sometimes, permission issues arise if your existing host directories were created by a previous container running as root or another UID. The container will fail to start with "Permission Denied" errors.
-
 ### Solution
 
 1. **Run the container once as root** (`--user "0"`) to allow it to correct permissions automatically:
 
 ```bash
 docker run -it --rm --name netalertx --user "0" \
-  -v local/path/config:/data/config \
-  -v local/path/db:/data/db \
+  -v /local_data_dir:/data \
+  --tmpfs /tmp:uid=20211,gid=20211,mode=1700 \
   ghcr.io/jokob-sk/netalertx:latest
 ```
 
@@ -46,26 +57,35 @@ docker run -it --rm --name netalertx --user "0" \
 
 > The container startup script detects `root` and runs `chown -R 20211:20211` on all volumes, fixing ownership for the secure `netalertx` user.
 
+> [!TIP]
+> If you are facing permissions issues run the following commands on your server. This will change the owner and assure sufficient access to the database and config files that are stored in the `/local_data_dir/db` and `/local_data_dir/config` folders (replace `local_data_dir` with the location where your `/db` and `/config` folders are located).
+>
+>  `sudo chown -R 20211:20211 /local_data_dir`
+>
+>  `sudo chmod -R a+rwx  /local_data_dir`
+>
+
 ---
 
 ## Example: docker-compose.yml with `tmpfs`
 
 ```yaml
 services:
-  netalertx:                                  
-    container_name: netalertx                
-    image: "ghcr.io/jokob-sk/netalertx"  
-    network_mode: "host"       
-    cap_add:
-      - NET_RAW
-      - NET_ADMIN
-      - NET_BIND_SERVICE
+  netalertx:
+    container_name: netalertx
+    image: "ghcr.io/jokob-sk/netalertx"
+    network_mode: "host"
+    cap_drop:                                       # Drop all capabilities for enhanced security
+      - ALL
+    cap_add:                                        # Add only the necessary capabilities
+      - NET_ADMIN                                   # Required for ARP scanning
+      - NET_RAW                                     # Required for raw socket operations
+      - NET_BIND_SERVICE                            # Required to bind to privileged ports (nbtscan)
     restart: unless-stopped
     volumes:
-      - local/path/config:/data/config         
-      - local/path/db:/data/db                 
+      - /local_data_dir:/data
+      - /etc/localtime:/etc/localtime
     environment:
-      - TZ=Europe/Berlin      
       - PORT=20211
     tmpfs:
       - "/tmp:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"

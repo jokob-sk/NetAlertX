@@ -17,11 +17,12 @@ from aiofreepybox.exceptions import NotOpenError, AuthorizationError
 INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from plugin_helper import Plugin_Objects
-from logger import mylog, Logger
-from const import logPath
-from helper import get_setting_value
-import conf
+from plugin_helper import Plugin_Objects  # noqa: E402 [flake8 lint suppression]
+from logger import mylog, Logger  # noqa: E402 [flake8 lint suppression]
+from const import logPath  # noqa: E402 [flake8 lint suppression]
+from helper import get_setting_value  # noqa: E402 [flake8 lint suppression]
+import conf  # noqa: E402 [flake8 lint suppression]
+from utils.datetime_utils import timeNowDB, DATETIME_PATTERN  # noqa: E402 [flake8 lint suppression]
 
 # Make sure the TIMEZONE for logging is correct
 conf.tz = timezone(get_setting_value("TIMEZONE"))
@@ -78,6 +79,7 @@ def map_device_type(type: str):
         # This device type has not been mapped yet
         mylog("minimal", [f"[{pluginName}] Unknown device type: {type}"])
         return device_type_map["other"]
+
 
 async def get_device_data(api_version: int, api_address: str, api_port: int):
     # ensure existence of db path
@@ -149,7 +151,7 @@ def main():
         watched1=freebox["name"],
         watched2=freebox["operator"],
         watched3="Gateway",
-        watched4=datetime.now,
+        watched4=timeNowDB(),
         extra="",
         foreignKey=freebox["mac"],
     )
@@ -165,7 +167,7 @@ def main():
                         watched1=host.get("primary_name", "(unknown)"),
                         watched2=host.get("vendor_name", "(unknown)"),
                         watched3=map_device_type(host.get("host_type", "")),
-                        watched4=datetime.fromtimestamp(ip.get("last_time_reachable", 0)),
+                        watched4=datetime.fromtimestamp(ip.get("last_time_reachable", 0)).strftime(DATETIME_PATTERN),
                         extra="",
                         foreignKey=mac,
                     )

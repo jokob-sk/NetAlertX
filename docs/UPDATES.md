@@ -1,7 +1,8 @@
 # Docker Update Strategies to upgrade NetAlertX
 
-> [!WARNING] 
+> [!WARNING]
 > For versions prior to `v25.6.7` upgrade to version `v25.5.24` first (`docker pull ghcr.io/jokob-sk/netalertx:25.5.24`) as later versions don't support a full upgrade. Alternatively, devices and settings can be migrated manually, e.g. via [CSV import](./DEVICES_BULK_EDITING.md).
+> See the [Migration guide](./MIGRATION.md) for details.
 
 This guide outlines approaches for updating Docker containers, usually when upgrading to a newer version of NetAlertX. Each method offers different benefits depending on the situation. Here are the methods:
 
@@ -15,7 +16,7 @@ You can choose any approach that fits your workflow.
 > In the examples I assume that the container name is `netalertx` and the image name is `netalertx` as well.
 
 > [!NOTE]
-> See also [Backup strategies](./BACKUPS.md) to be on the safe side.  
+> See also [Backup strategies](./BACKUPS.md) to be on the safe side.
 
 ## 1. Manual Updates
 
@@ -48,7 +49,7 @@ sudo docker-compose up --pull always -d
 
 ## 2. Dockcheck for Bulk Container Updates
 
-Always check the [Dockcheck](https://github.com/mag37/dockcheck) docs if encountering issues with the guide below. 
+Always check the [Dockcheck](https://github.com/mag37/dockcheck) docs if encountering issues with the guide below.
 
 Dockcheck is a useful tool if you have multiple containers to update and some flexibility for handling potential issues that might arise during mass updates. Dockcheck allows you to inspect each container and decide when to update.
 
@@ -74,7 +75,7 @@ sudo ./dockcheck.sh
 
 ## 3. Automated Updates with Watchtower
 
-Always check the [watchtower](https://github.com/containrrr/watchtower) docs if encountering issues with the guide below. 
+Always check the [watchtower](https://github.com/containrrr/watchtower) docs if encountering issues with the guide below.
 
 Watchtower monitors your Docker containers and automatically updates them when new images are available. This is ideal for ongoing updates without manual intervention.
 
@@ -96,7 +97,7 @@ docker run -d \
   --interval 300 # Check for updates every 5 minutes
 ```
 
-#### 3. Run Watchtower to update only NetAlertX: 
+#### 3. Run Watchtower to update only NetAlertX:
 
 You can specify which containers to monitor by listing them. For example, to monitor netalertx only:
 

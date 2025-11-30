@@ -2,17 +2,16 @@
 
 import os
 import sys
-from datetime import datetime
 from flask import jsonify, request
 
 # Register NetAlertX directories
 INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from database import get_temp_db_connection
-from helper import is_random_mac, get_setting_value
-from utils.datetime_utils import timeNowDB, format_date
-from db.db_helper import row_to_json, get_date_from_period
+from database import get_temp_db_connection  # noqa: E402 [flake8 lint suppression]
+from helper import is_random_mac, get_setting_value  # noqa: E402 [flake8 lint suppression]
+from utils.datetime_utils import timeNowDB, format_date  # noqa: E402 [flake8 lint suppression]
+from db.db_helper import row_to_json, get_date_from_period  # noqa: E402 [flake8 lint suppression]
 
 # --------------------------
 # Device Endpoints Functions
@@ -27,10 +26,10 @@ def get_device_data(mac):
     cur = conn.cursor()
 
     now = timeNowDB()
-    
+
     # Special case for new device
     if mac.lower() == "new":
-        
+
         device_data = {
             "devMac": "",
             "devName": "",
@@ -89,10 +88,10 @@ def get_device_data(mac):
             ELSE 'Off-line'
         END AS devStatus,
 
-        (SELECT COUNT(*) FROM Sessions 
+        (SELECT COUNT(*) FROM Sessions
          WHERE ses_MAC = d.devMac AND (
-            ses_DateTimeConnection >= {period_date_sql} OR 
-            ses_DateTimeDisconnection >= {period_date_sql} OR 
+            ses_DateTimeConnection >= {period_date_sql} OR
+            ses_DateTimeDisconnection >= {period_date_sql} OR
             ses_StillConnected = 1
          )) AS devSessions,
 

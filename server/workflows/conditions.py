@@ -1,12 +1,5 @@
 import re
 import json
-import os
-import sys
-
-# Register NetAlertX directories
-INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
-sys.path.extend([f"{INSTALL_PATH}/server"])
-
 from logger import mylog, Logger
 from helper import get_setting_value
 
@@ -59,10 +52,7 @@ class ConditionGroup:
     """Handles condition groups with AND, OR logic, supporting nested groups."""
 
     def __init__(self, group_json):
-        mylog(
-            "verbose",
-            [f"[WF] ConditionGroup json.dumps(group_json): {json.dumps(group_json)}"],
-        )
+        mylog("verbose", f"[WF] ConditionGroup json.dumps(group_json): {json.dumps(group_json)}")
 
         self.logic = group_json.get("logic", "AND").upper()
         self.conditions = []

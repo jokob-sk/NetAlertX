@@ -25,7 +25,6 @@ import sys
 import urllib3
 import requests
 import time
-import datetime
 import pytz
 
 from datetime import datetime
@@ -35,11 +34,11 @@ from typing import Literal, Any, Dict
 INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from plugin_helper import Plugin_Objects, is_typical_router_ip, is_mac
-from logger import mylog, Logger
-from const import logPath
-from helper import get_setting_value
-import conf
+from plugin_helper import Plugin_Objects, is_typical_router_ip, is_mac  # noqa: E402 [flake8 lint suppression]
+from logger import mylog, Logger  # noqa: E402 [flake8 lint suppression]
+from const import logPath  # noqa: E402 [flake8 lint suppression]
+from helper import get_setting_value  # noqa: E402 [flake8 lint suppression]
+import conf  # noqa: E402 [flake8 lint suppression]
 
 # Make sure the TIMEZONE for logging is correct
 conf.tz = pytz.timezone(get_setting_value('TIMEZONE'))
@@ -176,7 +175,10 @@ class OmadaHelper:
                     # If it's not a gateway try to assign parent node MAC
                     if data.get("type", "") != "gateway":
                         parent_mac = OmadaHelper.normalize_mac(data.get("uplinkDeviceMac"))
-                        entry["parent_node_mac_address"] = parent_mac.get("response_result") if isinstance(parent_mac, dict) and parent_mac.get("response_type") == "success" else ""
+
+                        resp_type = parent_mac.get("response_type")
+
+                        entry["parent_node_mac_address"] = parent_mac.get("response_result") if isinstance(parent_mac, dict) and resp_type == "success" else ""
 
                 # Applicable only for CLIENT
                 if input_type == "client":
@@ -185,15 +187,26 @@ class OmadaHelper:
                     # Try to assign parent node MAC and PORT/SSID to the CLIENT
                     if data.get("connectDevType", "") == "gateway":
                         parent_mac = OmadaHelper.normalize_mac(data.get("gatewayMac"))
-                        entry["parent_node_mac_address"] = parent_mac.get("response_result") if isinstance(parent_mac, dict) and parent_mac.get("response_type") == "success" else ""
+
+                        resp_type = parent_mac.get("response_type")
+
+                        entry["parent_node_mac_address"] = parent_mac.get("response_result") if isinstance(parent_mac, dict) and resp_type == "success" else ""
                         entry["parent_node_port"] = data.get("port", "")
+
                     elif data.get("connectDevType", "") == "switch":
                         parent_mac = OmadaHelper.normalize_mac(data.get("switchMac"))
-                        entry["parent_node_mac_address"] = parent_mac.get("response_result") if isinstance(parent_mac, dict) and parent_mac.get("response_type") == "success" else ""
+
+                        resp_type = parent_mac.get("response_type")
+
+                        entry["parent_node_mac_address"] = parent_mac.get("response_result") if isinstance(parent_mac, dict) and resp_type == "success" else ""
                         entry["parent_node_port"] = data.get("port", "")
+
                     elif data.get("connectDevType", "") == "ap":
                         parent_mac = OmadaHelper.normalize_mac(data.get("apMac"))
-                        entry["parent_node_mac_address"] = parent_mac.get("response_result") if isinstance(parent_mac, dict) and parent_mac.get("response_type") == "success" else ""
+
+                        resp_type = parent_mac.get("response_type")
+
+                        entry["parent_node_mac_address"] = parent_mac.get("response_result") if isinstance(parent_mac, dict) and resp_type == "success" else ""
                         entry["parent_node_ssid"] = data.get("ssid", "")
 
                 # Add the entry to the result
@@ -253,7 +266,7 @@ class OmadaAPI:
         """Return request headers."""
         headers = {"Content-type": "application/json"}
         # Add access token to header if requested and available
-        if include_auth == True:
+        if include_auth is True:
             if not self.access_token:
                 OmadaHelper.debug("No access token available for headers")
             else:
@@ -283,7 +296,7 @@ class OmadaAPI:
             OmadaHelper.verbose(f"{method} request error: {str(ex)}")
             return OmadaHelper.response("error", f"{method} request failed to endpoint '{endpoint}' with error: {str(ex)}")
 
-    def authenticate(self) -> Dict[str, any]:
+    def authenticate(self) -> Dict[str, Any]:
         """Make an endpoint request to get access token."""
         OmadaHelper.verbose("Starting authentication process")
 
@@ -368,7 +381,7 @@ class OmadaAPI:
 
         # Failed site population
         OmadaHelper.debug(f"Site population response: {response}")
-        return OmadaHelper.response("error", f"Site population failed - error: {response.get('response_message', 'Not provided')}") 
+        return OmadaHelper.response("error", f"Site population failed - error: {response.get('response_message', 'Not provided')}")
 
     def requested_sites(self) -> list:
         """Returns sites requested by user."""

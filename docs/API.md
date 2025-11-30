@@ -1,4 +1,4 @@
-# NetAlertX API Documentation
+# API Documentation
 
 This API provides programmatic access to **devices, events, sessions, metrics, network tools, and sync** in NetAlertX. It is implemented as a **REST and GraphQL server**. All requests require authentication via **API Token** (`API_TOKEN` setting) unless explicitly noted. For example, to authorize a GraphQL request, you need to use a `Authorization: Bearer API_TOKEN` header as per example below:
 

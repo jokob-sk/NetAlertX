@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 import os
 import time
-import pathlib
 import argparse
 import sys
 import re
@@ -9,16 +8,16 @@ import base64
 import subprocess
 
 # Register NetAlertX directories
-INSTALL_PATH="/app"
+INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from database import DB
-from plugin_helper import Plugin_Objects, handleEmpty
-from logger import mylog, Logger, append_line_to_file
-from helper import get_setting_value
-from const import logPath, applicationPath
-import conf
-from pytz import timezone
+from database import DB  # noqa: E402 [flake8 lint suppression]
+from plugin_helper import Plugin_Objects, handleEmpty  # noqa: E402 [flake8 lint suppression]
+from logger import mylog, Logger  # noqa: E402 [flake8 lint suppression]
+from helper import get_setting_value  # noqa: E402 [flake8 lint suppression]
+from const import logPath  # noqa: E402 [flake8 lint suppression]
+import conf  # noqa: E402 [flake8 lint suppression]
+from pytz import timezone  # noqa: E402 [flake8 lint suppression]
 
 # Make sure the TIMEZONE for logging is correct
 conf.tz = timezone(get_setting_value("TIMEZONE"))
@@ -139,10 +138,7 @@ def execute_arpscan(userSubnets):
     mylog("verbose", [f"[{pluginName}] All devices List len:", len(devices_list)])
     mylog("verbose", [f"[{pluginName}] Devices List:", devices_list])
 
-    mylog(
-        "verbose",
-        [f"[{pluginName}] Found: Devices without duplicates ", len(unique_devices)],
-    )
+    mylog("verbose", [f"[{pluginName}] Found: Devices without duplicates ", len(unique_devices)],)
 
     return unique_devices
 
@@ -175,10 +171,7 @@ def execute_arpscan_on_interface(interface):
         except subprocess.CalledProcessError:
             result = ""
         except subprocess.TimeoutExpired:
-            mylog(
-                "warning",
-                [f"[{pluginName}] arp-scan timed out after {timeout_seconds}s"],
-            )
+            mylog("warning", [f"[{pluginName}] arp-scan timed out after {timeout_seconds}s"],)
             result = ""
         # stop looping if duration not set or expired
         if scan_duration == 0 or (time.time() - start_time) > scan_duration:

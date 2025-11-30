@@ -41,15 +41,7 @@ Use the following Compose snippet to deploy NetAlertX with a **static LAN IP** a
 services:
   netalertx:
     image: ghcr.io/jokob-sk/netalertx:latest
-    ports:
-      - 20211:20211
-    volumes:
-      - /mnt/YOUR_SERVER/netalertx/config:/data/config:rw
-      - /mnt/YOUR_SERVER/netalertx/db:/netalertx/data/db:rw
-      - /mnt/YOUR_SERVER/netalertx/logs:/netalertx/tmp/log:rw
-    environment:
-      - TZ=Europe/London
-      - PORT=20211
+...
     networks:
       swarm-ipvlan:
         ipv4_address: 192.168.1.240     # ⚠️ Choose a free IP from your LAN

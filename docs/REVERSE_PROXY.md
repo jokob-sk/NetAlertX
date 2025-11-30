@@ -2,9 +2,9 @@
 
 > Submitted by amazing [cvc90](https://github.com/cvc90) 🙏
 
-> [!NOTE] 
+> [!NOTE]
 > There are various NGINX config files for NetAlertX, some for the bare-metal install, currently Debian 12 and Ubuntu 24 (`netalertx.conf`), and one for the docker container (`netalertx.template.conf`).
-> 
+>
 > The first one you can find in the respective bare metal installer folder `/app/install/\<system\>/netalertx.conf`.
 > The docker one can be found in the [install](https://github.com/jokob-sk/NetAlertX/tree/main/install) folder. Map, or use, the one appropriate for your setup.
 
@@ -17,14 +17,14 @@
 2. In this file, paste the following code:
 
 ```
-   server { 
-     listen 80; 
-     server_name netalertx; 
-     proxy_preserve_host on; 
-     proxy_pass http://localhost:20211/; 
-     proxy_pass_reverse http://localhost:20211/; 
+   server {
+     listen 80;
+     server_name netalertx;
+     proxy_preserve_host on;
+     proxy_pass http://localhost:20211/;
+     proxy_pass_reverse http://localhost:20211/;
     }
-``` 
+```
 
 3. Activate the new website by running the following command:
 
@@ -43,18 +43,18 @@
 2. In this file, paste the following code:
 
 ```
-   server { 
-     listen 80; 
-     server_name netalertx; 
-     proxy_preserve_host on; 
+   server {
+     listen 80;
+     server_name netalertx;
+     proxy_preserve_host on;
      location ^~ /netalertx/ {
           proxy_pass http://localhost:20211/;
-          proxy_pass_reverse http://localhost:20211/; 
+          proxy_pass_reverse http://localhost:20211/;
           proxy_redirect ~^/(.*)$ /netalertx/$1;
-          rewrite ^/netalertx/?(.*)$ /$1 break;			
+          rewrite ^/netalertx/?(.*)$ /$1 break;
      }
     }
-``` 
+```
 
 3. Check your config with `nginx -t`. If there are any issues, it will tell you.
 
@@ -73,13 +73,13 @@
 2. In this file, paste the following code:
 
 ```
-   server { 
-     listen 80; 
-     server_name netalertx; 
-     proxy_preserve_host on; 
+   server {
+     listen 80;
+     server_name netalertx;
+     proxy_preserve_host on;
      location ^~ /netalertx/ {
           proxy_pass http://localhost:20211/;
-          proxy_pass_reverse http://localhost:20211/; 
+          proxy_pass_reverse http://localhost:20211/;
           proxy_redirect ~^/(.*)$ /netalertx/$1;
           rewrite ^/netalertx/?(.*)$ /$1 break;
 	  sub_filter_once off;
@@ -89,13 +89,13 @@
 	  sub_filter '(?>$host)/js'  '/netalertx/js';
 	  sub_filter '/img' '/netalertx/img';
 	  sub_filter '/lib' '/netalertx/lib';
-	  sub_filter '/php' '/netalertx/php';				
+	  sub_filter '/php' '/netalertx/php';
      }
     }
-``` 
+```
 
 3. Check your config with `nginx -t`. If there are any issues, it will tell you.
-   
+
 4. Activate the new website by running the following command:
 
    `nginx -s reload` or `systemctl restart nginx`
@@ -111,17 +111,17 @@
 2. In this file, paste the following code:
 
 ```
-   server { 
-     listen 443; 
-     server_name netalertx; 
+   server {
+     listen 443;
+     server_name netalertx;
      SSLEngine On;
      SSLCertificateFile /etc/ssl/certs/netalertx.pem;
      SSLCertificateKeyFile /etc/ssl/private/netalertx.key;
-     proxy_preserve_host on; 
-     proxy_pass http://localhost:20211/; 
-     proxy_pass_reverse http://localhost:20211/; 
+     proxy_preserve_host on;
+     proxy_pass http://localhost:20211/;
+     proxy_pass_reverse http://localhost:20211/;
     }
-``` 
+```
 
 3. Check your config with `nginx -t`. If there are any issues, it will tell you.
 
@@ -140,23 +140,23 @@
 2. In this file, paste the following code:
 
 ```
-   server { 
-     listen 443; 
-     server_name netalertx; 
+   server {
+     listen 443;
+     server_name netalertx;
      SSLEngine On;
      SSLCertificateFile /etc/ssl/certs/netalertx.pem;
      SSLCertificateKeyFile /etc/ssl/private/netalertx.key;
      location ^~ /netalertx/ {
           proxy_pass http://localhost:20211/;
-          proxy_pass_reverse http://localhost:20211/; 
+          proxy_pass_reverse http://localhost:20211/;
           proxy_redirect ~^/(.*)$ /netalertx/$1;
-          rewrite ^/netalertx/?(.*)$ /$1 break;		
+          rewrite ^/netalertx/?(.*)$ /$1 break;
      }
     }
-``` 
+```
 
 3. Check your config with `nginx -t`. If there are any issues, it will tell you.
-   
+
 4. Activate the new website by running the following command:
 
    `nginx -s reload` or `systemctl restart nginx`
@@ -172,15 +172,15 @@
 2. In this file, paste the following code:
 
 ```
-   server { 
-     listen 443; 
-     server_name netalertx; 
+   server {
+     listen 443;
+     server_name netalertx;
      SSLEngine On;
      SSLCertificateFile /etc/ssl/certs/netalertx.pem;
      SSLCertificateKeyFile /etc/ssl/private/netalertx.key;
      location ^~ /netalertx/ {
           proxy_pass http://localhost:20211/;
-          proxy_pass_reverse http://localhost:20211/; 
+          proxy_pass_reverse http://localhost:20211/;
           proxy_redirect ~^/(.*)$ /netalertx/$1;
           rewrite ^/netalertx/?(.*)$ /$1 break;
 	  sub_filter_once off;
@@ -190,13 +190,13 @@
 	  sub_filter '(?>$host)/js'  '/netalertx/js';
 	  sub_filter '/img' '/netalertx/img';
 	  sub_filter '/lib' '/netalertx/lib';
-	  sub_filter '/php' '/netalertx/php';		
+	  sub_filter '/php' '/netalertx/php';
      }
     }
-``` 
+```
 
 3. Check your config with `nginx -t`. If there are any issues, it will tell you.
-   
+
 4. Activate the new website by running the following command:
 
    `nginx -s reload` or `systemctl restart nginx`
@@ -218,10 +218,10 @@
          ProxyPass / http://localhost:20211/
          ProxyPassReverse / http://localhost:20211/
     </VirtualHost>
-``` 
+```
 
 3. Check your config with `httpd -t` (or `apache2ctl -t` on Debian/Ubuntu). If there are any issues, it will tell you.
-   
+
 4. Activate the new website by running the following command:
 
    `a2ensite netalertx` or `service apache2 reload`
@@ -245,10 +245,10 @@
                ProxyPassReverse / http://localhost:20211/
          }
     </VirtualHost>
-```   
+```
 
 3. Check your config with `httpd -t` (or `apache2ctl -t` on Debian/Ubuntu). If there are any issues, it will tell you.
-   
+
 4. Activate the new website by running the following command:
 
    `a2ensite netalertx` or `service apache2 reload`
@@ -273,10 +273,10 @@
          ProxyPass / http://localhost:20211/
          ProxyPassReverse / http://localhost:20211/
     </VirtualHost>
-```   
+```
 
 3. Check your config with `httpd -t` (or `apache2ctl -t` on Debian/Ubuntu). If there are any issues, it will tell you.
-   
+
 4. Activate the new website by running the following command:
 
     `a2ensite netalertx` or `service apache2 reload`
@@ -290,11 +290,11 @@
 1. On your Apache server, create a new file called /etc/apache2/sites-available/netalertx.conf.
 
 2. In this file, paste the following code:
-                            
+
 ```
-	<VirtualHost *:443> 
+	<VirtualHost *:443>
         ServerName netalertx
-        SSLEngine On 
+        SSLEngine On
         SSLCertificateFile /etc/ssl/certs/netalertx.pem
         SSLCertificateKeyFile /etc/ssl/private/netalertx.key
         location ^~ /netalertx/ {
@@ -303,10 +303,10 @@
               ProxyPassReverse / http://localhost:20211/
         }
     </VirtualHost>
-```       
+```
 
 3. Check your config with `httpd -t` (or `apache2ctl -t` on Debian/Ubuntu). If there are any issues, it will tell you.
-   
+
 4. Activate the new website by running the following command:
 
    `a2ensite netalertx` or `service apache2 reload`
@@ -381,7 +381,7 @@ location ^~ /netalertx/ {
 
 > Submitted by [Isegrimm](https://github.com/Isegrimm) 🙏 (based on this [discussion](https://github.com/jokob-sk/NetAlertX/discussions/449#discussioncomment-7281442))
 
-Assuming the user already has a working Traefik setup, this is what's needed to make NetAlertX work at a URL like www.domain.com/netalertx/. 
+Assuming the user already has a working Traefik setup, this is what's needed to make NetAlertX work at a URL like www.domain.com/netalertx/.
 
 Note: Everything in these configs assumes '**www.domain.com**' as your domainname and '**section31**' as an arbitrary name for your certificate setup. You will have to substitute these with your own.
 
@@ -496,14 +496,9 @@ server {
 Mapping the updated file (on the local filesystem at `/appl/docker/netalertx/default`) into the docker container:
 
 
-```bash
-docker run -d --rm --network=host \
-  --name=netalertx \
-  -v /appl/docker/netalertx/config:/data/config \
-  -v /appl/docker/netalertx/db:/data/db \
-  -v /appl/docker/netalertx/default:/etc/nginx/sites-available/default \
-  -e TZ=Europe/Amsterdam \
-  -e PORT=20211 \
-  ghcr.io/jokob-sk/netalertx:latest
-
+```yaml
+...
+  volumes:
+    - /appl/docker/netalertx/default:/etc/nginx/sites-available/default
+...
 ```

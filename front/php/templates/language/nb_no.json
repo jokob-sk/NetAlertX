@@ -311,6 +311,7 @@
     "Gen_Filter": "Filter",
     "Gen_Generate": "",
     "Gen_InvalidMac": "",
+    "Gen_Invalid_Value": "",
     "Gen_LockedDB": "FEIL - DB kan være låst - Sjekk F12 Dev tools -> Konsoll eller prøv senere.",
     "Gen_NetworkMask": "",
     "Gen_Offline": "Frakoblet",

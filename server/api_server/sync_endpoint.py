@@ -11,7 +11,11 @@ INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
 
 def handle_sync_get():
     """Handle GET requests for SYNC (NODE → HUB)."""
-    file_path = INSTALL_PATH + "/api/table_devices.json"
+
+    # get all dwevices from the api endpoint
+    api_path = os.environ.get('NETALERTX_API', '/tmp/api')
+
+    file_path = f"/{api_path}/table_devices.json"
 
     try:
         with open(file_path, "rb") as f:

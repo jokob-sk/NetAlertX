@@ -7,23 +7,20 @@ import os
 import re
 import unicodedata
 import subprocess
-import pytz
 import json
 import requests
 import base64
 import hashlib
 import random
-import email
 import string
 import ipaddress
 
 import conf
-from const import *
+from const import applicationPath, fullConfPath, fullDbPath, dbPath, confPath, apiPath
 from logger import mylog, logResult
 
 # Register NetAlertX directories using runtime configuration
 INSTALL_PATH = applicationPath
-
 
 
 # -------------------------------------------------------------------------------
@@ -39,12 +36,7 @@ def checkPermissionsOK():
     dbW_access = os.access(fullDbPath, os.W_OK)
 
     mylog("none", ["\n"])
-    mylog(
-        "none",
-        [
-            "The backend restarted (started). If this is unexpected check https://bit.ly/NetAlertX_debug for troubleshooting tips."
-        ],
-    )
+    mylog("none", "The backend restarted (started). If this is unexpected check https://bit.ly/NetAlertX_debug for troubleshooting tips.")
     mylog("none", ["\n"])
     mylog("none", ["Permissions check (All should be True)"])
     mylog("none", ["------------------------------------------------"])
@@ -59,23 +51,10 @@ def checkPermissionsOK():
 
 
 # -------------------------------------------------------------------------------
-def fixPermissions():
-    # Try fixing access rights if needed
-    chmodCommands = []
-
-
-# -------------------------------------------------------------------------------
 def initialiseFile(pathToCheck, defaultFile):
     # if file not readable (missing?) try to copy over the backed-up (default) one
     if str(os.access(pathToCheck, os.R_OK)) == "False":
-        mylog(
-            "none",
-            [
-                "[Setup] ("
-                + pathToCheck
-                + ") file is not readable or missing. Trying to copy over the default one."
-            ],
-        )
+        mylog("none", ["[Setup] (" + pathToCheck + ") file is not readable or missing. Trying to copy over the default one."],)
         try:
             # try runnning a subprocess
             p = subprocess.Popen(
@@ -86,42 +65,16 @@ def initialiseFile(pathToCheck, defaultFile):
             stdout, stderr = p.communicate()
 
             if str(os.access(pathToCheck, os.R_OK)) == "False":
-                mylog(
-                    "none",
-                    [
-                        "[Setup] ⚠ ERROR copying ("
-                        + defaultFile
-                        + ") to ("
-                        + pathToCheck
-                        + "). Make sure the app has Read & Write access to the parent directory."
-                    ],
-                )
+                mylog("none", "[Setup] ⚠ ERROR copying (" + defaultFile + ") to (" + pathToCheck + "). Ensure Read & Write access to the parent directory.")
             else:
-                mylog(
-                    "none",
-                    [
-                        "[Setup] ("
-                        + defaultFile
-                        + ") copied over successfully to ("
-                        + pathToCheck
-                        + ")."
-                    ],
-                )
+                mylog("none", ["[Setup] (" + defaultFile + ") copied over successfully to (" + pathToCheck + ")."],)
 
             # write stdout and stderr into .log files for debugging if needed
             logResult(stdout, stderr)  # TO-DO should be changed to mylog
 
         except subprocess.CalledProcessError as e:
             # An error occured, handle it
-            mylog(
-                "none",
-                [
-                    "[Setup] ⚠ ERROR copying ("
-                    + defaultFile
-                    + "). Make sure the app has Read & Write access to "
-                    + pathToCheck
-                ],
-            )
+            mylog("none", ["[Setup] ⚠ ERROR copying (" + defaultFile + "). Make sure the app has Read & Write access to " + pathToCheck],)
             mylog("none", [e.output])
 
 
@@ -130,15 +83,12 @@ def filePermissions():
     # check and initialize .conf
     (confR_access, dbR_access) = checkPermissionsOK()  # Initial check
 
-    if confR_access == False:
+    if confR_access is False:
         initialiseFile(fullConfPath, f"{INSTALL_PATH}/back/app.conf")
 
     # check and initialize .db
-    if dbR_access == False:
+    if dbR_access is False:
         initialiseFile(fullDbPath, f"{INSTALL_PATH}/back/app.db")
-
-    # last attempt
-    fixPermissions()
 
 
 # -------------------------------------------------------------------------------
@@ -212,14 +162,7 @@ def get_setting(key):
         mylog("none", [f"[Settings] ⚠ File not found: {settingsFile}"])
         return None
 
-    mylog(
-        "trace",
-        [
-            "[Import table_settings.json] checking table_settings.json file",
-            f"SETTINGS_LASTCACHEDATE: {SETTINGS_LASTCACHEDATE}",
-            f"fileModifiedTime: {fileModifiedTime}",
-        ],
-    )
+    mylog("trace", f"[Import table_settings.json] checking table_settings.json file SETTINGS_LASTCACHEDATE: {SETTINGS_LASTCACHEDATE} fileModifiedTime: {fileModifiedTime}")
 
     # Use cache if file hasn't changed
     if fileModifiedTime == SETTINGS_LASTCACHEDATE and SETTINGS_CACHE:
@@ -246,10 +189,7 @@ def get_setting(key):
     SETTINGS_LASTCACHEDATE = fileModifiedTime
 
     if key not in SETTINGS_CACHE:
-        mylog(
-            "none",
-            [f"[Settings] ⚠ ERROR - setting_missing - {key} not in {settingsFile}"],
-        )
+        mylog("none", [f"[Settings] ⚠ ERROR - setting_missing - {key} not in {settingsFile}"],)
         return None
 
     return SETTINGS_CACHE[key]
@@ -273,8 +213,6 @@ def get_setting_value(key):
         Any: The Python-typed setting value, or an empty string if not found.
     """
 
-    global SETTINGS_SECONDARYCACHE
-
     # Returns empty string if not found
     value = ""
 
@@ -292,7 +230,7 @@ def get_setting_value(key):
                     value = setting_value_to_python_type(set_type, set_value)
                 else:
                     value = setting_value_to_python_type(set_type, str(set_value))
-            
+
                 SETTINGS_SECONDARYCACHE[key] = value
 
                 return value
@@ -382,12 +320,9 @@ def setting_value_to_python_type(set_type, set_value):
         if isinstance(set_value, str):
             try:
                 value = json.loads(set_value.replace("'", "\""))
-                    
+
             except json.JSONDecodeError as e:
-                mylog(
-                    "none",
-                    [f"[setting_value_to_python_type] Error decoding JSON object: {e}"],
-                )
+                mylog("none", [f"[setting_value_to_python_type] Error decoding JSON object: {e}"],)
                 mylog("none", [set_value])
                 value = []
 
@@ -402,10 +337,7 @@ def setting_value_to_python_type(set_type, set_value):
             try:
                 value = reverseTransformers(json.loads(set_value), transformers)
             except json.JSONDecodeError as e:
-                mylog(
-                    "none",
-                    [f"[setting_value_to_python_type] Error decoding JSON object: {e}"],
-                )
+                mylog("none", [f"[setting_value_to_python_type] Error decoding JSON object: {e}"],)
                 mylog("none", [{set_value}])
                 value = {}
 
@@ -413,17 +345,12 @@ def setting_value_to_python_type(set_type, set_value):
             value = set_value
 
     elif (
-        dataType == "string"
-        and elementType == "input"
-        and any(opt.get("readonly") == "true" for opt in elementOptions)
+        dataType == "string" and elementType == "input" and any(opt.get("readonly") == "true" for opt in elementOptions)
     ):
         value = reverseTransformers(str(set_value), transformers)
 
     elif (
-        dataType == "string"
-        and elementType == "input"
-        and any(opt.get("type") == "password" for opt in elementOptions)
-        and "sha256" in transformers
+        dataType == "string" and elementType == "input" and any(opt.get("type") == "password" for opt in elementOptions) and "sha256" in transformers
     ):
         value = hashlib.sha256(set_value.encode()).hexdigest()
 
@@ -602,23 +529,23 @@ def normalize_string(text):
 # -------------------------------------------------------------------------------
 
 
-# -------------------------------------------------------------------------------------------
-def is_random_mac(mac: str) -> bool:
-    """Determine if a MAC address is random, respecting user-defined prefixes not to mark as random."""
+# # -------------------------------------------------------------------------------------------
+# def is_random_mac(mac: str) -> bool:
+#     """Determine if a MAC address is random, respecting user-defined prefixes not to mark as random."""
 
-    is_random = mac[1].upper() in ["2", "6", "A", "E"]
+#     is_random = mac[1].upper() in ["2", "6", "A", "E"]
 
-    # Get prefixes from settings
-    prefixes = get_setting_value("UI_NOT_RANDOM_MAC")
+#     # Get prefixes from settings
+#     prefixes = get_setting_value("UI_NOT_RANDOM_MAC")
 
-    # If detected as random, make sure it doesn't start with a prefix the user wants to exclude
-    if is_random:
-        for prefix in prefixes:
-            if mac.upper().startswith(prefix.upper()):
-                is_random = False
-                break
+#     # If detected as random, make sure it doesn't start with a prefix the user wants to exclude
+#     if is_random:
+#         for prefix in prefixes:
+#             if mac.upper().startswith(prefix.upper()):
+#                 is_random = False
+#                 break
 
-    return is_random
+#     return is_random
 
 
 # -------------------------------------------------------------------------------------------
@@ -653,6 +580,12 @@ def extract_ip_addresses(text):
 # -------------------------------------------------------------------------------
 # Helper function to determine if a MAC address is random
 def is_random_mac(mac):
+    """Determine if a MAC address is random, respecting user-defined prefixes not to mark as random."""
+
+    # Validate input
+    if not mac or len(mac) < 2:
+        return False
+
     # Check if second character matches "2", "6", "A", "E" (case insensitive)
     is_random = mac[1].upper() in ["2", "6", "A", "E"]
 
@@ -660,7 +593,7 @@ def is_random_mac(mac):
     if is_random:
         not_random_prefixes = get_setting_value("UI_NOT_RANDOM_MAC")
         for prefix in not_random_prefixes:
-            if mac.startswith(prefix):
+            if mac.upper().startswith(prefix.upper()):
                 is_random = False
                 break
     return is_random
@@ -773,7 +706,6 @@ def getBuildTimeStampAndVersion():
     return tuple(results)
 
 
-
 # -------------------------------------------------------------------------------
 def checkNewVersion():
     mylog("debug", ["[Version check] Checking if new version available"])
@@ -793,9 +725,7 @@ def checkNewVersion():
     try:
         data = json.loads(text)
     except json.JSONDecodeError:
-        mylog(
-            "minimal", ["[Version check] ⚠ ERROR: Invalid JSON response from GitHub."]
-        )
+        mylog("minimal", ["[Version check] ⚠ ERROR: Invalid JSON response from GitHub."])
         return False
 
     # make sure we received a valid response and not an API rate limit exceeded message
@@ -811,10 +741,7 @@ def checkNewVersion():
         else:
             mylog("none", ["[Version check] Running the latest version."])
     else:
-        mylog(
-            "minimal",
-            ["[Version check] ⚠ ERROR: Received unexpected response from GitHub."],
-        )
+        mylog("minimal", ["[Version check] ⚠ ERROR: Received unexpected response from GitHub."],)
 
     return False
 

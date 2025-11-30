@@ -72,7 +72,7 @@ ENV LOG_APP_PHP_ERRORS=${NETALERTX_LOG}/app.php_errors.log
 ENV LOG_EXECUTION_QUEUE=${NETALERTX_LOG}/execution_queue.log
 ENV LOG_REPORT_OUTPUT_JSON=${NETALERTX_LOG}/report_output.json
 ENV LOG_STDOUT=${NETALERTX_LOG}/stdout.log
-ENV LOG_CROND=${NETALERTX_LOG}/crond.log
+ENV LOG_CRON=${NETALERTX_LOG}/cron.log
 ENV LOG_NGINX_ERROR=${NETALERTX_LOG}/nginx-error.log
 
 # System Services configuration files
@@ -132,25 +132,29 @@ COPY --chmod=775 --chown=${USER_ID}:${USER_GID} . ${INSTALL_DIR}/
 
 
 # ❗ IMPORTANT - if you modify this file modify the /install/install_dependecies.debian.sh file as well ❗ 
-RUN apt update && apt-get install -y \
+# hadolint ignore=DL3008,DL3027
+RUN apt-get update && apt-get install -y --no-install-recommends \
     tini snmp ca-certificates curl libwww-perl arp-scan sudo gettext-base \
     nginx-light php php-cgi php-fpm php-sqlite3 php-curl sqlite3 dnsutils net-tools  \
     python3 python3-dev iproute2 nmap python3-pip zip git systemctl usbutils traceroute nbtscan openrc \
-    busybox nginx nginx-core mtr python3-venv
+    busybox nginx nginx-core mtr python3-venv && \
+    rm -rf /var/lib/apt/lists/*
 
 # While php8.3 is in debian bookworm repos, php-fpm is not included so we need to add sury.org repo
 # (Ondřej Surý maintains php packages for debian. This is temp until debian includes php-fpm in their
 # repos. Likely it will be in Debian Trixie.).  This keeps the image up-to-date with the alpine version.
+# hadolint ignore=DL3008
 RUN apt-get install -y --no-install-recommends \
     apt-transport-https \
     ca-certificates \
     lsb-release \
     wget && \
-    wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg && \
+    wget -q -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg && \
     echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list && \
     apt-get update && \
-    apt-get install -y php8.3-fpm php8.3-cli php8.3-sqlite3 php8.3-common php8.3-curl php8.3-cgi && \
-    ln -s /usr/sbin/php-fpm8.3 /usr/sbin/php-fpm83 # make it compatible with alpine version
+    apt-get install -y --no-install-recommends php8.3-fpm php8.3-cli php8.3-sqlite3 php8.3-common php8.3-curl php8.3-cgi && \
+    ln -s /usr/sbin/php-fpm8.3 /usr/sbin/php-fpm83 && \
+    rm -rf /var/lib/apt/lists/* # make it compatible with alpine version
 
 # Setup virtual python environment and use pip3 to install packages
 RUN python3 -m venv ${VIRTUAL_ENV} && \

@@ -1,36 +1,37 @@
 import sys
-import pathlib
-import sqlite3
-import random
-import string
-import uuid
 import os
 import pytest
-from datetime import datetime, timedelta
+import random
+from datetime import timedelta
 
 INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from helper import get_setting_value
-from utils.datetime_utils import timeNowTZ
-from api_server.api_server_start import app
+from helper import get_setting_value  # noqa: E402 [flake8 lint suppression]
+from utils.datetime_utils import timeNowTZ  # noqa: E402 [flake8 lint suppression]
+from api_server.api_server_start import app  # noqa: E402 [flake8 lint suppression]
+
 
 @pytest.fixture(scope="session")
 def api_token():
     return get_setting_value("API_TOKEN")
+
 
 @pytest.fixture
 def client():
     with app.test_client() as client:
         yield client
 
+
 @pytest.fixture
 def test_mac():
     # Generate a unique MAC for each test run
-    return "AA:BB:CC:" + ":".join(f"{random.randint(0,255):02X}" for _ in range(3))
+    return "AA:BB:CC:" + ":".join(f"{random.randint(0, 255):02X}" for _ in range(3))
+
 
 def auth_headers(token):
     return {"Authorization": f"Bearer {token}"}
+
 
 def create_event(client, api_token, mac, event="UnitTest Event", days_old=None):
     payload = {"ip": "0.0.0.0", "event_type": event}
@@ -43,9 +44,11 @@ def create_event(client, api_token, mac, event="UnitTest Event", days_old=None):
 
     return client.post(f"/events/create/{mac}", json=payload, headers=auth_headers(api_token))
 
+
 def list_events(client, api_token, mac=None):
     url = "/events" if mac is None else f"/events?mac={mac}"
     return client.get(url, headers=auth_headers(api_token))
+
 
 def test_create_event(client, api_token, test_mac):
     # create event
@@ -82,6 +85,7 @@ def test_delete_events_for_mac(client, api_token, test_mac):
     assert resp.status_code == 200
     assert len(resp.json.get("events", [])) == 0
 
+
 def test_get_events_totals(client, api_token):
     # 1. Request totals with default period
     resp = client.get(
@@ -106,7 +110,6 @@ def test_get_events_totals(client, api_token):
     data_month = resp_month.json
     assert isinstance(data_month, list)
     assert len(data_month) == 6
-
 
 
 def test_delete_all_events(client, api_token, test_mac):
@@ -146,5 +149,3 @@ def test_delete_events_dynamic_days(client, api_token, test_mac):
     events = resp.get_json().get("events", [])
     mac_events = [ev for ev in events if ev.get("eve_MAC") == test_mac]
     assert len(mac_events) == 1
-
-

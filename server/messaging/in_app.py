@@ -11,13 +11,9 @@ from flask import jsonify
 INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
 sys.path.extend([f"{INSTALL_PATH}/server"])
 
-from const import apiPath
-from logger import mylog
-
-import conf
-from const import applicationPath, logPath, apiPath, confFileName, reportTemplatesPath
-from logger import mylog
-from utils.datetime_utils import timeNowDB
+from const import apiPath  # noqa: E402 [flake8 lint suppression]
+from logger import mylog  # noqa: E402 [flake8 lint suppression]
+from utils.datetime_utils import timeNowDB  # noqa: E402 [flake8 lint suppression]
 
 
 NOTIFICATION_API_FILE = apiPath + 'user_notifications.json'
@@ -38,7 +34,7 @@ def write_notification(content, level="alert", timestamp=None):
         None
     """
     if timestamp is None:
-        timestamp = timeNowDB()     
+        timestamp = timeNowDB()
 
     # Generate GUID
     guid = str(uuid.uuid4())
@@ -123,10 +119,7 @@ def remove_old(keepNumberOfEntries):
     try:
         with open(NOTIFICATION_API_FILE, "w") as file:
             json.dump(trimmed, file, indent=4)
-        mylog(
-            "verbose",
-            f"[Notification] Trimmed notifications to latest {keepNumberOfEntries}",
-        )
+        mylog("verbose", f"[Notification] Trimmed notifications to latest {keepNumberOfEntries}",)
     except Exception as e:
         mylog("none", f"Error writing trimmed notifications file: {e}")
 

@@ -1,9 +1,5 @@
 import sys
-import pathlib
-import sqlite3
 import random
-import string
-import uuid
 import os
 import pytest
 from datetime import datetime, timedelta
@@ -11,31 +7,35 @@ from datetime import datetime, timedelta
 INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from helper import get_setting_value
-from utils.datetime_utils import timeNowTZ, timeNowDB
-from api_server.api_server_start import app
+from helper import get_setting_value   # noqa: E402 [flake8 lint suppression]
+from utils.datetime_utils import timeNowTZ, timeNowDB  # noqa: E402 [flake8 lint suppression]
+from api_server.api_server_start import app  # noqa: E402 [flake8 lint suppression]
+
 
 @pytest.fixture(scope="session")
 def api_token():
     return get_setting_value("API_TOKEN")
+
 
 @pytest.fixture
 def client():
     with app.test_client() as client:
         yield client
 
+
 @pytest.fixture
 def test_mac():
     # Generate a unique MAC for each test run
-    return "AA:BB:CC:" + ":".join(f"{random.randint(0,255):02X}" for _ in range(3))
+    return "AA:BB:CC:" + ":".join(f"{random.randint(0, 255):02X}" for _ in range(3))
+
 
 def auth_headers(token):
     return {"Authorization": f"Bearer {token}"}
 
+
 def test_create_device(client, api_token, test_mac):
     payload = {
         "createNew": True,
-        "devType": "Test Device",
         "devOwner": "Unit Test",
         "devType": "Router",
         "devVendor": "TestVendor",
@@ -129,7 +129,7 @@ def test_device_session_events(client, api_token, test_mac):
 
     # 2. Fetch session events with default type ('all') and period ('7 days')
     resp = client.get(
-        f"/sessions/session-events?type=all&period=7 days",
+        "/sessions/session-events?type=all&period=7 days",
         headers=auth_headers(api_token)
     )
     assert resp.status_code == 200
@@ -159,6 +159,7 @@ def test_device_session_events(client, api_token, test_mac):
     sessions = resp_sessions.json["data"]
     assert isinstance(sessions, list)
 
+
 # -----------------------------
 def test_delete_session(client, api_token, test_mac):
     # First create session
@@ -180,15 +181,12 @@ def test_delete_session(client, api_token, test_mac):
     assert not any(ses["ses_MAC"] == test_mac for ses in sessions)
 
 
-
 def test_get_sessions_calendar(client, api_token, test_mac):
     """
     Test the /sessions/calendar endpoint.
     Creates session and ensures the calendar output is correct.
     Cleans up test sessions after test.
     """
-    
-
     # --- Setup: create two sessions for the test MAC ---
     now = timeNowTZ()
     start1 = (now - timedelta(days=2)).isoformat(timespec="seconds")

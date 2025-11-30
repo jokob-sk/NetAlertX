@@ -1,18 +1,16 @@
 # NetAlertX and Docker Compose
 
 > [!WARNING]
-> ⚠️ **Important:** The documentation has been recently updated and some instructions may have changed.  
-> If you are using the currently live production image, please follow the instructions on [Docker Hub](https://hub.docker.com/r/jokobsk/netalertx) for building and running the container.  
-> These docs reflect the latest development version and may differ from the production image.
+> ⚠️ **Important:** The docker-compose has recently changed. Carefully read the [Migration guide](https://jokob-sk.github.io/NetAlertX/MIGRATION/?h=migrat#12-migration-from-netalertx-v25524) for detailed instructions.
 
-Great care is taken to ensure NetAlertX meets the needs of everyone while being flexible enough for anyone. This document outlines how you can configure your docker-compose. There are many settings, so we recommend using the Baseline Docker Compose as-is, or modifying it for your system.Good care is taken to ensure NetAlertX meets the needs of everyone while being flexible enough for anyone. This document outlines how you can configure your docker-compose. There are many settings, so we recommend using the Baseline Docker Compose as-is, or modifying it for your system. 
+Great care is taken to ensure NetAlertX meets the needs of everyone while being flexible enough for anyone. This document outlines how you can configure your docker-compose. There are many settings, so we recommend using the Baseline Docker Compose as-is, or modifying it for your system.Good care is taken to ensure NetAlertX meets the needs of everyone while being flexible enough for anyone. This document outlines how you can configure your docker-compose. There are many settings, so we recommend using the Baseline Docker Compose as-is, or modifying it for your system.
 
-> [!NOTE] 
-> The container needs to run in `network_mode:"host"` to access Layer 2 networking such as arp, nmap and others. Due to lack of support for this feature, Windows host is not a supported operating system. 
+> [!NOTE]
+> The container needs to run in `network_mode:"host"` to access Layer 2 networking such as arp, nmap and others. Due to lack of support for this feature, Windows host is not a supported operating system.
 
 ## Baseline Docker Compose
 
-There is one baseline for NetAlertX. That's the default security-enabled official distribution. 
+There is one baseline for NetAlertX. That's the default security-enabled official distribution.
 
 ```yaml
 services:
@@ -45,7 +43,7 @@ services:
     # - /home/user/netalertx_data:/data:rw
 
       - type: bind                                  # Bind mount for timezone consistency
-        source: /etc/localtime                      # Alternatively add environment TZ: America/New York
+        source: /etc/localtime
         target: /etc/localtime
         read_only: true
 
@@ -125,15 +123,17 @@ docker compose up
 
 ### Modification 1: Use a Local Folder (Bind Mount)
 
-By default, the baseline compose file uses "named volumes" (`netalertx_config`, `netalertx_db`). **This is the preferred method** because NetAlertX is designed to manage all configuration and database settings directly from its web UI. Named volumes let Docker handle this data cleanly without you needing to manage local file permissions or paths.
+By default, the baseline compose file uses a single named volume (netalertx_data) mounted at `/data`. This single-volume layout is preferred because NetAlertX manages both configuration and the database under `/data` (for example, `/data/config` and `/data/db`) via its web UI. Using one named volume simplifies permissions and portability: Docker manages the storage and NetAlertX manages the files inside `/data`.
+
+A two-volume layout that mounts `/data/config` and `/data/db` separately (for example, `netalertx_config` and `netalertx_db`) is supported for backward compatibility and some advanced workflows, but it is an abnormal/legacy layout and not recommended for new deployments.
 
 However, if you prefer to have direct, file-level access to your configuration for manual editing, a "bind mount" is a simple alternative. This tells Docker to use a specific folder from your computer (the "host") inside the container.
 
 **How to make the change:**
 
-1. Choose a location on your computer. For example, `/home/adam/netalertx-files`.
+1. Choose a location on your computer. For example, `/local_data_dir`.
 
-2. Create the subfolders: `mkdir -p /home/adam/netalertx-files/config` and `mkdir -p /home/adam/netalertx-files/db`.
+2. Create the subfolders: `mkdir -p /local_data_dir/config` and `mkdir -p /local_data_dir/db`.
 
 3. Edit your `docker-compose.yml` and find the `volumes:` section (the one *inside* the `netalertx:` service).
 
@@ -152,19 +152,19 @@ However, if you prefer to have direct, file-level access to your configuration f
 ```
 
 **After (Using a Local Folder / Bind Mount):**
-Make sure to replace `/home/adam/netalertx-files` with your actual path. The format is `<path_on_your_computer>:<path_inside_container>:<options>`.
+Make sure to replace `/local_data_dir` with your actual path. The format is `<path_on_your_computer>:<path_inside_container>:<options>`.
 
 ```yaml
 ...
     volumes:
 #      - netalertx_config:/data/config:rw
 #      - netalertx_db:/data/db:rw
-      - /home/adam/netalertx-files/config:/data/config:rw
-      - /home/adam/netalertx-files/db:/data/db:rw
+      - /local_data_dir/config:/data/config:rw
+      - /local_data_dir/db:/data/db:rw
 ...
 ```
 
-Now, any files created by NetAlertX in `/data/config` will appear in your `/home/adam/netalertx-files/config` folder.
+Now, any files created by NetAlertX in `/data/config` will appear in your `/local_data_dir/config` folder.
 
 This same method works for mounting other things, like custom plugins or enterprise NGINX files, as shown in the commented-out examples in the baseline file.
 
@@ -183,20 +183,18 @@ This method is useful for keeping your paths and other settings separate from yo
 services:
   netalertx:
     environment:
-      - TZ=${TZ}
       - PORT=${PORT}
-      
+      - GRAPHQL_PORT=${GRAPHQL_PORT}
+
 ...
 ```
 
 **`.env` file contents:**
 
 ```sh
-TZ=Europe/Paris
 PORT=20211
 NETALERTX_NETWORK_MODE=host
 LISTEN_ADDR=0.0.0.0
-PORT=20211
 GRAPHQL_PORT=20212
 ```
 

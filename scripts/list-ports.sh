@@ -16,4 +16,4 @@ for p in $PORTS; do
 done
 
 # Show any other NetAlertX-related listeners (nginx, php-fpm, python backend)
-ss -ltnp 2>/dev/null | egrep 'nginx|php-fpm|python' || true
+ss -ltnp 2>/dev/null | grep -e 'nginx\|php-fpm\|python' || true

@@ -3,12 +3,12 @@ name: docker
 on:
   push:
     branches:
-      - next_release
+      - main
     tags:
       - '*.*.*'
   pull_request:
     branches:
-      - next_release
+      - main
 
 jobs:
   docker_dev:
@@ -83,7 +83,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v6
         with:
           context: .
           platforms: linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6

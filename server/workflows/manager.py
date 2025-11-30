@@ -1,21 +1,16 @@
 import json
-import os
-import sys
-
-# Register NetAlertX directories
-INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
-sys.path.extend([f"{INSTALL_PATH}/server"])
-
 from const import fullConfFolder
 from logger import mylog, Logger
 from helper import get_setting_value
 
-# Make sure log level is initialized correctly
-Logger(get_setting_value("LOG_LEVEL"))
-
 from workflows.triggers import Trigger
 from workflows.conditions import ConditionGroup
 from workflows.actions import DeleteObjectAction, RunPluginAction, UpdateFieldAction
+
+
+# Make sure log level is initialized correctly
+Logger(get_setting_value("LOG_LEVEL"))
+
 
 class WorkflowManager:
     def __init__(self, db):
@@ -58,21 +53,13 @@ class WorkflowManager:
             # Ensure workflow is enabled before proceeding
             if workflow.get("enabled", "No").lower() == "yes":
                 wfName = workflow["name"]
-                mylog(
-                    "debug",
-                    [f"[WF] Checking if '{evGuid}' triggers the workflow '{wfName}'"],
-                )
+                mylog("debug", f"[WF] Checking if '{evGuid}' triggers the workflow '{wfName}'")
 
                 # construct trigger object which also evaluates if the current event triggers it
                 trigger = Trigger(workflow["trigger"], event, self.db)
 
                 if trigger.triggered:
-                    mylog(
-                        "verbose",
-                        [
-                            f"[WF] Event with GUID '{evGuid}' triggered the workflow '{wfName}'"
-                        ],
-                    )
+                    mylog("verbose", f"[WF] Event with GUID '{evGuid}' triggered the workflow '{wfName}'")
 
                     self.execute_workflow(workflow, trigger)
 
@@ -103,12 +90,7 @@ class WorkflowManager:
             evaluator = ConditionGroup(condition_group)
 
             if evaluator.evaluate(trigger):  # If any group evaluates to True
-                mylog(
-                    "none",
-                    [
-                        f"[WF] Workflow {wfName} will be executed - conditions were evaluated as TRUE"
-                    ],
-                )
+                mylog("none", f"[WF] Workflow {wfName} will be executed - conditions were evaluated as TRUE")
                 mylog("debug", [f"[WF] Workflow condition_group: {condition_group}"])
 
                 self.execute_actions(workflow["actions"], trigger)

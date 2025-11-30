@@ -71,7 +71,7 @@ function getPluginConfig(pluginsData, prefix) {
 // Show the description of a setting
 function showDescriptionPopup(e) {
 
-  console.log($(e).attr("my-set-key"));    
+  console.log($(e).attr("my-set-key"));
 
   showModalOK("Info", getString($(e).attr("my-set-key") + '_description'))
 }
@@ -92,13 +92,13 @@ function pluginCards(prefixesOfEnabledPlugins, includeSettings) {
                   prefix + "_" + set
                 }">
                   <code>${getSetting(prefix + "_" + set)}</code>
-                </div> 
+                </div>
               </a>
             </div>
           `;
     });
 
-    html += `            
+    html += `
               <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2  col-xxl-1  padding-5px">
                 <div class="small-box bg-green col-sm-12 " >
                   <div class="inner col-sm-12">
@@ -110,10 +110,10 @@ function pluginCards(prefixesOfEnabledPlugins, includeSettings) {
                     ${includeSettings_html}
                   </div>
                   <a href="#${prefix}_header" onclick="toggleAllSettings('open')">
-                    <div class="icon"> ${getString(prefix + "_icon")} </div> 
-                  </a>  
+                    <div class="icon"> ${getString(prefix + "_icon")} </div>
+                  </a>
                 </div>
-                
+
               </div>
             `;
   });
@@ -251,17 +251,17 @@ function settingsCollectedCorrectly(settingsArray, settingsJSON_DB) {
 function cloneDataTableRow(el){
 
   console.log(el);
-  
+
   const id = "NEWDEV_devCustomProps_table"; // Your table ID
   const table = $('#'+id).DataTable();
 
-  
+
   // Get the 'my-index' attribute from the closest tr element
   const myIndex = parseInt($(el).closest("tr").attr("my-index"));
 
   // Find the row in the table with the matching 'my-index'
   const row = table.rows().nodes().to$().filter(`[my-index="${myIndex}"]`).first().get(0);
-  
+
   // Clone the row (including its data and controls)
   let clonedRow = $(row).clone(true, true); // The true arguments copy the data and event handlers
 
@@ -270,7 +270,7 @@ function cloneDataTableRow(el){
 
 
   console.log(clonedRow);
-  
+
 
   // Add the cloned row to the DataTable
   table.row.add(clonedRow[0]).draw();
@@ -291,13 +291,13 @@ function removeDataTableRow(el) {
 
     // Find the row in the table with the matching 'my-index'
     const row = table.rows().nodes().to$().filter(`[my-index="${myIndex}"]`).first().get(0);
-    
+
     // Remove the row from the DataTable
     table.row(row).remove().draw();
   }
   else
   {
-    showMessage (getString("CustProps_cant_remove"), 3000, "modal_red");  
+    showMessage (getString("CustProps_cant_remove"), 3000, "modal_red");
   }
 }
 
@@ -308,9 +308,9 @@ function addViaPopupForm(element) {
 
   const toId = $(element).attr("my-input-to");
   const curValue = $(`#${toId}`).val();
-  const parsed = JSON.parse(atob($(`#${toId}`).data("elementoptionsbase64")));  
+  const parsed = JSON.parse(atob($(`#${toId}`).data("elementoptionsbase64")));
   const popupFormJson = parsed.find(obj => "popupForm" in obj)?.popupForm ?? null;
-  
+
   console.log(`toId  | curValue: ${toId}  | ${curValue}`);
 
   showModalPopupForm(
@@ -393,7 +393,7 @@ function selectAll(element) {
   settingsChanged();
 
   var selectElement = $(`#${$(element).attr("my-input-to")}`);
-  
+
   // Iterate over each option within the select element
   selectElement.find('option').each(function() {
     // Mark each option as selected
@@ -409,13 +409,13 @@ function selectAll(element) {
 function unselectAll(element) {
   settingsChanged();
   var selectElement = $(`#${$(element).attr("my-input-to")}`);
-  
+
   // Iterate over each option within the select element
   selectElement.find('option').each(function() {
     // Unselect each option
     $(this).prop('selected', false);
   });
-  
+
   // Trigger the 'change' event to notify Bootstrap Select of the changes
   selectElement.trigger('change');
 }
@@ -426,7 +426,7 @@ function selectChange(element) {
   settingsChanged();
 
   var selectElement = $(`#${$(element).attr("my-input-to")}`);
-  
+
   selectElement.parent().find("input").focus().click();
 }
 
@@ -464,9 +464,9 @@ function initListInteractionOptions(element) {
           // Parent has my-transformers="name|base64"
           const toId =  $parent.attr("id");
           const curValue = $option.val();
-          const parsed = JSON.parse(atob($parent.data("elementoptionsbase64")));  
+          const parsed = JSON.parse(atob($parent.data("elementoptionsbase64")));
           const popupFormJson = parsed.find(obj => "popupForm" in obj)?.popupForm ?? null;
-                  
+
           showModalPopupForm(
             `<i class="fa fa-pen-to-square"></i> ${getString("Gen_Update_Value")}`, // title
             "",                                                                     // message
@@ -515,8 +515,8 @@ function filterRows(inputText) {
       var $panelHeader = $panel.find('.panel-heading');
       var $panelBody = $panel.find('.panel-collapse');
 
-      $panel.show() 
-      $panelHeader.show() 
+      $panel.show()
+      $panelHeader.show()
       $panelBody.collapse('show');
 
       $panelBody.find(".table_row:not(.docs)").each(function () {
@@ -525,11 +525,11 @@ function filterRows(inputText) {
         var isMetadataRow = rowId && rowId.endsWith("__metadata");
         if (!isMetadataRow) {
           $row.show()
-        }        
+        }
       });
-      
+
     });
-    
+
   } else{
     // filter
 
@@ -537,25 +537,25 @@ function filterRows(inputText) {
       var $panel = $(this);
       var $panelHeader = $panel.find('.panel-heading');
       var $panelBody = $panel.find('.panel-collapse');
-  
+
       var anyVisible = false; // Flag to check if any row is visible
-  
+
       $panelBody.find(".table_row:not(.docs)").each(function () {
         var $row = $(this);
-  
+
         // Check if the row ID ends with "__metadata"
         var rowId = $row.attr("id");
         var isMetadataRow = rowId && rowId.endsWith("__metadata");
-  
+
         // Always hide metadata rows
         if (isMetadataRow) {
           $row.hide();
           return; // Skip further processing for metadata rows
         }
-  
+
         var description = $row.find(".setting_description").text().toLowerCase();
         var setKey = $row.find(".setting_name code").text().toLowerCase();
-  
+
         if (
           description.includes(inputText.toLowerCase()) ||
           setKey.includes(inputText.toLowerCase())
@@ -566,7 +566,7 @@ function filterRows(inputText) {
           $row.hide();
         }
       });
-  
+
       // Determine whether to hide or show the panel based on visibility of rows
       if (anyVisible) {
         $panelBody.collapse('show'); // Ensure the panel body is shown if there are visible rows
@@ -582,7 +582,7 @@ function filterRows(inputText) {
 
   }
 
-  
+
 }
 
 
@@ -661,7 +661,7 @@ function generateOptionsOrSetOptions(
   processDataCallback, // Callback function to generate entries based on options
   targetField, // Target field or element where selected value should be applied or updated
   transformers = [], // Transformers to be applied to the values
-  overrideOptions = null // override options if available  
+  overrideOptions = null // override options if available
 ) {
 
   // console.log(setKey);
@@ -712,7 +712,7 @@ function applyTransformers(val, transformers) {
         break;
       case "getString":
         // no change
-        val = val;        
+        val = val;
         break;
       default:
         console.warn(`Unknown transformer: ${transformer}`);
@@ -745,13 +745,13 @@ function reverseTransformers(val, transformers) {
         break;
       case "getString":
         // retrieve string
-        val = getString(val);        
+        val = getString(val);
         break;
       case "deviceChip":
-        mac = val  // value is mac   
+        mac = val  // value is mac
         val =  `${getDevDataByMac(mac, "devName")}`
         break;
-      case "deviceRelType":        
+      case "deviceRelType":
         val =  val; // nothing to do
         break;
       default:
@@ -779,10 +779,11 @@ const handleElementOptions = (setKey, elementOptions, transformers, val) => {
   let getStringKey = "";
   let onClick = "console.log('onClick - Not implemented');";
   let onChange = "console.log('onChange - Not implemented');";
+  let focusout = "console.log('focusout - Not implemented');";
   let customParams = "";
   let customId = "";
   let columns = [];
-  let base64Regex = "";  
+  let base64Regex = "";
   let elementOptionsBase64 = btoa(JSON.stringify(elementOptions));
 
   elementOptions.forEach((option) => {
@@ -830,6 +831,9 @@ const handleElementOptions = (setKey, elementOptions, transformers, val) => {
     if (option.onChange) {
       onChange = option.onChange;
     }
+    if (option.focusout) {
+      focusout = option.focusout;
+    }
     if (option.customParams) {
       customParams = option.customParams;
     }
@@ -867,7 +871,8 @@ const handleElementOptions = (setKey, elementOptions, transformers, val) => {
     customId,
     columns,
     base64Regex,
-    elementOptionsBase64
+    elementOptionsBase64,
+    focusout
   };
 };
 
@@ -877,7 +882,7 @@ const handleElementOptions = (setKey, elementOptions, transformers, val) => {
 // -----------------------------------------------------------------------------
 
 // --------------------------------------------------
-// Creates an object from an array 
+// Creates an object from an array
 function arrayToObject(array) {
   const obj = [];
   array.forEach((item, index) => {
@@ -895,18 +900,18 @@ function generateOptions(options, valuesArray, targetField, transformers, placeh
 
   resultArray    = []
   selectedArray  = []
-  cssClass       = ""  
+  cssClass       = ""
 
   // determine if options or values are used in the listing
   if (valuesArray.length > 0 && options.length > 0){
 
-    // multiselect list ->  options only + selected the ones in valuesArray 
+    // multiselect list ->  options only + selected the ones in valuesArray
     resultArray   = options;
     selectedArray = valuesArray
 
   } else if (valuesArray.length > 0 && options.length == 0){
 
-    // editable list -> values only     
+    // editable list -> values only
     resultArray   = arrayToObject(valuesArray)
     cssClass = "interactable-option"  // generates [1x 📝 | 2x 🚮]
   } else if (options.length > 0){
@@ -914,7 +919,7 @@ function generateOptions(options, valuesArray, targetField, transformers, placeh
     // dropdown -> options only (value == 1 STRING not ARRAY)
     resultArray   = options;
   }
- 
+
   // Create a map to track the index of each item in valuesArray
   const orderMap = new Map(valuesArray.map((item, index) => [item, index]));
 
@@ -961,7 +966,7 @@ function generateList(options, valuesArray, targetField, transformers, placehold
 
     listHtml += `<li ${selected}>${labelName}</li>`;
   });
-  
+
   // Place the resulting HTML into the specified placeholder div
   $("#" + placeholder).replaceWith(listHtml);
 }
@@ -972,7 +977,7 @@ function genListWithInputSet(options, valuesArray, targetField, transformers, pl
 
   var listHtml = "";
 
-  
+
   options.forEach(function(item) {
 
     let selected = valuesArray.includes(item.id) ? 'selected' : '';
@@ -988,9 +993,9 @@ function genListWithInputSet(options, valuesArray, targetField, transformers, pl
     }
 
     listHtml += `<li ${selected}>
-                      <a href="javascript:void(0)" onclick="setTextValue('${targetField}','${item.id}')">${labelName}</a> 
+                      <a href="javascript:void(0)" onclick="setTextValue('${targetField}','${item.id}')">${labelName}</a>
                 </li>`;
-    
+
   });
 
   // Place the resulting HTML into the specified placeholder div
@@ -1001,8 +1006,8 @@ function genListWithInputSet(options, valuesArray, targetField, transformers, pl
 // Collects a setting based on code name
 function collectSetting(prefix, setCodeName, setType, settingsArray) {
   // Parse setType if it's a JSON string
-  const setTypeObject = (typeof setType === "string") 
-      ? JSON.parse(processQuotes(setType)) 
+  const setTypeObject = (typeof setType === "string")
+      ? JSON.parse(processQuotes(setType))
       : setType;
 
   const dataType = setTypeObject.dataType;
@@ -1014,6 +1019,20 @@ function collectSetting(prefix, setCodeName, setType, settingsArray) {
       : elements[0];
 
   const { elementType, elementOptions = [], transformers = [] } = elementWithInputValue;
+
+  // Check if validation failed
+  if (
+    $(`#${setCodeName}`)
+    && $(`#${setCodeName}`).attr("data-is-valid")
+    && $(`#${setCodeName}`).attr("data-is-valid") == 0
+  )
+  {
+     return {
+      "settingsArray": settingsArray,
+      "dataIsValid": false,
+      "failedSettingKey": setCodeName
+    };
+  }
 
   const opts = handleElementOptions('none', elementOptions, transformers, val = "");
 
@@ -1038,7 +1057,7 @@ function collectSetting(prefix, setCodeName, setType, settingsArray) {
           let temps = [];
           if (opts.isOrdeable) {
               temps = $(`#${setCodeName}`).val();
-          } else {            
+          } else {
               const sel = $(`#${setCodeName}`).attr("my-editable") === "true" ? "" : ":selected";
               $(`#${setCodeName} option${sel}`).each(function() {
                   const vl = $(this).val();
@@ -1066,7 +1085,7 @@ function collectSetting(prefix, setCodeName, setType, settingsArray) {
   let handlerKey;
   if (dataType === "string" && elementType === "datatable") {
       handlerKey = "datatableString";
-  } else if (dataType === "string" || 
+  } else if (dataType === "string" ||
             (dataType === "integer" && (opts.inputType === "number" || opts.inputType === "text"))) {
       handlerKey = "simpleValue";
   } else if (opts.inputType === "checkbox") {
@@ -1084,7 +1103,11 @@ function collectSetting(prefix, setCodeName, setType, settingsArray) {
   const value = handlers[handlerKey]();
   settingsArray.push([prefix, setCodeName, dataType, value]);
 
-  return settingsArray;
+  return {
+    "settingsArray": settingsArray,
+    "dataIsValid": true,
+    "failedSettingKey": ""
+  };
 }
 
 
@@ -1093,22 +1116,22 @@ function collectSetting(prefix, setCodeName, setType, settingsArray) {
 function generateFormHtml(settingsData, set, overrideValue, overrideOptions, originalSetKey) {
   let inputHtml = '';
 
-  isEmpty(overrideValue) ? inVal = set['setValue'] : inVal = overrideValue;  
+  isEmpty(overrideValue) ? inVal = set['setValue'] : inVal = overrideValue;
   const setKey = set['setKey'];
   const setType = set['setType'];
 
   // if (setKey == '') {
-    
+
   // console.log(setType);
   // console.log(setKey);
   // console.log(overrideValue);
-  // console.log(inVal);  
+  // console.log(inVal);
 
   // }
 
   // Parse the setType JSON string
   // console.log(processQuotes(setType));
-  
+
   const setTypeObject = JSON.parse(processQuotes(setType))
   const dataType = setTypeObject.dataType;
   const elements = setTypeObject.elements || [];
@@ -1137,20 +1160,21 @@ function generateFormHtml(settingsData, set, overrideValue, overrideOptions, ori
       customId,
       columns,
       base64Regex,
-      elementOptionsBase64
+      elementOptionsBase64,
+      focusout
     } = handleElementOptions(setKey, elementOptions, transformers, inVal);
 
     // Override value
     let val = valRes;
 
     // if (setKey == '') {
-    
+
     //   console.log(setType);
     //   console.log(setKey);
     //   console.log(overrideValue);
-    //   console.log(inVal);  
-    //   console.log(val);  
-    
+    //   console.log(inVal);
+    //   console.log(val);
+
     //   }
 
     // Generate HTML based on elementType
@@ -1159,16 +1183,17 @@ function generateFormHtml(settingsData, set, overrideValue, overrideOptions, ori
         const multi = isMultiSelect ? "multiple" : "";
         const addCss = isOrdeable ? "select2 select2-hidden-accessible" : "";
 
-        inputHtml += `<select onChange="settingsChanged();${onChange}" 
-                              my-data-type="${dataType}" 
-                              my-editable="${editable}" 
-                              class="form-control ${addCss} ${cssClasses}" 
-                              name="${setKey}" 
-                              id="${setKey}" 
+        inputHtml += `<select onChange="settingsChanged();${onChange}"
+                              onfocusout="${focusout}"
+                              my-data-type="${dataType}"
+                              my-editable="${editable}"
+                              class="form-control ${addCss} ${cssClasses}"
+                              name="${setKey}"
+                              id="${setKey}"
                               my-transformers=${transformers}
-                              my-customparams="${customParams}" 
-                              my-customid="${customId}" 
-                              my-originalSetKey="${originalSetKey}" 
+                              my-customparams="${customParams}"
+                              my-customid="${customId}"
+                              my-originalSetKey="${originalSetKey}"
                               data-elementoptionsbase64="${elementOptionsBase64}"
                               ${multi}
                               ${readOnly ? "disabled" : ""}>
@@ -1182,31 +1207,32 @@ function generateFormHtml(settingsData, set, overrideValue, overrideOptions, ori
         const checked = val === 'True' || val === 'true' ||  val === '1' ? 'checked' : '';
         const inputClass = inputType === 'checkbox' ? 'checkbox' : 'form-control';
 
-        inputHtml += `<input 
-                        class="${inputClass} ${cssClasses}" 
-                        onChange="settingsChanged();${onChange}" 
-                        my-data-type="${dataType}" 
-                        my-customparams="${customParams}" 
-                        my-customid="${customId}" 
+        inputHtml += `<input
+                        class="${inputClass} ${cssClasses}"
+                        onChange="settingsChanged();${onChange}"
+                        onfocusout="${focusout}"
+                        my-data-type="${dataType}"
+                        my-customparams="${customParams}"
+                        my-customid="${customId}"
                         my-originalSetKey="${originalSetKey}"
                         my-base64Regex="${base64Regex}"
-                        id="${setKey}${suffix}" 
-                        type="${inputType}" 
-                        value="${val}" 
+                        id="${setKey}${suffix}"
+                        type="${inputType}"
+                        value="${val}"
                         ${readOnly}
                         ${checked}
-                        placeholder="${placeholder}" 
+                        placeholder="${placeholder}"
                       />`;
         break;
 
       case 'button':
-        inputHtml += `<button 
-                        class="btn btn-primary ${cssClasses}" 
-                        my-customparams="${customParams}" 
-                        my-customid="${customId}" 
+        inputHtml += `<button
+                        class="btn btn-primary ${cssClasses}"
+                        my-customparams="${customParams}"
+                        my-customid="${customId}"
                         my-originalSetKey="${originalSetKey}"
-                        my-input-from="${sourceIds}" 
-                        my-input-to="${setKey}" 
+                        my-input-from="${sourceIds}"
+                        my-input-to="${setKey}"
                         data-elementoptionsbase64="${elementOptionsBase64}"
                         onclick="${onClick}">
                         ${getString(getStringKey)}
@@ -1214,21 +1240,23 @@ function generateFormHtml(settingsData, set, overrideValue, overrideOptions, ori
         break;
 
       case 'textarea':
-        inputHtml += `<textarea 
-                        class="form-control input" 
-                        my-customparams="${customParams}" 
-                        my-customid="${customId}" 
+        inputHtml += `<textarea
+                        class="form-control input"
+                        onChange="settingsChanged();${onChange}"
+                        onfocusout="${focusout}"
+                        my-customparams="${customParams}"
+                        my-customid="${customId}"
                         my-originalSetKey="${originalSetKey}"
-                        my-data-type="${dataType}" 
-                        id="${setKey}" 
+                        my-data-type="${dataType}"
+                        id="${setKey}"
                         ${readOnly}>${val}</textarea>`;
         break;
 
       case 'span':
-        inputHtml += `<span 
-                        class="${cssClasses}" 
-                        my-data-type="${dataType}" 
-                        my-customparams="${customParams}" 
+        inputHtml += `<span
+                        class="${cssClasses}"
+                        my-data-type="${dataType}"
+                        my-customparams="${customParams}"
                         my-customid="${customId}"
                         my-originalSetKey="${originalSetKey}"
                         onclick="${onClick}">
@@ -1264,13 +1292,13 @@ function generateFormHtml(settingsData, set, overrideValue, overrideOptions, ori
               columnSetting["setOptions"] = getSetting(column.optionsOverride.replace("setting.",""));
             } else {
               columnSetting["setOptions"] = column.optionsOverride;
-            }            
+            }
           }
 
           columnSettings.push(columnSetting)
-          
+
           // helper for if val is empty
-          emptyVal.push(''); 
+          emptyVal.push('');
         });
         datatableHtml += '</tr></thead>';
 
@@ -1290,7 +1318,7 @@ function generateFormHtml(settingsData, set, overrideValue, overrideOptions, ori
         let index = 0;
         val.forEach(rowData => {
             datatableHtml += `<tr my-index="${index}">`;
-            
+
             let j = 0;
             columnSettings.forEach(set => {
                 // Extract the value for the current column based on the new structure
@@ -1300,11 +1328,11 @@ function generateFormHtml(settingsData, set, overrideValue, overrideOptions, ori
                 {
                   columnOverrideValue = ""
                 }
-        
+
                 // Create unique key to prevent dropdown data duplication
                 const oldKey = set["setKey"];
                 set["setKey"] = oldKey + "_" + index;
-        
+
                 // Generate the cell HTML using the extracted value
                 const cellHtml = generateFormHtml(
                     settingsData,
@@ -1314,17 +1342,17 @@ function generateFormHtml(settingsData, set, overrideValue, overrideOptions, ori
                     oldKey
                 );
                 datatableHtml += `<td> <div class="input-group"> ${cellHtml} </div></td>`;
-        
+
                 // Restore the original key
                 set["setKey"] = oldKey;
-        
+
                 j++;
             });
             datatableHtml += '</tr>';
             index++;
         });
-        
-        
+
+
         datatableHtml += '</tbody></table>';
 
         inputHtml += datatableHtml;
@@ -1347,8 +1375,8 @@ function generateFormHtml(settingsData, set, overrideValue, overrideOptions, ori
 
   // Generate event HTML if applicable
   let eventsHtml = '';
- 
-  const eventsList = createArray(set['setEvents']); 
+
+  const eventsList = createArray(set['setEvents']);
   // inline buttons events
 if (eventsList.length > 0) {
   eventsList.forEach(event => {
@@ -1387,7 +1415,7 @@ if (eventsList.length > 0) {
                     data-myparam-setkey="${setKey}"
                     data-myparam="${setKey}"
                     data-myparam-plugin="${setKey.split('_')[0] || ''}"
-                    data-myevent="${event}"  
+                    data-myevent="${event}"
                     onclick="execute_settingEvent(this)">
                     <i title="${getString(event + "_event_tooltip")}" class="fa ${eventIcon}"></i>
                   </span>`;
@@ -1406,15 +1434,15 @@ function getSetObject(settingsData, setKey) {
   result = ""
 
   settingsData.forEach(function(set) {
-   
+
     if (set.setKey == setKey) {
-      // console.log(set);      
-      
+      // console.log(set);
+
       result = set;
       return;
-      
-    }   
-    
+
+    }
+
   });
 
   if(result == "")
@@ -1439,7 +1467,7 @@ function collectTableData(tableSelector) {
 
       cells.each((index, cell) => {
           const input = $(cell).find('input, select, textarea');
-          
+
           if (input.length) {
               if (input.attr('type') === 'checkbox') {
                   // For checkboxes, check if they are checked
@@ -1455,10 +1483,10 @@ function collectTableData(tableSelector) {
           }
       });
 
-      tableData.push(rowData); 
+      tableData.push(rowData);
   });
 
-  return tableData;  
+  return tableData;
 }
 
 

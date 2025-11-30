@@ -175,6 +175,8 @@ nginx -t || { echo "[INSTALL] nginx config test failed"; exit 1; }
 # sudo systemctl restart nginx
 
 #  Activate the virtual python environment
+# Shell check doesn't recognize source command because it's not in the repo, it is in the system at runtime
+# shellcheck disable=SC1091
 source /opt/venv/bin/activate
 
 echo "[INSTALL] 🚀 Starting app - navigate to your <server IP>:${PORT}"

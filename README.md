@@ -34,22 +34,23 @@ Get visibility of what's going on on your WIFI/LAN network and enable presence d
 ## 🚀 Quick Start
 
 > [!WARNING]
-> ⚠️ **Important:** The documentation has been recently updated and some instructions may have changed.  
-> If you are using the currently live production image, please follow the instructions on [Docker Hub](https://hub.docker.com/r/jokobsk/netalertx) for building and running the container.  
-> These docs reflect the latest development version and may differ from the production image.
+> ⚠️ **Important:** The docker-compose has recently changed. Carefully read the [Migration guide](https://jokob-sk.github.io/NetAlertX/MIGRATION/?h=migrat#12-migration-from-netalertx-v25524) for detailed instructions.
 
 Start NetAlertX in seconds with Docker:
 
 ```bash
-docker run -d --rm --network=host \
-  -v local_path/config:/data/config \
-  -v local_path/db:/data/db \
-  --mount type=tmpfs,target=/tmp/api \
-  -e PUID=200 -e PGID=300 \
-  -e TZ=Europe/Berlin \
+docker run -d \
+  --network=host \
+  --restart unless-stopped \
+  -v /local_data_dir:/data \
+  -v /etc/localtime:/etc/localtime:ro \
+  --tmpfs /tmp:uid=20211,gid=20211,mode=1700 \
   -e PORT=20211 \
+  -e APP_CONF_OVERRIDE='{"GRAPHQL_PORT":"20214"}' \
   ghcr.io/jokob-sk/netalertx:latest
 ```
+
+Note: Your `/local_data_dir` should contain a `config` and `db` folder.
 
 To deploy a containerized instance directly from the source repository, execute the following BASH sequence:
 ```bash
@@ -67,9 +68,9 @@ For other install methods, check the [installation docs](#-documentation)
 
 
 | [📑 Docker guide](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DOCKER_INSTALLATION.md) | [🚀 Releases](https://github.com/jokob-sk/NetAlertX/releases) | [📚 Docs](https://jokob-sk.github.io/NetAlertX/) | [🔌 Plugins](https://github.com/jokob-sk/NetAlertX/blob/main/docs/PLUGINS.md) | [🤖 Ask AI](https://gurubase.io/g/netalertx)
-|----------------------| ----------------------|  ----------------------| ----------------------| ----------------------| 
+|----------------------| ----------------------|  ----------------------| ----------------------| ----------------------|
 
-![showcase][showcase] 
+![showcase][showcase]
 
 <details>
   <summary>📷 Click for more screenshots</summary>
@@ -87,15 +88,15 @@ For other install methods, check the [installation docs](#-documentation)
 
 ### Scanners
 
-The app scans your network for **New devices**, **New connections** (re-connections), **Disconnections**, **"Always Connected" devices down**, Devices **IP changes** and **Internet IP address changes**. Discovery & scan methods include: **arp-scan**,  **Pi-hole - DB import**,  **Pi-hole - DHCP leases import**, **Generic DHCP leases import**, **UNIFI controller import**, **SNMP-enabled router import**. Check the [Plugins](https://github.com/jokob-sk/NetAlertX/tree/main/docs/PLUGINS.md#readme) docs for a full list of avaliable plugins. 
+The app scans your network for **New devices**, **New connections** (re-connections), **Disconnections**, **"Always Connected" devices down**, Devices **IP changes** and **Internet IP address changes**. Discovery & scan methods include: **arp-scan**,  **Pi-hole - DB import**,  **Pi-hole - DHCP leases import**, **Generic DHCP leases import**, **UNIFI controller import**, **SNMP-enabled router import**. Check the [Plugins](https://github.com/jokob-sk/NetAlertX/tree/main/docs/PLUGINS.md#readme) docs for a full list of avaliable plugins.
 
 ### Notification gateways
 
-Send notifications to more than 80+ services, including Telegram via [Apprise](https://hub.docker.com/r/caronc/apprise), or use native [Pushsafer](https://www.pushsafer.com/), [Pushover](https://www.pushover.net/), or [NTFY](https://ntfy.sh/) publishers. 
+Send notifications to more than 80+ services, including Telegram via [Apprise](https://hub.docker.com/r/caronc/apprise), or use native [Pushsafer](https://www.pushsafer.com/), [Pushover](https://www.pushover.net/), or [NTFY](https://ntfy.sh/) publishers.
 
 ### Integrations and Plugins
 
-Feed your data and device changes into [Home Assistant](https://github.com/jokob-sk/NetAlertX/blob/main/docs/HOME_ASSISTANT.md), read [API endpoints](https://github.com/jokob-sk/NetAlertX/blob/main/docs/API.md), or use [Webhooks](https://github.com/jokob-sk/NetAlertX/blob/main/docs/WEBHOOK_N8N.md) to setup custom automation flows. You can also 
+Feed your data and device changes into [Home Assistant](https://github.com/jokob-sk/NetAlertX/blob/main/docs/HOME_ASSISTANT.md), read [API endpoints](https://github.com/jokob-sk/NetAlertX/blob/main/docs/API.md), or use [Webhooks](https://github.com/jokob-sk/NetAlertX/blob/main/docs/WEBHOOK_N8N.md) to setup custom automation flows. You can also
 build your own scanners with the [Plugin system](https://github.com/jokob-sk/NetAlertX/tree/main/docs/PLUGINS.md#readme) in as little as [15 minutes](https://www.youtube.com/watch?v=cdbxlwiWhv8).
 
 ### Workflows
@@ -108,10 +109,10 @@ The [workflows module](https://github.com/jokob-sk/NetAlertX/blob/main/docs/WORK
 
 Supported browsers: Chrome, Firefox
 
-- [[Installation] Docker](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DOCKER_INSTALLATION.md) 
-- [[Installation] Home Assistant](https://github.com/alexbelgium/hassio-addons/tree/master/netalertx) 
-- [[Installation] Bare metal](https://github.com/jokob-sk/NetAlertX/blob/main/docs/HW_INSTALL.md) 
-- [[Installation] Unraid App](https://unraid.net/community/apps) 
+- [[Installation] Docker](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DOCKER_INSTALLATION.md)
+- [[Installation] Home Assistant](https://github.com/alexbelgium/hassio-addons/tree/master/netalertx)
+- [[Installation] Bare metal](https://github.com/jokob-sk/NetAlertX/blob/main/docs/HW_INSTALL.md)
+- [[Installation] Unraid App](https://unraid.net/community/apps)
 - [[Setup] Usage and Configuration](https://github.com/jokob-sk/NetAlertX/blob/main/docs/README.md)
 - [[Development] API docs](https://github.com/jokob-sk/NetAlertX/blob/main/docs/API.md)
 - [[Development] Custom Plugins](https://github.com/jokob-sk/NetAlertX/blob/main/docs/PLUGINS_DEV.md)
@@ -132,19 +133,19 @@ See [Security Best Practices](https://github.com/jokob-sk/NetAlertX/security) fo
 
 ## ❓ FAQ
 
-**Q: Why don’t I see any devices?**  
+**Q: Why don’t I see any devices?**
 A: Ensure the container has proper network access (e.g., use `--network host` on Linux). Also check that your scan method is properly configured in the UI.
 
-**Q: Does this work on Wi-Fi-only devices like Raspberry Pi?**  
+**Q: Does this work on Wi-Fi-only devices like Raspberry Pi?**
 A: Yes, but some scanners (e.g. ARP) work best on Ethernet. For Wi-Fi, try SNMP, DHCP, or Pi-hole import.
 
-**Q: Will this send any data to the internet?**  
+**Q: Will this send any data to the internet?**
 A: No. All scans and data remain local, unless you set up cloud-based notifications.
 
-**Q: Can I use this without Docker?**  
+**Q: Can I use this without Docker?**
 A: Yes! You can install it bare-metal. See the [bare metal installation guide](https://github.com/jokob-sk/NetAlertX/blob/main/docs/HW_INSTALL.md).
 
-**Q: Where is the data stored?**  
+**Q: Where is the data stored?**
 A: In the `/data/config` and `/data/db` folders. Back up these folders regularly.
 
 
@@ -162,9 +163,9 @@ Check the [GitHub Issues](https://github.com/jokob-sk/NetAlertX/issues) for the 
 
 ### 📧 Get notified what's new
 
-Get notified about a new release, what new functionality you can use and about breaking changes. 
+Get notified about a new release, what new functionality you can use and about breaking changes.
 
-![Follow and star][follow_star] 
+![Follow and star][follow_star]
 
 ### 🔀 Other Alternative Apps
 
@@ -175,15 +176,15 @@ Get notified about a new release, what new functionality you can use and about b
 
 ### 💙 Donations
 
-Thank you to everyone who appreciates this tool and donates. 
+Thank you to everyone who appreciates this tool and donates.
 
 <details>
   <summary>Click for more ways to donate</summary>
-  
+
   <hr>
 
-  | [![GitHub](https://i.imgur.com/emsRCPh.png)](https://github.com/sponsors/jokob-sk) | [![Buy Me A Coffee](https://i.imgur.com/pIM6YXL.png)](https://www.buymeacoffee.com/jokobsk) | [![Patreon](https://i.imgur.com/MuYsrq1.png)](https://www.patreon.com/user?u=84385063) | 
-| --- | --- | --- | 
+  | [![GitHub](https://i.imgur.com/emsRCPh.png)](https://github.com/sponsors/jokob-sk) | [![Buy Me A Coffee](https://i.imgur.com/pIM6YXL.png)](https://www.buymeacoffee.com/jokobsk) | [![Patreon](https://i.imgur.com/MuYsrq1.png)](https://www.patreon.com/user?u=84385063) |
+| --- | --- | --- |
 
   - Bitcoin: `1N8tupjeCK12qRVU2XrV17WvKK7LCawyZM`
   - Ethereum: `0x6e2749Cb42F4411bc98501406BdcD82244e3f9C7`
@@ -194,11 +195,11 @@ Thank you to everyone who appreciates this tool and donates.
 
 ### 🏗 Contributors
 
-This project would be nothing without the amazing work of the community, with special thanks to: 
+This project would be nothing without the amazing work of the community, with special thanks to:
 
-> [pucherot/Pi.Alert](https://github.com/pucherot/Pi.Alert) (the original creator of PiAlert), [leiweibau](https://github.com/leiweibau/Pi.Alert): Dark mode (and much more), [Macleykun](https://github.com/Macleykun) (Help with Dockerfile clean-up), [vladaurosh](https://github.com/vladaurosh) for Alpine re-base help, [Final-Hawk](https://github.com/Final-Hawk) (Help with NTFY, styling and other fixes), [TeroRERO](https://github.com/terorero) (Spanish translations), [Data-Monkey](https://github.com/Data-Monkey), (Split-up of the python.py file and more), [cvc90](https://github.com/cvc90) (Spanish translation and various UI work) to name a few. Check out all the [amazing contributors](https://github.com/jokob-sk/NetAlertX/graphs/contributors). 
+> [pucherot/Pi.Alert](https://github.com/pucherot/Pi.Alert) (the original creator of PiAlert), [leiweibau](https://github.com/leiweibau/Pi.Alert): Dark mode (and much more), [Macleykun](https://github.com/Macleykun) (Help with Dockerfile clean-up), [vladaurosh](https://github.com/vladaurosh) for Alpine re-base help, [Final-Hawk](https://github.com/Final-Hawk) (Help with NTFY, styling and other fixes), [TeroRERO](https://github.com/terorero) (Spanish translations), [Data-Monkey](https://github.com/Data-Monkey), (Split-up of the python.py file and more), [cvc90](https://github.com/cvc90) (Spanish translation and various UI work) to name a few. Check out all the [amazing contributors](https://github.com/jokob-sk/NetAlertX/graphs/contributors).
 
-### 🌍 Translations 
+### 🌍 Translations
 
 Proudly using [Weblate](https://hosted.weblate.org/projects/pialert/). Help out and suggest languages in the [online portal of Weblate](https://hosted.weblate.org/projects/pialert/core/).
 

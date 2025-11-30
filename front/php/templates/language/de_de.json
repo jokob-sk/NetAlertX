@@ -315,6 +315,7 @@
     "Gen_Filter": "Filter",
     "Gen_Generate": "Generieren",
     "Gen_InvalidMac": "Ungültige MAC-Adresse.",
+    "Gen_Invalid_Value": "",
     "Gen_LockedDB": "ERROR - DB eventuell gesperrt - Nutze die Konsole in den Entwickler Werkzeugen (F12) zur Überprüfung oder probiere es später erneut.",
     "Gen_NetworkMask": "",
     "Gen_Offline": "Offline",

@@ -1,14 +1,6 @@
-import sys
 import subprocess
 import os
 import re
-import datetime
-from dateutil import parser
-
-# Register NetAlertX directories
-INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
-sys.path.extend([f"{INSTALL_PATH}/server"])
-
 from helper import get_setting_value, check_IP_format
 from utils.datetime_utils import timeNowDB, normalizeTimeStamp
 from logger import mylog, Logger
@@ -44,7 +36,7 @@ def exclude_ignored_devices(db):
     # Join conditions and prepare the query
     conditions_str = " OR ".join(conditions)
     if conditions_str:
-        query = f"""DELETE FROM CurrentScan WHERE 
+        query = f"""DELETE FROM CurrentScan WHERE
                         1=1
                         AND (
                             {conditions_str}
@@ -57,22 +49,23 @@ def exclude_ignored_devices(db):
 
     sql.execute(query)
 
-#-------------------------------------------------------------------------------
-def update_devices_data_from_scan (db):
-    sql = db.sql #TO-DO    
+
+# -------------------------------------------------------------------------------
+def update_devices_data_from_scan(db):
+    sql = db.sql  # TO-DO
     startTime = timeNowDB()
 
     # Update Last Connection
     mylog("debug", "[Update Devices] 1 Last Connection")
     sql.execute(f"""UPDATE Devices SET devLastConnection = '{startTime}',
                         devPresentLastScan = 1
-                    WHERE EXISTS (SELECT 1 FROM CurrentScan 
+                    WHERE EXISTS (SELECT 1 FROM CurrentScan
                                   WHERE devMac = cur_MAC) """)
 
     # Clean no active devices
     mylog("debug", "[Update Devices] 2 Clean no active devices")
     sql.execute("""UPDATE Devices SET devPresentLastScan = 0
-                    WHERE NOT EXISTS (SELECT 1 FROM CurrentScan 
+                    WHERE NOT EXISTS (SELECT 1 FROM CurrentScan
                                       WHERE devMac = cur_MAC) """)
 
     # Update IP
@@ -103,7 +96,7 @@ def update_devices_data_from_scan (db):
                         FROM CurrentScan
                         WHERE Devices.devMac = CurrentScan.cur_MAC
                     )
-                    WHERE 
+                    WHERE
                         (devVendor IS NULL OR devVendor IN ("", "null", "(unknown)", "(Unknown)"))
                         AND EXISTS (
                             SELECT 1
@@ -116,12 +109,12 @@ def update_devices_data_from_scan (db):
     sql.execute("""UPDATE Devices
                     SET devParentPort = (
                     SELECT cur_Port
-                    FROM CurrentScan        
-                    WHERE Devices.devMac = CurrentScan.cur_MAC          
+                    FROM CurrentScan
+                    WHERE Devices.devMac = CurrentScan.cur_MAC
                 )
-                WHERE 
+                WHERE
                     (devParentPort IS NULL OR devParentPort IN ("", "null", "(unknown)", "(Unknown)"))
-                    AND    
+                    AND
                 EXISTS (
                     SELECT 1
                     FROM CurrentScan
@@ -130,18 +123,16 @@ def update_devices_data_from_scan (db):
                 )""")
 
     # Update only devices with empty or NULL devParentMAC
-    mylog(
-        "debug", "[Update Devices] - (if not empty) cur_NetworkNodeMAC -> devParentMAC"
-    )
+    mylog("debug", "[Update Devices] - (if not empty) cur_NetworkNodeMAC -> devParentMAC")
     sql.execute("""UPDATE Devices
                     SET devParentMAC = (
                         SELECT cur_NetworkNodeMAC
                         FROM CurrentScan
                         WHERE Devices.devMac = CurrentScan.cur_MAC
                     )
-                    WHERE 
+                    WHERE
                         (devParentMAC IS NULL OR devParentMAC IN ("", "null", "(unknown)", "(Unknown)"))
-                        AND                
+                        AND
                         EXISTS (
                             SELECT 1
                             FROM CurrentScan
@@ -151,17 +142,14 @@ def update_devices_data_from_scan (db):
                 """)
 
     # Update only devices with empty or NULL devSite
-    mylog(
-        "debug",
-        "[Update Devices] - (if not empty) cur_NetworkSite -> (if empty) devSite",
-    )
+    mylog("debug", "[Update Devices] - (if not empty) cur_NetworkSite -> (if empty) devSite",)
     sql.execute("""UPDATE Devices
                     SET devSite = (
                         SELECT cur_NetworkSite
                         FROM CurrentScan
                         WHERE Devices.devMac = CurrentScan.cur_MAC
                     )
-                    WHERE 
+                    WHERE
                         (devSite IS NULL OR devSite IN ("", "null"))
                         AND EXISTS (
                             SELECT 1
@@ -178,7 +166,7 @@ def update_devices_data_from_scan (db):
                         FROM CurrentScan
                         WHERE Devices.devMac = CurrentScan.cur_MAC
                     )
-                    WHERE 
+                    WHERE
                         (devSSID IS NULL OR devSSID IN ("", "null"))
                         AND EXISTS (
                             SELECT 1
@@ -195,7 +183,7 @@ def update_devices_data_from_scan (db):
                         FROM CurrentScan
                         WHERE Devices.devMac = CurrentScan.cur_MAC
                     )
-                    WHERE 
+                    WHERE
                         (devType IS NULL OR devType IN ("", "null"))
                         AND EXISTS (
                             SELECT 1
@@ -208,17 +196,17 @@ def update_devices_data_from_scan (db):
     mylog("debug", "[Update Devices] - (if not empty) cur_Name -> (if empty) devName")
     sql.execute("""    UPDATE Devices
                         SET devName = COALESCE((
-                            SELECT cur_Name 
+                            SELECT cur_Name
                             FROM CurrentScan
                             WHERE cur_MAC = devMac
                             AND cur_Name IS NOT NULL
                             AND cur_Name <> 'null'
                             AND cur_Name <> ''
                         ), devName)
-                        WHERE (devName IN ('(unknown)', '(name not found)', '') 
+                        WHERE (devName IN ('(unknown)', '(name not found)', '')
                             OR devName IS NULL)
                         AND EXISTS (
-                            SELECT 1 
+                            SELECT 1
                             FROM CurrentScan
                             WHERE cur_MAC = devMac
                             AND cur_Name IS NOT NULL
@@ -332,9 +320,7 @@ def save_scanned_devices(db):
         .strip()
     )
 
-    mylog(
-        "debug", ["[Save Devices] Saving this IP into the CurrentScan table:", local_ip]
-    )
+    mylog("debug", ["[Save Devices] Saving this IP into the CurrentScan table:", local_ip])
 
     if check_IP_format(local_ip) == "":
         local_ip = "0.0.0.0"
@@ -368,23 +354,12 @@ def print_scan_stats(db):
     sql.execute(query)
     stats = sql.fetchall()
 
-    mylog(
-        "verbose",
-        f"[Scan Stats] Devices Detected.......: {stats[0]['devices_detected']}",
-    )
+    mylog("verbose", f"[Scan Stats] Devices Detected.......: {stats[0]['devices_detected']}",)
     mylog("verbose", f"[Scan Stats] New Devices............: {stats[0]['new_devices']}")
     mylog("verbose", f"[Scan Stats] Down Alerts............: {stats[0]['down_alerts']}")
-    mylog(
-        "verbose",
-        f"[Scan Stats] New Down Alerts........: {stats[0]['new_down_alerts']}",
-    )
-    mylog(
-        "verbose",
-        f"[Scan Stats] New Connections........: {stats[0]['new_connections']}",
-    )
-    mylog(
-        "verbose", f"[Scan Stats] Disconnections.........: {stats[0]['disconnections']}"
-    )
+    mylog("verbose", f"[Scan Stats] New Down Alerts........: {stats[0]['new_down_alerts']}",)
+    mylog("verbose", f"[Scan Stats] New Connections........: {stats[0]['new_connections']}",)
+    mylog("verbose", f"[Scan Stats] Disconnections.........: {stats[0]['disconnections']}")
     mylog("verbose", f"[Scan Stats] IP Changes.............: {stats[0]['ip_changes']}")
 
     # if str(stats[0]["new_devices"]) != '0':
@@ -402,10 +377,7 @@ def print_scan_stats(db):
         row_dict = dict(row)
         mylog("trace", f"    {row_dict}")
 
-    mylog(
-        "trace",
-        "   ================ Events table content where eve_PendingAlertEmail = 1  ================",
-    )
+    mylog("trace", "   ================ Events table content where eve_PendingAlertEmail = 1  ================",)
     sql.execute("select * from Events where eve_PendingAlertEmail = 1")
     rows = sql.fetchall()
     for row in rows:
@@ -425,9 +397,9 @@ def print_scan_stats(db):
             mylog("verbose", f"    {row['cur_ScanMethod']}: {row['scan_method_count']}")
 
 
-#-------------------------------------------------------------------------------
-def create_new_devices (db):
-    sql = db.sql # TO-DO
+# -------------------------------------------------------------------------------
+def create_new_devices(db):
+    sql = db.sql  # TO-DO
     startTime = timeNowDB()
 
     # Insert events for new devices from CurrentScan (not yet in Devices)
@@ -474,36 +446,36 @@ def create_new_devices (db):
     mylog("debug", "[New Devices] 2 Create devices")
 
     # default New Device values preparation
-    newDevColumns = """devAlertEvents, 
-                        devAlertDown, 
-                        devPresentLastScan, 
-                        devIsArchived, 
-                        devIsNew, 
-                        devSkipRepeated, 
-                        devScan, 
-                        devOwner, 
-                        devFavorite, 
-                        devGroup, 
-                        devComments, 
-                        devLogEvents, 
+    newDevColumns = """devAlertEvents,
+                        devAlertDown,
+                        devPresentLastScan,
+                        devIsArchived,
+                        devIsNew,
+                        devSkipRepeated,
+                        devScan,
+                        devOwner,
+                        devFavorite,
+                        devGroup,
+                        devComments,
+                        devLogEvents,
                         devLocation,
                         devCustomProps,
                         devParentRelType,
                         devReqNicsOnline
                         """
 
-    newDevDefaults = f"""{get_setting_value("NEWDEV_devAlertEvents")}, 
-                        {get_setting_value("NEWDEV_devAlertDown")}, 
-                        {get_setting_value("NEWDEV_devPresentLastScan")}, 
-                        {get_setting_value("NEWDEV_devIsArchived")}, 
-                        {get_setting_value("NEWDEV_devIsNew")}, 
-                        {get_setting_value("NEWDEV_devSkipRepeated")}, 
-                        {get_setting_value("NEWDEV_devScan")}, 
-                        '{sanitize_SQL_input(get_setting_value("NEWDEV_devOwner"))}', 
-                        {get_setting_value("NEWDEV_devFavorite")}, 
-                        '{sanitize_SQL_input(get_setting_value("NEWDEV_devGroup"))}', 
-                        '{sanitize_SQL_input(get_setting_value("NEWDEV_devComments"))}', 
-                        {get_setting_value("NEWDEV_devLogEvents")}, 
+    newDevDefaults = f"""{get_setting_value("NEWDEV_devAlertEvents")},
+                        {get_setting_value("NEWDEV_devAlertDown")},
+                        {get_setting_value("NEWDEV_devPresentLastScan")},
+                        {get_setting_value("NEWDEV_devIsArchived")},
+                        {get_setting_value("NEWDEV_devIsNew")},
+                        {get_setting_value("NEWDEV_devSkipRepeated")},
+                        {get_setting_value("NEWDEV_devScan")},
+                        '{sanitize_SQL_input(get_setting_value("NEWDEV_devOwner"))}',
+                        {get_setting_value("NEWDEV_devFavorite")},
+                        '{sanitize_SQL_input(get_setting_value("NEWDEV_devGroup"))}',
+                        '{sanitize_SQL_input(get_setting_value("NEWDEV_devComments"))}',
+                        {get_setting_value("NEWDEV_devLogEvents")},
                         '{sanitize_SQL_input(get_setting_value("NEWDEV_devLocation"))}',
                         '{sanitize_SQL_input(get_setting_value("NEWDEV_devCustomProps"))}',
                         '{sanitize_SQL_input(get_setting_value("NEWDEV_devParentRelType"))}',
@@ -511,7 +483,7 @@ def create_new_devices (db):
                         """
 
     # Fetch data from CurrentScan skipping ignored devices by IP and MAC
-    query = """SELECT cur_MAC, cur_Name, cur_Vendor, cur_ScanMethod, cur_IP, cur_SyncHubNodeName, cur_NetworkNodeMAC, cur_PORT, cur_NetworkSite, cur_SSID, cur_Type 
+    query = """SELECT cur_MAC, cur_Name, cur_Vendor, cur_ScanMethod, cur_IP, cur_SyncHubNodeName, cur_NetworkNodeMAC, cur_PORT, cur_NetworkSite, cur_SSID, cur_Type
                 FROM CurrentScan """
 
     mylog("debug", f"[New Devices] Collecting New Devices Query: {query}")
@@ -554,40 +526,40 @@ def create_new_devices (db):
         )
 
         # Preparing the individual insert statement
-        sqlQuery = f"""INSERT OR IGNORE INTO Devices 
+        sqlQuery = f"""INSERT OR IGNORE INTO Devices
                         (
-                            devMac, 
-                            devName, 
+                            devMac,
+                            devName,
                             devVendor,
-                            devLastIP, 
-                            devFirstConnection, 
-                            devLastConnection, 
-                            devSyncHubNode, 
+                            devLastIP,
+                            devFirstConnection,
+                            devLastConnection,
+                            devSyncHubNode,
                             devGUID,
-                            devParentMAC, 
+                            devParentMAC,
                             devParentPort,
-                            devSite, 
+                            devSite,
                             devSSID,
-                            devType,                          
-                            devSourcePlugin,                          
+                            devType,
+                            devSourcePlugin,
                             {newDevColumns}
                         )
-                        VALUES 
+                        VALUES
                         (
-                            '{sanitize_SQL_input(cur_MAC)}', 
+                            '{sanitize_SQL_input(cur_MAC)}',
                             '{sanitize_SQL_input(cur_Name)}',
-                            '{sanitize_SQL_input(cur_Vendor)}', 
-                            '{sanitize_SQL_input(cur_IP)}', 
-                            ?, 
-                            ?, 
-                            '{sanitize_SQL_input(cur_SyncHubNodeName)}', 
+                            '{sanitize_SQL_input(cur_Vendor)}',
+                            '{sanitize_SQL_input(cur_IP)}',
+                            ?,
+                            ?,
+                            '{sanitize_SQL_input(cur_SyncHubNodeName)}',
                             {sql_generateGuid},
                             '{sanitize_SQL_input(cur_NetworkNodeMAC)}',
                             '{sanitize_SQL_input(cur_PORT)}',
-                            '{sanitize_SQL_input(cur_NetworkSite)}', 
+                            '{sanitize_SQL_input(cur_NetworkSite)}',
                             '{sanitize_SQL_input(cur_SSID)}',
-                            '{sanitize_SQL_input(cur_Type)}', 
-                            '{sanitize_SQL_input(cur_ScanMethod)}', 
+                            '{sanitize_SQL_input(cur_Type)}',
+                            '{sanitize_SQL_input(cur_ScanMethod)}',
                             {newDevDefaults}
                         )"""
 
@@ -598,7 +570,8 @@ def create_new_devices (db):
     mylog("debug", "[New Devices] New Devices end")
     db.commitDB()
 
-#-------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------
 # Check if plugins data changed
 def check_plugin_data_changed(pm, plugins_to_check):
     """
@@ -630,7 +603,7 @@ def check_plugin_data_changed(pm, plugins_to_check):
 
     for plugin_name in plugins_to_check:
 
-        last_data_change = pm.plugin_states.get(plugin_name, {}).get("lastDataChange")  
+        last_data_change = pm.plugin_states.get(plugin_name, {}).get("lastDataChange")
         last_data_check = pm.plugin_checks.get(plugin_name, "")
 
         if not last_data_change:
@@ -639,13 +612,13 @@ def check_plugin_data_changed(pm, plugins_to_check):
         # Normalize and validate last_changed timestamp
         last_changed_ts = normalizeTimeStamp(last_data_change)
 
-        if last_changed_ts == None:
+        if last_changed_ts is None:
             mylog('none', f'[check_plugin_data_changed] Unexpected last_data_change timestamp for {plugin_name} (input|output): ({last_data_change}|{last_changed_ts})')
 
         # Normalize and validate last_data_check timestamp
         last_data_check_ts = normalizeTimeStamp(last_data_check)
 
-        if last_data_check_ts == None:
+        if last_data_check_ts is None:
             mylog('none', f'[check_plugin_data_changed] Unexpected last_data_check timestamp for {plugin_name} (input|output): ({last_data_check}|{last_data_check_ts})')
 
         # Track which plugins have newer state than last_checked
@@ -660,15 +633,16 @@ def check_plugin_data_changed(pm, plugins_to_check):
 
     # Continue if changes detected
     for p in plugins_changed:
-        mylog('debug', f'[check_plugin_data_changed] {p} changed (last_data_change|last_data_check): ({pm.plugin_states.get(p, {}).get("lastDataChange")}|{pm.plugin_checks.get(p)})')
+        mylog('debug', f'[check_plugin_data_changed] {p} changed (last_change|last_check): ({pm.plugin_states.get(p, {}).get("lastDataChange")}|{pm.plugin_checks.get(p)})')
 
     return True
 
-#-------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------
 def update_devices_names(pm):
 
     # --- Short-circuit if no name-resolution plugin has changed ---
-    if check_plugin_data_changed(pm, ["DIGSCAN", "NSLOOKUP", "NBTSCAN", "AVAHISCAN"]) == False:
+    if check_plugin_data_changed(pm, ["DIGSCAN", "NSLOOKUP", "NBTSCAN", "AVAHISCAN"]) is False:
         mylog('debug', '[Update Device Name] No relevant plugin changes since last check.')
         return
 
@@ -676,8 +650,8 @@ def update_devices_names(pm):
 
     sql = pm.db.sql
     resolver = NameResolver(pm.db)
-    device_handler = DeviceInstance(pm.db)   
-    
+    device_handler = DeviceInstance(pm.db)
+
     nameNotFound = "(name not found)"
 
     # Define resolution strategies in priority order
@@ -722,8 +696,7 @@ def update_devices_names(pm):
 
                 # If a valid result is found, record it and stop further attempts
                 if (
-                    newFQDN not in [nameNotFound, "", "localhost."]
-                    and " communications error to " not in newFQDN
+                    newFQDN not in [nameNotFound, "", "localhost."] and " communications error to " not in newFQDN
                 ):
                     foundStats[label] += 1
 
@@ -744,21 +717,16 @@ def update_devices_names(pm):
     # --- Step 1: Update device names for unknown devices ---
     unknownDevices = device_handler.getUnknown()
     if unknownDevices:
-        mylog(
-            "verbose",
-            f"[Update Device Name] Trying to resolve devices without name. Unknown devices count: {len(unknownDevices)}",
-        )
+        mylog("verbose", f"[Update Device Name] Trying to resolve devices without name. Unknown devices count: {len(unknownDevices)}",)
 
         # Try resolving both name and FQDN
-        recordsToUpdate, recordsNotFound, foundStats, notFound = resolve_devices(
+        recordsToUpdate, recordsNotFound, fs, notFound = resolve_devices(
             unknownDevices
         )
 
         # Log summary
-        mylog(
-            "verbose",
-            f"[Update Device Name] Names Found (DIGSCAN/AVAHISCAN/NSLOOKUP/NBTSCAN): {len(recordsToUpdate)} ({foundStats['DIGSCAN']}/{foundStats['AVAHISCAN']}/{foundStats['NSLOOKUP']}/{foundStats['NBTSCAN']})",
-        )
+        res_string = f"{fs['DIGSCAN']}/{fs['AVAHISCAN']}/{fs['NSLOOKUP']}/{fs['NBTSCAN']}"
+        mylog("verbose", f"[Update Device Name] Names Found (DIGSCAN/AVAHISCAN/NSLOOKUP/NBTSCAN): {len(recordsToUpdate)} ({res_string})",)
         mylog("verbose", f"[Update Device Name] Names Not Found         : {notFound}")
 
         # Apply updates to database
@@ -774,23 +742,16 @@ def update_devices_names(pm):
     if get_setting_value("REFRESH_FQDN"):
         allDevices = device_handler.getAll()
         if allDevices:
-            mylog(
-                "verbose",
-                f"[Update FQDN] Trying to resolve FQDN. Devices count: {len(allDevices)}",
-            )
+            mylog("verbose", f"[Update FQDN] Trying to resolve FQDN. Devices count: {len(allDevices)}",)
 
             # Try resolving only FQDN
-            recordsToUpdate, _, foundStats, notFound = resolve_devices(
+            recordsToUpdate, _, fs, notFound = resolve_devices(
                 allDevices, resolve_both_name_and_fqdn=False
             )
 
             # Log summary
-            mylog(
-                "verbose",
-                f"[Update FQDN] Names Found (DIGSCAN/AVAHISCAN/NSLOOKUP/NBTSCAN): {len(recordsToUpdate)}"+ 
-                  f"({foundStats['DIGSCAN']}/{foundStats['AVAHISCAN']}/{foundStats['NSLOOKUP']}"+
-                  f"/{foundStats['NBTSCAN']})",
-            )
+            res_string = f"{fs['DIGSCAN']}/{fs['AVAHISCAN']}/{fs['NSLOOKUP']}/{fs['NBTSCAN']}"
+            mylog("verbose", f"[Update FQDN] Names Found (DIGSCAN/AVAHISCAN/NSLOOKUP/NBTSCAN): {len(recordsToUpdate)}({res_string})",)
             mylog("verbose", f"[Update FQDN] Names Not Found         : {notFound}")
 
             # Apply FQDN-only updates
@@ -803,7 +764,7 @@ def update_devices_names(pm):
 
     # --- Step 3: Log last checked time ---
     # After resolving names, update last checked
-    pm.plugin_checks = {"DIGSCAN": timeNowDB(), "AVAHISCAN": timeNowDB(), "NSLOOKUP": timeNowDB(), "NBTSCAN": timeNowDB() }
+    pm.plugin_checks = {"DIGSCAN": timeNowDB(), "AVAHISCAN": timeNowDB(), "NSLOOKUP": timeNowDB(), "NBTSCAN": timeNowDB()}
 
 
 # -------------------------------------------------------------------------------
@@ -901,7 +862,6 @@ def query_MAC_vendor(pMAC):
 
     # Search vendor in HW Vendors DB
     mac_start_string6 = mac[0:6]
-    mac_start_string9 = mac[0:9]
 
     try:
         with open(filePath, "r") as f:
@@ -913,25 +873,13 @@ def query_MAC_vendor(pMAC):
                     parts = line.split("\t", 1)
                     if len(parts) > 1:
                         vendor = parts[1].strip()
-                        mylog(
-                            "debug",
-                            [
-                                f"[Vendor Check] Found '{vendor}' for '{pMAC}' in {vendorsPath}"
-                            ],
-                        )
+                        mylog("debug", [f"[Vendor Check] Found '{vendor}' for '{pMAC}' in {vendorsPath}"], )
                         return vendor
                     else:
-                        mylog(
-                            "debug",
-                            [
-                                f'[Vendor Check] ⚠ ERROR: Match found, but line could not be processed: "{line_lower}"'
-                            ],
-                        )
+                        mylog("debug", [f'[Vendor Check] ⚠ ERROR: Match found, but line could not be processed: "{line_lower}"'],)
                         return -1
 
         return -1  # MAC address not found in the database
     except FileNotFoundError:
-        mylog(
-            "none", [f"[Vendor Check] ⚠ ERROR: Vendors file {vendorsPath} not found."]
-        )
+        mylog("none", [f"[Vendor Check] ⚠ ERROR: Vendors file {vendorsPath} not found."])
         return -1

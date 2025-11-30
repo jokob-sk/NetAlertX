@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 import os
 import sys
 import subprocess
@@ -8,14 +7,14 @@ import subprocess
 INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from plugin_helper import Plugin_Objects
-from logger import mylog, Logger
-from const import logPath
-from helper import get_setting_value 
-from database import DB
-from models.device_instance import DeviceInstance
-import conf
-from pytz import timezone
+from plugin_helper import Plugin_Objects  # noqa: E402 [flake8 lint suppression]
+from logger import mylog, Logger  # noqa: E402 [flake8 lint suppression]
+from const import logPath  # noqa: E402 [flake8 lint suppression]
+from helper import get_setting_value   # noqa: E402 [flake8 lint suppression]
+from database import DB  # noqa: E402 [flake8 lint suppression]
+from models.device_instance import DeviceInstance  # noqa: E402 [flake8 lint suppression]
+import conf  # noqa: E402 [flake8 lint suppression]
+from pytz import timezone  # noqa: E402 [flake8 lint suppression]
 
 # Make sure the TIMEZONE for logging is correct
 conf.tz = timezone(get_setting_value('TIMEZONE'))
@@ -35,7 +34,7 @@ plugin_objects = Plugin_Objects(RESULT_FILE)
 
 
 def main():
-    mylog('verbose', [f'[{pluginName}] In script']) 
+    mylog('verbose', [f'[{pluginName}] In script'])
 
     timeout = get_setting_value('DIGSCAN_RUN_TIMEOUT')
 
@@ -50,13 +49,13 @@ def main():
     device_handler = DeviceInstance(db)
 
     # Retrieve devices
-    if get_setting_value("REFRESH_FQDN"): 
+    if get_setting_value("REFRESH_FQDN"):
         devices = device_handler.getAll()
-    else:        
+    else:
         devices = device_handler.getUnknown()
 
-    mylog('verbose', [f'[{pluginName}] Devices count: {len(devices)}'])   
-    
+    mylog('verbose', [f'[{pluginName}] Devices count: {len(devices)}'])
+
     # TEST - below is a WINDOWS host IP
     # execute_name_lookup('192.168.1.121', timeout)
 
@@ -65,27 +64,27 @@ def main():
 
         if domain_name != '':
             plugin_objects.add_object(
-            # "MAC", "IP", "Server", "Name"
-            primaryId   = device['devMac'],
-            secondaryId = device['devLastIP'],
-            watched1    = dns_server,
-            watched2    = domain_name,
-            watched3    = '',
-            watched4    = '',
-            extra       = '',
-            foreignKey  = device['devMac'])
+                primaryId   = device['devMac'],
+                secondaryId = device['devLastIP'],
+                watched1    = dns_server,
+                watched2    = domain_name,
+                watched3    = '',
+                watched4    = '',
+                extra       = '',
+                foreignKey  = device['devMac']
+            )
 
     plugin_objects.write_result_file()
-    
-    
-    mylog('verbose', [f'[{pluginName}] Script finished'])   
-    
+
+    mylog('verbose', [f'[{pluginName}] Script finished'])
+
     return 0
 
-#===============================================================================
+
+# ===============================================================================
 # Execute scan
-#===============================================================================
-def execute_name_lookup (ip, timeout):
+# ===============================================================================
+def execute_name_lookup(ip, timeout):
     """
     Execute the DIG command on IP.
     """
@@ -97,32 +96,38 @@ def execute_name_lookup (ip, timeout):
 
     try:
         mylog('verbose', [f'[{pluginName}] DEBUG CMD :', args])
-        
+
         # try runnning a subprocess with a forced (timeout)  in case the subprocess hangs
-        output = subprocess.check_output (args, universal_newlines=True,  stderr=subprocess.STDOUT, timeout=(timeout), text=True).strip()
+        output = subprocess.check_output(
+            args,
+            universal_newlines=True,
+            stderr=subprocess.STDOUT,
+            timeout=(timeout),
+            text=True
+        ).strip()
 
         mylog('verbose', [f'[{pluginName}] DEBUG OUTPUT : {output}'])
 
         domain_name = output
-        dns_server = ''      
+        dns_server = ''
 
         mylog('verbose', [f'[{pluginName}] Domain Name: {domain_name}'])
 
         return domain_name, dns_server
 
     except subprocess.CalledProcessError as e:
-        mylog('verbose', [f'[{pluginName}] ⚠ ERROR - {e.output}'])                    
-        
-    except subprocess.TimeoutExpired:
-        mylog('verbose', [f'[{pluginName}] TIMEOUT - the process forcefully terminated as timeout reached']) 
+        mylog('verbose', [f'[{pluginName}] ⚠ ERROR - {e.output}'])
 
-    if output == "": # check if the subprocess failed                 
-        mylog('verbose', [f'[{pluginName}] Scan: FAIL - check logs']) 
-    else: 
+    except subprocess.TimeoutExpired:
+        mylog('verbose', [f'[{pluginName}] TIMEOUT - the process forcefully terminated as timeout reached'])
+
+    if output == "":  # check if the subprocess failed
+        mylog('verbose', [f'[{pluginName}] Scan: FAIL - check logs'])
+    else:
         mylog('verbose', [f'[{pluginName}] Scan: SUCCESS'])
 
-    return '', ''   
+    return '', ''
+
 
 if __name__ == '__main__':
     main()
-

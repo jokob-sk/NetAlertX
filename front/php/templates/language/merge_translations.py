@@ -1,6 +1,6 @@
 import json
 import os
-import sys
+
 
 def merge_translations(main_file, other_files):
     # Load main file
@@ -30,10 +30,14 @@ def merge_translations(main_file, other_files):
             json.dump(data, f, indent=4, ensure_ascii=False)
             f.truncate()
 
+
 if __name__ == "__main__":
     current_path = os.path.dirname(os.path.abspath(__file__))
     # language codes can be found here: http://www.lingoes.net/en/translator/langcode.htm
-    #  "en_us.json" has to be first!
-    json_files = [ "en_us.json", "ar_ar.json", "ca_ca.json", "cs_cz.json", "de_de.json", "es_es.json", "fa_fa.json", "fr_fr.json", "it_it.json", "nb_no.json", "pl_pl.json", "pt_br.json", "pt_pt.json", "ru_ru.json", "sv_sv.json", "tr_tr.json", "uk_ua.json", "zh_cn.json"]
+    # ⚠ "en_us.json" has to be first!
+    json_files =    ["en_us.json", "ar_ar.json", "ca_ca.json", "cs_cz.json", "de_de.json",
+                     "es_es.json", "fa_fa.json", "fr_fr.json", "it_it.json", "ja_jp.json",
+                     "nb_no.json", "pl_pl.json", "pt_br.json", "pt_pt.json", "ru_ru.json",
+                     "sv_sv.json", "tr_tr.json", "uk_ua.json", "zh_cn.json"]
     file_paths = [os.path.join(current_path, file) for file in json_files]
     merge_translations(file_paths[0], file_paths[1:])

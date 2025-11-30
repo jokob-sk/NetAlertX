@@ -1,6 +1,6 @@
 import os
 import json
-
+from collections import namedtuple
 import conf
 from logger import mylog
 from utils.crypto_utils import decrypt_data
@@ -26,12 +26,7 @@ def logEventStatusCounts(objName, pluginEvents):
             status_counts[status] = 1
 
     for status, count in status_counts.items():
-        mylog(
-            "debug",
-            [
-                f'[{module_name}] In {objName} there are {count} events with the status "{status}" '
-            ],
-        )
+        mylog("debug", [f'[{module_name}] In {objName} there are {count} events with the status "{status}" '],)
 
 
 # -------------------------------------------------------------------------------
@@ -100,10 +95,7 @@ def list_to_csv(arr):
 
     mylog("debug", f"[{module_name}] Flattening the below array")
     mylog("debug", arr)
-    mylog(
-        "debug",
-        f"[{module_name}] isinstance(arr, list) : {isinstance(arr, list)} | isinstance(arr, str) : {isinstance(arr, str)}",
-    )
+    mylog("debug", f"[{module_name}] isinstance(arr, list) : {isinstance(arr, list)} | isinstance(arr, str) : {isinstance(arr, str)}",)
 
     if isinstance(arr, str):
         tmpStr = (
@@ -220,28 +212,16 @@ def get_plugins_configs(loadAll):
                     # Load all plugins if `loadAll` is True, the plugin is in the enabled list,
                     # or no specific plugins are enabled (enabledPlugins is empty)
                     if (
-                        loadAll
-                        or plugJson["unique_prefix"] in enabledPlugins
-                        or enabledPlugins == []
+                        loadAll or plugJson["unique_prefix"] in enabledPlugins or enabledPlugins == []
                     ):
                         # Load the contents of the config.json file as a JSON object and append it to pluginsList
                         pluginsList.append(plugJson)
 
                 except (FileNotFoundError, json.JSONDecodeError):
                     # Handle the case when the file is not found or JSON decoding fails
-                    mylog(
-                        "none",
-                        [
-                            f"[{module_name}] ⚠ ERROR - JSONDecodeError or FileNotFoundError for file {config_path}"
-                        ],
-                    )
+                    mylog("none", f"[{module_name}] ⚠ ERROR - JSONDecodeError or FileNotFoundError for file {config_path}")
                 except Exception as e:
-                    mylog(
-                        "none",
-                        [
-                            f"[{module_name}] ⚠ ERROR - Exception for file {config_path}: {str(e)}"
-                        ],
-                    )
+                    mylog("none", f"[{module_name}] ⚠ ERROR - Exception for file {config_path}: {str(e)}")
 
     # Sort pluginsList based on "execution_order"
     pluginsListSorted = sorted(pluginsList, key=get_layer)
@@ -287,23 +267,13 @@ def getPluginObject(keyValues):
                 if all_match:
                     return item
 
-            mylog(
-                "verbose",
-                [
-                    f"[{module_name}] 💬 INFO - Object not found {json.dumps(keyValues)} "
-                ],
-            )
+            mylog("verbose", f"[{module_name}] 💬 INFO - Object not found {json.dumps(keyValues)} ")
 
             return {}
 
     except (FileNotFoundError, json.JSONDecodeError, ValueError):
         # Handle the case when the file is not found, JSON decoding fails, or data is not in the expected format
-        mylog(
-            "verbose",
-            [
-                f"[{module_name}] ⚠ ERROR - JSONDecodeError or FileNotFoundError for file {plugins_objects}"
-            ],
-        )
+        mylog("verbose", f"[{module_name}] ⚠ ERROR - JSONDecodeError or FileNotFoundError for file {plugins_objects}")
 
         return {}
 

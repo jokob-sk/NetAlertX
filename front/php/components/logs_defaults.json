@@ -107,11 +107,11 @@
         "buttons": [
             {
                 "labelStringCode": "Maint_PurgeLog",
-                "event": "logManage('crond.log', 'cleanLog')"
+                "event": "logManage('cron.log', 'cleanLog')"
             }
         ],
-    "fileName": "crond.log",
-    "filePath": "__NETALERTX_LOG__/crond.log",
+    "fileName": "cron.log",
+    "filePath": "__NETALERTX_LOG__/cron.log",
         "textAreaCssClass": "logs logs-small"
     }
 ]
