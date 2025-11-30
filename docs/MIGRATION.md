@@ -239,29 +239,7 @@ services:
 
 4. Start the container and verify everything works as expected.
 5. Stop the container.
-6. Perform a one-off migration to the latest `netalertx` image and `20211` user:
-
-> [!NOTE]
-> The example below assumes your `/config` and `/db` folders are stored in `local_data_dir`.
-> Replace this path with your actual configuration directory. `netalertx` is the container name, which might differ from your setup.
-
-```sh
-docker run -it --rm --name netalertx --user "0" \
-  -v /local_data_dir/config:/data/config \
-  -v /local_data_dir/db:/data/db \
-  --tmpfs /tmp:uid=20211,gid=20211,mode=1700 \
-  ghcr.io/jokob-sk/netalertx:latest
-```
-
-...or alternatively execute:
-
-```bash
-sudo chown -R 20211:20211 /local_data_dir
-sudo chmod -R a+rwx /local_data_dir
-```
-
-7. Stop the container
-8. Update the `docker-compose.yml` as per example below.
+6. Update the `docker-compose.yml` as per example below.
 
 ```yaml
 services:
@@ -288,5 +266,33 @@ services:
       - "/tmp:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
     # 🆕 New "tmpfs" section END  🔼
 ```
+7. Perform a one-off migration to the latest `netalertx` image and `20211` user.
 
-9. Start the container and verify everything works as expected.
+> [!NOTE]
+> The examples below assumes your `/config` and `/db` folders are stored in `local_data_dir`.
+> Replace this path with your actual configuration directory. `netalertx` is the container name, which might differ from your setup.
+
+**Automated approach**:
+
+Run the container with the `--user "0"` parameter. Please note, some systems will require the manual approach below.
+
+```sh
+docker run -it --rm --name netalertx --user "0" \
+  -v /local_data_dir/config:/data/config \
+  -v /local_data_dir/db:/data/db \
+  --tmpfs /tmp:uid=20211,gid=20211,mode=1700 \
+  ghcr.io/jokob-sk/netalertx:latest
+```
+
+Stop the container and run it as you would normally.
+
+**Manual approach**:
+
+Use the manual approach if the Automated approach fails. Execute the below commands:
+
+```bash
+sudo chown -R 20211:20211 /local_data_dir
+sudo chmod -R a+rwx /local_data_dir
+```
+
+8. Start the container and verify everything works as expected.
