@@ -87,7 +87,8 @@ CORS(
         r"/dbquery/*": {"origins": "*"},
         r"/messaging/*": {"origins": "*"},
         r"/events/*": {"origins": "*"},
-        r"/logs/*": {"origins": "*"}
+        r"/logs/*": {"origins": "*"},
+        r"/auth/*": {"origins": "*"}
     },
     supports_credentials=True,
     allow_headers=["Authorization", "Content-Type"],
@@ -737,6 +738,23 @@ def sync_endpoint():
         return handle_sync_get()
     elif request.method == "POST":
         return handle_sync_post()
+    else:
+        msg = "[sync endpoint] Method Not Allowed"
+        write_notification(msg, "alert")
+        mylog("verbose", [msg])
+        return jsonify({"success": False, "message": "ERROR: No allowed", "error": "Method Not Allowed"}), 405
+
+
+# --------------------------
+# Auth endpoint
+# --------------------------
+@app.route("/auth", methods=["GET"])
+def check_auth():
+    if not is_authorized():
+        return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
+
+    elif request.method == "GET":
+        return jsonify({"success": True, "message": "Authentication check successful"}), 200
     else:
         msg = "[sync endpoint] Method Not Allowed"
         write_notification(msg, "alert")
