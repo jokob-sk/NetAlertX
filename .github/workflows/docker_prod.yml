@@ -49,9 +49,17 @@ jobs:
         id: get_version
         run: echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
 
+
+      # --- debug output
+      - name: Debug version
+        run: |
+          echo "GITHUB_REF: $GITHUB_REF"
+          echo "Version: '${{ steps.get_version.outputs.version }}'"
+          echo "Version prev: '${{ steps.get_version_prev.outputs.version }}'"
+
       # --- Write version to .VERSION file
       - name: Create .VERSION file
-        run: echo "${{ steps.get_version.outputs.version }}" > .VERSION
+        run: echo -n "${{ steps.get_version.outputs.version }}" > .VERSION
 
       # --- Generate Docker metadata and tags
       - name: Docker meta
