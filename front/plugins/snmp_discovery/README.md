@@ -6,13 +6,21 @@ A plugin for importing devices from an SNMP-enabled router or switch. Using SNMP
 
 Specify the following settings in the Settings section of NetAlertX:
 
-- `SNMPDSC_routers` - A list of `snmpwalk` commands to execute against IP addresses of routers/switches with SNMP turned on. For example: 
+- `SNMPDSC_routers` - A list of `snmpwalk` commands to execute against IP addresses of routers/switches with SNMP turned on. For example:
 
   - `snmpwalk -v 2c -c public -OXsq 192.168.1.1 .1.3.6.1.2.1.3.1.1.2`
   - `snmpwalk -v 2c -c public -Oxsq 192.168.1.1 .1.3.6.1.2.1.3.1.1.2` (note: lower case `x`)
 
 
 If unsure, please check [snmpwalk examples](https://www.comparitech.com/net-admin/snmpwalk-examples-windows-linux/).
+
+Supported output formats:
+
+```
+ipNetToMediaPhysAddress[3][192.168.1.9] 6C:6C:6C:6C:6C:b6C1
+IP-MIB::ipNetToMediaPhysAddress.17.10.10.3.202 = STRING: f8:81:1a:ef:ef:ef
+mib-2.3.1.1.2.15.1.192.168.1.14 "2C F4 32 18 61 43 "
+```
 
 ### Setup Cisco IOS
 
