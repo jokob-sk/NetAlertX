@@ -47,6 +47,12 @@ jobs:
         id: get_version
         run: echo "version=Dev" >> $GITHUB_OUTPUT
 
+      # --- debug output
+      - name: Debug version
+        run: |
+          echo "GITHUB_REF: $GITHUB_REF"
+          echo "Version: '${{ steps.get_version.outputs.version }}'"
+
       # --- Write the timestamped version to .VERSION file
       - name: Create .VERSION file
         run: echo "${{ steps.timestamp.outputs.version }}" > .VERSION
