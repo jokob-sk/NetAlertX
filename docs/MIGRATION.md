@@ -278,8 +278,9 @@ Run the container with the `--user "0"` parameter. Please note, some systems wil
 
 ```sh
 docker run -it --rm --name netalertx --user "0" \
-  -v /local_data_dir/config:/data/config \
-  -v /local_data_dir/db:/data/db \
+  -v /local_data_dir/config:/app/config \
+  -v /local_data_dir/db:/app/db \
+  -v /local_data_dir:/data \
   --tmpfs /tmp:uid=20211,gid=20211,mode=1700 \
   ghcr.io/jokob-sk/netalertx:latest
 ```
