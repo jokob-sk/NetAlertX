@@ -2,12 +2,19 @@ import threading
 import sys
 import os
 
-from flask import Flask, request, jsonify, Response
+from flask import Flask, request, jsonify, Response, stream_with_context
+import json
+import uuid
+import queue
+import requests
+import logging
+from datetime import datetime, timedelta
+from models.device_instance import DeviceInstance  # noqa: E402
 from flask_cors import CORS
 
 # Register NetAlertX directories
 INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
-sys.path.extend([f"{INSTALL_PATH}/server"])
+sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from logger import mylog  # noqa: E402 [flake8 lint suppression]
 from helper import get_setting_value  # noqa: E402 [flake8 lint suppression]
@@ -63,6 +70,9 @@ from .dbquery_endpoint import read_query, write_query, update_query, delete_quer
 from .sync_endpoint import handle_sync_post, handle_sync_get  # noqa: E402 [flake8 lint suppression]
 from .logs_endpoint import clean_log  # noqa: E402 [flake8 lint suppression]
 from models.user_events_queue_instance import UserEventsQueueInstance  # noqa: E402 [flake8 lint suppression]
+from database import DB  # noqa: E402 [flake8 lint suppression]
+from models.plugin_object_instance import PluginObjectInstance  # noqa: E402 [flake8 lint suppression]
+from plugin_helper import is_mac  # noqa: E402 [flake8 lint suppression]
 from messaging.in_app import (  # noqa: E402 [flake8 lint suppression]
     write_notification,
     mark_all_notifications_read,
@@ -71,15 +81,14 @@ from messaging.in_app import (  # noqa: E402 [flake8 lint suppression]
     delete_notification,
     mark_notification_as_read
 )
-from .tools_routes import tools_bp  # noqa: E402 [flake8 lint suppression]
-from .mcp_routes import mcp_bp  # noqa: E402 [flake8 lint suppression]
+from .tools_routes import openapi_spec as tools_openapi_spec  # noqa: E402 [flake8 lint suppression]
+# tools and mcp routes have been moved into this module (api_server_start)
 
 # Flask application
 app = Flask(__name__)
 
 # Register Blueprints
-app.register_blueprint(tools_bp, url_prefix='/api/tools')
-app.register_blueprint(mcp_bp, url_prefix='/api/mcp')
+# No separate blueprints for tools or mcp - routes are registered below
 CORS(
     app,
     resources={
@@ -100,6 +109,195 @@ CORS(
     allow_headers=["Authorization", "Content-Type"],
 )
 
+# -----------------------------------------------
+# DB model instances for helper usage
+# -----------------------------------------------
+db_helper = DB()
+db_helper.open()
+device_handler = DeviceInstance(db_helper)
+plugin_object_handler = PluginObjectInstance(db_helper)
+
+# -------------------------------------------------------------------------------
+# MCP bridge variables + helpers (moved from mcp_routes)
+# -------------------------------------------------------------------------------
+mcp_sessions = {}
+mcp_sessions_lock = threading.Lock()
+mcp_openapi_spec_cache = None
+
+BACKEND_PORT = get_setting_value("GRAPHQL_PORT")
+API_BASE_URL = f"http://localhost:{BACKEND_PORT}/api/tools"
+
+
+def get_openapi_spec_local():
+    global mcp_openapi_spec_cache
+    if mcp_openapi_spec_cache:
+        return mcp_openapi_spec_cache
+    try:
+        resp = requests.get(f"{API_BASE_URL}/openapi.json", timeout=10)
+        resp.raise_for_status()
+        mcp_openapi_spec_cache = resp.json()
+        return mcp_openapi_spec_cache
+    except Exception as e:
+        mylog('minimal', [f"Error fetching OpenAPI spec: {e}"])
+        return None
+
+
+def map_openapi_to_mcp_tools(spec):
+    tools = []
+    if not spec or 'paths' not in spec:
+        return tools
+    for path, methods in spec['paths'].items():
+        for method, details in methods.items():
+            if 'operationId' in details:
+                tool = {
+                    'name': details['operationId'],
+                    'description': details.get('description', details.get('summary', '')),
+                    'inputSchema': {'type': 'object', 'properties': {}, 'required': []},
+                }
+                if 'requestBody' in details:
+                    content = details['requestBody'].get('content', {})
+                    if 'application/json' in content:
+                        schema = content['application/json'].get('schema', {})
+                        tool['inputSchema'] = schema.copy()
+                        if 'properties' not in tool['inputSchema']:
+                            tool['inputSchema']['properties'] = {}
+                if 'parameters' in details:
+                    for param in details['parameters']:
+                        if param.get('in') == 'query':
+                            tool['inputSchema']['properties'][param['name']] = {
+                                'type': param.get('schema', {}).get('type', 'string'),
+                                'description': param.get('description', ''),
+                            }
+                            if param.get('required'):
+                                tool['inputSchema'].setdefault('required', []).append(param['name'])
+                tools.append(tool)
+    return tools
+
+
+def process_mcp_request(data):
+    method = data.get('method')
+    msg_id = data.get('id')
+    response = None
+    if method == 'initialize':
+        response = {
+            'jsonrpc': '2.0',
+            'id': msg_id,
+            'result': {
+                'protocolVersion': '2024-11-05',
+                'capabilities': {'tools': {}},
+                'serverInfo': {'name': 'NetAlertX', 'version': '1.0.0'},
+            },
+        }
+    elif method == 'notifications/initialized':
+        pass
+    elif method == 'tools/list':
+        spec = get_openapi_spec_local()
+        tools = map_openapi_to_mcp_tools(spec)
+        response = {'jsonrpc': '2.0', 'id': msg_id, 'result': {'tools': tools}}
+    elif method == 'tools/call':
+        params = data.get('params', {})
+        tool_name = params.get('name')
+        tool_args = params.get('arguments', {})
+        spec = get_openapi_spec_local()
+        target_path = None
+        target_method = None
+        if spec and 'paths' in spec:
+            for path, methods in spec['paths'].items():
+                for m, details in methods.items():
+                    if details.get('operationId') == tool_name:
+                        target_path = path
+                        target_method = m.upper()
+                        break
+                if target_path:
+                    break
+        if target_path:
+            try:
+                headers = {'Content-Type': 'application/json'}
+                if 'Authorization' in request.headers:
+                    headers['Authorization'] = request.headers['Authorization']
+                url = f"{API_BASE_URL}{target_path}"
+                if target_method == 'POST':
+                    api_res = requests.post(url, json=tool_args, headers=headers, timeout=30)
+                elif target_method == 'GET':
+                    api_res = requests.get(url, params=tool_args, headers=headers, timeout=30)
+                else:
+                    api_res = None
+                if api_res:
+                    content = []
+                    try:
+                        json_content = api_res.json()
+                        content.append({'type': 'text', 'text': json.dumps(json_content, indent=2)})
+                    except Exception:
+                        content.append({'type': 'text', 'text': api_res.text})
+                    is_error = api_res.status_code >= 400
+                    response = {'jsonrpc': '2.0', 'id': msg_id, 'result': {'content': content, 'isError': is_error}}
+                else:
+                    response = {'jsonrpc': '2.0', 'id': msg_id, 'error': {'code': -32601, 'message': f"Method {target_method} not supported"}}
+            except Exception as e:
+                response = {'jsonrpc': '2.0', 'id': msg_id, 'result': {'content': [{'type': 'text', 'text': f"Error calling tool: {str(e)}"}], 'isError': True}}
+        else:
+            response = {'jsonrpc': '2.0', 'id': msg_id, 'error': {'code': -32601, 'message': f"Tool {tool_name} not found"}}
+    elif method == 'ping':
+        response = {'jsonrpc': '2.0', 'id': msg_id, 'result': {}}
+    else:
+        if msg_id:
+            response = {'jsonrpc': '2.0', 'id': msg_id, 'error': {'code': -32601, 'message': 'Method not found'}}
+    return response
+
+
+@app.route('/api/mcp/sse', methods=['GET', 'POST'])
+def api_mcp_sse():
+    if request.method == 'POST':
+        try:
+            data = request.get_json(silent=True)
+            if data and 'method' in data and 'jsonrpc' in data:
+                response = process_mcp_request(data)
+                if response:
+                    return jsonify(response)
+                else:
+                    return '', 202
+        except Exception as e:
+            logging.getLogger(__name__).debug(f'SSE POST processing error: {e}')
+        return jsonify({'status': 'ok', 'message': 'MCP SSE endpoint active'}), 200
+
+    session_id = uuid.uuid4().hex
+    q = queue.Queue()
+    with mcp_sessions_lock:
+        mcp_sessions[session_id] = q
+
+    def stream():
+        yield f"event: endpoint\ndata: /api/mcp/messages?session_id={session_id}\n\n"
+        try:
+            while True:
+                try:
+                    message = q.get(timeout=20)
+                    yield f"event: message\ndata: {json.dumps(message)}\n\n"
+                except queue.Empty:
+                    yield ": keep-alive\n\n"
+        except GeneratorExit:
+            with mcp_sessions_lock:
+                if session_id in mcp_sessions:
+                    del mcp_sessions[session_id]
+    return Response(stream_with_context(stream()), mimetype='text/event-stream')
+
+
+@app.route('/api/mcp/messages', methods=['POST'])
+def api_mcp_messages():
+    session_id = request.args.get('session_id')
+    if not session_id:
+        return jsonify({"error": "Missing session_id"}), 400
+    with mcp_sessions_lock:
+        if session_id not in mcp_sessions:
+            return jsonify({"error": "Session not found"}), 404
+        q = mcp_sessions[session_id]
+    data = request.json
+    if not data:
+        return jsonify({"error": "Invalid JSON"}), 400
+    response = process_mcp_request(data)
+    if response:
+        q.put(response)
+    return jsonify({"status": "accepted"}), 202
+
 
 # -------------------------------------------------------------------
 # Custom handler for 404 - Route not found
@@ -109,13 +307,13 @@ def log_request_info():
     """Log details of every incoming request."""
     # Filter out noisy requests if needed, but user asked for drastic logging
     mylog("verbose", [f"[HTTP] {request.method} {request.path} from {request.remote_addr}"])
-    # Filter sensitive headers before logging  
-    safe_headers = {k: v for k, v in request.headers if k.lower() not in ('authorization', 'cookie', 'x-api-key')}  
-    mylog("debug", [f"[HTTP] Headers: {safe_headers}"]) 
+    # Filter sensitive headers before logging
+    safe_headers = {k: v for k, v in request.headers if k.lower() not in ('authorization', 'cookie', 'x-api-key')}
+    mylog("debug", [f"[HTTP] Headers: {safe_headers}"])
     if request.method == "POST":
         # Be careful with large bodies, but log first 1000 chars
         data = request.get_data(as_text=True)
-        mylog("debug", [f"[HTTP] Body length: {len(data)} chars"])  
+        mylog("debug", [f"[HTTP] Body length: {len(data)} chars"])
 
 
 @app.errorhandler(404)
@@ -164,6 +362,183 @@ def graphql_endpoint():
         response["data"] = result.data
 
     return jsonify(response)
+
+
+# --------------------------
+# Tools endpoints (moved from tools_routes)
+# --------------------------
+
+
+@app.route('/api/tools/trigger_scan', methods=['POST'])
+def api_trigger_scan():
+    if not is_authorized():
+        return jsonify({"error": "Unauthorized"}), 401
+
+    data = request.get_json() or {}
+    scan_type = data.get('scan_type', 'nmap_fast')
+    # Map requested scan type to plugin prefix
+    plugin_prefix = None
+    if scan_type in ['nmap_fast', 'nmap_deep']:
+        plugin_prefix = 'NMAPDEV'
+    elif scan_type == 'arp':
+        plugin_prefix = 'ARPSCAN'
+    else:
+        return jsonify({"error": "Invalid scan_type. Must be 'arp', 'nmap_fast', or 'nmap_deep'"}), 400
+
+    queue_instance = UserEventsQueueInstance()
+    action = f"run|{plugin_prefix}"
+    success, message = queue_instance.add_event(action)
+    if success:
+        return jsonify({"success": True, "message": f"Triggered plugin {plugin_prefix} via ad-hoc queue."})
+    else:
+        return jsonify({"success": False, "error": message}), 500
+
+
+@app.route('/api/tools/list_devices', methods=['POST'])
+def api_tools_list_devices():
+    if not is_authorized():
+        return jsonify({"error": "Unauthorized"}), 401
+    return get_all_devices()
+
+
+@app.route('/api/tools/get_device_info', methods=['POST'])
+def api_tools_get_device_info():
+    if not is_authorized():
+        return jsonify({"error": "Unauthorized"}), 401
+    data = request.get_json(silent=True) or {}
+    query = data.get('query')
+    if not query:
+        return jsonify({"error": "Missing 'query' parameter"}), 400
+    # if MAC -> device endpoint
+    if is_mac(query):
+        return get_device_data(query)
+    # search by name or IP
+    matches = device_handler.search(query)
+    if not matches:
+        return jsonify({"message": "No devices found"}), 404
+    return jsonify(matches)
+
+
+@app.route('/api/tools/get_latest_device', methods=['POST'])
+def api_tools_get_latest_device():
+    if not is_authorized():
+        return jsonify({"error": "Unauthorized"}), 401
+    latest = device_handler.getLatest()
+    if not latest:
+        return jsonify({"message": "No devices found"}), 404
+    return jsonify([latest])
+
+
+@app.route('/api/tools/get_open_ports', methods=['POST'])
+def api_tools_get_open_ports():
+    if not is_authorized():
+        return jsonify({"error": "Unauthorized"}), 401
+    data = request.get_json(silent=True) or {}
+    target = data.get('target')
+    if not target:
+        return jsonify({"error": "Target is required"}), 400
+
+    # If MAC is provided, use plugin objects to get port entries
+    if is_mac(target):
+        entries = plugin_object_handler.getByPrimary('NMAP', target.lower())
+        open_ports = []
+        for e in entries:
+            try:
+                port = int(e.get('Object_SecondaryID', 0))
+            except (ValueError, TypeError):
+                continue
+            service = e.get('Watched_Value2', 'unknown')
+            open_ports.append({"port": port, "service": service})
+        return jsonify({"success": True, "target": target, "open_ports": open_ports, "raw": entries})
+
+    # If IP provided, try to resolve to MAC and proceed
+    # Use device handler to resolve IP
+    device = device_handler.getByIP(target)
+    if device and device.get('devMac'):
+        mac = device.get('devMac')
+        entries = plugin_object_handler.getByPrimary('NMAP', mac.lower())
+        open_ports = []
+        for e in entries:
+            try:
+                port = int(e.get('Object_SecondaryID', 0))
+            except (ValueError, TypeError):
+                continue
+            service = e.get('Watched_Value2', 'unknown')
+            open_ports.append({"port": port, "service": service})
+        return jsonify({"success": True, "target": target, "open_ports": open_ports, "raw": entries})
+
+    # No plugin data found; as fallback use nettools nmap_scan (may run subprocess)
+    # Note: Prefer plugin data (NMAP) when available
+    res = nmap_scan(target, 'fast')
+    return res
+
+
+@app.route('/api/tools/get_network_topology', methods=['GET'])
+def api_tools_get_network_topology():
+    if not is_authorized():
+        return jsonify({"error": "Unauthorized"}), 401
+    topo = device_handler.getNetworkTopology()
+    return jsonify(topo)
+
+
+@app.route('/api/tools/get_recent_alerts', methods=['POST'])
+def api_tools_get_recent_alerts():
+    if not is_authorized():
+        return jsonify({"error": "Unauthorized"}), 401
+    data = request.get_json(silent=True) or {}
+    hours = int(data.get('hours', 24))
+    # Reuse get_events() - which returns a Flask response with JSON containing 'events'
+    res = get_events()
+    events_json = res.get_json() if hasattr(res, 'get_json') else None
+    events = events_json.get('events', []) if events_json else []
+    cutoff = datetime.now() - timedelta(hours=hours)
+    filtered = [e for e in events if 'eve_DateTime' in e and datetime.strptime(e['eve_DateTime'], '%Y-%m-%d %H:%M:%S') > cutoff]
+    return jsonify(filtered)
+
+
+@app.route('/api/tools/set_device_alias', methods=['POST'])
+def api_tools_set_device_alias():
+    if not is_authorized():
+        return jsonify({"error": "Unauthorized"}), 401
+    data = request.get_json(silent=True) or {}
+    mac = data.get('mac')
+    alias = data.get('alias')
+    if not mac or not alias:
+        return jsonify({"error": "MAC and Alias are required"}), 400
+    return update_device_column(mac, 'devName', alias)
+
+
+@app.route('/api/tools/wol_wake_device', methods=['POST'])
+def api_tools_wol_wake_device():
+    if not is_authorized():
+        return jsonify({"error": "Unauthorized"}), 401
+    data = request.get_json(silent=True) or {}
+    mac = data.get('mac')
+    ip = data.get('ip')
+    if not mac and not ip:
+        return jsonify({"error": "MAC or IP is required"}), 400
+    # Resolve IP to MAC if needed
+    if not mac and ip:
+        device = device_handler.getByIP(ip)
+        if not device or not device.get('devMac'):
+            return jsonify({"error": f"Could not resolve MAC for IP {ip}"}), 404
+        mac = device.get('devMac')
+    # Validate mac using is_mac helper
+    if not is_mac(mac):
+        return jsonify({"success": False, "error": f"Invalid MAC: {mac}"}), 400
+    return wakeonlan(mac)
+
+
+@app.route('/api/tools/openapi.json', methods=['GET'])
+def api_tools_openapi_spec():
+    # Minimal OpenAPI spec for tools
+    spec = {
+        "openapi": "3.0.0",
+        "info": {"title": "NetAlertX Tools", "version": "1.1.0"},
+        "servers": [{"url": "/api/tools"}],
+        "paths": {}
+    }
+    return jsonify(spec)
 
 
 # --------------------------
