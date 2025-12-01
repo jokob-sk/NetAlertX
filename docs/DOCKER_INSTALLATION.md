@@ -7,7 +7,7 @@
 # NetAlertX - Network scanner & notification framework
 
 | [📑 Docker guide](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DOCKER_INSTALLATION.md) | [🚀 Releases](https://github.com/jokob-sk/NetAlertX/releases) | [📚 Docs](https://jokob-sk.github.io/NetAlertX/) | [🔌 Plugins](https://github.com/jokob-sk/NetAlertX/blob/main/docs/PLUGINS.md) | [🤖 Ask AI](https://gurubase.io/g/netalertx)
-|----------------------| ----------------------|  ----------------------| ----------------------| ----------------------| 
+|----------------------| ----------------------|  ----------------------| ----------------------| ----------------------|
 
 <a href="https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/GENERAL/github_social_image.jpg" target="_blank">
   <img src="https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/GENERAL/github_social_image.jpg" width="1000px" />
@@ -16,19 +16,18 @@
 Head to [https://netalertx.com/](https://netalertx.com/) for more gifs and screenshots 📷.
 
 > [!NOTE]
-> There is also an experimental 🧪 [bare-metal install](https://github.com/jokob-sk/NetAlertX/blob/main/docs/HW_INSTALL.md) method available. 
+> There is also an experimental 🧪 [bare-metal install](https://github.com/jokob-sk/NetAlertX/blob/main/docs/HW_INSTALL.md) method available.
 
-## 📕 Basic Usage 
+## 📕 Basic Usage
 
 > [!WARNING]
 > You will have to run the container on the `host` network and specify `SCAN_SUBNETS` unless you use other [plugin scanners](https://github.com/jokob-sk/NetAlertX/blob/main/docs/PLUGINS.md). The initial scan can take a few minutes, so please wait 5-10 minutes for the initial discovery to finish.
 
 ```bash
 docker run -d --rm --network=host \
-  -v /local_data_dir/config:/data/config \
-  -v /local_data_dir/db:/data/db \
+  -v /local_data_dir:/data \
   -v /etc/localtime:/etc/localtime \
-  --mount type=tmpfs,target=/tmp/api \
+  --tmpfs /tmp:uid=20211,gid=20211,mode=1700 \
   -e PORT=20211 \
   -e APP_CONF_OVERRIDE={"GRAPHQL_PORT":"20214"} \
   ghcr.io/jokob-sk/netalertx:latest
@@ -58,49 +57,48 @@ See alternative [docked-compose examples](https://github.com/jokob-sk/NetAlertX/
 ### Docker paths
 
 > [!NOTE]
-> See also [Backup strategies](https://github.com/jokob-sk/NetAlertX/blob/main/docs/BACKUPS.md).   
+> See also [Backup strategies](https://github.com/jokob-sk/NetAlertX/blob/main/docs/BACKUPS.md).
 
 | Required | Path | Description |
-| :------------- | :------------- | :-------------| 
-| ✅ | `:/data/config` | Folder which will contain the `app.conf` & `devices.csv` ([read about devices.csv](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEVICES_BULK_EDITING.md)) files  | 
-| ✅ | `:/data/db` | Folder which will contain the `app.db` database file  | 
-| ✅ | `/etc/localtime:/etc/localtime:ro` | Ensuring the timezone is teh same as on teh server.  | 
-| | `:/tmp/log` |  Logs folder useful for debugging if you have issues setting up the container  | 
-| | `:/tmp/api` |  The [API endpoint](https://github.com/jokob-sk/NetAlertX/blob/main/docs/API.md) containing static (but regularly updated) json and other files. Path configurable via `NETALERTX_API` environment variable.   | 
-| | `:/app/front/plugins/<plugin>/ignore_plugin` | Map a file `ignore_plugin` to ignore a plugin. Plugins can be soft-disabled via settings. More in the [Plugin docs](https://github.com/jokob-sk/NetAlertX/blob/main/docs/PLUGINS.md).  | 
-| | `:/etc/resolv.conf` | Use a custom `resolv.conf` file for [better name resolution](https://github.com/jokob-sk/NetAlertX/blob/main/docs/REVERSE_DNS.md).  | 
+| :------------- | :------------- | :-------------|
+| ✅ | `:/data` | Folder which will contain the `/db/app.db`, `/config/app.conf` & `/config/devices.csv` ([read about devices.csv](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEVICES_BULK_EDITING.md)) files  |
+| ✅ | `/etc/localtime:/etc/localtime:ro` | Ensuring the timezone is teh same as on teh server.  |
+| | `:/tmp/log` |  Logs folder useful for debugging if you have issues setting up the container  |
+| | `:/tmp/api` |  The [API endpoint](https://github.com/jokob-sk/NetAlertX/blob/main/docs/API.md) containing static (but regularly updated) json and other files. Path configurable via `NETALERTX_API` environment variable.   |
+| | `:/app/front/plugins/<plugin>/ignore_plugin` | Map a file `ignore_plugin` to ignore a plugin. Plugins can be soft-disabled via settings. More in the [Plugin docs](https://github.com/jokob-sk/NetAlertX/blob/main/docs/PLUGINS.md).  |
+| | `:/etc/resolv.conf` | Use a custom `resolv.conf` file for [better name resolution](https://github.com/jokob-sk/NetAlertX/blob/main/docs/REVERSE_DNS.md).  |
 
 > Use separate `db` and `config` directories, do not nest them.
 
 ### Initial setup
 
 - If unavailable, the app generates a default `app.conf` and `app.db` file on the first run.
-- The preferred way is to manage the configuration via the Settings section in the UI, if UI is inaccessible you can modify [app.conf](https://github.com/jokob-sk/NetAlertX/tree/main/back) in the `/data/config/` folder directly 
+- The preferred way is to manage the configuration via the Settings section in the UI, if UI is inaccessible you can modify [app.conf](https://github.com/jokob-sk/NetAlertX/tree/main/back) in the `/data/config/` folder directly
 
 #### Setting up scanners
 
-You have to specify which network(s) should be scanned. This is done by entering subnets that are accessible from the host. If you use the default `ARPSCAN` plugin, you have to specify at least one valid subnet and interface in the `SCAN_SUBNETS` setting. See the documentation on [How to set up multiple SUBNETS, VLANs and what are limitations](https://github.com/jokob-sk/NetAlertX/blob/main/docs/SUBNETS.md) for troubleshooting and more advanced scenarios. 
+You have to specify which network(s) should be scanned. This is done by entering subnets that are accessible from the host. If you use the default `ARPSCAN` plugin, you have to specify at least one valid subnet and interface in the `SCAN_SUBNETS` setting. See the documentation on [How to set up multiple SUBNETS, VLANs and what are limitations](https://github.com/jokob-sk/NetAlertX/blob/main/docs/SUBNETS.md) for troubleshooting and more advanced scenarios.
 
-If you are running PiHole you can synchronize devices directly. Check the [PiHole configuration guide](https://github.com/jokob-sk/NetAlertX/blob/main/docs/PIHOLE_GUIDE.md) for details. 
+If you are running PiHole you can synchronize devices directly. Check the [PiHole configuration guide](https://github.com/jokob-sk/NetAlertX/blob/main/docs/PIHOLE_GUIDE.md) for details.
 
 > [!NOTE]
 > You can bulk-import devices via the [CSV import method](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEVICES_BULK_EDITING.md).
 
 #### Community guides
 
-You can read or watch several [community configuration guides](https://github.com/jokob-sk/NetAlertX/blob/main/docs/COMMUNITY_GUIDES.md) in Chinese, Korean, German, or French. 
+You can read or watch several [community configuration guides](https://github.com/jokob-sk/NetAlertX/blob/main/docs/COMMUNITY_GUIDES.md) in Chinese, Korean, German, or French.
 
-> Please note these might be outdated. Rely on official documentation first. 
- 
+> Please note these might be outdated. Rely on official documentation first.
+
 #### Common issues
 
-- Before creating a new issue, please check if a similar issue was [already resolved](https://github.com/jokob-sk/NetAlertX/issues?q=is%3Aissue+is%3Aclosed). 
-- Check also common issues and [debugging tips](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEBUG_TIPS.md). 
+- Before creating a new issue, please check if a similar issue was [already resolved](https://github.com/jokob-sk/NetAlertX/issues?q=is%3Aissue+is%3Aclosed).
+- Check also common issues and [debugging tips](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEBUG_TIPS.md).
 
-## 💙 Support me 
+## 💙 Support me
 
-| [![GitHub](https://i.imgur.com/emsRCPh.png)](https://github.com/sponsors/jokob-sk) | [![Buy Me A Coffee](https://i.imgur.com/pIM6YXL.png)](https://www.buymeacoffee.com/jokobsk) | [![Patreon](https://i.imgur.com/MuYsrq1.png)](https://www.patreon.com/user?u=84385063) | 
-| --- | --- | --- | 
+| [![GitHub](https://i.imgur.com/emsRCPh.png)](https://github.com/sponsors/jokob-sk) | [![Buy Me A Coffee](https://i.imgur.com/pIM6YXL.png)](https://www.buymeacoffee.com/jokobsk) | [![Patreon](https://i.imgur.com/MuYsrq1.png)](https://www.patreon.com/user?u=84385063) |
+| --- | --- | --- |
 
 - Bitcoin: `1N8tupjeCK12qRVU2XrV17WvKK7LCawyZM`
 - Ethereum: `0x6e2749Cb42F4411bc98501406BdcD82244e3f9C7`

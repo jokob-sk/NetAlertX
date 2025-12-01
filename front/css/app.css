@@ -1,6 +1,6 @@
 /* -----------------------------------------------------------------------------
 #  NetAlertX
-#  Open Source Network Guard / WIFI & LAN intrusion detector 
+#  Open Source Network Guard / WIFI & LAN intrusion detector
 #
 #  app.css - Front module. CSS styles
 #-------------------------------------------------------------------------------
@@ -36,7 +36,7 @@ a[target="_blank"] {
     display: inline-block; /* Needed for positioning */
     padding-right: 0.6em;    /* Space for the icon */
   }
-  
+
   a[target="_blank"]::after {
     content: '↗';
     position: absolute;
@@ -55,7 +55,7 @@ a[target="_blank"] {
     right: -7px;
     top: 1px;
   } */
-  
+
 /* .select2-container--default .select2-selection--multiple .select2-selection__choice
 {
     padding-right: 15px !important;
@@ -68,6 +68,11 @@ a[target="_blank"] {
 .hoverHighlight:hover
 {
     opacity: 1;
+}
+
+[data-is-valid="0"] {
+    /* border: 1px solid red;  */
+    background-color: #ff4b4b !important;
 }
 
 /* -----------------------------------------------------------------------------
@@ -100,7 +105,7 @@ a[target="_blank"] {
   background-color: black;
   font-family: 'Courier New', monospace;
   font-size: .85em;
-  
+
 }
 .logs-row textarea
 {
@@ -110,12 +115,12 @@ a[target="_blank"] {
     display:contents;
     position: relative;
     padding: 0.4em
-    
+
 }
 
 #tab_Logging .actions .toggle{
 
-    margin: 0.5em;    
+    margin: 0.5em;
     height: 3em;
 }
 
@@ -134,8 +139,8 @@ a[target="_blank"] {
 }
 .log-area
 {
-    padding: 3px;    
-    width:100%;    
+    padding: 3px;
+    width:100%;
     border-bottom-width: 1px;
     border-bottom-style: solid;
     border-color: #606060;
@@ -246,7 +251,7 @@ a[target="_blank"] {
 {
     padding:8px;
     color: white;
-} 
+}
 
 .header-status
 {
@@ -262,7 +267,7 @@ a[target="_blank"] {
     position: absolute;
     top: 3px;
     margin-left: 15px;
-    display: none; 
+    display: none;
 
 }
 
@@ -298,9 +303,9 @@ body
 
 .NetAlertX-logo
 {
-    border-color:transparent !important;  
-    height: 50px !important; 
-    width: 50px !important; 
+    border-color:transparent !important;
+    height: 50px !important;
+    width: 50px !important;
     margin-top:15px !important;
     border-radius: 1px !important;
 }
@@ -327,7 +332,7 @@ body
 .content-wrapper,
 .right-side,
 .main-footer {
-    margin-left: 150px;    
+    margin-left: 150px;
 }
 
 
@@ -740,7 +745,7 @@ body
     text-decoration: underline;
 }
 
-#ticker-message 
+#ticker-message
 {
     color:#FFFFFF;
 }
@@ -774,7 +779,7 @@ body
 .file-checking .icon-wrap{
     width: 200px;
     overflow: hidden;
-    text-overflow: ellipsis; 
+    text-overflow: ellipsis;
     display: block;
 }
 
@@ -788,7 +793,7 @@ body
 
 .file-checking .file-name-wrap{
     overflow: hidden;
-    text-overflow: ellipsis; 
+    text-overflow: ellipsis;
     display: flex;
     padding: 5px;
 }
@@ -796,7 +801,7 @@ body
 .file-checking{
     display: block;
     overflow: hidden;
-    text-overflow: ellipsis; 
+    text-overflow: ellipsis;
 }
 
 
@@ -854,16 +859,16 @@ body
 
 .db_tools_table_cell_a {
     display: table-cell;
-    text-align: center; 
-    padding: 10px; 
-    min-width: 180px; 
-    width: 20%; 
+    text-align: center;
+    padding: 10px;
+    min-width: 180px;
+    width: 20%;
     vertical-align: middle;
 }
 .db_tools_table_cell_b {
     display: table-cell;
-    text-align: justify; 
-    font-size: 16px; 
+    text-align: justify;
+    font-size: 16px;
     vertical-align: middle;
     padding: 10px;
 }
@@ -876,12 +881,12 @@ height: 50px;
 }
 
 .nav-tabs-custom .tab-content {
-  background-color: white;  
-  
+  background-color: white;
+
 }
 
 @media (max-width: 767px) {
-    .nav-tabs-custom .tab-content {          
+    .nav-tabs-custom .tab-content {
         overflow: scroll;
       }
 }
@@ -898,7 +903,7 @@ height: 50px;
     font-size: 16px !important;
 }
 
-.deviceSelector 
+.deviceSelector
 {
     display: block;
 }
@@ -935,7 +940,7 @@ height: 50px;
     height: 10px;
     display: inline-block;
     /* background: #fff; */
-    opacity: .75; 
+    opacity: .75;
 }
 
 /* --------------------------------------------------------- */
@@ -979,32 +984,32 @@ height: 50px;
     }
     /* .setting_input{
         width:70%;
-        
+
     }
     .setting_name
     {
-        width:30%;         
+        width:30%;
     } */
   }
 
 @media (min-width: 768px) {
-.setting_description {        
+.setting_description {
     /* color: green; */
     display: block;
 }
 /* .setting_input{
-    width:40%;        
+    width:40%;
 
 }
 .setting_name
 {
-    width:19%;         
+    width:19%;
 } */
 }
 
 /* Hide unusable buttons on the settings page for the NEWDEV plugin*/
-#settingsPage #add_option_NEWDEV_devGroup, 
-#settingsPage #add_option_NEWDEV_devLocation, 
+#settingsPage #add_option_NEWDEV_devGroup,
+#settingsPage #add_option_NEWDEV_devLocation,
 #settingsPage #add_option_NEWDEV_devOwner,
 #settingsPage #copy_icons_NEWDEV_devIcon,
 #settingsPage #add_icon_NEWDEV_devIcon,
@@ -1024,11 +1029,11 @@ height: 50px;
 
 #settingsPage .small-box .inner .card-title {
     overflow: hidden;
-    text-overflow: ellipsis;        
+    text-overflow: ellipsis;
     white-space: nowrap;
     color: white;
 }
-  
+
 
 .settingswrap
 {
@@ -1048,13 +1053,13 @@ height: 50px;
 .padding-bottom
 {
     padding-bottom: 100px;
-} 
+}
 
 .settings-group
-{   
+{
     font-size: 20px;
     padding-top: 7px;
-    padding-bottom: 9px;    
+    padding-bottom: 9px;
 }
 
 .overview-section .small-box  .icon
@@ -1069,7 +1074,7 @@ height: 50px;
 }
 
 .overview-group
-{   
+{
     font-size: 20px;
     padding-top: 7px;
     padding-bottom: 9px;
@@ -1082,8 +1087,8 @@ height: 50px;
 }
 
 
-#settingsPage .table_row {    
-    padding: 3px;    
+#settingsPage .table_row {
+    padding: 3px;
     /* width:100%; */
     /* display: flex; */
     border-bottom-width: 1px;
@@ -1102,7 +1107,7 @@ height: 50px;
 .setting_name
 {
    /* width:19%; */
-    font-weight: 300;    
+    font-weight: 300;
 }
 
 
@@ -1111,24 +1116,24 @@ height: 50px;
     display:none !important;
 }
 
-.center 
+.center
 {
     margin: 0;
-    position: relative;    
+    position: relative;
     left: 50%;
     -ms-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
 }
 
-.top-margin 
+.top-margin
 {
     margin-top: 50px;
 }
 
 /* Settings */
 
-#settingsPage .overview-setting-value{    
-    display:unset;    
+#settingsPage .overview-setting-value{
+    display:unset;
 
 }
 
@@ -1165,7 +1170,7 @@ height: 50px;
 }
 
 .text-overflow-hidden
-{    
+{
     overflow: hidden;
     text-overflow: clip;
 }
@@ -1175,9 +1180,9 @@ height: 50px;
     padding: 10px;
     /* background-color: #272c30; */
     margin: 10px;
-    
+
 }
-#settingsPage .panel-heading:hover{    
+#settingsPage .panel-heading:hover{
     background-color: #272c30;
 }
 
@@ -1185,12 +1190,12 @@ height: 50px;
     font-size: medium;
     /* background-color: #272c30; */
     margin: 10px;
-    
+
 }
 
-.settings_content input[type=checkbox] 
-{ 
-    width: auto 
+.settings_content input[type=checkbox]
+{
+    width: auto
 }
 
 .override{
@@ -1212,7 +1217,7 @@ height: 50px;
 input[readonly] {
     /* Apply styles to the readonly input */
     background-color: #646566 !important;
-    color: #e6e6e6;    
+    color: #e6e6e6;
     cursor: not-allowed;
   }
 
@@ -1300,7 +1305,7 @@ input[readonly] {
     /* margin-bottom:20px; */
 }
 
-#settingsPage .select2-selection 
+#settingsPage .select2-selection
 {
     width: initial;
     display: inline-block;
@@ -1314,8 +1319,8 @@ input[readonly] {
 #settingsPage  .select2-selection
 {
     background-color: rgb(96, 96, 96);
-} 
-#settingsPage  .select2-container 
+}
+#settingsPage  .select2-container
 {
     width: 100% !important;
 }
@@ -1398,7 +1403,7 @@ input[readonly] {
     backdrop-filter: brightness(50%);
 }
 
-.iconPreviewSelector 
+.iconPreviewSelector
 {
     text-align: center;
     padding: 15px;
@@ -1440,7 +1445,7 @@ input[readonly] {
 }
 
 
-.dummyDevice 
+.dummyDevice
 {
     text-align: end;
 }
@@ -1461,7 +1466,7 @@ input[readonly] {
 }
 
 .info-icon-nav
-{   
+{
     top: -6px;
     position: absolute;
     z-index: 1;
@@ -1538,7 +1543,7 @@ input[readonly] {
 }
 
 #panDetails .input-group {
-        
+
     min-height: 40px;
 }
 
@@ -1583,7 +1588,7 @@ input[readonly] {
 }
 
 .devicePropAction
-{    
+{
     width: 1.2em;
     height: 1.2em;
     display: inline-block;
@@ -1593,11 +1598,11 @@ input[readonly] {
 }
 
 .devicePropAction:hover
-{    
+{
     font-size: larger;
     padding: 0em;
     margin: 0em;
-    
+
 }
 
 
@@ -1607,7 +1612,7 @@ input[readonly] {
     display: block;
     float:inline-end;
     height: 2em;
-} 
+}
 
 #panDetails .dataTables_wrapper .bottom .dataTables_info
 {
@@ -1636,22 +1641,22 @@ input[readonly] {
     height: 14px;
 }
 
-#deviceDetailsEdit .select2-container--default .select2-selection--multiple .select2-selection__choice 
+#deviceDetailsEdit .select2-container--default .select2-selection--multiple .select2-selection__choice
 {
     height: 20px;
 }
 
-#deviceDetailsEdit .select2-container--disabled 
+#deviceDetailsEdit .select2-container--disabled
 {
-    background-color: #606060;    
+    background-color: #606060;
 }
 
-#deviceDetailsEdit .select2-container--default .select2-selection--multiple .select2-selection__choice span 
+#deviceDetailsEdit .select2-container--default .select2-selection--multiple .select2-selection__choice span
 {
     font-size: 14px;
 }
 
-#deviceDetailsEdit .select2-selection 
+#deviceDetailsEdit .select2-selection
 {
     width: initial;
     display: inline-block;
@@ -1681,7 +1686,7 @@ input[readonly] {
     font-size: 14px;
 }
 .custom-badge
-{    
+{
     border: 1px solid #aaa;
     border-radius: 4px;
     border-style: solid;
@@ -1716,7 +1721,7 @@ input[readonly] {
 }
 
 
-#deviceDetailsEdit .select2-container 
+#deviceDetailsEdit .select2-container
 {
     width: 100% !important;
 }
@@ -1799,7 +1804,7 @@ input[readonly] {
     z-index: 5;
 }
 #networkTree .netNodeText
-{ 
+{
     position: absolute;
 }
 #networkTree .netPort
@@ -1812,7 +1817,7 @@ input[readonly] {
 #networkTree .portBckgIcon
 {
     opacity: 0.3;
-    display: initial;    
+    display: initial;
     float: left;
     width: 1em;
 }
@@ -1822,7 +1827,7 @@ input[readonly] {
     margin-left: 16px;
     /* border: solid;
     border-color:#606060;     */
-    position: relative;    
+    position: relative;
 }
 #networkTree .netIcon
 {
@@ -1850,8 +1855,8 @@ input[readonly] {
 }
 
 #hover-box .devName
-{    
-    font-size: larger;    
+{
+    font-size: larger;
     display: contents;
 }
 
@@ -1910,7 +1915,7 @@ input[readonly] {
 #networkTree .highlightedNode
 {
     /* border: solid; */
-    border-color:var(--color-lightblue); 
+    border-color:var(--color-lightblue);
     box-shadow: var(--color-lightblue) 0px 0px 20px;
 }
 
@@ -1968,7 +1973,7 @@ input[readonly] {
 }
 
 .sort-btn {
-    
+
     right: 5px;
     top: 50%;
     transform: translateY(-50%);
@@ -2020,7 +2025,7 @@ input[readonly] {
 }
 
 .plugin-filters
-{    
+{
     margin: 7px;
     margin-right: 7px;
     margin-bottom: 9px;
@@ -2054,7 +2059,7 @@ input[readonly] {
 }
 
 .plugin-content #tabs-content-location
-{    
+{
     margin: 0px;
     padding-top: 0;
 }
@@ -2066,7 +2071,7 @@ input[readonly] {
 }
 
 .plugin-content .tab-content
-{    
+{
     padding-top: 10px;
 }
 
@@ -2103,7 +2108,7 @@ input[readonly] {
 
 @media (max-width: 500px) {
     .header-server-time {
-      display: none;      
+      display: none;
     }
   }
 
@@ -2234,12 +2239,12 @@ input[readonly] {
     display: grid;
 }
 
-#workflowContainerWrap .panel-collapse 
+#workflowContainerWrap .panel-collapse
 {
     padding: 5px;
 }
 
-.workflows 
+.workflows
 {
     max-width: 800px;
 }
@@ -2285,7 +2290,7 @@ input[readonly] {
     color: #000;
 }
 
-.workflows .button-container 
+.workflows .button-container
 {
     /* display: contents; */
     text-align: center;
@@ -2305,7 +2310,7 @@ input[readonly] {
     margin: 5px;
 }
 
-.workflows .button-container 
+.workflows .button-container
 {
     padding-right: 0px !important;
     padding-left: 0px !important;
@@ -2318,19 +2323,19 @@ input[readonly] {
 
 /* .button-container button
 {
-    width:100%; 
+    width:100%;
 } */
 
 .red-hover-text:hover
 {
-    color: var(--color-red) !important;    
+    color: var(--color-red) !important;
 }
 
 .green-hover-text:hover
 {
     color: var(--color-green) !important;
 }
- 
+
 .workflows .bckg-icon-1-line
 {
     font-size: 3em;
@@ -2362,7 +2367,7 @@ input[readonly] {
     z-index: 1;
 }
 
-.workflows .workflow-card 
+.workflows .workflow-card
 {
     display: block;
 }
@@ -2372,7 +2377,7 @@ input[readonly] {
     padding: 10px;
 }
 
-.workflow-card, .actions-list 
+.workflow-card, .actions-list
 {
     display: contents;
     padding: 5px;
@@ -2384,7 +2389,7 @@ input[readonly] {
     z-index:1;
 }
 
-.condition 
+.condition
 {
     padding: 5px;
     padding-left: 10px;

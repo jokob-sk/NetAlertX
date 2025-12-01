@@ -32,14 +32,34 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      # --- Previous approach Get release version from tag
+      - name: Set up dynamic build ARGs
+        id: getargs
+        run: echo "version=$(cat ./stable/VERSION)" >> $GITHUB_OUTPUT
+
+      - name: Get release version
+        id: get_version_prev
+        run: echo "::set-output name=version::${GITHUB_REF#refs/tags/}"
+
+      - name: Create .VERSION file
+        run: echo "${{ steps.get_version.outputs.version }}" >> .VERSION_PREV
+
       # --- Get release version from tag
       - name: Get release version
         id: get_version
         run: echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
 
+
+      # --- debug output
+      - name: Debug version
+        run: |
+          echo "GITHUB_REF: $GITHUB_REF"
+          echo "Version: '${{ steps.get_version.outputs.version }}'"
+          echo "Version prev: '${{ steps.get_version_prev.outputs.version }}'"
+
       # --- Write version to .VERSION file
       - name: Create .VERSION file
-        run: echo "${{ steps.get_version.outputs.version }}" > .VERSION
+        run: echo -n "${{ steps.get_version.outputs.version }}" > .VERSION
 
       # --- Generate Docker metadata and tags
       - name: Docker meta

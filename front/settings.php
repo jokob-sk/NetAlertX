@@ -30,22 +30,22 @@ checkPermissions([$dbPath, $confPath]);
 
 // path to your JSON file
 $apiRoot = rtrim(getenv('NETALERTX_API') ?: '/tmp/api', '/');
-$file = $apiRoot . '/table_settings.json'; 
+$file = $apiRoot . '/table_settings.json';
 // put the content of the file in a variable
-$data = file_get_contents($file); 
+$data = file_get_contents($file);
 // JSON decode
-$settingsJson = json_decode($data); 
+$settingsJson = json_decode($data);
 
 // get settings from the DB
 
 global $db;
 
-$result = $db->query("SELECT * FROM Settings");  
+$result = $db->query("SELECT * FROM Settings");
 
 
 $settings = array();
-while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {   
-  // Push row data      
+while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
+  // Push row data
   $settings[] = array(  'setKey'          => $row['setKey'],
                         'setName'         => $row['setName'],
                         'setDescription'  => $row['setDescription'],
@@ -54,7 +54,7 @@ while ($row = $result -> fetchArray (SQLITE3_ASSOC)) {
                         'setValue'        => $row['setValue'],
                         'setGroup'        => $row['setGroup'],
                         'setEvents'       => $row['setEvents']
-                      ); 
+                      );
 }
 
 $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
@@ -63,7 +63,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
 <!-- Page ------------------------------------------------------------------ -->
 
 <!-- ----------------------------------------------------------------------- -->
- 
+
 
 <script src="lib/crypto/crypto-js.min.js"></script>
 <script src="lib/bcrypt/bcrypt.min.js"></script>
@@ -74,21 +74,21 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
 <a style="cursor:pointer">
   <span>
     <i id='toggleSettings' onclick="toggleAllSettings()" class="settings-expand-icon fa fa-angle-double-down"></i>
-  </span> 
+  </span>
 </a>
 
 <!-- Content header--------------------------------------------------------- -->
 
     <section class="content-header">
 
-    <div  class ="bg-white color-palette box box-solid box-primary  col-sm-12  panel panel-default panel-title" > 
-       
+    <div  class ="bg-white color-palette box box-solid box-primary  col-sm-12  panel panel-default panel-title" >
+
       <a data-toggle="collapse" href="#settingsOverview">
         <div class ="settings-group col-sm-12 panel-heading panel-title">
-            <i class="<?= lang("settings_enabled_icon");?>"></i>  <?= lang("settings_enabled");?>  
-        </div>     
-      </a>  
-        <div id="settingsOverview" class="panel-collapse collapse in"> 
+            <i class="<?= lang("settings_enabled_icon");?>"></i>  <?= lang("settings_enabled");?>
+        </div>
+      </a>
+        <div id="settingsOverview" class="panel-collapse collapse in">
           <div class="panel-body"></div>
         <div class =" col-sm-12 " id=""></div>
       </div>
@@ -96,43 +96,43 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
 
     <div class="content settingswrap " id="accordion_gen">
 
-      <div class ="bg-grey-dark color-palette panel panel-default col-sm-12  box-default box-info" id="core_content_header" >        
+      <div class ="bg-grey-dark color-palette panel panel-default col-sm-12  box-default box-info" id="core_content_header" >
           <div class ="settings-group col-sm-12">
-            <i class="<?= lang("settings_core_icon");?>"></i>  <?= lang("settings_core_label");?>       
-          </div>        
+            <i class="<?= lang("settings_core_icon");?>"></i>  <?= lang("settings_core_label");?>
+          </div>
           <div class =" col-sm-12" id="core_content"></div>
-      </div>    
+      </div>
 
-      <div class ="bg-grey-dark color-palette panel panel-default col-sm-12   box-default box-info" id="system_content_header" >        
+      <div class ="bg-grey-dark color-palette panel panel-default col-sm-12   box-default box-info" id="system_content_header" >
           <div class ="settings-group col-sm-12">
-            <i class="<?= lang("settings_system_icon");?>"></i>  <?= lang("settings_system_label");?>       
-          </div>        
+            <i class="<?= lang("settings_system_icon");?>"></i>  <?= lang("settings_system_label");?>
+          </div>
           <div class =" col-sm-12" id="system_content"></div>
-      </div> 
+      </div>
 
-      <div class ="bg-grey-dark color-palette  panel panel-default col-sm-12   box-default box-info" id="device_scanners_content_header" >        
+      <div class ="bg-grey-dark color-palette  panel panel-default col-sm-12   box-default box-info" id="device_scanners_content_header" >
           <div class ="settings-group col-sm-12">
-            <i class="<?= lang("settings_device_scanners_icon");?>"></i>  <?= lang("settings_device_scanners_label");?>     
-          </div>        
+            <i class="<?= lang("settings_device_scanners_icon");?>"></i>  <?= lang("settings_device_scanners_label");?>
+          </div>
           <div class =" col-sm-12" id="device_scanner_content"> <?= lang("settings_device_scanners_info");?> </div>
-      </div> 
+      </div>
 
-      <div class ="bg-grey-dark color-palette  panel panel-default col-sm-12   box-default box-info" id="other_scanners_content_header">        
+      <div class ="bg-grey-dark color-palette  panel panel-default col-sm-12   box-default box-info" id="other_scanners_content_header">
           <div class ="settings-group col-sm-12">
-            <i class="<?= lang("settings_other_scanners_icon");?>"></i>  <?= lang("settings_other_scanners_label");?>       
-          </div>        
+            <i class="<?= lang("settings_other_scanners_icon");?>"></i>  <?= lang("settings_other_scanners_label");?>
+          </div>
           <div class =" col-sm-12" id="other_content"></div>
-      </div> 
+      </div>
 
-      <div class ="bg-grey-dark color-palette  panel panel-default col-sm-12   box-default box-info" id="publishers_content_header" >        
+      <div class ="bg-grey-dark color-palette  panel panel-default col-sm-12   box-default box-info" id="publishers_content_header" >
           <div class ="settings-group col-sm-12">
-            <i class="<?= lang("settings_publishers_icon");?>"></i>  <?= lang("settings_publishers_label");?>       
-          </div>        
+            <i class="<?= lang("settings_publishers_icon");?>"></i>  <?= lang("settings_publishers_label");?>
+          </div>
           <div class =" col-sm-12" id="publisher_content"><?= lang("settings_publishers_info");?></div>
-      </div> 
-     
+      </div>
+
    </div>
-   
+
     <!-- /.content -->
 
     <section class=" padding-bottom  col-sm-12">
@@ -141,10 +141,10 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
 
       <div class="col-sm-7 settingsImportedTimestamp" style="display:none" title="<?= lang("settings_imported");?> ">
         <div class="settingsImported ">
-          <?= lang("settings_imported_label");?>:          
+          <?= lang("settings_imported_label");?>:
 
           <span id="lastImportedTime"></span>
-        </div>    
+        </div>
       </div>
     </section>
 
@@ -156,8 +156,8 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
               <input type="text" id="settingsSearch" class="form-control input-xs col-xs-12" placeholder="Filter Settings...">
               <div class="clear-filter ">
                 <i class="fa-solid fa-circle-xmark" onclick="$('#settingsSearch').val('');filterRows();$('#settingsSearch').focus()"></i>
-              </div>            
-          </div>          
+              </div>
+          </div>
         </div>
 
         <div class="col-xs-4 saveSettingsWrapper">
@@ -171,13 +171,13 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
 
 <!-- ----------------------------------------------------------------------- -->
 <?php
-  require 'php/templates/footer.php';  
+  require 'php/templates/footer.php';
 ?>
 
 
 <script>
 
-  // -------------------------------------------------------------------  
+  // -------------------------------------------------------------------
   // Get plugin and settings data from API endpoints
   function getData(){
 
@@ -217,9 +217,9 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
               console.log("Settings:", settingsData);
 
               // Wrong number of settings processing
-              if(settingsNumberDB != settingsData.length) 
+              if(settingsNumberDB != settingsData.length)
               {
-                showModalOk('WARNING', "<?= lang("settings_old")?>");    
+                showModalOk('WARNING', "<?= lang("settings_old")?>");
                 setTimeout(() => {
                         clearCache()
                       }, 3000);
@@ -227,7 +227,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
               {
                 $.get('php/server/query_json.php', { file: 'plugins.json', nocache: Date.now() }, function(res) {
 
-                  pluginsData = res["data"];  
+                  pluginsData = res["data"];
 
                   // Sort settingsData alphabetically, ensuring "General" is always first
                   settingsData.sort((a, b) => {
@@ -257,31 +257,31 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
 
                     setKey = set['setKey']
 
-                    try {                
+                    try {
                       const isMetadata = setKey.includes('__metadata');
                       // if this isn't a metadata entry, get corresponding metadata object from the dummy setting
                       const setObj = isMetadata ? {} : JSON.parse(getSetting(`${setKey}__metadata`));
-                      
+
                     } catch (error) {
                       console.error(`Error getting setting for ${setKey}:`, error);
-                      showModalOk('WARNING', "Outdated cache - refreshing (refresh browser cache if needed)");  
+                      showModalOk('WARNING', "Outdated cache - refreshing (refresh browser cache if needed)");
 
                       setTimeout(() => {
                         clearCache()
                       }, 3000);
 
-                      exception_occurred = true;                
+                      exception_occurred = true;
                     }
                   });
-        
+
                   // only proceed if everything was loaded correctly
                   if(!exception_occurred)
                   {
                     initSettingsPage(settingsData, pluginsData);
                   }
                 })
-              } 
-              
+              }
+
             }
         },
         error: function (xhr, status, error) {
@@ -296,9 +296,9 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
   function initSettingsPage(settingsData, pluginsData){
 
     const settingPluginPrefixes = [];
-    
-    const enabledDeviceScanners = getPluginsByType(pluginsData, "device_scanner", true);    
-    const enabledOthers         = getPluginsByType(pluginsData, "other", true);    
+
+    const enabledDeviceScanners = getPluginsByType(pluginsData, "device_scanner", true);
+    const enabledOthers         = getPluginsByType(pluginsData, "other", true);
     const enabledPublishers     = getPluginsByType(pluginsData, "publisher", true);
 
 
@@ -310,18 +310,18 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
       // settingPluginPrefixes
       if (!settingPluginPrefixes.includes(set.setGroup)) {
         settingPluginPrefixes.push(set.setGroup); // = Unique plugin prefix
-      }      
-    });    
+      }
+    });
 
     // Init the overview section
     overviewSections      = [
-                              'device_scanners',  
-                              'other_scanners', 
-                              'publishers'                                                          
+                              'device_scanners',
+                              'other_scanners',
+                              'publishers'
                             ]
     overviewSectionsHtml  = [
                               pluginCards(enabledDeviceScanners,['RUN', 'RUN_SCHD']),
-                              pluginCards(enabledOthers, ['RUN', 'RUN_SCHD']), 
+                              pluginCards(enabledOthers, ['RUN', 'RUN_SCHD']),
                               pluginCards(enabledPublishers, []),
                             ]
 
@@ -334,15 +334,15 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
                                   <div class="col-sm-12 " title="${getString("settings_"+section)}">
                                     <a href="#${section}_content_header">
                                       <div class="overview-group col-sm-12 col-xs-12">
-                                      
-                                        <i title="${section}" class="${getString("settings_"+section+"_icon")}"></i>       
-            
-                                        ${getString("settings_"+section+"_label")}                                      
-                                      </div>     
-                                    </a>                               
+
+                                        <i title="${section}" class="${getString("settings_"+section+"_icon")}"></i>
+
+                                        ${getString("settings_"+section+"_label")}
+                                      </div>
+                                    </a>
                                   </div>
                                   <div class="col-sm-12">
-                                    ${overviewSectionsHtml[index]}        
+                                    ${overviewSectionsHtml[index]}
                                   </div>
                                 </div>`
       index++;
@@ -350,7 +350,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
 
     $('#settingsOverview .panel-body').append(overviewSections_html);
 
-    // Display warning 
+    // Display warning
     if(schedulesAreSynchronized(enabledDeviceScanners, pluginsData) == false)
     {
       $("#device_scanners").append(
@@ -359,9 +359,9 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
             ${getString('Settings_device_Scanners_desync')}
           </small>
         `)
-    } 
+    }
 
-    for (const prefix of settingPluginPrefixes) {   
+    for (const prefix of settingPluginPrefixes) {
 
       // enabled / disabled icons
       enabledHtml = ''
@@ -376,16 +376,16 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
                         <i class="fa fa-${onOff}"></i>
                       </div>
                       `
-      }      
+      }
 
       // console.log(pluginsData);
 
-      // Start constructing the main settings HTML 
+      // Start constructing the main settings HTML
       let pluginHtml = `
         <div class="row table_row docs">
           <div class="table_cell bold">
             <i class="fa fa-book fa-sm"></i>
-            ${getString(prefix+'_description')} 
+            ${getString(prefix+'_description')}
             <a href="https://github.com/jokob-sk/NetAlertX/tree/main/front/plugins/${getPluginCodeName(pluginsData, prefix)}" target="_blank">
             ${getString('Gen_ReadDocs')}
             </a>
@@ -399,28 +399,28 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
                     <div class="panel-heading">
                       <h4 class="panel-title">
                         <div class="col-sm-1 col-xs-1">${getString(prefix+"_icon")}   </div>
-                        <div class="col-sm-10 col-xs-8">${getString(prefix+"_display_name")} </div>     
+                        <div class="col-sm-10 col-xs-8">${getString(prefix+"_display_name")} </div>
                         <div class="col-sm-1 col-xs-1">${enabledHtml} </div>
-                      </h4>                      
+                      </h4>
                     </div>
                   </a>
                   <div id="${prefix}" data-myid="collapsible" class="panel-collapse collapse ${prefix == "General" ? ' in ' : ""}">
                     <div class="panel-body">
-                    ${prefix != "General" ? pluginHtml: ""}                    
+                    ${prefix != "General" ? pluginHtml: ""}
                     </div>
                   </div>
                 </div>
                     `;
 
-      // generate headers/sections      
+      // generate headers/sections
       $('#'+getPluginType(pluginsData, prefix) + "_content").append(headerHtml);
-    }  
+    }
 
 
     // generate panel content
     for (const prefix of settingPluginPrefixes) {
 
-      // go thru all settings and collect settings per settings prefix 
+      // go thru all settings and collect settings per settings prefix
       settingsData.forEach((set) => {
 
         const valIn = set['setValue'];
@@ -443,18 +443,18 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
 
         if(set["setGroup"] == prefix)
         {
-          // hide metadata by default by assigning it a special class          
+          // hide metadata by default by assigning it a special class
           isMetadata ? metadataClass = 'metadata' : metadataClass = '';
-          isMetadata ? showMetadata = '' : showMetadata = `<i 
+          isMetadata ? showMetadata = '' : showMetadata = `<i
                                                       my-to-toggle="row_${setKey}__metadata"
-                                                      title="${getString("Settings_Metadata_Toggle")}" 
-                                                      class="fa fa-circle-question pointer hideOnMobile" 
+                                                      title="${getString("Settings_Metadata_Toggle")}"
+                                                      class="fa fa-circle-question pointer hideOnMobile"
                                                       onclick="toggleMetadata(this)">
                                                     </i>` ;
 
           infoIcon = `<i my-to-show="#row_${setKey} .setting_description"
-                        title="${getString("Settings_Show_Description")}" 
-                        class="fa fa-circle-info pointer hideOnBigScreen" 
+                        title="${getString("Settings_Show_Description")}"
+                        class="fa fa-circle-info pointer hideOnBigScreen"
                         onclick="showDescription(this)">
                       </i>` ;
 
@@ -477,12 +477,12 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
           // surface settings override functionality if the setting is a template that can be overridden with user defined values
           // if the setting is a json of the correct structure, handle like a template setting
 
-          let overrideHtml = "";  
+          let overrideHtml = "";
 
           //pre-check if this is a json object that needs value extraction
 
           let overridable = false;  // indicates if the setting is overridable
-          let override = false;     // If the setting is set to be overridden by the user or by default     
+          let override = false;     // If the setting is set to be overridden by the user or by default
           let readonly = "";        // helper variable to make text input readonly
           let disabled = "";        // helper variable to make checkbox input readonly
 
@@ -490,7 +490,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
           if ('override_value' in setObj) {
             overridable = true;
             overrideObj = setObj["override_value"]
-            override = overrideObj["override"];            
+            override = overrideObj["override"];
 
             console.log(setObj)
             console.log(prefix)
@@ -498,8 +498,8 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
 
           // prepare override checkbox and HTML
           if(overridable)
-          { 
-            let checked = override ? 'checked' : '';   
+          {
+            let checked = override ? 'checked' : '';
 
             overrideHtml = `<div class="override col-xs-12">
                               <div class="override-check col-xs-1">
@@ -508,10 +508,10 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
                               <div class="override-text col-xs-11" title="${getString("Setting_Override_Description")}">
                                 ${getString("Setting_Override")}
                               </div>
-                            </div>`;           
+                            </div>`;
 
-          } 
-          
+          }
+
           // INPUT
           inputFormHtml = generateFormHtml(settingsData, set, valIn, null, null);
 
@@ -522,7 +522,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
           `
 
           // generate settings in the correct prefix (group) section
-          $(`#${prefix} .panel-body`).append(setHtml);          
+          $(`#${prefix} .panel-body`).append(setHtml);
         }
       });
 
@@ -532,7 +532,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
     setTimeout(() => {
       initListInteractionOptions()  // init remove and edit listitem click gestures
     }, 50);
-    
+
     setupSmoothScrolling();
     // try to initialize select2
     initSelect2();
@@ -548,29 +548,29 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
   var settingsNumberJSON = <?php echo count($settingsJson->data)?>;
 
   // Wrong number of settings processing
-  if(settingsNumberJSON != settingsNumberDB) 
+  if(settingsNumberJSON != settingsNumberDB)
   {
-    showModalOk('WARNING', getString("settings_missing"));    
+    showModalOk('WARNING', getString("settings_missing"));
   }
 
   // ---------------------------------------------------------
   function saveSettings() {
-    if(settingsNumberJSON != settingsNumberDB) 
+    if(settingsNumberJSON != settingsNumberDB)
     {
       console.log(`Error settingsNumberJSON != settingsNumberDB: ${settingsNumberJSON} !=  ${settingsNumberDB}`);
 
-      showModalOk('WARNING', getString("settings_missing_block")); 
+      showModalOk('WARNING', getString("settings_missing_block"));
 
       setTimeout(() => {
-              clearCache()  
+              clearCache()
             }, 1500);
-         
+
     } else {
       let settingsArray = [];
 
       // collect values for each of the different input form controls
       // get settings to determine setting type to store values appropriately
-      $.get('php/server/query_json.php', { file: 'table_settings.json', nocache: Date.now() }, function(res) { 
+      $.get('php/server/query_json.php', { file: 'table_settings.json', nocache: Date.now() }, function(res) {
         // loop through the settings definitions from the json
         res["data"].forEach(set => {
 
@@ -578,7 +578,17 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
           setType     = set["setType"]
           setCodeName = set["setKey"]
 
-          settingsArray = collectSetting(prefix, setCodeName, setType, settingsArray)
+          // settingsArray = collectSetting(prefix, setCodeName, setType, settingsArray)
+          const collectSettingResult = collectSetting(prefix, setCodeName, setType, settingsArray);
+          settingsArray = collectSettingResult.settingsArray;
+
+          if (!collectSettingResult.dataIsValid) {
+              msg = getString("Gen_Invalid_Value") + ": " + collectSettingResult.failedSettingKey;
+              console.error(msg);
+              showMessage (msg, 3000, "modal_red");
+              // return early
+              return;
+          }
         });
 
         // sanity check to make sure settings were loaded & collected correctly
@@ -586,44 +596,45 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
         {
 
           console.log(settingsArray);
+          console.log(settingsJSON_DB);
           console.log( JSON.stringify(settingsArray));
           // return;  // 🐛 🔺
           // trigger a save settings event in the backend
           $.ajax({
           method: "POST",
           url: "php/server/util.php",
-          data: { 
-            function: 'savesettings', 
+          data: {
+            function: 'savesettings',
             settings: JSON.stringify(settingsArray) },
-            success: function(data, textStatus) {                    
-              
+            success: function(data, textStatus) {
+
               if(data == "OK")
-              {                
+              {
                 // showMessage (getString("settings_saved"), 5000, "modal_grey");
                 // Remove navigation prompt "Are you sure you want to leave..."
-                window.onbeforeunload = null;         
+                window.onbeforeunload = null;
 
                 // Reloads the current page
-                // setTimeout("clearCache()", 5000);    
+                // setTimeout("clearCache()", 5000);
 
                 write_notification(`[Settings] Settings saved by the user`, 'info')
 
                 clearCache()
               } else{
-                // something went wrong                
+                // something went wrong
                 write_notification("[Important] Please take a screenshot of the Console tab in the browser (F12) and next error. Submit it (with the nginx and php error logs) as a new issue here: https://github.com/jokob-sk/NetAlertX/issues", 'interrupt')
                 write_notification(data, 'interrupt')
 
                 console.log("🔽");
                 console.log(settingsArray);
-                console.log(JSON.stringify(settingsArray));    
-                console.log(data);            
+                console.log(JSON.stringify(settingsArray));
+                console.log(data);
                 console.log("🔼");
               }
             }
           });
-        } 
-        
+        }
+
       })
 
     }
@@ -647,30 +658,30 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
     } else
     {
       // check if config file has been updated
-      $.get('php/server/query_json.php', { file: 'app_state.json', nocache: Date.now() }, function(appState) {   
+      $.get('php/server/query_json.php', { file: 'app_state.json', nocache: Date.now() }, function(appState) {
 
-        console.log("Settings: Got app_state.json");       
-        
-        fileModificationTime = <?php echo filemtime($confPath)*1000;?>;  
+        console.log("Settings: Got app_state.json");
+
+        fileModificationTime = <?php echo filemtime($confPath)*1000;?>;
 
         // console.log(appState["settingsImported"]*1000)
         importedMiliseconds = parseInt((appState["settingsImported"]*1000));
-        
+
 
         // check if displayed settings are outdated
         if(appState["showSpinner"] || fileModificationTime > importedMiliseconds)
-        {     
+        {
           showSpinner("settings_old")
 
           setTimeout("handleLoadingDialog()", 1000);
 
         } else
-        {       
+        {
           checkInitialization();
         }
 
         humanReadable = (new Date(importedMiliseconds)).toLocaleString("en-UK", { timeZone: "<?php echo $timeZone?>" });
-        document.getElementById('lastImportedTime').innerHTML = humanReadable; 
+        document.getElementById('lastImportedTime').innerHTML = humanReadable;
       })
 
     }
@@ -697,7 +708,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
         setTimeout(checkInitialization, 1000);
     }
   }
-  
+
 
   showSpinner()
   handleLoadingDialog()

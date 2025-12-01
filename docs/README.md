@@ -13,13 +13,13 @@ There is also an in-app Help / FAQ section that should be answering frequently a
 
 #### 🐳 Docker (Fully supported)
 
-- The main installation method is as a [docker container - follow these instructions here](./DOCKER_INSTALLATION.md). 
+- The main installation method is as a [docker container - follow these instructions here](./DOCKER_INSTALLATION.md).
 
 #### 💻 Bare-metal / On-server (Experimental/community supported 🧪)
 
-- [(Experimental 🧪) On-hardware instructions](./HW_INSTALL.md) 
+- [(Experimental 🧪) On-hardware instructions](./HW_INSTALL.md)
 
-- Alternative bare-metal install forks: 
+- Alternative bare-metal install forks:
   - [leiweibau's fork](https://github.com/leiweibau/Pi.Alert/) (maintained)
   - [pucherot's original code](https://github.com/pucherot/Pi.Alert/) (un-maintained)
 
@@ -63,7 +63,6 @@ There is also an in-app Help / FAQ section that should be answering frequently a
 
 #### ♻ Misc
 
-- [Version history (legacy)](./VERSIONS_HISTORY.md)
 - [Reverse proxy (Nginx, Apache, SWAG)](./REVERSE_PROXY.md)
 - [Installing Updates](./UPDATES.md)
 - [Setting up Authelia](./AUTHELIA.md) (DRAFT)
@@ -80,27 +79,27 @@ There is also an in-app Help / FAQ section that should be answering frequently a
 - [Frontend development tips](./FRONTEND_DEVELOPMENT.md)
 - [Webhook secrets](./WEBHOOK_SECRET.md)
 
-Feel free to suggest or submit new docs via a PR. 
+Feel free to suggest or submit new docs via a PR.
 
 ## 👨‍💻 Development priorities
 
 Priorities from highest to lowest:
 
 * 🔼 Fixing core functionality bugs not solvable with workarounds
-* 🔵 New core functionality unlocking other opportunities (e.g.: plugins) 
-* 🔵 Refactoring enabling faster implementation of future functionality 
+* 🔵 New core functionality unlocking other opportunities (e.g.: plugins)
+* 🔵 Refactoring enabling faster implementation of future functionality
 * 🔽 (low) UI functionality & improvements (PRs welcome 😉)
 
-Design philosophy: Focus on core functionality and leverage existing apps and tools to make NetAlertX integrate into other workflows. 
+Design philosophy: Focus on core functionality and leverage existing apps and tools to make NetAlertX integrate into other workflows.
 
-Examples: 
+Examples:
 
     1. Supporting apprise makes more sense than implementing multiple individual notification gateways
-    2. Implementing regular expression support across settings for validation makes more sense than validating one setting with a specific expression. 
+    2. Implementing regular expression support across settings for validation makes more sense than validating one setting with a specific expression.
 
 UI-specific requests are a low priority as the framework picked by the original developer is not very extensible (and afaik doesn't support components) and has limited mobile support. Also, I argue the value proposition is smaller than working on something else.
 
-Feel free to submit PRs if interested. try to **keep the PRs small/on-topic** so they are easier to review and approve. 
+Feel free to submit PRs if interested. try to **keep the PRs small/on-topic** so they are easier to review and approve.
 
 That being said, I'd reconsider if more people and or recurring sponsors file a request 😉.
 
@@ -112,8 +111,8 @@ Please be as detailed as possible with **workarounds** you considered and why a 
 
 If you submit a PR please:
 
-1. Check that your changes are backward compatible with existing installations and with a blank setup. 
-2. Existing features should always be preserved. 
+1. Check that your changes are backward compatible with existing installations and with a blank setup.
+2. Existing features should always be preserved.
 3. Keep the PR small, on-topic and don't change code that is not necessary for the PR to work
 4. New features code should ideally be re-usable for different purposes, not for a very narrow use case.
 5. New functionality should ideally be implemented via the Plugins system, if possible.
@@ -131,13 +130,13 @@ Suggested test cases:
 Some additional context:
 
 * Permanent settings/config is stored in the `app.conf` file
-* Currently temporary (session?) settings are stored in the `Parameters` DB table as key-value pairs. This table is wiped during a container rebuild/restart and its values are re-initialized from cookies/session data from the browser. 
+* Currently temporary (session?) settings are stored in the `Parameters` DB table as key-value pairs. This table is wiped during a container rebuild/restart and its values are re-initialized from cookies/session data from the browser.
 
 ## 🐛 Submitting an issue or bug
 
 Before submitting a new issue please spend a couple of minutes on research:
 
-* Check [🛑 Common issues](./DEBUG_TIPS.md#common-issues) 
+* Check [🛑 Common issues](./DEBUG_TIPS.md#common-issues)
 * Check [💡 Closed issues](https://github.com/jokob-sk/NetAlertX/issues?q=is%3Aissue+is%3Aclosed) if a similar issue was solved in the past.
 * When submitting an issue ❗[enable debug](./DEBUG_TIPS.md)❗
 

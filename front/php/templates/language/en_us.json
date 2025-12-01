@@ -311,6 +311,7 @@
     "Gen_Filter": "Filter",
     "Gen_Generate": "Generate",
     "Gen_InvalidMac": "Invalid Mac address.",
+    "Gen_Invalid_Value": "An invalid value was entered",
     "Gen_LockedDB": "ERROR - DB might be locked - Check F12 Dev tools -> Console or try later.",
     "Gen_NetworkMask": "Network mask",
     "Gen_Offline": "Offline",

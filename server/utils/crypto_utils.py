@@ -70,3 +70,13 @@ def generate_deterministic_guid(plugin, primary_id, secondary_id):
     """Generates a deterministic GUID based on plugin, primary ID, and secondary ID."""
     data = f"{plugin}-{primary_id}-{secondary_id}".encode("utf-8")
     return str(uuid.UUID(hashlib.md5(data).hexdigest()))
+
+
+def string_to_mac_hash(input_string):
+    # Calculate a hash using SHA-256
+    sha256_hash = hashlib.sha256(input_string.encode()).hexdigest()
+
+    # Take the first 12 characters of the hash and format as a MAC address
+    mac_hash = ':'.join(sha256_hash[i:i + 2] for i in range(0, 12, 2))
+
+    return mac_hash

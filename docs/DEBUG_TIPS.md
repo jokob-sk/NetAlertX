@@ -1,30 +1,36 @@
 # Debugging and troubleshooting
 
-Please follow tips 1 - 4 to get a more detailed error. 
+Please follow tips 1 - 4 to get a more detailed error.
 
-## 1. More Logging 
+## 1. More Logging
 
 When debugging an issue always set the highest log level:
 
 `LOG_LEVEL='trace'`
 
-## 2. Surfacing errors when container restarts 
+## 2. Surfacing errors when container restarts
 
 Start the container via the **terminal** with a command similar to this one:
 
 ```bash
-docker run --rm --network=host \
-  -v /local_data_dir/netalertx/config:/data/config \
-  -v /local_data_dir/netalertx/db:/data/db \
-  -v /etc/localtime:/etc/localtime \
+docker run \
+  --network=host \
+  --restart unless-stopped \
+  -v /local_data_dir:/data \
+  -v /etc/localtime:/etc/localtime:ro \
+  --tmpfs /tmp:uid=20211,gid=20211,mode=1700 \
   -e PORT=20211 \
+  -e APP_CONF_OVERRIDE='{"GRAPHQL_PORT":"20214"}' \
   ghcr.io/jokob-sk/netalertx:latest
 
 ```
 
-> ⚠ Please note, don't use the `-d` parameter so you see the error when the container crashes. Use this error in your issue description.
+Note: Your `/local_data_dir` should contain a `config` and `db` folder.
 
-## 3. Check the _dev image and open issues 
+> [!NOTE]
+> ⚠ The most important part is NOT to use the `-d` parameter so you see the error when the container crashes. Use this error in your issue description.
+
+## 3. Check the _dev image and open issues
 
 If possible, check if your issue got fixed in the `_dev` image before opening a new issue. The container is:
 
@@ -34,7 +40,7 @@ If possible, check if your issue got fixed in the `_dev` image before opening a 
 
 Please also search [open issues](https://github.com/jokob-sk/NetAlertX/issues).
 
-## 4. Disable restart behavior 
+## 4. Disable restart behavior
 
 To prevent a Docker container from automatically restarting in a Docker Compose file, specify the restart policy as `no`:
 
@@ -48,9 +54,14 @@ services:
     # Other service configurations...
 ```
 
-## 5. Sharing application state
+## 5. TMP mount directories to rule host out permission issues
 
-Sometimes specific log sections are needed to debug issues. The Devices and CurrentScan table data is sometimes needed to figure out what's wrong. 
+Try starting the container with all data to be in non-persistent volumes. If this works, the issue might be related to the permissions of your persistent data mount locations on your server. See teh [Permissions guide](./FILE_PERMISSIONS.md) for details.
+
+
+## 6. Sharing application state
+
+Sometimes specific log sections are needed to debug issues. The Devices and CurrentScan table data is sometimes needed to figure out what's wrong.
 
 1. Please set `LOG_LEVEL` to `trace` (Disable it once you have the info as this produces big log files).
 2. Wait for the issue to occur.
@@ -61,4 +72,4 @@ Sometimes specific log sections are needed to debug issues. The Devices and Curr
 
 ## Common issues
 
-See [Common issues](./COMMON_ISSUES.md) for details. 
+See [Common issues](./COMMON_ISSUES.md) for additional troubleshooting tips.

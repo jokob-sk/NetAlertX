@@ -1,7 +1,7 @@
 <!--
 #---------------------------------------------------------------------------------#
-#  NetAlertX                                                                       #
-#  Open Source Network Guard / WIFI & LAN intrusion detector                      #  
+#  NetAlertX                                                                      #
+#  Open Source Network Guard / WIFI & LAN intrusion detector                      #
 #                                                                                 #
 #  devices.php - Front module. Devices list page                                  #
 #---------------------------------------------------------------------------------#
@@ -15,7 +15,7 @@
 <?php
 
   require 'php/templates/header.php';
-  
+
   // check permissions
   // Use environment-aware paths with fallback to legacy locations
   $dbFolderPath = rtrim(getenv('NETALERTX_DB') ?: '/data/db', '/');
@@ -36,7 +36,7 @@
 ?>
 
 <!-- ----------------------------------------------------------------------- -->
- 
+
 
 <!-- Page ------------------------------------------------------------------ -->
   <div class="content-wrapper">
@@ -55,15 +55,15 @@
           <div class="col-md-12">
             <div class="box" id="clients">
               <div class="box-header ">
-                <h3 class="box-title col-md-12"><?= lang('Device_Shortcut_OnlineChart');?> </h3> 
+                <h3 class="box-title col-md-12"><?= lang('Device_Shortcut_OnlineChart');?> </h3>
               </div>
               <div class="box-body">
                 <div class="chart">
                   <script src="lib/chart.js/Chart.js?v=<?php include 'php/templates/version.php'; ?>"></script>
                   <!-- presence chart -->
-                  <?php  
+                  <?php
                       require 'php/components/graph_online_history.php';
-                  ?>     
+                  ?>
                 </div>
               </div>
               <!-- /.box-body -->
@@ -74,7 +74,7 @@
       <!-- Device Filters ------------------------------------------------------- -->
       <div class="box box-aqua hidden" id="columnFiltersWrap">
         <div class="box-header ">
-          <h3 class="box-title col-md-12"><?= lang('Devices_Filters');?> </h3> 
+          <h3 class="box-title col-md-12"><?= lang('Devices_Filters');?> </h3>
         </div>
         <!-- Placeholder ------------------------------------------------------- -->
          <div id="columnFilters" ></div>
@@ -88,8 +88,8 @@
             <!-- box-header -->
             <div class="box-header">
               <div class=" col-sm-8 ">
-                <h3 id="tableDevicesTitle" class="box-title text-gray "></h3>  
-              </div>    
+                <h3 id="tableDevicesTitle" class="box-title text-gray "></h3>
+              </div>
               <div  class="dummyDevice col-sm-4 ">
                 <span id="multiEditPlc">
                   <!-- multi edit button placeholder -->
@@ -104,8 +104,8 @@
             <div class="box-body table-responsive">
               <table id="tableDevices" class="table table-bordered table-hover table-striped">
                 <thead>
-                <tr>                
-                  
+                <tr>
+
                 </tr>
                 </thead>
               </table>
@@ -122,7 +122,7 @@
 <!-- ----------------------------------------------------------------------- -->
     </section>
     <!-- /.content -->
-    
+
   </div>
   <!-- /.content-wrapper -->
 
@@ -136,9 +136,9 @@
 <!-- page script ----------------------------------------------------------- -->
 <script>
   var deviceStatus    = 'all';
-  var tableRows       = getCache ("nax_parTableRows") == "" ? parseInt(getSetting("UI_DEFAULT_PAGE_SIZE")) : getCache ("nax_parTableRows") ;
+
   var tableOrder      = getCache ("nax_parTableOrder") == "" ? [[3,'desc'], [0,'asc']] : JSON.parse(getCache ("nax_parTableOrder")) ;
-  
+
   var tableColumnHide = [];
   var tableColumnOrder = [];
   var tableColumnVisible = [];
@@ -161,7 +161,7 @@ function main () {
 
   //initialize the table headers in the correct order
   var availableColumns = getSettingOptions("UI_device_columns").split(",");
-  headersDefaultOrder = availableColumns.map(val => getString(val));  
+  headersDefaultOrder = availableColumns.map(val => getString(val));
 
   var selectedColumns = JSON.parse(getSetting("UI_device_columns").replace(/'/g, '"'));
 
@@ -190,10 +190,10 @@ function main () {
 
   // Initialize components with parameters
   initializeDatatable(getUrlAnchor('my_devices'));
-  
+
   // check if data outdated and show spinner if so
   handleLoadingDialog()
-  
+
 }
 
 // -----------------------------------------------------------------------------
@@ -202,7 +202,7 @@ function mapIndx(oldIndex)
 {
   // console.log(oldIndex);
   // console.log(tableColumnOrder);
-  
+
   for(i=0;i<tableColumnOrder.length;i++)
   {
     if(tableColumnOrder[i] == oldIndex)
@@ -311,7 +311,7 @@ function processDeviceTotals(devicesData) {
     }
   });
 
-  // Render info boxes/tile cards  
+  // Render info boxes/tile cards
   renderInfoboxes(dataArray);
 }
 
@@ -350,9 +350,9 @@ function initFilters() {
             nocache: Date.now() // Prevent caching with a timestamp
         },
         success: function(response) {
-            if (response && response.data) {                
-                
-                let resultJSON = response.data; 
+            if (response && response.data) {
+
+                let resultJSON = response.data;
 
                 // Save the result to cache
                 setCache("devicesFilters", JSON.stringify(resultJSON));
@@ -381,7 +381,7 @@ function initFilters() {
                     });
 
                     // Filter resultJSON to include only entries with columnName in columnFilters
-                    resultJSON = resultJSON.filter(entry => 
+                    resultJSON = resultJSON.filter(entry =>
                         columnFilters.some(filter => filter[0] === entry.columnName)
                     );
 
@@ -451,7 +451,7 @@ function initFilters() {
 function renderFilters(customData) {
 
   // console.log(JSON.stringify(customData));
-  
+
   // Load filter data from the JSON file
   $.ajax({
     url: 'php/components/devices_filters.php', // PHP script URL
@@ -471,7 +471,7 @@ function renderFilters(customData) {
 
           // Update DataTable with the new filters or search value (if applicable)
           $('#tableDevices').DataTable().draw();
-          
+
           // Optionally, apply column filters (if using filters for individual columns)
           const table = $('#tableDevices').DataTable();
           table.columnFilters = columnFilters;  // Apply your column filters logic
@@ -493,11 +493,11 @@ function collectFilters() {
     // Loop through each filter group
     document.querySelectorAll('.filter-group').forEach(filterGroup => {
         const dropdown = filterGroup.querySelector('.filter-dropdown');
-        
+
         if (dropdown) {
             const filterColumn = dropdown.getAttribute('data-column');
             const filterValue = dropdown.value;
-            
+
             if (filterValue && filterColumn) {
                 columnFilters.push({
                     filterColumn: filterColumn,
@@ -548,7 +548,7 @@ function mapColumnIndexToFieldName(index, tableColumnVisible) {
     "devReqNicsOnline"         // 29
   ];
 
-  // console.log("OrderBy: " + columnNames[tableColumnOrder[index]]);  
+  // console.log("OrderBy: " + columnNames[tableColumnOrder[index]]);
 
   return columnNames[tableColumnOrder[index]] || null;
 }
@@ -557,11 +557,14 @@ function mapColumnIndexToFieldName(index, tableColumnVisible) {
 // ---------------------------------------------------------
 // Initializes the main devices list datatable
 function initializeDatatable (status) {
-  
+
   if(!status)
   {
     status = 'my_devices'
   }
+
+  // retrieve page size
+  var tableRows       = getCache ("nax_parTableRows") == "" ? parseInt(getSetting("UI_DEFAULT_PAGE_SIZE")) : getCache ("nax_parTableRows") ;
 
   // Save status selected
   deviceStatus = status;
@@ -579,7 +582,7 @@ function initializeDatatable (status) {
     case 'all_devices':     tableTitle = getString('Gen_All_Devices');             color = 'gray';    break;
     case 'network_devices': tableTitle = getString('Network_Devices');             color = 'aqua';    break;
     default:                tableTitle = getString('Device_Shortcut_Devices');     color = 'gray';    break;
-  } 
+  }
 
   // Set title and color
   $('#tableDevicesTitle')[0].className = 'box-title text-'+ color;
@@ -588,23 +591,23 @@ function initializeDatatable (status) {
 
   // render table headers
   html = '';
-                                  
+
   for(index = 0; index < tableColumnOrder.length; index++)
   {
     html += '<th>' + headersDefaultOrder[tableColumnOrder[index]] + '</th>';
   }
 
-  $('#tableDevices tr').html(html);  
+  $('#tableDevices tr').html(html);
 
   hideUIelements("UI_DEV_SECTIONS")
 
   for(i = 0; i < tableColumnOrder.length; i++)
-  {    
-    // hide this column if not in the tableColumnVisible variable (we need to keep the MAC address (index 11) for functionality reasons)    
+  {
+    // hide this column if not in the tableColumnVisible variable (we need to keep the MAC address (index 11) for functionality reasons)
     if(tableColumnVisible.includes(tableColumnOrder[i]) == false)
     {
       tableColumnHide.push(mapIndx(tableColumnOrder[i]));
-    }    
+    }
   }
 
   var table = $('#tableDevices').DataTable({
@@ -690,7 +693,7 @@ function initializeDatatable (status) {
               "status": deviceStatus,
               "filters" : columnFilters
             }
-            
+
           }
         };
 
@@ -766,8 +769,8 @@ function initializeDatatable (status) {
 
     // Parameters
     'pageLength'   : tableRows,
-    'order'        : tableOrder,   
-    'select'       : true, // Enable selection   
+    'order'        : tableOrder,
+    'select'       : true, // Enable selection
 
     'fixedHeader': true,
     'fixedHeader': {
@@ -776,19 +779,19 @@ function initializeDatatable (status) {
     },
 
     'columnDefs'   : [
-      {visible:   false,         targets: tableColumnHide },      
-      {className: 'text-center', targets: [mapIndx(4), mapIndx(9), mapIndx(10), mapIndx(15), mapIndx(18)] },      
-      {className: 'iconColumn text-center',  targets: [mapIndx(3)]},      
-      {width:     '80px',        targets: [mapIndx(6), mapIndx(7), mapIndx(15), mapIndx(27)] },      
-      {width:     '85px',        targets: [mapIndx(9)] },      
-      {width:     '30px',        targets: [mapIndx(3), mapIndx(10), mapIndx(13), mapIndx(18)] },      
+      {visible:   false,         targets: tableColumnHide },
+      {className: 'text-center', targets: [mapIndx(4), mapIndx(9), mapIndx(10), mapIndx(15), mapIndx(18)] },
+      {className: 'iconColumn text-center',  targets: [mapIndx(3)]},
+      {width:     '80px',        targets: [mapIndx(6), mapIndx(7), mapIndx(15), mapIndx(27)] },
+      {width:     '85px',        targets: [mapIndx(9)] },
+      {width:     '30px',        targets: [mapIndx(3), mapIndx(10), mapIndx(13), mapIndx(18)] },
       {orderData: [mapIndx(12)],          targets: mapIndx(8) },
 
       // Device Name and FQDN
       {targets: [mapIndx(0), mapIndx(27)],
-        'createdCell': function (td, cellData, rowData, row, col) {    
-                      
-            // console.log(cellData)      
+        'createdCell': function (td, cellData, rowData, row, col) {
+
+            // console.log(cellData)
             $(td).html (
               `<b class="anonymizeDev "
               >
@@ -811,9 +814,9 @@ function initializeDatatable (status) {
             );
       } },
 
-      // Connected Devices       
+      // Connected Devices
       {targets: [mapIndx(15)],
-        'createdCell': function (td, cellData, rowData, row, col) {                   
+        'createdCell': function (td, cellData, rowData, row, col) {
           // check if this is a network device
           if(getSetting("NETWORK_DEVICE_TYPES").includes(`'${rowData[mapIndx(2)]}'`)   )
           {
@@ -823,13 +826,13 @@ function initializeDatatable (status) {
           {
             $(td).html (`<i class="fa-solid fa-xmark" title="${getString("Device_Table_Not_Network_Device")}"></i>`)
           }
-            
+
       } },
 
-      // Icon      
+      // Icon
       {targets: [mapIndx(3)],
         'createdCell': function (td, cellData, rowData, row, col) {
-         
+
           if (!emptyArr.includes(cellData)){
             $(td).html (atob(cellData));
           } else {
@@ -837,7 +840,7 @@ function initializeDatatable (status) {
           }
       } },
 
-      // Full MAC      
+      // Full MAC
       {targets: [mapIndx(11)],
         'createdCell': function (td, cellData, rowData, row, col) {
           if (!emptyArr.includes(cellData)){
@@ -846,8 +849,8 @@ function initializeDatatable (status) {
             $(td).html ('');
           }
       } },
-      
-      // IP address     
+
+      // IP address
       {targets: [mapIndx(8)],
         'createdCell': function (td, cellData, rowData, row, col) {
             if (!emptyArr.includes(cellData)){
@@ -864,9 +867,9 @@ function initializeDatatable (status) {
             } else {
               $(td).html ('');
             }
-        } 
+        }
       },
-      // IP address (ordeable)     
+      // IP address (ordeable)
       {targets: [mapIndx(12)],
         'createdCell': function (td, cellData, rowData, row, col) {
             if (!emptyArr.includes(cellData)){
@@ -874,10 +877,10 @@ function initializeDatatable (status) {
             } else {
               $(td).html ('');
             }
-        } 
+        }
       },
 
-      // Custom Properties     
+      // Custom Properties
       {targets: [mapIndx(26)],
         'createdCell': function (td, cellData, rowData, row, col) {
             if (!emptyArr.includes(cellData)){
@@ -885,10 +888,10 @@ function initializeDatatable (status) {
             } else {
               $(td).html ('');
             }
-        } 
+        }
       },
-      
-      // Favorite      
+
+      // Favorite
       {targets: [mapIndx(4)],
         'createdCell': function (td, cellData, rowData, row, col) {
           if (cellData == 1){
@@ -897,8 +900,8 @@ function initializeDatatable (status) {
             $(td).html ('');
           }
       } },
-        
-      // Dates      
+
+      // Dates
       {targets: [mapIndx(6), mapIndx(7)],
         'createdCell': function (td, cellData, rowData, row, col) {
           var result = cellData.toString(); // Convert to string
@@ -908,7 +911,7 @@ function initializeDatatable (status) {
           $(td).html (translateHTMLcodes (result));
       } },
 
-      // Random MAC      
+      // Random MAC
       {targets: [mapIndx(9)],
         'createdCell': function (td, cellData, rowData, row, col) {
           // console.log(cellData)
@@ -919,7 +922,7 @@ function initializeDatatable (status) {
           }
       } },
 
-      // Parent Mac      
+      // Parent Mac
       {targets: [mapIndx(14)],
         'createdCell': function (td, cellData, rowData, row, col) {
           if (!isValidMac(cellData)) {
@@ -938,13 +941,13 @@ function initializeDatatable (status) {
 
           const chipHtml = renderDeviceLink(data, spanWrap, true); // pass the td as container
 
-          $(spanWrap).append(chipHtml); 
-        } 
+          $(spanWrap).append(chipHtml);
+        }
       },
-      // Status color      
+      // Status color
       {targets: [mapIndx(10)],
         'createdCell': function (td, cellData, rowData, row, col) {
-          
+
           tmp_devPresentLastScan = rowData[mapIndx(24)]
           tmp_devAlertDown = rowData[mapIndx(25)]
 
@@ -954,11 +957,11 @@ function initializeDatatable (status) {
             rowData[mapIndx(11)],  // MAC
             cellData               // optional text
           );
-      
+
           $(td).html (`<a href="${badge.url}" class="badge ${badge.cssClass}">${badge.iconHtml} ${badge.text}</a>`);
       } },
     ],
-    
+
     // Processing
     'processing'  : true,
     'language'    : {
@@ -978,7 +981,7 @@ function initializeDatatable (status) {
       $('#tableDevices').on( 'length.dt', function ( e, settings, len ) {
             setCache ("nax_parTableRows", len, 129600); // save for 90 days
           } );
-            
+
           $('#tableDevices').on( 'order.dt', function () {
             setCache ("nax_parTableOrder", JSON.stringify (table.order()), 129600); // save for 90 days
           } );
@@ -998,7 +1001,7 @@ function initializeDatatable (status) {
                 // Toggle visibility of element with ID 'multiEdit'
                 $('#multiEdit').toggle(anyRowSelected);
             }, 100);
-            
+
           });
 
           // search only after idle
@@ -1014,59 +1017,59 @@ function initializeDatatable (status) {
               }, debounceTime);
           });
 
-          initHoverNodeInfo(); 
+          initHoverNodeInfo();
           hideSpinner();
-          
+
     },
     createdRow: function(row, data, dataIndex) {
         // add devMac to the table row
-        $(row).attr('my-devMac', data[mapIndx(11)]); 
-                
+        $(row).attr('my-devMac', data[mapIndx(11)]);
+
     }
-    
-  });  
+
+  });
 }
 
 
 // -----------------------------------------------------------------------------
 function handleLoadingDialog(needsReload = false)
 {
-  // console.log(`needsReload: ${needsReload}`); 
+  // console.log(`needsReload: ${needsReload}`);
 
-  $.get('php/server/query_logs.php?file=execution_queue.log&nocache=' + Date.now(), function(data) {     
+  $.get('php/server/query_logs.php?file=execution_queue.log&nocache=' + Date.now(), function(data) {
 
     if(data.includes("update_api|devices"))
-    {       
+    {
       showSpinner("devices_old")
 
       setTimeout(handleLoadingDialog(true), 1000);
 
     } else if (needsReload)
-    {    
-      location.reload();     
+    {
+      location.reload();
     }else
     {
-      // hideSpinner();     
-    }      
+      // hideSpinner();
+    }
 
   })
-  
+
 }
 
 // -----------------------------------------------------------------------------
-// Function collects selected devices in the DataTable and redirects the user to 
-// the Miantenance section with a 'macs' query string identifying selected devices 
+// Function collects selected devices in the DataTable and redirects the user to
+// the Miantenance section with a 'macs' query string identifying selected devices
 function multiEditDevices()
 {
   // get selected devices
   var selectedDevicesDataTableData = $('#tableDevices').DataTable().rows({ selected: true, page: 'current' }).data().toArray();
 
   console.log(selectedDevicesDataTableData);
- 
+
   macs = ""
 
   for (var j = 0; j < selectedDevicesDataTableData.length; j++) {
-    macs += selectedDevicesDataTableData[j][mapIndx(11)] + ",";  // [11] == MAC    
+    macs += selectedDevicesDataTableData[j][mapIndx(11)] + ",";  // [11] == MAC
   }
 
   // redirect to the Maintenance section
@@ -1075,7 +1078,7 @@ function multiEditDevices()
 
 
 // -----------------------------------------------------------------------------
-// Function collects shown devices from the DataTable  
+// Function collects shown devices from the DataTable
 function getMacsOfShownDevices() {
   var table = $('#tableDevices').DataTable();
 
@@ -1096,15 +1099,15 @@ function getMacsOfShownDevices() {
 
 
 // -----------------------------------------------------------------------------
-// Handle custom actions/properties on a device    
+// Handle custom actions/properties on a device
 function renderCustomProps(custProps, mac) {
   // Decode and parse the custom properties
 
   if (!isBase64(custProps)) {
 
-    console.error(`Unable to decode CustomProps for ${mac}`);    
-    console.error(custProps);    
-    
+    console.error(`Unable to decode CustomProps for ${mac}`);
+    console.error(custProps);
+
   } else{
     const props = JSON.parse(atob(custProps));
     let html = "";
@@ -1150,13 +1153,13 @@ function renderCustomProps(custProps, mac) {
 
 
 // -----------------------------------------------------------------------------
-// Update cache with shown devices before navigating away    
+// Update cache with shown devices before navigating away
 window.addEventListener('beforeunload', function(event) {
     // Call your function here
     macs = getMacsOfShownDevices();
 
     setCache("ntx_visible_macs", macs)
-  
+
 });
 
 </script>

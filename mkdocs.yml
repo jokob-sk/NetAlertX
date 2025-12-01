@@ -9,11 +9,11 @@ site_description: >-
 nav:
   - Home: index.md
 
-  - Installation: 
+  - Installation:
       - Installation options: INSTALLATION.md
-      - Quick setup: INITIAL_SETUP.md      
+      - Quick setup: INITIAL_SETUP.md
       - Docker:
-        - Docker Guide: DOCKER_INSTALLATION.md   
+        - Docker Guide: DOCKER_INSTALLATION.md
         - Docker Compose: DOCKER_COMPOSE.md
         - Docker File Permissions: FILE_PERMISSIONS.md
         - Docker Updates: UPDATES.md
@@ -25,24 +25,24 @@ nav:
         - Bare-metal (Experimental): HW_INSTALL.md
         - Migration Guide: MIGRATION.md
       - Help:
-        - Common issues: COMMON_ISSUES.md      
+        - Common issues: COMMON_ISSUES.md
   - Setup:
       - Getting started:
         - Subnets: SUBNETS.md
-        - Enable Plugins: PLUGINS.md  
+        - Enable Plugins: PLUGINS.md
         - Pi-hole Guide: PIHOLE_GUIDE.md
         - Home Assistant: HOME_ASSISTANT.md
         - Emails: SMTP.md
-        - Backups: BACKUPS.md   
+        - Backups: BACKUPS.md
         - Security Features: SECURITY_FEATURES.md
         - Security Considerations: SECURITY.md
       - Advanced guides:
-        - Remote Networks: REMOTE_NETWORKS.md      
-        - Notifications Guide: NOTIFICATIONS.md      
-        - Name Resolution: NAME_RESOLUTION.md  
-        - Authelia: AUTHELIA.md   
-        - Performance: PERFORMANCE.md      
-        - Reverse DNS: REVERSE_DNS.md  
+        - Remote Networks: REMOTE_NETWORKS.md
+        - Notifications Guide: NOTIFICATIONS.md
+        - Name Resolution: NAME_RESOLUTION.md
+        - Authelia: AUTHELIA.md
+        - Performance: PERFORMANCE.md
+        - Reverse DNS: REVERSE_DNS.md
         - Reverse Proxy: REVERSE_PROXY.md
         - Webhooks (n8n): WEBHOOK_N8N.md
         - Workflows: WORKFLOWS.md
@@ -63,14 +63,15 @@ nav:
         - Icons: ICONS.md
         - Network Topology: NETWORK_TREE.md
   - Troubleshooting:
+      - General Tips: DEBUG_TIPS.md
+      - Common Issues: COMMON_ISSUES.md
       - Inspecting Logs: LOGGING.md
-      - Debugging Tips: DEBUG_TIPS.md
-      - Debugging GraphQL: DEBUG_GRAPHQL.md
-      - Debugging Invalid JSON: DEBUG_INVALID_JSON.md
-      - Debugging PHP: DEBUG_PHP.md
-      - Debugging Plugins: DEBUG_PLUGINS.md
-      - Debugging Web UI Port: WEB_UI_PORT_DEBUG.md
-      - Debugging Workflows: WORKFLOWS_DEBUGGING.md
+      - API Server Issues: DEBUG_API_SERVER.md
+      - Invalid JSON Issues: DEBUG_INVALID_JSON.md
+      - PHP Issues: DEBUG_PHP.md
+      - Plugin Issues: DEBUG_PLUGINS.md
+      - Web UI Port Issues: WEB_UI_PORT_DEBUG.md
+      - Workflows Issues: WORKFLOWS_DEBUGGING.md
   - Development:
       - Plugin and app development:
         - Environment Setup: DEV_ENV_SETUP.md
@@ -83,8 +84,8 @@ nav:
         - Settings: SETTINGS_SYSTEM.md
         - Versions: VERSIONS.md
         - Icon and Type guessing: DEVICE_HEURISTICS.md
-      - API: 
-        - Overview: API.md   
+      - API:
+        - Overview: API.md
         - Devices Collection: API_DEVICES.md
         - Device: API_DEVICE.md
         - Sessions: API_SESSIONS.md
@@ -98,9 +99,9 @@ nav:
         - GraphQL: API_GRAPHQL.md
         - DB query: API_DBQUERY.md
         - Tests: API_TESTS.md
-        - SUPERSEDED OLD API Overview: API_OLD.md   
+        - SUPERSEDED OLD API Overview: API_OLD.md
       - Integrations:
-        - Webhook Secret: WEBHOOK_SECRET.md            
+        - Webhook Secret: WEBHOOK_SECRET.md
         - Helper scripts: HELPER_SCRIPTS.md
 
 

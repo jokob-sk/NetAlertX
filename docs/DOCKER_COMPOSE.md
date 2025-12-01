@@ -1,18 +1,16 @@
 # NetAlertX and Docker Compose
 
 > [!WARNING]
-> ⚠️ **Important:** The documentation has been recently updated and some instructions may have changed.  
-> If you are using the currently live production image, please follow the instructions on [Docker Hub](https://hub.docker.com/r/jokobsk/netalertx) for building and running the container.  
-> These docs reflect the latest development version and may differ from the production image.
+> ⚠️ **Important:** The docker-compose has recently changed. Carefully read the [Migration guide](https://jokob-sk.github.io/NetAlertX/MIGRATION/?h=migrat#12-migration-from-netalertx-v25524) for detailed instructions.
 
-Great care is taken to ensure NetAlertX meets the needs of everyone while being flexible enough for anyone. This document outlines how you can configure your docker-compose. There are many settings, so we recommend using the Baseline Docker Compose as-is, or modifying it for your system.Good care is taken to ensure NetAlertX meets the needs of everyone while being flexible enough for anyone. This document outlines how you can configure your docker-compose. There are many settings, so we recommend using the Baseline Docker Compose as-is, or modifying it for your system. 
+Great care is taken to ensure NetAlertX meets the needs of everyone while being flexible enough for anyone. This document outlines how you can configure your docker-compose. There are many settings, so we recommend using the Baseline Docker Compose as-is, or modifying it for your system.Good care is taken to ensure NetAlertX meets the needs of everyone while being flexible enough for anyone. This document outlines how you can configure your docker-compose. There are many settings, so we recommend using the Baseline Docker Compose as-is, or modifying it for your system.
 
-> [!NOTE] 
-> The container needs to run in `network_mode:"host"` to access Layer 2 networking such as arp, nmap and others. Due to lack of support for this feature, Windows host is not a supported operating system. 
+> [!NOTE]
+> The container needs to run in `network_mode:"host"` to access Layer 2 networking such as arp, nmap and others. Due to lack of support for this feature, Windows host is not a supported operating system.
 
 ## Baseline Docker Compose
 
-There is one baseline for NetAlertX. That's the default security-enabled official distribution. 
+There is one baseline for NetAlertX. That's the default security-enabled official distribution.
 
 ```yaml
 services:
@@ -45,7 +43,7 @@ services:
     # - /home/user/netalertx_data:/data:rw
 
       - type: bind                                  # Bind mount for timezone consistency
-        source: /etc/localtime                      
+        source: /etc/localtime
         target: /etc/localtime
         read_only: true
 
@@ -125,9 +123,9 @@ docker compose up
 
 ### Modification 1: Use a Local Folder (Bind Mount)
 
-By default, the baseline compose file uses a single named volume (netalertx_data) mounted at /data. This single-volume layout is preferred because NetAlertX manages both configuration and the database under /data (for example, /data/config and /data/db) via its web UI. Using one named volume simplifies permissions and portability: Docker manages the storage and NetAlertX manages the files inside /data.
+By default, the baseline compose file uses a single named volume (netalertx_data) mounted at `/data`. This single-volume layout is preferred because NetAlertX manages both configuration and the database under `/data` (for example, `/data/config` and `/data/db`) via its web UI. Using one named volume simplifies permissions and portability: Docker manages the storage and NetAlertX manages the files inside `/data`.
 
-A two-volume layout that mounts /data/config and /data/db separately (for example, netalertx_config and netalertx_db) is supported for backward compatibility and some advanced workflows, but it is an abnormal/legacy layout and not recommended for new deployments. 
+A two-volume layout that mounts `/data/config` and `/data/db` separately (for example, `netalertx_config` and `netalertx_db`) is supported for backward compatibility and some advanced workflows, but it is an abnormal/legacy layout and not recommended for new deployments.
 
 However, if you prefer to have direct, file-level access to your configuration for manual editing, a "bind mount" is a simple alternative. This tells Docker to use a specific folder from your computer (the "host") inside the container.
 
@@ -187,7 +185,7 @@ services:
     environment:
       - PORT=${PORT}
       - GRAPHQL_PORT=${GRAPHQL_PORT}
-      
+
 ...
 ```
 

@@ -34,30 +34,26 @@ Copy and paste the following YAML into the **Web editor**:
 services:
   netalertx:
     container_name: netalertx
-
     # Use this line for stable release
-    image: "ghcr.io/jokob-sk/netalertx:latest"      
-
+    image: "ghcr.io/jokob-sk/netalertx:latest"
     # Or, use this for the latest development build
-    # image: "ghcr.io/jokob-sk/netalertx-dev:latest" 
-
+    # image: "ghcr.io/jokob-sk/netalertx-dev:latest"
     network_mode: "host"
     restart: unless-stopped
-
+    cap_drop:       # Drop all capabilities for enhanced security
+      - ALL
+    cap_add:        # Re-add necessary capabilities
+      - NET_RAW
+      - NET_ADMIN
+      - NET_BIND_SERVICE
     volumes:
       - ${APP_FOLDER}/netalertx/config:/data/config
       - ${APP_FOLDER}/netalertx/db:/data/db
-      # Optional: logs (useful for debugging setup issues, comment out for performance)
-      - ${APP_FOLDER}/netalertx/log:/tmp/log
-
-      # API storage options:
-      # (Option 1) tmpfs (default, best performance)
-      - type: tmpfs
-        target: /tmp/api
-
-      # (Option 2) bind mount (useful for debugging)
-      # - ${APP_FOLDER}/netalertx/api:/tmp/api
-
+      # to sync with system time
+      - /etc/localtime:/etc/localtime:ro
+    tmpfs:
+      # All writable runtime state resides under /tmp; comment out to persist logs between restarts
+      - "/tmp:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
     environment:
       - PORT=${PORT}
       - APP_CONF_OVERRIDE=${APP_CONF_OVERRIDE}
@@ -78,11 +74,12 @@ In the **Environment variables** section of Portainer, add the following:
 ## 5. Ensure permissions
 
 > [!TIP]
-> If you are facing permissions issues run the following commands on your server. This will change the owner and assure sufficient access to the database and config files that are stored in the `/local_data_dir/db` and `/local_data_dir/config` folders (replace `local_data_dir` with the location where your `/db` and `/config` folders are located). 
->  ```bash
->  sudo chown -R 20211:20211 /local_data_dir
->  sudo chmod -R a+rwx  /local_data_dir
->  ```
+> If you are facing permissions issues run the following commands on your server. This will change the owner and assure sufficient access to the database and config files that are stored in the `/local_data_dir/db` and `/local_data_dir/config` folders (replace `local_data_dir` with the location where your `/db` and `/config` folders are located).
+>
+>  `sudo chown -R 20211:20211 /local_data_dir`
+>
+>  `sudo chmod -R a+rwx  /local_data_dir`
+>
 
 
 ---
@@ -104,4 +101,4 @@ http://<your-docker-host-ip>:22022
 * Check logs via Portainer → **Containers** → `netalertx` → **Logs**.
 * Logs are stored under `${APP_FOLDER}/netalertx/log` if you enabled that volume.
 
-Once the application is running, configure it by reading the [initial setup](INITIAL_SETUP.md) guide, or [troubleshoot common issues](COMMON_ISSUES.md). 
+Once the application is running, configure it by reading the [initial setup](INITIAL_SETUP.md) guide, or [troubleshoot common issues](COMMON_ISSUES.md).

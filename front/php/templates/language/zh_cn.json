@@ -311,6 +311,7 @@
     "Gen_Filter": "筛选",
     "Gen_Generate": "生成",
     "Gen_InvalidMac": "无效的 Mac 地址。",
+    "Gen_Invalid_Value": "",
     "Gen_LockedDB": "错误 - DB 可能被锁定 - 检查 F12 开发工具 -> 控制台或稍后重试。",
     "Gen_NetworkMask": "网络掩码",
     "Gen_Offline": "离线",
