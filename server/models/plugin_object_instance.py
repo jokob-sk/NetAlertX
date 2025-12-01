@@ -37,6 +37,15 @@ class PluginObjectInstance:
         self.db.sql.execute("SELECT * FROM Plugins_Objects WHERE Plugin = ?", (plugin,))
         return self.db.sql.fetchall()
 
+    # Get plugin objects by primary ID and plugin name
+    def getByPrimary(self, plugin, primary_id):
+        self.db.sql.execute(
+            "SELECT * FROM Plugins_Objects WHERE Plugin = ? AND Object_PrimaryID = ?",
+            (plugin, primary_id),
+        )
+        rows = self.db.sql.fetchall()
+        return [dict(r) for r in rows]
+
     # Get objects by status
     def getByStatus(self, status):
         self.db.sql.execute("SELECT * FROM Plugins_Objects WHERE Status = ?", (status,))

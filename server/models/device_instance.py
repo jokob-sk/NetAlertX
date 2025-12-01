@@ -57,6 +57,44 @@ class DeviceInstance:
         result = self.db.sql.fetchone()
         return result["count"] > 0
 
+    # Get a device by its last IP address
+    def getByIP(self, ip):
+        self.db.sql.execute("SELECT * FROM Devices WHERE devLastIP = ?", (ip,))
+        row = self.db.sql.fetchone()
+        return dict(row) if row else None
+
+    # Search devices by partial mac, name or IP
+    def search(self, query):
+        like = f"%{query}%"
+        self.db.sql.execute(
+            "SELECT * FROM Devices WHERE devMac LIKE ? OR devName LIKE ? OR devLastIP LIKE ?",
+            (like, like, like),
+        )
+        rows = self.db.sql.fetchall()
+        return [dict(r) for r in rows]
+
+    # Get the most recently discovered device
+    def getLatest(self):
+        self.db.sql.execute("SELECT * FROM Devices ORDER BY devFirstConnection DESC LIMIT 1")
+        row = self.db.sql.fetchone()
+        return dict(row) if row else None
+
+    def getNetworkTopology(self):
+        """Returns nodes and links for the current Devices table.
+
+        Nodes: {id, name, vendor}
+        Links: {source, target, port}
+        """
+        self.db.sql.execute("SELECT devName, devMac, devParentMAC, devParentPort, devVendor FROM Devices")
+        rows = self.db.sql.fetchall()
+        nodes = []
+        links = []
+        for row in rows:
+            nodes.append({"id": row['devMac'], "name": row['devName'], "vendor": row['devVendor']})
+            if row['devParentMAC']:
+                links.append({"source": row['devParentMAC'], "target": row['devMac'], "port": row['devParentPort']})
+        return {"nodes": nodes, "links": links}
+
     # Update a specific field for a device
     def updateField(self, devGUID, field, value):
         if not self.exists(devGUID):
