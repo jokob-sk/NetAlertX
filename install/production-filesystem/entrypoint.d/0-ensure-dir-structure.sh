@@ -32,8 +32,4 @@ ensure_folder() {
 ensure_folder "${TARGET_CONFIG}"
 ensure_folder "${TARGET_DB}"
 
->&2 printf "%s" "${CYAN}"
->&2 echo "✅ All required folders are present under ${DATA_DIR}."
->&2 printf "%s" "${RESET}"
-
 exit 0
