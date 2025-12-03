@@ -61,19 +61,37 @@ See alternative [docked-compose examples](https://github.com/jokob-sk/NetAlertX/
 
 | Required | Path | Description |
 | :------------- | :------------- | :-------------|
-| ✅ | `:/data` | Folder which will contain the `/db/app.db`, `/config/app.conf` & `/config/devices.csv` ([read about devices.csv](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEVICES_BULK_EDITING.md)) files  |
-| ✅ | `/etc/localtime:/etc/localtime:ro` | Ensuring the timezone is teh same as on teh server.  |
+| ✅ | `:/data` | Folder which needs to contain a `/db` and `/config` sub-folders. |
+| ✅ | `/etc/localtime:/etc/localtime:ro` | Ensuring the timezone is the same as on the server.  |
 | | `:/tmp/log` |  Logs folder useful for debugging if you have issues setting up the container  |
 | | `:/tmp/api` |  The [API endpoint](https://github.com/jokob-sk/NetAlertX/blob/main/docs/API.md) containing static (but regularly updated) json and other files. Path configurable via `NETALERTX_API` environment variable.   |
 | | `:/app/front/plugins/<plugin>/ignore_plugin` | Map a file `ignore_plugin` to ignore a plugin. Plugins can be soft-disabled via settings. More in the [Plugin docs](https://github.com/jokob-sk/NetAlertX/blob/main/docs/PLUGINS.md).  |
 | | `:/etc/resolv.conf` | Use a custom `resolv.conf` file for [better name resolution](https://github.com/jokob-sk/NetAlertX/blob/main/docs/REVERSE_DNS.md).  |
 
-> Use separate `db` and `config` directories, do not nest them.
+### Folder structure
+
+Use separate `db` and `config` directories, do not nest them:
+
+```
+data
+├── config
+└── db
+```
+
+### Permissions
+
+If you are facing permissions issues run the following commands on your server. This will change the owner and assure sufficient access to the database and config files that are stored in the `/local_data_dir/db` and `/local_data_dir/config` folders (replace `local_data_dir` with the location where your `/db` and `/config` folders are located).
+
+```bash
+sudo chown -R 20211:20211 /local_data_dir
+sudo chmod -R a+rwx /local_data_dir
+```
 
 ### Initial setup
 
 - If unavailable, the app generates a default `app.conf` and `app.db` file on the first run.
 - The preferred way is to manage the configuration via the Settings section in the UI, if UI is inaccessible you can modify [app.conf](https://github.com/jokob-sk/NetAlertX/tree/main/back) in the `/data/config/` folder directly
+
 
 #### Setting up scanners
 
