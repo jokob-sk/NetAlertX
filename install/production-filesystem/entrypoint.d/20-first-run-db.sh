@@ -1,31 +1,45 @@
 #!/bin/sh
-# This script checks if the database file exists, and if not, creates it with the initial schema.
-# It is intended to be run at the first start of the application.
+# Ensures the database exists, or creates a new one on first run.
+# Intended to run only at initial startup.
 
-# If ALWAYS_FRESH_INSTALL is true, remove the database to force a rebuild.
-if [ "${ALWAYS_FRESH_INSTALL}" = "true" ]; then
-    if [ -f "${NETALERTX_DB_FILE}" ]; then
-        # Provide feedback to the user.
-        >&2 echo "INFO: ALWAYS_FRESH_INSTALL is true. Removing existing database to force a fresh installation."
-        rm -f "${NETALERTX_DB_FILE}" "${NETALERTX_DB_FILE}-shm" "${NETALERTX_DB_FILE}-wal"
-    fi
-# Otherwise, if the db exists, exit.
-elif [ -f "${NETALERTX_DB_FILE}" ]; then
+set -eu
+
+YELLOW=$(printf '\033[1;33m')
+CYAN=$(printf '\033[1;36m')
+RED=$(printf '\033[1;31m')
+RESET=$(printf '\033[0m')
+
+# Ensure DB folder exists
+if [ ! -d "${NETALERTX_DB}" ]; then
+    mkdir -p "${NETALERTX_DB}" || {
+        >&2 echo "ERROR: Failed to create DB directory at ${NETALERTX_DB}"
+        exit 1
+    }
+    chmod 700 "${NETALERTX_DB}" 2>/dev/null || true
+fi
+
+# Fresh rebuild requested
+if [ "${ALWAYS_FRESH_INSTALL:-false}" = "true" ] && [ -f "${NETALERTX_DB_FILE}" ]; then
+    >&2 echo "INFO: ALWAYS_FRESH_INSTALL enabled — removing existing database."
+    rm -f "${NETALERTX_DB_FILE}" "${NETALERTX_DB_FILE}-shm" "${NETALERTX_DB_FILE}-wal"
+fi
+
+# If file exists now, nothing to do
+if [ -f "${NETALERTX_DB_FILE}" ]; then
     exit 0
 fi
 
-CYAN=$(printf '\033[1;36m')
-RESET=$(printf '\033[0m')
 >&2 printf "%s" "${CYAN}"
 >&2 cat <<EOF
 ══════════════════════════════════════════════════════════════════════════════
-🆕  First run detected. Building initial database schema in ${NETALERTX_DB_FILE}.
+🆕  First run detected — building initial database at: ${NETALERTX_DB_FILE}
 
-    Do not interrupt this step. Once complete, consider backing up the fresh
-    database before onboarding sensitive networks.
+    Do not interrupt this step. When complete, consider backing up the fresh
+    DB before onboarding sensitive or critical networks.
 ══════════════════════════════════════════════════════════════════════════════
 EOF
 >&2 printf "%s" "${RESET}"
+
 
 # Write all text to db file until we see "end-of-database-schema"
 sqlite3 "${NETALERTX_DB_FILE}" <<'end-of-database-schema'
@@ -91,7 +105,7 @@ CREATE TABLE IF NOT EXISTS "Parameters" (
           );
 CREATE TABLE Plugins_Objects(
                                     "Index"               INTEGER,
-                                    Plugin TEXT NOT NULL,                                    
+                                    Plugin TEXT NOT NULL,
                                     Object_PrimaryID TEXT NOT NULL,
                                     Object_SecondaryID TEXT NOT NULL,
                                     DateTimeCreated TEXT NOT NULL,
@@ -164,7 +178,7 @@ CREATE TABLE Plugins_Language_Strings(
                                 Extra TEXT NOT NULL,
                                 PRIMARY KEY("Index" AUTOINCREMENT)
                         );
-CREATE TABLE CurrentScan (                                
+CREATE TABLE CurrentScan (
                                 cur_MAC STRING(50) NOT NULL COLLATE NOCASE,
                                 cur_IP STRING(50) NOT NULL COLLATE NOCASE,
                                 cur_Vendor STRING(250),
@@ -191,11 +205,11 @@ CREATE TABLE IF NOT EXISTS "AppEvents" (
                 "ObjectPrimaryID" TEXT,
                 "ObjectSecondaryID" TEXT,
                 "ObjectForeignKey" TEXT,
-                "ObjectIndex" TEXT,            
-                "ObjectIsNew" BOOLEAN, 
-                "ObjectIsArchived" BOOLEAN, 
+                "ObjectIndex" TEXT,
+                "ObjectIsNew" BOOLEAN,
+                "ObjectIsArchived" BOOLEAN,
                 "ObjectStatusColumn" TEXT,
-                "ObjectStatus" TEXT,            
+                "ObjectStatus" TEXT,
                 "AppEventType" TEXT,
                 "Helper1" TEXT,
                 "Helper2" TEXT,
@@ -233,21 +247,21 @@ CREATE INDEX IDX_dev_Favorite ON Devices (devFavorite);
 CREATE INDEX IDX_dev_LastIP ON Devices (devLastIP);
 CREATE INDEX IDX_dev_NewDevice ON Devices (devIsNew);
 CREATE INDEX IDX_dev_Archived ON Devices (devIsArchived);
-CREATE VIEW Events_Devices AS 
-                            SELECT * 
-                            FROM Events 
+CREATE VIEW Events_Devices AS
+                            SELECT *
+                            FROM Events
                             LEFT JOIN Devices ON eve_MAC = devMac
 /* Events_Devices(eve_MAC,eve_IP,eve_DateTime,eve_EventType,eve_AdditionalInfo,eve_PendingAlertEmail,eve_PairEventRowid,devMac,devName,devOwner,devType,devVendor,devFavorite,devGroup,devComments,devFirstConnection,devLastConnection,devLastIP,devStaticIP,devScan,devLogEvents,devAlertEvents,devAlertDown,devSkipRepeated,devLastNotification,devPresentLastScan,devIsNew,devLocation,devIsArchived,devParentMAC,devParentPort,devIcon,devGUID,devSite,devSSID,devSyncHubNode,devSourcePlugin,devCustomProps) */;
 CREATE VIEW LatestEventsPerMAC AS
                                 WITH RankedEvents AS (
-                                    SELECT 
+                                    SELECT
                                         e.*,
                                         ROW_NUMBER() OVER (PARTITION BY e.eve_MAC ORDER BY e.eve_DateTime DESC) AS row_num
                                     FROM Events AS e
                                 )
-                                SELECT 
-                                    e.*, 
-                                    d.*, 
+                                SELECT
+                                    e.*,
+                                    d.*,
                                     c.*
                                 FROM RankedEvents AS e
                                 LEFT JOIN Devices AS d ON e.eve_MAC = d.devMac
@@ -286,11 +300,11 @@ CREATE VIEW Convert_Events_to_Sessions AS  SELECT EVE1.eve_MAC,
 CREATE TRIGGER "trg_insert_devices"
             AFTER INSERT ON "Devices"
             WHEN NOT EXISTS (
-                SELECT 1 FROM AppEvents 
-                WHERE AppEventProcessed = 0 
+                SELECT 1 FROM AppEvents
+                WHERE AppEventProcessed = 0
                 AND ObjectType = 'Devices'
                 AND ObjectGUID = NEW.devGUID
-                AND ObjectStatus = CASE WHEN NEW.devPresentLastScan = 1 THEN 'online' ELSE 'offline' END 
+                AND ObjectStatus = CASE WHEN NEW.devPresentLastScan = 1 THEN 'online' ELSE 'offline' END
                 AND AppEventType = 'insert'
             )
             BEGIN
@@ -311,18 +325,18 @@ CREATE TRIGGER "trg_insert_devices"
                     "AppEventType"
                 )
                 VALUES (
-                    
+
                 lower(
-                    hex(randomblob(4)) || '-' || hex(randomblob(2)) || '-' || '4' || 
-                    substr(hex( randomblob(2)), 2) || '-' || 
+                    hex(randomblob(4)) || '-' || hex(randomblob(2)) || '-' || '4' ||
+                    substr(hex( randomblob(2)), 2) || '-' ||
                     substr('AB89', 1 + (abs(random()) % 4) , 1)  ||
-                    substr(hex(randomblob(2)), 2) || '-' || 
+                    substr(hex(randomblob(2)), 2) || '-' ||
                     hex(randomblob(6))
                 )
-            , 
-                    DATETIME('now'), 
-                    FALSE, 
-                    'Devices', 
+            ,
+                    DATETIME('now'),
+                    FALSE,
+                    'Devices',
                     NEW.devGUID,  -- ObjectGUID
                     NEW.devMac,  -- ObjectPrimaryID
                     NEW.devLastIP,  -- ObjectSecondaryID
@@ -338,11 +352,11 @@ CREATE TRIGGER "trg_insert_devices"
 CREATE TRIGGER "trg_update_devices"
             AFTER UPDATE ON "Devices"
             WHEN NOT EXISTS (
-                SELECT 1 FROM AppEvents 
-                WHERE AppEventProcessed = 0 
+                SELECT 1 FROM AppEvents
+                WHERE AppEventProcessed = 0
                 AND ObjectType = 'Devices'
                 AND ObjectGUID = NEW.devGUID
-                AND ObjectStatus = CASE WHEN NEW.devPresentLastScan = 1 THEN 'online' ELSE 'offline' END 
+                AND ObjectStatus = CASE WHEN NEW.devPresentLastScan = 1 THEN 'online' ELSE 'offline' END
                 AND AppEventType = 'update'
             )
             BEGIN
@@ -363,18 +377,18 @@ CREATE TRIGGER "trg_update_devices"
                     "AppEventType"
                 )
                 VALUES (
-                    
+
                 lower(
-                    hex(randomblob(4)) || '-' || hex(randomblob(2)) || '-' || '4' || 
-                    substr(hex( randomblob(2)), 2) || '-' || 
+                    hex(randomblob(4)) || '-' || hex(randomblob(2)) || '-' || '4' ||
+                    substr(hex( randomblob(2)), 2) || '-' ||
                     substr('AB89', 1 + (abs(random()) % 4) , 1)  ||
-                    substr(hex(randomblob(2)), 2) || '-' || 
+                    substr(hex(randomblob(2)), 2) || '-' ||
                     hex(randomblob(6))
                 )
-            , 
-                    DATETIME('now'), 
-                    FALSE, 
-                    'Devices', 
+            ,
+                    DATETIME('now'),
+                    FALSE,
+                    'Devices',
                     NEW.devGUID,  -- ObjectGUID
                     NEW.devMac,  -- ObjectPrimaryID
                     NEW.devLastIP,  -- ObjectSecondaryID
@@ -390,11 +404,11 @@ CREATE TRIGGER "trg_update_devices"
 CREATE TRIGGER "trg_delete_devices"
             AFTER DELETE ON "Devices"
             WHEN NOT EXISTS (
-                SELECT 1 FROM AppEvents 
-                WHERE AppEventProcessed = 0 
+                SELECT 1 FROM AppEvents
+                WHERE AppEventProcessed = 0
                 AND ObjectType = 'Devices'
                 AND ObjectGUID = OLD.devGUID
-                AND ObjectStatus = CASE WHEN OLD.devPresentLastScan = 1 THEN 'online' ELSE 'offline' END 
+                AND ObjectStatus = CASE WHEN OLD.devPresentLastScan = 1 THEN 'online' ELSE 'offline' END
                 AND AppEventType = 'delete'
             )
             BEGIN
@@ -415,18 +429,18 @@ CREATE TRIGGER "trg_delete_devices"
                     "AppEventType"
                 )
                 VALUES (
-                    
+
                 lower(
-                    hex(randomblob(4)) || '-' || hex(randomblob(2)) || '-' || '4' || 
-                    substr(hex( randomblob(2)), 2) || '-' || 
+                    hex(randomblob(4)) || '-' || hex(randomblob(2)) || '-' || '4' ||
+                    substr(hex( randomblob(2)), 2) || '-' ||
                     substr('AB89', 1 + (abs(random()) % 4) , 1)  ||
-                    substr(hex(randomblob(2)), 2) || '-' || 
+                    substr(hex(randomblob(2)), 2) || '-' ||
                     hex(randomblob(6))
                 )
-            , 
-                    DATETIME('now'), 
-                    FALSE, 
-                    'Devices', 
+            ,
+                    DATETIME('now'),
+                    FALSE,
+                    'Devices',
                     OLD.devGUID,  -- ObjectGUID
                     OLD.devMac,  -- ObjectPrimaryID
                     OLD.devLastIP,  -- ObjectSecondaryID
