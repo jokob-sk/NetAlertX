@@ -11,10 +11,21 @@ RESET=$(printf '\033[0m')
 
 # Ensure DB folder exists
 if [ ! -d "${NETALERTX_DB}" ]; then
-    mkdir -p "${NETALERTX_DB}" || {
-        >&2 echo "ERROR: Failed to create DB directory at ${NETALERTX_DB}"
+    if ! mkdir -p "${NETALERTX_DB}"; then
+        >&2 printf "%s" "${RED}"
+        >&2 cat <<EOF
+══════════════════════════════════════════════════════════════════════════════
+❌  Error creating DB folder in: ${NETALERTX_DB}
+
+A database directory is required for proper operation, however there appear to be
+insufficient permissions on this mount or it is otherwise inaccessible.
+
+More info: https://github.com/jokob-sk/NetAlertX/blob/main/docs/FILE_PERMISSIONS.md
+══════════════════════════════════════════════════════════════════════════════
+EOF
+        >&2 printf "%s" "${RESET}"
         exit 1
-    }
+    fi
     chmod 700 "${NETALERTX_DB}" 2>/dev/null || true
 fi
 
