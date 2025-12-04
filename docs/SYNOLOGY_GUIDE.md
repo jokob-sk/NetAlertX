@@ -22,8 +22,10 @@ The folders you are creating below will contain the configuration and the databa
 ![Getting the location](./img/SYNOLOGY/05_Access_folder_properties.png)
 ![Getting the location](./img/SYNOLOGY/06_Note_location.png)
 
-5. Open **Container manager** -> **Project** and click **Create**.
-6. Fill in the details:
+## Creating the Project
+
+1. Open **Container manager** -> **Project** and click **Create**.
+2. Fill in the details:
 
 - Project name: `netalertx`
 - Path: `/app_storage/netalertx` (will differ from yours)
@@ -59,7 +61,7 @@ services:
 
 ![Project settings](./img/SYNOLOGY/07_Create_project.png)
 
-7. Replace the paths to your volume and comment out unnecessary line(s):
+3. Replace the paths to your volume and comment out unnecessary line(s):
 
 - This is only an example, your paths will differ.
 
@@ -70,8 +72,8 @@ services:
 
 ![Adjusting docker-compose](./img/SYNOLOGY/08_Adjust_docker_compose_volumes.png)
 
-8. (optional) Change the port number from `20211` to an unused port if this port is already used.
-9. Build the project:
+4. (optional) Change the port number from `20211` to an unused port if this port is already used.
+5. Build the project:
 
 ![Build](./img/SYNOLOGY/09_Run_and_build.png)
 
