@@ -78,6 +78,11 @@ services:
 10. Navigate to `<Synology URL>:20211` (or your custom port).
 11. Read the [Subnets](./SUBNETS.md) and [Plugins](/docs/PLUGINS.md) docs to complete your setup.
 
+## Solving permission issues
+
+See also the [Permission overview guide](./FILE_PERMISSIONS.md).
+
+### Configuring the permissions via SSH
 
 > [!TIP]
 > If you are facing permissions issues run the following commands on your server. This will change the owner and assure sufficient access to the database and config files that are stored in the `/local_data_dir/db` and `/local_data_dir/config` folders (replace `local_data_dir` with the location where your `/db` and `/config` folders are located).
@@ -86,3 +91,31 @@ services:
 >
 >  `sudo chmod -R a+rwx  /local_data_dir`
 >
+
+### Configuring the permissions via the Synology UI
+
+You can also execute the above bash commands via the UI by creating a one-off scheduled task.
+
+1. Control panel -> Task Scheduler
+2. Create -> Scheduled Task -> User-defined Script
+
+![User-defined Script](./img/SYNOLOGY/11_permissions_create_scheduled_task.png)
+
+3. Give your task a name.
+
+![User-defined task_general](./img/SYNOLOGY/12_permissions_task_general.png)
+
+4. Specify one-off execution time (e.g. 5 minutes from now).
+
+![task_schedule](./img/SYNOLOGY/13_permissions_task_schedule.png)
+
+5. Paste the commands from the above SSH section and replace the `/local_data_dir` with the parent fodler of your `/db` and `/config` folders.
+
+![task_settings](./img/SYNOLOGY/14_permissions_task_settings.png)
+
+6. Wait until the execution time passes and verify the new ownership.
+
+![permissions_after](./img/SYNOLOGY/15_permissions_after.png)
+
+
+In case of issues, double-check the [Permission overview guide](./FILE_PERMISSIONS.md).
