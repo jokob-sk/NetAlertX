@@ -32,31 +32,31 @@ The folders you are creating below will contain the configuration and the databa
 - Paste in the following template:
 
 
-  ```yaml
-  services:
-    netalertx:
-      container_name: netalertx
-      # use the below line if you want to test the latest dev image
-      # image: "ghcr.io/jokob-sk/netalertx-dev:latest"
-      image: "ghcr.io/jokob-sk/netalertx:latest"
-      network_mode: "host"
-      restart: unless-stopped
-      cap_drop:       # Drop all capabilities for enhanced security
-        - ALL
-      cap_add:        # Re-add necessary capabilities
-        - NET_RAW
-        - NET_ADMIN
-        - NET_BIND_SERVICE
-      volumes:
-        - /app_storage/netalertx:/data
-        # to sync with system time
-        - /etc/localtime:/etc/localtime:ro
-      tmpfs:
-        # All writable runtime state resides under /tmp; comment out to persist logs between restarts
-        - "/tmp:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
-      environment:
-        - PORT=20211
-  ```
+```yaml
+services:
+  netalertx:
+    container_name: netalertx
+    # use the below line if you want to test the latest dev image
+    # image: "ghcr.io/jokob-sk/netalertx-dev:latest"
+    image: "ghcr.io/jokob-sk/netalertx:latest"
+    network_mode: "host"
+    restart: unless-stopped
+    cap_drop:       # Drop all capabilities for enhanced security
+      - ALL
+    cap_add:        # Re-add necessary capabilities
+      - NET_RAW
+      - NET_ADMIN
+      - NET_BIND_SERVICE
+    volumes:
+      - /app_storage/netalertx:/data
+      # to sync with system time
+      - /etc/localtime:/etc/localtime:ro
+    tmpfs:
+      # All writable runtime state resides under /tmp; comment out to persist logs between restarts
+      - "/tmp:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+    environment:
+      - PORT=20211
+```
 
   ![Project settings](./img/SYNOLOGY/07_Create_project.png)
 
@@ -64,10 +64,10 @@ The folders you are creating below will contain the configuration and the databa
 
   - This is only an example, your paths will differ.
 
-  ```yaml
-  volumes:
-        - /volume1/app_storage/netalertx:/data
-  ```
+```yaml
+volumes:
+      - /volume1/app_storage/netalertx:/data
+```
 
   ![Adjusting docker-compose](./img/SYNOLOGY/08_Adjust_docker_compose_volumes.png)
 
