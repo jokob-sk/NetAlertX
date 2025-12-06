@@ -296,4 +296,6 @@ sudo chown -R 20211:20211 /local_data_dir
 sudo chmod -R a+rwx /local_data_dir
 ```
 
-8. Start the container and verify everything works as expected.
+8. Start the container and verify everything works as expeexpected.
+9. Check the [Permissions -> Writable-paths](https://jokob-sk.github.io/NetAlertX/FILE_PERMISSIONS/#writable-paths) what directories to mount if you'd like to access the API or log files.
+   
