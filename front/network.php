@@ -445,8 +445,11 @@
       $('#showOfflineNumber').text(`(${offlineCount})`);
     }
 
-    // Now apply UI filter based on toggles
+    // Now apply UI filter based on toggles (always keep root)
     const filteredDevices = allDevices.filter(device => {
+      const isRoot = (device.devMac || '').toLowerCase() === 'internet';
+
+      if (isRoot) return true;
       if (!showArchived && parseInt(device.devIsArchived) === 1) return false;
       if (!showOffline && parseInt(device.devPresentLastScan) === 0) return false;
       return true;
@@ -569,6 +572,11 @@ function getChildren(node, list, path, visited = [])
 // ---------------------------------------------------------------------------
 function getHierarchy()
 {
+  // reset counters before rebuilding the hierarchy
+  leafNodesCount = 0;
+  visibleNodesCount = 0;
+  parentNodesCount = 0;
+
   let internetNode = null;
 
   for(i in deviceListGlobal)
@@ -709,18 +717,23 @@ function initTree(myHierarchy)
     // calculate the drawing area based on the tree width and available screen size
     let baseFontSize = parseFloat($('html').css('font-size'));
     let treeAreaHeight = ($(window).height() - 155); ;
+    let minNodeWidth = 60 // min safe node width not breaking the tree
 
     // calculate the font size of the leaf nodes to fit everything into the tree area
     leafNodesCount == 0 ? 1 : leafNodesCount;
 
     emSize = pxToEm((treeAreaHeight/(leafNodesCount)).toFixed(2));
 
-    let screenWidthEm = pxToEm($('.networkTable').width()-15);
+    // let screenWidthEm = pxToEm($('.networkTable').width()-15);
+    let minTreeWidthPx = parentNodesCount * minNodeWidth;
+    let actualWidthPx = $('.networkTable').width() - 15;
 
-    // init the drawing area size
-    $("#networkTree").attr('style', `height:${treeAreaHeight}px; width:${emToPx(screenWidthEm)}px`)
+    let finalWidthPx = Math.max(actualWidthPx, minTreeWidthPx);
 
-    // handle canvas and node size if only a few nodes
+    // override original value
+    let screenWidthEm = pxToEm(finalWidthPx);
+
+        // handle canvas and node size if only a few nodes
     emSize > 1 ? emSize = 1 : emSize = emSize;
 
     let nodeHeightPx = emToPx(emSize*1);
@@ -728,6 +741,12 @@ function initTree(myHierarchy)
 
     // handle if only a few nodes
     nodeWidthPx > 160 ? nodeWidthPx = 160 : nodeWidthPx = nodeWidthPx;
+    if (nodeWidthPx < minNodeWidth) nodeWidthPx = minNodeWidth;  // minimum safe width
+
+    console.log("Calculated nodeWidthPx =", nodeWidthPx, "emSize =", emSize , " screenWidthEm:", screenWidthEm, " emToPx(screenWidthEm):" , emToPx(screenWidthEm));
+
+    // init the drawing area size
+    $("#networkTree").attr('style', `height:${treeAreaHeight}px; width:${emToPx(screenWidthEm)}px`)
 
     console.log(Treeviz);
 
