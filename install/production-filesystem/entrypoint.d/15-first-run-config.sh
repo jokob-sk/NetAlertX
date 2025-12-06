@@ -8,7 +8,7 @@ if [ ! -f "${NETALERTX_CONFIG}/app.conf" ]; then
         exit 1
     }
     install -m 600 -o ${NETALERTX_USER} -g ${NETALERTX_GROUP} /app/back/app.conf "${NETALERTX_CONFIG}/app.conf" || {
-        >&2 echo "ERROR: Failed to copy default config to ${NETALERTX_CONFIG}/app.conf"
+        >&2 echo "ERROR: Failed to deploy default config to ${NETALERTX_CONFIG}/app.conf"
         exit 2
     }
     RESET=$(printf '\033[0m')
