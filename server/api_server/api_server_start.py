@@ -418,7 +418,7 @@ def api_devices_search():
 
     if is_mac(query):
         device_data = get_device_data(query)
-        if device_data:
+        if device_data.status_code == 200:
             return jsonify({"success": True, "devices": [device_data.get_json()]})
         else:
             return jsonify({"success": False, "error": "Device not found"}), 404
@@ -574,7 +574,7 @@ def api_trigger_scan():
 @app.route('/mcp/sse/openapi.json', methods=['GET'])
 def api_openapi_spec():
     if not is_authorized():
-        return jsonify({"Success": False, "error": "Unauthorized"}), 401
+        return jsonify({"success": False, "error": "Unauthorized"}), 401
     return openapi_spec()
 
 

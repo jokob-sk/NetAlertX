@@ -32,6 +32,7 @@ class EventInstance:
             ORDER BY eve_DateTime DESC
             LIMIT ?
         """, (n,)).fetchall()
+        conn.close()
         return self._rows_to_list(rows)
 
     # --- Specific helper for last 10 ---

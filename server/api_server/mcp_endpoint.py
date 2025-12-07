@@ -57,16 +57,13 @@ def openapi_spec():
 
 
 # Sessions for SSE
-_sessions = {}
-_sessions_lock = __import__('threading').Lock()
 _openapi_spec_cache = None
 API_BASE_URL = f"http://localhost:{get_setting_value('GRAPHQL_PORT')}"
 
 
 def get_openapi_spec():
     global _openapi_spec_cache
-    # Clear cache on each call for now to ensure fresh spec
-    _openapi_spec_cache = None
+
     if _openapi_spec_cache:
         return _openapi_spec_cache
     try:
