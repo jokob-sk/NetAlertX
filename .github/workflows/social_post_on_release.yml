@@ -7,8 +7,8 @@ jobs:
   post-discord:
     runs-on: ubuntu-latest
     steps:
-      - name: Wait for 15 minutes
-        run: sleep 900  # 15 minutes delay
+      - name: Wait for 60 minutes
+        run: sleep 3600  # 60 minutes delay
 
       - name: Post to Discord
         run: |
