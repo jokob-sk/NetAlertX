@@ -2,7 +2,7 @@
 
 The **Database Query API** provides direct, low-level access to the NetAlertX database. It allows **read, write, update, and delete** operations against tables, using **base64-encoded** SQL or structured parameters.
 
-> [!Warning] 
+> [!Warning]
 > This API is primarily used internally to generate and render the application UI. These endpoints are low-level and powerful, and should be used with caution. Wherever possible, prefer the [standard API endpoints](API.md). Invalid or unsafe queries can corrupt data.
 > If you need data in a specific format that is not already provided, please open an issue or pull request with a clear, broadly useful use case. This helps ensure new endpoints benefit the wider community rather than relying on raw database queries.
 
@@ -16,10 +16,14 @@ All `/dbquery/*` endpoints require an API token in the HTTP headers:
 Authorization: Bearer <API_TOKEN>
 ```
 
-If the token is missing or invalid:
+If the token is missing or invalid (HTTP 403):
 
 ```json
-{ "error": "Forbidden" }
+{
+  \"success\": false,
+  \"message\": \"ERROR: Not authorized\",
+  \"error\": \"Forbidden\"
+}
 ```
 
 ---

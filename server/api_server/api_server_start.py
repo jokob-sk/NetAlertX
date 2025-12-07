@@ -180,7 +180,7 @@ def graphql_endpoint():
     if not is_authorized():
         msg = '[graphql_server] Unauthorized access attempt - make sure your GRAPHQL_PORT and API_TOKEN settings are correct.'
         mylog('verbose', [msg])
-        return jsonify({"success": False, "message": msg, "error": "Forbidden"}), 401
+        return jsonify({"success": False, "message": msg, "error": "Forbidden"}), 403
 
     # Retrieve and log request data
     data = request.get_json()
@@ -301,7 +301,7 @@ def api_device_set_alias(mac):
 def api_device_open_ports():
     """Get stored NMAP open ports for a target IP or MAC."""
     if not is_authorized():
-        return jsonify({"success": False, "error": "Unauthorized"}), 401
+        return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
 
     data = request.get_json(silent=True) or {}
     target = data.get('target')
@@ -393,7 +393,7 @@ def api_devices_by_status():
 def api_devices_search():
     """Device search: accepts 'query' in JSON and maps to device info/search."""
     if not is_authorized():
-        return jsonify({"error": "Unauthorized"}), 401
+        return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
 
     data = request.get_json(silent=True) or {}
     query = data.get('query')
@@ -424,7 +424,7 @@ def api_devices_search():
 def api_devices_latest():
     """Get latest device (most recent) - maps to DeviceInstance.getLatest()."""
     if not is_authorized():
-        return jsonify({"error": "Unauthorized"}), 401
+        return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
 
     device_handler = DeviceInstance()
 
@@ -440,7 +440,7 @@ def api_devices_latest():
 def api_devices_network_topology():
     """Network topology mapping."""
     if not is_authorized():
-        return jsonify({"error": "Unauthorized"}), 401
+        return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
 
     device_handler = DeviceInstance()
 
@@ -564,7 +564,7 @@ def api_trigger_scan():
 @app.route('/mcp/sse/openapi.json', methods=['GET'])
 def api_openapi_spec():
     if not is_authorized():
-        return jsonify({"success": False, "error": "Unauthorized"}), 401
+        return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
     return openapi_spec()
 
 
@@ -786,7 +786,7 @@ def api_events_recent(hours):
     """Return events from the last <hours> hours using EventInstance."""
 
     if not is_authorized():
-        return jsonify({"success": False, "error": "Unauthorized"}), 401
+        return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
 
     # Validate hours input
     if hours <= 0:

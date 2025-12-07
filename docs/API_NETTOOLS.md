@@ -241,3 +241,12 @@ curl -X POST "http://<server_ip>:<GRAPHQL_PORT>/nettools/nmap" \
 curl "http://<server_ip>:<GRAPHQL_PORT>/nettools/internetinfo" \
   -H "Authorization: Bearer <API_TOKEN>"
 ```
+
+---
+
+## MCP Tools
+
+Network tools are available as **MCP Tools** for AI assistant integration:
+- `wol_wake_device`, `trigger_scan`, `get_open_ports`
+
+📖 See [MCP Server Bridge API](API_MCP.md) for AI integration details.
