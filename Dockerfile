@@ -36,6 +36,8 @@ RUN apk add --no-cache \
         libffi-dev \
         openssl-dev \
         git \
+        rust \
+        cargo \
     && python -m venv /opt/venv
 
 # Upgrade pip/wheel/setuptools and install Python packages
