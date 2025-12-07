@@ -169,10 +169,12 @@ def log_request_info():
 
 @app.errorhandler(404)
 def not_found(error):
+    # Get the requested path from the request object instead of error.description
+    requested_url = request.path if request else "unknown"
     response = {
         "success": False,
         "error": "API route not found",
-        "message": f"The requested URL {error.description if hasattr(error, 'description') else ''} was not found on the server.",
+        "message": f"The requested URL {requested_url} was not found on the server.",
     }
     return jsonify(response), 404
 
@@ -485,6 +487,11 @@ def api_wakeonlan():
         if not dev or not dev.get('devMac'):
             return jsonify({"success": False, "message": "ERROR: Device not found", "error": "MAC not resolved"}), 404
         mac = dev.get('devMac')
+
+    # Validate that we have a valid MAC address
+    if not mac:
+        return jsonify({"success": False, "message": "ERROR: Missing device MAC or IP", "error": "Bad Request"}), 400
+
     return wakeonlan(mac)
 
 
@@ -787,7 +794,8 @@ def get_last_events():
     # Create fresh DB instance for this thread
     event_handler = EventInstance()
 
-    return event_handler.get_last_n(10)
+    events = event_handler.get_last_n(10)
+    return jsonify({"success": True, "count": len(events), "events": events}), 200
 
 
 @app.route('/events/<int:hours>', methods=['GET'])

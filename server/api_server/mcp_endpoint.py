@@ -71,7 +71,8 @@ def get_openapi_spec():
         r.raise_for_status()
         _openapi_spec_cache = r.json()
         return _openapi_spec_cache
-    except Exception:
+    except Exception as e:
+        mylog("none", [f"[MCP] Failed to fetch OpenAPI spec: {e}"])
         return None
 
 
@@ -140,11 +141,13 @@ def process_mcp_request(data):
             try:
                 json_content = api_res.json()
                 content.append({'type': 'text', 'text': json.dumps(json_content, indent=2)})
-            except Exception:
+            except Exception as e:
+                mylog("none", [f"[MCP] Failed to parse API response as JSON: {e}"])
                 content.append({'type': 'text', 'text': api_res.text})
             is_error = api_res.status_code >= 400
             return {'jsonrpc': '2.0', 'id': msg_id, 'result': {'content': content, 'isError': is_error}}
         except Exception as e:
+            mylog("none", [f"[MCP] Error calling tool {tool_name}: {e}"])
             return {'jsonrpc': '2.0', 'id': msg_id, 'result': {'content': [{'type': 'text', 'text': f"Error calling tool: {str(e)}"}], 'isError': True}}
     if method == 'ping':
         return {'jsonrpc': '2.0', 'id': msg_id, 'result': {}}
@@ -180,7 +183,7 @@ def mcp_sse():
                 else:
                     return '', 202
         except Exception as e:
-            mylog("none", f'SSE POST processing error: {e}')
+            mylog("none", [f"[MCP] SSE POST processing error: {e}"])
         return jsonify({'status': 'ok', 'message': 'MCP SSE endpoint active'}), 200
 
     session_id = uuid.uuid4().hex
