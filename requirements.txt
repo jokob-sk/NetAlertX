@@ -1,3 +1,4 @@
+cryptography<40
 openwrt-luci-rpc
 asusrouter
 aiohttp
