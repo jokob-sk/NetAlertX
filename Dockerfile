@@ -36,15 +36,13 @@ RUN apk add --no-cache \
         libffi-dev \
         openssl-dev \
         git \
-        rust \
-        cargo \
     && python -m venv /opt/venv
 
 # Upgrade pip/wheel/setuptools and install Python packages
 RUN python -m pip install --upgrade pip setuptools wheel && \
-    pip install --no-cache-dir -r /tmp/requirements.txt && \
+    pip install --prefer-binary --no-cache-dir -r /tmp/requirements.txt && \
     chmod -R u-rwx,g-rwx /opt
-    
+
 # second stage is the main runtime stage with just the minimum required to run the application
 # The runner is used for both devcontainer, and as a base for the hardened stage.
 FROM alpine:3.22 AS runner
