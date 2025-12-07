@@ -97,8 +97,9 @@ CREATE TABLE Devices (
               devSite TEXT,
               devSSID TEXT,
               devSyncHubNode TEXT,
-              devSourcePlugin TEXT
-          , "devCustomProps" TEXT);
+              devSourcePlugin TEXT,
+			  devFQDN TEXT,
+              "devCustomProps" TEXT);
 CREATE TABLE IF NOT EXISTS "Settings" (
             "setKey"            TEXT,
             "setName"           TEXT,
