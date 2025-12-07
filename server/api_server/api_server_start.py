@@ -3,7 +3,6 @@ import sys
 import os
 
 from flask import Flask, request, jsonify, Response
-import requests
 from models.device_instance import DeviceInstance  # noqa: E402
 from flask_cors import CORS
 
@@ -116,24 +115,8 @@ CORS(
 # MCP bridge variables + helpers (moved from mcp_routes)
 # -------------------------------------------------------------------------------
 
-mcp_openapi_spec_cache = None
-
 BACKEND_PORT = get_setting_value("GRAPHQL_PORT")
 API_BASE_URL = f"http://localhost:{BACKEND_PORT}"
-
-
-def get_openapi_spec_local():
-    global mcp_openapi_spec_cache
-    if mcp_openapi_spec_cache:
-        return mcp_openapi_spec_cache
-    try:
-        resp = requests.get(f"{API_BASE_URL}/mcp/openapi.json", timeout=10)
-        resp.raise_for_status()
-        mcp_openapi_spec_cache = resp.json()
-        return mcp_openapi_spec_cache
-    except Exception as e:
-        mylog('minimal', [f"Error fetching OpenAPI spec: {e}"])
-        return None
 
 
 @app.route('/mcp/sse', methods=['GET', 'POST'])

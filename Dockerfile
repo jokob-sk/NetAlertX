@@ -32,7 +32,8 @@ RUN apk add --no-cache bash shadow python3 python3-dev gcc musl-dev libffi-dev o
 # Create virtual environment owned by root, but readable by everyone else. This makes it easy to copy
 # into hardened stage without worrying about permissions and keeps image size small. Keeping the commands
 # together makes for a slightly smaller image size.
-RUN pip install --no-cache-dir -r /tmp/requirements.txt && \
+RUN python -m pip install --upgrade pip setuptools wheel && \
+    pip install --no-cache-dir -r /tmp/requirements.txt && \
     chmod -R u-rwx,g-rwx /opt
 
 # second stage is the main runtime stage with just the minimum required to run the application
