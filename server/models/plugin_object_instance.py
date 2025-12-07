@@ -1,79 +1,91 @@
 from logger import mylog
+from database import get_temp_db_connection
 
 
 # -------------------------------------------------------------------------------
-# Plugin object handling (WIP)
+# Plugin object handling (THREAD-SAFE REWRITE)
 # -------------------------------------------------------------------------------
 class PluginObjectInstance:
-    def __init__(self, db):
-        self.db = db
 
-    # Get all plugin objects
-    def getAll(self):
-        self.db.sql.execute("""
-            SELECT * FROM Plugins_Objects
-        """)
-        return self.db.sql.fetchall()
-
-    # Get plugin object by ObjectGUID
-    def getByGUID(self, ObjectGUID):
-        self.db.sql.execute(
-            "SELECT * FROM Plugins_Objects WHERE ObjectGUID = ?", (ObjectGUID,)
-        )
-        result = self.db.sql.fetchone()
-        return dict(result) if result else None
-
-    # Check if a plugin object exists by ObjectGUID
-    def exists(self, ObjectGUID):
-        self.db.sql.execute(
-            "SELECT COUNT(*) AS count FROM Plugins_Objects WHERE ObjectGUID = ?",
-            (ObjectGUID,),
-        )
-        result = self.db.sql.fetchone()
-        return result["count"] > 0
-
-    # Get objects by plugin name
-    def getByPlugin(self, plugin):
-        self.db.sql.execute("SELECT * FROM Plugins_Objects WHERE Plugin = ?", (plugin,))
-        return self.db.sql.fetchall()
-
-    # Get plugin objects by primary ID and plugin name
-    def getByPrimary(self, plugin, primary_id):
-        self.db.sql.execute(
-            "SELECT * FROM Plugins_Objects WHERE Plugin = ? AND Object_PrimaryID = ?",
-            (plugin, primary_id),
-        )
-        rows = self.db.sql.fetchall()
+    # -------------- Internal DB helper wrappers --------------------------------
+    def _fetchall(self, query, params=()):
+        conn = get_temp_db_connection()
+        rows = conn.execute(query, params).fetchall()
+        conn.close()
         return [dict(r) for r in rows]
 
-    # Get objects by status
-    def getByStatus(self, status):
-        self.db.sql.execute("SELECT * FROM Plugins_Objects WHERE Status = ?", (status,))
-        return self.db.sql.fetchall()
+    def _fetchone(self, query, params=()):
+        conn = get_temp_db_connection()
+        row = conn.execute(query, params).fetchone()
+        conn.close()
+        return dict(row) if row else None
 
-    # Update a specific field for a plugin object
+    def _execute(self, query, params=()):
+        conn = get_temp_db_connection()
+        conn.execute(query, params)
+        conn.commit()
+        conn.close()
+
+    # ---------------------------------------------------------------------------
+    # Public API — identical behaviour, now thread-safe + self-contained
+    # ---------------------------------------------------------------------------
+
+    def getAll(self):
+        return self._fetchall("SELECT * FROM Plugins_Objects")
+
+    def getByGUID(self, ObjectGUID):
+        return self._fetchone(
+            "SELECT * FROM Plugins_Objects WHERE ObjectGUID = ?", (ObjectGUID,)
+        )
+
+    def exists(self, ObjectGUID):
+        row = self._fetchone("""
+            SELECT COUNT(*) AS count FROM Plugins_Objects WHERE ObjectGUID = ?
+        """, (ObjectGUID,))
+        return row["count"] > 0 if row else False
+
+    def getByPlugin(self, plugin):
+        return self._fetchall(
+            "SELECT * FROM Plugins_Objects WHERE Plugin = ?", (plugin,)
+        )
+
+    def getByField(self, plugPrefix, matchedColumn, matchedKey, returnFields=None):
+        rows = self._fetchall(
+            f"SELECT * FROM Plugins_Objects WHERE Plugin = ? AND {matchedColumn} = ?",
+            (plugPrefix, matchedKey.lower())
+        )
+
+        if not returnFields:
+            return rows
+
+        return [{f: row.get(f) for f in returnFields} for row in rows]
+
+    def getByPrimary(self, plugin, primary_id):
+        return self._fetchall("""
+            SELECT * FROM Plugins_Objects
+            WHERE Plugin = ? AND Object_PrimaryID = ?
+        """, (plugin, primary_id))
+
+    def getByStatus(self, status):
+        return self._fetchall("""
+            SELECT * FROM Plugins_Objects WHERE Status = ?
+        """, (status,))
+
     def updateField(self, ObjectGUID, field, value):
         if not self.exists(ObjectGUID):
-            m = f"[PluginObject] In 'updateField': GUID {ObjectGUID} not found."
-            mylog("none", m)
-            raise ValueError(m)
+            msg = f"[PluginObject] updateField: GUID {ObjectGUID} not found."
+            mylog("none", msg)
+            raise ValueError(msg)
 
-        self.db.sql.execute(
-            f"""
-            UPDATE Plugins_Objects SET {field} = ? WHERE ObjectGUID = ?
-        """,
-            (value, ObjectGUID),
+        self._execute(
+            f"UPDATE Plugins_Objects SET {field}=? WHERE ObjectGUID=?",
+            (value, ObjectGUID)
         )
-        self.db.commitDB()
 
-    # Delete a plugin object by ObjectGUID
     def delete(self, ObjectGUID):
         if not self.exists(ObjectGUID):
-            m = f"[PluginObject] In 'delete': GUID {ObjectGUID} not found."
-            mylog("none", m)
-            raise ValueError(m)
+            msg = f"[PluginObject] delete: GUID {ObjectGUID} not found."
+            mylog("none", msg)
+            raise ValueError(msg)
 
-        self.db.sql.execute(
-            "DELETE FROM Plugins_Objects WHERE ObjectGUID = ?", (ObjectGUID,)
-        )
-        self.db.commitDB()
+        self._execute("DELETE FROM Plugins_Objects WHERE ObjectGUID=?", (ObjectGUID,))

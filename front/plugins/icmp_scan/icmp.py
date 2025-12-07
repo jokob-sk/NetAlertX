@@ -15,7 +15,6 @@ from plugin_helper import Plugin_Objects  # noqa: E402 [flake8 lint suppression]
 from logger import mylog, Logger  # noqa: E402 [flake8 lint suppression]
 from helper import get_setting_value  # noqa: E402 [flake8 lint suppression]
 from const import logPath  # noqa: E402 [flake8 lint suppression]
-from database import DB  # noqa: E402 [flake8 lint suppression]
 from models.device_instance import DeviceInstance  # noqa: E402 [flake8 lint suppression]
 import conf  # noqa: E402 [flake8 lint suppression]
 from pytz import timezone  # noqa: E402 [flake8 lint suppression]
@@ -41,15 +40,11 @@ def main():
     args = get_setting_value('ICMP_ARGS')
     in_regex = get_setting_value('ICMP_IN_REGEX')
 
-    # Create a database connection
-    db = DB()  # instance of class DB
-    db.open()
-
     # Initialize the Plugin obj output file
     plugin_objects = Plugin_Objects(RESULT_FILE)
 
     # Create a DeviceInstance instance
-    device_handler = DeviceInstance(db)
+    device_handler = DeviceInstance()
 
     # Retrieve devices
     all_devices = device_handler.getAll()

@@ -25,7 +25,7 @@
     // even within this container and connect to them as needed.
     // "--network=host",
   ],
-  "mounts": [ 
+  "mounts": [
     "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind" //used for testing various conditions in docker
   ],
   // ATTENTION: If running with --network=host, COMMENT `forwardPorts` OR ELSE THERE WILL BE NO WEBUI!
@@ -88,7 +88,7 @@
           }
         },
         "terminal.integrated.defaultProfile.linux": "zsh",
-        
+
         // Python testing configuration
         "python.testing.pytestEnabled": true,
         "python.testing.unittestEnabled": false,
