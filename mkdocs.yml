@@ -169,6 +169,23 @@ theme:
         name: Switch to dark mode
 markdown_extensions:
   - admonition
+  - pymdownx.superfences
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed
+  - pymdownx.details
+  - pymdownx.snippets
+  - pymdownx.blocks.tab
+  - pymdownx.blocks.admonition
+  - pymdownx.blocks.details
+  - pymdownx.mark
+  - pymdownx.tasklist
+  - pymdownx.emoji
+  - pymdownx.magiclink
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
 plugins:
   - gh-admonitions
   - search
