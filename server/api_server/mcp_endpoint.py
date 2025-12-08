@@ -67,9 +67,10 @@ def get_openapi_spec():
     if _openapi_spec_cache:
         return _openapi_spec_cache
     try:
-        r = requests.get(f"{API_BASE_URL}/mcp/openapi.json", timeout=10)
-        r.raise_for_status()
-        _openapi_spec_cache = r.json()
+        # Call the openapi_spec function directly instead of making HTTP request
+        # to avoid circular requests and authorization issues
+        response = openapi_spec()
+        _openapi_spec_cache = response.get_json()
         return _openapi_spec_cache
     except Exception as e:
         mylog("none", [f"[MCP] Failed to fetch OpenAPI spec: {e}"])
