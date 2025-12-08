@@ -20,9 +20,9 @@ If the token is missing or invalid (HTTP 403):
 
 ```json
 {
-  \"success\": false,
-  \"message\": \"ERROR: Not authorized\",
-  \"error\": \"Forbidden\"
+  "success": false,
+  "message": "ERROR: Not authorized",
+  "error": "Forbidden"
 }
 ```
 

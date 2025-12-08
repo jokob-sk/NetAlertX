@@ -112,7 +112,7 @@ CORS(
 )
 
 # -------------------------------------------------------------------------------
-# MCP bridge variables + helpers (moved from mcp_routes)
+# MCP bridge variables + helpers 
 # -------------------------------------------------------------------------------
 
 BACKEND_PORT = get_setting_value("GRAPHQL_PORT")
@@ -126,7 +126,7 @@ def api_mcp_sse():
     return mcp_sse()
 
 
-@app.route('/api/mcp/messages', methods=['POST'])
+@app.route('/mcp/messages', methods=['POST'])
 def api_mcp_messages():
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
@@ -399,14 +399,14 @@ def api_devices_search():
     query = data.get('query')
 
     if not query:
-        return jsonify({"error": "Missing 'query' parameter"}), 400
+        return jsonify({"success": False, "message": "Missing 'query' parameter", "error": "Missing query"}), 400
 
     if is_mac(query):
         device_data = get_device_data(query)
         if device_data.status_code == 200:
             return jsonify({"success": True, "devices": [device_data.get_json()]})
         else:
-            return jsonify({"success": False, "error": "Device not found"}), 404
+            return jsonify({"success": False, "message": "Device not found", "error": "Device not found"}), 404
 
     # Create fresh DB instance for this thread
     device_handler = DeviceInstance()
@@ -414,7 +414,7 @@ def api_devices_search():
     matches = device_handler.search(query)
 
     if not matches:
-        return jsonify({"success": False, "error": "No devices found"}), 404
+        return jsonify({"success": False, "message": "No devices found", "error": "No devices found"}), 404
 
     return jsonify({"success": True, "devices": matches})
 
