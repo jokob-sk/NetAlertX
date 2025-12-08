@@ -162,8 +162,9 @@ def build_row(
     now: dt.datetime,
 ) -> dict[str, str]:
     comments = "Synthetic device generated for testing."
-    first_seen = random_time(now)
-    last_seen = random_time(now)
+    t1 = random_time(now)
+    t2 = random_time(now)
+    first_seen, last_seen = (t1, t2) if t1 <= t2 else (t2, t1)
     fqdn = f"{name.lower().replace(' ', '-')}.{site}" if name else ""
 
     # Minimal fields set; missing ones default to empty string for CSV compatibility.
@@ -215,6 +216,7 @@ def generate_rows(args: argparse.Namespace, header: list[str]) -> list[dict[str,
 
     rows: list[dict[str, str]] = []
 
+    # Include one Internet root device that anchors the tree; it does not consume an IP.
     required_devices = 1 + args.switches + args.aps + args.devices
     if required_devices > len(ip_pool):
         raise ValueError(
@@ -226,6 +228,30 @@ def generate_rows(args: argparse.Namespace, header: list[str]) -> list[dict[str,
         choice = random.choice(ip_pool)
         ip_pool.remove(choice)
         return choice
+
+    # Root "Internet" device (no parent, no IP) so the topology has a defined root.
+    root_row = build_row(
+        name="Internet",
+        dev_type="Gateway",
+        vendor="NetAlertX",
+        mac="Internet",
+        parent_mac="",
+        ip="",
+        header=header,
+        owner=args.owner,
+        site=args.site,
+        ssid=args.ssid,
+        now=now,
+    )
+    root_row["devComments"] = "Synthetic root device representing the Internet."
+    root_row["devParentRelType"] = "Root"
+    root_row["devStaticIP"] = "0"
+    root_row["devScan"] = "0"
+    root_row["devAlertEvents"] = "0"
+    root_row["devAlertDown"] = "0"
+    root_row["devLogEvents"] = "0"
+    root_row["devPresentLastScan"] = "0"
+    rows.append(root_row)
 
     router_mac = random_mac(macs)
     router_ip = take_ip()

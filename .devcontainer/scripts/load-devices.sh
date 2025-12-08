@@ -13,8 +13,8 @@ else
     CSV_PATH="$(mktemp -t netalertx-devices.XXXXXX 2>/dev/null || mktemp /tmp/netalertx-devices-XXXXXX.csv)"
   fi
 fi
-DEVICE_COUNT="${DEVICE_COUNT:-40}"
-SEED="${SEED:-42}"
+DEVICE_COUNT="${DEVICE_COUNT:-255}"
+SEED="${SEED:-20211}"
 NETWORK_CIDR="${NETWORK_CIDR:-192.168.50.0/22}"
 DB_DIR="${NETALERTX_DB:-/data/db}"
 DB_FILE="${DB_DIR%/}/app.db"
