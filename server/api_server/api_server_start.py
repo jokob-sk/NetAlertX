@@ -112,7 +112,7 @@ CORS(
 )
 
 # -------------------------------------------------------------------------------
-# MCP bridge variables + helpers 
+# MCP bridge variables + helpers
 # -------------------------------------------------------------------------------
 
 BACKEND_PORT = get_setting_value("GRAPHQL_PORT")
@@ -142,7 +142,7 @@ def log_request_info():
     # Filter out noisy requests if needed, but user asked for drastic logging
     mylog("verbose", [f"[HTTP] {request.method} {request.path} from {request.remote_addr}"])
     # Filter sensitive headers before logging
-    safe_headers = {k: v for k, v in request.headers if k.lower() not in ('authorization', 'cookie', 'x-api-key')}
+    safe_headers = {k: v for k, v in request.headers.items() if k.lower() not in ('authorization', 'cookie', 'x-api-key')}
     mylog("debug", [f"[HTTP] Headers: {safe_headers}"])
     if request.method == "POST":
         # Be careful with large bodies, but log first 1000 chars

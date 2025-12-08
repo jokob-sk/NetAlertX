@@ -19,6 +19,98 @@ All MCP endpoints mirror the functionality of standard REST endpoints but are op
 
 ---
 
+## Architecture Overview
+
+### MCP Connection Flow
+
+```mermaid
+graph TB
+    A[AI Assistant<br/>Claude Desktop] -->|SSE Connection| B[NetAlertX MCP Server<br/>:20212/mcp/sse]
+    B -->|JSON-RPC Messages| C[MCP Bridge<br/>api_server_start.py]
+    C -->|Tool Calls| D[NetAlertX Tools<br/>Device/Network APIs]
+    D -->|Response Data| C
+    C -->|JSON Response| B
+    B -->|Stream Events| A
+
+    style A fill:#e1f5fe
+    style B fill:#f3e5f5
+    style C fill:#fff3e0
+    style D fill:#e8f5e8
+```
+
+### MCP Tool Integration
+
+```mermaid
+sequenceDiagram
+    participant AI as AI Assistant
+    participant MCP as MCP Server (:20212)
+    participant API as NetAlertX API (:20211)
+    participant DB as SQLite Database
+
+    AI->>MCP: 1. Connect via SSE
+    MCP-->>AI: 2. Session established
+    AI->>MCP: 3. tools/list request
+    MCP->>API: 4. GET /mcp/sse/openapi.json
+    API-->>MCP: 5. Available tools spec
+    MCP-->>AI: 6. Tool definitions
+    AI->>MCP: 7. tools/call: search_devices
+    MCP->>API: 8. POST /mcp/sse/devices/search
+    API->>DB: 9. Query devices
+    DB-->>API: 10. Device data
+    API-->>MCP: 11. JSON response
+    MCP-->>AI: 12. Tool result
+```
+
+### Component Architecture
+
+```mermaid
+graph LR
+    subgraph "AI Client"
+        A[Claude Desktop]
+        B[Custom MCP Client]
+    end
+
+    subgraph "NetAlertX MCP Server (:20212)"
+        C[SSE Endpoint<br/>/mcp/sse]
+        D[Message Handler<br/>/mcp/messages]
+        E[OpenAPI Spec<br/>/mcp/sse/openapi.json]
+    end
+
+    subgraph "NetAlertX API Server (:20211)"
+        F[Device APIs<br/>/mcp/sse/devices/*]
+        G[Network Tools<br/>/mcp/sse/nettools/*]
+        H[Events API<br/>/mcp/sse/events/*]
+    end
+
+    subgraph "Backend"
+        I[SQLite Database]
+        J[Network Scanners]
+        K[Plugin System]
+    end
+
+    A -.->|Bearer Auth| C
+    B -.->|Bearer Auth| C
+    C --> D
+    C --> E
+    D --> F
+    D --> G
+    D --> H
+    F --> I
+    G --> J
+    H --> I
+
+    style A fill:#e1f5fe
+    style B fill:#e1f5fe
+    style C fill:#f3e5f5
+    style D fill:#f3e5f5
+    style E fill:#f3e5f5
+    style F fill:#fff3e0
+    style G fill:#fff3e0
+    style H fill:#fff3e0
+```
+
+---
+
 ## Authentication
 
 MCP endpoints use the same **Bearer token authentication** as REST endpoints:
