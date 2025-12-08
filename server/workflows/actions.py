@@ -42,13 +42,13 @@ class UpdateFieldAction(Action):
         # currently unused
         if isinstance(obj, dict) and "ObjectGUID" in obj:
             mylog("debug", f"[WF] Updating Object '{obj}' ")
-            plugin_instance = PluginObjectInstance(self.db)
+            plugin_instance = PluginObjectInstance()
             plugin_instance.updateField(obj["ObjectGUID"], self.field, self.value)
             processed = True
 
         elif isinstance(obj, dict) and "devGUID" in obj:
             mylog("debug", f"[WF] Updating Device '{obj}' ")
-            device_instance = DeviceInstance(self.db)
+            device_instance = DeviceInstance()
             device_instance.updateField(obj["devGUID"], self.field, self.value)
             processed = True
 
@@ -79,13 +79,13 @@ class DeleteObjectAction(Action):
         # currently unused
         if isinstance(obj, dict) and "ObjectGUID" in obj:
             mylog("debug", f"[WF] Updating Object '{obj}' ")
-            plugin_instance = PluginObjectInstance(self.db)
+            plugin_instance = PluginObjectInstance()
             plugin_instance.delete(obj["ObjectGUID"])
             processed = True
 
         elif isinstance(obj, dict) and "devGUID" in obj:
             mylog("debug", f"[WF] Updating Device '{obj}' ")
-            device_instance = DeviceInstance(self.db)
+            device_instance = DeviceInstance()
             device_instance.delete(obj["devGUID"])
             processed = True
 

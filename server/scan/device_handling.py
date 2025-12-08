@@ -650,7 +650,7 @@ def update_devices_names(pm):
 
     sql = pm.db.sql
     resolver = NameResolver(pm.db)
-    device_handler = DeviceInstance(pm.db)
+    device_handler = DeviceInstance()
 
     nameNotFound = "(name not found)"
 

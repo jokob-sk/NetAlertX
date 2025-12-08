@@ -12,7 +12,6 @@ from plugin_helper import Plugin_Objects  # noqa: E402 [flake8 lint suppression]
 from logger import mylog, Logger  # noqa: E402 [flake8 lint suppression]
 from const import logPath  # noqa: E402 [flake8 lint suppression]
 from helper import get_setting_value  # noqa: E402 [flake8 lint suppression]
-from database import DB  # noqa: E402 [flake8 lint suppression]
 from models.device_instance import DeviceInstance  # noqa: E402 [flake8 lint suppression]
 import conf  # noqa: E402 [flake8 lint suppression]
 from pytz import timezone  # noqa: E402 [flake8 lint suppression]
@@ -98,9 +97,7 @@ def main():
             {"devMac": "00:11:22:33:44:57", "devLastIP": "192.168.1.82"},
         ]
     else:
-        db = DB()
-        db.open()
-        device_handler = DeviceInstance(db)
+        device_handler = DeviceInstance()
         devices = (
             device_handler.getAll()
             if get_setting_value("REFRESH_FQDN")

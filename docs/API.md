@@ -36,8 +36,14 @@ Authorization: Bearer <API_TOKEN>
 If the token is missing or invalid, the server will return:
 
 ```json
-{ "error": "Forbidden" }
+{
+  "success": false,
+  "message": "ERROR: Not authorized",
+  "error": "Forbidden"
+}
 ```
+
+HTTP Status: **403 Forbidden**
 
 ---
 
@@ -54,6 +60,8 @@ http://<server>:<GRAPHQL_PORT>/
 > [!TIP]
 > When retrieving devices or settings try using the GraphQL API endpoint first as it is read-optimized.
 
+### Standard REST Endpoints
+
 * [Device API Endpoints](API_DEVICE.md) – Manage individual devices
 * [Devices Collection](API_DEVICES.md) – Bulk operations on multiple devices
 * [Events](API_EVENTS.md) – Device event logging and management
@@ -68,6 +76,18 @@ http://<server>:<GRAPHQL_PORT>/
 * [Sync](API_SYNC.md) – Synchronization between multiple NetAlertX instances
 * [Logs](API_LOGS.md) – Purging of logs and adding to the event execution queue for user triggered events
 * [DB query](API_DBQUERY.md) (⚠ Internal) - Low level database access - use other endpoints if possible
+
+### MCP Server Bridge
+
+NetAlertX includes an **MCP (Model Context Protocol) Server Bridge** that provides AI assistants access to NetAlertX functionality through standardized tools. MCP endpoints are available at `/mcp/sse/*` paths and mirror the functionality of standard REST endpoints:
+
+* `/mcp/sse` - Server-Sent Events endpoint for MCP client connections
+* `/mcp/sse/openapi.json` - OpenAPI specification for available MCP tools
+* `/mcp/sse/device/*`, `/mcp/sse/devices/*`, `/mcp/sse/nettools/*`, `/mcp/sse/events/*` - MCP-enabled versions of REST endpoints
+
+MCP endpoints require the same Bearer token authentication as REST endpoints.
+
+**📖 See [MCP Server Bridge API](API_MCP.md) for complete documentation, tool specifications, and integration examples.**
 
 See [Testing](API_TESTS.md) for example requests and usage.
 

@@ -256,13 +256,11 @@ def main():
     start_time = time.time()
 
     mylog("verbose", [f"[{pluginName}] starting execution"])
-    from database import DB
+
     from models.device_instance import DeviceInstance
 
-    db = DB()  # instance of class DB
-    db.open()
     # Create a DeviceInstance instance
-    device_handler = DeviceInstance(db)
+    device_handler = DeviceInstance()
     # Retrieve configuration settings
     # these should be self-explanatory
     omada_sites = []

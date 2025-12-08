@@ -41,6 +41,8 @@ Manage a **single device** by its MAC address. Operations include retrieval, upd
 * Device not found → HTTP 404
 * Unauthorized → HTTP 403
 
+**MCP Integration**: Available as `get_device_info` and `set_device_alias` tools. See [MCP Server Bridge API](API_MCP.md).
+
 ---
 
 ## 2. Update Device Fields

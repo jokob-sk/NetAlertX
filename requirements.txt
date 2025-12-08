@@ -1,3 +1,4 @@
+cryptography<40
 openwrt-luci-rpc
 asusrouter
 aiohttp
@@ -30,3 +31,4 @@ urllib3
 httplib2
 gunicorn
 git+https://github.com/foreign-sub/aiofreepybox.git
+mcp

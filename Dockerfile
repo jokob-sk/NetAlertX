@@ -26,13 +26,23 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 # Install build dependencies
 COPY requirements.txt /tmp/requirements.txt
-RUN apk add --no-cache bash shadow python3 python3-dev gcc musl-dev libffi-dev openssl-dev git \
+RUN apk add --no-cache \
+        bash \
+        shadow \
+        python3 \
+        python3-dev \
+        gcc \
+        musl-dev \
+        libffi-dev \
+        openssl-dev \
+        git \
+        rust \
+        cargo \
     && python -m venv /opt/venv
 
-# Create virtual environment owned by root, but readable by everyone else. This makes it easy to copy
-# into hardened stage without worrying about permissions and keeps image size small. Keeping the commands
-# together makes for a slightly smaller image size.
-RUN pip install --no-cache-dir -r /tmp/requirements.txt && \
+# Upgrade pip/wheel/setuptools and install Python packages
+RUN python -m pip install --upgrade pip setuptools wheel && \
+    pip install --prefer-binary --no-cache-dir -r /tmp/requirements.txt && \
     chmod -R u-rwx,g-rwx /opt
 
 # second stage is the main runtime stage with just the minimum required to run the application

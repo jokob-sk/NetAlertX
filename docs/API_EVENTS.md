@@ -88,7 +88,56 @@ The Events API provides access to **device event logs**, allowing creation, retr
 
 ---
 
-### 4. Event Totals Over a Period
+### 4. Get Recent Events
+
+* **GET** `/events/recent` → Get events from the last 24 hours
+* **GET** `/events/<hours>` → Get events from the last N hours
+
+**Response** (JSON):
+
+```json
+{
+  "success": true,
+  "hours": 24,
+  "count": 5,
+  "events": [
+    {
+      "eve_DateTime": "2025-12-07 12:00:00",
+      "eve_EventType": "New Device",
+      "eve_MAC": "AA:BB:CC:DD:EE:FF",
+      "eve_IP": "192.168.1.100",
+      "eve_AdditionalInfo": "Device detected"
+    }
+  ]
+}
+```
+
+---
+
+### 5. Get Latest Events
+
+* **GET** `/events/last`
+  Get the 10 most recent events.
+
+**Response** (JSON):
+
+```json
+{
+  "success": true,
+  "count": 10,
+  "events": [
+    {
+      "eve_DateTime": "2025-12-07 12:00:00",
+      "eve_EventType": "Device Down",
+      "eve_MAC": "AA:BB:CC:DD:EE:FF"
+    }
+  ]
+}
+```
+
+---
+
+### 6. Event Totals Over a Period
 
 * **GET** `/sessions/totals?period=<period>`
   Return event and session totals over a given period.
@@ -116,12 +165,25 @@ The Events API provides access to **device event logs**, allowing creation, retr
 
 ---
 
+## MCP Tools
+
+Event endpoints are available as **MCP Tools** for AI assistant integration:
+- `get_recent_alerts`, `get_last_events`
+
+📖 See [MCP Server Bridge API](API_MCP.md) for AI integration details.
+
+---
+
 ## Notes
 
-* All endpoints require **authorization** (Bearer token). Unauthorized requests return:
+* All endpoints require **authorization** (Bearer token). Unauthorized requests return HTTP 403:
 
 ```json
-{ "error": "Forbidden" }
+{
+  "success": false,
+  "message": "ERROR: Not authorized",
+  "error": "Forbidden"
+}
 ```
 
 * Events are stored in the **Events table** with the following fields:

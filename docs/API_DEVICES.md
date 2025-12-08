@@ -170,7 +170,7 @@ The Devices Collection API provides operations to **retrieve, manage, import/exp
 **Response**:
 
 ```json
-[ 
+[
   120,    // Total devices
   85,     // Connected
   5,      // Favorites
@@ -204,6 +204,93 @@ The Devices Collection API provides operations to **retrieve, manage, import/exp
 ```
 
 *If `devFavorite=1`, the title is prepended with a star `★`.*
+
+---
+
+### 9. Search Devices
+
+* **POST** `/devices/search`
+  Search for devices by MAC, name, or IP address.
+
+**Request Body** (JSON):
+
+```json
+{
+  "query": ".50"
+}
+```
+
+**Response**:
+
+```json
+{
+  "success": true,
+  "devices": [
+    {
+      "devName": "Test Device",
+      "devMac": "AA:BB:CC:DD:EE:FF",
+      "devLastIP": "192.168.1.50"
+    }
+  ]
+}
+```
+
+---
+
+### 10. Get Latest Device
+
+* **GET** `/devices/latest`
+  Get the most recently connected device.
+
+**Response**:
+
+```json
+[
+  {
+    "devName": "Latest Device",
+    "devMac": "AA:BB:CC:DD:EE:FF",
+    "devLastIP": "192.168.1.100",
+    "devFirstConnection": "2025-12-07 10:30:00"
+  }
+]
+```
+
+---
+
+### 11. Get Network Topology
+
+* **GET** `/devices/network/topology`
+  Get network topology showing device relationships.
+
+**Response**:
+
+```json
+{
+  "nodes": [
+    {
+      "id": "AA:AA:AA:AA:AA:AA",
+      "name": "Router",
+      "vendor": "VendorA"
+    }
+  ],
+  "links": [
+    {
+      "source": "AA:AA:AA:AA:AA:AA",
+      "target": "BB:BB:BB:BB:BB:BB",
+      "port": "eth1"
+    }
+  ]
+}
+```
+
+---
+
+## MCP Tools
+
+These endpoints are also available as **MCP Tools** for AI assistant integration:
+- `list_devices`, `search_devices`, `get_latest_device`, `get_network_topology`, `set_device_alias`
+
+📖 See [MCP Server Bridge API](API_MCP.md) for AI integration details.
 
 ---
 
@@ -244,6 +331,29 @@ curl -X POST "http://<server_ip>:<GRAPHQL_PORT>/devices/import" \
 
 ```sh
 curl -X GET "http://<server_ip>:<GRAPHQL_PORT>/devices/by-status?status=online" \
+  -H "Authorization: Bearer <API_TOKEN>"
+```
+
+**Search Devices**:
+
+```sh
+curl -X POST "http://<server_ip>:<GRAPHQL_PORT>/devices/search" \
+  -H "Authorization: Bearer <API_TOKEN>" \
+  -H "Content-Type: application/json" \
+  --data '{"query": "192.168.1"}'
+```
+
+**Get Latest Device**:
+
+```sh
+curl -X GET "http://<server_ip>:<GRAPHQL_PORT>/devices/latest" \
+  -H "Authorization: Bearer <API_TOKEN>"
+```
+
+**Get Network Topology**:
+
+```sh
+curl -X GET "http://<server_ip>:<GRAPHQL_PORT>/devices/network/topology" \
   -H "Authorization: Bearer <API_TOKEN>"
 ```
 

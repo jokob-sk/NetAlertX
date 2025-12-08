@@ -98,6 +98,7 @@ nav:
         - Sync: API_SYNC.md
         - GraphQL: API_GRAPHQL.md
         - DB query: API_DBQUERY.md
+        - MCP: API_MCP.md
         - Tests: API_TESTS.md
         - SUPERSEDED OLD API Overview: API_OLD.md
       - Integrations:

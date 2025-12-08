@@ -39,10 +39,11 @@ Backend loop phases (see `server/__main__.py` and `server/plugin.py`): `once`, `
 ## API/Endpoints quick map
 - Flask app: `server/api_server/api_server_start.py` exposes routes like `/device/<mac>`, `/devices`, `/devices/export/{csv,json}`, `/devices/import`, `/devices/totals`, `/devices/by-status`, plus `nettools`, `events`, `sessions`, `dbquery`, `metrics`, `sync`.
 - Authorization: all routes expect header `Authorization: Bearer <API_TOKEN>` via `get_setting_value('API_TOKEN')`.
+- All responses need to return `"success":<False:True>` and if `False` an "error" message needs to be returned, e.g. `{"success": False, "error": f"No stored open ports for Device"}`
 
 ## Conventions & helpers to reuse
 - Settings: add/modify via `ccd()` in `server/initialise.py` or per‑plugin manifest. Never hardcode ports or secrets; use `get_setting_value()`.
-- Logging: use `logger.mylog(level, [message])`; levels: none/minimal/verbose/debug/trace.
+- Logging: use `mylog(level, [message])`; levels: none/minimal/verbose/debug/trace. `none` is used for most important messages that should always appear, such as exceptions.
 - Time/MAC/strings: `helper.py` (`timeNowDB`, `normalize_mac`, sanitizers). Validate MACs before DB writes.
 - DB helpers: prefer `server/db/db_helper.py` functions (e.g., `get_table_json`, device condition helpers) over raw SQL in new paths.
 
@@ -85,7 +86,7 @@ Backend loop phases (see `server/__main__.py` and `server/plugin.py`): `once`, `
 - Above all, use the simplest possible code that meets the need so it can be easily audited and maintained.
 - Always leave logging enabled. If there is a possiblity it will be difficult to debug with current logging, add more logging.
 - Always run the testFailure tool before executing any tests to gather current failure information and avoid redundant runs.
-- Always prioritize using the appropriate tools in the environment first. As an example if a test is failing use `testFailure` then `runTests`. Never `runTests` first. 
+- Always prioritize using the appropriate tools in the environment first. As an example if a test is failing use `testFailure` then `runTests`. Never `runTests` first.
 - Docker tests take an extremely long time to run.  Avoid changes to docker or tests until you've examined the exisiting testFailures and runTests results.
-- Environment tools are designed specifically for your use in this project and running them in this order will give you the best results. 
+- Environment tools are designed specifically for your use in this project and running them in this order will give you the best results.
 

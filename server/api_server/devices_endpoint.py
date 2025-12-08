@@ -228,7 +228,8 @@ def devices_totals():
 
 def devices_by_status(status=None):
     """
-    Return devices filtered by status.
+    Return devices filtered by status. Returns all if no status provided.
+    Possible statuses: my, connected, favorites, new, down, archived
     """
 
     conn = get_temp_db_connection()
