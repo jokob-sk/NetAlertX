@@ -732,6 +732,34 @@
       ]
     },
     {
+      "function": "SEND_NOTIFICATIONS",
+      "type": {
+        "dataType": "boolean",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "checkbox" }],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": true,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Send notifications"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Check to send notifications to the broker with json containing events, new_devices, down_devices and more."
+        }
+      ]
+    },
+    {
       "function": "topic_root",
       "type": {
         "dataType": "string",

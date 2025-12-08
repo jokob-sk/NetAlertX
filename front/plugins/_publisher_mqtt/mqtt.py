@@ -26,7 +26,8 @@ from logger import mylog, Logger  # noqa: E402 [flake8 lint suppression]
 from helper import get_setting_value, bytes_to_string, \
     sanitize_string, normalize_string  # noqa: E402 [flake8 lint suppression]
 from database import DB, get_device_stats  # noqa: E402 [flake8 lint suppression]
-
+from utils.datetime_utils import timeNowDB  # noqa: E402 [flake8 lint suppression]
+from models.notification_instance import NotificationInstance  # noqa: E402 [flake8 lint suppression]
 
 # Make sure the TIMEZONE for logging is correct
 conf.tz = timezone(get_setting_value('TIMEZONE'))
@@ -459,6 +460,10 @@ def mqtt_start(db):
             }
         )
 
+    #  Notifications
+    if get_setting_value('MQTT_SEND_NOTIFICATIONS'):
+        publish_notifications(db, mqtt_client)
+
     # Generate device-specific MQTT messages if enabled
     if get_setting_value('MQTT_SEND_DEVICES'):
 
@@ -534,6 +539,57 @@ def mqtt_start(db):
 
             # publish device_tracker attributes
             publish_mqtt(mqtt_client, sensorConfig.json_attr_topic, devJson)
+
+
+# ---------------------------------------------------------------------
+# Publish webhook-style notifications via MQTT
+# ---------------------------------------------------------------------
+def publish_notifications(db, mqtt_client):
+    """
+    Gather pending notifications and publish a single JSON payload via MQTT
+    that mirrors the webhook structure.
+    Only runs if MQTT_SEND_NOTIFICATIONS is enabled.
+    """
+
+    # Ensure MQTT client is connected
+    if not mqtt_connected_to_broker:
+        mylog('minimal', [f"[{pluginName}] ⚠ ERROR: Not connected to broker, aborting notification publish."])
+        return False
+
+    notifications = NotificationInstance(db).getNew() or []
+    if not notifications:
+        mylog('debug', [f"[{pluginName}] No new notifications to publish via MQTT."])
+        return False
+
+    for notification in notifications:
+        # Use pre-built JSON payload if available
+        if notification.get("Payload"):
+            payload = notification["Payload"]
+        else:
+            # fallback generic payload (like webhook does)
+            payload = {
+                "username": "NetAlertX",
+                "text": "There are new notifications",
+                "attachments": [{
+                    "title": "NetAlertX Notifications",
+                    "title_link": get_setting_value('REPORT_DASHBOARD_URL'),
+                    "text": notification.get("Text") or notification.get("HTML") or ""
+                }]
+            }
+
+        # Optional: attach meta info
+        payload["_meta"] = {
+            "published_at": timeNowDB(),
+            "source": "NetAlertX",
+            "notification_GUID": notification.get("GUID")
+        }
+
+        # Publish to a single MQTT topic
+        topic = f"{topic_root}/notifications/all"
+        mylog('debug', [f"[{pluginName}] Publishing notification GUID {notification.get('GUID')} to MQTT topic {topic}"])
+        publish_mqtt(mqtt_client, topic, payload)
+
+    return True
 
 
 # =============================================================================
