@@ -9,10 +9,10 @@ CURRENT_GID="$(id -g)"
 
 # Fallback to known defaults when lookups fail
 if [ -z "${EXPECTED_UID}" ]; then
-    EXPECTED_UID="20211"
+    EXPECTED_UID="${CURRENT_UID}"
 fi
 if [ -z "${EXPECTED_GID}" ]; then
-    EXPECTED_GID="20211"
+    EXPECTED_GID="${CURRENT_GID}"
 fi
 
 if [ "${CURRENT_UID}" -eq "${EXPECTED_UID}" ] && [ "${CURRENT_GID}" -eq "${EXPECTED_GID}" ]; then
