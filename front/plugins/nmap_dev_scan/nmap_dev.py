@@ -44,6 +44,7 @@ def main():
     args    = get_setting_value('NMAPDEV_ARGS')
 
     mylog('verbose', [f'[{pluginName}] subnets: ', subnets])
+    mylog('verbose', [f'[{pluginName}] args: ', args])
 
     # Initialize the Plugin obj output file
     plugin_objects = Plugin_Objects(RESULT_FILE)
@@ -169,7 +170,7 @@ def parse_nmap_xml(xml_output, interface, fakeMac):
                 })
             else:
                 # MAC or IP missing
-                mylog('verbose', [f"[{pluginName}] Skipping: {hostname}, IP or MAC missing, or NMAPDEV_GENERATE_MAC setting not enabled"])
+                mylog('verbose', [f"[{pluginName}] Skipping: {hostname}, IP or MAC missing, or NMAPDEV_FAKE_MAC setting not enabled"])
 
     except Exception as e:
         mylog('verbose', [f"[{pluginName}] Error parsing nmap XML: ", str(e)])
