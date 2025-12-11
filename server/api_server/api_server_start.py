@@ -58,7 +58,8 @@ from .nettools_endpoint import (  # noqa: E402 [flake8 lint suppression]
     speedtest,
     nslookup,
     nmap_scan,
-    internet_info
+    internet_info,
+    network_interfaces
 )
 from .dbquery_endpoint import read_query, write_query, update_query, delete_query  # noqa: E402 [flake8 lint suppression]
 from .sync_endpoint import handle_sync_post, handle_sync_get  # noqa: E402 [flake8 lint suppression]
@@ -533,6 +534,13 @@ def api_internet_info():
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
     return internet_info()
+
+
+@app.route("/nettools/interfaces", methods=["GET"])
+def api_network_interfaces():
+    if not is_authorized():
+        return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
+    return network_interfaces()
 
 
 @app.route('/mcp/sse/nettools/trigger-scan', methods=['POST'])

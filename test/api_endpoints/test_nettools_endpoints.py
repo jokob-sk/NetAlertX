@@ -208,3 +208,32 @@ def test_internet_info_endpoint(client, api_token):
         assert data.get("success") is False
         assert "error" in data
         assert "details" in data
+
+
+def test_interfaces_endpoint(client, api_token):
+    # Call the /nettools/interfaces endpoint
+    resp = client.get("/nettools/interfaces", headers=auth_headers(api_token))
+    data = resp.json
+
+    # Assertions
+    if resp.status_code == 200:
+        assert data.get("success") is True
+        assert "interfaces" in data
+        interfaces = data["interfaces"]
+        assert isinstance(interfaces, dict)
+        for if_name, iface in interfaces.items():
+            assert "name" in iface
+            assert "short" in iface
+            assert "type" in iface
+            assert "state" in iface
+            assert "mtu" in iface
+            assert "mac" in iface
+            assert "ipv4" in iface and isinstance(iface["ipv4"], list)
+            assert "ipv6" in iface and isinstance(iface["ipv6"], list)
+            assert "rx_bytes" in iface
+            assert "tx_bytes" in iface
+    else:
+        # Handle failure
+        assert data.get("success") is False
+        assert "error" in data
+        assert "details" in data
