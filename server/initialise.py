@@ -490,7 +490,7 @@ def importConfigs(pm, db, all_plugins):
                     c_d,
                     set["name"][0]["string"],
                     set["type"],
-                    str(set["options"]),
+                    str(set.get("options", [])),
                     group=pref,
                     events=set.get("events"),
                     desc=set["description"][0]["string"],
