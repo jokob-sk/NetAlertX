@@ -347,7 +347,9 @@ def mqtt_create_client():
 
     mytransport = 'tcp'  # or 'websockets'
 
-    def on_disconnect(mqtt_client, userdata, rc):
+    def on_disconnect(mqtt_client, userdata, rc, properties=None, *args):
+
+        mylog('verbose', [f"[{pluginName}] MQTT disconnected: reasonCode={rc}"])
 
         global mqtt_connected_to_broker
 
@@ -562,9 +564,14 @@ def publish_notifications(db, mqtt_client):
         return False
 
     for notification in notifications:
-        # Use pre-built JSON payload if available
-        if notification.get("Payload"):
-            payload = notification["Payload"]
+        # Use pre-built JSON payload if available in the 'JSON' column
+        payload_str = notification["JSON"]
+        if payload_str:
+            try:
+                payload = json.loads(payload_str)  # Deserialize JSON string
+            except Exception as e:
+                mylog('minimal', [f"[{pluginName}] ⚠ ERROR decoding JSON for notification GUID {notification["GUID"]}: {e}"])
+                continue  # skip this notification
         else:
             # fallback generic payload (like webhook does)
             payload = {
@@ -573,7 +580,7 @@ def publish_notifications(db, mqtt_client):
                 "attachments": [{
                     "title": "NetAlertX Notifications",
                     "title_link": get_setting_value('REPORT_DASHBOARD_URL'),
-                    "text": notification.get("Text") or notification.get("HTML") or ""
+                    "text": notification["Text"] or notification["HTML"] or ""
                 }]
             }
 
@@ -581,13 +588,16 @@ def publish_notifications(db, mqtt_client):
         payload["_meta"] = {
             "published_at": timeNowDB(),
             "source": "NetAlertX",
-            "notification_GUID": notification.get("GUID")
+            "notification_GUID": notification["GUID"]
         }
 
-        # Publish to a single MQTT topic
+        # Publish to a single MQTT topic safely
         topic = f"{topic_root}/notifications/all"
-        mylog('debug', [f"[{pluginName}] Publishing notification GUID {notification.get('GUID')} to MQTT topic {topic}"])
-        publish_mqtt(mqtt_client, topic, payload)
+        mylog('debug', [f"[{pluginName}] Publishing notification GUID {notification["GUID"]} to MQTT topic {topic}"])
+        try:
+            publish_mqtt(mqtt_client, topic, payload)
+        except Exception as e:
+            mylog('minimal', [f"[{pluginName}] ⚠ ERROR publishing MQTT notification GUID {notification["GUID"]}: {e}"])
 
     return True
 
