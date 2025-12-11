@@ -27,6 +27,34 @@
   "params": [],
   "settings": [
     {
+      "function": "LOCALE",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": "en-GB",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Locale"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The locale used to format dates that are displayed in the UI."
+        }
+      ]
+    },
+    {
       "function": "NOT_RANDOM_MAC",
       "type": {
         "dataType": "array",

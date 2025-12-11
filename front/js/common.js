@@ -369,13 +369,15 @@ function getLangCode() {
     return lang_code;
 }
 
-
+  const tz = getSetting("TIMEZONE") || 'Europe/Berlin';
+  const LOCALE = getSetting('UI_LOCALE') || 'en-GB';
 
 // -----------------------------------------------------------------------------
 // String utilities
 // -----------------------------------------------------------------------------
 function localizeTimestamp(input) {
-  let tz = getSetting("TIMEZONE") || 'Europe/Berlin';
+
+
   input = String(input || '').trim();
 
   // 1. Unix timestamps (10 or 13 digits)
@@ -450,7 +452,7 @@ function localizeTimestamp(input) {
       console.error(`ERROR: Couldn't parse date: '${str}' with TIMEZONE ${tz}`);
       return 'Failed conversion - Check browser console';
     }
-    return new Intl.DateTimeFormat('default', {
+    return new Intl.DateTimeFormat(LOCALE, {
       timeZone: tz,
       year: 'numeric', month: '2-digit', day: '2-digit',
       hour: '2-digit', minute: '2-digit', second: '2-digit',
