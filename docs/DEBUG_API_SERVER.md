@@ -40,7 +40,7 @@ There are several ways to check if the GraphQL server is running.
 
 ### Init Check
 
-You can navigate to Maintenance -> Init Check to see if `isGraphQLServerRunning` is ticked:
+You can navigate to System Info -> Init Check to see if `isGraphQLServerRunning` is ticked:
 
 ![Init Check](./img/DEBUG_API_SERVER/Init_check.png)
 

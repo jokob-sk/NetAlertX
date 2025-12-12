@@ -1,7 +1,7 @@
 <?php
 #---------------------------------------------------------------------------------#
 #  NetAlertX                                                                       #
-#  Open Source Network Guard / WIFI & LAN intrusion detector                      #  
+#  Open Source Network Guard / WIFI & LAN intrusion detector                      #
 #                                                                                 #
 #  systeminfo.php - Front module. Server side. System Information                 #
 #---------------------------------------------------------------------------------#
@@ -15,59 +15,70 @@
 ?>
 <?php require 'php/templates/modals.php'; ?>
 <!-- ----------------------------------------------------------------------- -->
- 
+
 
 <script>
 
   // show spinning icon
   showSpinner()
-  
+
 </script>
 
 <!-- Page ------------------------------------------------------------------ -->
 <div class="content-wrapper">
 
     <!-- Main content ---------------------------------------------------------- -->
-    <section class="content">	
+    <section class="content">
     <div class="row">
         <div class="col-lg-12 col-sm-12 col-xs-12">
         <!-- <div class="box-transparent"> -->
           <div id="navSysInfo" class="nav-tabs-custom">
             <ul class="nav nav-tabs" style="font-size:16px;">
-              <li> 
-                <a id="tabServer"  href="#panServer"  data-toggle="tab"> 
-                  <i class="fa fa-info-circle"></i> 
-                    <span class="dev-detail-tab-name"> 
-                      <?= lang('Systeminfo_System');?>  
+              <li>
+                <a id="tabServer"  href="#panServer"  data-toggle="tab">
+                  <i class="fa fa-info-circle"></i>
+                    <span class="dev-detail-tab-name">
+                      <?= lang('Systeminfo_System');?>
                     </span>
                 </a>
               </li>
-              <li> 
-                <a id="tabNetwork"    href="#panNetwork"    data-toggle="tab"> 
-                  <i class="fa fa-sitemap fa-rotate-270"></i> 
+              <li>
+                <a id="tabNetwork"    href="#panNetwork"    data-toggle="tab">
+                  <i class="fa fa-sitemap fa-rotate-270"></i>
                     <span class="dev-detail-tab-name">
-                      <?= lang('Systeminfo_Network');?>    
+                      <?= lang('Systeminfo_Network');?>
                     </span>
                 </a>
               </li>
-              <li> 
-                <a id="tabStorage" href="#panStorage" data-toggle="tab"> 
-                  <i class="fa fa-hdd"></i> 
+              <li>
+                <a id="tabStorage" href="#panStorage" data-toggle="tab">
+                  <i class="fa fa-hdd"></i>
                     <span class="dev-detail-tab-name">
-                      <?= lang('Systeminfo_Storage');?> 
+                      <?= lang('Systeminfo_Storage');?>
                     </span>
                 </a>
-                </li>
+              </li>
+              <li>
+                <a id="tabInitCheck" href="#panInitCheck" data-toggle="tab">
+                  <i class="fa fa-check"></i>
+                    <span class="dev-detail-tab-name">
+                      <?= lang('Maintenance_InitCheck');?>
+                    </span>
+                </a>
+              </li>
             </ul>
-            
+
             <div class="tab-content spinnerTarget" style="min-height: 430px;">
               <div class="tab-pane fade" data-php-file="systeminfoServer.php" id="panServer">
                <!-- PLACEHOLDER -->
-              </div>                                                                         
+              </div>
               <div class="tab-pane fade" data-php-file="systeminfoNetwork.php" id="panNetwork">
-                 <!-- PLACEHOLDER -->     	        
+                 <!-- PLACEHOLDER -->
               </div>
               <div class="tab-pane fade table-responsive" data-php-file="systeminfoStorage.php" id="panStorage">
+               <!-- PLACEHOLDER -->
+              </div>
+              <div class="tab-pane fade table-responsive" data-php-file="systeminfoInitCheck.php" id="panInitCheck">
                <!-- PLACEHOLDER -->
               </div>
             </div>
@@ -134,7 +145,7 @@ function initializeTabs() {
 }
 
 window.onload = function async() {
-  initializeTabs();  
+  initializeTabs();
 }
 
 </script>

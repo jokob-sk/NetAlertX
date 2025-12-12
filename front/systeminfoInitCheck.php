@@ -1,7 +1,10 @@
 <?php
   //------------------------------------------------------------------------------
   // check if authenticated
-  require_once  $_SERVER['DOCUMENT_ROOT'] . '/php/templates/security.php';
+  require_once $_SERVER['DOCUMENT_ROOT'] . '/php/templates/security.php';
+  require_once $_SERVER['DOCUMENT_ROOT'] . '/php/server/db.php';
+  require_once $_SERVER['DOCUMENT_ROOT'] . '/php/templates/language/lang.php';
+  require_once $_SERVER['DOCUMENT_ROOT'] . '/php/templates/globals.php';
 ?>
 
     <div class="col-md-12">
@@ -16,10 +19,10 @@
             <i class="fa-solid fa-check text-success"></i> <?= lang('Maintenance_InitCheck_Success');?>
           </div>
         </div>
-        
+
         <div class="row">
           <div class="col-12">
-            <div class="d-flex flex-wrap gap-2 w-100" id="file-check-list"></div>        
+            <div class="d-flex flex-wrap gap-2 w-100" id="file-check-list"></div>
           </div>
         </div>
         <div class="row">
@@ -36,7 +39,7 @@
     </div>
 
 <script>
-  
+
   function retryCheck() {
     // re-set page
     $('#file-check-list').empty();
@@ -48,5 +51,6 @@
 
   $(document).ready(() => {
     checkAppInitializedJsonInit();
+    hideSpinner();
   });
 </script>

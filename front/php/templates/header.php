@@ -1,8 +1,8 @@
 <!-- ---------------------------------------------------------------------------
 #  NetAlertX
-#  Open Source Network Guard / WIFI & LAN intrusion detector 
+#  Open Source Network Guard / WIFI & LAN intrusion detector
 #
-#  header.php - Front module. Common header to all the web pages 
+#  header.php - Front module. Common header to all the web pages
 #-------------------------------------------------------------------------------
 #  Puche 2021 / 2022+ jokob             jokob@duck.com                GNU GPLv3
 #--------------------------------------------------------------------------- -->
@@ -15,7 +15,7 @@
 
 ?>
 
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html>
 
 <!-- ----------------------------------------------------------------------- -->
@@ -80,7 +80,7 @@
   <link id="favicon" rel="icon" type="image/x-icon" href="img/NetAlertX_logo.png">
 
   <!-- For better UX on Mobile Devices using the Shortcut on the Homescreen -->
-  <link rel="manifest" href="img/manifest.json" crossorigin="use-credentials">  
+  <link rel="manifest" href="img/manifest.json" crossorigin="use-credentials">
   <!-- Dark-Mode Patch -->
 
   <?php
@@ -102,12 +102,12 @@
   // -------------------------------------------------------------
   // Updates the backend application state/status in the header
   function updateState(){
-    $.get('php/server/query_json.php', { file: 'app_state.json', nocache: Date.now() }, function(appState) {    
+    $.get('php/server/query_json.php', { file: 'app_state.json', nocache: Date.now() }, function(appState) {
 
       document.getElementById('state').innerHTML = appState["currentState"].replaceAll('"', '');
 
       setTimeout("updateState()", 1000);
-        
+
     })
   }
 
@@ -160,13 +160,13 @@
     <a href="devices.php" class="logo">
       <!-- mini logo for sidebar mini 50x50 pixels -->
       <span class="logo-mini">
-        <img src="img/NetAlertX_logo.png" class="top-left-logo" alt="NetAlertX Logo"/>        
+        <img src="img/NetAlertX_logo.png" class="top-left-logo" alt="NetAlertX Logo"/>
       </span>
       <!-- logo for regular state and mobile devices -->
       <span class="logo-lg">Net<b>Alert</b><sup>x</sup>
 
       </span>
-      
+
     </a>
 
 <!-- ----------------------------------------------------------------------- -->
@@ -175,35 +175,35 @@
       <!-- Sidebar toggle button-->
       <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
         <i class="fa-solid fa-bars"></i>
-      </a>      
-      
+      </a>
+
       <!-- ticker message  Placeholder for ticker announcement messages -->
       <div id="ticker_announcement_plc"></div>
 
       <!-- Navbar Right Menu -->
       <div class="navbar-custom-menu">
-        <ul class="nav navbar-nav">    
-          <!-- Back Button -->		 
+        <ul class="nav navbar-nav">
+          <!-- Back Button -->
           <li>
             <a id="back-button" href="javascript:history.go(-1);" role="button" span class='fa fa-arrow-left'></a>
           </li>
-          <!-- Next Button -->		 
+          <!-- Next Button -->
           <li>
             <a id="next-button" href="javascript:history.go(1);" role="button" span class='fa fa-arrow-right'></a>
-          </li>			
-          <!-- Clear cache & Reload -->		 
+          </li>
+          <!-- Clear cache & Reload -->
           <li>
             <a id="reload-button" href='#' role="button" span  onclick='clearCache()' class='fa-solid fa-rotate'></a>
-          </li>	
-          <!-- Full Screen -->		 
+          </li>
+          <!-- Full Screen -->
           <li>
             <a id="fullscreen-button" href='#' role="button" span class='fa fa-arrows-alt' onclick='toggleFullscreen()'></a>
-          </li>	                
-          <!-- Notifications -->		 
+          </li>
+          <!-- Notifications -->
           <li>
             <a id="notifications-button" href='userNotifications.php' role="button" span class='fa-solid fa-bell'></a>
             <span  id="unread-notifications-bell-count" title="" class="badge bg-red unread-notifications-bell" >0</span>
-          </li>	                
+          </li>
           <!-- Server Status -->
           <li>
             <a onclick="setCache('activeMaintenanceTab', 'tab_Logging_id')" href="maintenance.php#tab_Logging">
@@ -220,7 +220,7 @@
             <div class="header-server-time small">
               <div>
                 <?php echo gethostname();?>
-              </div> 
+              </div>
               <div>
                 <span id="NAX_Servertime_plc"></span>
                 <span id="NAX_TZ" class="hidden"></span>
@@ -232,7 +232,7 @@
           <li class="dropdown user user-menu">
             <!-- Menu Toggle Button -->
             <a href="#" class="dropdown-toggle" style=" height: 50px;" data-toggle="dropdown">
-              
+
               <span class="hidden-xs" ><!-- The user image in the navbar-->
               <img src="img/NetAlertX_logo.png" class="user-image" style="border-radius: initial" alt="NetAlertX Logo">
               <!-- hidden-xs hides the username on small devices so only the image appears. --></span>
@@ -260,7 +260,7 @@
       </div>
     </nav>
 
-        
+
   </header>
 
 
@@ -336,11 +336,11 @@
             </li>
             <li>
               <a href="report.php"> <?= lang("Navigation_Report");?> </a>
-            </li>            
+            </li>
             <li>
               <a href="userNotifications.php"> <?= lang("Navigation_Notifications");?> </a>
-            </li>            
-            
+            </li>
+
           </ul>
         </li>
 
@@ -374,10 +374,6 @@
             <li>
               <a href="maintenance.php#tab_multiEdit" onclick="initializeTabs()">  <?= lang("Device_MultiEdit");?> </a>
             </li>
-            <li>
-              <a href="maintenance.php#tab_initCheck" onclick="initializeTabs()">  <?= lang("Maintenance_InitCheck");?> </a>
-            </li>
-            
           </ul>
         </li>
 
@@ -408,7 +404,7 @@
             <li>
               <a href="settings.php#publishers_content_header"> <?= lang("settings_publishers_label");?> </a>
             </li>
-            
+
           </ul>
         </li>
 
@@ -420,13 +416,13 @@
               <i class="fa fa-angle-left pull-right"></i>
             </span>
           </a>
-          <ul class="treeview-menu " style="display: <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('plugins.php', 'appEvents.php' ) ) ){ echo 'block'; } else {echo 'none';} ?>;">                    
+          <ul class="treeview-menu " style="display: <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('plugins.php', 'appEvents.php' ) ) ){ echo 'block'; } else {echo 'none';} ?>;">
             <li>
               <a href="appEvents.php"><?= lang('Navigation_AppEvents');?></a>
             </li>
             <li>
               <a href="plugins.php"><?= lang("Navigation_Plugins");?> </a>
-            </li>            
+            </li>
           </ul>
         </li>
 
@@ -443,16 +439,19 @@
               <i class="fa fa-angle-left pull-right"></i>
             </span>
           </a>
-          <ul class="treeview-menu " style="display: <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('systeminfo.php') ) ){ echo 'block'; } else {echo 'none';} ?>;">                    
+          <ul class="treeview-menu " style="display: <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('systeminfo.php') ) ){ echo 'block'; } else {echo 'none';} ?>;">
             <li>
               <a href="systeminfo.php#panServer" onclick="setCache('activeSysinfoTab','tabServer');initializeTabs()"><?= lang('Systeminfo_System');?></a>
-            </li>           
+            </li>
             <li>
               <a href="systeminfo.php#panNetwork"  onclick="setCache('activeSysinfoTab','tabNetwork');initializeTabs()"><?= lang('Systeminfo_Network');?></a>
-            </li>           
+            </li>
             <li>
               <a href="systeminfo.php#panStorage" onclick="setCache('activeSysinfoTab','tabStorage');initializeTabs()"><?= lang('Systeminfo_Storage');?></a>
-            </li>           
+            </li>
+             <li>
+              <a href="systeminfo.php#panInitCheck" onclick="setCache('activeSysinfoTab','tabInitCheck');initializeTabs()">  <?= lang("Maintenance_InitCheck");?> </a>
+            </li>
           </ul>
         </li>
 
@@ -475,7 +474,7 @@
      document.documentElement.requestFullscreen();
 	}
    }
-  
+
   //--------------------------------------------------------------
 
   // Update server time in the header
@@ -483,5 +482,5 @@
 
   // Update server state in the header
   updateState()
-  
+
 </script>
