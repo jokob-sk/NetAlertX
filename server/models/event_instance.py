@@ -1,6 +1,8 @@
 from datetime import datetime, timedelta
 from logger import mylog
 from database import get_temp_db_connection
+from db.db_helper import row_to_json, get_date_from_period
+from utils.datetime_utils import ensure_datetime
 
 
 # -------------------------------------------------------------------------------
@@ -105,3 +107,114 @@ class EventInstance:
         deleted_count = result.rowcount
         conn.close()
         return deleted_count
+
+    # --- events_endpoint.py methods ---
+
+    def createEvent(self, mac: str, ip: str, event_type: str = "Device Down", additional_info: str = "", pending_alert: int = 1, event_time: datetime | None = None):
+        """
+        Insert a single event into the Events table.
+        Returns dict with success status.
+        """
+        if isinstance(event_time, str):
+            start_time = ensure_datetime(event_time)
+        else:
+            start_time = ensure_datetime(event_time)
+
+        conn = self._conn()
+        cur = conn.cursor()
+        cur.execute(
+            """
+            INSERT INTO Events (eve_MAC, eve_IP, eve_DateTime, eve_EventType, eve_AdditionalInfo, eve_PendingAlertEmail)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """,
+            (mac, ip, start_time, event_type, additional_info, pending_alert),
+        )
+
+        conn.commit()
+        conn.close()
+
+        mylog("debug", f"[Events] Created event for {mac} ({event_type})")
+        return {"success": True, "message": f"Created event for {mac}"}
+
+    def getEvents(self, mac=None):
+        """
+        Fetch all events, or events for a specific MAC if provided.
+        Returns list of events.
+        """
+        conn = self._conn()
+        cur = conn.cursor()
+
+        if mac:
+            sql = "SELECT * FROM Events WHERE eve_MAC=? ORDER BY eve_DateTime DESC"
+            cur.execute(sql, (mac,))
+        else:
+            sql = "SELECT * FROM Events ORDER BY eve_DateTime DESC"
+            cur.execute(sql)
+
+        rows = cur.fetchall()
+        events = [row_to_json(list(r.keys()), r) for r in rows]
+
+        conn.close()
+        return events
+
+    def deleteEventsOlderThan(self, days):
+        """Delete all events older than a specified number of days"""
+        conn = self._conn()
+        cur = conn.cursor()
+
+        # Use a parameterized query with sqlite date function
+        sql = "DELETE FROM Events WHERE eve_DateTime <= date('now', ?)"
+        cur.execute(sql, [f"-{days} days"])
+
+        conn.commit()
+        conn.close()
+
+        return {"success": True, "message": f"Deleted events older than {days} days"}
+
+    def deleteAllEvents(self):
+        """Delete all events"""
+        conn = self._conn()
+        cur = conn.cursor()
+
+        sql = "DELETE FROM Events"
+        cur.execute(sql)
+        conn.commit()
+        conn.close()
+
+        return {"success": True, "message": "Deleted all events"}
+
+    def getEventsTotals(self, period: str = "7 days"):
+        """
+        Return counts for events and sessions totals over a given period.
+        period: "7 days", "1 month", "1 year", "100 years"
+        Returns list with counts: [all_events, sessions, missing, voided, new, down]
+        """
+        # Convert period to SQLite date expression
+        period_date_sql = get_date_from_period(period)
+
+        conn = self._conn()
+        cur = conn.cursor()
+
+        sql = f"""
+            SELECT
+                (SELECT COUNT(*) FROM Events WHERE eve_DateTime >= {period_date_sql}) AS all_events,
+                (SELECT COUNT(*) FROM Sessions WHERE
+                    ses_DateTimeConnection >= {period_date_sql}
+                    OR ses_DateTimeDisconnection >= {period_date_sql}
+                    OR ses_StillConnected = 1
+                ) AS sessions,
+                (SELECT COUNT(*) FROM Sessions WHERE
+                    (ses_DateTimeConnection IS NULL AND ses_DateTimeDisconnection >= {period_date_sql})
+                    OR (ses_DateTimeDisconnection IS NULL AND ses_StillConnected = 0 AND ses_DateTimeConnection >= {period_date_sql})
+                ) AS missing,
+                (SELECT COUNT(*) FROM Events WHERE eve_DateTime >= {period_date_sql} AND eve_EventType LIKE 'VOIDED%') AS voided,
+                (SELECT COUNT(*) FROM Events WHERE eve_DateTime >= {period_date_sql} AND eve_EventType LIKE 'New Device') AS new,
+                (SELECT COUNT(*) FROM Events WHERE eve_DateTime >= {period_date_sql} AND eve_EventType LIKE 'Device Down') AS down
+        """
+
+        cur.execute(sql)
+        row = cur.fetchone()
+        conn.close()
+
+        # Return as list
+        return [row[0], row[1], row[2], row[3], row[4], row[5]]

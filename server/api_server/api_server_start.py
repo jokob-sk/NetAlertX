@@ -16,32 +16,6 @@ from db.db_helper import get_date_from_period  # noqa: E402 [flake8 lint suppres
 from app_state import updateState  # noqa: E402 [flake8 lint suppression]
 
 from .graphql_endpoint import devicesSchema  # noqa: E402 [flake8 lint suppression]
-from .device_endpoint import (  # noqa: E402 [flake8 lint suppression]
-    get_device_data,
-    set_device_data,
-    delete_device,
-    delete_device_events,
-    reset_device_props,
-    copy_device,
-    update_device_column
-)
-from .devices_endpoint import (  # noqa: E402 [flake8 lint suppression]
-    get_all_devices,
-    delete_unknown_devices,
-    delete_all_with_empty_macs,
-    delete_devices,
-    export_devices,
-    import_csv,
-    devices_totals,
-    devices_by_status
-)
-from .events_endpoint import (  # noqa: E402 [flake8 lint suppression]
-    delete_events,
-    delete_events_older_than,
-    get_events,
-    create_event,
-    get_events_totals
-)
 from .history_endpoint import delete_online_history  # noqa: E402 [flake8 lint suppression]
 from .prometheus_endpoint import get_metric_stats  # noqa: E402 [flake8 lint suppression]
 from .sessions_endpoint import (  # noqa: E402 [flake8 lint suppression]
@@ -223,35 +197,55 @@ def api_get_setting(setKey):
 def api_get_device(mac):
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
-    return get_device_data(mac)
+
+    period = request.args.get("period", "")
+    device_handler = DeviceInstance()
+    device_data = device_handler.getDeviceData(mac, period)
+
+    if device_data is None:
+        return jsonify({"error": "Device not found"}), 404
+
+    return jsonify(device_data)
 
 
 @app.route("/device/<mac>", methods=["POST"])
 def api_set_device(mac):
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
-    return set_device_data(mac, request.json)
+
+    device_handler = DeviceInstance()
+    result = device_handler.setDeviceData(mac, request.json)
+    return jsonify(result)
 
 
 @app.route("/device/<mac>/delete", methods=["DELETE"])
 def api_delete_device(mac):
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
-    return delete_device(mac)
+
+    device_handler = DeviceInstance()
+    result = device_handler.deleteDeviceByMAC(mac)
+    return jsonify(result)
 
 
 @app.route("/device/<mac>/events/delete", methods=["DELETE"])
 def api_delete_device_events(mac):
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
-    return delete_device_events(mac)
+
+    device_handler = DeviceInstance()
+    result = device_handler.deleteDeviceEvents(mac)
+    return jsonify(result)
 
 
 @app.route("/device/<mac>/reset-props", methods=["POST"])
 def api_reset_device_props(mac):
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
-    return reset_device_props(mac, request.json)
+
+    device_handler = DeviceInstance()
+    result = device_handler.resetDeviceProps(mac)
+    return jsonify(result)
 
 
 @app.route("/device/copy", methods=["POST"])
@@ -266,7 +260,9 @@ def api_copy_device():
     if not mac_from or not mac_to:
         return jsonify({"success": False, "message": "ERROR: Missing parameters", "error": "macFrom and macTo are required"}), 400
 
-    return copy_device(mac_from, mac_to)
+    device_handler = DeviceInstance()
+    result = device_handler.copyDevice(mac_from, mac_to)
+    return jsonify(result)
 
 
 @app.route("/device/<mac>/update-column", methods=["POST"])
@@ -281,20 +277,29 @@ def api_update_device_column(mac):
     if not column_name or not column_value:
         return jsonify({"success": False, "message": "ERROR: Missing parameters", "error": "columnName and columnValue are required"}), 400
 
-    return update_device_column(mac, column_name, column_value)
+    device_handler = DeviceInstance()
+    result = device_handler.updateDeviceColumn(mac, column_name, column_value)
+
+    if not result.get("success"):
+        return jsonify(result), 404
+
+    return jsonify(result)
 
 
 @app.route('/mcp/sse/device/<mac>/set-alias', methods=['POST'])
 @app.route('/device/<mac>/set-alias', methods=['POST'])
 def api_device_set_alias(mac):
-    """Set the device alias - convenience wrapper around update_device_column."""
+    """Set the device alias - convenience wrapper around updateDeviceColumn."""
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
     data = request.get_json() or {}
     alias = data.get('alias')
     if not alias:
         return jsonify({"success": False, "message": "ERROR: Missing parameters", "error": "alias is required"}), 400
-    return update_device_column(mac, 'devName', alias)
+
+    device_handler = DeviceInstance()
+    result = device_handler.updateDeviceColumn(mac, 'devName', alias)
+    return jsonify(result)
 
 
 @app.route('/mcp/sse/device/open_ports', methods=['POST'])
@@ -327,7 +332,9 @@ def api_device_open_ports():
 def api_get_devices():
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
-    return get_all_devices()
+    device_handler = DeviceInstance()
+    devices = device_handler.getAll_AsResponse()
+    return jsonify({"success": True, "devices": devices})
 
 
 @app.route("/devices", methods=["DELETE"])
@@ -336,24 +343,27 @@ def api_delete_devices():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
 
     macs = request.json.get("macs") if request.is_json else None
-
-    return delete_devices(macs)
+    device_handler = DeviceInstance()
+    return jsonify(device_handler.deleteDevices(macs))
 
 
 @app.route("/devices/empty-macs", methods=["DELETE"])
 def api_delete_all_empty_macs():
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
-    return delete_all_with_empty_macs()
+    device_handler = DeviceInstance()
+    return jsonify(device_handler.deleteAllWithEmptyMacs())
 
 
 @app.route("/devices/unknown", methods=["DELETE"])
 def api_delete_unknown_devices():
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
-    return delete_unknown_devices()
+    device_handler = DeviceInstance()
+    return jsonify(device_handler.deleteUnknownDevices())
 
 
+@app.route('/mcp/sse/devices/export', methods=['GET'])
 @app.route("/devices/export", methods=["GET"])
 @app.route("/devices/export/<format>", methods=["GET"])
 def api_export_devices(format=None):
@@ -361,21 +371,52 @@ def api_export_devices(format=None):
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
 
     export_format = (format or request.args.get("format", "csv")).lower()
-    return export_devices(export_format)
+    device_handler = DeviceInstance()
+    result = device_handler.exportDevices(export_format)
+
+    if "error" in result:
+        return jsonify(result), 400
+
+    if result["format"] == "json":
+        return jsonify({"data": result["data"], "columns": result["columns"]})
+    elif result["format"] == "csv":
+        return Response(
+            result["content"],
+            mimetype="text/csv",
+            headers={"Content-Disposition": "attachment; filename=devices.csv"},
+        )
 
 
+@app.route('/mcp/sse/devices/import', methods=['POST'])
 @app.route("/devices/import", methods=["POST"])
 def api_import_csv():
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
-    return import_csv(request.files.get("file"))
+
+    device_handler = DeviceInstance()
+    json_content = None
+    file_storage = None
+
+    if request.is_json and request.json.get("content"):
+        json_content = request.json.get("content")
+    else:
+        file_storage = request.files.get("file")
+
+    result = device_handler.importCSV(file_storage=file_storage, json_content=json_content)
+
+    if not result.get("success"):
+        return jsonify(result), 400
+
+    return jsonify(result)
 
 
+@app.route('/mcp/sse/devices/totals', methods=['GET'])
 @app.route("/devices/totals", methods=["GET"])
 def api_devices_totals():
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
-    return devices_totals()
+    device_handler = DeviceInstance()
+    return jsonify(device_handler.getTotals())
 
 
 @app.route('/mcp/sse/devices/by-status', methods=['GET', 'POST'])
@@ -385,8 +426,8 @@ def api_devices_by_status():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
 
     status = request.args.get("status", "") if request.args else None
-
-    return devices_by_status(status)
+    device_handler = DeviceInstance()
+    return jsonify(device_handler.getByStatus(status))
 
 
 @app.route('/mcp/sse/devices/search', methods=['POST'])
@@ -402,15 +443,15 @@ def api_devices_search():
     if not query:
         return jsonify({"success": False, "message": "Missing 'query' parameter", "error": "Missing query"}), 400
 
+    device_handler = DeviceInstance()
+
     if is_mac(query):
-        device_data = get_device_data(query)
-        if device_data.status_code == 200:
-            return jsonify({"success": True, "devices": [device_data.get_json()]})
+
+        device_data = device_handler.getDeviceData(query)
+        if device_data:
+            return jsonify({"success": True, "devices": [device_data]})
         else:
             return jsonify({"success": False, "message": "Device not found", "error": "Device not found"}), 404
-
-    # Create fresh DB instance for this thread
-    device_handler = DeviceInstance()
 
     matches = device_handler.search(query)
 
@@ -432,8 +473,24 @@ def api_devices_latest():
     latest = device_handler.getLatest()
 
     if not latest:
-        return jsonify({"message": "No devices found"}), 404
+        return jsonify({"success": False, "message": "No devices found"}), 404
     return jsonify([latest])
+
+
+@app.route('/mcp/sse/devices/favorite', methods=['GET'])
+@app.route('/devices/favorite', methods=['GET'])
+def api_devices_favorite():
+    """Get favorite devices - maps to DeviceInstance.getFavorite()."""
+    if not is_authorized():
+        return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
+
+    device_handler = DeviceInstance()
+
+    favorite = device_handler.getFavorite()
+
+    if not favorite:
+        return jsonify({"success": False, "message": "No devices found"}), 404
+    return jsonify([favorite])
 
 
 @app.route('/mcp/sse/devices/network/topology', methods=['GET'])
@@ -479,6 +536,7 @@ def api_wakeonlan():
     return wakeonlan(mac)
 
 
+@app.route('/mcp/sse/nettools/traceroute', methods=['POST'])
 @app.route("/nettools/traceroute", methods=["POST"])
 def api_traceroute():
     if not is_authorized():
@@ -720,25 +778,30 @@ def api_create_event(mac):
     pending_alert = data.get("pending_alert", 1)
     event_time = data.get("event_time", None)
 
-    # Call the helper to insert into DB
-    create_event(mac, ip, event_type, additional_info, pending_alert, event_time)
+    event_handler = EventInstance()
+    result = event_handler.createEvent(mac, ip, event_type, additional_info, pending_alert, event_time)
 
-    # Return consistent JSON response
-    return jsonify({"success": True, "message": f"Event created for {mac}"})
+    return jsonify(result)
 
 
 @app.route("/events/<mac>", methods=["DELETE"])
 def api_events_by_mac(mac):
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
-    return delete_device_events(mac)
+
+    device_handler = DeviceInstance()
+    result = device_handler.deleteDeviceEvents(mac)
+    return jsonify(result)
 
 
 @app.route("/events", methods=["DELETE"])
 def api_delete_all_events():
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
-    return delete_events()
+
+    event_handler = EventInstance()
+    result = event_handler.deleteAllEvents()
+    return jsonify(result)
 
 
 @app.route("/events", methods=["GET"])
@@ -747,7 +810,9 @@ def api_get_events():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
 
     mac = request.args.get("mac")
-    return get_events(mac)
+    event_handler = EventInstance()
+    events = event_handler.getEvents(mac)
+    return jsonify({"count": len(events), "events": events})
 
 
 @app.route("/events/<int:days>", methods=["DELETE"])
@@ -759,7 +824,9 @@ def api_delete_old_events(days: int):
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
 
-    return delete_events_older_than(days)
+    event_handler = EventInstance()
+    result = event_handler.deleteEventsOlderThan(days)
+    return jsonify(result)
 
 
 @app.route("/sessions/totals", methods=["GET"])
@@ -767,8 +834,10 @@ def api_get_events_totals():
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
 
-    period = get_date_from_period(request.args.get("period", "7 days"))
-    return get_events_totals(period)
+    period = request.args.get("period", "7 days")
+    event_handler = EventInstance()
+    totals = event_handler.getEventsTotals(period)
+    return jsonify(totals)
 
 
 @app.route('/mcp/sse/events/recent', methods=['GET', 'POST'])
