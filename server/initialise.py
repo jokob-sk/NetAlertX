@@ -727,6 +727,8 @@ replacements = {
     r"\bREPORT_TO\b": "SMTP_REPORT_TO",
     r"\bSYNC_api_token\b": "API_TOKEN",
     r"\bAPI_TOKEN=\'\'": f"API_TOKEN='t_{generate_random_string(20)}'",
+    # Detect SMTP_PASS='anything' BUT not starting with base64:
+    r"SMTP_PASS='(?!base64:)([^']*)'": r"SMTP_PASS='base64:\1'",
 }
 
 

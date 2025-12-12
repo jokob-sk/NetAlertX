@@ -698,9 +698,15 @@ function applyTransformers(val, transformers) {
         }
         break;
       case "base64":
-        // Implement base64  logic
+        // Implement base64 logic
         if (!isBase64(val)) {
           val = btoa(val);
+        }
+        break;
+      case "prefix|base64":
+        // Implement base64 logic w/ prefix
+        if (val.startsWith("base64:") == false) {
+          val = "base64:" + btoa(val);
         }
         break;
       case "name|base64":
@@ -734,6 +740,19 @@ function reverseTransformers(val, transformers) {
         // Implement base64 decoding logic
         if (isBase64(val)) {
           val = atob(val);
+        }
+        break;
+      case "prefix|base64":
+        // Implement base64 decoding logic
+        if (val.startsWith("base64:")) {
+          let encodedPart = val.slice(7); // remove "base64:"
+          if (isBase64(encodedPart)) {
+              val = atob(encodedPart);
+          } else {
+              console.log("Prefix exists but not valid Base64");
+          }
+        } else {
+            console.error("Not Base64-prefixed");
         }
         break;
       case "name|base64":

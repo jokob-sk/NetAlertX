@@ -388,17 +388,43 @@ def updateSubnets(scan_subnets):
 # -------------------------------------------------------------------------------
 # Reverse transformed values if needed
 def reverseTransformers(val, transformers):
-    # Function to apply transformers to a single value
+    """
+    Reverse applied transformers on a value or list of values.
+
+    This function iterates through a list of transformers and reverses
+    them where possible. Currently supports:
+
+    - "base64": Decodes a Base64-encoded string prefixed with 'base64:'.
+    - "sha256": Logs a warning since SHA256 is irreversible.
+
+    Args:
+        val (str or list): The value or list of values to reverse-transform.
+        transformers (list): List of transformers applied in order.
+
+    Returns:
+        str or list: The value(s) after reversing applicable transformers.
+
+    Notes:
+        - If 'val' is a list, each element is processed individually.
+        - Invalid Base64 strings are returned unchanged.
+        - Transformers are applied in the order given in the list.
+    """
     def reverse_transformers(value, transformers):
         for transformer in transformers:
             if transformer == "base64":
                 if isinstance(value, str):
                     value = base64.b64decode(value).decode("utf-8")
+            elif transformer == "prefix|base64":
+                if isinstance(value, str) and value.startswith("base64:"):
+                    encoded_part = value[7:]
+                    value = base64.b64decode(encoded_part).decode("utf-8")
+                else:
+                    mylog("none", ["[reverseTransformers] invalid base64 value format. Try re-saving Settings."])
             elif transformer == "sha256":
                 mylog("none", ["[reverseTransformers] sha256 is irreversible"])
+            # Add more transformer handling here if needed
         return value
 
-    # Check if the value is a list
     if isinstance(val, list):
         return [reverse_transformers(item, transformers) for item in val]
     else:
