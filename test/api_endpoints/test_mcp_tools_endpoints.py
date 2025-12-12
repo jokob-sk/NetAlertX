@@ -200,7 +200,7 @@ def test_get_recent_alerts(mock_db_conn, client, api_token):
 
 # --- Device Alias Tests ---
 
-@patch('api_server.api_server_start.update_device_column')
+@patch('models.device_instance.DeviceInstance.updateDeviceColumn')
 def test_set_device_alias(mock_update_col, client, api_token):
     """Test set_device_alias."""
     mock_update_col.return_value = {"success": True, "message": "Device alias updated"}
@@ -216,7 +216,7 @@ def test_set_device_alias(mock_update_col, client, api_token):
     mock_update_col.assert_called_once_with("AA:BB:CC:DD:EE:FF", "devName", "New Device Name")
 
 
-@patch('api_server.api_server_start.update_device_column')
+@patch('models.device_instance.DeviceInstance.updateDeviceColumn')
 def test_set_device_alias_not_found(mock_update_col, client, api_token):
     """Test set_device_alias when device is not found."""
     mock_update_col.return_value = {"success": False, "error": "Device not found"}
@@ -304,3 +304,134 @@ def test_openapi_spec(client, api_token):
     assert "/events/recent" in spec["paths"]
     assert "/device/{mac}/set-alias" in spec["paths"]
     assert "/nettools/wakeonlan" in spec["paths"]
+    # Check for newly added MCP endpoints
+    assert "/devices/export" in spec["paths"]
+    assert "/devices/import" in spec["paths"]
+    assert "/devices/totals" in spec["paths"]
+    assert "/nettools/traceroute" in spec["paths"]
+
+
+# --- MCP Device Export Tests ---
+
+@patch('models.device_instance.get_temp_db_connection')
+def test_mcp_devices_export_csv(mock_db_conn, client, api_token):
+    """Test MCP devices export in CSV format."""
+    mock_conn = MagicMock()
+    mock_execute_result = MagicMock()
+    mock_execute_result.fetchall.return_value = [
+        {"devMac": "AA:BB:CC:DD:EE:FF", "devName": "Test Device", "devLastIP": "192.168.1.1"}
+    ]
+    mock_conn.execute.return_value = mock_execute_result
+    mock_db_conn.return_value = mock_conn
+
+    response = client.get('/mcp/sse/devices/export',
+                          headers=auth_headers(api_token))
+
+    assert response.status_code == 200
+    # CSV response should have content-type header
+    assert 'text/csv' in response.content_type
+    assert 'attachment; filename=devices.csv' in response.headers.get('Content-Disposition', '')
+
+
+@patch('models.device_instance.DeviceInstance.exportDevices')
+def test_mcp_devices_export_json(mock_export, client, api_token):
+    """Test MCP devices export in JSON format."""
+    mock_export.return_value = {
+        "format": "json",
+        "data": [{"devMac": "AA:BB:CC:DD:EE:FF", "devName": "Test Device", "devLastIP": "192.168.1.1"}],
+        "columns": ["devMac", "devName", "devLastIP"]
+    }
+
+    response = client.get('/mcp/sse/devices/export?format=json',
+                          headers=auth_headers(api_token))
+
+    assert response.status_code == 200
+    data = response.get_json()
+    assert "data" in data
+    assert "columns" in data
+    assert len(data["data"]) == 1
+
+
+# --- MCP Device Import Tests ---
+
+@patch('models.device_instance.get_temp_db_connection')
+def test_mcp_devices_import_json(mock_db_conn, client, api_token):
+    """Test MCP devices import from JSON content."""
+    mock_conn = MagicMock()
+    mock_execute_result = MagicMock()
+    mock_conn.execute.return_value = mock_execute_result
+    mock_db_conn.return_value = mock_conn
+
+    # Mock successful import
+    with patch('models.device_instance.DeviceInstance.importCSV') as mock_import:
+        mock_import.return_value = {"success": True, "message": "Imported 2 devices"}
+
+        payload = {"content": "bW9ja2VkIGNvbnRlbnQ="}  # base64 encoded content
+        response = client.post('/mcp/sse/devices/import',
+                               json=payload,
+                               headers=auth_headers(api_token))
+
+        assert response.status_code == 200
+        data = response.get_json()
+        assert data["success"] is True
+        assert "Imported 2 devices" in data["message"]
+
+
+# --- MCP Device Totals Tests ---
+
+@patch('database.get_temp_db_connection')
+def test_mcp_devices_totals(mock_db_conn, client, api_token):
+    """Test MCP devices totals endpoint."""
+    mock_conn = MagicMock()
+    mock_sql = MagicMock()
+    mock_execute_result = MagicMock()
+    # Mock the getTotals method to return sample data
+    mock_execute_result.fetchone.return_value = [10, 8, 2, 0, 1, 3]  # devices, connected, favorites, new, down, archived
+    mock_sql.execute.return_value = mock_execute_result
+    mock_conn.cursor.return_value = mock_sql
+    mock_db_conn.return_value = mock_conn
+
+    response = client.get('/mcp/sse/devices/totals',
+                          headers=auth_headers(api_token))
+
+    assert response.status_code == 200
+    data = response.get_json()
+    # Should return device counts as array
+    assert isinstance(data, list)
+    assert len(data) >= 4  # At least online, offline, etc.
+
+
+# --- MCP Traceroute Tests ---
+
+@patch('api_server.api_server_start.traceroute')
+def test_mcp_traceroute(mock_traceroute, client, api_token):
+    """Test MCP traceroute endpoint."""
+    mock_traceroute.return_value = ({"success": True, "output": "traceroute output"}, 200)
+
+    payload = {"devLastIP": "8.8.8.8"}
+    response = client.post('/mcp/sse/nettools/traceroute',
+                           json=payload,
+                           headers=auth_headers(api_token))
+
+    assert response.status_code == 200
+    data = response.get_json()
+    assert data["success"] is True
+    assert "output" in data
+    mock_traceroute.assert_called_once_with("8.8.8.8")
+
+
+@patch('api_server.api_server_start.traceroute')
+def test_mcp_traceroute_missing_ip(mock_traceroute, client, api_token):
+    """Test MCP traceroute with missing IP."""
+    mock_traceroute.return_value = ({"success": False, "error": "Invalid IP: None"}, 400)
+
+    payload = {}  # Missing devLastIP
+    response = client.post('/mcp/sse/nettools/traceroute',
+                           json=payload,
+                           headers=auth_headers(api_token))
+
+    assert response.status_code == 400
+    data = response.get_json()
+    assert data["success"] is False
+    assert "error" in data
+    mock_traceroute.assert_called_once_with(None)
