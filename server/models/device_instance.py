@@ -95,7 +95,7 @@ class DeviceInstance:
     def getFavorite(self):
         return self._fetchall("""
             SELECT * FROM Devices
-            HERE devFavorite = 1
+            WHERE devFavorite = 1
         """)
 
     def getNetworkTopology(self):
