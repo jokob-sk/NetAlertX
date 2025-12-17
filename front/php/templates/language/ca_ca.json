@@ -311,7 +311,7 @@
     "Gen_Filter": "Filtrar",
     "Gen_Generate": "Generar",
     "Gen_InvalidMac": "Mac address invàlida.",
-    "Gen_Invalid_Value": "",
+    "Gen_Invalid_Value": "S'ha introduït un valor incorrecte",
     "Gen_LockedDB": "ERROR - DB podria estar bloquejada - Fes servir F12 Eines desenvolupament -> Consola o provar-ho més tard.",
     "Gen_NetworkMask": "Màscara de xarxa",
     "Gen_Offline": "Fora de línia",
