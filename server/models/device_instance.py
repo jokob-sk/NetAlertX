@@ -500,96 +500,112 @@ class DeviceInstance:
 
     def setDeviceData(self, mac, data):
         """Update or create a device."""
-        if data.get("createNew", False):
-            sql = """
-            INSERT INTO Devices (
-                devMac, devName, devOwner, devType, devVendor, devIcon,
-                devFavorite, devGroup, devLocation, devComments,
-                devParentMAC, devParentPort, devSSID, devSite,
-                devStaticIP, devScan, devAlertEvents, devAlertDown,
-                devParentRelType, devReqNicsOnline, devSkipRepeated,
-                devIsNew, devIsArchived, devLastConnection,
-                devFirstConnection, devLastIP, devGUID, devCustomProps,
-                devSourcePlugin
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """
+        try:
+            if data.get("createNew", False):
+                sql = """
+                INSERT INTO Devices (
+                    devMac, devName, devOwner, devType, devVendor, devIcon,
+                    devFavorite, devGroup, devLocation, devComments,
+                    devParentMAC, devParentPort, devSSID, devSite,
+                    devStaticIP, devScan, devAlertEvents, devAlertDown,
+                    devParentRelType, devReqNicsOnline, devSkipRepeated,
+                    devIsNew, devIsArchived, devLastConnection,
+                    devFirstConnection, devLastIP, devGUID, devCustomProps,
+                    devSourcePlugin
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """
 
-            values = (
-                mac,
-                data.get("devName", ""),
-                data.get("devOwner", ""),
-                data.get("devType", ""),
-                data.get("devVendor", ""),
-                data.get("devIcon", ""),
-                data.get("devFavorite", 0),
-                data.get("devGroup", ""),
-                data.get("devLocation", ""),
-                data.get("devComments", ""),
-                data.get("devParentMAC", ""),
-                data.get("devParentPort", ""),
-                data.get("devSSID", ""),
-                data.get("devSite", ""),
-                data.get("devStaticIP", 0),
-                data.get("devScan", 0),
-                data.get("devAlertEvents", 0),
-                data.get("devAlertDown", 0),
-                data.get("devParentRelType", "default"),
-                data.get("devReqNicsOnline", 0),
-                data.get("devSkipRepeated", 0),
-                data.get("devIsNew", 0),
-                data.get("devIsArchived", 0),
-                data.get("devLastConnection", timeNowDB()),
-                data.get("devFirstConnection", timeNowDB()),
-                data.get("devLastIP", ""),
-                data.get("devGUID", ""),
-                data.get("devCustomProps", ""),
-                data.get("devSourcePlugin", "DUMMY"),
-            )
+                values = (
+                    mac,
+                    data.get("devName", ""),
+                    data.get("devOwner", ""),
+                    data.get("devType", ""),
+                    data.get("devVendor", ""),
+                    data.get("devIcon", ""),
+                    data.get("devFavorite", 0),
+                    data.get("devGroup", ""),
+                    data.get("devLocation", ""),
+                    data.get("devComments", ""),
+                    data.get("devParentMAC", ""),
+                    data.get("devParentPort", ""),
+                    data.get("devSSID", ""),
+                    data.get("devSite", ""),
+                    data.get("devStaticIP", 0),
+                    data.get("devScan", 0),
+                    data.get("devAlertEvents", 0),
+                    data.get("devAlertDown", 0),
+                    data.get("devParentRelType", "default"),
+                    data.get("devReqNicsOnline", 0),
+                    data.get("devSkipRepeated", 0),
+                    data.get("devIsNew", 0),
+                    data.get("devIsArchived", 0),
+                    data.get("devLastConnection", timeNowDB()),
+                    data.get("devFirstConnection", timeNowDB()),
+                    data.get("devLastIP", ""),
+                    data.get("devGUID", ""),
+                    data.get("devCustomProps", ""),
+                    data.get("devSourcePlugin", "DUMMY"),
+                )
 
-        else:
-            sql = """
-            UPDATE Devices SET
-                devName=?, devOwner=?, devType=?, devVendor=?, devIcon=?,
-                devFavorite=?, devGroup=?, devLocation=?, devComments=?,
-                devParentMAC=?, devParentPort=?, devSSID=?, devSite=?,
-                devStaticIP=?, devScan=?, devAlertEvents=?, devAlertDown=?,
-                devParentRelType=?, devReqNicsOnline=?, devSkipRepeated=?,
-                devIsNew=?, devIsArchived=?, devCustomProps=?
-            WHERE devMac=?
-            """
-            values = (
-                data.get("devName", ""),
-                data.get("devOwner", ""),
-                data.get("devType", ""),
-                data.get("devVendor", ""),
-                data.get("devIcon", ""),
-                data.get("devFavorite", 0),
-                data.get("devGroup", ""),
-                data.get("devLocation", ""),
-                data.get("devComments", ""),
-                data.get("devParentMAC", ""),
-                data.get("devParentPort", ""),
-                data.get("devSSID", ""),
-                data.get("devSite", ""),
-                data.get("devStaticIP", 0),
-                data.get("devScan", 0),
-                data.get("devAlertEvents", 0),
-                data.get("devAlertDown", 0),
-                data.get("devParentRelType", "default"),
-                data.get("devReqNicsOnline", 0),
-                data.get("devSkipRepeated", 0),
-                data.get("devIsNew", 0),
-                data.get("devIsArchived", 0),
-                data.get("devCustomProps", ""),
-                mac,
-            )
+            else:
+                sql = """
+                UPDATE Devices SET
+                    devName=?, devOwner=?, devType=?, devVendor=?, devIcon=?,
+                    devFavorite=?, devGroup=?, devLocation=?, devComments=?,
+                    devParentMAC=?, devParentPort=?, devSSID=?, devSite=?,
+                    devStaticIP=?, devScan=?, devAlertEvents=?, devAlertDown=?,
+                    devParentRelType=?, devReqNicsOnline=?, devSkipRepeated=?,
+                    devIsNew=?, devIsArchived=?, devCustomProps=?
+                WHERE devMac=?
+                """
+                values = (
+                    data.get("devName", ""),
+                    data.get("devOwner", ""),
+                    data.get("devType", ""),
+                    data.get("devVendor", ""),
+                    data.get("devIcon", ""),
+                    data.get("devFavorite", 0),
+                    data.get("devGroup", ""),
+                    data.get("devLocation", ""),
+                    data.get("devComments", ""),
+                    data.get("devParentMAC", ""),
+                    data.get("devParentPort", ""),
+                    data.get("devSSID", ""),
+                    data.get("devSite", ""),
+                    data.get("devStaticIP", 0),
+                    data.get("devScan", 0),
+                    data.get("devAlertEvents", 0),
+                    data.get("devAlertDown", 0),
+                    data.get("devParentRelType", "default"),
+                    data.get("devReqNicsOnline", 0),
+                    data.get("devSkipRepeated", 0),
+                    data.get("devIsNew", 0),
+                    data.get("devIsArchived", 0),
+                    data.get("devCustomProps", ""),
+                    mac,
+                )
 
-        conn = get_temp_db_connection()
-        cur = conn.cursor()
-        cur.execute(sql, values)
-        conn.commit()
-        conn.close()
-        return {"success": True}
+            conn = get_temp_db_connection()
+            cur = conn.cursor()
+            cur.execute(sql, values)
+            conn.commit()
+            conn.close()
+            return {"success": True}
+        except Exception as e:
+            if conn:
+                conn.rollback()
+
+            # Optional: your existing logger
+            mylog("none", f"[DeviceInstance] setDeviceData({mac}) failed: {e}")
+
+            return {
+                "success": False,
+                "error": str(e)
+            }
+
+        finally:
+            if conn:
+                conn.close()
 
     def deleteDeviceByMAC(self, mac):
         """Delete a device by MAC."""

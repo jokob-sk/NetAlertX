@@ -345,8 +345,7 @@ function formatDataSize(bytes) {
 
 
 function loadInterfaces() {
-    const apiToken = getSetting("API_TOKEN"); // replace with dynamic token if available
-
+    const apiToken = getSetting("API_TOKEN"); 
     const host = window.location.hostname;
     const port = getSetting("GRAPHQL_PORT");
 

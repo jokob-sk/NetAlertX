@@ -1,7 +1,7 @@
 <?php
 //------------------------------------------------------------------------------
 //  NetAlertX
-//  Open Source Network Guard / WIFI & LAN intrusion detector 
+//  Open Source Network Guard / WIFI & LAN intrusion detector
 //
 //  devices.php - Front module. Server side. Manage Devices
 //------------------------------------------------------------------------------
@@ -32,17 +32,16 @@
     switch ($action) {
                                                                                       // check server/api_server/api_server_start.py for equivalents
       case 'getServerDeviceData':     getServerDeviceData();                   break; // equivalent: get_device_data  
-      case 'setDeviceData':           setDeviceData();                         break; // equivalent: set_device_data
       case 'deleteDevice':            deleteDevice();                          break; // equivalent: delete_device(mac)
-      case 'deleteAllWithEmptyMACs':  deleteAllWithEmptyMACs();                break; // equivalent: delete_all_with_empty_macs      
-      
+      case 'deleteAllWithEmptyMACs':  deleteAllWithEmptyMACs();                break; // equivalent: delete_all_with_empty_macs
+
       case 'deleteAllDevices':        deleteAllDevices();                      break; // equivalent: delete_devices(macs)
       case 'deleteUnknownDevices':    deleteUnknownDevices();                  break; // equivalent: delete_unknown_devices
       case 'deleteEvents':            deleteEvents();                          break; // equivalent: delete_events
       case 'deleteEvents30':          deleteEvents30();                        break; // equivalent: delete_events_30
       case 'deleteActHistory':        deleteActHistory();                      break; // equivalent: delete_online_history
       case 'deleteDeviceEvents':      deleteDeviceEvents();                    break; // equivalent: delete_device_events(mac)
-      case 'resetDeviceProps':        resetDeviceProps();                      break; // equivalent: reset_device_props        
+      case 'resetDeviceProps':        resetDeviceProps();                      break; // equivalent: reset_device_props
       case 'ExportCSV':               ExportCSV();                             break; // equivalent: export_devices
       case 'ImportCSV':               ImportCSV();                             break; // equivalent: import_csv
 
@@ -54,11 +53,11 @@
       case 'copyFromDevice':          copyFromDevice();                        break; // equivalent: copy_device(mac_from, mac_to)
       case 'wakeonlan':               wakeonlan();                             break; // equivalent: wakeonlan
 
-      default:                        logServerConsole ('Action: '. $action);  break; // equivalent: 
+      default:                        logServerConsole ('Action: '. $action);  break; // equivalent:
     }
   }
 
- 
+
 
 //------------------------------------------------------------------------------
 //  Query Device Data
@@ -125,47 +124,47 @@ function getServerDeviceData() {
 
   // Fetch Device Info + Children + Events Stats
   $sql =<<<SQL
-    SELECT 
+    SELECT
       d.rowid,
       d.*,
-      CASE 
+      CASE
         WHEN d.devAlertDown != 0 AND d.devPresentLastScan = 0 THEN "Down"
         WHEN d.devPresentLastScan = 1 THEN "On-line"
         ELSE "Off-line"
       END AS devStatus,
 
       -- Event counters
-      (SELECT COUNT(*) FROM Sessions 
+      (SELECT COUNT(*) FROM Sessions
       WHERE ses_MAC = d.devMac AND (
-        ses_DateTimeConnection >= $periodDate OR 
-        ses_DateTimeDisconnection >= $periodDate OR 
+        ses_DateTimeConnection >= $periodDate OR
+        ses_DateTimeDisconnection >= $periodDate OR
         ses_StillConnected = 1
       )
       ) AS devSessions,
 
-      (SELECT COUNT(*) FROM Events 
-      WHERE eve_MAC = d.devMac AND 
-            eve_DateTime >= $periodDate AND 
+      (SELECT COUNT(*) FROM Events
+      WHERE eve_MAC = d.devMac AND
+            eve_DateTime >= $periodDate AND
             eve_EventType NOT IN ("Connected", "Disconnected")
       ) AS devEvents,
 
-      (SELECT COUNT(*) FROM Events 
-      WHERE eve_MAC = d.devMac AND 
-            eve_DateTime >= $periodDate AND 
+      (SELECT COUNT(*) FROM Events
+      WHERE eve_MAC = d.devMac AND
+            eve_DateTime >= $periodDate AND
             eve_EventType = "Device Down"
       ) AS devDownAlerts,
 
       (SELECT CAST(( MAX (0, SUM (julianday (IFNULL (ses_DateTimeDisconnection,'$currentdate'))
-                      - julianday (CASE WHEN ses_DateTimeConnection < $periodDate 
-                                        THEN $periodDate 
+                      - julianday (CASE WHEN ses_DateTimeConnection < $periodDate
+                                        THEN $periodDate
                                         ELSE ses_DateTimeConnection END)) *24 )) AS INT)
       FROM Sessions
-      WHERE ses_MAC = d.devMac AND 
-            ses_DateTimeConnection IS NOT NULL AND 
-            (ses_DateTimeDisconnection IS NOT NULL OR ses_StillConnected = 1) AND 
+      WHERE ses_MAC = d.devMac AND
+            ses_DateTimeConnection IS NOT NULL AND
+            (ses_DateTimeDisconnection IS NOT NULL OR ses_StillConnected = 1) AND
             (
-              ses_DateTimeConnection >= $periodDate OR 
-              ses_DateTimeDisconnection >= $periodDate OR 
+              ses_DateTimeConnection >= $periodDate OR
+              ses_DateTimeDisconnection >= $periodDate OR
               ses_StillConnected = 1
             )
       ) AS devPresenceHours
@@ -271,31 +270,31 @@ function setDeviceData() {
       WHERE devMac = '$mac'";
   } else { // An INSERT
       $sql = "INSERT INTO Devices (
-                            devMac, 
-                            devName, 
-                            devOwner, 
-                            devType, 
-                            devVendor, 
-                            devIcon, 
-                            devFavorite, 
-                            devGroup, 
-                            devLocation, 
-                            devComments, 
-                            devParentMAC, 
-                            devParentPort, 
-                            devSSID, 
-                            devSite, 
-                            devStaticIP, 
-                            devScan, 
-                            devAlertEvents, 
-                            devAlertDown, 
+                            devMac,
+                            devName,
+                            devOwner,
+                            devType,
+                            devVendor,
+                            devIcon,
+                            devFavorite,
+                            devGroup,
+                            devLocation,
+                            devComments,
+                            devParentMAC,
+                            devParentPort,
+                            devSSID,
+                            devSite,
+                            devStaticIP,
+                            devScan,
+                            devAlertEvents,
+                            devAlertDown,
                             devParentRelType,
                             devReqNicsOnline,
-                            devSkipRepeated, 
-                            devIsNew, 
-                            devIsArchived, 
-                            devLastConnection, 
-                            devFirstConnection, 
+                            devSkipRepeated,
+                            devIsNew,
+                            devIsArchived,
+                            devLastConnection,
+                            devFirstConnection,
                             devLastIP,
                             devGUID,
                             devCustomProps,
@@ -369,7 +368,7 @@ function deleteDevice() {
 //  Delete all devices with empty MAC addresses
 //------------------------------------------------------------------------------
 function deleteAllWithEmptyMACs() {
-  global $db;  
+  global $db;
 
   // sql
   $sql = 'DELETE FROM Devices WHERE devMac=""';
@@ -388,7 +387,7 @@ function deleteAllWithEmptyMACs() {
 //  Delete all devices with empty MAC addresses
 //------------------------------------------------------------------------------
 function deleteUnknownDevices() {
-  global $db;  
+  global $db;
 
   // sql
   $sql = 'DELETE FROM Devices WHERE devName="(unknown)" OR devName="(name not found)"';
@@ -430,7 +429,7 @@ function resetDeviceProps() {
 
   // sql
   $sql = 'UPDATE Devices set devCustomProps = "'.getSettingValue("NEWDEV_devCustomProps").'" WHERE devMac="' . $_REQUEST['mac'] .'"';
-  
+
   // execute sql
   $result = $db->query($sql);
 
@@ -443,7 +442,7 @@ function resetDeviceProps() {
 }
 
 //------------------------------------------------------------------------------
-//  Delete all devices 
+//  Delete all devices
 //------------------------------------------------------------------------------
 function deleteAllDevices() {
   global $db;
@@ -462,7 +461,7 @@ function deleteAllDevices() {
 }
 
 //------------------------------------------------------------------------------
-//  Delete all Events 
+//  Delete all Events
 //------------------------------------------------------------------------------
 function deleteEvents() {
   global $db;
@@ -527,18 +526,18 @@ function ExportCSV() {
   header("Content-disposition: attachment; filename=\"devices.csv\"");
 
   global $db;
-  $func_result = $db->query("SELECT * FROM Devices");        
+  $func_result = $db->query("SELECT * FROM Devices");
 
   // prepare CSV header row
   $columns = getDevicesColumns();
 
-  // wrap the headers with " (quotes) 
+  // wrap the headers with " (quotes)
   $resultCSV = '"'.implode('","', $columns).'"'."\n";
 
   // retrieve the devices from the DB
-  while ($row = $func_result->fetchArray(SQLITE3_ASSOC)) {   
+  while ($row = $func_result->fetchArray(SQLITE3_ASSOC)) {
 
-    // loop through columns and add values to the string 
+    // loop through columns and add values to the string
     $index = 0;
     foreach ($columns as $columnName) {
       // Escape special chars (e.g.quotes) inside fields by replacing them with html definitions
@@ -552,14 +551,14 @@ function ExportCSV() {
         $resultCSV .= ',';
       }
       $index++;
-    } 
+    }
 
     // add a new line for the next row
     $resultCSV .= "\n";
   }
 
   //write the built CSV string
-  echo $resultCSV;    
+  echo $resultCSV;
 }
 
 
@@ -568,7 +567,7 @@ function ExportCSV() {
 //------------------------------------------------------------------------------
 function ImportCSV() {
 
-  global $db;   
+  global $db;
   $file = '../../../config/devices.csv';
   $data = "";
   $skipped = "";
@@ -587,9 +586,9 @@ function ImportCSV() {
   } else if (file_exists($file)) { // try to get the data form the file
 
     // Read the CSV file
-    $data = file_get_contents($file); 
+    $data = file_get_contents($file);
   } else {
-    echo lang('BackDevices_DBTools_ImportCSVMissing');    
+    echo lang('BackDevices_DBTools_ImportCSVMissing');
   }
 
   if($data != "")
@@ -600,20 +599,20 @@ function ImportCSV() {
       return str_replace("\n", " ", $matches[0]); // Replace with a space
     }, $data);
 
-    $lines = explode("\n", $data); 
+    $lines = explode("\n", $data);
 
     // Get the column headers from the first line of the CSV
     $header = str_getcsv(array_shift($lines));
     $header = array_map('trim', $header);
 
     // Delete everything form the DB table
-    $sql = 'DELETE FROM Devices';     
-    $result = $db->query($sql);  
+    $sql = 'DELETE FROM Devices';
+    $result = $db->query($sql);
 
     // Build the SQL statement
     $sql = "INSERT INTO Devices (" . implode(', ', $header) . ") VALUES ";
 
-    // Parse data from CSV file line by line (max 10000 lines)    
+    // Parse data from CSV file line by line (max 10000 lines)
     $index = 0;
     foreach($lines as $row) {
       $rowArray = str_getcsv($row);
@@ -642,7 +641,7 @@ function ImportCSV() {
       // Import successful
       echo lang('BackDevices_DBTools_ImportCSV') . " (Skipped lines: " . $skipped . ") ";
     } else {
-      // An error occurred while writing to the DB, display the last error message 
+      // An error occurred while writing to the DB, display the last error message
       echo lang('BackDevices_DBTools_ImportCSVError') . "\n" . $error . "\n" . $sql . "\n\n" . $result;
     }
   }
@@ -665,21 +664,21 @@ function getDevicesTotals() {
 
     // combined query
     $result = $db->query(
-          'SELECT 
-          (SELECT COUNT(*) FROM Devices '. getDeviceCondition ('my').') as devices, 
-          (SELECT COUNT(*) FROM Devices '. getDeviceCondition ('connected').') as connected, 
-          (SELECT COUNT(*) FROM Devices '. getDeviceCondition ('favorites').') as favorites, 
-          (SELECT COUNT(*) FROM Devices '. getDeviceCondition ('new').') as new, 
-          (SELECT COUNT(*) FROM Devices '. getDeviceCondition ('down').') as down, 
+          'SELECT
+          (SELECT COUNT(*) FROM Devices '. getDeviceCondition ('my').') as devices,
+          (SELECT COUNT(*) FROM Devices '. getDeviceCondition ('connected').') as connected,
+          (SELECT COUNT(*) FROM Devices '. getDeviceCondition ('favorites').') as favorites,
+          (SELECT COUNT(*) FROM Devices '. getDeviceCondition ('new').') as new,
+          (SELECT COUNT(*) FROM Devices '. getDeviceCondition ('down').') as down,
           (SELECT COUNT(*) FROM Devices '. getDeviceCondition ('archived').') as archived
     ');
 
-    $row = $result -> fetchArray (SQLITE3_NUM); 
+    $row = $result -> fetchArray (SQLITE3_NUM);
     $resultJSON = json_encode (array ($row[0], $row[1], $row[2], $row[3], $row[4], $row[5]));
 
     // save to cache
     setCache("getDevicesTotals", $resultJSON );
-  }  
+  }
 
   echo ($resultJSON);
 }
@@ -769,19 +768,19 @@ function updateNetworkLeaf()
 }
 
 //------------------------------------------------------------------------------
-//  Wake-on-LAN 
+//  Wake-on-LAN
 // Inspired by @leiweibau: https://github.com/leiweibau/Pi.Alert/commit/30427c7fea180670c71a2b790699e5d9e9e88ffd
 //------------------------------------------------------------------------------
-function wakeonlan() {  
+function wakeonlan() {
 
   $WOL_HOST_IP = $_REQUEST['ip'];
   $WOL_HOST_MAC = $_REQUEST['mac'];
 
-  if (!filter_var($WOL_HOST_IP, FILTER_VALIDATE_IP)) {            
+  if (!filter_var($WOL_HOST_IP, FILTER_VALIDATE_IP)) {
       echo "Invalid IP! ". lang('BackDevDetail_Tools_WOL_error'); exit;
-  } 
-  elseif (!filter_var($WOL_HOST_MAC, FILTER_VALIDATE_MAC)) {      
-      echo "Invalid MAC! ". lang('BackDevDetail_Tools_WOL_error'); exit;      
+  }
+  elseif (!filter_var($WOL_HOST_MAC, FILTER_VALIDATE_MAC)) {
+      echo "Invalid MAC! ". lang('BackDevDetail_Tools_WOL_error'); exit;
   }
 
   exec('wakeonlan '.$WOL_HOST_MAC , $output);
@@ -792,14 +791,14 @@ function wakeonlan() {
 //------------------------------------------------------------------------------
 // Copy from device
 //------------------------------------------------------------------------------
-function copyFromDevice() {  
+function copyFromDevice() {
 
   $MAC_FROM = $_REQUEST['macFrom'];
   $MAC_TO   = $_REQUEST['macTo'];
-  
+
   global $db;
 
-  // clean-up temporary table  
+  // clean-up temporary table
   $sql = "DROP TABLE IF EXISTS temp_devices ";
   $result = $db->query($sql);
 
@@ -810,7 +809,7 @@ function copyFromDevice() {
   // update temporary table with the correct target MAC
   $sql = "UPDATE temp_devices SET devMac = '". $MAC_TO . "';";
   $result = $db->query($sql);
-  
+
   // delete previous entry
   $sql = "DELETE FROM Devices WHERE devMac = '". $MAC_TO . "';";
   $result = $db->query($sql);
@@ -828,8 +827,8 @@ function copyFromDevice() {
     echo 'OK';
   } else {
     echo lang('BackDevices_Device_UpdDevError');
-  }  
-  
+  }
+
 }
 
 //------------------------------------------------------------------------------
@@ -845,7 +844,7 @@ function getDeviceCondition ($deviceStatus) {
     case 'down':       return 'WHERE devIsArchived=0 AND devAlertDown !=0 AND devPresentLastScan=0';  break;
     case 'archived':   return 'WHERE devIsArchived=1';                                                        break;
     default:           return 'WHERE 1=0';                                                                   break;
-  }  
+  }
 }
 
 
