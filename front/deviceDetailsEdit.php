@@ -308,6 +308,7 @@
 
     const apiToken = getSetting("API_TOKEN");   // dynamic token
     const host     = window.location.hostname;
+    const protocol = window.location.protocol;
     const port     = getSetting("GRAPHQL_PORT");
 
     mac = $('#NEWDEV_devMac').val();
@@ -356,7 +357,7 @@
 
 
     $.ajax({
-        url: "http://" + host + ":" + port + "/device/" + encodeURIComponent(mac),
+        url: `${protocol}//${host}:${port}/device/${encodeURIComponent(mac)}`,
         type: "POST",
         headers: {
             "Authorization": "Bearer " + apiToken,

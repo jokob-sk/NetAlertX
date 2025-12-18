@@ -127,7 +127,8 @@ def test_traceroute_device(client, api_token, test_mac):
         data = resp.json
         assert data.get("success") is True
         assert "output" in data
-        assert isinstance(data["output"], str)
+        assert isinstance(data["output"], list)
+        assert all(isinstance(line, str) for line in data["output"])
 
 
 @pytest.mark.parametrize("ip,expected_status", [
@@ -201,8 +202,8 @@ def test_internet_info_endpoint(client, api_token):
 
     if resp.status_code == 200:
         assert data.get("success") is True
-        assert isinstance(data.get("output"), str)
-        assert len(data["output"]) > 0  # ensure output is not empty
+        assert isinstance(data.get("output"), dict)   
+        assert len(data["output"]) > 0              # ensure output is not empty
     else:
         # Handle errors, e.g., curl failure
         assert data.get("success") is False

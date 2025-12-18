@@ -1,5 +1,6 @@
 import subprocess
 import re
+import json
 import sys
 import ipaddress
 import shutil
@@ -94,7 +95,7 @@ def traceroute(ip):
             check=True,  # Raise CalledProcessError on non-zero exit
         )
         # Return success response with traceroute output
-        return jsonify({"success": True, "output": result.stdout.strip()})
+        return jsonify({"success": True, "output": result.stdout.strip().splitlines()})
 
     # --------------------------
     # Step 3: Handle command errors
@@ -247,29 +248,24 @@ def internet_info():
     Returns JSON with the info or error.
     """
     try:
-        # Perform the request via curl
         result = subprocess.run(
-            ["curl", "-s", "https://ipinfo.io"],
+            ["curl", "-s", "https://ipinfo.io/json"],
             capture_output=True,
             text=True,
             check=True,
         )
 
-        output = result.stdout.strip()
-        if not output:
+        if not result.stdout:
             raise ValueError("Empty response from ipinfo.io")
 
-        # Clean up the JSON-like string by removing { } , and "
-        cleaned_output = (
-            output.replace("{", "")
-            .replace("}", "")
-            .replace(",", "")
-            .replace('"', "")
-        )
+        data = json.loads(result.stdout)
 
-        return jsonify({"success": True, "output": cleaned_output})
+        return jsonify({
+            "success": True,
+            "output": data
+        })
 
-    except (subprocess.CalledProcessError, ValueError) as e:
+    except (subprocess.CalledProcessError, ValueError, json.JSONDecodeError) as e:
         return jsonify(
             {
                 "success": False,

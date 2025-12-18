@@ -31,12 +31,6 @@ function getExternalIp() {
 // Network
 // ----------------------------------------------------------
 
-
-
-// ----------------------------------------------------
-// Network Stats (General)
-// ----------------------------------------------------
-
 // External IP
 $externalIp = getExternalIp();
 
@@ -58,12 +52,9 @@ $network_referer = !empty($_SERVER['HTTP_REFERER'])
 
 
 // ----------------------------------------------------
-// Network Hardware Stats (FAST VERSION)
+// Network Hardware Stats
 // ----------------------------------------------------
 
-// ----------------------------------------------------
-// Network Stats (General)
-// ----------------------------------------------------
 
 // External IP
 $externalIp = getExternalIp();
@@ -345,12 +336,13 @@ function formatDataSize(bytes) {
 
 
 function loadInterfaces() {
-    const apiToken = getSetting("API_TOKEN"); 
+    const apiToken = getSetting("API_TOKEN");
     const host = window.location.hostname;
+    const protocol = window.location.protocol;
     const port = getSetting("GRAPHQL_PORT");
 
     $.ajax({
-        url: "http://" + host + ":" + port + "/nettools/interfaces",
+        url: `${protocol}//${host}:${port}/nettools/interfaces`,
         type: "GET",
         headers: {
             "Authorization": "Bearer " + apiToken,

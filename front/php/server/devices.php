@@ -31,7 +31,7 @@
     $action = $_REQUEST['action'];
     switch ($action) {
                                                                                       // check server/api_server/api_server_start.py for equivalents
-      case 'getServerDeviceData':     getServerDeviceData();                   break; // equivalent: get_device_data  
+      case 'getServerDeviceData':     getServerDeviceData();                   break; // equivalent: get_device_data
       case 'deleteDevice':            deleteDevice();                          break; // equivalent: delete_device(mac)
       case 'deleteAllWithEmptyMACs':  deleteAllWithEmptyMACs();                break; // equivalent: delete_all_with_empty_macs
 
@@ -41,7 +41,7 @@
       case 'deleteEvents30':          deleteEvents30();                        break; // equivalent: delete_events_30
       case 'deleteActHistory':        deleteActHistory();                      break; // equivalent: delete_online_history
       case 'deleteDeviceEvents':      deleteDeviceEvents();                    break; // equivalent: delete_device_events(mac)
-      case 'resetDeviceProps':        resetDeviceProps();                      break; // equivalent: reset_device_props
+
       case 'ExportCSV':               ExportCSV();                             break; // equivalent: export_devices
       case 'ImportCSV':               ImportCSV();                             break; // equivalent: import_csv
 
@@ -49,9 +49,6 @@
       case 'getDevicesListCalendar':  getDevicesListCalendar();                break; // equivalent: devices_by_status
 
       case 'updateNetworkLeaf':       updateNetworkLeaf();                     break; // equivalent: update_device_column(mac, column_name, column_value)
-
-      case 'copyFromDevice':          copyFromDevice();                        break; // equivalent: copy_device(mac_from, mac_to)
-      case 'wakeonlan':               wakeonlan();                             break; // equivalent: wakeonlan
 
       default:                        logServerConsole ('Action: '. $action);  break; // equivalent:
     }
@@ -202,149 +199,6 @@ function getServerDeviceData() {
 
 }
 
-
-//------------------------------------------------------------------------------
-//  Update Device Data
-//------------------------------------------------------------------------------
-function setDeviceData() {
-  global $db;
-
-  // Sanitize input
-  $mac = quotes($_POST['mac']);
-  $name = urldecode(quotes($_POST['name']));
-  $owner = urldecode(quotes($_POST['owner']));
-  $type = urldecode(quotes($_POST['type']));
-  $vendor = urldecode(quotes($_POST['vendor']));
-  $icon = urldecode(quotes($_POST['icon']));
-  $favorite = quotes($_POST['favorite']);
-  $group = urldecode(quotes($_POST['group']));
-  $location = urldecode(quotes($_POST['location']));
-  $comments = urldecode(quotes($_POST['comments']));
-  $parentMac = quotes($_POST['networknode']);
-  $parentPort = quotes($_POST['networknodeport']);
-  $ssid = urldecode(quotes($_POST['ssid']));
-  $site = quotes($_POST['networksite']);
-  $staticIP = quotes($_POST['staticIP']);
-  $scancycle = quotes($_POST['scancycle']);
-  $alertevents = quotes($_POST['alertevents']);
-  $alertdown = quotes($_POST['alertdown']);
-  $relType = quotes($_POST['relType']);
-  $reqNics = quotes($_POST['reqNics']);
-  $skiprepeated = quotes($_POST['skiprepeated']);
-  $newdevice = quotes($_POST['newdevice']);
-  $archived = quotes($_POST['archived']);
-  $devFirstConnection = quotes($_POST['devFirstConnection']);
-  $devLastConnection = quotes($_POST['devLastConnection']);
-  $ip = quotes($_POST['ip']);
-  $devCustomProps = quotes($_POST['devCustomProps']);
-  $createNew = quotes($_POST['createNew']);
-  $devNewGuid = generateGUID();
-
-  // An update
-  if ($_POST['createNew'] == 0) {
-      // UPDATE SQL query
-      $sql = "UPDATE Devices SET
-                        devName = '$name',
-                        devOwner = '$owner',
-                        devType = '$type',
-                        devVendor = '$vendor',
-                        devIcon = '$icon',
-                        devFavorite = '$favorite',
-                        devGroup = '$group',
-                        devLocation = '$location',
-                        devComments = '$comments',
-                        devParentMAC = '$parentMac',
-                        devParentPort = '$parentPort',
-                        devSSID = '$ssid',
-                        devSite = '$site',
-                        devStaticIP = '$staticIP',
-                        devScan = '$scancycle',
-                        devAlertEvents = '$alertevents',
-                        devAlertDown = '$alertdown',
-                        devParentRelType = '$relType',
-                        devReqNicsOnline = '$reqNics',
-                        devSkipRepeated = '$skiprepeated',
-                        devIsNew = '$newdevice',
-                        devIsArchived = '$archived',
-                        devCustomProps = '$devCustomProps'
-      WHERE devMac = '$mac'";
-  } else { // An INSERT
-      $sql = "INSERT INTO Devices (
-                            devMac,
-                            devName,
-                            devOwner,
-                            devType,
-                            devVendor,
-                            devIcon,
-                            devFavorite,
-                            devGroup,
-                            devLocation,
-                            devComments,
-                            devParentMAC,
-                            devParentPort,
-                            devSSID,
-                            devSite,
-                            devStaticIP,
-                            devScan,
-                            devAlertEvents,
-                            devAlertDown,
-                            devParentRelType,
-                            devReqNicsOnline,
-                            devSkipRepeated,
-                            devIsNew,
-                            devIsArchived,
-                            devLastConnection,
-                            devFirstConnection,
-                            devLastIP,
-                            devGUID,
-                            devCustomProps,
-                            devSourcePlugin
-                        ) VALUES (
-                          '$mac',
-                          '$name',
-                          '$owner',
-                          '$type',
-                          '$vendor',
-                          '$icon',
-                          '$favorite',
-                          '$group',
-                          '$location',
-                          '$comments',
-                          '$parentMac',
-                          '$parentPort',
-                          '$ssid',
-                          '$site',
-                          '$staticIP',
-                          '$scancycle',
-                          '$alertevents',
-                          '$alertdown',
-                          '$relType',
-                          '$reqNics',
-                          '$skiprepeated',
-                          '$newdevice',
-                          '$archived',
-                          '$devLastConnection',
-                          '$devFirstConnection',
-                          '$ip',
-                          '$devNewGuid',
-                          '$devCustomProps',
-                          'DUMMY'
-                        )";
-  }
-
-  // Execute the query
-  $result = $db->query($sql);
-
-  // Check the result
-  if ($result == TRUE) {
-      echo lang('BackDevices_DBTools_UpdDev');
-  } else {
-      echo lang('BackDevices_DBTools_UpdDevError')."\n\n$sql \n\n". $db->lastErrorMsg();
-  }
-}
-
-
-
 //------------------------------------------------------------------------------
 //  Delete Device
 //------------------------------------------------------------------------------
@@ -421,25 +275,6 @@ function deleteDeviceEvents() {
   }
 }
 
-//------------------------------------------------------------------------------
-//  Delete Device Properties
-//------------------------------------------------------------------------------
-function resetDeviceProps() {
-  global $db;
-
-  // sql
-  $sql = 'UPDATE Devices set devCustomProps = "'.getSettingValue("NEWDEV_devCustomProps").'" WHERE devMac="' . $_REQUEST['mac'] .'"';
-
-  // execute sql
-  $result = $db->query($sql);
-
-  // check result
-  if ($result == TRUE) {
-    echo lang('Gen_Okay');
-  } else {
-    echo lang('Gen_Error')."\n\n$sql \n\n". $db->lastErrorMsg();
-  }
-}
 
 //------------------------------------------------------------------------------
 //  Delete all devices
@@ -767,69 +602,6 @@ function updateNetworkLeaf()
 
 }
 
-//------------------------------------------------------------------------------
-//  Wake-on-LAN
-// Inspired by @leiweibau: https://github.com/leiweibau/Pi.Alert/commit/30427c7fea180670c71a2b790699e5d9e9e88ffd
-//------------------------------------------------------------------------------
-function wakeonlan() {
-
-  $WOL_HOST_IP = $_REQUEST['ip'];
-  $WOL_HOST_MAC = $_REQUEST['mac'];
-
-  if (!filter_var($WOL_HOST_IP, FILTER_VALIDATE_IP)) {
-      echo "Invalid IP! ". lang('BackDevDetail_Tools_WOL_error'); exit;
-  }
-  elseif (!filter_var($WOL_HOST_MAC, FILTER_VALIDATE_MAC)) {
-      echo "Invalid MAC! ". lang('BackDevDetail_Tools_WOL_error'); exit;
-  }
-
-  exec('wakeonlan '.$WOL_HOST_MAC , $output);
-
-  echo lang('BackDevDetail_Tools_WOL_okay');
-}
-
-//------------------------------------------------------------------------------
-// Copy from device
-//------------------------------------------------------------------------------
-function copyFromDevice() {
-
-  $MAC_FROM = $_REQUEST['macFrom'];
-  $MAC_TO   = $_REQUEST['macTo'];
-
-  global $db;
-
-  // clean-up temporary table
-  $sql = "DROP TABLE IF EXISTS temp_devices ";
-  $result = $db->query($sql);
-
-  // create temporary table with the source data
-  $sql = "CREATE  TABLE temp_devices AS SELECT * FROM Devices WHERE devMac = '". $MAC_FROM . "';";
-  $result = $db->query($sql);
-
-  // update temporary table with the correct target MAC
-  $sql = "UPDATE temp_devices SET devMac = '". $MAC_TO . "';";
-  $result = $db->query($sql);
-
-  // delete previous entry
-  $sql = "DELETE FROM Devices WHERE devMac = '". $MAC_TO . "';";
-  $result = $db->query($sql);
-
-  // insert new entry with the correct target MAC from the temporary table
-  $sql = "INSERT INTO Devices SELECT * FROM temp_devices WHERE devMac = '".$MAC_TO."'";
-  $result = $db->query($sql);
-
-  // clean-up temporary table
-  $sql = "DROP TABLE temp_devices ";
-  $result = $db->query($sql);
-
-  // check result
-  if ($result == TRUE) {
-    echo 'OK';
-  } else {
-    echo lang('BackDevices_Device_UpdDevError');
-  }
-
-}
 
 //------------------------------------------------------------------------------
 //  Status Where conditions
