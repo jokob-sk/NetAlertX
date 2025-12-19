@@ -53,9 +53,9 @@ ARG INSTALL_DIR=/app
 # Runtime service account (override at build; container user can still be overridden at run time)
 ARG NETALERTX_UID=20211
 ARG NETALERTX_GID=20211
-# Read-only lock owner (kept at 20211 by default for immutability)
-ARG READONLY_UID=20211
-ARG READONLY_GID=20211
+# Read-only lock owner (separate from service account to avoid UID/GID collisions)
+ARG READONLY_UID=20212
+ARG READONLY_GID=20212
 
 # NetAlertX app directories
 ENV NETALERTX_APP=${INSTALL_DIR}
@@ -196,8 +196,8 @@ FROM runner AS hardened
 # Re-declare UID/GID args for this stage
 ARG NETALERTX_UID=20211
 ARG NETALERTX_GID=20211
-ARG READONLY_UID=20211
-ARG READONLY_GID=20211
+ARG READONLY_UID=20212
+ARG READONLY_GID=20212
 
 ENV UMASK=0077
 

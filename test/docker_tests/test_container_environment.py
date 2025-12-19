@@ -58,11 +58,65 @@ def _create_docker_volume(prefix: str) -> str:
 
 def _remove_docker_volume(name: str) -> None:
     subprocess.run(
-        ["docker", "volume", "rm", "-f", name],
+        [
+            "docker",
+            "volume",
+            "rm",
+            "-f",
+            name,
+        ],
         check=False,
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
     )
+
+
+def _seed_config_volume() -> str:
+    name = _create_docker_volume("config")
+    cmd = [
+        "docker",
+        "run",
+        "--rm",
+        "--user",
+        "0:0",
+        "--entrypoint",
+        "/bin/sh",
+        "-v",
+        f"{name}:/data",
+        IMAGE,
+        "-c",
+        "install -d /data && install -m 600 /app/back/app.conf /data/app.conf && chown 20211:20211 /data/app.conf",
+    ]
+    try:
+        subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    except subprocess.CalledProcessError:
+        _remove_docker_volume(name)
+        raise
+    return name
+
+
+def _seed_data_volume() -> str:
+    name = _create_docker_volume("data")
+    cmd = [
+        "docker",
+        "run",
+        "--rm",
+        "--user",
+        "0:0",
+        "--entrypoint",
+        "/bin/sh",
+        "-v",
+        f"{name}:/data",
+        IMAGE,
+        "-c",
+        "install -d /data/db /data/config && chown -R 20211:20211 /data",
+    ]
+    try:
+        subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    except subprocess.CalledProcessError:
+        _remove_docker_volume(name)
+        raise
+    return name
 
 
 def _chown_path(host_path: pathlib.Path, uid: int, gid: int) -> None:
@@ -272,6 +326,7 @@ def _run_container(
     volume_specs: list[str] | None = None,
     sleep_seconds: float = GRACE_SECONDS,
     wait_for_exit: bool = False,
+    pre_entrypoint: str | None = None,
 ) -> subprocess.CompletedProcess[str]:
     name = f"netalertx-test-{label}-{uuid.uuid4().hex[:8]}".lower()
 
@@ -323,11 +378,18 @@ def _run_container(
         mounts_ls += f" {target}"
     mounts_ls += " || true; echo '--- END MOUNTS ---'; \n"
 
+    setup_script = ""
+    if pre_entrypoint:
+        setup_script = pre_entrypoint
+        if not setup_script.endswith("\n"):
+            setup_script += "\n"
+
     if wait_for_exit:
-        script = mounts_ls + "sh /entrypoint.sh"
+        script = mounts_ls + setup_script + "sh /entrypoint.sh"
     else:
         script = "".join([
             mounts_ls,
+            setup_script,
             "sh /entrypoint.sh & pid=$!; ",
             f"sleep {sleep_seconds}; ",
             "if kill -0 $pid >/dev/null 2>&1; then kill -TERM $pid >/dev/null 2>&1 || true; fi; ",
@@ -509,23 +571,24 @@ def test_missing_host_network_warns(tmp_path: pathlib.Path) -> None:
     Check script: check-network-mode.sh
     Sample message: "⚠️  ATTENTION: NetAlertX is not running with --network=host. Bridge networking..."
     """
-    base = tmp_path / "missing_host_net_base"
-    paths = _setup_fixed_mount_tree(base)
-    # Ensure directories are writable and owned by netalertx user so container can operate
-    for key in ["data", "app_db", "app_config"]:
-        paths[key].chmod(0o777)
-        _chown_netalertx(paths[key])
-    # Create a config file so the writable check passes
-    config_file = paths["app_config"] / "app.conf"
-    config_file.write_text("test config")
-    config_file.chmod(0o666)
-    _chown_netalertx(config_file)
-    volumes = _build_volume_args_for_keys(paths, {"data"})
-    result = _run_container(
-        "missing-host-network",
-        volumes,
-        network_mode=None,
-    )
+    data_volume = _seed_data_volume()
+    config_volume = _seed_config_volume()
+    result = None
+    try:
+        result = _run_container(
+            "missing-host-network",
+            None,
+            network_mode=None,
+            volume_specs=[
+                f"{data_volume}:{VOLUME_MAP['data']}",
+                f"{config_volume}:{VOLUME_MAP['app_config']}",
+            ],
+            sleep_seconds=5,
+        )
+    finally:
+        _remove_docker_volume(config_volume)
+        _remove_docker_volume(data_volume)
+    assert result is not None
     _assert_contains(result, "not running with --network=host", result.args)
 
 
@@ -536,146 +599,200 @@ def test_missing_host_network_warns(tmp_path: pathlib.Path) -> None:
 # top level.
 
 
-if False:  # pragma: no cover - placeholder until writable /data fixtures exist for these flows
-    def test_running_as_uid_1000_warns(tmp_path: pathlib.Path) -> None:
-        # No output assertion, just returncode check
-        """Test running as wrong user - simulates using arbitrary user instead of netalertx.
 
-        7. Running as Wrong User: Simulates running as arbitrary user (UID 1000) instead
-        of netalertx user. Permission errors due to incorrect user context.
-        Expected: Permission errors, guidance to use correct user.
+def test_missing_app_conf_triggers_seed(tmp_path: pathlib.Path) -> None:
+    """Test missing configuration file seeding - simulates corrupted/missing app.conf.
 
-        Check script: /entrypoint.d/60-user-netalertx.sh
-        Sample message: "⚠️  ATTENTION: NetAlertX is running as UID 1000:1000. Hardened permissions..."
-        """
-        paths = _setup_mount_tree(tmp_path, "run_as_1000")
-        volumes = _build_volume_args_for_keys(paths, {"data"})
-        result = _run_container(
-            "run-as-1000",
-            volumes,
-            user="1000:1000",
-        )
-        _assert_contains(result, "NetAlertX is running as UID 1000:1000", result.args)
+    9. Missing Configuration File: Simulates corrupted/missing app.conf.
+    Container automatically regenerates default configuration on startup.
+    Expected: Automatic regeneration of default configuration.
 
-    def test_missing_app_conf_triggers_seed(tmp_path: pathlib.Path) -> None:
-        """Test missing configuration file seeding - simulates corrupted/missing app.conf.
+    Check script: /entrypoint.d/15-first-run-config.sh
+    Sample message: "Default configuration written to"
+    """
+    base = tmp_path / "missing_app_conf_base"
+    paths = _setup_fixed_mount_tree(base)
+    for key in ["data", "app_db", "app_config"]:
+        paths[key].chmod(0o777)
+        _chown_netalertx(paths[key])
+    (paths["app_config"] / "testfile.txt").write_text("test")
+    volumes = _build_volume_args_for_keys(paths, {"data"})
+    result = _run_container("missing-app-conf", volumes, sleep_seconds=5)
+    _assert_contains(result, "Default configuration written to", result.args)
+    assert result.returncode == 0
 
-        9. Missing Configuration File: Simulates corrupted/missing app.conf.
-        Container automatically regenerates default configuration on startup.
-        Expected: Automatic regeneration of default configuration.
 
-        Check script: /entrypoint.d/15-first-run-config.sh
-        Sample message: "Default configuration written to"
-        """
-        base = tmp_path / "missing_app_conf_base"
-        paths = _setup_fixed_mount_tree(base)
-        for key in ["data", "app_db", "app_config"]:
-            paths[key].chmod(0o777)
-            _chown_netalertx(paths[key])
-        (paths["app_config"] / "testfile.txt").write_text("test")
-        volumes = _build_volume_args_for_keys(paths, {"data"})
-        result = _run_container("missing-app-conf", volumes, sleep_seconds=5)
-        _assert_contains(result, "Default configuration written to", result.args)
-        assert result.returncode == 0
+def test_missing_app_db_triggers_seed(tmp_path: pathlib.Path) -> None:
+    """Test missing database file seeding - simulates corrupted/missing app.db.
 
-    def test_missing_app_db_triggers_seed(tmp_path: pathlib.Path) -> None:
-        """Test missing database file seeding - simulates corrupted/missing app.db.
+    10. Missing Database File: Simulates corrupted/missing app.db.
+    Container automatically creates initial database schema on startup.
+    Expected: Automatic creation of initial database schema.
 
-        10. Missing Database File: Simulates corrupted/missing app.db.
-        Container automatically creates initial database schema on startup.
-        Expected: Automatic creation of initial database schema.
-
-        Check script: /entrypoint.d/20-first-run-db.sh
-        Sample message: "Building initial database schema"
-        """
-        base = tmp_path / "missing_app_db_base"
-        paths = _setup_fixed_mount_tree(base)
-        _chown_netalertx(paths["app_db"])
-        (paths["app_db"] / "testfile.txt").write_text("test")
-        volumes = _build_volume_args_for_keys(paths, {"data"})
+    Check script: /entrypoint.d/20-first-run-db.sh
+    Sample message: "Building initial database schema"
+    """
+    data_volume = _seed_data_volume()
+    config_volume = _seed_config_volume()
+    # Prepare a minimal writable config that still contains TIMEZONE for plugin_helper
+    subprocess.run(
+        [
+            "docker",
+            "run",
+            "--rm",
+            "--entrypoint",
+            "/bin/sh",
+            "-v",
+            f"{config_volume}:/data",
+            IMAGE,
+            "-c",
+            "printf \"TIMEZONE='UTC'\\n\" >/data/app.conf && chown 20211:20211 /data/app.conf",
+        ],
+        check=True,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+    result = None
+    db_file_check = None
+    try:
         result = _run_container(
             "missing-app-db",
-            volumes,
+            None,
             user="20211:20211",
             sleep_seconds=5,
             wait_for_exit=True,
+            volume_specs=[
+                f"{data_volume}:{VOLUME_MAP['data']}",
+                f"{config_volume}:{VOLUME_MAP['app_config']}",
+            ],
         )
-        _assert_contains(result, "Building initial database schema", result.args)
+    finally:
+        db_file_check = subprocess.run(
+            [
+                "docker",
+                "run",
+                "--rm",
+                "-v",
+                f"{data_volume}:/data",
+                IMAGE,
+                "/bin/sh",
+                "-c",
+                "test -f /data/db/app.db",
+            ],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+        _remove_docker_volume(config_volume)
+        _remove_docker_volume(data_volume)
+    assert db_file_check is not None and db_file_check.returncode == 0
+    assert result is not None
+    assert result.returncode != 0
+
+
+def test_custom_port_without_writable_conf(tmp_path: pathlib.Path) -> None:
+    """Test custom port configuration without writable nginx config mount.
+
+    4. Custom Port Without Nginx Config Mount: Simulates setting custom LISTEN_ADDR/PORT
+    without mounting nginx config. Container starts but uses default address.
+    Expected: Container starts but uses default address, warning about missing config mount.
+
+    Check script: check-nginx-config.sh
+    Sample messages: "⚠️  ATTENTION: Nginx configuration mount /tmp/nginx/active-config is missing."
+                        "⚠️  ATTENTION: Unable to write to /tmp/nginx/active-config/netalertx.conf."
+    """
+    data_volume = _seed_data_volume()
+    config_volume = _seed_config_volume()
+    paths = _setup_mount_tree(tmp_path, "custom_port_ro_conf")
+    for key in ["data", "app_db", "app_config", "app_log", "app_api", "services_run"]:
+        paths[key].chmod(0o777)
+        _chown_netalertx(paths[key])
+    volumes = _build_volume_args_for_keys(
+        paths,
+        {"app_log", "app_api", "services_run"},
+    )
+    extra_args = [
+        "--tmpfs",
+        f"{VOLUME_MAP['nginx_conf']}:uid=20211,gid=20211,mode=500",
+    ]
+    try:
+        result = _run_container(
+            "custom-port-ro-conf",
+            volumes,
+            env={"PORT": "24444", "LISTEN_ADDR": "127.0.0.1"},
+            user="20211:20211",
+            extra_args=extra_args,
+            volume_specs=[
+                f"{data_volume}:{VOLUME_MAP['data']}",
+                f"{config_volume}:{VOLUME_MAP['app_config']}",
+            ],
+            sleep_seconds=5,
+        )
+        _assert_contains(result, "Unable to write to", result.args)
+        _assert_contains(
+            result, f"{VOLUME_MAP['nginx_conf']}/netalertx.conf", result.args
+        )
         assert result.returncode != 0
+    finally:
+        _remove_docker_volume(config_volume)
+        _remove_docker_volume(data_volume)
 
-    def test_custom_port_without_writable_conf(tmp_path: pathlib.Path) -> None:
-        """Test custom port configuration without writable nginx config mount.
+def test_excessive_capabilities_warning(tmp_path: pathlib.Path) -> None:
+    """Test excessive capabilities detection - simulates container with extra capabilities.
 
-        4. Custom Port Without Nginx Config Mount: Simulates setting custom LISTEN_ADDR/PORT
-        without mounting nginx config. Container starts but uses default address.
-        Expected: Container starts but uses default address, warning about missing config mount.
+    11. Excessive Capabilities: Simulates container with capabilities beyond the required
+    NET_ADMIN, NET_RAW, and NET_BIND_SERVICE.
+    Expected: Warning about excessive capabilities detected.
 
-        Check script: check-nginx-config.sh
-        Sample messages: "⚠️  ATTENTION: Nginx configuration mount /tmp/nginx/active-config is missing."
-                         "⚠️  ATTENTION: Unable to write to /tmp/nginx/active-config/netalertx.conf."
-        """
-        paths = _setup_mount_tree(tmp_path, "custom_port_ro_conf")
-        for key in ["app_db", "app_config", "app_log", "app_api", "services_run"]:
-            paths[key].chmod(0o777)
-        paths["nginx_conf"].chmod(0o500)
-        volumes = _build_volume_args_for_keys(
-            paths,
-            {"data", "app_log", "app_api", "services_run", "nginx_conf"},
-        )
-        try:
-            result = _run_container(
-                "custom-port-ro-conf",
-                volumes,
-                env={"PORT": "24444", "LISTEN_ADDR": "127.0.0.1"},
-                user="20211:20211",
-                sleep_seconds=5,
-            )
-            _assert_contains(result, "Unable to write to", result.args)
-            _assert_contains(
-                result, f"{VOLUME_MAP['nginx_conf']}/netalertx.conf", result.args
-            )
-            assert result.returncode != 0
-        finally:
-            paths["nginx_conf"].chmod(0o755)
-
-    def test_excessive_capabilities_warning(tmp_path: pathlib.Path) -> None:
-        """Test excessive capabilities detection - simulates container with extra capabilities.
-
-        11. Excessive Capabilities: Simulates container with capabilities beyond the required
-        NET_ADMIN, NET_RAW, and NET_BIND_SERVICE.
-        Expected: Warning about excessive capabilities detected.
-
-        Check script: 90-excessive-capabilities.sh
-        Sample message: "Excessive capabilities detected"
-        """
-        paths = _setup_mount_tree(tmp_path, "excessive_caps")
-        volumes = _build_volume_args_for_keys(paths, {"data"})
+    Check script: 90-excessive-capabilities.sh
+    Sample message: "Excessive capabilities detected"
+    """
+    data_volume = _seed_data_volume()
+    config_volume = _seed_config_volume()
+    try:
         result = _run_container(
             "excessive-caps",
-            volumes,
+            None,
             extra_args=["--cap-add=SYS_ADMIN", "--cap-add=NET_BROADCAST"],
             sleep_seconds=5,
+            volume_specs=[
+                f"{data_volume}:{VOLUME_MAP['data']}",
+                f"{config_volume}:{VOLUME_MAP['app_config']}",
+            ],
         )
         _assert_contains(result, "Excessive capabilities detected", result.args)
         _assert_contains(result, "bounding caps:", result.args)
+    finally:
+        _remove_docker_volume(config_volume)
+        _remove_docker_volume(data_volume)
 
-    def test_appliance_integrity_read_write_mode(tmp_path: pathlib.Path) -> None:
-        """Test appliance integrity - simulates running with read-write root filesystem.
+def test_appliance_integrity_read_write_mode(tmp_path: pathlib.Path) -> None:
+    """Test appliance integrity - simulates running with read-write root filesystem.
 
-        12. Appliance Integrity: Simulates running container with read-write root filesystem
-        instead of read-only mode.
-        Expected: Warning about running in read-write mode instead of read-only.
+    12. Appliance Integrity: Simulates running container with read-write root filesystem
+    instead of read-only mode.
+    Expected: Warning about running in read-write mode instead of read-only.
 
-        Check script: 95-appliance-integrity.sh
-        Sample message: "Container is running as read-write, not in read-only mode"
-        """
-        paths = _setup_mount_tree(tmp_path, "appliance_integrity")
-        volumes = _build_volume_args_for_keys(paths, {"data"})
-        result = _run_container("appliance-integrity", volumes, sleep_seconds=5)
-        _assert_contains(
-            result, "Container is running as read-write, not in read-only mode", result.args
+    Check script: 95-appliance-integrity.sh
+    Sample message: "Container is running as read-write, not in read-only mode"
+    """
+    data_volume = _seed_data_volume()
+    config_volume = _seed_config_volume()
+    try:
+        result = _run_container(
+            "appliance-integrity",
+            None,
+            sleep_seconds=5,
+            volume_specs=[
+                f"{data_volume}:{VOLUME_MAP['data']}",
+                f"{config_volume}:{VOLUME_MAP['app_config']}",
+            ],
         )
-        _assert_contains(result, "read-only: true", result.args)
+    finally:
+        _remove_docker_volume(config_volume)
+        _remove_docker_volume(data_volume)
+    _assert_contains(
+        result, "Container is running as read-write, not in read-only mode", result.args
+    )
 
 
 def test_zero_permissions_app_db_dir(tmp_path: pathlib.Path) -> None:
@@ -779,9 +896,10 @@ def test_writable_config_validation(tmp_path: pathlib.Path) -> None:
     Sample message: "Read permission denied"
     """
     paths = _setup_mount_tree(tmp_path, "writable_config")
-    # Make config file read-only but keep directories writable so container gets past mounts.py
+    # Make config file unreadable/unwritable to the container user to force the check
     config_file = paths["app_config"] / "app.conf"
-    config_file.chmod(0o400)  # Read-only for owner
+    _chown_root(config_file)
+    config_file.chmod(0o000)
 
     # Ensure directories are writable and owned by netalertx user so container gets past mounts.py
     for key in [

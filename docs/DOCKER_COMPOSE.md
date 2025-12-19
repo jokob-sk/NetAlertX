@@ -51,18 +51,18 @@ services:
       # - path/on/host/to/dhcp.file:/resources/dhcp.file
 
     # tmpfs mount consolidates writable state for a read-only container and improves performance
-    # uid=20211 and gid=20211 is the netalertx user inside the container
-    # mode=1700 grants rwx------ permissions to the netalertx user only
+    # uid/gid default to the service user (NETALERTX_UID/GID, default 20211)
+    # mode=1700 grants rwx------ permissions to the runtime user only
     tmpfs:
       # Comment out to retain logs between container restarts - this has a server performance impact.
-      - "/tmp:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      - "/tmp:uid=${NETALERTX_UID:-20211},gid=${NETALERTX_GID:-20211},mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
 
       # Retain logs - comment out tmpfs /tmp if you want to retain logs between container restarts
       # Please note if you remove the /tmp mount, you must create and maintain sub-folder mounts.
       # - /path/on/host/log:/tmp/log
-      # - "/tmp/api:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
-      # - "/tmp/nginx:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
-      # - "/tmp/run:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      # - "/tmp/api:uid=${NETALERTX_UID:-20211},gid=${NETALERTX_GID:-20211},mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      # - "/tmp/nginx:uid=${NETALERTX_UID:-20211},gid=${NETALERTX_GID:-20211},mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      # - "/tmp/run:uid=${NETALERTX_UID:-20211},gid=${NETALERTX_GID:-20211},mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
 
     environment:
       LISTEN_ADDR: ${LISTEN_ADDR:-0.0.0.0}                   # Listen for connections on all interfaces
@@ -93,6 +93,9 @@ Run or re-run it:
 ```sh
 docker compose up --force-recreate
 ```
+
+> [!TIP]
+> Runtime UID/GID: The image ships with a service user `netalertx` (UID/GID 20211) and a readonly lock owner also at 20211 for 004/005 immutability. If you override the runtime user (compose `user:` or `NETALERTX_UID/GID` vars), ensure your `/data` volume and tmpfs mounts use matching `uid/gid` so startup checks and writable paths succeed.
 
 ### Customize with Environmental Variables
 
