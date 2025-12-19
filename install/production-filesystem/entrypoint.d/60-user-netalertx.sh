@@ -18,26 +18,6 @@ fi
 if [ "${CURRENT_UID}" -eq "${EXPECTED_UID}" ] && [ "${CURRENT_GID}" -eq "${EXPECTED_GID}" ]; then
     exit 0
 fi
-
-YELLOW=$(printf '\033[1;33m')
-RESET=$(printf '\033[0m')
->&2 printf "%s" "${YELLOW}"
->&2 cat <<EOF
-══════════════════════════════════════════════════════════════════════════════
-⚠️  ATTENTION: NetAlertX is running as UID ${CURRENT_UID}:${CURRENT_GID}.
-
-    Hardened permissions, file ownership, and runtime isolation expect the
-    dedicated service account (${EXPECTED_USER} -> ${EXPECTED_UID}:${EXPECTED_GID}).
-    When you override the container user (for example, docker run --user 1000:1000
-    or a Compose "user:" directive), NetAlertX loses crucial safeguards and
-    future upgrades may silently fail.
-
-    Restore the container to the default user:
-      * Remove any custom --user flag
-      * Delete "user:" overrides in compose files
-      * Recreate the container so volume ownership is reset
-
-    https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/incorrect-user.md
-══════════════════════════════════════════════════════════════════════════════
-EOF
->&2 printf "%s" "${RESET}"
+>&2 printf '\nNetAlertX note: current UID %s GID %s, expected UID %s GID %s\n' \
+    "${CURRENT_UID}" "${CURRENT_GID}" "${EXPECTED_UID}" "${EXPECTED_GID}"
+exit 0

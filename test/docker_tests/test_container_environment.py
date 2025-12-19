@@ -45,141 +45,26 @@ def _unique_label(prefix: str) -> str:
     return f"{prefix.upper()}__NETALERTX_INTENTIONAL__{uuid.uuid4().hex[:6]}"
 
 
-def _create_docker_volume(prefix: str) -> str:
-    name = f"netalertx-test-{prefix}-{uuid.uuid4().hex[:8]}".lower()
-    subprocess.run(
-        ["docker", "volume", "create", name],
-        check=True,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-    )
-    return name
-
-
-def _remove_docker_volume(name: str) -> None:
-    subprocess.run(
-        [
-            "docker",
-            "volume",
-            "rm",
-            "-f",
-            name,
-        ],
-        check=False,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-    )
-
-
-def _seed_config_volume() -> str:
-    name = _create_docker_volume("config")
-    cmd = [
-        "docker",
-        "run",
-        "--rm",
-        "--user",
-        "0:0",
-        "--entrypoint",
-        "/bin/sh",
-        "-v",
-        f"{name}:/data",
-        IMAGE,
-        "-c",
-        "install -d /data && install -m 600 /app/back/app.conf /data/app.conf && chown 20211:20211 /data/app.conf",
-    ]
-    try:
-        subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    except subprocess.CalledProcessError:
-        _remove_docker_volume(name)
-        raise
-    return name
-
-
-def _seed_data_volume() -> str:
-    name = _create_docker_volume("data")
-    cmd = [
-        "docker",
-        "run",
-        "--rm",
-        "--user",
-        "0:0",
-        "--entrypoint",
-        "/bin/sh",
-        "-v",
-        f"{name}:/data",
-        IMAGE,
-        "-c",
-        "install -d /data/db /data/config && chown -R 20211:20211 /data",
-    ]
-    try:
-        subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    except subprocess.CalledProcessError:
-        _remove_docker_volume(name)
-        raise
-    return name
-
-
-def _chown_path(host_path: pathlib.Path, uid: int, gid: int) -> None:
-    """Chown a host path using the test image with host user namespace."""
-    if not host_path.exists():
-        raise RuntimeError(f"Cannot chown missing path {host_path}")
-
-    cmd = [
-        "docker",
-        "run",
-        "--rm",
-        "--userns",
-        "host",
-        "--user",
-        "0:0",
-        "--entrypoint",
-        "/bin/chown",
-        "-v",
-        f"{host_path}:/mnt",
-        IMAGE,
-        "-R",
-        f"{uid}:{gid}",
-        "/mnt",
-    ]
-
-    try:
-        subprocess.run(
-            cmd,
-            check=True,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-        )
-    except subprocess.CalledProcessError as exc:
-        raise RuntimeError(f"Failed to chown {host_path} to {uid}:{gid}") from exc
-
-
+def test_nonroot_custom_uid_logs_note(
+    tmp_path: pathlib.Path,
+    uid_gid: tuple[int, int],
+) -> None:
 def _setup_mount_tree(
     tmp_path: pathlib.Path,
     prefix: str,
-    seed_config: bool = True,
-    seed_db: bool = True,
-) -> dict[str, pathlib.Path]:
-    label = _unique_label(prefix)
-    base = tmp_path / f"{label}_MOUNT_ROOT"
-    base.mkdir()
-    paths: dict[str, pathlib.Path] = {}
-
-    # Create unified /data mount root
-    data_root = base / f"{label}_DATA_INTENTIONAL_NETALERTX_TEST"
-    data_root.mkdir(parents=True, exist_ok=True)
-    data_root.chmod(0o777)
-    paths["data"] = data_root
-
-    # Create required data subdirectories and aliases
-    db_dir = data_root / "db"
-    db_dir.mkdir(exist_ok=True)
-    db_dir.chmod(0o777)
-    paths["app_db"] = db_dir
-    paths["data_db"] = db_dir
-
-    config_dir = data_root / "config"
-    config_dir.mkdir(exist_ok=True)
-    config_dir.chmod(0o777)
+    paths = _setup_mount_tree(tmp_path, f"note_uid_{uid}")
+    for key in ["data", "app_db", "app_config"]:
+        paths[key].chmod(0o777)
+    volumes = _build_volume_args_for_keys(paths, {"data"})
+    result = _run_container(
+        f"note-uid-{uid}",
+        volumes,
+        user=f"{uid}:{gid}",
+        sleep_seconds=5,
+    )
+    _assert_contains(result, f"NetAlertX note: current UID {uid} GID {gid}", result.args)
+    assert "expected UID" in result.output
+    assert result.returncode == 0
     paths["app_config"] = config_dir
     paths["data_config"] = config_dir
 
@@ -571,24 +456,14 @@ def test_missing_host_network_warns(tmp_path: pathlib.Path) -> None:
     Check script: check-network-mode.sh
     Sample message: "⚠️  ATTENTION: NetAlertX is not running with --network=host. Bridge networking..."
     """
-    data_volume = _seed_data_volume()
-    config_volume = _seed_config_volume()
-    result = None
-    try:
-        result = _run_container(
-            "missing-host-network",
-            None,
-            network_mode=None,
-            volume_specs=[
-                f"{data_volume}:{VOLUME_MAP['data']}",
-                f"{config_volume}:{VOLUME_MAP['app_config']}",
-            ],
-            sleep_seconds=5,
-        )
-    finally:
-        _remove_docker_volume(config_volume)
-        _remove_docker_volume(data_volume)
-    assert result is not None
+    paths = _setup_mount_tree(tmp_path, "missing_host_network")
+    volumes = _build_volume_args_for_keys(paths, {"data"})
+    result = _run_container(
+        "missing-host-network",
+        volumes,
+        network_mode=None,
+        sleep_seconds=5,
+    )
     _assert_contains(result, "not running with --network=host", result.args)
 
 
@@ -632,60 +507,19 @@ def test_missing_app_db_triggers_seed(tmp_path: pathlib.Path) -> None:
     Check script: /entrypoint.d/20-first-run-db.sh
     Sample message: "Building initial database schema"
     """
-    data_volume = _seed_data_volume()
-    config_volume = _seed_config_volume()
-    # Prepare a minimal writable config that still contains TIMEZONE for plugin_helper
-    subprocess.run(
-        [
-            "docker",
-            "run",
-            "--rm",
-            "--entrypoint",
-            "/bin/sh",
-            "-v",
-            f"{config_volume}:/data",
-            IMAGE,
-            "-c",
-            "printf \"TIMEZONE='UTC'\\n\" >/data/app.conf && chown 20211:20211 /data/app.conf",
-        ],
-        check=True,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
+    paths = _setup_mount_tree(tmp_path, "missing_app_db", seed_db=False)
+    config_file = paths["app_config"] / "app.conf"
+    config_file.write_text("TIMEZONE='UTC'\n")
+    config_file.chmod(0o600)
+    volumes = _build_volume_args_for_keys(paths, {"data"})
+    result = _run_container(
+        "missing-app-db",
+        volumes,
+        user="20211:20211",
+        sleep_seconds=5,
+        wait_for_exit=True,
     )
-    result = None
-    db_file_check = None
-    try:
-        result = _run_container(
-            "missing-app-db",
-            None,
-            user="20211:20211",
-            sleep_seconds=5,
-            wait_for_exit=True,
-            volume_specs=[
-                f"{data_volume}:{VOLUME_MAP['data']}",
-                f"{config_volume}:{VOLUME_MAP['app_config']}",
-            ],
-        )
-    finally:
-        db_file_check = subprocess.run(
-            [
-                "docker",
-                "run",
-                "--rm",
-                "-v",
-                f"{data_volume}:/data",
-                IMAGE,
-                "/bin/sh",
-                "-c",
-                "test -f /data/db/app.db",
-            ],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-        )
-        _remove_docker_volume(config_volume)
-        _remove_docker_volume(data_volume)
-    assert db_file_check is not None and db_file_check.returncode == 0
-    assert result is not None
+    assert (paths["app_db"] / "app.db").exists()
     assert result.returncode != 0
 
 
@@ -700,13 +534,11 @@ def test_custom_port_without_writable_conf(tmp_path: pathlib.Path) -> None:
     Sample messages: "⚠️  ATTENTION: Nginx configuration mount /tmp/nginx/active-config is missing."
                         "⚠️  ATTENTION: Unable to write to /tmp/nginx/active-config/netalertx.conf."
     """
-    data_volume = _seed_data_volume()
-    config_volume = _seed_config_volume()
     paths = _setup_mount_tree(tmp_path, "custom_port_ro_conf")
     for key in ["data", "app_db", "app_config", "app_log", "app_api", "services_run"]:
         paths[key].chmod(0o777)
-        _chown_netalertx(paths[key])
-    volumes = _build_volume_args_for_keys(
+    volumes = _build_volume_args_for_keys(paths, {"data"})
+    volumes += _build_volume_args_for_keys(
         paths,
         {"app_log", "app_api", "services_run"},
     )
@@ -714,27 +546,19 @@ def test_custom_port_without_writable_conf(tmp_path: pathlib.Path) -> None:
         "--tmpfs",
         f"{VOLUME_MAP['nginx_conf']}:uid=20211,gid=20211,mode=500",
     ]
-    try:
-        result = _run_container(
-            "custom-port-ro-conf",
-            volumes,
-            env={"PORT": "24444", "LISTEN_ADDR": "127.0.0.1"},
-            user="20211:20211",
-            extra_args=extra_args,
-            volume_specs=[
-                f"{data_volume}:{VOLUME_MAP['data']}",
-                f"{config_volume}:{VOLUME_MAP['app_config']}",
-            ],
-            sleep_seconds=5,
-        )
-        _assert_contains(result, "Unable to write to", result.args)
-        _assert_contains(
-            result, f"{VOLUME_MAP['nginx_conf']}/netalertx.conf", result.args
-        )
-        assert result.returncode != 0
-    finally:
-        _remove_docker_volume(config_volume)
-        _remove_docker_volume(data_volume)
+    result = _run_container(
+        "custom-port-ro-conf",
+        volumes,
+        env={"PORT": "24444", "LISTEN_ADDR": "127.0.0.1"},
+        user="20211:20211",
+        extra_args=extra_args,
+        sleep_seconds=5,
+    )
+    _assert_contains(result, "Unable to write to", result.args)
+    _assert_contains(
+        result, f"{VOLUME_MAP['nginx_conf']}/netalertx.conf", result.args
+    )
+    assert result.returncode != 0
 
 def test_excessive_capabilities_warning(tmp_path: pathlib.Path) -> None:
     """Test excessive capabilities detection - simulates container with extra capabilities.
@@ -746,24 +570,16 @@ def test_excessive_capabilities_warning(tmp_path: pathlib.Path) -> None:
     Check script: 90-excessive-capabilities.sh
     Sample message: "Excessive capabilities detected"
     """
-    data_volume = _seed_data_volume()
-    config_volume = _seed_config_volume()
-    try:
-        result = _run_container(
-            "excessive-caps",
-            None,
-            extra_args=["--cap-add=SYS_ADMIN", "--cap-add=NET_BROADCAST"],
-            sleep_seconds=5,
-            volume_specs=[
-                f"{data_volume}:{VOLUME_MAP['data']}",
-                f"{config_volume}:{VOLUME_MAP['app_config']}",
-            ],
-        )
-        _assert_contains(result, "Excessive capabilities detected", result.args)
-        _assert_contains(result, "bounding caps:", result.args)
-    finally:
-        _remove_docker_volume(config_volume)
-        _remove_docker_volume(data_volume)
+    paths = _setup_mount_tree(tmp_path, "excessive_caps")
+    volumes = _build_volume_args_for_keys(paths, {"data"})
+    result = _run_container(
+        "excessive-caps",
+        volumes,
+        extra_args=["--cap-add=SYS_ADMIN", "--cap-add=NET_BROADCAST"],
+        sleep_seconds=5,
+    )
+    _assert_contains(result, "Excessive capabilities detected", result.args)
+    _assert_contains(result, "bounding caps:", result.args)
 
 def test_appliance_integrity_read_write_mode(tmp_path: pathlib.Path) -> None:
     """Test appliance integrity - simulates running with read-write root filesystem.
@@ -775,21 +591,13 @@ def test_appliance_integrity_read_write_mode(tmp_path: pathlib.Path) -> None:
     Check script: 95-appliance-integrity.sh
     Sample message: "Container is running as read-write, not in read-only mode"
     """
-    data_volume = _seed_data_volume()
-    config_volume = _seed_config_volume()
-    try:
-        result = _run_container(
-            "appliance-integrity",
-            None,
-            sleep_seconds=5,
-            volume_specs=[
-                f"{data_volume}:{VOLUME_MAP['data']}",
-                f"{config_volume}:{VOLUME_MAP['app_config']}",
-            ],
-        )
-    finally:
-        _remove_docker_volume(config_volume)
-        _remove_docker_volume(data_volume)
+    paths = _setup_mount_tree(tmp_path, "appliance_integrity")
+    volumes = _build_volume_args_for_keys(paths, {"data"})
+    result = _run_container(
+        "appliance-integrity",
+        volumes,
+        sleep_seconds=5,
+    )
     _assert_contains(
         result, "Container is running as read-write, not in read-only mode", result.args
     )
