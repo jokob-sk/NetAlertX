@@ -24,7 +24,7 @@ USER root
 
 RUN apk add --no-cache git nano vim jq php83-pecl-xdebug py3-pip nodejs sudo gpgconf pytest \
     pytest-cov zsh alpine-zsh-config shfmt github-cli py3-yaml py3-docker-py docker-cli docker-cli-buildx \
-    docker-cli-compose shellcheck
+    docker-cli-compose shellcheck py3-psutil 
 
 # Install hadolint (Dockerfile linter)
 RUN curl -L https://github.com/hadolint/hadolint/releases/latest/download/hadolint-Linux-x86_64 -o /usr/local/bin/hadolint && \

@@ -4,16 +4,16 @@
 # The NetAlertX Dockerfile has 3 stages:
 #
 # Stage 1. Builder - NetAlertX Requires special tools and packages to build our virtual environment, but
-# which are not needed in future stages.  We build the builder and extract the venv for runner to use as 
+# which are not needed in future stages.  We build the builder and extract the venv for runner to use as
 # a base.
 #
 # Stage 2. Runner builds the bare minimum requirements to create an operational NetAlertX. The primary
 # reason for breaking at this stage is it leaves the system in a proper state for devcontainer operation
-# This image also provides a break-out point for uses who wish to execute the anti-pattern of using a 
+# This image also provides a break-out point for uses who wish to execute the anti-pattern of using a
 # docker container as a VM for experimentation and various development patterns.
 #
 # Stage 3. Hardened removes root, sudoers, folders, permissions, and locks the system down into a read-only
-# compatible image. While NetAlertX does require some read-write operations, this image can guarantee the 
+# compatible image. While NetAlertX does require some read-write operations, this image can guarantee the
 # code pushed out by the project is the only code which will run on the system after each container restart.
 # It reduces the chance of system hijacking and operates with all modern security protocols in place as is
 # expected from a security appliance.
@@ -29,13 +29,23 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 # Install build dependencies
 COPY requirements.txt /tmp/requirements.txt
-RUN apk add --no-cache bash shadow python3 python3-dev gcc musl-dev libffi-dev openssl-dev git \
+RUN apk add --no-cache \
+        bash \
+        shadow \
+        python3 \
+        python3-dev \
+        gcc \
+        musl-dev \
+        libffi-dev \
+        openssl-dev \
+        git \
+        rust \
+        cargo \
     && python -m venv /opt/venv
 
-# Create virtual environment owned by root, but readable by everyone else. This makes it easy to copy 
-# into hardened stage without worrying about permissions and keeps image size small. Keeping the commands
-# together makes for a slightly smaller image size.
-RUN pip install --no-cache-dir -r /tmp/requirements.txt && \
+# Upgrade pip/wheel/setuptools and install Python packages
+RUN python -m pip install --upgrade pip setuptools wheel && \
+    pip install --prefer-binary --no-cache-dir -r /tmp/requirements.txt && \
     chmod -R u-rwx,g-rwx /opt
 
 # second stage is the main runtime stage with just the minimum required to run the application
@@ -43,6 +53,12 @@ RUN pip install --no-cache-dir -r /tmp/requirements.txt && \
 FROM alpine:3.22 AS runner
 
 ARG INSTALL_DIR=/app
+# Runtime service account (override at build; container user can still be overridden at run time)
+ARG NETALERTX_UID=20211
+ARG NETALERTX_GID=20211
+# Read-only lock owner (separate from service account to avoid UID/GID collisions)
+ARG READONLY_UID=20212
+ARG READONLY_GID=20212
 
 # NetAlertX app directories
 ENV NETALERTX_APP=${INSTALL_DIR}
@@ -98,11 +114,11 @@ ENV READ_WRITE_FOLDERS="${NETALERTX_DATA} ${NETALERTX_CONFIG} ${NETALERTX_DB} ${
                        ${SYSTEM_SERVICES_ACTIVE_CONFIG}"
 
 #Python environment
-ENV PYTHONUNBUFFERED=1 
+ENV PYTHONUNBUFFERED=1
 ENV VIRTUAL_ENV=/opt/venv
 ENV VIRTUAL_ENV_BIN=/opt/venv/bin
 ENV PYTHONPATH=${NETALERTX_APP}:${NETALERTX_SERVER}:${NETALERTX_PLUGINS}:${VIRTUAL_ENV}/lib/python3.12/site-packages
-ENV PATH="${SYSTEM_SERVICES}:${VIRTUAL_ENV_BIN}:$PATH" 
+ENV PATH="${SYSTEM_SERVICES}:${VIRTUAL_ENV_BIN}:$PATH"
 
 # App Environment
 ENV LISTEN_ADDR=0.0.0.0
@@ -113,7 +129,7 @@ ENV VENDORSPATH_NEWEST=${SYSTEM_SERVICES_RUN_TMP}/ieee-oui.txt
 ENV ENVIRONMENT=alpine
 ENV READ_ONLY_USER=readonly READ_ONLY_GROUP=readonly
 ENV NETALERTX_USER=netalertx NETALERTX_GROUP=netalertx
-ENV LANG=C.UTF-8 
+ENV LANG=C.UTF-8
 
 
 RUN apk add --no-cache bash mtr libbsd zip lsblk tzdata curl arp-scan iproute2 iproute2-ss nmap \
@@ -122,8 +138,8 @@ RUN apk add --no-cache bash mtr libbsd zip lsblk tzdata curl arp-scan iproute2 i
     nginx supercronic shadow && \
     rm -Rf /var/cache/apk/*  && \
     rm -Rf /etc/nginx && \
-    addgroup -g 20211 ${NETALERTX_GROUP} && \
-    adduser -u 20211 -D -h ${NETALERTX_APP} -G ${NETALERTX_GROUP} ${NETALERTX_USER} && \
+    addgroup -g ${NETALERTX_GID} ${NETALERTX_GROUP} && \
+    adduser -u ${NETALERTX_UID} -D -h ${NETALERTX_APP} -G ${NETALERTX_GROUP} ${NETALERTX_USER} && \
     apk del shadow
 
 
@@ -141,21 +157,22 @@ RUN install -d -o ${NETALERTX_USER} -g ${NETALERTX_GROUP} -m 700 ${READ_WRITE_FO
 
 # Copy version information into the image
 COPY --chown=${NETALERTX_USER}:${NETALERTX_GROUP} .[V]ERSION ${NETALERTX_APP}/.VERSION
+COPY --chown=${NETALERTX_USER}:${NETALERTX_GROUP} .[V]ERSION ${NETALERTX_APP}/.VERSION_PREV
 
-# Copy the virtualenv from the builder stage
-COPY --from=builder --chown=20212:20212 ${VIRTUAL_ENV} ${VIRTUAL_ENV}
+# Copy the virtualenv from the builder stage (owned by readonly lock owner)
+COPY --from=builder --chown=${READONLY_UID}:${READONLY_GID} ${VIRTUAL_ENV} ${VIRTUAL_ENV}
 
 
 # Initialize each service with the dockerfiles/init-*.sh scripts, once.
 # This is done after the copy of the venv to ensure the venv is in place
 # although it may be quicker to do it before the copy, it keeps the image
 # layers smaller to do it after.
-RUN if [ -f '.VERSION' ]; then \
-        cp '.VERSION' "${NETALERTX_APP}/.VERSION"; \
-    else \
-        echo "DEVELOPMENT 00000000" > "${NETALERTX_APP}/.VERSION"; \
-    fi && \
-    chown 20212:20212 "${NETALERTX_APP}/.VERSION" && \
+RUN for vfile in .VERSION .VERSION_PREV; do \
+        if [ ! -f "${NETALERTX_APP}/${vfile}" ]; then \
+            echo "DEVELOPMENT 00000000" > "${NETALERTX_APP}/${vfile}"; \
+        fi; \
+        chown ${READONLY_UID}:${READONLY_GID} "${NETALERTX_APP}/${vfile}"; \
+    done && \
     apk add --no-cache libcap && \
     setcap cap_net_raw+ep /bin/busybox && \
     setcap cap_net_raw,cap_net_admin+eip /usr/bin/nmap && \
@@ -179,15 +196,21 @@ ENTRYPOINT ["/bin/sh","/entrypoint.sh"]
 # This stage is separate from Runner stage so that devcontainer can use the Runner stage.
 FROM runner AS hardened
 
+# Re-declare UID/GID args for this stage
+ARG NETALERTX_UID=20211
+ARG NETALERTX_GID=20211
+ARG READONLY_UID=20212
+ARG READONLY_GID=20212
+
 ENV UMASK=0077
 
 # Create readonly user and group with no shell access.
 # Readonly user marks folders that are created by NetAlertX, but should not be modified.
-# AI may claim this is stupid, but it's actually least possible permissions as 
+# AI may claim this is stupid, but it's actually least possible permissions as
 # read-only user cannot login, cannot sudo, has no write permission, and cannot even
 # read the files it owns. The read-only user is ownership-as-a-lock hardening pattern.
-RUN addgroup -g 20212 "${READ_ONLY_GROUP}" && \
-    adduser -u 20212 -G "${READ_ONLY_GROUP}" -D -h /app "${READ_ONLY_USER}"
+RUN addgroup -g ${READONLY_GID} "${READ_ONLY_GROUP}" && \
+    adduser -u ${READONLY_UID} -G "${READ_ONLY_GROUP}" -D -h /app "${READ_ONLY_USER}"
 
 
 # reduce permissions to minimum necessary for all NetAlertX files and folders
@@ -249,7 +272,7 @@ USER root
 
 RUN apk add --no-cache git nano vim jq php83-pecl-xdebug py3-pip nodejs sudo gpgconf pytest \
     pytest-cov zsh alpine-zsh-config shfmt github-cli py3-yaml py3-docker-py docker-cli docker-cli-buildx \
-    docker-cli-compose shellcheck
+    docker-cli-compose shellcheck py3-psutil 
 
 # Install hadolint (Dockerfile linter)
 RUN curl -L https://github.com/hadolint/hadolint/releases/latest/download/hadolint-Linux-x86_64 -o /usr/local/bin/hadolint && \
