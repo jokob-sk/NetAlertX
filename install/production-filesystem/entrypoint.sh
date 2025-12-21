@@ -121,6 +121,7 @@ fi
 # Set APP_CONF_OVERRIDE based on GRAPHQL_PORT if not already set
 if [ -n "${GRAPHQL_PORT:-}" ] && [ -z "${APP_CONF_OVERRIDE:-}" ]; then
     export APP_CONF_OVERRIDE='{"GRAPHQL_PORT":"'"${GRAPHQL_PORT}"'"}'
+    >&2 echo "APP_CONF_OVERRIDE detected (set from GRAPHQL_PORT)"
 fi
 
 

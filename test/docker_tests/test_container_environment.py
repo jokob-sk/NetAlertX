@@ -970,20 +970,26 @@ def test_mandatory_folders_creation(tmp_path: pathlib.Path) -> None:
 
 
 def test_writable_config_validation(tmp_path: pathlib.Path) -> None:
-    """Test writable config validation - simulates read-only config file.
+    """Test writable config validation - simulates invalid config file type.
 
-    3. Writable Config Validation: Simulates config file with read-only permissions.
+    3. Writable Config Validation: Simulates app.conf being a non-regular file (directory).
     Container verifies it can read from and write to critical config and database files.
-    Expected: "Read permission denied" warning for config file.
+    Expected: "Path is not a regular file" warning for config file.
 
-    Check script: 30-writable-config.sh
-    Sample message: "Read permission denied"
+    Check script: 35-writable-config.sh
+    Sample message: "Path is not a regular file"
     """
     paths = _setup_mount_tree(tmp_path, "writable_config")
-    # Make config file unreadable/unwritable to the container user to force the check
-    config_file = paths["app_config"] / "app.conf"
-    _chown_root(config_file)
-    config_file.chmod(0o000)
+    # Force a non-regular file for /data/config/app.conf to exercise the correct warning branch.
+    config_path = paths["app_config"] / "app.conf"
+    if config_path.exists():
+        if config_path.is_dir():
+            shutil.rmtree(config_path)
+        else:
+            config_path.unlink()
+    config_path.mkdir(parents=False)
+    config_path.chmod(0o777)
+    _chown_netalertx(config_path)
 
     # Ensure directories are writable and owned by netalertx user so container gets past mounts.py
     for key in [
@@ -1001,7 +1007,7 @@ def test_writable_config_validation(tmp_path: pathlib.Path) -> None:
     result = _run_container(
         "writable-config", volumes, user="20211:20211", sleep_seconds=5.0
     )
-    _assert_contains(result, "Read permission denied", result.args)
+    _assert_contains(result, "ATTENTION: Path is not a regular file.", result.args)
 
 
 def test_mount_analysis_ram_disk_performance(tmp_path: pathlib.Path) -> None:

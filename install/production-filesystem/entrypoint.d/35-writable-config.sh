@@ -43,7 +43,7 @@ EOF
         >&2 printf "%s" "${YELLOW}"
         >&2 cat <<EOF
 ══════════════════════════════════════════════════════════════════════════════
-⚠️  ATTENTION: Read permission denied.
+⚠️  ATTENTION: Path is not a regular file.
 
     The path "${path}" is not a regular file (current type: $(stat -c %F "$path" 2>/dev/null || echo unknown)).
     This prevents NetAlertX from reading the configuration and indicates a

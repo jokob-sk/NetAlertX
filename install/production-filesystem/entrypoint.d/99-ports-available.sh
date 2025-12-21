@@ -64,7 +64,7 @@ if echo "$LISTENING_PORTS" | grep -q ":${PORT_GQL}$"; then
 ══════════════════════════════════════════════════════════════════════════════
 ⚠️  Port Warning: GraphQL API port ${PORT_GQL} is already in use.
 
-    The GraphQL API (defined by $APP_CONF_OVERRIDE or $GRAPHQL_PORT)
+    The GraphQL API (defined by \$APP_CONF_OVERRIDE or \$GRAPHQL_PORT)
     may fail to start.
 
     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/port-conflicts.md
