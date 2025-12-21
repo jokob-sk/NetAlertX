@@ -17,6 +17,7 @@ import pytest
 IMAGE = os.environ.get("NETALERTX_TEST_IMAGE", "netalertx-test")
 GRACE_SECONDS = float(os.environ.get("NETALERTX_TEST_GRACE", "2"))
 DEFAULT_CAPS = ["NET_RAW", "NET_ADMIN", "NET_BIND_SERVICE"]
+SUBPROCESS_TIMEOUT_SECONDS = float(os.environ.get("NETALERTX_TEST_SUBPROCESS_TIMEOUT", "60"))
 
 CONTAINER_TARGETS: dict[str, str] = {
     "data": "/data",
@@ -263,6 +264,7 @@ def _chown_path(host_path: pathlib.Path, uid: int, gid: int) -> None:
             check=True,
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
+            timeout=SUBPROCESS_TIMEOUT_SECONDS,
         )
     except subprocess.CalledProcessError as exc:
         raise RuntimeError(f"Failed to chown {host_path} to {uid}:{gid}") from exc
@@ -282,6 +284,7 @@ def _docker_volume_rm(volume_name: str) -> None:
         check=False,
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
+        timeout=SUBPROCESS_TIMEOUT_SECONDS,
     )
 
 
@@ -291,6 +294,7 @@ def _docker_volume_create(volume_name: str) -> None:
         check=True,
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
+        timeout=SUBPROCESS_TIMEOUT_SECONDS,
     )
 
 
@@ -327,6 +331,7 @@ def _ensure_volume_copy_up(volume_name: str) -> None:
         check=True,
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
+        timeout=SUBPROCESS_TIMEOUT_SECONDS,
     )
 
 
@@ -371,6 +376,7 @@ def _seed_volume_text_file(
         check=True,
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
+        timeout=SUBPROCESS_TIMEOUT_SECONDS,
     )
 
 
@@ -393,6 +399,7 @@ def _volume_has_file(volume_name: str, container_path: str) -> bool:
             check=False,
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
+            timeout=SUBPROCESS_TIMEOUT_SECONDS,
         ).returncode
         == 0
     )
@@ -467,6 +474,7 @@ def _run_container(
         check=False,
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
+        timeout=SUBPROCESS_TIMEOUT_SECONDS,
     )
 
     cmd: list[str] = ["docker", "run", "--rm", "--name", name]
@@ -549,7 +557,7 @@ def _run_container(
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         text=True,
-        timeout=sleep_seconds + 30,
+        timeout=max(SUBPROCESS_TIMEOUT_SECONDS, sleep_seconds + 30),
         check=False,
     )
     # Combine and clean stdout and stderr
@@ -1134,7 +1142,13 @@ def test_restrictive_permissions_handling(tmp_path: pathlib.Path) -> None:
             IMAGE,
             "-R", "0:0", "/mnt",
         ]
-        subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run(
+            cmd,
+            check=True,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            timeout=SUBPROCESS_TIMEOUT_SECONDS,
+        )
 
     # Set up a restrictive directory (root owned, 755)
     target_dir = paths["app_db"]
@@ -1184,7 +1198,12 @@ def test_restrictive_permissions_handling(tmp_path: pathlib.Path) -> None:
     for host_path, target, readonly in volumes:
         check_cmd.extend(["-v", f"{host_path}:{target}"])
     
-    check_result = subprocess.run(check_cmd, capture_output=True, text=True)
+    check_result = subprocess.run(
+        check_cmd,
+        capture_output=True,
+        text=True,
+        timeout=SUBPROCESS_TIMEOUT_SECONDS,
+    )
     
     if check_result.returncode != 0:
         print(f"Check command failed. Cmd: {check_cmd}")

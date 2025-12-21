@@ -9,7 +9,7 @@
 #
 # Stage 2. Runner builds the bare minimum requirements to create an operational NetAlertX. The primary
 # reason for breaking at this stage is it leaves the system in a proper state for devcontainer operation
-# This image also provides a break-out point for uses who wish to execute the anti-pattern of using a
+# This image also provides a break-out point for users who wish to execute the anti-pattern of using a
 # docker container as a VM for experimentation and various development patterns.
 #
 # Stage 3. Hardened removes root, sudoers, folders, permissions, and locks the system down into a read-only
