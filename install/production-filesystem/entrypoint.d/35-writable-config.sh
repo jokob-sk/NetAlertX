@@ -38,6 +38,21 @@ for path in $READ_WRITE_PATHS; do
 ══════════════════════════════════════════════════════════════════════════════
 EOF
         >&2 printf "%s" "${RESET}"
+    elif [ ! -f "$path" ]; then
+        failures=1
+        >&2 printf "%s" "${YELLOW}"
+        >&2 cat <<EOF
+══════════════════════════════════════════════════════════════════════════════
+⚠️  ATTENTION: Path is not a regular file.
+
+    The path "${path}" is not a regular file (current type: $(stat -c %F "$path" 2>/dev/null || echo unknown)).
+    This prevents NetAlertX from reading the configuration and indicates a
+    permissions or mount issue — often seen when running with custom UID/GID.
+
+    https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/file-permissions.md
+══════════════════════════════════════════════════════════════════════════════
+EOF
+        >&2 printf "%s" "${RESET}"
     elif [ ! -r "$path" ]; then
         failures=1
         >&2 printf "%s" "${YELLOW}"

@@ -27,11 +27,13 @@ Head to [https://netalertx.com/](https://netalertx.com/) for more gifs and scree
 docker run -d --rm --network=host \
   -v /local_data_dir:/data \
   -v /etc/localtime:/etc/localtime \
-  --tmpfs /tmp:uid=20211,gid=20211,mode=1700 \
+  --tmpfs /tmp:uid=${NETALERTX_UID:-20211},gid=${NETALERTX_GID:-20211},mode=1700 \
   -e PORT=20211 \
   -e APP_CONF_OVERRIDE={"GRAPHQL_PORT":"20214"} \
   ghcr.io/jokob-sk/netalertx:latest
 ```
+
+> Runtime UID/GID: The image defaults to a service user `netalertx` (UID/GID 20211). A separate readonly lock owner also uses UID/GID 20211 for 004/005 immutability. You can override the runtime UID/GID at build (ARG) or run (`--user` / compose `user:`) but must align writable mounts (`/data`, `/tmp*`) and tmpfs `uid/gid` to that choice.
 
 See alternative [docked-compose examples](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DOCKER_COMPOSE.md).
 
@@ -83,7 +85,8 @@ data
 If you are facing permissions issues run the following commands on your server. This will change the owner and assure sufficient access to the database and config files that are stored in the `/local_data_dir/db` and `/local_data_dir/config` folders (replace `local_data_dir` with the location where your `/db` and `/config` folders are located).
 
 ```bash
-sudo chown -R 20211:20211 /local_data_dir
+# Use the runtime UID/GID you intend to run with (default 20211:20211)
+sudo chown -R ${NETALERTX_UID:-20211}:${NETALERTX_GID:-20211} /local_data_dir
 sudo chmod -R a+rwx /local_data_dir
 ```
 

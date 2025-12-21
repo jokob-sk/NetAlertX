@@ -37,7 +37,7 @@ def read_config_file():
 
 
 configFile = read_config_file()
-timeZoneSetting = configFile['TIMEZONE']
+timeZoneSetting = configFile.get('TIMEZONE', default_tz)
 if timeZoneSetting not in all_timezones:
     timeZoneSetting = default_tz
 timeZone = pytz.timezone(timeZoneSetting)

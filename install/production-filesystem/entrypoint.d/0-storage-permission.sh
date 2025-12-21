@@ -23,6 +23,8 @@ ${NETALERTX_CONFIG_FILE}
 ${NETALERTX_DB_FILE}
 "
 
+TARGET_USER="${NETALERTX_USER:-netalertx}"
+
 # If running as root, fix permissions first
 if [ "$(id -u)" -eq 0 ]; then
     >&2 printf "%s" "${MAGENTA}"
@@ -54,11 +56,11 @@ EOF
     # Set ownership and permissions for each read-write path individually
     printf '%s\n' "${READ_WRITE_PATHS}" | while IFS= read -r path; do
         [ -n "${path}" ] || continue
-        chown -R netalertx "${path}" 2>/dev/null || true
+        chown -R "${TARGET_USER}" "${path}" 2>/dev/null || true
         find "${path}" -type d -exec chmod u+rwx {} \;
         find "${path}" -type f -exec chmod u+rw {} \;
     done
-    echo Permissions fixed for read-write paths. Please restart the container as user 20211.
+    echo Permissions fixed for read-write paths. Please restart the container as user ${TARGET_USER}.
     sleep infinity & wait $!
 fi
 

@@ -1,5 +1,20 @@
 #!/usr/bin/env python3
 
+"""
+Mount Diagnostic Tool
+
+Analyzes container mount points for permission issues, persistence risks, and performance problems.
+
+TODO: Future Enhancements (Roadmap Step 3 & 4)
+1. Text-based Output: Replace emoji status indicators (✅, ❌) with plain text (e.g., [OK], [FAIL])
+   to ensure compatibility with all terminal types and logging systems.
+2. OverlayFS/Copy-up Support: Improve detection logic for filesystems like Synology's OverlayFS
+   where files may appear writable but fail on specific operations (locking, mmap).
+3. Root-to-User Context: Ensure this tool remains accurate when the container starts as root
+   to fix permissions and then drops privileges to the 'netalertx' user. The check should
+   reflect the *effective* permissions of the application user.
+"""
+
 import os
 import sys
 from dataclasses import dataclass
@@ -80,7 +95,21 @@ def _resolve_writeable_state(target_path: str) -> bool:
         seen.add(current)
 
         if os.path.exists(current):
-            return os.access(current, os.W_OK)
+            if not os.access(current, os.W_OK):
+                return False
+            
+            # OverlayFS/Copy-up check: Try to actually write a file to verify
+            if os.path.isdir(current):
+                test_file = os.path.join(current, f".netalertx_write_test_{os.getpid()}")
+                try:
+                    with open(test_file, "w") as f:
+                        f.write("test")
+                    os.remove(test_file)
+                    return True
+                except OSError:
+                    return False
+            
+            return True
 
         parent_dir = os.path.dirname(current)
         if not parent_dir or parent_dir == current:

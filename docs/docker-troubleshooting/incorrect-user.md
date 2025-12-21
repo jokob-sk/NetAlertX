@@ -2,27 +2,30 @@
 
 ## Issue Description
 
-NetAlertX is running as UID:GID other than the expected 20211:20211. This bypasses hardened permissions, file ownership, and runtime isolation safeguards.
+NetAlertX is running as a UID:GID that does not match the runtime service user configured for this container (default 20211:20211). Hardened ownership on writable paths may block writes if the UID/GID do not align with mounted volumes and tmpfs settings.
 
 ## Security Ramifications
 
-The application is designed with security hardening that depends on running under a dedicated, non-privileged service account. Using a different user account can silently fail future upgrades and removes crucial isolation between the container and host system.
+The image uses a dedicated service user for writes and a readonly lock owner (UID 20211) for code/venv with 004/005 permissions. Running as an arbitrary UID is supported, but only when writable mounts (`/data`, `/tmp/*`) are owned by that UID. Misalignment can cause startup failures or unexpected permission escalation attempts.
 
 ## Why You're Seeing This Issue
 
-This occurs when you override the container's default user with custom `user:` directives in docker-compose.yml or `--user` flags in docker run commands. The container expects to run as the netalertx user for proper security isolation.
+- A `user:` override in docker-compose.yml or `--user` flag on `docker run` changes the runtime UID/GID without updating mount ownership.
+- Tmpfs mounts still use `uid=20211,gid=20211` while the container runs as another UID.
+- Host bind mounts (e.g., `/data`) are owned by a different UID.
 
 ## How to Correct the Issue
 
-Restore the container to the default user:
+Option A: Use defaults (recommended)
+- Remove custom `user:` overrides and `--user` flags.
+- Let the container run as the built-in service user (UID/GID 20211) and keep tmpfs at `uid=20211,gid=20211`.
 
-- Remove any `user:` overrides from docker-compose.yml
-- Avoid `--user` flags in docker run commands
-- Allow the container to run with its default UID:GID 20211:20211
-- Recreate the container so volume ownership is reset automatically
+Option B: Run with a custom UID/GID
+- Set `user:` (or `NETALERTX_UID/NETALERTX_GID`) to your desired UID/GID.
+- Align mounts: ensure `/data` (and any `/tmp/*` tmpfs) use the same `uid=`/`gid=` and that host bind mounts are chowned to that UID/GID.
+- Recreate the container so ownership is consistent.
 
 ## Additional Resources
 
-Docker Compose setup can be complex. We recommend starting with the default docker-compose.yml as a base and modifying it incrementally.
-
-For detailed Docker Compose configuration guidance, see: [DOCKER_COMPOSE.md](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DOCKER_COMPOSE.md)
+- Default compose and tmpfs guidance: [DOCKER_COMPOSE.md](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DOCKER_COMPOSE.md)
+- General Docker install and runtime notes: [DOCKER_INSTALLATION.md](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DOCKER_INSTALLATION.md)

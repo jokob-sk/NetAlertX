@@ -13,9 +13,7 @@ mkdir -p "$(dirname "$NETALERTX_CONFIG")" || {
 rm -f "$OVERRIDE_FILE"
 
 # Check if APP_CONF_OVERRIDE is set
-if [ -z "$APP_CONF_OVERRIDE" ]; then
-    >&2 echo "APP_CONF_OVERRIDE is not set. Skipping override config file creation."
-else
+if [ -n "$APP_CONF_OVERRIDE" ]; then
     # Save the APP_CONF_OVERRIDE env variable as a JSON file
     echo "$APP_CONF_OVERRIDE" > "$OVERRIDE_FILE" || {
         >&2 echo "ERROR: Failed to write override config to $OVERRIDE_FILE"

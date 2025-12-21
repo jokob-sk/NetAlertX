@@ -8,6 +8,8 @@ services:
     image: netalertx:latest
     container_name: netalertx                       # The name when you docker contiainer ls
     read_only: true                                 # Make the container filesystem read-only
+    # Runtime user is configurable; defaults align with image build args
+    user: "${NETALERTX_UID:-20211}:${NETALERTX_GID:-20211}"
     cap_drop:                                       # Drop all capabilities for enhanced security
       - ALL
     cap_add:                                        # Add only the necessary capabilities
@@ -49,7 +51,7 @@ services:
     # uid=20211 and gid=20211 is the netalertx user inside the container
     # mode=1700 gives rwx------ permissions to the netalertx user only
     tmpfs:
-      - "/tmp:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      - "/tmp:uid=${NETALERTX_UID:-20211},gid=${NETALERTX_GID:-20211},mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
     environment:
       LISTEN_ADDR: ${LISTEN_ADDR:-0.0.0.0}                      # Listen for connections on all interfaces
       PORT: ${PORT:-20211}                                      # Application port
