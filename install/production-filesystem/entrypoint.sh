@@ -50,8 +50,7 @@ fi
 RED='\033[1;31m'
 GREY='\033[90m'
 RESET='\033[0m'
-printf "%s" "${RED}"
-echo '
+NAX='
  _   _      _    ___  _           _  __   __
 | \ | |    | |  / _ \| |         | | \ \ / /
 |  \| | ___| |_/ /_\ \ | ___ _ __| |_ \ V / 
@@ -60,13 +59,12 @@ echo '
 \_| \_/\___|\__\_| |_/_|\___|_|   \__\/   \/
 '
 
-printf "%s" "${RESET}"
+printf "%b%s%b" "${RED}" "${NAX}" "${RESET}"
 echo '   Network intruder and presence detector. 
    https://netalertx.com
 
 '
 set -u
-
 FAILED_STATUS=""
 echo "Startup pre-checks"
 for script in "${ENTRYPOINT_CHECKS}"/*; do
@@ -123,7 +121,6 @@ fi
 # Set APP_CONF_OVERRIDE based on GRAPHQL_PORT if not already set
 if [ -n "${GRAPHQL_PORT:-}" ] && [ -z "${APP_CONF_OVERRIDE:-}" ]; then
     export APP_CONF_OVERRIDE='{"GRAPHQL_PORT":"'"${GRAPHQL_PORT}"'"}'
-    echo "Setting APP_CONF_OVERRIDE to $APP_CONF_OVERRIDE"
 fi
 
 
@@ -282,15 +279,6 @@ fi
 add_service "${SYSTEM_SERVICES}/start-php-fpm.sh" "php-fpm83"
 add_service "${SYSTEM_SERVICES}/start-nginx.sh" "nginx"
 add_service "${SYSTEM_SERVICES}/start-backend.sh" "python3"
-
-################################################################################
-# Development Mode Debug Switch
-################################################################################
-# If NETALERTX_DEBUG=1, skip automatic service restart on failure
-# Useful for devcontainer debugging where individual services need to be debugged
-if [ "${NETALERTX_DEBUG:-0}" -eq 1 ]; then
-	echo "NETALERTX_DEBUG is set to 1, will not shut down other services if one fails."
-fi
 
 ################################################################################
 # Service Monitoring Loop (Production Mode)

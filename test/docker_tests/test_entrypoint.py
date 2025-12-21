@@ -49,11 +49,11 @@ def test_skip_tests_env_var():
 @pytest.mark.feature_complete
 def test_app_conf_override_from_graphql_port():
     # If GRAPHQL_PORT is set and APP_CONF_OVERRIDE is not set, the entrypoint should set
-    # APP_CONF_OVERRIDE to a JSON string containing the GRAPHQL_PORT value and print a message
-    # about it.
+    # APP_CONF_OVERRIDE to a JSON string containing the GRAPHQL_PORT value.
     # The script should exit successfully.
     result = _run_entrypoint(env={"GRAPHQL_PORT": "20212", "SKIP_TESTS": "1"}, check_only=True)
-    assert 'Setting APP_CONF_OVERRIDE to {"GRAPHQL_PORT":"20212"}' in result.stdout
+    assert 'Setting APP_CONF_OVERRIDE to' not in result.stdout
+    assert 'APP_CONF_OVERRIDE detected' in result.stderr
     assert result.returncode == 0
 
 

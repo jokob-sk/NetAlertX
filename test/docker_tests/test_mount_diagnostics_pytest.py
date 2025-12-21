@@ -5,6 +5,14 @@ Pytest-based Mount Diagnostic Tests for NetAlertX
 Tests all possible mount configurations for each path to validate the diagnostic tool.
 Uses pytest framework for proper test discovery and execution.
 
+TODO: Future Robustness & Compatibility Tests
+1. Symlink Attacks: Verify behavior when a writable directory is mounted via a symlink.
+   Hypothesis: The tool might misidentify the mount status or path.
+2. OverlayFS/Copy-up Scenarios: Investigate behavior on filesystems like Synology's OverlayFS.
+   Hypothesis: Files might appear writable but fail on specific operations (locking, mmap).
+3. Text-based Output: Refactor output to support text-based status (e.g., [OK], [FAIL]) 
+   instead of emojis for better compatibility with terminals that don't support unicode.
+
 All tests use the mounts table. For reference, the mounts table looks like this:
 
  Path                    | Writeable | Mount | RAMDisk | Performance | DataLoss
@@ -604,3 +612,4 @@ def test_table_parsing():
         performance=True,
         dataloss=True,
     )
+

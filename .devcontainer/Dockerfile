@@ -221,15 +221,17 @@ RUN addgroup -g ${READONLY_GID} "${READ_ONLY_GROUP}" && \
 RUN chown -R ${READ_ONLY_USER}:${READ_ONLY_GROUP} ${READ_ONLY_FOLDERS} && \
     chmod -R 004 ${READ_ONLY_FOLDERS} && \
     find ${READ_ONLY_FOLDERS} -type d -exec chmod 005 {} + && \
-    install -d -o ${NETALERTX_USER} -g ${NETALERTX_GROUP} -m 700 ${READ_WRITE_FOLDERS} && \
-    chown -R ${NETALERTX_USER}:${NETALERTX_GROUP} ${READ_WRITE_FOLDERS} && \
-    chmod -R 600 ${READ_WRITE_FOLDERS} && \
-    find ${READ_WRITE_FOLDERS} -type d -exec chmod 700 {} + && \
+    install -d -o ${NETALERTX_USER} -g ${NETALERTX_GROUP} -m 0777 ${READ_WRITE_FOLDERS} && \
     chown ${READ_ONLY_USER}:${READ_ONLY_GROUP} /entrypoint.sh /opt /opt/venv && \
     chmod 005 /entrypoint.sh ${SYSTEM_SERVICES}/*.sh ${SYSTEM_SERVICES_SCRIPTS}/* ${ENTRYPOINT_CHECKS}/* /app /opt /opt/venv && \
-    for dir in ${READ_WRITE_FOLDERS}; do \
-        install -d -o ${NETALERTX_USER} -g ${NETALERTX_GROUP} -m 700 "$dir"; \
-    done && \
+    # Do not bake first-run artifacts into the image. If present, Docker volume copy-up
+    # will persist restrictive ownership/modes into fresh named volumes, breaking
+    # arbitrary non-root UID/GID runs.
+    rm -f \
+      "${NETALERTX_CONFIG}/app.conf" \
+      "${NETALERTX_DB_FILE}" \
+      "${NETALERTX_DB_FILE}-shm" \
+      "${NETALERTX_DB_FILE}-wal" || true && \
     apk del apk-tools && \
     rm -Rf /var /etc/sudoers.d/* /etc/shadow /etc/gshadow /etc/sudoers \
     /lib/apk /lib/firmware /lib/modules-load.d /lib/sysctl.d /mnt /home/ /root \
