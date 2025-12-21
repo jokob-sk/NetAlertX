@@ -1183,10 +1183,7 @@ def test_restrictive_permissions_handling(tmp_path: pathlib.Path) -> None:
     
     _assert_contains(result_root, "NetAlertX is running as ROOT", result_root.args)
     _assert_contains(result_root, "Permissions fixed for read-write paths", result_root.args)
-    
-    # Verify the fix actually happened
-    data_host_path = paths["data"]
-    
+
     check_cmd = [
         "docker", "run", "--rm",
         "--entrypoint", "/bin/sh",
@@ -1195,7 +1192,7 @@ def test_restrictive_permissions_handling(tmp_path: pathlib.Path) -> None:
         "-c", "ls -ldn /data/db && touch /data/db/test_write_after_fix"
     ]
     # Add all volumes to check_cmd too
-    for host_path, target, readonly in volumes:
+    for host_path, target, _readonly in volumes:
         check_cmd.extend(["-v", f"{host_path}:{target}"])
     
     check_result = subprocess.run(
