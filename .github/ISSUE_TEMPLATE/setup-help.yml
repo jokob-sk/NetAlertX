@@ -53,6 +53,8 @@ body:
       - Home Assistant (addon)
       - Home Assistant fa (full-access addon)
       - Bare-metal (community only support - Check Discord)
+      - Proxmox (community only support - Check Discord)
+      - Unraid (community only support - Check Discord)
   validations:
     required: true
 - type: textarea
