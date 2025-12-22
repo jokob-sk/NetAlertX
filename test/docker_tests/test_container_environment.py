@@ -589,23 +589,36 @@ def _assert_contains(result, snippet: str, cmd: list[str] = None) -> None:
 def _extract_mount_rows(output: str) -> dict[str, list[str]]:
     rows: dict[str, list[str]] = {}
     in_table = False
+    expected_cols = 0
+
     for raw_line in (output or "").splitlines():
         line = raw_line.rstrip()
         if not in_table:
             if line.startswith(" Path") and "Writeable" in line:
+                # Legacy format: Path | Writeable | Mount | RAMDisk | Performance | DataLoss
                 in_table = True
+                expected_cols = 5
+            elif line.startswith(" Path") and "| R" in line and "| W" in line:
+                # Current format: Path | R | W | Mount | RAMDisk | Performance | DataLoss
+                in_table = True
+                expected_cols = 6
             continue
+
         if not line.strip():
             break
         if line.lstrip().startswith("Path"):
             continue
         if set(line.strip()) <= {"-", "+"}:
             continue
+
         parts = [part.strip() for part in line.split("|")]
-        if len(parts) < 6:
+        if len(parts) < 1 + expected_cols:
             continue
         path = parts[0].strip()
-        rows[path] = parts[1:6]
+        if not path:
+            continue
+        rows[path] = parts[1 : 1 + expected_cols]
+
     return rows
 
 
@@ -625,16 +638,49 @@ def _assert_mount_row(
             f"Mount table row for {path} not found. Rows: {sorted(rows)}\nOutput:\n{result.output}"
         )
     columns = rows[path]
-    labels = ["Writeable", "Mount", "RAMDisk", "Performance", "DataLoss"]
-    expectations = [write, mount, ramdisk, performance, dataloss]
-    for idx, expected in enumerate(expectations):
+
+    # Legacy: [Writeable, Mount, RAMDisk, Performance, DataLoss]
+    # Current: [R, W, Mount, RAMDisk, Performance, DataLoss]
+    if len(columns) == 5:
+        label_to_value = {
+            "Writeable": columns[0],
+            "Mount": columns[1],
+            "RAMDisk": columns[2],
+            "Performance": columns[3],
+            "DataLoss": columns[4],
+        }
+        write_label = "Writeable"
+    elif len(columns) == 6:
+        label_to_value = {
+            "R": columns[0],
+            "W": columns[1],
+            "Mount": columns[2],
+            "RAMDisk": columns[3],
+            "Performance": columns[4],
+            "DataLoss": columns[5],
+        }
+        write_label = "W"
+    else:
+        raise AssertionError(
+            f"Unexpected mount table column count for {path}: {len(columns)}. Columns: {columns}\nOutput:\n{result.output}"
+        )
+
+    checks = [
+        (write_label, write),
+        ("Mount", mount),
+        ("RAMDisk", ramdisk),
+        ("Performance", performance),
+        ("DataLoss", dataloss),
+    ]
+
+    for label, expected in checks:
         if expected is None:
             continue
-        actual = columns[idx]
+        actual = label_to_value.get(label)
         if actual != expected:
             raise AssertionError(
-                f"{path} {labels[idx]} expected {expected}, got {actual}.\n"
-                f"Rows: {rows}\nOutput:\n{result.output}"
+                f"{path} {label} expected {expected}, got {actual}.\n"
+                f"Row: {label_to_value}\nOutput:\n{result.output}"
             )
 
 
@@ -958,6 +1004,7 @@ def test_mandatory_folders_creation(tmp_path: pathlib.Path) -> None:
 
     # Ensure other directories are writable and owned by netalertx user so container gets past mounts.py
     for key in [
+        "data",
         "app_db",
         "app_config",
         "app_log",
@@ -1001,6 +1048,7 @@ def test_writable_config_validation(tmp_path: pathlib.Path) -> None:
 
     # Ensure directories are writable and owned by netalertx user so container gets past mounts.py
     for key in [
+        "data",
         "app_db",
         "app_config",
         "app_log",

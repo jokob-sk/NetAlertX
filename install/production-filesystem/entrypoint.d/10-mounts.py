@@ -31,6 +31,7 @@ class MountCheckResult:
     var_name: str
     path: str = ""
     is_writeable: bool = False
+    is_readable: bool = False
     is_mounted: bool = False
     is_mount_point: bool = False
     is_ramdisk: bool = False
@@ -38,6 +39,7 @@ class MountCheckResult:
     fstype: str = "N/A"
     error: bool = False
     write_error: bool = False
+    read_error: bool = False
     performance_issue: bool = False
     dataloss_risk: bool = False
     category: str = ""
@@ -97,7 +99,7 @@ def _resolve_writeable_state(target_path: str) -> bool:
         if os.path.exists(current):
             if not os.access(current, os.W_OK):
                 return False
-            
+
             # OverlayFS/Copy-up check: Try to actually write a file to verify
             if os.path.isdir(current):
                 test_file = os.path.join(current, f".netalertx_write_test_{os.getpid()}")
@@ -108,8 +110,29 @@ def _resolve_writeable_state(target_path: str) -> bool:
                     return True
                 except OSError:
                     return False
-            
+
             return True
+
+        parent_dir = os.path.dirname(current)
+        if not parent_dir or parent_dir == current:
+            break
+        current = parent_dir
+
+    return False
+
+
+def _resolve_readable_state(target_path: str) -> bool:
+    """Determine if a path is readable, ascending to the first existing parent."""
+
+    current = target_path
+    seen: set[str] = set()
+    while True:
+        if current in seen:
+            break
+        seen.add(current)
+
+        if os.path.exists(current):
+            return os.access(current, os.R_OK)
 
         parent_dir = os.path.dirname(current)
         if not parent_dir or parent_dir == current:
@@ -142,13 +165,19 @@ def analyze_path(
 
     result.path = target_path
 
-    # --- 1. Check Write Permissions ---
+    # --- 1. Check Read/Write Permissions ---
     result.is_writeable = _resolve_writeable_state(target_path)
+    result.is_readable = _resolve_readable_state(target_path)
 
     if not result.is_writeable:
         result.error = True
         if spec.role != "secondary":
             result.write_error = True
+
+    if not result.is_readable:
+        result.error = True
+        if spec.role != "secondary":
+            result.read_error = True
 
     # --- 2. Check Filesystem Type (Parent and Self) ---
     parent_mount_fstype = ""
@@ -184,6 +213,8 @@ def analyze_path(
                 result.is_ramdisk = parent_mount_fstype in non_persistent_fstypes
 
     # --- 4. Apply Risk Logic ---
+    # Keep risk flags about persistence/performance properties of the mount itself.
+    # Read/write permission problems are surfaced via the R/W columns and error flags.
     if spec.category == "persist":
         if result.underlying_fs_is_ramdisk or result.is_ramdisk:
             result.dataloss_risk = True
@@ -198,17 +229,32 @@ def analyze_path(
     return result
 
 
-def print_warning_message():
+def print_warning_message(results: list[MountCheckResult]):
     """Prints a formatted warning to stderr."""
     YELLOW = "\033[1;33m"
     RESET = "\033[0m"
 
+    print(f"{YELLOW}══════════════════════════════════════════════════════════════════════════════", file=sys.stderr)
+    print("⚠️  ATTENTION: Configuration issues detected (marked with ❌).\n", file=sys.stderr)
+
+    for r in results:
+        issues = []
+        if not r.is_writeable:
+            issues.append("error writing")
+        if not r.is_readable:
+            issues.append("error reading")
+        if not r.is_mounted and (r.category == "persist" or r.category == "ramdisk"):
+            issues.append("not mounted")
+        if r.dataloss_risk:
+            issues.append("risk of dataloss")
+        if r.performance_issue:
+            issues.append("performance issue")
+
+        if issues:
+            print(f"    * {r.path} {', '.join(issues)}", file=sys.stderr)
+
     message = (
-        "══════════════════════════════════════════════════════════════════════════════\n"
-        "⚠️  ATTENTION: Configuration issues detected (marked with ❌).\n\n"
-        "    Your configuration has write permission, dataloss, or performance issues\n"
-        "    as shown in the table above.\n\n"
-        "    We recommend starting with the default docker-compose.yml as the\n"
+        "\n    We recommend starting with the default docker-compose.yml as the\n"
         "    configuration can be quite complex.\n\n"
         "    Review the documentation for a correct setup:\n"
         "    https://github.com/jokob-sk/NetAlertX/blob/main/docs/DOCKER_COMPOSE.md\n"
@@ -216,7 +262,7 @@ def print_warning_message():
         "══════════════════════════════════════════════════════════════════════════════\n"
     )
 
-    print(f"{YELLOW}{message}{RESET}", file=sys.stderr)
+    print(f"{message}{RESET}", file=sys.stderr)
 
 
 def _get_active_specs() -> list[PathSpec]:
@@ -231,14 +277,14 @@ def _sub_result_is_healthy(result: MountCheckResult) -> bool:
     if result.category == "persist":
         if not result.is_mounted:
             return False
-        if result.dataloss_risk or result.write_error or result.error:
+        if result.dataloss_risk or result.write_error or result.read_error or result.error:
             return False
         return True
 
     if result.category == "ramdisk":
         if not result.is_mounted or not result.is_ramdisk:
             return False
-        if result.performance_issue or result.write_error or result.error:
+        if result.performance_issue or result.write_error or result.read_error or result.error:
             return False
         return True
 
@@ -278,19 +324,9 @@ def _apply_primary_rules(specs: list[PathSpec], results_map: dict[str, MountChec
             )
             all_core_subs_are_mounts = bool(core_sub_results) and len(core_mount_points) == len(core_sub_results)
 
-            if all_core_subs_healthy:
-                if result.write_error:
-                    result.write_error = False
-                if not result.is_writeable:
-                    result.is_writeable = True
-                if spec.category == "persist" and result.dataloss_risk:
-                    result.dataloss_risk = False
-                if result.error and not (result.performance_issue or result.dataloss_risk or result.write_error):
-                    result.error = False
-
             suppress_primary = False
             if all_core_subs_healthy and all_core_subs_are_mounts:
-                if not result.is_mount_point and not result.error and not result.write_error:
+                if not result.is_mount_point and not result.error and not result.write_error and not result.read_error:
                     suppress_primary = True
 
             if suppress_primary:
@@ -329,14 +365,14 @@ def main():
     results = _apply_primary_rules(active_specs, results_map)
 
     has_issues = any(
-        r.dataloss_risk or r.error or r.write_error or r.performance_issue
+        r.dataloss_risk or r.error or r.write_error or r.read_error or r.performance_issue
         for r in results
     )
-    has_write_errors = any(r.write_error for r in results)
+    has_rw_errors = any(r.write_error or r.read_error for r in results)
 
     if has_issues or True:  # Always print table for diagnostic purposes
         # --- Print Table ---
-        headers = ["Path", "Writeable", "Mount", "RAMDisk", "Performance", "DataLoss"]
+        headers = ["Path", "R", "W", "Mount", "RAMDisk", "Performance", "DataLoss"]
 
         CHECK_SYMBOL = "✅"
         CROSS_SYMBOL = "❌"
@@ -355,7 +391,8 @@ def main():
             f" {{:^{col_widths[2]}}} |"
             f" {{:^{col_widths[3]}}} |"
             f" {{:^{col_widths[4]}}} |"
-            f" {{:^{col_widths[5]}}} "
+            f" {{:^{col_widths[5]}}} |"
+            f" {{:^{col_widths[6]}}} "
         )
 
         row_fmt = (
@@ -364,7 +401,8 @@ def main():
             f" {{:^{col_widths[2]}}}|"  # No space
             f" {{:^{col_widths[3]}}}|"  # No space
             f" {{:^{col_widths[4]}}}|"  # No space
-            f" {{:^{col_widths[5]}}} "  # DataLoss is last, needs space
+            f" {{:^{col_widths[5]}}}|"  # No space
+            f" {{:^{col_widths[6]}}} "  # DataLoss is last, needs space
         )
 
         separator = "".join([
@@ -378,13 +416,16 @@ def main():
             "+",
             "-" * (col_widths[4] + 2),
             "+",
-            "-" * (col_widths[5] + 2)
+            "-" * (col_widths[5] + 2),
+            "+",
+            "-" * (col_widths[6] + 2)
         ])
 
-        print(header_fmt.format(*headers))
-        print(separator)
+        print(header_fmt.format(*headers), file=sys.stderr)
+        print(separator, file=sys.stderr)
         for r in results:
             # Symbol Logic
+            read_symbol = bool_to_check(r.is_readable)
             write_symbol = bool_to_check(r.is_writeable)
 
             mount_symbol = CHECK_SYMBOL if r.is_mounted else CROSS_SYMBOL
@@ -407,21 +448,23 @@ def main():
             print(
                 row_fmt.format(
                     r.path,
+                    read_symbol,
                     write_symbol,
                     mount_symbol,
                     ramdisk_symbol,
                     perf_symbol,
                     dataloss_symbol,
-                )
+                ),
+                file=sys.stderr
             )
 
         # --- Print Warning ---
         if has_issues:
             print("\n", file=sys.stderr)
-            print_warning_message()
+            print_warning_message(results)
 
-        # Exit with error only if there are write permission issues
-        if has_write_errors and os.environ.get("NETALERTX_DEBUG") != "1":
+        # Exit with error only if there are read/write permission issues
+        if has_rw_errors and os.environ.get("NETALERTX_DEBUG") != "1":
             sys.exit(1)
 
 

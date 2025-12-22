@@ -1,0 +1,39 @@
+# Expected outcome: Mounts table shows /tmp/api is mounted and writable but NOT readable (R=❌, W=✅)
+# Note: This is a diagnostic-only container (entrypoint sleeps); the test chmods/chowns /tmp/api to mode 0300.
+services:
+  netalertx:
+    network_mode: host
+    build:
+      context: ../../../
+      dockerfile: Dockerfile
+    image: netalertx-test
+    container_name: netalertx-test-mount-api_noread
+    entrypoint: ["sh", "-lc", "sleep infinity"]
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+      - NET_BIND_SERVICE
+    environment:
+      NETALERTX_DEBUG: 0
+      NETALERTX_DATA: /data
+      NETALERTX_DB: /data/db
+      NETALERTX_CONFIG: /data/config
+      SYSTEM_SERVICES_RUN_TMP: /tmp
+      NETALERTX_API: /tmp/api
+      NETALERTX_LOG: /tmp/log
+      SYSTEM_SERVICES_RUN: /tmp/run
+      SYSTEM_SERVICES_ACTIVE_CONFIG: /tmp/nginx/active-config
+
+    volumes:
+      - type: volume
+        source: test_netalertx_data
+        target: /data
+        read_only: false
+
+    tmpfs:
+      - "/tmp:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+
+volumes:
+  test_netalertx_data:
