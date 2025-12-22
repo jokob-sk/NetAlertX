@@ -1,4 +1,4 @@
-## How to Set Up Your Network Page
+# How to Set Up Your Network Page
 
 The **Network** page lets you map how devices connect — visually and logically.
 It’s especially useful for planning infrastructure, assigning parent-child relationships, and spotting gaps.
@@ -98,6 +98,26 @@ You can confirm that `raspberrypi` now acts as a network device in two places:
 > You can change this behavior by adjusting the `UI_hide_rel_types` setting, which by default is set to `["nic","virtual"]`.
 > This means devices with `devParentRelType` set to `nic` or `virtual` will not be shown.
 > All devices, regardless of relationship type, are always accessible in the **All devices** view.
+
+
+## Troubleshooting
+
+If the Network page doesn't load re-set your parent nodes. This can be done with [bulk-edit](./DEVICES_BULK_EDITING.md).
+
+1. [Backup your setup just in case](./BACKUPS.md)
+2. Navigate to **Maintenance -> Multi edit** ( (1), (2) )
+3. Add all devices (3) (clear the cache with the refresh button if you seem to be missing devices in the dropdown (4))
+4. Select None as parent node (5) and save (6)
+
+![Hover detail](./img/NETWORK_TREE/Network_tree_RESET.png)
+
+5. Find now your root Internet Node by searching for "Internet" in the My Devices view
+6. If not found, make sure the `INTRNT` plugin runs and creates the internet device
+7. If above fails, [create a manual device](./DEVICE_MANAGEMENT.md) with the MAC set to `Internet`
+
+![Hover detail](./img/NETWORK_TREE/Network_tree_MANUAL_INTERNET_NODE.png)
+
+7. You should be able to start again to configure your Network view.
 
 ---
 
