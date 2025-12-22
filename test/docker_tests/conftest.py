@@ -18,6 +18,7 @@ def build_netalertx_test_image(request: pytest.FixtureRequest) -> None:
     """Build the docker test image before running any docker-based tests."""
 
     image = os.environ.get("NETALERTX_TEST_IMAGE", "netalertx-test")
+
     project_root = pathlib.Path(__file__).resolve().parents[2]
 
     cmd = [

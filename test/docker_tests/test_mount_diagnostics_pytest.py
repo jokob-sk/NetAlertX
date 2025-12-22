@@ -55,6 +55,7 @@ class MountTableRow:
     """Represents a parsed row from the mount diagnostic table."""
 
     path: str
+    readable: bool
     writeable: bool
     mount: bool
     ramdisk: Optional[bool]  # None for ➖
@@ -103,7 +104,7 @@ def parse_mount_table(output: str) -> List[MountTableRow]:
 
         # Split by | and clean up
         parts = [part.strip() for part in line.split("|")]
-        if len(parts) < 6:
+        if len(parts) < 7:
             continue
 
         path = parts[0]
@@ -124,11 +125,12 @@ def parse_mount_table(output: str) -> List[MountTableRow]:
         try:
             row = MountTableRow(
                 path=path,
-                writeable=emoji_to_bool(parts[1]),
-                mount=emoji_to_bool(parts[2]),
-                ramdisk=emoji_to_bool(parts[3]),
-                performance=emoji_to_bool(parts[4]),
-                dataloss=emoji_to_bool(parts[5]),
+                readable=emoji_to_bool(parts[1]),
+                writeable=emoji_to_bool(parts[2]),
+                mount=emoji_to_bool(parts[3]),
+                ramdisk=emoji_to_bool(parts[4]),
+                performance=emoji_to_bool(parts[5]),
+                dataloss=emoji_to_bool(parts[6]),
             )
             rows.append(row)
         except (IndexError, ValueError):
@@ -140,6 +142,7 @@ def parse_mount_table(output: str) -> List[MountTableRow]:
 def assert_table_row(
     output: str,
     expected_path: str,
+    readable: Expectation = UNSET,
     writeable: Expectation = UNSET,
     mount: Expectation = UNSET,
     ramdisk: Expectation = UNSET,
@@ -169,7 +172,7 @@ def assert_table_row(
     assert raw_line is not None, f"Raw table line for '{expected_path}' not found in output."
 
     raw_parts = [part.strip() for part in raw_line.split("|")]
-    assert len(raw_parts) >= 6, f"Malformed table row for '{expected_path}': {raw_line}"
+    assert len(raw_parts) >= 7, f"Malformed table row for '{expected_path}': {raw_line}"
 
     def _check(field_name: str, expected: Expectation, actual: Optional[bool], column_index: int) -> None:
         if expected is UNSET:
@@ -183,11 +186,12 @@ def assert_table_row(
             f"got '{raw_parts[column_index]}' in row: {raw_line}"
         )
 
-    _check("writeable", writeable, matching_row.writeable, 1)
-    _check("mount", mount, matching_row.mount, 2)
-    _check("ramdisk", ramdisk, matching_row.ramdisk, 3)
-    _check("performance", performance, matching_row.performance, 4)
-    _check("dataloss", dataloss, matching_row.dataloss, 5)
+    _check("readable", readable, matching_row.readable, 1)
+    _check("writeable", writeable, matching_row.writeable, 2)
+    _check("mount", mount, matching_row.mount, 3)
+    _check("ramdisk", ramdisk, matching_row.ramdisk, 4)
+    _check("performance", performance, matching_row.performance, 5)
+    _check("dataloss", dataloss, matching_row.dataloss, 6)
 
     return matching_row
 
@@ -212,9 +216,23 @@ def netalertx_test_image():
     image_name = os.environ.get("NETALERTX_TEST_IMAGE", "netalertx-test")
 
     # Check if image exists
-    result = subprocess.run(
-        ["docker", "images", "-q", image_name], capture_output=True, text=True
-    )
+    try:
+        result = subprocess.run(
+            ["docker", "images", "-q", image_name],
+            capture_output=True,
+            text=True,
+            timeout=10,
+            check=False,
+        )
+    except FileNotFoundError:
+        pytest.skip("Docker CLI not found; skipping docker-based mount diagnostics tests.")
+    except subprocess.TimeoutExpired:
+        pytest.skip("Docker is not responding; skipping docker-based mount diagnostics tests.")
+
+    if result.returncode != 0:
+        pytest.skip(
+            f"Docker returned error while checking images (rc={result.returncode}): {result.stderr.strip() or '<no stderr>'}"
+        )
 
     if not result.stdout.strip():
         pytest.skip(f"NetAlertX test image '{image_name}' not found. Build it first.")
@@ -293,6 +311,49 @@ def create_test_scenarios() -> List[TestScenario]:
                 )
             )
 
+    # Focused coverage: mounted-but-unreadable (-wx) scenarios.
+    # These are intentionally not part of the full matrix to avoid runtime bloat.
+    scenarios.extend(
+        [
+            TestScenario(
+                name="data_noread",
+                path_var="NETALERTX_DATA",
+                container_path="/data",
+                is_persistent=True,
+                docker_compose="docker-compose.mount-test.data_noread.yml",
+                expected_issues=["table_issues", "warning_message"],
+                expected_exit_code=0,
+            ),
+            TestScenario(
+                name="db_noread",
+                path_var="NETALERTX_DB",
+                container_path="/data/db",
+                is_persistent=True,
+                docker_compose="docker-compose.mount-test.db_noread.yml",
+                expected_issues=["table_issues", "warning_message"],
+                expected_exit_code=0,
+            ),
+            TestScenario(
+                name="tmp_noread",
+                path_var="SYSTEM_SERVICES_RUN_TMP",
+                container_path="/tmp",
+                is_persistent=False,
+                docker_compose="docker-compose.mount-test.tmp_noread.yml",
+                expected_issues=["table_issues", "warning_message"],
+                expected_exit_code=0,
+            ),
+            TestScenario(
+                name="api_noread",
+                path_var="NETALERTX_API",
+                container_path=CONTAINER_PATHS["api"],
+                is_persistent=False,
+                docker_compose="docker-compose.mount-test.api_noread.yml",
+                expected_issues=["table_issues", "warning_message"],
+                expected_exit_code=0,
+            ),
+        ]
+    )
+
     return scenarios
 
 
@@ -343,6 +404,35 @@ def validate_scenario_table_output(output: str, test_scenario: TestScenario) -> 
         return
 
     try:
+        if test_scenario.name.endswith("_noread"):
+            # Mounted but unreadable: R should fail, W should succeed, and the mount itself
+            # should otherwise be correctly configured.
+            if test_scenario.container_path.startswith("/data"):
+                # Persistent paths: mounted, not a ramdisk, no dataloss flag.
+                assert_table_row(
+                    output,
+                    test_scenario.container_path,
+                    readable=False,
+                    writeable=True,
+                    mount=True,
+                    ramdisk=None,
+                    performance=None,
+                    dataloss=True,
+                )
+            else:
+                # Ramdisk paths: mounted tmpfs, ramdisk ok, performance ok.
+                assert_table_row(
+                    output,
+                    test_scenario.container_path,
+                    readable=False,
+                    writeable=True,
+                    mount=True,
+                    ramdisk=True,
+                    performance=True,
+                    dataloss=True,
+                )
+            return
+
         if test_scenario.name.startswith("db_"):
             if test_scenario.name == "db_ramdisk":
                 assert_table_row(
@@ -474,6 +564,17 @@ def test_mount_diagnostic(netalertx_test_image, test_scenario):
         base_cmd + ["down", "-v"], capture_output=True, timeout=30, env=compose_env
     )
 
+    # The compose files use a fixed container name; ensure no stale container blocks the run.
+    container_name = f"netalertx-test-mount-{test_scenario.name}"
+    subprocess.run(
+        ["docker", "rm", "-f", container_name],
+        capture_output=True,
+        text=True,
+        timeout=30,
+        check=False,
+        env=compose_env,
+    )
+
     cmd_up = base_cmd + ["up", "-d"]
 
     try:
@@ -493,7 +594,6 @@ def test_mount_diagnostic(netalertx_test_image, test_scenario):
         time.sleep(1)
 
         # Check if container is still running
-        container_name = f"netalertx-test-mount-{test_scenario.name}"
         result_ps = subprocess.run(
             ["docker", "ps", "-q", "-f", f"name={container_name}"],
             capture_output=True,
@@ -529,6 +629,68 @@ def test_mount_diagnostic(netalertx_test_image, test_scenario):
             return  # Test passed - container correctly detected issues and exited
 
         # Container is still running - run diagnostic tool
+        if test_scenario.name.endswith("_noread"):
+            # Craft a mounted-but-unreadable (-wx) directory owned by uid 20211.
+            # Do this after container start so entrypoint scripts cannot overwrite it.
+            prep_cmd = [
+                "docker",
+                "exec",
+                "--user",
+                "netalertx",
+                container_name,
+                "/bin/sh",
+                "-c",
+                " ".join(
+                    [
+                        # Baseline structure for stable diagnostics (best-effort).
+                        "mkdir -p /data/db /data/config /tmp/api /tmp/log /tmp/run /tmp/nginx/active-config || true;",
+                        "chmod 0700 /data/db /data/config /tmp/api /tmp/log /tmp/run /tmp/nginx/active-config 2>/dev/null || true;",
+                        # Target path: remove read permission but keep write+execute.
+                        f"chmod 0300 '{test_scenario.container_path}';",
+                    ]
+                ),
+            ]
+            result_prep = subprocess.run(
+                prep_cmd, capture_output=True, text=True, timeout=30, check=False
+            )
+            if result_prep.returncode != 0:
+                ensure_logs("failed to prepare noread permissions")
+                pytest.fail(
+                    f"Failed to prepare noread permissions: {result_prep.stderr}\nSTDOUT: {result_prep.stdout}"
+                )
+
+            # Verify as the effective app user: not readable, but writable+executable.
+            verify_cmd = [
+                "docker",
+                "exec",
+                "--user",
+                "netalertx",
+                container_name,
+                "python3",
+                "-c",
+                "".join(
+                    [
+                        "import os, sys; ",
+                        f"p={test_scenario.container_path!r}; ",
+                        "r=os.access(p, os.R_OK); ",
+                        "w=os.access(p, os.W_OK); ",
+                        "x=os.access(p, os.X_OK); ",
+                        "sys.exit(0 if (not r and w and x) else 1)",
+                    ]
+                ),
+            ]
+            result_verify = subprocess.run(
+                verify_cmd, capture_output=True, text=True, timeout=30, check=False
+            )
+            if result_verify.returncode != 0:
+                ensure_logs("noread verification failed")
+                pytest.fail(
+                    "noread verification failed for "
+                    f"{test_scenario.container_path}:\n"
+                    f"stdout: {result_verify.stdout}\n"
+                    f"stderr: {result_verify.stderr}"
+                )
+
         cmd_exec = [
             "docker",
             "exec",
@@ -543,10 +705,10 @@ def test_mount_diagnostic(netalertx_test_image, test_scenario):
         )
         diagnostic_output = result_exec.stdout + result_exec.stderr
 
-        # The diagnostic tool returns 1 for unwritable paths except active_config, which only warns
+        # The diagnostic tool returns 1 for rw permission issues except active_config, which only warns
         if (test_scenario.name.startswith("active_config_") and "unwritable" in test_scenario.name):
             expected_tool_exit = 0
-        elif "unwritable" in test_scenario.name:
+        elif "unwritable" in test_scenario.name or test_scenario.name.endswith("_noread"):
             expected_tool_exit = 1
         else:
             expected_tool_exit = 0
@@ -564,8 +726,8 @@ def test_mount_diagnostic(netalertx_test_image, test_scenario):
             )
         else:
             # Should have table output but no warning message
-            assert "Path" in result_exec.stdout, (
-                f"Good config {test_scenario.name} should show table, got: {result_exec.stdout}"
+            assert "Path" in diagnostic_output, (
+                f"Good config {test_scenario.name} should show table, got: {diagnostic_output}"
             )
             assert "⚠️" not in diagnostic_output, (
                 f"Good config {test_scenario.name} should not show warning, got stderr: {result_exec.stderr}"
@@ -583,10 +745,10 @@ def test_table_parsing():
     """Test the table parsing and assertion functions."""
 
     sample_output = """
- Path                | Writeable | Mount | RAMDisk | Performance | DataLoss
----------------------+-----------+-------+---------+-------------+----------
-/data/db            |     ✅    |   ❌  |    ➖   |      ➖     |    ❌
-/tmp/api            |     ✅    |   ✅  |    ✅   |      ✅     |    ✅
+ Path                | R | W | Mount | RAMDisk | Performance | DataLoss
+---------------------+---+---+-------+---------+-------------+----------
+/data/db            | ✅ | ✅ |   ❌  |    ➖   |      ➖     |    ❌
+/tmp/api            | ✅ | ✅ |   ✅  |    ✅   |      ✅     |    ✅
 """
 
     # Test parsing
@@ -597,6 +759,7 @@ def test_table_parsing():
     assert_table_row(
         sample_output,
         "/data/db",
+        readable=True,
         writeable=True,
         mount=False,
         ramdisk=None,
@@ -606,6 +769,7 @@ def test_table_parsing():
     assert_table_row(
         sample_output,
         CONTAINER_PATHS["api"],
+        readable=True,
         writeable=True,
         mount=True,
         ramdisk=True,
