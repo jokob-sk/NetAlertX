@@ -288,7 +288,11 @@
   // Save device data to DB
   function setDeviceData(direction = '', refreshCallback = '') {
     // Check MAC
-    if (mac === '') {
+    mac = getMac()
+
+    if (isEmpty(mac)) {
+
+      console.error("Mac not defined");
       return;
     }
 
