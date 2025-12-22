@@ -1135,16 +1135,19 @@ function collectSetting(prefix, setCodeName, setType, settingsArray) {
 function generateFormHtml(settingsData, set, overrideValue, overrideOptions, originalSetKey) {
   let inputHtml = '';
 
-  isEmpty(overrideValue) ? inVal = set['setValue'] : inVal = overrideValue;
+
+  // if override value is considered empty initialize from setting defaults
+  overrideValue == null || overrideValue == undefined ? inVal = set['setValue'] : inVal = overrideValue
   const setKey = set['setKey'];
   const setType = set['setType'];
 
-  // if (setKey == '') {
+  // if (setKey == 'NEWDEV_devParentMAC') {
 
-  // console.log(setType);
-  // console.log(setKey);
-  // console.log(overrideValue);
-  // console.log(inVal);
+  //   console.log("==== DEBUG OUTPUT BELOW 1 ====");
+  //   console.log(setType);
+  //   console.log(setKey);
+  //   console.log(overrideValue);
+  //   console.log(inVal);
 
   // }
 
@@ -1186,15 +1189,16 @@ function generateFormHtml(settingsData, set, overrideValue, overrideOptions, ori
     // Override value
     let val = valRes;
 
-    // if (setKey == '') {
+    // if (setKey == 'NEWDEV_devParentMAC') {
 
+    //   console.log("==== DEBUG OUTPUT BELOW 2 ====");
     //   console.log(setType);
     //   console.log(setKey);
     //   console.log(overrideValue);
     //   console.log(inVal);
     //   console.log(val);
 
-    //   }
+    // }
 
     // Generate HTML based on elementType
     switch (elementType) {
@@ -1340,7 +1344,7 @@ function generateFormHtml(settingsData, set, overrideValue, overrideOptions, ori
 
             let j = 0;
             columnSettings.forEach(set => {
-                // Extract the value for the current column based on the new structure
+                // Extract the value for the current column
                 let columnOverrideValue = rowData[j] && Object.values(rowData[j])[0];
 
                 if(columnOverrideValue == undefined)

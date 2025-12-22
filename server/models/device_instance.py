@@ -590,6 +590,10 @@ class DeviceInstance:
             cur.execute(sql, values)
             conn.commit()
             conn.close()
+
+            mylog("debug", f"[DeviceInstance] setDeviceData SQL: {sql.strip()}")
+            mylog("debug", f"[DeviceInstance] setDeviceData VALUES:{values}")
+
             return {"success": True}
         except Exception as e:
             if conn:

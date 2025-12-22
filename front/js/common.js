@@ -1000,7 +1000,8 @@ function isRandomMAC(mac)
       return input;
     }
     // Empty array
-    if (input === '[]' || input === '') {
+    // if (input === '[]' || input === '') {
+    if (input === '[]') {
       return [];
     }
     // handle integer

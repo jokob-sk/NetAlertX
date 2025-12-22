@@ -388,7 +388,7 @@
         },
         error: function (xhr) {
             if (xhr.status === 403) {
-                showMessage("Unauthorized – invalid API token");
+                showMessage("Unauthorized - invalid API token");
             } else {
                 showMessage("Failed to save device (" + xhr.status + ")");
             }
