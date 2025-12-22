@@ -81,17 +81,14 @@ def check_config():
 
     Returns:
         bool: True if all required MQTT settings
-              ('MQTT_BROKER', 'MQTT_PORT', 'MQTT_USER', 'MQTT_PASSWORD')
+              ('MQTT_BROKER', 'MQTT_PORT')
               are non-empty;
               False otherwise. Logs a verbose error message
               if any setting is missing.
     """
-    if get_setting_value('MQTT_BROKER') == '' \
-        or get_setting_value('MQTT_PORT') == '' \
-            or get_setting_value('MQTT_USER') == '' \
-            or get_setting_value('MQTT_PASSWORD') == '':
+    if get_setting_value('MQTT_BROKER') == '' or get_setting_value('MQTT_PORT') == '':
         mylog('verbose', [f'[Check Config] ⚠ ERROR: MQTT service not set up \
-            correctly. Check your {confFileName} MQTT_* variables.'])
+            correctly. Check your {confFileName} MQTT_BROKER and MQTT_PORT variables.'])
         return False
     else:
         return True
