@@ -1,4 +1,4 @@
-import sqlite3
+import sys
 import os
 
 # Connect to the database using environment variable
@@ -6,7 +6,14 @@ db_path = os.path.join(
     os.getenv('NETALERTX_DB', '/data/db'),
     'app.db'
 )
-conn = sqlite3.connect(db_path)
+
+# Register NetAlertX directories
+INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
+sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
+
+from database import get_temp_db_connection  # noqa: E402 [flake8 lint suppression]
+
+conn = get_temp_db_connection()
 cursor = conn.cursor()
 
 # Get the names of all tables (excluding SQLite internal tables)
