@@ -2,7 +2,6 @@
 
 import os
 import sys
-import sqlite3
 
 # Register NetAlertX directories
 INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
@@ -13,6 +12,7 @@ from helper import get_setting_value  # noqa: E402 [flake8 lint suppression]
 from const import logPath, fullDbPath  # noqa: E402 [flake8 lint suppression]
 import conf  # noqa: E402 [flake8 lint suppression]
 from pytz import timezone  # noqa: E402 [flake8 lint suppression]
+from database import get_temp_db_connection  # noqa: E402 [flake8 lint suppression]
 
 # Make sure the TIMEZONE for logging is correct
 conf.tz = timezone(get_setting_value("TIMEZONE"))
@@ -67,11 +67,18 @@ def cleanup_database(
     Cleaning out old records from the tables that don't need to keep all data.
     """
 
-    mylog("verbose", [f"[{pluginName}] Upkeep Database:"])
+    mylog("verbose", [f"[{pluginName}] Upkeep Database: {dbPath}"])
 
     # Connect to the App database
-    conn = sqlite3.connect(dbPath, timeout=30)
+    conn = get_temp_db_connection()
     cursor = conn.cursor()
+
+    # Reindwex to prevent fails due to corruption
+    try:
+        cursor.execute("REINDEX;")
+        mylog("verbose", [f"[{pluginName}] REINDEX completed"])
+    except Exception as e:
+        mylog("none", [f"[{pluginName}] REINDEX failed: {e}"])
 
     # -----------------------------------------------------
     # Cleanup Online History
@@ -85,10 +92,10 @@ def cleanup_database(
     # -----------------------------------------------------
     # Cleanup Events
     mylog("verbose", f"[{pluginName}] Events: Delete all older than {str(DAYS_TO_KEEP_EVENTS)} days (DAYS_TO_KEEP_EVENTS setting)")
-    cursor.execute(
-        f"""DELETE FROM Events
-                            WHERE eve_DateTime <= date('now', '-{str(DAYS_TO_KEEP_EVENTS)} day')"""
-    )
+    sql = f"""DELETE FROM Events WHERE eve_DateTime <= date('now', '-{str(DAYS_TO_KEEP_EVENTS)} day')"""
+
+    mylog("verbose", [f"[{pluginName}] SQL : {sql}"])
+    cursor.execute(sql)
     # -----------------------------------------------------
     # Trim Plugins_History entries to less than PLUGINS_KEEP_HIST setting per unique "Plugin" column entry
     mylog("verbose", f"[{pluginName}] Plugins_History: Trim Plugins_History entries to less than {str(PLUGINS_KEEP_HIST)} per Plugin (PLUGINS_KEEP_HIST setting)")
