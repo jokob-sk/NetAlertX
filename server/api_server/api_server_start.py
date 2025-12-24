@@ -75,6 +75,7 @@ CORS(
         r"/sessions/*": {"origins": "*"},
         r"/settings/*": {"origins": "*"},
         r"/dbquery/*": {"origins": "*"},
+        r"/graphql/*": {"origins": "*"},
         r"/messaging/*": {"origins": "*"},
         r"/events/*": {"origins": "*"},
         r"/logs/*": {"origins": "*"},

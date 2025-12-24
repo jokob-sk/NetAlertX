@@ -133,6 +133,42 @@ class LangStringResult(ObjectType):
     count = Int()
 
 
+# --- APP EVENTS ---
+
+class AppEvent(ObjectType):
+    Index = Int()
+    GUID = String()
+    AppEventProcessed = Int()
+    DateTimeCreated = String()
+
+    ObjectType = String()
+    ObjectGUID = String()
+    ObjectPlugin = String()
+    ObjectPrimaryID = String()
+    ObjectSecondaryID = String()
+    ObjectForeignKey = String()
+    ObjectIndex = Int()
+
+    ObjectIsNew = Int()
+    ObjectIsArchived = Int()
+    ObjectStatusColumn = String()
+    ObjectStatus = String()
+
+    AppEventType = String()
+
+    Helper1 = String()
+    Helper2 = String()
+    Helper3 = String()
+    Extra = String()
+
+
+class AppEventResult(ObjectType):
+    appEvents = List(AppEvent)
+    count = Int()
+
+
+# ----------------------------------------------------------------------------------------------
+
 # Define Query Type with Pagination Support
 class Query(ObjectType):
     # --- DEVICES ---
@@ -346,6 +382,83 @@ class Query(ObjectType):
         settings = [Setting(**setting) for setting in settings_data]
 
         return SettingResult(settings=settings, count=len(settings))
+
+    # --- APP EVENTS ---
+    appEvents = Field(AppEventResult, options=PageQueryOptionsInput())
+
+    def resolve_appEvents(self, info, options=None):
+        try:
+            with open(folder + "table_appevents.json", "r") as f:
+                events_data = json.load(f).get("data", [])
+        except (FileNotFoundError, json.JSONDecodeError) as e:
+            mylog("none", f"[graphql_schema] Error loading app events data: {e}")
+            return AppEventResult(appEvents=[], count=0)
+
+        mylog("trace", f"[graphql_schema] Loaded {len(events_data)} app events")
+
+        # total count BEFORE pagination (after filters/search)
+        total_count = len(events_data)
+
+        if options:
+            # --------------------
+            # SEARCH
+            # --------------------
+            if options.search:
+                search_term = options.search.lower()
+
+                searchable_fields = [
+                    "GUID",
+                    "ObjectType",
+                    "ObjectGUID",
+                    "ObjectPlugin",
+                    "ObjectPrimaryID",
+                    "ObjectSecondaryID",
+                    "ObjectStatus",
+                    "AppEventType",
+                    "Helper1",
+                    "Helper2",
+                    "Helper3",
+                    "Extra",
+                ]
+
+                events_data = [
+                    e for e in events_data
+                    if any(
+                        search_term in str(e.get(field, "")).lower()
+                        for field in searchable_fields
+                    )
+                ]
+
+            # --------------------
+            # SORTING
+            # --------------------
+            if options.sort:
+                for sort_option in reversed(options.sort):
+                    events_data = sorted(
+                        events_data,
+                        key=lambda x: mixed_type_sort_key(
+                            x.get(sort_option.field)
+                        ),
+                        reverse=(sort_option.order.lower() == "desc"),
+                    )
+
+            # update count AFTER filters/search, BEFORE pagination
+            total_count = len(events_data)
+
+            # --------------------
+            # PAGINATION
+            # --------------------
+            if options.page and options.limit:
+                start = (options.page - 1) * options.limit
+                end = start + options.limit
+                events_data = events_data[start:end]
+
+        events = [AppEvent(**event) for event in events_data]
+
+        return AppEventResult(
+            appEvents=events,
+            count=total_count
+        )
 
     # --- LANGSTRINGS ---
     langStrings = Field(
