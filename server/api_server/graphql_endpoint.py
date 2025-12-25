@@ -366,9 +366,9 @@ class Query(ObjectType):
         return DeviceResult(devices=devices, count=total_count)
 
     # --- SETTINGS ---
-    settings = Field(SettingResult)
+    settings = Field(SettingResult, filters=List(FilterOptionsInput))
 
-    def resolve_settings(root, info):
+    def resolve_settings(root, info, filters=None):
         try:
             with open(folder + "table_settings.json", "r") as f:
                 settings_data = json.load(f)["data"]
@@ -379,7 +379,18 @@ class Query(ObjectType):
         mylog("trace", f"[graphql_schema] settings_data: {settings_data}")
 
         # Convert to Setting objects
-        settings = [Setting(**setting) for setting in settings_data]
+        settings = [Setting(**s) for s in settings_data]
+
+        # Apply dynamic filters (OR)
+        if filters:
+            filtered_settings = []
+            for s in settings:
+                for f in filters:
+                    if f.filterColumn and f.filterValue is not None:
+                        if str(getattr(s, f.filterColumn, "")).lower() == str(f.filterValue).lower():
+                            filtered_settings.append(s)
+                            break  # match one filter is enough (OR)
+            settings = filtered_settings
 
         return SettingResult(settings=settings, count=len(settings))
 

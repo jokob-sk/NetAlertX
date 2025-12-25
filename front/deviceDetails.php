@@ -416,9 +416,25 @@ async function renderSmallBoxes() {
         showSpinner();
 
         // Get data from the server
-        const response = await fetch(`php/server/devices.php?action=getServerDeviceData&mac=${getMac()}&period=${period}`);
+        const protocol = window.location.protocol.replace(':', '');
+        const host = window.location.hostname;
+        const apiToken = getSetting("API_TOKEN");
+        const port = getSetting("GRAPHQL_PORT"); // same port your Flask app runs on
+
+        const apiBase = `${protocol}://${host}:${port}`;
+        const url = `${apiBase}/device/${getMac()}?period=${encodeURIComponent(period)}`;
+
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${apiToken}`,
+            "Content-Type": "application/json"
+          }
+        });
+
         if (!response.ok) {
-            throw new Error(`Error fetching device data: ${response.statusText}`);
+          const text = await response.text();
+          throw new Error(`Error fetching device data: ${response.status} ${text}`);
         }
 
         const deviceData = await response.json();
