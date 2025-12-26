@@ -589,7 +589,6 @@
           "string": "Maximale Zeit in Sekunden, die auf den Abschluss des nativen Speedtest-Binaries gewartet werden soll. Mindestwert ist 60 Sekunden. Wenn der Test diese Zeit überschreitet, wird er beendet und gibt Nullwerte zurück."
         }
       ]
-
     },
     {
       "function": "WATCH",

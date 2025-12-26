@@ -65,22 +65,26 @@ def run_speedtest():
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
         
         if result.returncode != 0:
-            mylog('verbose', [f"[INTRSPD] Native binary failed: {result.stderr}"])
+            mylog('none', [f"[INTRSPD] Native binary failed: {result.stderr}"])
             return {'down': 0.0, 'up': 0.0, 'json': '{}'}
 
         o = json.loads(result.stdout)
         
-        down_mbps = round((o['download']['bandwidth'] * 8) / 10**6, 2)
-        up_mbps = round((o['upload']['bandwidth'] * 8) / 10**6, 2)
-        
-        # Payload optimized for n8n/webhooks
-        payload = {
-            "download": int(o['download']['bandwidth'] * 8),
-            "upload": int(o['upload']['bandwidth'] * 8),
-            "ping": o['ping']['latency'],
-            "server": {"name": o['server']['name']},
-            "timestamp": o['timestamp']
-        }
+        try:
+            down_mbps = round((o['download']['bandwidth'] * 8) / 10**6, 2)
+            up_mbps = round((o['upload']['bandwidth'] * 8) / 10**6, 2)
+            
+            # Payload optimized for n8n/webhooks
+            payload = {
+                "download": int(o['download']['bandwidth'] * 8),
+                "upload": int(o['upload']['bandwidth'] * 8),
+                "ping": o['ping']['latency'],
+                "server": {"name": o['server']['name']},
+                "timestamp": o['timestamp']
+            }
+        except (KeyError, ValueError, TypeError) as e:
+            mylog('none', [f"[INTRSPD] Failed to process JSON data: {e!s}. Raw output: {result.stdout}"])
+            return {'down': 0.0, 'up': 0.0, 'json': json.dumps({"error": "invalid_json_structure", "raw": result.stdout})}
         
         mylog('verbose', [f"[INTRSPD] Result (down|up): {down_mbps} Mbps | {up_mbps} Mbps"])
         
@@ -94,13 +98,13 @@ def run_speedtest():
         mylog('none', [f"[INTRSPD] Speedtest timed out after {timeout}s"])
         return {'down': 0.0, 'up': 0.0, 'json': json.dumps({"error": "timeout"})}
     except json.JSONDecodeError as e:
-        mylog('none', [f"[INTRSPD] Failed to parse JSON output: {str(e)}"])
+        mylog('none', [f"[INTRSPD] Failed to parse JSON output: {e!s}"])
         return {'down': 0.0, 'up': 0.0, 'json': json.dumps({"error": "json_parse_error"})}
     except subprocess.SubprocessError as e:
-        mylog('none', [f"[INTRSPD] Subprocess error: {str(e)}"])
+        mylog('none', [f"[INTRSPD] Subprocess error: {e!s}"])
         return {'down': 0.0, 'up': 0.0, 'json': json.dumps({"error": str(e)})}
     except Exception as e:
-        mylog('none', [f"[INTRSPD] Unexpected error: {str(e)}"])
+        mylog('none', [f"[INTRSPD] Unexpected error: {e!s}"])
         return {'down': 0.0, 'up': 0.0, 'json': json.dumps({"error": str(e)})}
 
 
