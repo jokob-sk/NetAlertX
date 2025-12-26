@@ -14,16 +14,21 @@ SPEEDTEST_CLI_PATH = None
 
 
 def _get_speedtest_cli_path():
-    """Resolve and validate the speedtest-cli executable path."""
-    path = shutil.which("speedtest-cli")
+    """Resolve and validate the speedtest executable path (Ookla or python-cli)."""
+    # Prefer native Ookla speedtest binary
+    path = shutil.which("speedtest")
+    if path is None:
+        # Fallback to python speedtest-cli
+        path = shutil.which("speedtest-cli")
+
     if path is None:
         raise RuntimeError(
-            "speedtest-cli not found in PATH. Please install it: "
-            "pip install speedtest-cli"
+            "Speedtest executable not found in PATH. "
+            "Please ensure either Ookla 'speedtest' or 'speedtest-cli' is installed."
         )
     if not os.access(path, os.X_OK):
         raise RuntimeError(
-            f"speedtest-cli found at {path} but is not executable"
+            f"Speedtest executable found at {path} but is not executable"
         )
     return path
 
@@ -113,30 +118,48 @@ def traceroute(ip):
 
 def speedtest():
     """
-    API endpoint to run a speedtest using speedtest-cli.
+    API endpoint to run a speedtest using either Ookla's native binary or speedtest-cli.
     Returns JSON with the test output or error.
     """
-    # If the CLI wasn't found at module load, return a 503 so the caller
-    # knows the service is unavailable rather than failing unpredictably.
     if SPEEDTEST_CLI_PATH is None:
         return jsonify(
             {
                 "success": False,
-                "error": "speedtest-cli is not installed or not found in PATH",
+                "error": "Speedtest executable is not installed or not found in PATH",
             }
         ), 503
 
     try:
-        # Run speedtest-cli command using the resolved absolute path
+        # Detect if we're using the native Ookla binary or the python-based CLI
+        # Heuristic: if the executable is named exactly 'speedtest', it's likely the native one
+        is_native = os.path.basename(SPEEDTEST_CLI_PATH) == "speedtest"
+
+        if is_native:
+            cmd = [SPEEDTEST_CLI_PATH, "--format=json", "--accept-license", "--accept-gdpr"]
+        else:
+            cmd = [SPEEDTEST_CLI_PATH, "--secure", "--simple"]
+
         result = subprocess.run(
-            [SPEEDTEST_CLI_PATH, "--secure", "--simple"],
+            cmd,
             capture_output=True,
             text=True,
             check=True,
         )
 
-        # Return each line as a list
-        output_lines = result.stdout.strip().split("\n")
+        if is_native:
+            try:
+                data = json.loads(result.stdout)
+                # Format to match --simple output for backward compatibility
+                output_lines = [
+                    f"Ping: {data['ping']['latency']} ms",
+                    f"Download: {round((data['download']['bandwidth'] * 8) / 10**6, 2)} Mbit/s",
+                    f"Upload: {round((data['upload']['bandwidth'] * 8) / 10**6, 2)} Mbit/s"
+                ]
+            except (json.JSONDecodeError, KeyError):
+                output_lines = [result.stdout.strip()]
+        else:
+            output_lines = result.stdout.strip().split("\n")
+
         return jsonify({"success": True, "output": output_lines})
 
     except subprocess.CalledProcessError as e:

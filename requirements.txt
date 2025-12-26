@@ -17,7 +17,6 @@ pytz
 json2table
 dhcp-leases
 pyunifi
-speedtest-cli
 chardet
 python-nmap
 dnspython

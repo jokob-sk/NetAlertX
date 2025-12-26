@@ -27,17 +27,17 @@ ENV PATH="/opt/venv/bin:$PATH"
 # Install build dependencies
 COPY requirements.txt /tmp/requirements.txt
 RUN apk add --no-cache \
-        bash \
-        shadow \
-        python3 \
-        python3-dev \
-        gcc \
-        musl-dev \
-        libffi-dev \
-        openssl-dev \
-        git \
-        rust \
-        cargo \
+    bash \
+    shadow \
+    python3 \
+    python3-dev \
+    gcc \
+    musl-dev \
+    libffi-dev \
+    openssl-dev \
+    git \
+    rust \
+    cargo \
     && python -m venv /opt/venv
 
 # Upgrade pip/wheel/setuptools and install Python packages
@@ -56,6 +56,7 @@ ARG NETALERTX_GID=20211
 # Read-only lock owner (separate from service account to avoid UID/GID collisions)
 ARG READONLY_UID=20212
 ARG READONLY_GID=20212
+ARG SPEEDTEST_VERSION=1.2.0
 
 # NetAlertX app directories
 ENV NETALERTX_APP=${INSTALL_DIR}
@@ -104,11 +105,11 @@ ENV SYSTEM_SERVICES_RUN_TMP=${SYSTEM_SERVICES_RUN}/tmp
 ENV SYSTEM_SERVICES_RUN_LOG=${SYSTEM_SERVICES_RUN}/logs
 ENV PHP_FPM_CONFIG_FILE=${SYSTEM_SERVICES_PHP_FOLDER}/php-fpm.conf
 ENV READ_ONLY_FOLDERS="${NETALERTX_BACK} ${NETALERTX_FRONT} ${NETALERTX_SERVER} ${SYSTEM_SERVICES} \
-                       ${SYSTEM_SERVICES_CONFIG} ${ENTRYPOINT_CHECKS}"
+    ${SYSTEM_SERVICES_CONFIG} ${ENTRYPOINT_CHECKS}"
 ENV READ_WRITE_FOLDERS="${NETALERTX_DATA} ${NETALERTX_CONFIG} ${NETALERTX_DB} ${NETALERTX_API} \
-                       ${NETALERTX_LOG} ${NETALERTX_PLUGINS_LOG} ${SYSTEM_SERVICES_RUN} \
-                       ${SYSTEM_SERVICES_RUN_TMP} ${SYSTEM_SERVICES_RUN_LOG} \
-                       ${SYSTEM_SERVICES_ACTIVE_CONFIG}"
+    ${NETALERTX_LOG} ${NETALERTX_PLUGINS_LOG} ${SYSTEM_SERVICES_RUN} \
+    ${SYSTEM_SERVICES_RUN_TMP} ${SYSTEM_SERVICES_RUN_LOG} \
+    ${SYSTEM_SERVICES_ACTIVE_CONFIG}"
 
 #Python environment
 ENV PYTHONUNBUFFERED=1
@@ -132,12 +133,26 @@ ENV LANG=C.UTF-8
 RUN apk add --no-cache bash mtr libbsd zip lsblk tzdata curl arp-scan iproute2 iproute2-ss nmap \
     nmap-scripts traceroute nbtscan net-tools net-snmp-tools bind-tools awake ca-certificates \
     sqlite php83 php83-fpm php83-cgi php83-curl php83-sqlite3 php83-session python3 envsubst \
-    nginx supercronic shadow && \
+    nginx supercronic shadow gcompat && \
     rm -Rf /var/cache/apk/*  && \
     rm -Rf /etc/nginx && \
     addgroup -g ${NETALERTX_GID} ${NETALERTX_GROUP} && \
     adduser -u ${NETALERTX_UID} -D -h ${NETALERTX_APP} -G ${NETALERTX_GROUP} ${NETALERTX_USER} && \
     apk del shadow
+
+# Install native Ookla Speedtest binary for multiple architectures
+RUN ARCH=$(uname -m) && \
+    case "$ARCH" in \
+    x86_64) ST_ARCH="x86_64"; ST_SHA256="5690596c54ff9bed63fa3732f818a05dbc2db19ad36ed68f21ca5f64d5cfeeb7" ;; \
+    aarch64) ST_ARCH="aarch64"; ST_SHA256="3953d231da3783e2bf8904b6dd72767c5c6e533e163d3742fd0437affa431bd3" ;; \
+    armv7l|armhf) ST_ARCH="armhf"; ST_SHA256="e45fcdebbd8a185553535533dd032d6b10bc8c64eee4139b1147b9c09835d08d" ;; \
+    *) echo "Unsupported architecture: $ARCH"; exit 1 ;; \
+    esac && \
+    curl --max-time 60 --retry 3 -L -o /tmp/speedtest.tgz \
+    https://install.speedtest.net/app/cli/ookla-speedtest-${SPEEDTEST_VERSION}-linux-${ST_ARCH}.tgz && \
+    echo "${ST_SHA256}  /tmp/speedtest.tgz" | sha256sum -c - && \
+    tar xz -C /usr/bin speedtest < /tmp/speedtest.tgz && \
+    rm /tmp/speedtest.tgz
 
 
 
@@ -165,10 +180,10 @@ COPY --from=builder --chown=${READONLY_UID}:${READONLY_GID} ${VIRTUAL_ENV} ${VIR
 # although it may be quicker to do it before the copy, it keeps the image
 # layers smaller to do it after.
 RUN for vfile in .VERSION .VERSION_PREV; do \
-        if [ ! -f "${NETALERTX_APP}/${vfile}" ]; then \
-            echo "DEVELOPMENT 00000000" > "${NETALERTX_APP}/${vfile}"; \
-        fi; \
-        chown ${READONLY_UID}:${READONLY_GID} "${NETALERTX_APP}/${vfile}"; \
+    if [ ! -f "${NETALERTX_APP}/${vfile}" ]; then \
+    echo "DEVELOPMENT 00000000" > "${NETALERTX_APP}/${vfile}"; \
+    fi; \
+    chown ${READONLY_UID}:${READONLY_GID} "${NETALERTX_APP}/${vfile}"; \
     done && \
     apk add --no-cache libcap && \
     setcap cap_net_raw+ep /bin/busybox && \
@@ -225,10 +240,10 @@ RUN chown -R ${READ_ONLY_USER}:${READ_ONLY_GROUP} ${READ_ONLY_FOLDERS} && \
     # will persist restrictive ownership/modes into fresh named volumes, breaking
     # arbitrary non-root UID/GID runs.
     rm -f \
-      "${NETALERTX_CONFIG}/app.conf" \
-      "${NETALERTX_DB_FILE}" \
-      "${NETALERTX_DB_FILE}-shm" \
-      "${NETALERTX_DB_FILE}-wal" || true && \
+    "${NETALERTX_CONFIG}/app.conf" \
+    "${NETALERTX_DB_FILE}" \
+    "${NETALERTX_DB_FILE}-shm" \
+    "${NETALERTX_DB_FILE}-wal" || true && \
     apk del apk-tools && \
     rm -Rf /var /etc/sudoers.d/* /etc/shadow /etc/gshadow /etc/sudoers \
     /lib/apk /lib/firmware /lib/modules-load.d /lib/sysctl.d /mnt /home/ /root \
