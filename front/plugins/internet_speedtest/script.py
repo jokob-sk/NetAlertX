@@ -2,7 +2,8 @@
 
 import os
 import sys
-import speedtest
+import subprocess
+import json
 
 # Register NetAlertX directories
 INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
@@ -30,16 +31,17 @@ RESULT_FILE = os.path.join(LOG_PATH, f'last_result.{pluginName}.log')
 
 def main():
 
-    mylog('verbose', ['[INTRSPD] In script'])
+    mylog('verbose', ['[INTRSPD] In script (Native Binary Optimization)'])
 
     plugin_objects = Plugin_Objects(RESULT_FILE)
-    speedtest_result = run_speedtest()
+    speed_data = run_speedtest()
+    
     plugin_objects.add_object(
         primaryId   = 'Speedtest',
         secondaryId = timeNowDB(),
-        watched1    = speedtest_result['download_speed'],
-        watched2    = speedtest_result['upload_speed'],
-        watched3    = 'null',
+        watched1    = speed_data['down'],    # Download Mbps
+        watched2    = speed_data['up'],      # Upload Mbps
+        watched3    = speed_data['json'],    # Payload for n8n/webhooks
         watched4    = 'null',
         extra       = 'null',
         foreignKey  = 'null'
@@ -48,24 +50,58 @@ def main():
 
 
 def run_speedtest():
+    native_bin = '/usr/bin/speedtest'
+    cmd = [native_bin, "--format=json", "--accept-license", "--accept-gdpr"]
+    
+    # Get configurable timeout with minimum 60s enforcement
     try:
-        st = speedtest.Speedtest(secure=True)
-        st.get_best_server()
-        download_speed = round(st.download() / 10**6, 2)  # Convert to Mbps
-        upload_speed = round(st.upload() / 10**6, 2)  # Convert to Mbps
+        timeout = int(get_setting_value('INTRSPD_TIMEOUT'))
+        timeout = max(timeout, 60)
+    except (ValueError, TypeError):
+        timeout = 60
+    
+    try:
+        mylog('verbose', [f"[INTRSPD] Executing native binary: {native_bin}"])
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
+        
+        if result.returncode != 0:
+            mylog('verbose', [f"[INTRSPD] Native binary failed: {result.stderr}"])
+            return {'down': 0.0, 'up': 0.0, 'json': '{}'}
 
-        mylog('verbose', [f"[INTRSPD] Result (down|up): {str(download_speed)} Mbps|{upload_speed} Mbps"])
-
-        return {
-            'download_speed': download_speed,
-            'upload_speed': upload_speed,
+        o = json.loads(result.stdout)
+        
+        down_mbps = round((o['download']['bandwidth'] * 8) / 10**6, 2)
+        up_mbps = round((o['upload']['bandwidth'] * 8) / 10**6, 2)
+        
+        # Payload optimized for n8n/webhooks
+        payload = {
+            "download": int(o['download']['bandwidth'] * 8),
+            "upload": int(o['upload']['bandwidth'] * 8),
+            "ping": o['ping']['latency'],
+            "server": {"name": o['server']['name']},
+            "timestamp": o['timestamp']
         }
+        
+        mylog('verbose', [f"[INTRSPD] Result (down|up): {down_mbps} Mbps | {up_mbps} Mbps"])
+        
+        return {
+            'down': down_mbps, 
+            'up': up_mbps, 
+            'json': json.dumps(payload)
+        }
+
+    except subprocess.TimeoutExpired:
+        mylog('none', [f"[INTRSPD] Speedtest timed out after {timeout}s"])
+        return {'down': 0.0, 'up': 0.0, 'json': json.dumps({"error": "timeout"})}
+    except json.JSONDecodeError as e:
+        mylog('none', [f"[INTRSPD] Failed to parse JSON output: {str(e)}"])
+        return {'down': 0.0, 'up': 0.0, 'json': json.dumps({"error": "json_parse_error"})}
+    except subprocess.SubprocessError as e:
+        mylog('none', [f"[INTRSPD] Subprocess error: {str(e)}"])
+        return {'down': 0.0, 'up': 0.0, 'json': json.dumps({"error": str(e)})}
     except Exception as e:
-        mylog('verbose', [f"[INTRSPD] Error running speedtest: {str(e)}"])
-        return {
-            'download_speed': -1,
-            'upload_speed': -1,
-        }
+        mylog('none', [f"[INTRSPD] Unexpected error: {str(e)}"])
+        return {'down': 0.0, 'up': 0.0, 'json': json.dumps({"error": str(e)})}
 
 
 if __name__ == '__main__':
