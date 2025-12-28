@@ -2,32 +2,28 @@
 
 // -----------------------------------------------------------------------------
 function askDeleteDevice() {
-  // Check MAC
-  if (mac == '') {
-    return;
-  }
+
+  mac = getMac()
 
   // Ask delete device
   showModalWarning(
     getString("DevDetail_button_Delete"),
     getString("DevDetail_button_Delete_ask"),
-    getString('Gen_Cancel'), 
-    getString('Gen_Delete'), 
+    getString('Gen_Cancel'),
+    getString('Gen_Delete'),
     'deleteDevice');
 }
 
 // -----------------------------------------------------------------------------
 function askDelDevDTInline(mac) {
   // Check MAC
-  if (mac == '') {
-    return;
-  }
+  mac = getMac()
 
   showModalWarning(
-    getString("DevDetail_button_Delete"), 
+    getString("DevDetail_button_Delete"),
     getString("DevDetail_button_Delete_ask"),
-    getString('Gen_Cancel'), 
-    getString('Gen_Delete'), 
+    getString('Gen_Cancel'),
+    getString('Gen_Delete'),
     () => deleteDeviceByMac(mac))
 }
 
@@ -35,9 +31,7 @@ function askDelDevDTInline(mac) {
 // -----------------------------------------------------------------------------
 function deleteDevice() {
   // Check MAC
-  if (mac == '') {
-    return;
-  }
+  mac = getMac()
 
   // Delete device
   $.get('php/server/devices.php?action=deleteDevice&mac=' + mac, function (msg) {
@@ -51,9 +45,7 @@ function deleteDevice() {
 // -----------------------------------------------------------------------------
 function deleteDeviceByMac(mac) {
   // Check MAC
-  if (mac == '') {
-    return;
-  }
+  mac = getMac()
 
   // alert(mac)
   // return;

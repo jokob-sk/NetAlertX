@@ -920,7 +920,13 @@ function getMac(){
     get: (searchParams, prop) => searchParams.get(prop),
   });
 
-  return params.mac
+  mac = params.mac;
+
+  if (mac == "") {
+    console.error("Couldn't retrieve mac");
+  }
+
+  return mac;
 }
 
 // -----------------------------------------------------------------------------
