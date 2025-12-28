@@ -2,6 +2,20 @@ name: Setup help
 description: 'When submitting an issue enable LOG_LEVEL="trace" and re-search first.'
 labels: ['Setup 📥']
 body:
+- type: dropdown
+  id: installation_type
+  attributes:
+    label: What installation are you running?
+    options:
+      - Production (netalertx) 📦
+      - Dev (netalertx-dev) 👩‍💻
+      - Home Assistant (addon) 🏠
+      - Home Assistant fa (full-access addon) 🏠
+      - Bare-metal (community only support - Check Discord) ❗
+      - Proxmox (community only support - Check Discord) ❗
+      - Unraid (community only support - Check Discord) ❗
+  validations:
+    required: true
 - type: checkboxes
   attributes:
     label: Did I research?
@@ -16,7 +30,7 @@ body:
 - type: checkboxes
   attributes:
     label: The issue occurs in the following browsers. Select at least 2.
-    description: This step helps me understand if this is a cache or browser-specific issue. 
+    description: This step helps me understand if this is a cache or browser-specific issue.
     options:
     - label: "Firefox"
     - label: "Chrome"
@@ -32,31 +46,17 @@ body:
   attributes:
     label: Relevant settings you changed
     description: |
-      Paste a screenshot or setting values of the settings you changed. 
+      Paste a screenshot or setting values of the settings you changed.
   validations:
     required: false
 - type: textarea
   attributes:
     label: docker-compose.yml
     description: |
-      Paste your `docker-compose.yml`    
+      Paste your `docker-compose.yml`
     render: python
   validations:
     required: false
-- type: dropdown
-  id: installation_type
-  attributes:
-    label: What installation are you running?
-    options:
-      - Production (netalertx)
-      - Dev (netalertx-dev)
-      - Home Assistant (addon)
-      - Home Assistant fa (full-access addon)
-      - Bare-metal (community only support - Check Discord)
-      - Proxmox (community only support - Check Discord)
-      - Unraid (community only support - Check Discord)
-  validations:
-    required: true
 - type: textarea
   attributes:
     label: app.log
@@ -65,7 +65,7 @@ body:
       ***Generally speaking, all bug reports should have logs provided.***
       Tip: You can attach images or log files by clicking this area to highlight it and then dragging files in.
       Additionally, any additional info? Screenshots? References? Anything that will give us more context about the issue you are encountering!
-      You can use `tail -100 /app/log/app.log` in the container if you have trouble getting to the log files. 
+      You can use `tail -100 /app/log/app.log` in the container if you have trouble getting to the log files.
   validations:
     required: false
 - type: checkboxes

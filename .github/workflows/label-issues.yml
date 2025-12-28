@@ -21,7 +21,7 @@ jobs:
 
             let labelsToAdd = [];
 
-            if (lowerBody.includes('bare-metal')) {
+            if (lowerBody.includes('bare-metal') || lowerBody.includes('proxmox')) {
               labelsToAdd.push('bare-metal ❗');
             }
 

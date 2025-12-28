@@ -2,6 +2,20 @@ name: Bug Report
 description: 'When submitting an issue enable LOG_LEVEL="trace" and have a look at the docs.'
 labels: ['bug 🐛']
 body:
+- type: dropdown
+  id: installation_type
+  attributes:
+    label: What installation are you running?
+    options:
+      - Production (netalertx) 📦
+      - Dev (netalertx-dev) 👩‍💻
+      - Home Assistant (addon) 🏠
+      - Home Assistant fa (full-access addon) 🏠
+      - Bare-metal (community only support - Check Discord) ❗
+      - Proxmox (community only support - Check Discord) ❗
+      - Unraid (community only support - Check Discord) ❗
+  validations:
+    required: true
 - type: checkboxes
   attributes:
     label: Is there an existing issue for this?
@@ -12,7 +26,7 @@ body:
 - type: checkboxes
   attributes:
     label: The issue occurs in the following browsers. Select at least 2.
-    description: This step helps me understand if this is a cache or browser-specific issue. 
+    description: This step helps me understand if this is a cache or browser-specific issue.
     options:
     - label: "Firefox"
     - label: "Chrome"
@@ -44,9 +58,9 @@ body:
     required: false
 - type: textarea
   attributes:
-    label: Relevant `app.conf` settings 
+    label: Relevant `app.conf` settings
     description: |
-      Paste relevant `app.conf`settings (remove sensitive info)    
+      Paste relevant `app.conf`settings (remove sensitive info)
     render: python
   validations:
     required: false
@@ -54,24 +68,10 @@ body:
   attributes:
     label: docker-compose.yml
     description: |
-      Paste your `docker-compose.yml`    
+      Paste your `docker-compose.yml`
     render: yaml
   validations:
     required: false
-- type: dropdown
-  id: installation_type
-  attributes:
-    label: What installation are you running?
-    options:
-      - Production (netalertx)
-      - Dev (netalertx-dev)
-      - Home Assistant (addon)
-      - Home Assistant fa (full-access addon)
-      - Bare-metal (community only support - Check Discord)
-      - Proxmox (community only support - Check Discord)
-      - Unraid (community only support - Check Discord)
-  validations:
-    required: true
 - type: checkboxes
   attributes:
     label: Debug or Trace enabled
@@ -84,7 +84,7 @@ body:
     label: Relevant `app.log` section
     value: |
         ```
-          PASTE LOG HERE. Using the triple backticks preserves format. 
+          PASTE LOG HERE. Using the triple backticks preserves format.
         ```
     description: |
       Logs with debug enabled (https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEBUG_TIPS.md) ⚠
@@ -101,7 +101,7 @@ body:
      You can retrieve the logs from Portainer -> Containers -> your NetAlertX container -> Logs or by running `sudo docker logs netalertx`.
     value: |
         ```
-          PASTE DOCKER LOG HERE. Using the triple backticks preserves format. 
+          PASTE DOCKER LOG HERE. Using the triple backticks preserves format.
         ```
   validations:
     required: true
