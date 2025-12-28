@@ -4,11 +4,11 @@
   require_once  $_SERVER['DOCUMENT_ROOT'] . '/php/templates/security.php';
 ?>
 <!-- ----------------------------------------------------------------------- -->
- 
+
 
 <!-- Hide Connections -->
 <div class="col-sm-12 col-xs-12">
-    <label class="col-sm-3 col-xs-10">      
+    <label class="col-sm-3 col-xs-10">
       <?= lang('DevDetail_Events_CheckBox');?>
     </label>
     <input class="checkbox blue col-sm-1 col-xs-2" id="chkHideConnectionEvents" type="checkbox" onChange="loadEventsData()">
@@ -30,10 +30,6 @@
 
 <script>
 
-
-
-
-
 // -----------------------------------------------------------------------------
 function loadEventsData() {
   const hideConnections = $('#chkHideConnectionEvents')[0].checked;
@@ -43,8 +39,8 @@ function loadEventsData() {
 
   const rawSql = `
     SELECT eve_DateTime, eve_DateTime, eve_EventType, eve_IP, eve_AdditionalInfo
-    FROM Events 
-    WHERE eve_MAC = "${mac}" 
+    FROM Events
+    WHERE eve_MAC = "${mac}"
       AND (
         (eve_EventType NOT IN ("Connected", "Disconnected", "VOIDED - Connected", "VOIDED - Disconnected"))
         OR "${hideConnectionsStr}" = "false"
@@ -56,7 +52,7 @@ function loadEventsData() {
   // Manually load the data first
   $.get(apiUrl, function (data) {
     const parsed = JSON.parse(data);
-    
+
     const rows = parsed.map(row => {
       const rawDate = row.eve_DateTime;
       const formattedDate = rawDate ? localizeTimestamp(rawDate) : '-';
@@ -98,7 +94,7 @@ function initializeEventsDatatable (eventsRows) {
 
       'columnDefs'  : [
           {   orderData: [1], targets:  [0]   },
-          {   visible:   false, targets: [1]  }, 
+          {   visible:   false, targets: [1]  },
           {
               targets: [0],
               'createdCell': function (td, cellData, rowData, row, col) {
@@ -127,7 +123,7 @@ function initializeEventsDatatable (eventsRows) {
 // INIT with polling for panel element visibility
 // -----------------------------------------------
 
-var eventsPageInitialized = false; 
+var eventsPageInitialized = false;
 
 function initDeviceEventsPage()
 {
