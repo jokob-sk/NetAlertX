@@ -45,6 +45,8 @@ vendorsPathNewest = os.getenv(
     "VENDORSPATH_NEWEST", "/usr/share/arp-scan/ieee-oui_all_filtered.txt"
 )
 
+NATIVE_SPEEDTEST_PATH = os.getenv("NATIVE_SPEEDTEST_PATH", "/usr/bin/speedtest")
+
 default_tz = "Europe/Berlin"
 
 

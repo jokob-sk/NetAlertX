@@ -6,11 +6,13 @@ import ipaddress
 import shutil
 import os
 from flask import jsonify
+from const import NATIVE_SPEEDTEST_PATH
 
 # Resolve speedtest-cli path once at module load and validate it.
 # We do this once to avoid repeated PATH lookups and to fail fast when
 # the binary isn't available or executable.
 SPEEDTEST_CLI_PATH = None
+
 
 
 def _get_speedtest_cli_path():
@@ -113,9 +115,52 @@ def traceroute(ip):
 
 def speedtest():
     """
-    API endpoint to run a speedtest using speedtest-cli.
+    API endpoint to run a speedtest using native binary or speedtest-cli.
     Returns JSON with the test output or error.
     """
+    # Prefer native speedtest binary
+    if os.path.exists(NATIVE_SPEEDTEST_PATH):
+        try:
+            result = subprocess.run(
+                [NATIVE_SPEEDTEST_PATH, "--format=json", "--accept-license", "--accept-gdpr"],
+                capture_output=True,
+                text=True,
+                timeout=60
+            )
+            if result.returncode == 0:
+                try:
+                    data = json.loads(result.stdout)
+                    download = round(data['download']['bandwidth'] * 8 / 10**6, 2)
+                    upload = round(data['upload']['bandwidth'] * 8 / 10**6, 2)
+                    ping = data['ping']['latency']
+                    isp = data['isp']
+                    server = f"{data['server']['name']} - {data['server']['location']} ({data['server']['id']})"
+                    
+                    output_lines = [
+                        f"Server: {server}",
+                        f"ISP: {isp}",
+                        f"Latency: {ping} ms",
+                        f"Download: {download} Mbps",
+                        f"Upload: {upload} Mbps"
+                    ]
+                    
+                    if 'packetLoss' in data:
+                        output_lines.append(f"Packet Loss: {data['packetLoss']}%")
+                    
+                    return jsonify({"success": True, "output": output_lines})
+                
+                except (json.JSONDecodeError, KeyError, TypeError) as parse_error:
+                    print(f"Failed to parse native speedtest output: {parse_error}", file=sys.stderr)
+                    # Fall through to CLI fallback
+            else:
+                print(f"Native speedtest exited with code {result.returncode}: {result.stderr}", file=sys.stderr)
+
+        except subprocess.TimeoutExpired:
+            print("Native speedtest timed out after 60s, falling back to CLI", file=sys.stderr)
+        except Exception as e:
+            # Fall back to speedtest-cli if native fails
+            print(f"Native speedtest failed: {e}, falling back to CLI", file=sys.stderr)
+
     # If the CLI wasn't found at module load, return a 503 so the caller
     # knows the service is unavailable rather than failing unpredictably.
     if SPEEDTEST_CLI_PATH is None:
@@ -133,11 +178,20 @@ def speedtest():
             capture_output=True,
             text=True,
             check=True,
+            timeout=60,
         )
 
         # Return each line as a list
         output_lines = result.stdout.strip().split("\n")
         return jsonify({"success": True, "output": output_lines})
+
+    except subprocess.TimeoutExpired:
+        return jsonify(
+            {
+                "success": False,
+                "error": "Speedtest timed out after 60 seconds",
+            }
+        ), 504
 
     except subprocess.CalledProcessError as e:
         return jsonify(
