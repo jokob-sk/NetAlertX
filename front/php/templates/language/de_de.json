@@ -294,6 +294,7 @@
     "Events_Tablelenght": "Zeige _MENU_ Einträge",
     "Events_Tablelenght_all": "Alle",
     "Events_Title": "Ereignisse",
+    "FakeMAC_hover": "",
     "GRAPHQL_PORT_description": "Die Portnummer des GraphQL-Servers. Stellen Sie sicher, dass dieser Port von keiner anderen Anwendung oder NetAlertX Instanz verwendet wird.",
     "GRAPHQL_PORT_name": "GraphQL-Port",
     "Gen_Action": "Action",

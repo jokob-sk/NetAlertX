@@ -231,6 +231,13 @@ function getDeviceData() {
                         </a>
                       </span>`;
                   }
+                  // handle FAKE mac
+                  if (setting.setKey == "NEWDEV_devMac" && isFakeMac(deviceData["devMac"])) {
+                    inlineControl += `<span class="input-group-addon"
+                        title="${getString("FakeMAC_hover")}">
+                          <i class="fa-solid fa-dice"></i>
+                      </span>`;
+                  }
                   // handle generate MAC for new device
                   if (setting.setKey == "NEWDEV_devMac" && deviceData["devMac"] == "") {
                     inlineControl += `<span class="input-group-addon pointer"

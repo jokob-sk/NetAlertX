@@ -290,6 +290,7 @@
     "Events_Tablelenght": "表示中 _MENU_ 件",
     "Events_Tablelenght_all": "全て",
     "Events_Title": "イベント",
+    "FakeMAC_hover": "",
     "GRAPHQL_PORT_description": "GraphQLサーバーのポート番号。このホスト上のすべてのアプリケーションおよびNetAlertXインスタンスにおいて、ポートが一意であることを確認してください。",
     "GRAPHQL_PORT_name": "GraphQLポート",
     "Gen_Action": "アクション",

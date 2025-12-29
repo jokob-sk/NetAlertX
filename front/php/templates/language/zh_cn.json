@@ -290,6 +290,7 @@
     "Events_Tablelenght": "显示_MENU_条",
     "Events_Tablelenght_all": "全部",
     "Events_Title": "事件",
+    "FakeMAC_hover": "",
     "GRAPHQL_PORT_description": "GraphQL服务器的端口号。请确保该端口在该主机和 NetAlertX 实例上的所有应用程序中都是唯一的。",
     "GRAPHQL_PORT_name": "GraphQL端口",
     "Gen_Action": "动作",

@@ -290,6 +290,7 @@
     "Events_Tablelenght": "طول الجدول",
     "Events_Tablelenght_all": "الكل",
     "Events_Title": "الأحداث",
+    "FakeMAC_hover": "",
     "GRAPHQL_PORT_description": "منفذ خادم GraphQL",
     "GRAPHQL_PORT_name": "منفذ GraphQL",
     "Gen_Action": "إجراء",

@@ -290,6 +290,7 @@
     "Events_Tablelenght": "Show _MENU_ entries",
     "Events_Tablelenght_all": "Hepsi",
     "Events_Title": "Olaylar",
+    "FakeMAC_hover": "",
     "GRAPHQL_PORT_description": "GraphQL sunucusunun port numarası. Portun, bu anahtardaki tüm uygulamalar ve NetAlertX örnekleri arasında benzersiz olduğundan emin olun.",
     "GRAPHQL_PORT_name": "GraphQL port",
     "Gen_Action": "Komut",

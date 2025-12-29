@@ -290,6 +290,7 @@
     "Events_Tablelenght": "Veure_entrades_MENU",
     "Events_Tablelenght_all": "Tot",
     "Events_Title": "Esdeveniments",
+    "FakeMAC_hover": "",
     "GRAPHQL_PORT_description": "El número de port del servidor GraphQL. Comprova que el port és únic en totes les aplicacions d'aquest servidor i en totes les instàncies de NetAlertX.",
     "GRAPHQL_PORT_name": "Port GraphQL",
     "Gen_Action": "Acció",
