@@ -8,6 +8,16 @@ This plugin supports two engines:
 1.  **Baseline Engine**: Uses the Python `speedtest-cli` library (default).
 2.  **Native Engine (Optimized)**: Uses the official native Ookla Speedtest binary.
 
+#### Native Speedtest Path
+The plugin looks for the Speedtest binary at `/usr/bin/speedtest` by default. If the binary is located elsewhere, you can configure the path using the `NATIVE_SPEEDTEST_PATH` environment variable:
+
+Example:
+```env
+NATIVE_SPEEDTEST_PATH=/custom/path/to/speedtest
+```
+
+If this variable is left unset, the plugin assumes `/usr/bin/speedtest`.
+
 #### Opt-in for Native Engine
 To use the native engine, you must provide the official binary to the container. The native binary is **strongly recommended** for internet connections > 100 Mbps to ensure CPU bottlenecks don't affect your results.
 

@@ -50,6 +50,7 @@ def main():
 
 def run_speedtest():
     native_path = NATIVE_SPEEDTEST_PATH
+    mylog('verbose', [f"[INTRSPD] Using native binary path: {native_path}"])
     if os.path.exists(native_path):
         mylog('verbose', ["[INTRSPD] Native speedtest binary detected, using it."])
         try:
