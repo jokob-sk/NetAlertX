@@ -72,11 +72,25 @@ def generate_deterministic_guid(plugin, primary_id, secondary_id):
     return str(uuid.UUID(hashlib.md5(data).hexdigest()))
 
 
-def string_to_mac_hash(input_string):
-    # Calculate a hash using SHA-256
+# -------------------------------------------------------------------------------
+def string_to_fake_mac(input_string):
+    """
+    Generate a deterministic fake MAC address from an input string.
+
+    The MAC address is hex-valid and begins with a FA:CE prefix
+    to clearly indicate it is synthetic.
+
+    Args:
+        input_string (str): The input string to hash into a MAC address.
+
+    Returns:
+        str: A MAC address string in the format 'fa:ce:xx:xx:xx:xx'.
+    """
+    # Calculate a SHA-256 hash of the input string
     sha256_hash = hashlib.sha256(input_string.encode()).hexdigest()
 
-    # Take the first 12 characters of the hash and format as a MAC address
-    mac_hash = ':'.join(sha256_hash[i:i + 2] for i in range(0, 12, 2))
+    # Take characters 4–11 (next 4 bytes) to form the rest of the MAC address
+    rest = ':'.join(sha256_hash[i:i + 2] for i in range(4, 12, 2))
 
-    return mac_hash
+    # Prepend the FA:CE prefix to clearly mark this as a fake MAC
+    return f"fa:ce:{rest}"

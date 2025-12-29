@@ -144,7 +144,7 @@ function validateRegex(elem) {
       } else {
           iconSpan.html("<i class='fa fa-xmark'></i>");
           showModalOk('WARNING', getString("Gen_Invalid_Value"));
-          inputElem.attr("data-is-valid", "0"); 
+          inputElem.attr("data-is-valid", "0");
       }
   }
 
@@ -450,10 +450,10 @@ function addOptionFromModalInput() {
 
 
 // --------------------------------------------------------
-// Generate a random MAC address starting 00:1A
+// Generate a random MAC address starting FA:CE
 function generate_NEWDEV_devMac() {
   const randomHexPair = () => Math.floor(Math.random() * 256).toString(16).padStart(2, '0').toUpperCase();
-  $('#NEWDEV_devMac').val(`00:1A:${randomHexPair()}:${randomHexPair()}:${randomHexPair()}:${randomHexPair()}`.toLowerCase());
+  $('#NEWDEV_devMac').val(`FA:CE:${randomHexPair()}:${randomHexPair()}:${randomHexPair()}:${randomHexPair()}`.toLowerCase());
 }
 
 
