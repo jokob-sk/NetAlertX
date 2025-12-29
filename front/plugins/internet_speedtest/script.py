@@ -3,6 +3,8 @@
 import os
 import sys
 import speedtest
+import subprocess
+import json
 
 # Register NetAlertX directories
 INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
@@ -14,8 +16,7 @@ from logger import mylog, Logger  # noqa: E402 [flake8 lint suppression]
 from helper import get_setting_value  # noqa: E402 [flake8 lint suppression]
 import conf  # noqa: E402 [flake8 lint suppression]
 from pytz import timezone  # noqa: E402 [flake8 lint suppression]
-from const import logPath  # noqa: E402 [flake8 lint suppression]
-
+from const import logPath, NATIVE_SPEEDTEST_PATH
 # Make sure the TIMEZONE for logging is correct
 conf.tz = timezone(get_setting_value('TIMEZONE'))
 
@@ -39,7 +40,7 @@ def main():
         secondaryId = timeNowDB(),
         watched1    = speedtest_result['download_speed'],
         watched2    = speedtest_result['upload_speed'],
-        watched3    = 'null',
+        watched3    = speedtest_result['full_json'],
         watched4    = 'null',
         extra       = 'null',
         foreignKey  = 'null'
@@ -48,23 +49,62 @@ def main():
 
 
 def run_speedtest():
+    native_path = NATIVE_SPEEDTEST_PATH
+    if os.path.exists(native_path):
+        mylog('verbose', ["[INTRSPD] Native speedtest binary detected, using it."])
+        try:
+            # Safe parsing of timeout setting
+            try:
+                raw_timeout = get_setting_value('INTRSPD_RUN_TIMEOUT')
+                timeout = int(raw_timeout) if raw_timeout else 60
+            except (ValueError, TypeError):
+                timeout = 60
+            
+            if timeout < 60:
+                timeout = 60
+
+            cmd = [native_path, "--format=json", "--accept-license", "--accept-gdpr"]
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
+            
+            if result.returncode == 0:
+                try:
+                    data = json.loads(result.stdout)
+                    download_speed = round(data['download']['bandwidth'] * 8 / 10**6, 2)
+                    upload_speed = round(data['upload']['bandwidth'] * 8 / 10**6, 2)
+                except (json.JSONDecodeError, KeyError, TypeError) as parse_error:
+                    mylog('none', [f"[INTRSPD] Failed to parse native JSON: {parse_error}"])
+                    # Fall through to baseline fallback
+                else:
+                    mylog('verbose', [f"[INTRSPD] Native Result (down|up): {download_speed} Mbps|{upload_speed} Mbps"])
+                    return {
+                        'download_speed': download_speed,
+                        'upload_speed': upload_speed,
+                        'full_json': result.stdout.strip()
+                    }
+
+        except subprocess.TimeoutExpired:
+            mylog('none', ["[INTRSPD] Native speedtest timed out, falling back to baseline."])
+        except Exception as e:
+            mylog('none', [f"[INTRSPD] Error running native speedtest: {e!s}, falling back to baseline."])
+
+    # Baseline fallback
     try:
         st = speedtest.Speedtest(secure=True)
         st.get_best_server()
-        download_speed = round(st.download() / 10**6, 2)  # Convert to Mbps
-        upload_speed = round(st.upload() / 10**6, 2)  # Convert to Mbps
-
-        mylog('verbose', [f"[INTRSPD] Result (down|up): {str(download_speed)} Mbps|{upload_speed} Mbps"])
-
+        download_speed = round(st.download() / 10**6, 2)
+        upload_speed = round(st.upload() / 10**6, 2)
+        mylog('verbose', [f"[INTRSPD] Baseline Result (down|up): {download_speed} Mbps|{upload_speed} Mbps"])
         return {
             'download_speed': download_speed,
             'upload_speed': upload_speed,
+            'full_json': json.dumps(st.results.dict())
         }
     except Exception as e:
         mylog('verbose', [f"[INTRSPD] Error running speedtest: {str(e)}"])
         return {
             'download_speed': -1,
             'upload_speed': -1,
+            'full_json': json.dumps({"error": str(e)})
         }
 
 
