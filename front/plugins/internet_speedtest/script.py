@@ -16,7 +16,7 @@ from logger import mylog, Logger  # noqa: E402 [flake8 lint suppression]
 from helper import get_setting_value  # noqa: E402 [flake8 lint suppression]
 import conf  # noqa: E402 [flake8 lint suppression]
 from pytz import timezone  # noqa: E402 [flake8 lint suppression]
-from const import logPath, NATIVE_SPEEDTEST_PATH
+from const import logPath, NATIVE_SPEEDTEST_PATH  # noqa: E402 [flake8 lint suppression]
 # Make sure the TIMEZONE for logging is correct
 conf.tz = timezone(get_setting_value('TIMEZONE'))
 
@@ -31,7 +31,7 @@ RESULT_FILE = os.path.join(LOG_PATH, f'last_result.{pluginName}.log')
 
 def main():
 
-    mylog('verbose', ['[INTRSPD] In script'])
+    mylog('verbose', [f"[{pluginName}] In script"])
 
     plugin_objects = Plugin_Objects(RESULT_FILE)
     speedtest_result = run_speedtest()
@@ -50,33 +50,25 @@ def main():
 
 def run_speedtest():
     native_path = NATIVE_SPEEDTEST_PATH
-    mylog('verbose', [f"[INTRSPD] Using native binary path: {native_path}"])
+    mylog('verbose', [f"[{pluginName}] Using native binary path: {native_path}"])
     if os.path.exists(native_path):
-        mylog('verbose', ["[INTRSPD] Native speedtest binary detected, using it."])
+        mylog('verbose', [f"[{pluginName}] Native speedtest binary detected, using it."])
         try:
-            # Safe parsing of timeout setting
-            try:
-                raw_timeout = get_setting_value('INTRSPD_RUN_TIMEOUT')
-                timeout = int(raw_timeout) if raw_timeout else 60
-            except (ValueError, TypeError):
-                timeout = 60
-            
-            if timeout < 60:
-                timeout = 60
+            timeout = get_setting_value('INTRSPD_RUN_TIMEOUT')
 
             cmd = [native_path, "--format=json", "--accept-license", "--accept-gdpr"]
             result = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
-            
+
             if result.returncode == 0:
                 try:
                     data = json.loads(result.stdout)
                     download_speed = round(data['download']['bandwidth'] * 8 / 10**6, 2)
                     upload_speed = round(data['upload']['bandwidth'] * 8 / 10**6, 2)
                 except (json.JSONDecodeError, KeyError, TypeError) as parse_error:
-                    mylog('none', [f"[INTRSPD] Failed to parse native JSON: {parse_error}"])
+                    mylog('none', [f"[{pluginName}] Failed to parse native JSON: {parse_error}"])
                     # Fall through to baseline fallback
                 else:
-                    mylog('verbose', [f"[INTRSPD] Native Result (down|up): {download_speed} Mbps|{upload_speed} Mbps"])
+                    mylog('verbose', [f"[{pluginName}] Native Result (down|up): {download_speed} Mbps|{upload_speed} Mbps"])
                     return {
                         'download_speed': download_speed,
                         'upload_speed': upload_speed,
@@ -84,9 +76,9 @@ def run_speedtest():
                     }
 
         except subprocess.TimeoutExpired:
-            mylog('none', ["[INTRSPD] Native speedtest timed out, falling back to baseline."])
+            mylog('none', [f"[{pluginName}] Native speedtest timed out, falling back to baseline."])
         except Exception as e:
-            mylog('none', [f"[INTRSPD] Error running native speedtest: {e!s}, falling back to baseline."])
+            mylog('none', [f"[{pluginName}] Error running native speedtest: {e!s}, falling back to baseline."])
 
     # Baseline fallback
     try:
@@ -94,14 +86,14 @@ def run_speedtest():
         st.get_best_server()
         download_speed = round(st.download() / 10**6, 2)
         upload_speed = round(st.upload() / 10**6, 2)
-        mylog('verbose', [f"[INTRSPD] Baseline Result (down|up): {download_speed} Mbps|{upload_speed} Mbps"])
+        mylog('verbose', [f"[{pluginName}] Baseline Result (down|up): {download_speed} Mbps|{upload_speed} Mbps"])
         return {
             'download_speed': download_speed,
             'upload_speed': upload_speed,
             'full_json': json.dumps(st.results.dict())
         }
     except Exception as e:
-        mylog('verbose', [f"[INTRSPD] Error running speedtest: {str(e)}"])
+        mylog('verbose', [f"[{pluginName}] Error running speedtest: {str(e)}"])
         return {
             'download_speed': -1,
             'upload_speed': -1,
