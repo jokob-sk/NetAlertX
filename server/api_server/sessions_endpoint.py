@@ -12,7 +12,7 @@ sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 from database import get_temp_db_connection  # noqa: E402 [flake8 lint suppression]
 from helper import get_setting_value, format_ip_long  # noqa: E402 [flake8 lint suppression]
 from db.db_helper import get_date_from_period  # noqa: E402 [flake8 lint suppression]
-from utils.datetime_utils import format_date_iso, format_event_date, format_date_diff, format_date   # noqa: E402 [flake8 lint suppression]
+from utils.datetime_utils import timeNowDB, format_date_iso, format_event_date, format_date_diff, format_date   # noqa: E402 [flake8 lint suppression]
 
 
 # --------------------------
@@ -88,36 +88,42 @@ def get_sessions(mac=None, start_date=None, end_date=None):
     return jsonify({"success": True, "sessions": table_data})
 
 
-def get_sessions_calendar(start_date, end_date):
+def get_sessions_calendar(start_date, end_date, mac):
     """
     Fetch sessions between a start and end date for calendar display.
-    Returns JSON list of calendar sessions.
+    Returns FullCalendar-compatible JSON.
     """
 
     if not start_date or not end_date:
         return jsonify({"success": False, "error": "Missing start or end date"}), 400
 
+    # Normalize MAC (empty string → NULL)
+    mac = mac or None
+
     conn = get_temp_db_connection()
+    conn.row_factory = sqlite3.Row
     cur = conn.cursor()
 
     sql = """
-        -- Correct missing connection/disconnection sessions:
-        -- If ses_EventTypeConnection is missing, backfill from last disconnection
-        -- If ses_EventTypeDisconnection is missing, forward-fill from next connection
-
         SELECT
-            SES1.ses_MAC, SES1.ses_EventTypeConnection, SES1.ses_DateTimeConnection,
-            SES1.ses_EventTypeDisconnection, SES1.ses_DateTimeDisconnection, SES1.ses_IP,
-            SES1.ses_AdditionalInfo, SES1.ses_StillConnected,
+            SES1.ses_MAC,
+            SES1.ses_EventTypeConnection,
+            SES1.ses_DateTimeConnection,
+            SES1.ses_EventTypeDisconnection,
+            SES1.ses_DateTimeDisconnection,
+            SES1.ses_IP,
+            SES1.ses_AdditionalInfo,
+            SES1.ses_StillConnected,
 
             CASE
               WHEN SES1.ses_EventTypeConnection = '<missing event>' THEN
                 IFNULL(
-                  (SELECT MAX(SES2.ses_DateTimeDisconnection)
-                   FROM Sessions AS SES2
-                   WHERE SES2.ses_MAC = SES1.ses_MAC
-                     AND SES2.ses_DateTimeDisconnection < SES1.ses_DateTimeDisconnection
-                     AND SES2.ses_DateTimeDisconnection BETWEEN Date(?) AND Date(?)
+                  (
+                    SELECT MAX(SES2.ses_DateTimeDisconnection)
+                    FROM Sessions AS SES2
+                    WHERE SES2.ses_MAC = SES1.ses_MAC
+                      AND SES2.ses_DateTimeDisconnection < SES1.ses_DateTimeDisconnection
+                      AND SES2.ses_DateTimeDisconnection BETWEEN Date(?) AND Date(?)
                   ),
                   DATETIME(SES1.ses_DateTimeDisconnection, '-1 hour')
                 )
@@ -126,41 +132,46 @@ def get_sessions_calendar(start_date, end_date):
 
             CASE
               WHEN SES1.ses_EventTypeDisconnection = '<missing event>' THEN
-                (SELECT MIN(SES2.ses_DateTimeConnection)
-                 FROM Sessions AS SES2
-                 WHERE SES2.ses_MAC = SES1.ses_MAC
-                   AND SES2.ses_DateTimeConnection > SES1.ses_DateTimeConnection
-                   AND SES2.ses_DateTimeConnection BETWEEN Date(?) AND Date(?)
+                (
+                  SELECT MIN(SES2.ses_DateTimeConnection)
+                  FROM Sessions AS SES2
+                  WHERE SES2.ses_MAC = SES1.ses_MAC
+                    AND SES2.ses_DateTimeConnection > SES1.ses_DateTimeConnection
+                    AND SES2.ses_DateTimeConnection BETWEEN Date(?) AND Date(?)
                 )
               ELSE SES1.ses_DateTimeDisconnection
             END AS ses_DateTimeDisconnectionCorrected
 
         FROM Sessions AS SES1
-        WHERE (SES1.ses_DateTimeConnection BETWEEN Date(?) AND Date(?))
+        WHERE (
+              (SES1.ses_DateTimeConnection BETWEEN Date(?) AND Date(?))
            OR (SES1.ses_DateTimeDisconnection BETWEEN Date(?) AND Date(?))
            OR SES1.ses_StillConnected = 1
+        )
+        AND (? IS NULL OR SES1.ses_MAC = ?)
     """
 
     cur.execute(
         sql,
         (
-            start_date,
-            end_date,
-            start_date,
-            end_date,
-            start_date,
-            end_date,
-            start_date,
-            end_date,
+            start_date, end_date,
+            start_date, end_date,
+            start_date, end_date,
+            start_date, end_date,
+            mac, mac,
         ),
     )
+
     rows = cur.fetchall()
+    conn.close()
 
-    table_data = []
-    for r in rows:
-        row = dict(r)
+    now_iso = timeNowDB()
 
-        # Determine color
+    events = []
+    for row in rows:
+        row = dict(row)
+
+        # Color logic (unchanged from PHP)
         if (
             row["ses_EventTypeConnection"] == "<missing event>" or row["ses_EventTypeDisconnection"] == "<missing event>"
         ):
@@ -170,28 +181,31 @@ def get_sessions_calendar(start_date, end_date):
         else:
             color = "#0073b7"
 
-        # Tooltip
+        # --- IMPORTANT FIX ---
+        # FullCalendar v3 CANNOT handle end = null
+        end_dt = row["ses_DateTimeDisconnectionCorrected"]
+        if not end_dt and row["ses_StillConnected"] == 1:
+            end_dt = now_iso
+
         tooltip = (
             f"Connection: {format_event_date(row['ses_DateTimeConnection'], row['ses_EventTypeConnection'])}\n"
             f"Disconnection: {format_event_date(row['ses_DateTimeDisconnection'], row['ses_EventTypeDisconnection'])}\n"
             f"IP: {row['ses_IP']}"
         )
 
-        # Append calendar entry
-        table_data.append(
+        events.append(
             {
                 "resourceId": row["ses_MAC"],
                 "title": "",
                 "start": format_date_iso(row["ses_DateTimeConnectionCorrected"]),
-                "end": format_date_iso(row["ses_DateTimeDisconnectionCorrected"]),
+                "end": format_date_iso(end_dt),
                 "color": color,
                 "tooltip": tooltip,
                 "className": "no-border",
             }
         )
 
-    conn.close()
-    return jsonify({"success": True, "sessions": table_data})
+    return jsonify({"success": True, "sessions": events})
 
 
 def get_device_sessions(mac, period):

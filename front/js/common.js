@@ -373,7 +373,7 @@ function getLangCode() {
   const LOCALE = getSetting('UI_LOCALE') || 'en-GB';
 
 // -----------------------------------------------------------------------------
-// String utilities
+// DateTime utilities
 // -----------------------------------------------------------------------------
 function localizeTimestamp(input) {
 
@@ -461,6 +461,54 @@ function localizeTimestamp(input) {
   }
 }
 
+
+/**
+ * Returns start and end date for a given period.
+ * @param {string} period - "1 day", "7 days", "1 month", "1 year", "100 years"
+ * @returns {{start: string, end: string}} - Dates in "YYYY-MM-DD HH:MM:SS" format
+ */
+function getPeriodStartEnd(period) {
+  const now = new Date();
+  let start = new Date(now); // default start = now
+  let end = new Date(now);   // default end = now
+
+  switch (period) {
+    case "1 day":
+      start.setDate(now.getDate() - 1);
+      break;
+    case "7 days":
+      start.setDate(now.getDate() - 7);
+      break;
+    case "1 month":
+      start.setMonth(now.getMonth() - 1);
+      break;
+    case "1 year":
+      start.setFullYear(now.getFullYear() - 1);
+      break;
+    case "100 years":
+      start = new Date(0); // very old date for "all"
+      break;
+    default:
+      console.warn("Unknown period, using 1 month as default");
+      start.setMonth(now.getMonth() - 1);
+  }
+
+  // Helper function to format date as "YYYY-MM-DD HH:MM:SS"
+  const formatDate = (date) => {
+    const pad = (n) => String(n).padStart(2, "0");
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ` +
+           `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+  };
+
+  return {
+    start: formatDate(start),
+    end: formatDate(end)
+  };
+}
+
+// -----------------------------------------------------------------------------
+// String utilities
+// -----------------------------------------------------------------------------
 
 
 // ----------------------------------------------------

@@ -210,14 +210,14 @@ function getDeviceData() {
                 groupSettings.forEach(setting => {
                   const column = $('<div>'); // Create a column for each setting (Bootstrap column)
 
-                  console.log(setting);
+                  // console.log(setting);
 
                   // Get the field data (replace 'NEWDEV_' prefix from the key)
                   fieldData = deviceData[setting.setKey.replace('NEWDEV_', '')]
                   fieldData = fieldData == null ? "" : fieldData;
                   fieldOptionsOverride = null;
 
-                  console.log(setting.setKey);
+                  // console.log(setting.setKey);
                   // console.log(fieldData);
 
                   // Additional form elements like the random MAC address button for devMac

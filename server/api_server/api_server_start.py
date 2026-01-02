@@ -938,8 +938,9 @@ def api_get_sessions_calendar():
     # Query params: /sessions/calendar?start=2025-08-01&end=2025-08-21
     start_date = request.args.get("start")
     end_date = request.args.get("end")
+    mac = request.args.get("mac")
 
-    return get_sessions_calendar(start_date, end_date)
+    return get_sessions_calendar(start_date, end_date, mac)
 
 
 @app.route("/sessions/<mac>", methods=["GET"])

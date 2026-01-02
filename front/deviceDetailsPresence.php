@@ -35,95 +35,49 @@
 
   // ---------------------------------------
   // query data
-  function loadPresenceData()
-  {
-     // Define Presence datasource and query data
+  function loadPresenceData() {
+    const protocol = window.location.protocol.replace(":", "");
+    const host = window.location.hostname;
+    const port = getSetting("GRAPHQL_PORT");
+    const apiToken = getSetting("API_TOKEN");
+
+    const apiBase = `${protocol}://${host}:${port}`;
+    const url = `${apiBase}/sessions/calendar`;
+
     $('#calendar').fullCalendar('removeEventSources');
-    $('#calendar').fullCalendar('addEventSource',
-    { url: 'php/server/events.php?action=getDevicePresence&mac=' + mac});
-  }
 
-  // ---------------------------------------
-  function initializeCalendar_() {
-
-  
-    var calendarEl = document.getElementById('calendar');
-
-    var calendar = new FullCalendar.Calendar(calendarEl, {
-      headerToolbar: {
-        left: 'prev,next today',
-        center: 'title',
-        right: 'dayGridYear,dayGridMonth,timeGridWeek'
-      },
-      initialView: 'dayGridYear',
-      initialDate: '2023-01-12',
-      editable: true,
-      selectable: true,
-      dayMaxEvents: true, // allow "more" link when too many events
-      // businessHours: true,
-      // weekends: false,
-      events: [
-        {
-          title: 'All Day Event',
-          start: '2023-01-01'
+    $('#calendar').fullCalendar('addEventSource', function(start, end, timezone, callback) {
+      $.ajax({
+        url: url,
+        method: "GET",
+        dataType: "json",
+        headers: {
+          "Authorization": `Bearer ${apiToken}`
         },
-        {
-          title: 'Long Event',
-          start: '2023-01-07',
-          end: '2023-01-10'
+        data: {
+          start: start.format('YYYY-MM-DD'),
+          end: end.format('YYYY-MM-DD'),
+          mac: mac
         },
-        {
-          groupId: 999,
-          title: 'Repeating Event',
-          start: '2023-01-09T16:00:00'
+        success: function(response) {
+          if (response && response.success) {
+            callback(response.sessions || []);
+          } else {
+            console.warn("Presence calendar API error:", response);
+            callback([]);
+          }
         },
-        {
-          groupId: 999,
-          title: 'Repeating Event',
-          start: '2023-01-16T16:00:00'
-        },
-        {
-          title: 'Conference',
-          start: '2023-01-11',
-          end: '2023-01-13'
-        },
-        {
-          title: 'Meeting',
-          start: '2023-01-12T10:30:00',
-          end: '2023-01-12T12:30:00'
-        },
-        {
-          title: 'Lunch',
-          start: '2023-01-12T12:00:00'
-        },
-        {
-          title: 'Meeting',
-          start: '2023-01-12T14:30:00'
-        },
-        {
-          title: 'Happy Hour',
-          start: '2023-01-12T17:30:00'
-        },
-        {
-          title: 'Dinner',
-          start: '2023-01-12T20:00:00'
-        },
-        {
-          title: 'Birthday Party',
-          start: '2023-01-13T07:00:00'
-        },
-        {
-          title: 'Click for Google',
-          url: 'http://google.com/',
-          start: '2023-01-28'
+        error: function(xhr) {
+          console.error(
+            "Presence calendar request failed:",
+            xhr.status,
+            xhr.responseText
+          );
+          callback([]);
         }
-      ]
+      });
     });
-
-    calendar.render();
-  
-
-}
+  }
 
 // -----------------------------------------------------------------------------
 function initializeCalendar() {
@@ -138,7 +92,7 @@ function initializeCalendar() {
     slotDuration      : '02:00:00',
     slotLabelInterval : '04:00:00',
     slotLabelFormat   : 'H:mm',
-    timeFormat        : 'H:mm', 
+    timeFormat        : 'H:mm',
     locale            : '<?= lang('Presence_CalHead_lang');?>',
     header: {
       left            : 'prev,next today',
@@ -146,7 +100,7 @@ function initializeCalendar() {
       right           : 'agendaYear,agendaMonth,agendaWeek'
     },
 
-    views: {
+   views: {
       agendaYear: {
         type               : 'agenda',
         duration           : { year: 1 },
@@ -162,16 +116,7 @@ function initializeCalendar() {
       },
       agendaWeek: {
         buttonText         : '<?= lang('Presence_CalHead_week');?>',
-      },
-      agendaDay: {
-        type              : 'agenda',
-        duration          : { day: 1 },
-        buttonText        : '<?= lang('Presence_CalHead_day');?>',
-        slotLabelFormat   : 'H',
-        slotDuration      : '01:00:00'
       }
-
-      
     },
 
     viewRender: function(view) {
@@ -191,40 +136,40 @@ function initializeCalendar() {
               listContent[i+1].style.borderRightColor = '#808080';
             }
             listHeader[i].style.paddingLeft = '10px';
-          }   
-        };    
+          }
+        };
       }
     },
- 
+
     columnHeaderText: function(mom) {
       switch ($('#calendar').fullCalendar('getView').name) {
-      case 'agendaYear':
-        if (mom.date() == 1) {
-          return mom.format('MMM');
-        } else {
-          return '';
+        case 'agendaYear':
+          if (mom.date() == 1) {
+            return mom.format('MMM');
+          } else {
+            return '';
+          }
+          break;
+        case 'agendaMonth':
+          return mom.date();
+          break;
+        case 'agendaWeek':
+          return mom.format ('ddd D');
+          break;
+        default:
+          return mom.date();
         }
-        break;
-      case 'agendaMonth':
-        return mom.date();
-        break;
-      case 'agendaWeek':
-        return mom.format ('ddd D');
-        break;
-      default:
-        return mom.date();
-      }
     },
 
     eventRender: function (event, element) {
       // $(element).tooltip({container: 'body', placement: 'bottom',  title: event.tooltip});
       element.attr ('title', event.tooltip);  // Alternative tooltip
     },
-      
+
     loading: function( isLoading, view ) {
         if (isLoading) {
           showSpinner()
-        } else {          
+        } else {
           hideSpinner()
         }
     }
@@ -250,7 +195,7 @@ function initDevicePresencePage() {
 
   showSpinner();
 
-  initializeCalendar();    
+  initializeCalendar();
   loadPresenceData();
 }
 

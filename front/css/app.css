@@ -664,7 +664,9 @@ body
     border-right: 5px solid #606060;
 }
 
-
+.fc-ltr .fc-time-grid .fc-event-container {
+  margin: 0 2.5% 0 0px !important;
+}
 
 /* -----------------------------------------------------------------------------
    Notification float banner
