@@ -85,8 +85,22 @@ Scripts that start and manage the core services required for NetAlertX operation
 - `healthcheck.sh` - Container health verification
 - `cron_script.sh` - Scheduled task definitions
 
+
+### `/root-entrypoint.sh` - Initial Entrypoint and Permission Priming
+This script is the very first process executed in the production container (it becomes PID 1 and `/` in the Docker filesystem). Its primary role is to perform best-effort permission priming for all runtime and persistent paths, ensuring that directories like `/data`, `/tmp`, and their subpaths are owned and writable by the correct user and group (as specified by the `PUID` and `PGID` environment variables, defaulting to 20211).
+
+Key behaviors:
+- If started as root, attempts to create and chown all required paths, then drops privileges to the target user/group using `su-exec`.
+- If started as non-root, skips priming and expects the operator to ensure correct host-side permissions.
+- All permission operations are best-effort: failures to chown/chmod do not halt startup, but are logged for troubleshooting.
+- The only fatal condition is a malformed (non-numeric) `PUID` or `PGID` value, which is treated as a security risk and halts startup with a clear error message and troubleshooting URL.
+- No artificial upper bound is enforced on UID/GID; any numeric value is accepted.
+- If privilege drop fails, the script logs a warning and continues as the current user for resilience.
+
+This design ensures that NetAlertX can run securely and portably across a wide range of host environments (including NAS appliances and hardened Docker setups), while minimizing the risk of privilege escalation or misconfiguration.
+
 ### `/entrypoint.sh` - Container Startup Script
-The main orchestration script that runs when the container starts. It coordinates the entire container initialization process, from pre-startup validation through service startup and ongoing monitoring, ensuring NetAlertX operates reliably in production environments.
+The main orchestration script that runs after `/root-entrypoint.sh` completes. It coordinates the entire container initialization process, from pre-startup validation through service startup and ongoing monitoring, ensuring NetAlertX operates reliably in production environments.
 
 The main script that runs when the container starts:
 - Runs all pre-startup checks from `/services/scripts`
