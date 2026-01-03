@@ -45,3 +45,4 @@ front/css/cloud_services.css
 docker-compose.yml.ffsb42
 .env.omada.ffsb42
 .venv
+test_mounts/

@@ -87,10 +87,11 @@ def _docker_visible_tmp_root() -> pathlib.Path:
 
     Pytest's default tmp_path lives under /tmp inside the devcontainer, which may
     not be visible to the Docker daemon that evaluates bind mount source paths.
-    We use /tmp/pytest-docker-mounts instead of the repo.
+    We use a directory under the repo root which is guaranteed to be shared.
     """
 
-    root = pathlib.Path("/tmp/pytest-docker-mounts")
+    # Use a directory inside the workspace to ensure visibility to Docker daemon
+    root = _repo_root() / "test_mounts"
     root.mkdir(parents=True, exist_ok=True)
     try:
         root.chmod(0o777)
@@ -1259,6 +1260,8 @@ def test_mount_analysis_ram_disk_performance(tmp_path: pathlib.Path) -> None:
         f"{VOLUME_MAP['app_db']}:uid=20211,gid=20211,mode=755",
         "--tmpfs",
         f"{VOLUME_MAP['app_config']}:uid=20211,gid=20211,mode=755",
+        "--tmpfs",
+        "/tmp/nginx:uid=20211,gid=20211,mode=755",
     ]
     result = _run_container(
         "ram-disk-mount", volumes=volumes, extra_args=extra_args, user="20211:20211"
@@ -1314,6 +1317,8 @@ def test_mount_analysis_dataloss_risk(tmp_path: pathlib.Path) -> None:
         f"{VOLUME_MAP['app_db']}:uid=20211,gid=20211,mode=755",
         "--tmpfs",
         f"{VOLUME_MAP['app_config']}:uid=20211,gid=20211,mode=755",
+        "--tmpfs",
+        "/tmp/nginx:uid=20211,gid=20211,mode=755",
     ]
     result = _run_container(
         "dataloss-risk", volumes=volumes, extra_args=extra_args, user="20211:20211"
@@ -1354,16 +1359,16 @@ def test_restrictive_permissions_handling(tmp_path: pathlib.Path) -> None:
     """
     paths = _setup_mount_tree(tmp_path, "restrictive_perms")
 
-    # Helper to chown without userns host (workaround for potential devcontainer hang)
-    def _chown_root_safe(host_path: pathlib.Path) -> None:
+    # Helper to chown/chmod without userns host (workaround for potential devcontainer hang)
+    def _setup_restrictive_dir(host_path: pathlib.Path) -> None:
         cmd = [
             "docker", "run", "--rm",
             # "--userns", "host", # Removed to avoid hang
             "--user", "0:0",
-            "--entrypoint", "/bin/chown",
+            "--entrypoint", "/bin/sh",
             "-v", f"{host_path}:/mnt",
             IMAGE,
-            "-R", "0:0", "/mnt",
+            "-c", "chown -R 0:0 /mnt && chmod 755 /mnt",
         ]
         subprocess.run(
             cmd,
@@ -1375,8 +1380,7 @@ def test_restrictive_permissions_handling(tmp_path: pathlib.Path) -> None:
 
     # Set up a restrictive directory (root owned, 755)
     target_dir = paths["app_db"]
-    _chown_root_safe(target_dir)
-    target_dir.chmod(0o755)
+    _setup_restrictive_dir(target_dir)
 
     # Mount ALL volumes to avoid errors during permission checks
     keys = {"data", "app_db", "app_config", "app_log", "app_api", "services_run", "nginx_conf"}

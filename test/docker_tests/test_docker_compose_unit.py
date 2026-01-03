@@ -17,12 +17,12 @@ def test_run_docker_compose_returns_output(monkeypatch, tmp_path):
         subprocess.CompletedProcess([], 0, stdout="down-initial\n", stderr=""),
         subprocess.CompletedProcess(["up"], 0, stdout="up-out\n", stderr=""),
         subprocess.CompletedProcess(["logs"], 0, stdout="log-out\n", stderr=""),
-        # ps_proc: cause compose ps parsing to fail (no containers listed)
-        subprocess.CompletedProcess(["ps"], 0, stdout="", stderr="no containers"),
+        # ps_proc: return valid container entries
+        subprocess.CompletedProcess(["ps"], 0, stdout="test-container Running 0\n", stderr=""),
         subprocess.CompletedProcess([], 0, stdout="down-final\n", stderr=""),
     ]
 
-    def fake_run(*args, **kwargs):
+    def fake_run(*_, **__):
         try:
             return cps.pop(0)
         except IndexError:

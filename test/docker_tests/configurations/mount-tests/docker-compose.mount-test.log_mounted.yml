@@ -39,9 +39,9 @@ services:
         target: /tmp/log
         read_only: false
     tmpfs:
-      - "/tmp/api:mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
-      - "/tmp/run:mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
-      - "/tmp/nginx/active-config:mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      - "/tmp/api:mode=1700,uid=20211,gid=20211,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      - "/tmp/run:mode=1700,uid=20211,gid=20211,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      - "/tmp/nginx/active-config:mode=1700,uid=20211,gid=20211,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
 volumes:
   netalertx_config:
   netalertx_db:

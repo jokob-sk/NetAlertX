@@ -14,6 +14,8 @@ services:
     cap_add:
       - SETUID
       - SETGID
+      - NET_RAW
+      - NET_ADMIN
     # Intentionally drop CHOWN to prove failure path while leaving defaults intact
     environment:
       LISTEN_ADDR: 0.0.0.0

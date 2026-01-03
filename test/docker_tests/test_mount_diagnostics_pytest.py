@@ -651,7 +651,7 @@ def test_mount_diagnostic(netalertx_test_image, test_scenario):
 
         # Wait for container to be ready
         import time
-# Container is still running - validate the diagnostics already run at startup
+        # Container is still running - validate the diagnostics already run at startup
         # Give entrypoint scripts a moment to finish outputting to logs
         time.sleep(2)
 
@@ -727,7 +727,7 @@ def test_table_parsing():
 
 
 @pytest.mark.docker
-def test_cap_chown_required_when_caps_dropped(netalertx_test_image):
+def test_cap_chown_required_when_caps_dropped():
     """Ensure startup warns (but runs) when CHOWN capability is removed."""
 
     compose_file = CONFIG_DIR / "mount-tests" / "docker-compose.mount-test.cap_chown_missing.yml"
@@ -747,7 +747,7 @@ def test_cap_chown_required_when_caps_dropped(netalertx_test_image):
     container_name = "netalertx-test-mount-cap_chown_missing"
 
     result = subprocess.run(
-        base_cmd + ["down", "-v"], capture_output=True, text=True, timeout=30, env=compose_env
+        [*base_cmd, "down", "-v"], capture_output=True, text=True, timeout=30, env=compose_env
     )
     print(result.stdout)  # DO NOT REMOVE OR MODIFY - MANDATORY LOGGING FOR DEBUGGING & CI.
     print(result.stderr)  # DO NOT REMOVE OR MODIFY - MANDATORY LOGGING FOR DEBUGGING & CI.
@@ -762,7 +762,7 @@ def test_cap_chown_required_when_caps_dropped(netalertx_test_image):
     print(result.stdout)  # DO NOT REMOVE OR MODIFY - MANDATORY LOGGING FOR DEBUGGING & CI.
     print(result.stderr)  # DO NOT REMOVE OR MODIFY - MANDATORY LOGGING FOR DEBUGGING & CI.
 
-    cmd_up = base_cmd + ["up", "-d"]
+    cmd_up = [*base_cmd, "up", "-d"]
 
     try:
         result_up = subprocess.run(
@@ -806,7 +806,7 @@ def test_cap_chown_required_when_caps_dropped(netalertx_test_image):
 
     finally:
         result = subprocess.run(
-            base_cmd + ["down", "-v"], capture_output=True, text=True, timeout=30, env=compose_env
+            [*base_cmd, "down", "-v"], capture_output=True, text=True, timeout=30, env=compose_env
         )
         print(result.stdout)  # DO NOT REMOVE OR MODIFY - MANDATORY LOGGING FOR DEBUGGING & CI.
         print(result.stderr)  # DO NOT REMOVE OR MODIFY - MANDATORY LOGGING FOR DEBUGGING & CI.

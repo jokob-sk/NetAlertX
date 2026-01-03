@@ -31,11 +31,11 @@ services:
         target: /data/config
         read_only: false
     tmpfs:
-      - "/data/db:mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
-      - "/tmp/api:mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
-      - "/tmp/log:mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
-      - "/tmp/run:mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
-      - "/tmp/nginx/active-config:mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      - "/data/db:mode=1700,uid=0,gid=0,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      - "/tmp/api:mode=1700,uid=0,gid=0,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      - "/tmp/log:mode=1700,uid=0,gid=0,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      - "/tmp/run:mode=1700,uid=0,gid=0,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      - "/tmp/nginx/active-config:mode=1700,uid=0,gid=0,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
 volumes:
   netalertx_config:
   netalertx_db:
