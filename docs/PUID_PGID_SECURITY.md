@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This short document explains the security rationale behind the root-priming entrypoint's validation of runtime user IDs (`PUID`) and group IDs (`PGID`). The validation is intentionally strict and is a safety measure to prevent environment-variable based command injection when running as root during the initial priming stage.
+This short document explains the security rationale behind the root-priming entrypoint's validation of runtime user IDs (`PUID`) and group IDs (`PGID`). The validation is intentionally strict and is a safety measure to prevent environment-variable-based command injection when running as root during the initial priming stage.
 
 ## Key points
 
