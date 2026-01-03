@@ -2,7 +2,7 @@
 python_classes = ["Test", "Describe"]
 python_functions = ["test_", "it_", "and_", "but_", "they_"]
 python_files = ["test_*.py",]
-testpaths = ["test", "tests/docker_tests"]
+testpaths = ["test", "test/docker_tests"]
 norecursedirs = [".git", ".venv", "venv", "node_modules", "__pycache__", "*.egg-info", "build", "dist", "tmp", "api", "log"]
 markers = [
 	"docker: requires docker socket and elevated container permissions",

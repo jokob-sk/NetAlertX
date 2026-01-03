@@ -54,11 +54,11 @@ chmod -R 777 "/tmp/nginx" 2>/dev/null || true
 
 # Execute nginx with overrides
 # echo the full nginx command then run it
-echo "Starting /usr/sbin/nginx -p \"${RUN_DIR}/\" -c \"${SYSTEM_SERVICES_ACTIVE_CONFIG_FILE}\" -g \"error_log /dev/stderr; error_log ${NETALERTX_LOG}/nginx-error.log; daemon off;\" &"
+echo "Starting /usr/sbin/nginx -p \"${RUN_DIR}/\" -c \"${SYSTEM_SERVICES_ACTIVE_CONFIG_FILE}\" -g \"error_log stderr; error_log ${NETALERTX_LOG}/nginx-error.log; daemon off;\" &"
 /usr/sbin/nginx \
 	-p "${RUN_DIR}/" \
 	-c "${SYSTEM_SERVICES_ACTIVE_CONFIG_FILE}" \
-	-g "error_log /dev/stderr; error_log ${NETALERTX_LOG}/nginx-error.log; daemon off;" &
+	-g "error_log stderr; error_log ${NETALERTX_LOG}/nginx-error.log; daemon off;" &
 nginx_pid=$!
 
 wait "${nginx_pid}"

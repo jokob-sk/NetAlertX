@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# 30-writable-config.sh: Verify read/write permissions for config and database files.
+# 40-writable-config.sh: Verify read/write permissions for config and database files.
 #
 # This script ensures that the application can read from and write to the
 # critical configuration and database files after startup.
@@ -72,7 +72,7 @@ EOF
         >&2 printf "%s" "${YELLOW}"
         >&2 cat <<EOF
 ══════════════════════════════════════════════════════════════════════════════
-⚠️  ATTENTION: Read permission denied (write permission denied).
+⚠️  ATTENTION: Write permission denied.
 
     The application cannot write to "${path}". This will prevent it from
     saving data, logs, or configuration.

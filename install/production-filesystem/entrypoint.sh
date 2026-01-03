@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 ################################################################################
 # NetAlertX Container Entrypoint
@@ -44,6 +44,17 @@ if [ "$#" -gt 0 ]; then
             exec "$@"
             ;;
     esac
+fi
+
+# If invoked directly (bypassing root-entrypoint), re-enter through it once for priming
+# and privilege drop. Guard with ENTRYPOINT_PRIMED to avoid loops when root-entrypoint
+# hands control back to this script.
+if [ "${ENTRYPOINT_PRIMED:-0}" != "1" ] && [ "$(id -u)" -eq 0 ] && [ -x "/root-entrypoint.sh" ]; then
+    >&2 cat <<'EOF'
+NetAlertX is running as ROOT (UID 0). Prefer setting PUID/PGID to 20211 for better isolation.
+EOF
+    export ENTRYPOINT_PRIMED=1
+    exec /root-entrypoint.sh "$@"
 fi
 
 # Banner display
@@ -92,12 +103,9 @@ https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/trou
 EOF
         >&2 printf "%s" "${RESET}"
 
+        FAILED_STATUS="1"
         if [ "${NETALERTX_DEBUG:-0}" -eq 1 ]; then
-		
-            FAILED_STATUS="1"
             echo "NETALERTX_DEBUG=1, continuing despite critical failure in ${script_name}."
-        else
-            exit 1
         fi
     elif [ ${NETALERTX_DOCKER_ERROR_CHECK} -ne 0 ]; then
         # fail but continue checks so user can see all issues
@@ -264,9 +272,6 @@ trap on_signal INT TERM
 
 
 
-################################################################################
-# Service Startup Section
-################################################################################
 # Start services based on environment configuration
 
 # Only start crond scheduler on Alpine (non-Debian) environments

@@ -4,8 +4,8 @@
 OVERRIDE_FILE="${NETALERTX_CONFIG}/app_conf_override.json"
 
 # Ensure config directory exists
-mkdir -p "$(dirname "$NETALERTX_CONFIG")" || {
-    >&2 echo "ERROR: Failed to create config directory $(dirname "$NETALERTX_CONFIG")"
+mkdir -p "$NETALERTX_CONFIG" || {
+    >&2 echo "ERROR: Failed to create config directory $NETALERTX_CONFIG"
     exit 1
 }
 

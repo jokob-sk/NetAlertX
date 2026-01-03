@@ -12,7 +12,8 @@
   "capAdd": [
     "SYS_ADMIN", // For mounting ramdisks
     "NET_ADMIN", // For network interface configuration
-    "NET_RAW" // For raw packet manipulation
+    "NET_RAW", // For raw packet manipulation
+    "NET_BIND_SERVICE" // For privileged port binding (e.g., UDP 137)
   ],
   "runArgs": [
     "--security-opt",
