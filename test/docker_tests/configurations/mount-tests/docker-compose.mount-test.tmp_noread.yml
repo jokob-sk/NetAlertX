@@ -8,15 +8,20 @@ services:
       dockerfile: Dockerfile
     image: netalertx-test
     container_name: netalertx-test-mount-tmp_noread
-    entrypoint: ["sh", "-lc", "sleep infinity"]
+    user: "20211:20211"
     cap_drop:
       - ALL
     cap_add:
+      - CHOWN
       - NET_ADMIN
       - NET_RAW
       - NET_BIND_SERVICE
+      - SETUID
+      - SETGID
     environment:
       NETALERTX_DEBUG: 0
+      PUID: 20211
+      PGID: 20211
       NETALERTX_DATA: /data
       NETALERTX_DB: /data/db
       NETALERTX_CONFIG: /data/config
@@ -33,7 +38,7 @@ services:
         read_only: false
 
     tmpfs:
-      - "/tmp:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      - "/tmp:mode=0300,uid=20211,gid=20211,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
 
 volumes:
   test_netalertx_data:

@@ -13,6 +13,7 @@ services:
     cap_drop:
       - ALL
     cap_add:
+      - CHOWN
       - NET_ADMIN
       - NET_RAW
       - NET_BIND_SERVICE
@@ -30,11 +31,11 @@ services:
         target: /data/config
         read_only: false
     tmpfs:
-      - "/data/db:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
-      - "/tmp/api:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
-      - "/tmp/log:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
-      - "/tmp/run:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
-      - "/tmp/nginx/active-config:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      - "/data/db:mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      - "/tmp/api:mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      - "/tmp/log:mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      - "/tmp/run:mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      - "/tmp/nginx/active-config:mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
 volumes:
   netalertx_config:
   netalertx_db:
