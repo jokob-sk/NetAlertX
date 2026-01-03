@@ -109,6 +109,44 @@ The main script that runs when the container starts:
 - Monitors services and handles failures
 - Ensures clean shutdown on container stop
 
+## Boot Flow
+
+The container startup process is designed to be robust, secure, and informative. It follows a strict sequence to ensure the environment is correctly prepared before the application starts.
+
+1.  **`root-entrypoint.sh` (Privilege & Permission Management)**
+    *   **Validation:** Verifies that `PUID` and `PGID` environment variables are numeric (security measure).
+    *   **Permission Priming:** If running as root, it attempts to fix ownership of writable volumes (`/data`, `/tmp`) to match the requested `PUID`/`PGID`. This ensures the application can write to its storage even if the host volume permissions are incorrect.
+    *   **Privilege Drop:** Uses `su-exec` to switch to the target user (default `netalertx:20211`) before executing the main entrypoint.
+    *   **Non-Root Support:** If the container is started as a non-root user, this step is skipped, and the operator is responsible for volume permissions.
+
+2.  **`entrypoint.sh` (Orchestration)**
+    *   **Banner:** Displays the NetAlertX logo and version.
+    *   **Pre-Startup Checks:** Executes all scripts in `/entrypoint.d/` to validate the environment (see below).
+    *   **Configuration:** Applies environment variable overrides (e.g., `GRAPHQL_PORT`) to the application configuration.
+    *   **Background Tasks:** Launches `update_vendors.sh` to update the MAC address database without blocking startup.
+    *   **Service Startup:** Launches core services in order:
+        *   `crond` (Scheduler) - *Alpine only*
+        *   `php-fpm` (PHP Processor)
+        *   `nginx` (Web Server)
+        *   `python3` (NetAlertX Backend)
+    *   **Monitoring Loop:** Enters a loop to monitor the health of all started services. If any service fails (and `NETALERTX_DEBUG` is not enabled), the container shuts down to allow the orchestrator (Docker/K8s) to restart it.
+
+3.  **`entrypoint.d` (Sanity Checks & Initialization)**
+    Scripts in this directory run sequentially to prepare and validate the system. Key checks include:
+    *   **Data Migration:** `05-data-migration.sh` - Handles data structure updates.
+    *   **Capabilities:** `10-capabilities-audit.sh` - Verifies required network capabilities (CAP_NET_RAW, etc.).
+    *   **Mounts:** `15-mounts.py` - Checks for correct volume mounts.
+    *   **First Run:** `20-first-run-config.sh` & `25-first-run-db.sh` - Initializes config and database if missing.
+    *   **Environment:** `30-mandatory-folders.sh` - Ensures required directories exist.
+    *   **Configuration:** `35-apply-conf-override.sh` & `40-writable-config.sh` - Applies config overrides and checks write permissions.
+    *   **Web Server:** `45-nginx-config.sh` - Generates Nginx configuration.
+    *   **User ID:** `60-expected-user-id-match.sh` - Warns if running as an unexpected UID.
+    *   **Network:** `80-host-mode-network.sh` & `99-ports-available.sh` - Checks network mode and port availability.
+    *   **Security:** `90-excessive-capabilities.sh` & `95-appliance-integrity.sh` - Audits for security risks.
+
+4.  **Service Operation**
+    Once all checks pass and services are started, the container is fully operational. The `entrypoint.sh` script continues to run as PID 1, handling signals (SIGINT/SIGTERM) for graceful shutdown.
+
 ## Security Considerations
 
 - Application code is read-only to prevent modifications
