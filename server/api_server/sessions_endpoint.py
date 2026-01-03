@@ -341,7 +341,8 @@ def get_session_events(event_type, period_date):
             NULL,
             ses_AdditionalInfo,
             ses_StillConnected,
-            devMac
+            devMac,
+            0 AS ses_PendingAlertEmail
         FROM Sessions_Devices
     """
 

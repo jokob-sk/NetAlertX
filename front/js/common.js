@@ -1218,7 +1218,12 @@ let spinnerTimeout = null;
 let animationTime = 300
 
 function showSpinner(stringKey = 'Loading') {
-  const text = isEmpty(stringKey) ? "Loading" : getString(stringKey || "Loading");
+  let text = isEmpty(stringKey) ? "Loading..." : getString(stringKey || "Loading");
+
+  if (text == ""){
+    text = "Loading"
+  }
+
   const spinner = $("#loadingSpinner");
   const target = $(".spinnerTarget").first(); // Only use the first one if multiple exist
 
