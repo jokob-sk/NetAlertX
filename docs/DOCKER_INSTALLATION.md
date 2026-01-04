@@ -46,8 +46,10 @@ See alternative [docked-compose examples](https://github.com/jokob-sk/NetAlertX/
 
 ### Docker environment variables
 
-| Variable | Description | Example Value |
+| Variable | Description | Example/Default Value |
 | :------------- |:------------------------| -----:|
+| `PUID`      |Runtime UID override  |  `20211` |
+| `PGID`      |Runtime GID override  |  `20211` |
 | `PORT`      |Port of the web interface  |  `20211` |
 | `LISTEN_ADDR`      |Set the specific IP Address for the listener address for the nginx webserver (web interface). This could be useful when using multiple subnets to hide the web interface from all untrusted networks. |  `0.0.0.0` |
 |`LOADED_PLUGINS` | Default [plugins](https://github.com/jokob-sk/NetAlertX/blob/main/docs/PLUGINS.md) to load. Plugins cannot be loaded with `APP_CONF_OVERRIDE`, you need to use this variable instead and then specify the plugins settings with `APP_CONF_OVERRIDE`. |  `["PIHOLE","ASUSWRT"]` |
