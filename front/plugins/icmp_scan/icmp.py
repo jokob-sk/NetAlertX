@@ -6,6 +6,7 @@ import os
 import subprocess
 import sys
 import re
+import ipaddress
 
 # Register NetAlertX directories
 INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
@@ -155,7 +156,7 @@ def execute_ping(timeout, args, all_devices, regex_pattern, plugin_objects):
                     secondaryId = device['devLastIP'],
                     watched1    = device['devName'],
                     watched2    = output.replace('\n', ''),
-                    watched3    = '',
+                    watched3    = 'ping',  # mode
                     watched4    = '',
                     extra       = '',
                     foreignKey  = device['devMac']
@@ -174,23 +175,48 @@ def execute_ping(timeout, args, all_devices, regex_pattern, plugin_objects):
 
 def execute_fping(timeout, args, all_devices, plugin_objects, subnets, interfaces, fakeMac):
     """
-    Run fping command and return alive IPs.
+    Run fping command and return alive IPs (IPv4 and IPv6).
     Handles:
       - fping exit code 1 (some hosts unreachable)
-      - Mixed subnets and known IPs
-      - Synology quirks
+      - Mixed subnets, known IPs, and IPv6
+      - Automatic CIDR subnet expansion
     """
 
     device_map = {d["devLastIP"]: d for d in all_devices if d.get("devLastIP")}
     known_ips = list(device_map.keys())
-    online_ips = []
+    online_results = []  # list of tuples (ip, full_line)
 
-    # Function to run fping for a list of targets
+    # Regex patterns
+    ipv4_pattern = r'\d{1,3}(?:\.\d{1,3}){3}'
+    ipv6_pattern = r'([0-9a-fA-F:]+)'
+    ip_pattern = f'{ipv4_pattern}|{ipv6_pattern}'
+    ip_regex = re.compile(ip_pattern)
+
+    def expand_subnets(targets):
+        """Expand CIDR subnets to list of IPs if needed."""
+        expanded = []
+        for t in targets:
+            t = t.strip()
+            if "/" in t:
+                try:
+                    net = ipaddress.ip_network(t, strict=False)
+                    expanded.extend([str(ip) for ip in net.hosts()])
+                except ValueError:
+                    expanded.append(t)
+            else:
+                expanded.append(t)
+        return expanded
+
     def run_fping(targets):
+        targets = expand_subnets(targets)
         if not targets:
             return []
 
+        is_ipv6 = any(':' in t for t in targets)
         cmd = ["fping", "-a"] + args.split() + targets
+        if is_ipv6:
+            cmd.insert(1, "-6")  # insert -6 after "fping"
+
         if interfaces:
             cmd += ["-I", ",".join(interfaces)]
 
@@ -204,35 +230,59 @@ def execute_fping(timeout, args, all_devices, plugin_objects, subnets, interface
                 text=True
             )
         except subprocess.CalledProcessError as e:
-            # fping returns 1 if some hosts are down – alive hosts are still in e.output
             output = e.output
-            mylog("verbose", [f"[{pluginName}] fping returned non-zero exit code, reading alive hosts anyway"])
-
+            mylog("none", [f"[{pluginName}] fping returned non-zero exit code, reading alive hosts anyway"])
         except subprocess.TimeoutExpired:
-            mylog("verbose", [f"[{pluginName}] fping timeout"])
+            mylog("none", [f"[{pluginName}] fping timeout"])
             return []
 
-        return [line.strip() for line in output.splitlines() if line.strip()]
+        results = []
+        for line in output.splitlines():
+            line = line.strip()
+            if not line:
+                continue
 
-    # First scan subnets
-    online_ips += run_fping(subnets)
+            # Skip unreachable, timed out, or 100% packet loss
+            if "unreachable" in line.lower() or "timed out" in line.lower() or "100% loss" in line.lower():
+                mylog("debug", [f"[{pluginName}] fping skipping {line}"])
+                continue
 
-    # Then scan known IPs
-    online_ips += run_fping(known_ips)
+            match = ip_regex.search(line)
+            if match:
+                ip = match.group(0)
+                mylog("debug", [f"[{pluginName}] adding {ip} from {line}"])
+                results.append((ip, line))
+            else:
+                mylog("verbose", [f"[{pluginName}] fping non-parseable {line}"])
 
-    # Remove duplicates
-    online_ips = list(set(online_ips))
+        return results
+
+    # Scan subnets
+    mylog("verbose", [f"[{pluginName}] run_fping: subnets {subnets}"])
+    online_results += run_fping(subnets)
+
+    # Scan known IPs
+    mylog("verbose", [f"[{pluginName}] run_fping: known_ips {known_ips}"])
+    online_results += run_fping(known_ips)
+
+    # Remove duplicates by IP
+    seen = set()
+    online_results_unique = []
+    for ip, full_line in online_results:
+        if ip not in seen:
+            seen.add(ip)
+            online_results_unique.append((ip, full_line))
 
     # Process all online IPs
-    for onlineIp in online_ips:
+    for onlineIp, full_line in online_results_unique:
         if onlineIp in device_map:
             device = device_map[onlineIp]
             plugin_objects.add_object(
                 primaryId   = device['devMac'],
                 secondaryId = device['devLastIP'],
                 watched1    = device['devName'],
-                watched2    = 'mode:fping',
-                watched3    = '',
+                watched2    = full_line,
+                watched3    = 'fping',  # mode
                 watched4    = '',
                 extra       = '',
                 foreignKey  = device['devMac']
@@ -243,8 +293,8 @@ def execute_fping(timeout, args, all_devices, plugin_objects, subnets, interface
                 primaryId   = fakeMacFromIp,
                 secondaryId = onlineIp,
                 watched1    = "(unknown)",
-                watched2    = 'mode:fping',
-                watched3    = '',
+                watched2    = full_line,
+                watched3    = 'fping',  # mode
                 watched4    = '',
                 extra       = '',
                 foreignKey  = fakeMacFromIp
@@ -252,7 +302,8 @@ def execute_fping(timeout, args, all_devices, plugin_objects, subnets, interface
         else:
             mylog('verbose', [f"[{pluginName}] Skipping: {onlineIp}, as new IP and ICMP_FAKE_MAC not enabled"])
 
-    mylog('verbose', [f"[{pluginName}] online_ips: {online_ips}"])
+    # log only the IPs
+    mylog('verbose', [f"[{pluginName}] online_ips: {[ip for ip, _ in online_results_unique]}"])
 
     return plugin_objects
 
