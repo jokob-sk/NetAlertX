@@ -76,6 +76,34 @@
       ]
     },
     {
+      "function": "MODE",
+      "events": ["run"],
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "select", "elementOptions": [], "transformers": [] }
+        ]
+      },
+      "default_value": "ping",
+      "options": [
+        "ping",
+        "fping"
+      ],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Mode"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Selects the ICMP engine to use. <code>ping</code> checks devices individually and works even when the ARP / neighbor cache is empty, but is slower on larger networks. <code>fping</code> scans IP ranges in parallel and is significantly faster, but relies on the system neighbor cache to resolve IP addresses to MAC addresses. For most networks, <code>fping</code> is recommended. The default command arguments <code>ICMP_ARGS</code> are compatible with both modes."
+        }
+      ]
+    },
+    {
       "function": "CMD",
       "type": {
         "dataType": "string",
@@ -115,7 +143,7 @@
           }
         ]
       },
-      "default_value": "-i 0.5 -c 3 -W 4 -w 5",
+      "default_value": "-i 0.5 -c 3 -w 5",
       "options": [],
       "localized": ["name", "description"],
       "name": [
@@ -127,7 +155,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Arguments passed to the <code>ping</code> command. Please be careful modifying these."
+          "string": "Arguments passed to the underlying <code>ping</code> or <code>fping</code> command. The default values are compatible with both modes and work well in most environments. Modify with care, and consult the relevant manual pages if advanced tuning is required."
         }
       ]
     },
@@ -156,6 +184,41 @@
         {
           "language_code": "en_us",
           "string": "REGEX to specify which IPs are included in the scan. Examples: <code>192.168.1.*|10.0.0.1|172.16.5.*</code> (specific IPs or ranges). Use <code>.*</code> to include all IPs."
+        }
+      ]
+    },
+    {
+      "function": "FAKE_MAC",
+      "type": {
+        "dataType": "boolean",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "type": "checkbox"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": false,
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Fake MAC"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "If enabled and the mode is set to <code>fping</code>, the plugin will also discover new devices not already in the database. Enabling this setting generates a fake MAC address from the IP address to track devices. This may cause inconsistencies if IPs change or devices are re-discovered with a different MAC. Static IPs are recommended. Device type and icon might not be detected correctly, and some plugins may fail if they rely on a valid MAC address. When unchecked, devices without a MAC address are skipped."
         }
       ]
     },

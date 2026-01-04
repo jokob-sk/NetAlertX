@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# 🛑 Important: This is only used for the bare-metal install 🛑 
+# 🛑 Important: This is only used for the bare-metal install 🛑
 
 echo "---------------------------------------------------------"
 echo "[INSTALL] Starting NetAlertX installation for Ubuntu"
@@ -34,7 +34,7 @@ ALWAYS_FRESH_INSTALL=false  # Set to true to always reset /config and /db on eac
 
 # Check if script is run as root
 if [[ $EUID -ne 0 ]]; then
-    echo "[INSTALL] This script must be run as root. Please use 'sudo'." 
+    echo "[INSTALL] This script must be run as root. Please use 'sudo'."
     exit 1
 fi
 
@@ -62,7 +62,7 @@ apt-get install -y --no-install-recommends \
 
 # Install plugin dependencies
 apt-get install -y --no-install-recommends \
-  dnsutils mtr arp-scan snmp iproute2 nmap zip usbutils traceroute nbtscan avahi-daemon avahi-utils
+  dnsutils mtr arp-scan snmp iproute2 nmap fping zip usbutils traceroute nbtscan avahi-daemon avahi-utils
 
 # nginx-core install nginx and nginx-common as dependencies
 apt-get install -y --no-install-recommends \
@@ -156,14 +156,14 @@ python3 -m venv "${VENV_DIR}"
 source "${VENV_DIR}/bin/activate"
 
 if [[ ! -f "${REQUIREMENTS_FILE}" ]]; then
-  echo "[INSTALL] requirements.txt not found at ${REQUIREMENTS_FILE}"  
-  exit 1  
+  echo "[INSTALL] requirements.txt not found at ${REQUIREMENTS_FILE}"
+  exit 1
 fi
 
-pip3 install -r "${REQUIREMENTS_FILE}" || {  
-  echo "[INSTALL] Failed to install Python dependencies"  
-  exit 1  
-}  
+pip3 install -r "${REQUIREMENTS_FILE}" || {
+  echo "[INSTALL] Failed to install Python dependencies"
+  exit 1
+}
 
 
 # We now should have all dependencies and files in place
@@ -179,11 +179,11 @@ fi
 
 
 # if custom variables not set we do not need to do anything
-if [ -n "${TZ}" ]; then    
-  FILECONF=${INSTALL_DIR}/config/${CONF_FILE} 
+if [ -n "${TZ}" ]; then
+  FILECONF=${INSTALL_DIR}/config/${CONF_FILE}
   if [ -f "$FILECONF" ]; then
     sed -i -e "s|Europe/Berlin|${TZ}|g" "${INSTALL_DIR}/config/${CONF_FILE}"
-  else 
+  else
     sed -i -e "s|Europe/Berlin|${TZ}|g" "${INSTALL_DIR}/back/${CONF_FILE}.bak"
   fi
 fi
@@ -253,7 +253,7 @@ else
   if [ -f "${SYSTEM_SERVICES}/update_vendors.sh" ]; then
     "${SYSTEM_SERVICES}/update_vendors.sh"
   else
-    echo "[INSTALL] update_vendors.sh script not found in ${SYSTEM_SERVICES}."    
+    echo "[INSTALL] update_vendors.sh script not found in ${SYSTEM_SERVICES}."
   fi
 fi
 
@@ -282,12 +282,12 @@ touch "${INSTALL_DIR}"/api/user_notifications.json
 mkdir -p "${INSTALL_DIR}"/log/plugins
 
 
-# DANGER ZONE: ALWAYS_FRESH_INSTALL 
+# DANGER ZONE: ALWAYS_FRESH_INSTALL
 if [ "${ALWAYS_FRESH_INSTALL}" = true ]; then
   echo "[INSTALL] ❗ ALERT /db and /config folders are cleared because the ALWAYS_FRESH_INSTALL is set to: ${ALWAYS_FRESH_INSTALL}❗"
   # Delete content of "/config/"
   rm -rf "${INSTALL_DIR}/config/"*
-  
+
   # Delete content of "/db/"
   rm -rf "${INSTALL_DIR}/db/"*
 fi
