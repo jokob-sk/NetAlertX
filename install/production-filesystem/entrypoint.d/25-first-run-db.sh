@@ -4,7 +4,6 @@
 
 set -eu
 
-YELLOW=$(printf '\033[1;33m')
 CYAN=$(printf '\033[1;36m')
 RED=$(printf '\033[1;31m')
 RESET=$(printf '\033[0m')

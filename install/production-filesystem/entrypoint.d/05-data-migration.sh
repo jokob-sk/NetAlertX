@@ -1,5 +1,28 @@
 #!/bin/sh
-# 01-data-migration.sh - consolidate legacy /app mounts into /data
+# 05-data-migration.sh - Consolidate legacy /app mounts into /data
+#
+# This script migrates NetAlertX data from legacy mount points (/app/config and /app/db)
+# to the new consolidated /data directory. It runs during container startup as part of the
+# entrypoint process.
+#
+# Function:
+# - Checks for existing migration markers to avoid re-migration.
+# - Detects if legacy directories are mounted.
+# - Ensures the new /data directory is mounted.
+# - Copies configuration and database files from legacy paths to /data.
+# - Sets migration markers in legacy directories to prevent future migrations.
+# - Provides warnings and errors for various mount states.
+#
+# Migration Conditions:
+# - Both /app/config and /app/db must be mounted (legacy mounts present).
+# - /data must be mounted (new consolidated volume).
+# - No .migration marker files exist in legacy directories (not already migrated).
+#
+# Exit Codes:
+# - 0: Success, no action needed, or migration completed.
+# - 1: Migration failure (e.g., copy errors).
+#
+# The script exits early with 0 for non-fatal conditions like partial mounts or already migrated.
 
 set -eu
 
@@ -37,7 +60,7 @@ EOF
     >&2 printf "%s" "${RESET}"
 }
 
-fatal_missing_data_mount() {
+possibly_fatal_missing_data_mount() {   # Fatal if read-only mode, data loss if not. 
     >&2 printf "%s" "${RED}"
     >&2 cat <<EOF
 ══════════════════════════════════════════════════════════════════════════════
@@ -137,8 +160,11 @@ EOF
 fi
 
 if ! ${DATA_MOUNTED}; then
-    fatal_missing_data_mount
-    exit 1
+    # Warn about missing /data mount. Migration cannot proceed, but we allow container
+    # startup to continue. Data written to /data will be ephemeral, though legacy
+    # mount data remains safe and accessible.
+    possibly_fatal_missing_data_mount
+    exit 0
 fi
 
 migrate_legacy_mounts || exit 1

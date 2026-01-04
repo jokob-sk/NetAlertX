@@ -1,20 +1,20 @@
 services:
   netalertx:
-    # Writable container configuration with tmpfs mounts for performance testing
+    # Missing NET_ADMIN capability configuration for testing
     network_mode: ${NETALERTX_NETWORK_MODE:-host}
     build:
       context: ../../../
       dockerfile: Dockerfile
     image: netalertx-test
-    container_name: netalertx-test-writable
-    read_only: false
+    container_name: netalertx-test-missing-net-admin
+    read_only: true
     cap_drop:
       - ALL
     cap_add:
       - CHOWN
-      - NET_ADMIN
       - NET_RAW
       - NET_BIND_SERVICE
+      # Missing NET_ADMIN
 
     volumes:
       - type: volume
@@ -27,14 +27,10 @@ services:
         target: /etc/localtime
         read_only: true
 
-    # tmpfs mount aligns with simplified runtime layout to simulate production read-only container with adversarial root filesystem
-    tmpfs:
-      - "/tmp:uid=0,gid=0,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
-
     environment:
       LISTEN_ADDR: ${LISTEN_ADDR:-0.0.0.0}
       PORT: ${PORT:-20211}
-      APP_CONF_OVERRIDE: ${GRAPHQL_PORT:-20212}
+      GRAPHQL_PORT: ${GRAPHQL_PORT:-20212}
       ALWAYS_FRESH_INSTALL: ${ALWAYS_FRESH_INSTALL:-false}
       NETALERTX_DEBUG: ${NETALERTX_DEBUG:-0}
 
@@ -47,8 +43,6 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
-
-    restart: unless-stopped
 
 volumes:
   netalertx_data:

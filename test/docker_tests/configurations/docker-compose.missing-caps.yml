@@ -28,6 +28,33 @@ services:
       APP_CONF_OVERRIDE: ${GRAPHQL_PORT:-20212}
       ALWAYS_FRESH_INSTALL: ${ALWAYS_FRESH_INSTALL:-false}
       NETALERTX_DEBUG: ${NETALERTX_DEBUG:-0}
+      # Environment variable: NETALERTX_CHECK_ONLY
+      # 
+      # Purpose: Enables check-only mode for container startup diagnostics and capability testing.
+      # 
+      # When set to 1 (enabled):
+      # - Container runs all startup checks and prints diagnostic information
+      # - Services are NOT started (container exits after checks complete)
+      # - Useful for testing configurations, auditing capabilities, or troubleshooting
+      # 
+      # When set to 0 (disabled):
+      # - Normal operation: container starts all services after passing checks
+      # 
+      # Default: 1 in this compose file (check-only mode for testing)
+      # Production default: 0 (full startup)
+      # 
+      # Automatic behavior:
+      # - May be automatically set by root-entrypoint.sh when privilege drop fails
+      # - Triggers immediate exit path in entrypoint.sh after diagnostic output
+      # 
+      # Usage examples:
+      #   NETALERTX_CHECK_ONLY: 0  # Normal startup with services
+      #   NETALERTX_CHECK_ONLY: 1  # Check-only mode (exits after diagnostics)
+      # 
+      # Troubleshooting:
+      # If container exits immediately after startup checks, verify this variable is set to 0
+      # for production deployments. Check container logs for diagnostic output from startup checks.
+      NETALERTX_CHECK_ONLY: ${NETALERTX_CHECK_ONLY:-1}
 
     mem_limit: 2048m
     mem_reservation: 1024m

@@ -1,22 +1,24 @@
 services:
   netalertx:
-  #use an environmental variable to set host networking mode if needed
-    network_mode: ${NETALERTX_NETWORK_MODE:-host}   # Use host networking for ARP scanning and other services
+    network_mode: host   # Use host networking for ARP scanning and other services
     build:
       context: .                                    # Build context is the current directory
       dockerfile: Dockerfile                        # Specify the Dockerfile to use
     image: netalertx:latest
     container_name: netalertx                       # The name when you docker contiainer ls
     read_only: true                                 # Make the container filesystem read-only
-    # Runtime user is configurable; defaults align with image build args
-    user: "${NETALERTX_UID:-20211}:${NETALERTX_GID:-20211}"
+    
+    # It is most secure to start with user 20211, but then we lose provisioning capabilities.
+    # user: "${NETALERTX_UID:-20211}:${NETALERTX_GID:-20211}"
     cap_drop:                                       # Drop all capabilities for enhanced security
       - ALL
     cap_add:                                        # Add only the necessary capabilities
-      - NET_ADMIN                                   # Required for ARP scanning
-      - NET_RAW                                     # Required for raw socket operations
-      - NET_BIND_SERVICE                            # Required to bind to privileged ports (nbtscan)
-
+      - NET_ADMIN                                   # Required for scanning with arp-scan, nmap, nbtscan, traceroute, and zero-conf
+      - NET_RAW                                     # Required for raw socket operations with arp-scan, nmap, nbtscan, traceroute and zero-conf
+      - NET_BIND_SERVICE                            # Required to bind to privileged ports with nbtscan
+      - CHOWN                                       # Required for root-entrypoint to chown /data + /tmp before dropping privileges
+      - SETUID                                      # Required for root-entrypoint to switch to non-root user
+      - SETGID                                      # Required for root-entrypoint to switch to non-root group                  
     volumes:
 
       - type: volume                                # Persistent Docker-managed Named Volume for storage
@@ -37,22 +39,23 @@ services:
         target: /etc/localtime
         read_only: true
 
-  # Use a custom Enterprise-configured nginx config for ldap or other settings
-  # - /custom-enterprise.conf:/tmp/nginx/active-config/netalertx.conf:ro
+    # Use a custom Enterprise-configured nginx config for ldap or other settings
+    # - /custom-enterprise.conf:/tmp/nginx/active-config/netalertx.conf:ro
 
-      # Test your plugin on the production container
-      # - /path/on/host:/app/front/plugins/custom
+    # Test your plugin on the production container
+    # - /path/on/host:/app/front/plugins/custom
 
-  # Retain logs - comment out tmpfs /tmp/log if you want to retain logs between container restarts
-  # - /path/on/host/log:/tmp/log
+    # Retain logs - comment out tmpfs /tmp/log if you want to retain logs between container restarts
+    # - /path/on/host/log:/tmp/log
 
     # tmpfs mounts for writable directories in a read-only container and improve system performance
     # All writes now live under /tmp/* subdirectories which are created dynamically by entrypoint.d scripts
-    # uid=20211 and gid=20211 is the netalertx user inside the container
-    # mode=1700 gives rwx------ permissions to the netalertx user only
+    # mode=1700 gives rwx------ permissions; ownership is set by /root-entrypoint.sh
     tmpfs:
-      - "/tmp:uid=${NETALERTX_UID:-20211},gid=${NETALERTX_GID:-20211},mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      - "/tmp:mode=1700,uid=0,gid=0,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
     environment:
+      PUID: ${NETALERTX_UID:-20211}                             # Runtime UID after priming (Synology/no-copy-up safe)
+      PGID: ${NETALERTX_GID:-20211}                             # Runtime GID after priming (Synology/no-copy-up safe)
       LISTEN_ADDR: ${LISTEN_ADDR:-0.0.0.0}                      # Listen for connections on all interfaces
       PORT: ${PORT:-20211}                                      # Application port
       GRAPHQL_PORT: ${GRAPHQL_PORT:-20212}                      # GraphQL API port

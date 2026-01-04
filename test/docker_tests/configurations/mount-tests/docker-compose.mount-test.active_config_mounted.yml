@@ -13,6 +13,7 @@ services:
     cap_drop:
       - ALL
     cap_add:
+      - CHOWN
       - NET_ADMIN
       - NET_RAW
       - NET_BIND_SERVICE
@@ -34,7 +35,7 @@ services:
         target: /tmp/nginx/active-config
         read_only: false
     tmpfs:
-      - "/tmp:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      - "/tmp:mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
 volumes:
   test_netalertx_data:
   test_system_services_active_config:

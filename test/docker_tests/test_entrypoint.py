@@ -19,6 +19,7 @@ def _run_entrypoint(env: dict[str, str] | None = None, check_only: bool = True) 
         "docker", "run", "--rm", "--name", name,
         "--network", "host", "--userns", "host",
         "--tmpfs", "/tmp:mode=777",
+        "--cap-add", "CHOWN",
         "--cap-add", "NET_RAW", "--cap-add", "NET_ADMIN", "--cap-add", "NET_BIND_SERVICE",
     ]
     if env:
@@ -28,7 +29,7 @@ def _run_entrypoint(env: dict[str, str] | None = None, check_only: bool = True) 
         cmd.extend(["-e", "NETALERTX_CHECK_ONLY=1"])
     cmd.extend([
         "--entrypoint", "/bin/sh", IMAGE, "-c",
-        "sh /entrypoint.sh"
+        "sh /root-entrypoint.sh"
     ])
     return subprocess.run(cmd, capture_output=True, text=True, timeout=30)
 

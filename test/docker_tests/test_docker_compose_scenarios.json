@@ -1,0 +1,495 @@
+{
+  "tests": [
+    {
+      "file": "conftest.py",
+      "testname": "build_netalertx_test_image",
+      "conditions": "normal",
+      "expected_results": [
+        "* Docker test image 'netalertx-test' is built using docker buildx before any docker-based tests run",
+        "* If docker buildx fails, all docker tests are skipped with failure message"
+      ]
+    },
+    {
+      "file": "test_container_environment.py",
+      "testname": "test_nonroot_custom_uid_logs_note",
+      "conditions": [
+        "* Container run with arbitrary non-root UID/GID (1001:1001 or 1502:1502)",
+        "* Fresh named volume at /data"
+      ],
+      "expected_results": [
+        "* Container logs message about current UID/GID",
+        "* Log contains 'expected UID' guidance",
+        "* Container exits with returncode 0"
+      ]
+    },
+    {
+      "file": "test_container_environment.py",
+      "testname": "test_missing_capabilities_triggers_warning",
+      "conditions": [
+        "* All capabilities dropped (cap_drop: ALL)",
+        "* No NET_ADMIN, NET_RAW, NET_BIND_SERVICE"
+      ],
+      "expected_results": [
+        "* 'exec /bin/sh: operation not permitted' error in output",
+        "* Non-zero return code"
+      ]
+    },
+    {
+      "file": "test_container_environment.py",
+      "testname": "test_running_as_root_is_blocked",
+      "conditions": [
+        "* Container run as user: 0 (root)"
+      ],
+      "expected_results": [
+        "* Warning 'NetAlertX is running as ROOT' in output",
+        "* Message 'Permissions fixed for read-write paths.' in output",
+        "* Container exits with returncode 0 (warns but continues)"
+      ]
+    },
+    {
+      "file": "test_container_environment.py",
+      "testname": "test_missing_host_network_warns",
+      "conditions": [
+        "* Container run without network_mode: host (bridge/default network)"
+      ],
+      "expected_results": [
+        "* Warning 'not running with --network=host' in output"
+      ]
+    },
+    {
+      "file": "test_container_environment.py",
+      "testname": "test_missing_app_conf_triggers_seed",
+      "conditions": [
+        "* Fresh named volume with no app.conf file"
+      ],
+      "expected_results": [
+        "* 'Default configuration written to' message in output",
+        "* Container exits with returncode 0"
+      ]
+    },
+    {
+      "file": "test_container_environment.py",
+      "testname": "test_missing_app_db_triggers_seed",
+      "conditions": [
+        "* Named volume with app.conf but no app.db file"
+      ],
+      "expected_results": [
+        "* Database file /data/db/app.db is created",
+        "* Container exits with returncode 0"
+      ]
+    },
+    {
+      "file": "test_container_environment.py",
+      "testname": "test_custom_port_without_writable_conf",
+      "conditions": [
+        "* Custom PORT=24444 and LISTEN_ADDR=127.0.0.1 environment variables set",
+        "* Nginx config mount (/tmp/nginx/active-config) is read-only (mode=500)"
+      ],
+      "expected_results": [
+        "* 'Unable to write to' message in output",
+        "* Reference to '/tmp/nginx/active-config/netalertx.conf' in output",
+        "* Non-zero return code"
+      ]
+    },
+    {
+      "file": "test_container_environment.py",
+      "testname": "test_excessive_capabilities_warning",
+      "conditions": [
+        "* Container run with extra capabilities beyond required (SYS_ADMIN, NET_BROADCAST)"
+      ],
+      "expected_results": [
+        "* 'Excessive capabilities detected' message in output",
+        "* 'bounding caps:' list in output"
+      ]
+    },
+    {
+      "file": "test_container_environment.py",
+      "testname": "test_appliance_integrity_read_write_mode",
+      "conditions": [
+        "* Container root filesystem is read-write (not read-only mode)"
+      ],
+      "expected_results": [
+        "* 'Container is running as read-write, not in read-only mode' warning in output"
+      ]
+    },
+    {
+      "file": "test_container_environment.py",
+      "testname": "test_zero_permissions_app_db_dir",
+      "conditions": [
+        "* /data/db directory has chmod 000 (no permissions)"
+      ],
+      "expected_results": [
+        "* Mounts table shows ❌ for writeable status on /data/db",
+        "* 'Configuration issues detected' message in output",
+        "* Non-zero return code"
+      ]
+    },
+    {
+      "file": "test_container_environment.py",
+      "testname": "test_zero_permissions_app_config_dir",
+      "conditions": [
+        "* /data/config directory has chmod 000 (no permissions)"
+      ],
+      "expected_results": [
+        "* Mounts table shows ❌ for writeable status on /data/config",
+        "* 'Configuration issues detected' message in output",
+        "* Non-zero return code"
+      ]
+    },
+    {
+      "file": "test_container_environment.py",
+      "testname": "test_mandatory_folders_creation",
+      "conditions": [
+        "* Plugins log directory (/tmp/log/plugins) is missing"
+      ],
+      "expected_results": [
+        "* 'Creating Plugins log' message in output",
+        "* Mandatory folders are automatically created"
+      ]
+    },
+    {
+      "file": "test_container_environment.py",
+      "testname": "test_writable_config_validation",
+      "conditions": [
+        "* app.conf is a directory instead of a regular file"
+      ],
+      "expected_results": [
+        "* 'ATTENTION: Path is not a regular file.' warning in output"
+      ]
+    },
+    {
+      "file": "test_container_environment.py",
+      "testname": "test_mount_analysis_ram_disk_performance",
+      "conditions": [
+        "* Persistent paths (/data/db, /data/config) mounted on tmpfs RAM disk"
+      ],
+      "expected_results": [
+        "* Mounts table shows ✅ writeable, ✅ mount, ❌ ramdisk, ❌ dataloss for db and config paths",
+        "* 'Configuration issues detected' message in output",
+        "* Non-zero return code"
+      ]
+    },
+    {
+      "file": "test_container_environment.py",
+      "testname": "test_mount_analysis_dataloss_risk",
+      "conditions": [
+        "* Persistent database/config paths mounted on non-persistent tmpfs filesystem"
+      ],
+      "expected_results": [
+        "* Mounts table shows dataloss risk warnings for persistent paths",
+        "* 'Configuration issues detected' message in output",
+        "* Non-zero return code"
+      ]
+    },
+    {
+      "file": "test_container_environment.py",
+      "testname": "test_restrictive_permissions_handling",
+      "conditions": [
+        "* Directory mounted with restrictive permissions (root:root, 755)"
+      ],
+      "expected_results": [
+        "* Non-root user case: fails to write or shows 'Permission denied'/'Unable to write'",
+        "* Root user case: 'NetAlertX is running as ROOT' and 'Permissions fixed for read-write paths' messages",
+        "* After root fix: netalertx user can write to directory"
+      ]
+    },
+    {
+      "file": "test_docker_compose_scenarios.py",
+      "testname": "test_missing_capabilities_compose",
+      "conditions": [
+        "* Docker compose with cap_drop: ALL (all capabilities dropped)",
+        "* Uses docker-compose.missing-caps.yml"
+      ],
+      "expected_results": [
+        "* 'exec /root-entrypoint.sh: operation not permitted' error in output",
+        "* Non-zero return code"
+      ]
+    },
+    {
+      "file": "test_docker_compose_scenarios.py",
+      "testname": "test_custom_port_with_unwritable_nginx_config_compose",
+      "conditions": [
+        "* Custom PORT=24444 environment variable",
+        "* Unwritable nginx config mount",
+        "* Uses docker-compose.mount-test.active_config_unwritable.yml"
+      ],
+      "expected_results": [
+        "* 'unable to write' or 'nginx' message in output",
+        "* 'failed to chown' message in output",
+        "* 'cap_chown' reference in output",
+        "* 'missing-capabilities.md' documentation link in output",
+        "* Container exits with returncode 0 (warns but continues)"
+      ]
+    },
+    {
+      "file": "test_docker_compose_scenarios.py",
+      "testname": "test_host_network_compose",
+      "conditions": "normal",
+      "expected_results": [
+        "* Container starts successfully with host networking",
+        "* No 'not running with --network=host' warning",
+        "* Container exits with returncode 0"
+      ]
+    },
+    {
+      "file": "test_docker_compose_scenarios.py",
+      "testname": "test_normal_startup_no_warnings_compose",
+      "conditions": "normal",
+      "expected_results": [
+        "* 'Startup pre-checks' message in output",
+        "* No ❌ symbols in output",
+        "* /data row in mounts table shows ✅ for readable and writeable",
+        "* No 'Write permission denied' message",
+        "* No 'CRITICAL' messages",
+        "* No ⚠️ warning symbols",
+        "* No 'arning' or 'rror' text (case insensitive partial match for Warning/Error)"
+      ]
+    },
+    {
+      "file": "test_docker_compose_scenarios.py",
+      "testname": "test_ram_disk_mount_analysis_compose",
+      "conditions": [
+        "* /data path mounted as tmpfs (RAM disk)",
+        "* Persistent data on non-persistent storage"
+      ],
+      "expected_results": [
+        "* 'Configuration issues detected' message in output",
+        "* /data path appears in mounts table",
+        "* Non-zero return code due to dataloss risk"
+      ]
+    },
+    {
+      "file": "test_docker_compose_scenarios.py",
+      "testname": "test_dataloss_risk_mount_analysis_compose",
+      "conditions": [
+        "* Persistent /data path mounted on tmpfs with uid=20211,gid=20211",
+        "* Non-persistent filesystem for persistent data"
+      ],
+      "expected_results": [
+        "* 'Configuration issues detected' message in output",
+        "* /data path appears in output",
+        "* Non-zero return code due to dataloss risk"
+      ]
+    },
+    {
+      "file": "test_entrypoint.py",
+      "testname": "test_skip_tests_env_var",
+      "conditions": [
+        "* SKIP_TESTS=1 environment variable set"
+      ],
+      "expected_results": [
+        "* 'Skipping startup checks as SKIP_TESTS is set.' message in stdout",
+        "* No ' --> ' check output markers",
+        "* Container exits with returncode 0"
+      ]
+    },
+    {
+      "file": "test_entrypoint.py",
+      "testname": "test_app_conf_override_from_graphql_port",
+      "conditions": [
+        "* GRAPHQL_PORT=20212 environment variable set",
+        "* APP_CONF_OVERRIDE is not set",
+        "* SKIP_TESTS=1 to skip checks"
+      ],
+      "expected_results": [
+        "* 'APP_CONF_OVERRIDE detected' message in stderr",
+        "* No 'Setting APP_CONF_OVERRIDE to' message in stdout",
+        "* Container exits with returncode 0"
+      ]
+    },
+    {
+      "file": "test_entrypoint.py",
+      "testname": "test_app_conf_override_not_overridden",
+      "conditions": [
+        "* Both GRAPHQL_PORT=20212 and APP_CONF_OVERRIDE={\"OTHER\":\"value\"} set",
+        "* SKIP_TESTS=1 to skip checks"
+      ],
+      "expected_results": [
+        "* No 'Setting APP_CONF_OVERRIDE to' message (existing override preserved)",
+        "* Container exits with returncode 0"
+      ]
+    },
+    {
+      "file": "test_entrypoint.py",
+      "testname": "test_no_app_conf_override_when_no_graphql_port",
+      "conditions": [
+        "* GRAPHQL_PORT is not set",
+        "* SKIP_TESTS=1 to skip checks"
+      ],
+      "expected_results": [
+        "* No 'Setting APP_CONF_OVERRIDE to' message",
+        "* Container exits with returncode 0"
+      ]
+    },
+    {
+      "file": "test_mount_diagnostics_pytest.py",
+      "testname": "test_mount_diagnostic",
+      "conditions": [
+        "* Parameterized test for each mount configuration scenario",
+        "* Scenarios: no-mount, ramdisk, mounted, unwritable for each path (db, config, api, log, run, active_config)",
+        "* Additional noread scenarios: data_noread, db_noread, tmp_noread, api_noread"
+      ],
+      "expected_results": [
+        "* For issue scenarios: diagnostic table shows appropriate ❌/✅/➖ symbols",
+        "* For issue scenarios: troubleshooting URL present in output",
+        "* For issue scenarios: ⚠️ warning symbol in output",
+        "* For good config scenarios: table output with 'Path' header",
+        "* For good config scenarios: no ⚠️ warning symbol",
+        "* Container exit code matches expected (usually 0)"
+      ]
+    },
+    {
+      "file": "test_mount_diagnostics_pytest.py",
+      "testname": "test_table_parsing",
+      "conditions": "normal",
+      "expected_results": [
+        "* parse_mount_table correctly parses sample mount diagnostic table",
+        "* assert_table_row correctly validates row values",
+        "* ✅=True, ❌=False, ➖=None emoji mapping works"
+      ]
+    },
+    {
+      "file": "test_mount_diagnostics_pytest.py",
+      "testname": "test_cap_chown_required_when_caps_dropped",
+      "conditions": [
+        "* CAP_CHOWN capability is missing",
+        "* Uses docker-compose.mount-test.cap_chown_missing.yml"
+      ],
+      "expected_results": [
+        "* Container continues with warnings (exit code 0)",
+        "* 'failed to chown' message in logs",
+        "* 'CAP_CHOWN' reference in logs",
+        "* Troubleshooting URL present in logs"
+      ]
+    },
+    {
+      "file": "test_ports_available.py",
+      "testname": "test_ports_available_normal_case",
+      "conditions": [
+        "* PORT=99991 and GRAPHQL_PORT=99992 (non-conflicting, unused ports)"
+      ],
+      "expected_results": [
+        "* No 'Configuration Warning: Both ports are set to' message",
+        "* No 'Port Warning: Application port' message",
+        "* No 'Port Warning: GraphQL API port' message",
+        "* Container exits with returncode 0"
+      ]
+    },
+    {
+      "file": "test_ports_available.py",
+      "testname": "test_ports_conflict_same_number",
+      "conditions": [
+        "* PORT=20211 and GRAPHQL_PORT=20211 (both set to same port)"
+      ],
+      "expected_results": [
+        "* 'Configuration Warning: Both ports are set to 20211' message",
+        "* 'The Application port ($PORT) and the GraphQL API port' message",
+        "* 'are configured to use the' and 'same port. This will cause a conflict.' messages",
+        "* Container exits with returncode 0 (warns but continues)"
+      ]
+    },
+    {
+      "file": "test_ports_available.py",
+      "testname": "test_ports_in_use_warning",
+      "conditions": [
+        "* Dummy container already occupying ports 20211 and 20212",
+        "* PORT=20211 and GRAPHQL_PORT=20212 configured"
+      ],
+      "expected_results": [
+        "* 'Port Warning: Application port 20211 is already in use' message",
+        "* 'Port Warning: GraphQL API port 20212 is already in use' message",
+        "* Container exits with returncode 0 (warns but continues)"
+      ]
+    },
+    {
+      "file": "test_puid_pgid.py",
+      "testname": "test_default_puid_pgid_ok",
+      "conditions": [
+        "* SKIP_TESTS=1 to skip startup checks",
+        "* Default PUID/PGID values"
+      ],
+      "expected_results": [
+        "* Container exits with returncode 0"
+      ]
+    },
+    {
+      "file": "test_puid_pgid.py",
+      "testname": "test_invalid_puid_pgid_rejected",
+      "conditions": [
+        "* Various invalid PUID/PGID values:",
+        "  - PUID='0;rm -rf /' (shell injection attempt)",
+        "  - PUID='$(id)' (command substitution attempt)",
+        "  - PUID='-1' (negative value)",
+        "  - PUID='99999999' (out of range)",
+        "  - PGID='99999999' (out of range)"
+      ],
+      "expected_results": [
+        "* Non-zero return code",
+        "* 'invalid characters' or 'out of range' message in output depending on test case"
+      ]
+    },
+    {
+      "file": "test_puid_pgid.py",
+      "testname": "test_legacy_user_mode_skips_puid_pgid",
+      "conditions": [
+        "* PUID=1000 and PGID=1000 environment variables set",
+        "* Container run with --user 20211:20211 (legacy mode)"
+      ],
+      "expected_results": [
+        "* 'PUID/PGID (1000:1000) will not be applied' message in output",
+        "* Container exits with returncode 0"
+      ]
+    },
+    {
+      "file": "test_puid_pgid.py",
+      "testname": "test_synology_like_fresh_volume_is_primed",
+      "conditions": [
+        "* Fresh named volume with root-owned directories (simulating Synology behavior)",
+        "* PUID=1000 and PGID=1000 target ownership"
+      ],
+      "expected_results": [
+        "* Container exits with returncode 0",
+        "* Volume ownership changed to 1000:1000 for /data, /data/config, /data/db"
+      ]
+    },
+    {
+      "file": "test_puid_pgid.py",
+      "testname": "test_missing_cap_chown_fails_priming",
+      "conditions": [
+        "* Named volume with UID 1000 ownership",
+        "* PUID=20212, PGID=20212 (needs chown)",
+        "* CAP_CHOWN capability removed"
+      ],
+      "expected_results": [
+        "* Container continues with warnings (exit code 0)",
+        "* 'failed to chown' message in output",
+        "* 'missing-capabilities' reference in output",
+        "* 'docs/docker-troubleshooting/missing-capabilities.md' documentation link"
+      ]
+    },
+    {
+      "file": "test_docker_compose_scenarios.py",
+      "testname": "test_missing_net_admin_compose",
+      "conditions": [
+        "* docker-compose.missing-net-admin.yml",
+        "* Missing NET_ADMIN capability"
+      ],
+      "expected_results": [
+        "* 'Raw network capabilities are missing' warning in output",
+        "* Container exits with returncode 0"
+      ]
+    },
+    {
+      "file": "test_docker_compose_scenarios.py",
+      "testname": "test_missing_net_raw_compose",
+      "conditions": [
+        "* docker-compose.missing-net-raw.yml",
+        "* Missing NET_RAW capability"
+      ],
+      "expected_results": [
+        "* 'Raw network capabilities are missing' warning in output",
+        "* Container exits with returncode 0"
+      ]
+    }
+  ]
+}

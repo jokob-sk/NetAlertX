@@ -22,6 +22,10 @@ COPY .devcontainer/resources/devcontainer-overlay/ /
 USER root
 # Install common tools, create user, and set up sudo
 
+# Ensure entrypoint scripts stay executable in the devcontainer (avoids 126 errors)
+RUN chmod +x /entrypoint.sh /root-entrypoint.sh /entrypoint.d/*.sh && \
+    chmod +x /entrypoint.d/35-apply-conf-override.sh
+
 RUN apk add --no-cache git nano vim jq php83-pecl-xdebug py3-pip nodejs sudo gpgconf pytest \
     pytest-cov zsh alpine-zsh-config shfmt github-cli py3-yaml py3-docker-py docker-cli docker-cli-buildx \
     docker-cli-compose shellcheck py3-psutil 
