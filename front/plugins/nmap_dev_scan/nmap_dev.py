@@ -16,7 +16,7 @@ from plugin_helper import Plugin_Objects  # noqa: E402 [flake8 lint suppression]
 from logger import mylog, Logger  # noqa: E402 [flake8 lint suppression]
 from helper import get_setting_value  # noqa: E402 [flake8 lint suppression]
 from const import logPath  # noqa: E402 [flake8 lint suppression]
-from utils.crypto_utils import string_to_mac_hash  # noqa: E402 [flake8 lint suppression]
+from utils.crypto_utils import string_to_fake_mac  # noqa: E402 [flake8 lint suppression]
 import conf  # noqa: E402 [flake8 lint suppression]
 from pytz import timezone  # noqa: E402 [flake8 lint suppression]
 
@@ -159,7 +159,7 @@ def parse_nmap_xml(xml_output, interface, fakeMac):
             if (ip != '' and mac != '') or (ip != '' and fakeMac):
 
                 if mac == '' and fakeMac:
-                    mac = string_to_mac_hash(ip)
+                    mac = string_to_fake_mac(ip)
 
                 devices_list.append({
                     'name': hostname,

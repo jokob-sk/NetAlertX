@@ -11,7 +11,7 @@ sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from const import logPath  # noqa: E402, E261
 from plugin_helper import Plugin_Objects  # noqa: E402, E261
-from utils.crypto_utils import string_to_mac_hash  # noqa: E402 [flake8 lint suppression]
+from utils.crypto_utils import string_to_fake_mac  # noqa: E402 [flake8 lint suppression]
 from logger import mylog, Logger  # noqa: E402, E261
 from helper import get_setting_value  # noqa: E402, E261
 import conf  # noqa: E402, E261
@@ -120,7 +120,7 @@ def main():
 
         if not mac and fake_mac_enabled:
             mylog("verbose", [f"[{pluginName}] Generating FAKE MAC for ip: {ip}"])
-            mac = string_to_mac_hash(ip)
+            mac = string_to_fake_mac(ip)
 
         if not mac:
             # Skip devices without MAC if fake MAC not allowed

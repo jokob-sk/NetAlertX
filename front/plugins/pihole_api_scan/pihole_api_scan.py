@@ -23,7 +23,7 @@ from helper import get_setting_value  # noqa: E402 [flake8 lint suppression]
 from const import logPath  # noqa: E402 [flake8 lint suppression]
 import conf  # noqa: E402 [flake8 lint suppression]
 from pytz import timezone  # noqa: E402 [flake8 lint suppression]
-from utils.crypto_utils import string_to_mac_hash  # noqa: E402 [flake8 lint suppression]
+from utils.crypto_utils import string_to_fake_mac  # noqa: E402 [flake8 lint suppression]
 
 # Setup timezone & logger using standard NAX helpers
 conf.tz = timezone(get_setting_value('TIMEZONE'))
@@ -228,7 +228,7 @@ def gather_device_entries():
 
             # ensure fake mac if enabled
             if PIHOLEAPI_FAKE_MAC and is_mac(tmpMac) is False:
-                tmpMac = string_to_mac_hash(ip)
+                tmpMac = string_to_fake_mac(ip)
 
             entries.append({
                 'mac': tmpMac,

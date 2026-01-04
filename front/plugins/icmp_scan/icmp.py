@@ -16,7 +16,7 @@ from logger import mylog, Logger  # noqa: E402 [flake8 lint suppression]
 from helper import get_setting_value  # noqa: E402 [flake8 lint suppression]
 from const import logPath  # noqa: E402 [flake8 lint suppression]
 from models.device_instance import DeviceInstance  # noqa: E402 [flake8 lint suppression]
-from utils.crypto_utils import string_to_mac_hash  # noqa: E402 [flake8 lint suppression]
+from utils.crypto_utils import string_to_fake_mac  # noqa: E402 [flake8 lint suppression]
 import conf  # noqa: E402 [flake8 lint suppression]
 from pytz import timezone  # noqa: E402 [flake8 lint suppression]
 
@@ -228,7 +228,7 @@ def execute_fping(timeout, args, all_devices, plugin_objects, subnets, interface
             else:
                 mylog("none", [f"[{pluginName}] ERROR reverse device lookup failed unexpectedly for {onlineIp}"])
         elif fakeMac:
-            fakeMacFromIp = string_to_mac_hash(onlineIp)
+            fakeMacFromIp = string_to_fake_mac(onlineIp)
             plugin_objects.add_object(
                 primaryId   = fakeMacFromIp,
                 secondaryId = onlineIp,
