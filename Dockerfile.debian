@@ -4,7 +4,7 @@
 # treat a container as an operating system, which is an anti-pattern and a common source of
 # security issues.
 #
-# The default Dockerfile/docker-compose image contains the following security improvements 
+# The default Dockerfile/docker-compose image contains the following security improvements
 # over the Debian image:
 # - read-only filesystem
 # - no sudo access
@@ -25,7 +25,7 @@
 # - minimal base image (Alpine Linux)
 # - minimal python environment (venv, no pip)
 # - minimal stripped web server
-# - minimal stripped php environment 
+# - minimal stripped php environment
 # - minimal services (nginx, php-fpm, crond, no unnecessary services or service managers)
 # - minimal users and groups (netalertx and readonly only, no others)
 # - minimal permissions (read-only for most files and folders, write-only for necessary folders)
@@ -36,8 +36,8 @@
 # - Uses the same services as the development environment (nginx, php-fpm, crond)
 # - Uses the same environment variables as the development environment (only necessary ones, no others)
 # - Uses the same file and folder structure as the development environment (only necessary ones, no others)
-# NetAlertX is designed to be run as an unattended network security monitoring appliance, which means it 
-# should be able to operate without human intervention. Overall, the hardened image is designed to be as 
+# NetAlertX is designed to be run as an unattended network security monitoring appliance, which means it
+# should be able to operate without human intervention. Overall, the hardened image is designed to be as
 # secure as possible while still being functional and is recommended because you cannot attack a surface
 # that isn't there.
 
@@ -92,7 +92,7 @@ ENV PHP_FPM_CONFIG_FILE=${SYSTEM_SERVICES_PHP_FOLDER}/php-fpm.conf
 
 #Python environment
 ENV PYTHONPATH=${NETALERTX_SERVER}
-ENV PYTHONUNBUFFERED=1 
+ENV PYTHONUNBUFFERED=1
 ENV VIRTUAL_ENV=/opt/venv
 ENV VIRTUAL_ENV_BIN=/opt/venv/bin
 ENV PATH="${VIRTUAL_ENV}/bin:${PATH}:/services"
@@ -107,9 +107,9 @@ ENV NETALERTX_DEBUG=0
 
 #Container environment
 ENV ENVIRONMENT=debian
-ENV USER=netalertx 
+ENV USER=netalertx
 ENV USER_ID=1000
-ENV USER_GID=1000 
+ENV USER_GID=1000
 
 # Todo, figure out why using a workdir instead of full paths don't work
 # Todo, do we still need all these packages? I can already see sudo which isn't needed
@@ -127,16 +127,16 @@ RUN groupadd --gid "${USER_GID}" "${USER}" && \
     usermod -a -G ${USER_GID} root && \
     usermod -a -G ${USER_GID} www-data
 
-COPY --chmod=775 --chown=${USER_ID}:${USER_GID} install/production-filesystem/ /    
+COPY --chmod=775 --chown=${USER_ID}:${USER_GID} install/production-filesystem/ /
 COPY --chmod=775 --chown=${USER_ID}:${USER_GID} . ${INSTALL_DIR}/
 
 
-# ❗ IMPORTANT - if you modify this file modify the /install/install_dependecies.debian.sh file as well ❗ 
+# ❗ IMPORTANT - if you modify this file modify the /install/install_dependecies.debian.sh file as well ❗
 # hadolint ignore=DL3008,DL3027
 RUN apt-get update && apt-get install -y --no-install-recommends \
     tini snmp ca-certificates curl libwww-perl arp-scan sudo gettext-base \
-    nginx-light php php-cgi php-fpm php-sqlite3 php-curl sqlite3 dnsutils net-tools  \
-    python3 python3-dev iproute2 nmap python3-pip zip git systemctl usbutils traceroute nbtscan openrc \
+    nginx-light php php-cgi php-fpm php-sqlite3 php-curl sqlite3 dnsutils net-tools   \
+    python3 python3-dev iproute2 nmap fping python3-pip zip git systemctl usbutils traceroute nbtscan openrc \
     busybox nginx nginx-core mtr python3-venv && \
     rm -rf /var/lib/apt/lists/*
 

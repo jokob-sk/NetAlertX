@@ -510,7 +510,7 @@ def mqtt_start(db):
                 "group": device["devGroup"],
                 "location": device["devLocation"],
                 "network_parent_mac": device["devParentMAC"],
-                "network_parent_name": next((dev["devName"] for dev in devices if dev["devMAC"] == device["devParentMAC"]), "")
+                "network_parent_name": next((dev["devName"] for dev in devices if dev["devMac"] == device["devParentMAC"]), "")
             }
 
             # bulk update device sensors in home assistant

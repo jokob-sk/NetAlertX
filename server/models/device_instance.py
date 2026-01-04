@@ -176,10 +176,10 @@ class DeviceInstance:
             if "*" in mac:
                 # Wildcard matching
                 sql_pattern = mac.replace("*", "%")
-                cur.execute("DELETE FROM Devices WHERE devMAC LIKE ?", (sql_pattern,))
+                cur.execute("DELETE FROM Devices WHERE devMac LIKE ?", (sql_pattern,))
             else:
                 # Exact match
-                cur.execute("DELETE FROM Devices WHERE devMAC = ?", (mac,))
+                cur.execute("DELETE FROM Devices WHERE devMac = ?", (mac,))
             deleted_count += cur.rowcount
 
         conn.commit()
@@ -191,7 +191,7 @@ class DeviceInstance:
         """Delete devices with empty MAC addresses."""
         conn = get_temp_db_connection()
         cur = conn.cursor()
-        cur.execute("DELETE FROM Devices WHERE devMAC IS NULL OR devMAC = ''")
+        cur.execute("DELETE FROM Devices WHERE devMac IS NULL OR devMac = ''")
         deleted = cur.rowcount
         conn.commit()
         conn.close()

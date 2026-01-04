@@ -9,7 +9,7 @@ set -o pipefail
 # Safe IFS
 IFS=$' \t\n'
 
-# 🛑 Important: This is only used for the bare-metal install 🛑 
+# 🛑 Important: This is only used for the bare-metal install 🛑
 # Colors (guarded)
 if [ -t 1 ] && [ -z "${NO_COLOR:-}" ]; then
   RESET='\e[0m'
@@ -37,13 +37,13 @@ DB_FILE=app.db
 NGINX_CONF_FILE=netalertx.conf
 WEB_UI_DIR=/var/www/html/netalertx
 NGINX_CONFIG=/etc/nginx/conf.d/$NGINX_CONF_FILE
-OUI_FILE="/usr/share/arp-scan/ieee-oui.txt" 
+OUI_FILE="/usr/share/arp-scan/ieee-oui.txt"
 FILEDB=$INSTALL_DIR/db/$DB_FILE
-# DO NOT CHANGE ANYTHING ABOVE THIS LINE! 
+# DO NOT CHANGE ANYTHING ABOVE THIS LINE!
 
 # Check if script is run as root
 if [[ $EUID -ne 0 ]]; then
-    echo "This script must be run as root." 
+    echo "This script must be run as root."
     exit 1
 fi
 
@@ -51,7 +51,7 @@ fi
 if [ -z "${NETALERTX_ASSUME_YES:-}" ] && [ -z "${ASSUME_YES:-}" ] && [ -z "${NETALERTX_FORCE:-}" ]; then
     printf "%b\n" "------------------------------------------------------------------------"
     printf "%b\n" "${RED}[WARNING]              ${RESET}This script should be run on a fresh server"
-    printf "%b\n" "${RED}[WARNING]              ${RESET}This script will install NetAlertX and will:" 
+    printf "%b\n" "${RED}[WARNING]              ${RESET}This script will install NetAlertX and will:"
     printf "%b\n" "${RED}[WARNING]              ${RESET}• Update OS with apt-get update/upgrade"
     printf "%b\n" "${RED}[WARNING]              ${RESET}• Overwrite existing files under ${INSTALL_DIR}  "
     printf "%b\n" "${RED}[WARNING]              ${RESET}• Wipe any existing database"
@@ -137,7 +137,7 @@ printf "%b\n" "-----------------------------------------------------------------
 printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}Detected OS: ${OS_ID} ${OS_VER}"
 printf "%b\n" "--------------------------------------------------------------------------"
 
-if 
+if
   [ "${OS_ID}" = "ubuntu" ] && printf '%s' "${OS_VER}" | grep -q '^24'; then
   # Ubuntu 24.x typically ships PHP 8.3; add ondrej/php PPA and set 8.4
   printf "%b\n" "--------------------------------------------------------------------------"
@@ -152,15 +152,15 @@ elif
   printf "%b\n" "${GREEN}[INSTALLING]                          ${RESET}Debian 13 detected - using built-in PHP 8.4"
   printf "%b\n" "--------------------------------------------------------------------------"
 fi
-  
+
 apt-get install -y --no-install-recommends \
     tini snmp ca-certificates curl libwww-perl arp-scan perl apt-utils cron sudo \
     php8.4 php8.4-cgi php8.4-fpm php8.4-sqlite3 php8.4-curl sqlite3 dnsutils net-tools mtr \
-    python3 python3-dev iproute2 nmap python3-pip zip usbutils traceroute nbtscan \
+    python3 python3-dev iproute2 nmap fping python3-pip zip usbutils traceroute nbtscan \
     avahi-daemon avahi-utils build-essential git gnupg2 lsb-release \
     debian-archive-keyring python3-venv
 
-if 
+if
   [ "${OS_ID}" = "ubuntu" ] && printf '%s' "${OS_VER}" | grep -q '^24'; then  # Set PHP 8.4 as the default alternatives where applicable
   update-alternatives --set php /usr/bin/php8.4 || true
   systemctl enable php8.4-fpm || true
@@ -211,7 +211,7 @@ source /opt/myenv/bin/activate
 python -m pip install --upgrade pip
 python -m pip install -r "${INSTALLER_DIR}/requirements.txt"
 
-# Backup default NGINX site just in case  
+# Backup default NGINX site just in case
 if [ -L /etc/nginx/sites-enabled/default ] ; then
   rm /etc/nginx/sites-enabled/default
 elif [ -f /etc/nginx/sites-enabled/default ]; then
@@ -350,7 +350,7 @@ printf "%b\n" "-----------------------------------------------------------------
 printf "%b\n" "${GREEN}[STARTING]                          ${RESET}Starting PHP and NGINX"
 printf "%b\n" "--------------------------------------------------------------------------"
 /etc/init.d/php8.4-fpm start
-nginx -t || {  
+nginx -t || {
   printf "%b\n" "--------------------------------------------------------------------------"
   printf "%b\n" "${RED}[ERROR]                         ${RESET}NGINX config test failed!"
   printf "%b\n" "--------------------------------------------------------------------------"; exit 1; }
@@ -405,7 +405,7 @@ systemctl daemon-reload
 systemctl enable netalertx.service
 systemctl start netalertx.service
 systemctl restart nginx
-  
+
   # Verify service is running
   if systemctl is-active --quiet netalertx.service; then
     printf "%b\n" "--------------------------------------------------------------------------"
