@@ -1,13 +1,13 @@
-#!/bin/bash
-# Bash used in this check for simplicty of math operations.
+#!/bin/sh
+# POSIX-compliant shell script for capability checking.
 # excessive-capabilities.sh checks that no more than the necessary
 # NET_ADMIN NET_BIND_SERVICE and NET_RAW capabilities are present.
 
 
-# if we are running in devcontainer then we should exit imemditely without checking
+# if we are running in devcontainer then we should exit immediately without checking
 # The devcontainer is set up to have additional permissions which are not granted
 # in production so this check would always fail there.
-if [ "${NETALERTX_DEBUG}" == "1" ]; then
+if [ "${NETALERTX_DEBUG}" = "1" ]; then
     exit 0
 fi
 
@@ -18,8 +18,8 @@ if [ -z "$BND_HEX" ]; then
     exit 0
 fi
 
-# Convert hex to decimal
-BND_DEC=$(( 16#$BND_HEX )) || exit 0  
+#POSIX compliant base16 on permissions
+BND_DEC=$(awk 'BEGIN { h = "0x'"$BND_HEX"'"; if (h ~ /^0x[0-9A-Fa-f]+$/) { printf "%d", h; exit 0 } else { exit 1 } }') || exit 0
 
 # Allowed capabilities: NET_BIND_SERVICE (10), NET_ADMIN (12), NET_RAW (13)
 ALLOWED_DEC=$(( ( 1 << 10 )  | ( 1 << 12 ) | ( 1 << 13 ) ))

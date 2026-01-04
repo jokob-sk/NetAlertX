@@ -26,8 +26,9 @@ done
 trap cleanup EXIT
 trap forward_signal INT TERM
 
-echo "Starting /usr/sbin/php-fpm83 -y \"${PHP_FPM_CONFIG_FILE}\" -F >>\"${LOG_APP_PHP_ERRORS}\" 2>/dev/stderr &"
-/usr/sbin/php-fpm83 -y "${PHP_FPM_CONFIG_FILE}" -F >>"${LOG_APP_PHP_ERRORS}" 2> /dev/stderr &
+echo "Starting /usr/sbin/php-fpm83 -y \"${PHP_FPM_CONFIG_FILE}\" -F (tee stderr to app.php_errors.log)"
+php_fpm_cmd=(/usr/sbin/php-fpm83 -y "${PHP_FPM_CONFIG_FILE}" -F)
+"${php_fpm_cmd[@]}" 2> >(tee -a "${LOG_APP_PHP_ERRORS}" >&2) &
 php_fpm_pid=$!
 
 wait "${php_fpm_pid}"

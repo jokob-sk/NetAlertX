@@ -326,8 +326,7 @@ def _apply_primary_rules(specs: list[PathSpec], results_map: dict[str, MountChec
 
             suppress_primary = False
             if all_core_subs_healthy and all_core_subs_are_mounts:
-                if not result.is_mount_point and not result.error and not result.write_error and not result.read_error:
-                    suppress_primary = True
+                suppress_primary = True
 
             if suppress_primary:
                 # All sub-paths are healthy and mounted; suppress the aggregate row.
@@ -368,104 +367,110 @@ def main():
         r.dataloss_risk or r.error or r.write_error or r.read_error or r.performance_issue
         for r in results
     )
-    has_rw_errors = any(r.write_error or r.read_error for r in results)
+    has_rw_errors = any(
+        (r.write_error or r.read_error) and r.category == "persist"
+        for r in results
+    )
+    has_primary_dataloss = any(
+        r.category == "persist" and r.role == "primary" and r.dataloss_risk and r.is_mount_point
+        for r in results
+    )
 
-    if has_issues or True:  # Always print table for diagnostic purposes
-        # --- Print Table ---
-        headers = ["Path", "R", "W", "Mount", "RAMDisk", "Performance", "DataLoss"]
+    # --- Print Table ---
+    headers = ["Path", "R", "W", "Mount", "RAMDisk", "Performance", "DataLoss"]
 
-        CHECK_SYMBOL = "✅"
-        CROSS_SYMBOL = "❌"
-        BLANK_SYMBOL = "➖"
+    CHECK_SYMBOL = "✅"
+    CROSS_SYMBOL = "❌"
+    BLANK_SYMBOL = "➖"
 
-        def bool_to_check(is_good):
-            return CHECK_SYMBOL if is_good else CROSS_SYMBOL
+    def bool_to_check(is_good):
+        return CHECK_SYMBOL if is_good else CROSS_SYMBOL
 
-        col_widths = [len(h) for h in headers]
-        for r in results:
-            col_widths[0] = max(col_widths[0], len(str(r.path)))
+    col_widths = [len(h) for h in headers]
+    for r in results:
+        col_widths[0] = max(col_widths[0], len(str(r.path)))
 
-        header_fmt = (
-            f" {{:<{col_widths[0]}}} |"
-            f" {{:^{col_widths[1]}}} |"
-            f" {{:^{col_widths[2]}}} |"
-            f" {{:^{col_widths[3]}}} |"
-            f" {{:^{col_widths[4]}}} |"
-            f" {{:^{col_widths[5]}}} |"
-            f" {{:^{col_widths[6]}}} "
-        )
+    header_fmt = (
+        f" {{:<{col_widths[0]}}} |"
+        f" {{:^{col_widths[1]}}} |"
+        f" {{:^{col_widths[2]}}} |"
+        f" {{:^{col_widths[3]}}} |"
+        f" {{:^{col_widths[4]}}} |"
+        f" {{:^{col_widths[5]}}} |"
+        f" {{:^{col_widths[6]}}} "
+    )
 
-        row_fmt = (
-            f" {{:<{col_widths[0]}}} |"
-            f" {{:^{col_widths[1]}}}|"  # No space
-            f" {{:^{col_widths[2]}}}|"  # No space
-            f" {{:^{col_widths[3]}}}|"  # No space
-            f" {{:^{col_widths[4]}}}|"  # No space
-            f" {{:^{col_widths[5]}}}|"  # No space
-            f" {{:^{col_widths[6]}}} "  # DataLoss is last, needs space
-        )
+    row_fmt = (
+        f" {{:<{col_widths[0]}}} |"
+        f" {{:^{col_widths[1]}}}|"  # No space - intentional
+        f" {{:^{col_widths[2]}}}|"  # No space - intentional
+        f" {{:^{col_widths[3]}}}|"  # No space - intentional
+        f" {{:^{col_widths[4]}}}|"  # No space - intentional
+        f" {{:^{col_widths[5]}}}|"  # No space - intentional
+        f" {{:^{col_widths[6]}}} "  # DataLoss is last, needs space
+    )
 
-        separator = "".join([
-            "-" * (col_widths[0] + 2),
-            "+",
-            "-" * (col_widths[1] + 2),
-            "+",
-            "-" * (col_widths[2] + 2),
-            "+",
-            "-" * (col_widths[3] + 2),
-            "+",
-            "-" * (col_widths[4] + 2),
-            "+",
-            "-" * (col_widths[5] + 2),
-            "+",
-            "-" * (col_widths[6] + 2)
-        ])
+    separator = "".join([
+        "-" * (col_widths[0] + 2),
+        "+",
+        "-" * (col_widths[1] + 2),
+        "+",
+        "-" * (col_widths[2] + 2),
+        "+",
+        "-" * (col_widths[3] + 2),
+        "+",
+        "-" * (col_widths[4] + 2),
+        "+",
+        "-" * (col_widths[5] + 2),
+        "+",
+        "-" * (col_widths[6] + 2)
+    ])
 
-        print(header_fmt.format(*headers), file=sys.stderr)
-        print(separator, file=sys.stderr)
-        for r in results:
-            # Symbol Logic
-            read_symbol = bool_to_check(r.is_readable)
-            write_symbol = bool_to_check(r.is_writeable)
+    print(header_fmt.format(*headers), file=sys.stderr)
+    print(separator, file=sys.stderr)
+    for r in results:
+        # Symbol Logic
+        read_symbol = bool_to_check(r.is_readable)
+        write_symbol = bool_to_check(r.is_writeable)
 
-            mount_symbol = CHECK_SYMBOL if r.is_mounted else CROSS_SYMBOL
+        mount_symbol = CHECK_SYMBOL if r.is_mounted else CROSS_SYMBOL
 
-            if r.category == "persist":
-                if r.underlying_fs_is_ramdisk or r.is_ramdisk:
-                    ramdisk_symbol = CROSS_SYMBOL
-                else:
-                    ramdisk_symbol = BLANK_SYMBOL
-                perf_symbol = BLANK_SYMBOL
-            elif r.category == "ramdisk":
-                ramdisk_symbol = CHECK_SYMBOL if r.is_ramdisk else CROSS_SYMBOL
-                perf_symbol = bool_to_check(not r.performance_issue)
+        if r.category == "persist":
+            if r.underlying_fs_is_ramdisk or r.is_ramdisk:
+                ramdisk_symbol = CROSS_SYMBOL
             else:
                 ramdisk_symbol = BLANK_SYMBOL
-                perf_symbol = bool_to_check(not r.performance_issue)
+            perf_symbol = BLANK_SYMBOL
+        elif r.category == "ramdisk":
+            ramdisk_symbol = CHECK_SYMBOL if r.is_ramdisk else CROSS_SYMBOL
+            perf_symbol = bool_to_check(not r.performance_issue)
+        else:
+            ramdisk_symbol = BLANK_SYMBOL
+            perf_symbol = bool_to_check(not r.performance_issue)
 
-            dataloss_symbol = bool_to_check(not r.dataloss_risk)
+        dataloss_symbol = bool_to_check(not r.dataloss_risk)
 
-            print(
-                row_fmt.format(
-                    r.path,
-                    read_symbol,
-                    write_symbol,
-                    mount_symbol,
-                    ramdisk_symbol,
-                    perf_symbol,
-                    dataloss_symbol,
-                ),
-                file=sys.stderr
-            )
+        print(
+            row_fmt.format(
+                r.path,
+                read_symbol,
+                write_symbol,
+                mount_symbol,
+                ramdisk_symbol,
+                perf_symbol,
+                dataloss_symbol,
+            ),
+            file=sys.stderr
+        )
 
-        # --- Print Warning ---
-        if has_issues:
-            print("\n", file=sys.stderr)
-            print_warning_message(results)
+    # --- Print Warning ---
+    if has_issues:
+        print("\n", file=sys.stderr)
+        print_warning_message(results)
 
-        # Exit with error only if there are read/write permission issues
-        if has_rw_errors and os.environ.get("NETALERTX_DEBUG") != "1":
-            sys.exit(1)
+    # Exit with error only if there are read/write permission issues
+    if (has_rw_errors or has_primary_dataloss) and os.environ.get("NETALERTX_DEBUG") != "1":
+        sys.exit(1)
 
 
 if __name__ == "__main__":

@@ -1,6 +1,7 @@
 #!/bin/sh
 # check-nginx-config.sh - verify nginx conf.active mount is writable when PORT != 20211.
 
+
 # Only check nginx config writability if PORT is not the default 20211
 if [ "${PORT:-20211}" = "20211" ]; then
     exit 0
@@ -9,7 +10,7 @@ fi
 CONF_ACTIVE_DIR="${SYSTEM_SERVICES_ACTIVE_CONFIG}"
 TARGET_FILE="${CONF_ACTIVE_DIR}/netalertx.conf"
 
-# If the directory is missing entirely we warn and exit failure so the caller can see the message.
+# If the directory is missing entirely we warn and exit 0 to allow startup with defaults.
 if [ ! -d "${CONF_ACTIVE_DIR}" ]; then
     YELLOW=$(printf '\033[1;33m')
     RESET=$(printf '\033[0m')
@@ -30,7 +31,7 @@ if [ ! -d "${CONF_ACTIVE_DIR}" ]; then
 ══════════════════════════════════════════════════════════════════════════════
 EOF
     >&2 printf "%s" "${RESET}"
-    exit 1
+    exit 0
 fi
 
 TMP_FILE="${CONF_ACTIVE_DIR}/.netalertx-write-test"
@@ -52,7 +53,7 @@ if ! ( : >"${TMP_FILE}" ) 2>/dev/null; then
 ══════════════════════════════════════════════════════════════════════════════
 EOF
     >&2 printf "%s" "${RESET}"
-    exit 1
+    exit 0 # Nginx can continue using default config on port 20211
 fi
 rm -f "${TMP_FILE}"
 
