@@ -87,7 +87,7 @@ def main():
 
     plugin_objects.write_result_file()
 
-    mylog('verbose', [f'[{pluginName}] Script finished'])
+    mylog('verbose', [f'[{pluginName}] Script finished - {len(plugin_objects)} added or updated'])
 
     return 0
 
@@ -174,59 +174,69 @@ def execute_ping(timeout, args, all_devices, regex_pattern, plugin_objects):
 
 def execute_fping(timeout, args, all_devices, plugin_objects, subnets, interfaces, fakeMac):
     """
-    Run fping command and return alive IPs
+    Run fping command and return alive IPs.
+    Handles:
+      - fping exit code 1 (some hosts unreachable)
+      - Mixed subnets and known IPs
+      - Synology quirks
     """
-    cmd = ["fping", "-a"]
 
-    if interfaces:
-        cmd += ["-I", ",".join(interfaces)]
-
-    # Build a lookup dict once
     device_map = {d["devLastIP"]: d for d in all_devices if d.get("devLastIP")}
-
     known_ips = list(device_map.keys())
     online_ips = []
 
-    cmd += args.split()
-    cmd += subnets
-    cmd += known_ips
+    # Function to run fping for a list of targets
+    def run_fping(targets):
+        if not targets:
+            return []
 
-    mylog("verbose", [f"[{pluginName}] fping cmd: {' '.join(cmd)}"])
+        cmd = ["fping", "-a"] + args.split() + targets
+        if interfaces:
+            cmd += ["-I", ",".join(interfaces)]
 
-    try:
-        output = subprocess.check_output(
-            cmd,
-            stderr=subprocess.DEVNULL,
-            timeout=timeout,
-            text=True
-        )
-        online_ips = [line.strip() for line in output.splitlines() if line.strip()]
+        mylog("verbose", [f"[{pluginName}] fping cmd: {' '.join(cmd)}"])
 
-    except subprocess.CalledProcessError:
-        online_ips = []
+        try:
+            output = subprocess.check_output(
+                cmd,
+                stderr=subprocess.DEVNULL,
+                timeout=timeout,
+                text=True
+            )
+        except subprocess.CalledProcessError as e:
+            # fping returns 1 if some hosts are down – alive hosts are still in e.output
+            output = e.output
+            mylog("verbose", [f"[{pluginName}] fping returned non-zero exit code, reading alive hosts anyway"])
 
-    except subprocess.TimeoutExpired:
-        mylog("verbose", [f"[{pluginName}] fping timeout"])
-        online_ips = []
+        except subprocess.TimeoutExpired:
+            mylog("verbose", [f"[{pluginName}] fping timeout"])
+            return []
 
-    # process all online IPs
+        return [line.strip() for line in output.splitlines() if line.strip()]
+
+    # First scan subnets
+    online_ips += run_fping(subnets)
+
+    # Then scan known IPs
+    online_ips += run_fping(known_ips)
+
+    # Remove duplicates
+    online_ips = list(set(online_ips))
+
+    # Process all online IPs
     for onlineIp in online_ips:
-        if onlineIp in known_ips:
-            # use lookup dict instead of looping
-            device = device_map.get(onlineIp)
-            if device:
-                plugin_objects.add_object(
-                    primaryId   = device['devMac'],
-                    secondaryId = device['devLastIP'],
-                    watched1    = device['devName'],
-                    watched2    = 'mode:fping',
-                    watched3    = '',
-                    watched4    = '',
-                    extra       = '',
-                    foreignKey  = device['devMac']
-                )
-            else:
-                mylog("none", [f"[{pluginName}] ERROR reverse device lookup failed unexpectedly for {onlineIp}"])
+        if onlineIp in device_map:
+            device = device_map[onlineIp]
+            plugin_objects.add_object(
+                primaryId   = device['devMac'],
+                secondaryId = device['devLastIP'],
+                watched1    = device['devName'],
+                watched2    = 'mode:fping',
+                watched3    = '',
+                watched4    = '',
+                extra       = '',
+                foreignKey  = device['devMac']
+            )
         elif fakeMac:
             fakeMacFromIp = string_to_fake_mac(onlineIp)
             plugin_objects.add_object(
@@ -240,7 +250,11 @@ def execute_fping(timeout, args, all_devices, plugin_objects, subnets, interface
                 foreignKey  = fakeMacFromIp
             )
         else:
-            mylog('verbose', [f"[{pluginName}] Skipping: {onlineIp}, as new IP and ICMP_FAKE_MAC setting not enabled"])
+            mylog('verbose', [f"[{pluginName}] Skipping: {onlineIp}, as new IP and ICMP_FAKE_MAC not enabled"])
+
+    mylog('verbose', [f"[{pluginName}] online_ips: {online_ips}"])
+
+    return plugin_objects
 
 
 # ===============================================================================

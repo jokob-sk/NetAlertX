@@ -155,7 +155,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Arguments passed to the underlying <code>ping</code> or <code>fping</code> command. The default values are compatible with both modes and work well in most environments. Modify with care, and consult the relevant manual pages if advanced tuning is required."
+          "string": "Arguments passed to the underlying <code>ping</code> or <code>fping</code> command. The default values (<code>-i 0.5 -c 3 -w 5</code>) are compatible with both modes and work well in most environments. Modify with care, and consult the relevant manual pages if advanced tuning is required."
         }
       ]
     },
