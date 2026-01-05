@@ -290,7 +290,7 @@
     "Events_Tablelenght": "Veure_entrades_MENU",
     "Events_Tablelenght_all": "Tot",
     "Events_Title": "Esdeveniments",
-    "FakeMAC_hover": "",
+    "FakeMAC_hover": "Autodetecció - indica si el dispositiu fa servir una adreça MAC falsa (comença amb FA:CE o 00:1A), típicament generada per un plugin que no pot detectar la MAC real o quan es crea un dispositiu amagat (dummy).",
     "GRAPHQL_PORT_description": "El número de port del servidor GraphQL. Comprova que el port és únic en totes les aplicacions d'aquest servidor i en totes les instàncies de NetAlertX.",
     "GRAPHQL_PORT_name": "Port GraphQL",
     "Gen_Action": "Acció",
