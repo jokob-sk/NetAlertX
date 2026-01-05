@@ -2,6 +2,12 @@
 # Ensures the database exists, or creates a new one on first run.
 # Intended to run only at initial startup.
 
+# Fix permissions if DB directory exists but is unreadable
+if [ -d "${NETALERTX_DB}" ]; then
+    chmod u+rwX "${NETALERTX_DB}" 2>/dev/null || true
+fi
+chmod u+rw "${NETALERTX_DB_FILE}" 2>/dev/null || true
+
 set -eu
 
 CYAN=$(printf '\033[1;36m')

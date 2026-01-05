@@ -45,8 +45,8 @@ RUN apk add --no-cache \
     && python -m venv /opt/venv
 
 # Upgrade pip/wheel/setuptools and install Python packages
-# hadolint ignore=DL3013 
-RUN python -m pip install --no-cache-dir --upgrade pip setuptools wheel && \
+# hadolint ignore=DL3013, DL3042
+RUN python -m pip install --upgrade pip setuptools wheel && \
     pip install --prefer-binary --no-cache-dir -r /tmp/requirements.txt && \
     chmod -R u-rwx,g-rwx /opt
 
@@ -133,8 +133,8 @@ ENV READ_ONLY_USER=readonly READ_ONLY_GROUP=readonly
 ENV NETALERTX_USER=netalertx NETALERTX_GROUP=netalertx
 ENV LANG=C.UTF-8
 
-# hadolint ignore=DL3018
-RUN apk add --no-cache bash mtr libbsd zip lsblk tzdata curl arp-scan iproute2 iproute2-ss nmap \
+
+RUN apk add --no-cache bash mtr libbsd zip lsblk tzdata curl arp-scan iproute2 iproute2-ss nmap fping \
     nmap-scripts traceroute nbtscan net-tools net-snmp-tools bind-tools awake ca-certificates \
     sqlite php83 php83-fpm php83-cgi php83-curl php83-sqlite3 php83-session python3 envsubst \
     nginx supercronic shadow su-exec && \

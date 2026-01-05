@@ -33,7 +33,7 @@ if [ "$EXTRA" -ne 0 ]; then
 ⚠️  Warning: Excessive capabilities detected (bounding caps: 0x$BND_HEX).
 
     Only CHOWN, SETGID, SETUID, NET_ADMIN, NET_BIND_SERVICE, and NET_RAW are 
-	required in this container. Please remove unnecessary capabilities.
+    required in this container. Please remove unnecessary capabilities.
 
     https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/excessive-capabilities.md
 ══════════════════════════════════════════════════════════════════════════════

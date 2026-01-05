@@ -20,6 +20,12 @@ ensure_dir() {
 	# When creating as the user running the services, we ensure correct ownership and access
     path="$1"
     label="$2"
+    # Fix permissions if directory exists but is unreadable/unwritable
+	# It's expected chown is done as root during root-entrypoint, and now we own the files
+	# here we will set correct access.
+    if [ -d "${path}" ]; then
+        chmod u+rwX "${path}" 2>/dev/null || true
+    fi
     if ! mkdir -p "${path}" 2>/dev/null; then
         if is_tmp_path "${path}"; then
             warn_tmp_skip "${path}" "${label}"

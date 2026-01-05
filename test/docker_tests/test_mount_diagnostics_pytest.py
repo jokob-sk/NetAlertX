@@ -354,22 +354,22 @@ def create_test_scenarios() -> List[TestScenario]:
     # These are intentionally not part of the full matrix to avoid runtime bloat.
     scenarios.extend(
         [
-            TestScenario(
+            TestScenario(  # Will no longer fail due to the root-entrypoint fix
                 name="data_noread",
                 path_var="NETALERTX_DATA",
                 container_path="/data",
                 is_persistent=True,
                 docker_compose="docker-compose.mount-test.data_noread.yml",
-                expected_issues=["table_issues", "warning_message"],
+                expected_issues=[""],
                 expected_exit_code=0,
             ),
-            TestScenario(
+            TestScenario(  # Will no longer fail due to the root-entrypoint fix
                 name="db_noread",
                 path_var="NETALERTX_DB",
                 container_path="/data/db",
                 is_persistent=True,
                 docker_compose="docker-compose.mount-test.db_noread.yml",
-                expected_issues=["table_issues", "warning_message"],
+                expected_issues=[],
                 expected_exit_code=0,
             ),
             TestScenario(
@@ -437,6 +437,18 @@ def validate_scenario_table_output(output: str, test_scenario: TestScenario) -> 
     """Validate the diagnostic table for scenarios that should report issues."""
 
     if not test_scenario.expected_issues:
+        if test_scenario.name in ("data_noread", "db_noread"):
+            # Cannot fix chmod 0300 (write-only) when running as user; expect R=❌, W=✅, dataloss=✅
+            assert_table_row(
+                output,
+                test_scenario.container_path,
+                readable=False,
+                writeable=True,
+                mount=True,
+                ramdisk=None,
+                performance=None,
+                dataloss=True,
+            )
         return
 
     try:
@@ -663,8 +675,10 @@ def test_mount_diagnostic(netalertx_test_image, test_scenario):
         # Always surface diagnostic output for visibility
         print("\n[diagnostic output from startup logs]\n", diagnostic_output)
 
+        # Always validate the table output, even when expected_issues is empty.
+        validate_scenario_table_output(diagnostic_output, test_scenario)
+
         if test_scenario.expected_issues:
-            validate_scenario_table_output(diagnostic_output, test_scenario)
             assert_has_troubleshooting_url(diagnostic_output)
             assert "⚠️" in diagnostic_output, (
                 f"Issue scenario {test_scenario.name} should include a warning symbol in startup logs"

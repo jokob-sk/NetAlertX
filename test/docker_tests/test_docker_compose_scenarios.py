@@ -696,29 +696,60 @@ def test_custom_port_with_unwritable_nginx_config_compose() -> None:
     compose_file = CONFIG_DIR / "mount-tests" / "docker-compose.mount-test.active_config_unwritable.yml"
     http_port = _select_custom_ports()
     graphql_port = _select_custom_ports({http_port})
+    LAST_PORT_SUCCESSES.pop(http_port, None)
+    project_name = "netalertx-custom-port"
+
+    def _wait_for_unwritable_failure() -> None:
+        deadline = time.time() + 45
+        while time.time() < deadline:
+            ps_cmd = [
+                "docker",
+                "compose",
+                "-f",
+                str(compose_file),
+                "-p",
+                project_name,
+                "ps",
+                "--format",
+                "{{.Name}} {{.State}}",
+            ]
+            ps_proc = subprocess.run(
+                ps_cmd,
+                capture_output=True,
+                text=True,
+                timeout=5,
+                check=False,
+            )
+            ps_output = (ps_proc.stdout or "") + (ps_proc.stderr or "")
+            print("[unwritable-nginx ps poll]", ps_output.strip() or "<no output>")
+            if "exited" in ps_output.lower() or "dead" in ps_output.lower():
+                return
+            time.sleep(2)
+        raise TimeoutError("netalertx-custom-port container did not exit within 45 seconds")
+
     result = _run_docker_compose(
         compose_file,
-        "netalertx-custom-port",
+        project_name,
         env_vars={
             "PORT": str(http_port),
             "GRAPHQL_PORT": str(graphql_port),
-            "NETALERTX_CHECK_ONLY": "1",
+            # Run full startup to validate nginx config generation on tmpfs.
+            "NETALERTX_CHECK_ONLY": "0",
         },
-        timeout=60,
-        detached=False,
+        timeout=8,
+        detached=True,
+        post_up=_wait_for_unwritable_failure,
     )
 
     # MANDATORY LOGGING - DO NOT REMOVE (see file header for reasoning)
-    print("\n[compose output]", result.output)
-
-    full_output = (result.output or "") + (result.stdout or "") + (result.stderr or "")
+    full_output = ANSI_ESCAPE.sub("", result.output)
     lowered_output = full_output.lower()
+    print("\n[compose output unwritable-nginx]", full_output)
 
-    assert "unable to write" in lowered_output or "nginx" in lowered_output or "chown" in lowered_output
-    assert "chown" in lowered_output or "permission" in lowered_output
-    # The container may succeed (with warnings) or fail depending on the chown behavior
-    # The important thing is that the warnings are shown
-    assert "missing-capabilities" in lowered_output or "permission" in lowered_output
+    # Container should exit due to inability to write nginx config and custom port.
+    assert result.returncode == 1
+    assert "unable to write to /tmp/nginx/active-config/netalertx.conf" in lowered_output
+    assert "mv: can't create '/tmp/nginx/active-config/nginx.conf'" in lowered_output
 
 
 def test_host_network_compose(tmp_path: pathlib.Path) -> None:
@@ -791,7 +822,7 @@ def test_normal_startup_no_warnings_compose(tmp_path: pathlib.Path) -> None:
     default_result = _run_docker_compose(
         default_compose_file,
         default_project,
-        timeout=60,
+        timeout=8,
         detached=True,
         post_up=_make_port_check_hook(default_ports),
     )
@@ -847,7 +878,7 @@ def test_normal_startup_no_warnings_compose(tmp_path: pathlib.Path) -> None:
     custom_result = _run_docker_compose(
         custom_compose_file,
         custom_project,
-        timeout=60,
+        timeout=8,
         detached=True,
         post_up=_make_port_check_hook(custom_ports),
     )
