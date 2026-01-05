@@ -101,7 +101,7 @@ def execute_arpscan(userSubnets):
     devices_list = []
 
     # scan each interface
-
+    mylog("verbose", [f"[{pluginName}] userSubnets: ", userSubnets])
     for interface in userSubnets:
 
         arpscan_output = execute_arpscan_on_interface(interface)
