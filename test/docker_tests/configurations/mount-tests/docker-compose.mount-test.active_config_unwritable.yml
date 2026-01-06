@@ -33,24 +33,6 @@ services:
         source: test_netalertx_data
         target: /data
         read_only: false
-      - type: tmpfs
-        target: /tmp/log
-        tmpfs:
-          size: 64m
-          mode: 1777
-          options: noexec,nosuid,nodev,async,noatime,nodiratime
-      - type: tmpfs
-        target: /tmp/api
-        tmpfs:
-          size: 64m
-          mode: 1777
-          options: noexec,nosuid,nodev,async,noatime,nodiratime
-      - type: tmpfs
-        target: /tmp/run
-        tmpfs:
-          size: 64m
-          mode: 1777
-          options: noexec,nosuid,nodev,async,noatime,nodiratime
       - type: volume
         source: test_system_services_active_config
         target: /tmp/nginx/active-config
@@ -58,6 +40,9 @@ services:
     tmpfs:
       # Ensure /tmp is a writable tmpfs for the app user; mode 1777 to support su-exec drop.
       - /tmp:uid=20211,gid=20211,mode=1777,noexec,nosuid,nodev,size=64m
+      - /tmp/log:uid=20211,gid=20211,mode=1777,noexec,nosuid,nodev,size=64m
+      - /tmp/api:uid=20211,gid=20211,mode=1777,noexec,nosuid,nodev,size=64m
+      - /tmp/run:uid=20211,gid=20211,mode=1777,noexec,nosuid,nodev,size=64m
 volumes:
   test_netalertx_data:
   test_system_services_active_config:

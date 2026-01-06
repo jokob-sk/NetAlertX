@@ -360,7 +360,7 @@ def create_test_scenarios() -> List[TestScenario]:
                 container_path="/data",
                 is_persistent=True,
                 docker_compose="docker-compose.mount-test.data_noread.yml",
-                expected_issues=[""],
+                expected_issues=[],
                 expected_exit_code=0,
             ),
             TestScenario(  # Will no longer fail due to the root-entrypoint fix
