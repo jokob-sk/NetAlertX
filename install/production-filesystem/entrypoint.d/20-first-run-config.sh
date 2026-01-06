@@ -1,6 +1,11 @@
 #!/bin/sh
 # first-run-check.sh - Checks and initializes configuration files on first run
 
+# Fix permissions if config directory exists but is unreadable
+if [ -d "${NETALERTX_CONFIG}" ]; then
+    chmod u+rwX "${NETALERTX_CONFIG}" 2>/dev/null || true
+fi
+chmod u+rw "${NETALERTX_CONFIG}/app.conf" 2>/dev/null || true
 # Check for app.conf and deploy if required
 if [ ! -f "${NETALERTX_CONFIG}/app.conf" ]; then
     mkdir -p "${NETALERTX_CONFIG}" || {
