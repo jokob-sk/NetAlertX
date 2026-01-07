@@ -68,7 +68,6 @@ services:
     cpu_shares: 512             # Relative CPU weight for CPU contention scenarios
     pids_limit: 512             # Limit the number of processes/threads to prevent fork bombs
     logging:
-      driver: "json-file"       # Use JSON file logging driver
       options:
         max-size: "10m"         # Rotate log files after they reach 10MB
         max-file: "3"           # Keep a maximum of 3 log files

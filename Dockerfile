@@ -42,7 +42,7 @@ RUN apk add --no-cache \
     && python -m venv /opt/venv
 
 # Upgrade pip/wheel/setuptools and install Python packages
-# hadolint ignore=DL3013
+# hadolint ignore=DL3013, DL3042
 RUN python -m pip install --upgrade pip setuptools wheel && \
     pip install --prefer-binary --no-cache-dir -r /tmp/requirements.txt && \
     chmod -R u-rwx,g-rwx /opt

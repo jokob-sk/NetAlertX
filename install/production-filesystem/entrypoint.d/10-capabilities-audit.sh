@@ -3,6 +3,9 @@
 #
 # This script runs early to detect missing capabilities that would cause later
 # scripts (like Python-based checks) to fail with "Operation not permitted".
+# This is not for checking excessive capabilities, which is handled in another
+# startup script.
+
 
 RED=$(printf '\033[1;31m')
 YELLOW=$(printf '\033[1;33m')

@@ -8,7 +8,6 @@ services:
       dockerfile: Dockerfile
     image: netalertx-test
     container_name: netalertx-test-mount-data_noread
-    user: "20211:20211"
     cap_drop:
       - ALL
     cap_add:
@@ -38,7 +37,7 @@ services:
         read_only: false
 
     tmpfs:
-      - "/tmp:mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      - "/tmp:mode=1777,uid=20211,gid=20211,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
 
 volumes:
   test_netalertx_data:
