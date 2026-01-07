@@ -31,6 +31,18 @@ LOG_PATH = logPath + "/plugins"
 LOG_FILE = os.path.join(LOG_PATH, f"script.{pluginName}.log")
 RESULT_FILE = os.path.join(LOG_PATH, f"last_result.{pluginName}.log")
 
+# DEBUG START
+
+# mylog("debug", "User:", getpass.getuser())
+mylog("verbose", "UID:", getattr(os, "getuid", lambda: "n/a")())
+mylog("verbose", "Executable:", sys.executable)
+mylog("verbose", "Python:", sys.version.split()[0])
+mylog("verbose", "Virtualenv:", sys.prefix != sys.base_prefix)
+mylog("verbose", "VIRTUAL_ENV:", os.environ.get("VIRTUAL_ENV"))
+mylog("verbose", "CWD:", os.getcwd())
+
+# DEBUG END
+
 
 def main():
     parser = argparse.ArgumentParser(description="Import devices from settings")
@@ -153,11 +165,7 @@ def execute_arpscan_on_interface(interface):
     except Exception:
         scan_duration = 0  # default: single run
 
-    # Get timeout from plugin settings (default 30 seconds if not set)
-    try:
-        timeout_seconds = int(get_setting_value("ARPSCAN_RUN_TIMEOUT"))
-    except Exception:
-        timeout_seconds = 30
+    timeout_seconds = int(get_setting_value("ARPSCAN_RUN_TIMEOUT"))
 
     results = []
     start_time = time.time()
@@ -165,10 +173,15 @@ def execute_arpscan_on_interface(interface):
     while True:
         try:
             result = subprocess.check_output(
-                arpscan_args, universal_newlines=True, timeout=timeout_seconds
+                arpscan_args,
+                universal_newlines=True,
+                timeout=timeout_seconds,
+                stderr=subprocess.STDOUT
             )
             results.append(result)
-        except subprocess.CalledProcessError:
+
+        except subprocess.CalledProcessError as e:
+            mylog("none", [f"[{pluginName}] Scan failed on {interface}:", e.output])
             result = ""
         except subprocess.TimeoutExpired:
             mylog("warning", [f"[{pluginName}] arp-scan timed out after {timeout_seconds}s"],)
