@@ -4,9 +4,9 @@ NetAlertX comes with a plugin system to feed events from third-party scripts int
 
 * dynamic creation of a simple UI to interact with the discovered objects,
 * filtering of displayed values in the Devices UI
-* surface settings of plugins in the UI, 
+* surface settings of plugins in the UI,
 * different column types for reported values to e.g. link back to a device
-* import objects into existing NetAlertX database tables 
+* import objects into existing NetAlertX database tables
 
 > (Currently, update/overwriting of existing objects is only supported for devices via the `CurrentScan` table.)
 
@@ -22,9 +22,9 @@ NetAlertX comes with a plugin system to feed events from third-party scripts int
 
 ### 📸 Screenshots
 
-| ![Screen 1][screen1] | ![Screen 2][screen2] | ![Screen 3][screen3] | 
-|----------------------|----------------------| ----------------------| 
-| ![Screen 4][screen4] |  ![Screen 5][screen5] | 
+| ![Screen 1][screen1] | ![Screen 2][screen2] | ![Screen 3][screen3] |
+|----------------------|----------------------| ----------------------|
+| ![Screen 4][screen4] |  ![Screen 5][screen5] |
 
 ## Use cases
 
@@ -37,34 +37,43 @@ Example use cases for plugins could be:
 * Creating a script to create FAKE devices based on user input via custom settings
 * ...at this point the limitation is mostly the creativity rather than the capability (there might be edge cases and a need to support more form controls for user input off custom settings, but you probably get the idea)
 
-If you wish to develop a plugin, please check the existing plugin structure. Once the settings are saved by the user they need to be removed from the `app.conf` file manually if you want to re-initialize them from the `config.json` of the plugin. 
+If you wish to develop a plugin, please check the existing plugin structure. Once the settings are saved by the user they need to be removed from the `app.conf` file manually if you want to re-initialize them from the `config.json` of the plugin.
 
 ## ⚠ Disclaimer
 
-Please read the below carefully if you'd like to contribute with a plugin yourself. This documentation file might be outdated, so double-check the sample plugins as well. 
+Please read the below carefully if you'd like to contribute with a plugin yourself. This documentation file might be outdated, so double-check the existing plugins as well.
 
-## Plugin file structure overview 
+## Plugin development quick start
+
+1. Create a new folder for your plugin (e.g. `my_plugin`)
+1. Copy the files from the `__template` folder into the newly created folder
+1. Update the relevant attributes in the `config.json` file, especially `code_name` and `unique_prefix`, e.g.:
+  - `"code_name": "my_plugin"` - must match the folder name
+  - `"unique_prefix": "MYPLG"` - has to be unique, upper case letters only
+1. Update the `RUN` setting to point to your script file
+1. Update the rest of the `config.json` sections and implement the actual data retrieval in our python script
+
+## Plugin file structure overview
 
 > ⚠️Folder name must be the same as the code name value in: `"code_name": "<value>"`
-> Unique prefix needs to be unique compared to the other settings prefixes, e.g.: the prefix `APPRISE` is already in use. 
+> Unique prefix needs to be unique compared to the other settings prefixes, e.g.: the prefix `APPRISE` is already in use.
 
-  | File | Required (plugin type) | Description | 
-  |----------------------|----------------------|----------------------| 
+  | File | Required (plugin type) | Description |
+  |----------------------|----------------------|----------------------|
   | `config.json` | yes | Contains the plugin configuration (manifest) including the settings available to the user. |
   | `script.py` |  no | The Python script itself. You may call any valid linux command.  |
   | `last_result.<prefix>.log` | no | The file used to interface between NetAlertX and the plugin. Required for a script plugin if you want to feed data into the app. Stored in the `/api/log/plugins/` |
-  | `script.log` | no | Logging output (recommended) |
   | `README.md` | yes | Any setup considerations or overview  |
 
 More on specifics below.
 
 ### Column order and values (plugins interface contract)
 
-> [!IMPORTANT] 
+> [!IMPORTANT]
 > Spend some time reading and trying to understand the below table. This is the interface between the Plugins and the core application. The application expets 9 or 13 values The first 9 values are mandatory. The next 4 values (`HelpVal1` to `HelpVal4`) are optional. However, if you use any of these optional values (e.g., `HelpVal1`), you need to supply all optional values (e.g., `HelpVal2`, `HelpVal3`, and `HelpVal4`). If a value is not used, it should be padded with `null`.
 
-  | Order | Represented Column | Value Required | Description | 
-  |----------------------|----------------------|----------------------|----------------------| 
+  | Order | Represented Column | Value Required | Description |
+  |----------------------|----------------------|----------------------|----------------------|
   | 0 | `Object_PrimaryID` | yes | The primary ID used to group Events under. |
   | 1 | `Object_SecondaryID` | no | Optional secondary ID to create a relationship beween other entities, such as a MAC address |
   | 2 | `DateTime` | yes | When the event occured in the format `2023-01-02 15:56:30` |
@@ -78,14 +87,14 @@ More on specifics below.
   | 10 | `HelpVal2` | no | (optional) A helper value |
   | 11 | `HelpVal3` | no | (optional) A helper value |
   | 12 | `HelpVal4` | no | (optional) A helper value |
-  
 
-> [!NOTE] 
+
+> [!NOTE]
 > De-duplication is run once an hour on the `Plugins_Objects` database table and duplicate entries with the same value in columns `Object_PrimaryID`, `Object_SecondaryID`, `Plugin` (auto-filled based on `unique_prefix` of the plugin), `UserData` (can be populated with the `"type": "textbox_save"` column type) are removed.
 
 # config.json structure
 
-The `config.json` file is the manifest of the plugin. It contains mainly settings definitions and the mapping of Plugin objects to NetAlertX objects. 
+The `config.json` file is the manifest of the plugin. It contains mainly settings definitions and the mapping of Plugin objects to NetAlertX objects.
 
 ## Execution order
 
@@ -99,15 +108,15 @@ The execution order is used to specify when a plugin is executed. This is useful
 
 ## Supported data sources
 
-Currently, these data sources are supported (valid `data_source` value). 
+Currently, these data sources are supported (valid `data_source` value).
 
-| Name | `data_source` value | Needs to return a "table"* | Overview (more details on this page below) | 
-|----------------------|----------------------|----------------------|----------------------| 
+| Name | `data_source` value | Needs to return a "table"* | Overview (more details on this page below) |
+|----------------------|----------------------|----------------------|----------------------|
 | Script | `script` | no | Executes any linux command in the `CMD` setting. |
 | NetAlertX DB query | `app-db-query` | yes | Executes a SQL query on the NetAlertX database in the `CMD` setting. |
 | Template | `template` | no | Used to generate internal settings, such as default values. |
 | External SQLite DB query | `sqlite-db-query` | yes | Executes a SQL query from the `CMD` setting on an external SQLite database mapped in the `DB_PATH` setting.  |
-| Plugin type | `plugin_type` | no | Specifies the type of the plugin and in which section the Plugin settings are displayed ( one of `general/system/scanner/other/publisher` ). | 
+| Plugin type | `plugin_type` | no | Specifies the type of the plugin and in which section the Plugin settings are displayed ( one of `general/system/scanner/other/publisher` ). |
 
 > * "Needs to return a "table" means that the application expects a `last_result.<prefix>.log` file with some results. It's not a blocker, however warnings in the `app.log` might be logged.
 
@@ -126,18 +135,18 @@ You can show or hide the UI on the "Plugins" page and "Plugins" tab for a plugin
 
 ### "data_source":  "script"
 
- If the `data_source` is set to `script` the `CMD` setting (that you specify in the `settings` array section in the `config.json`) contains an executable Linux command, that usually generates a `last_result.<prefix>.log` file (not required if you don't import any data into the app). The `last_result.<prefix>.log` file needs to be saved in `/api/log/plugins`. 
+ If the `data_source` is set to `script` the `CMD` setting (that you specify in the `settings` array section in the `config.json`) contains an executable Linux command, that usually generates a `last_result.<prefix>.log` file (not required if you don't import any data into the app). The `last_result.<prefix>.log` file needs to be saved in `/api/log/plugins`.
 
 > [!IMPORTANT]
 > A lot of the work is taken care of by the [`plugin_helper.py` library](/front/plugins/plugin_helper.py). You don't need to manage the `last_result.<prefix>.log` file if using the helper objects. Check other `script.py` of other plugins for details.
- 
- The content of the `last_result.<prefix>.log` file needs to contain the columns as defined in the "Column order and values" section above. The order of columns can't be changed. After every scan it should contain only the results from the latest scan/execution. 
 
-- The format of the `last_result.<prefix>.log` is a `csv`-like file with the pipe `|` as a separator. 
-- 9 (nine) values need to be supplied, so every line needs to contain 8 pipe separators. Empty values are represented by `null`.  
+ The content of the `last_result.<prefix>.log` file needs to contain the columns as defined in the "Column order and values" section above. The order of columns can't be changed. After every scan it should contain only the results from the latest scan/execution.
+
+- The format of the `last_result.<prefix>.log` is a `csv`-like file with the pipe `|` as a separator.
+- 9 (nine) values need to be supplied, so every line needs to contain 8 pipe separators. Empty values are represented by `null`.
 - Don't render "headers" for these "columns".
 Every scan result/event entry needs to be on a new line.
-- You can find which "columns" need to be present, and if the value is required or optional, in the "Column order and values" section. 
+- You can find which "columns" need to be present, and if the value is required or optional, in the "Column order and values" section.
 - The order of these "columns" can't be changed.
 
 #### 🔎 last_result.prefix.log examples
@@ -167,33 +176,33 @@ https://www.google.com|null|2023-01-02 15:56:30|200|0.7898|
 
 ### "data_source":  "app-db-query"
 
-If the `data_source` is set to `app-db-query`, the `CMD` setting needs to contain a SQL query rendering the columns as defined in the "Column order and values" section above. The order of columns is important. 
+If the `data_source` is set to `app-db-query`, the `CMD` setting needs to contain a SQL query rendering the columns as defined in the "Column order and values" section above. The order of columns is important.
 
-This SQL query is executed on the `app.db` SQLite database file. 
+This SQL query is executed on the `app.db` SQLite database file.
 
 >  🔎Example
-> 
+>
 > SQL query example:
-> 
+>
 > ```SQL
-> SELECT  dv.devName as Object_PrimaryID, 
->     cast(dv.devLastIP as VARCHAR(100)) || ':' || cast( SUBSTR(ns.Port ,0, INSTR(ns.Port , '/')) as VARCHAR(100)) as Object_SecondaryID,  
->     datetime() as DateTime,  
->     ns.Service as Watched_Value1,        
+> SELECT  dv.devName as Object_PrimaryID,
+>     cast(dv.devLastIP as VARCHAR(100)) || ':' || cast( SUBSTR(ns.Port ,0, INSTR(ns.Port , '/')) as VARCHAR(100)) as Object_SecondaryID,
+>     datetime() as DateTime,
+>     ns.Service as Watched_Value1,
 >     ns.State as Watched_Value2,
 >     'null' as Watched_Value3,
 >     'null' as Watched_Value4,
 >     ns.Extra as Extra,
->     dv.devMac as ForeignKey 
-> FROM 
->     (SELECT * FROM Nmap_Scan) ns 
-> LEFT JOIN 
->     (SELECT devName, devMac, devLastIP FROM Devices) dv 
+>     dv.devMac as ForeignKey
+> FROM
+>     (SELECT * FROM Nmap_Scan) ns
+> LEFT JOIN
+>     (SELECT devName, devMac, devLastIP FROM Devices) dv
 > ON ns.MAC = dv.devMac
 > ```
-> 
+>
 > Required `CMD` setting example with above query (you can set `"type": "label"` if you want it to make uneditable in the UI):
-> 
+>
 > ```json
 > {
 >             "function": "CMD",
@@ -218,7 +227,7 @@ In most cases, it is used to initialize settings. Check the `newdev_template` pl
 
 ### "data_source":  "sqlite-db-query"
 
-You can execute a SQL query on an external database connected to the current NetAlertX database via a temporary `EXTERNAL_<unique prefix>.` prefix. 
+You can execute a SQL query on an external database connected to the current NetAlertX database via a temporary `EXTERNAL_<unique prefix>.` prefix.
 
 For example for `PIHOLE` (`"unique_prefix": "PIHOLE"`) it is `EXTERNAL_PIHOLE.`. The external SQLite database file has to be mapped in the container to the path specified in the `DB_PATH` setting:
 
@@ -239,12 +248,12 @@ For example for `PIHOLE` (`"unique_prefix": "PIHOLE"`) it is `EXTERNAL_PIHOLE.`.
 >        "description": [{
 >            "language_code":"en_us",
 >            "string" : "Required setting for the <code>sqlite-db-query</code> plugin type. Is used to mount an external SQLite database and execute the SQL query stored in the <code>CMD</code> setting."
->        }]    
+>        }]
 >    }
 >  ...
 >```
 
-The actual SQL query you want to execute is then stored as a `CMD` setting, similar to a Plugin of the `app-db-query` plugin type. The format has to adhere to the format outlined in the "Column order and values" section above. 
+The actual SQL query you want to execute is then stored as a `CMD` setting, similar to a Plugin of the `app-db-query` plugin type. The format has to adhere to the format outlined in the "Column order and values" section above.
 
 >  🔎Example
 >
@@ -272,26 +281,26 @@ The actual SQL query you want to execute is then stored as a `CMD` setting, simi
 
 Plugin entries can be filtered in the UI based on values entered into filter fields. The `txtMacFilter` textbox/field contains the Mac address of the currently viewed device, or simply a Mac address that's available in the `mac` query string (`<url>?mac=aa:22:aa:22:aa:22:aa`).
 
-  | Property | Required | Description | 
-  |----------------------|----------------------|----------------------| 
+  | Property | Required | Description |
+  |----------------------|----------------------|----------------------|
   | `compare_column` | yes | Plugin column name that's value is used for comparison (**Left** side of the equation) |
   | `compare_operator` |  yes | JavaScript comparison operator |
   | `compare_field_id` | yes | The `id` of a input text field containing a value is used for comparison (**Right** side of the equation)|
   | `compare_js_template` | yes | JavaScript code used to convert left and right side of the equation. `{value}` is replaced with input values. |
   | `compare_use_quotes` | yes | If `true` then the end result of the `compare_js_template` i swrapped in `"` quotes. Use to compare strings. |
-  
+
   Filters are only applied if a filter is specified, and the `txtMacFilter` is not `undefined`, or empty (`--`).
 
 > 🔎Example:
-> 
+>
 > ```json
 >     "data_filters": [
 >         {
 >             "compare_column" : "Object_PrimaryID",
 >             "compare_operator" : "==",
 >             "compare_field_id": "txtMacFilter",
->             "compare_js_template": "'{value}'.toString()", 
->             "compare_use_quotes": true 
+>             "compare_js_template": "'{value}'.toString()",
+>             "compare_use_quotes": true
 >         }
 >     ],
 > ```
@@ -310,7 +319,7 @@ Plugin entries can be filtered in the UI based on values entered into filter fie
 >
 >5. `compare_use_quotes` is set to `true` so `'{value}'.toString()` is wrappe dinto `"` quotes.
 >
->6. This results in for example this code: 
+>6. This results in for example this code:
 >
 >```javascript
 >    // left part of the expression coming from compare_column and right from the input field
@@ -324,8 +333,8 @@ Plugin entries can be filtered in the UI based on values entered into filter fie
 
 Plugin results are always inserted into the standard `Plugin_Objects` database table. Optionally, NetAlertX can take the results of the plugin execution, and insert these results into an additional database table. This is enabled by with the property `"mapped_to_table"` in the `config.json` file. The mapping of the columns is defined in the `database_column_definitions` array.
 
-> [!NOTE] 
-> If results are mapped to the `CurrentScan` table, the data is then included into the regular scan loop, so for example notification for devices are sent out.  
+> [!NOTE]
+> If results are mapped to the `CurrentScan` table, the data is then included into the regular scan loop, so for example notification for devices are sent out.
 
 
 >🔍 Example:
@@ -341,7 +350,7 @@ Plugin results are always inserted into the standard `Plugin_Objects` database t
 >    ...
 >    "data_source":  "script",
 >    "localized": ["display_name", "description", "icon"],
->    "mapped_to_table": "CurrentScan",    
+>    "mapped_to_table": "CurrentScan",
 >    ...
 >}
 >```
@@ -350,10 +359,10 @@ Plugin results are always inserted into the standard `Plugin_Objects` database t
 >```json
 >{
 >            "column": "Object_PrimaryID",
->            "mapped_to_column": "cur_MAC", 
+>            "mapped_to_column": "cur_MAC",
 >            "css_classes": "col-sm-2",
 >            "show": true,
->            "type": "device_mac",            
+>            "type": "device_mac",
 >            "default_value":"",
 >            "options": [],
 >            "localized": ["name"],
@@ -366,8 +375,8 @@ Plugin results are always inserted into the standard `Plugin_Objects` database t
 >
 >3.  That's it. The app takes care of the rest. It loops thru the objects discovered by the plugin, takes the results line-by-line, and inserts them into the database table specified in `"mapped_to_table"`. The columns are translated from the generic plugin columns to the target table columns via the `"mapped_to_column"` property in the column definitions.
 
-> [!NOTE] 
-> You can create a column mapping with a default value via the `mapped_to_column_data` property. This means that the value of the given column will always be this value. That also means that the `"column": "NameDoesntMatter"` is not important as there is no database source column. 
+> [!NOTE]
+> You can create a column mapping with a default value via the `mapped_to_column_data` property. This means that the value of the given column will always be this value. That also means that the `"column": "NameDoesntMatter"` is not important as there is no database source column.
 
 
 >🔍 Example:
@@ -377,11 +386,11 @@ Plugin results are always inserted into the standard `Plugin_Objects` database t
 >            "column": "NameDoesntMatter",
 >            "mapped_to_column": "cur_ScanMethod",
 >            "mapped_to_column_data": {
->                "value": "DHCPLSS"                
->            },  
+>                "value": "DHCPLSS"
+>            },
 >            "css_classes": "col-sm-2",
 >            "show": true,
->            "type": "device_mac",            
+>            "type": "device_mac",
 >            "default_value":"",
 >            "options": [],
 >            "localized": ["name"],
@@ -394,7 +403,7 @@ Plugin results are always inserted into the standard `Plugin_Objects` database t
 
 #### params
 
-> [!IMPORTANT] 
+> [!IMPORTANT]
 > An esier way to access settings in scripts is the `get_setting_value` method.
 > ```python
 > from helper import get_setting_value
@@ -403,18 +412,18 @@ Plugin results are always inserted into the standard `Plugin_Objects` database t
 >   NTFY_TOPIC = get_setting_value('NTFY_TOPIC')
 >   ...
 >
-> ``` 
+> ```
 
-The `params` array in the `config.json` is used to enable the user to change the parameters of the executed script. For example, the user wants to monitor a specific URL. 
+The `params` array in the `config.json` is used to enable the user to change the parameters of the executed script. For example, the user wants to monitor a specific URL.
 
 > 🔎 Example:
-> Passing user-defined settings to a command. Let's say, you want to have a script, that is called with a user-defined parameter called `urls`: 
-> 
+> Passing user-defined settings to a command. Let's say, you want to have a script, that is called with a user-defined parameter called `urls`:
+>
 > ```bash
 > root@server# python3 /app/front/plugins/website_monitor/script.py urls=https://google.com,https://duck.com
 > ```
 
-* You can allow the user to add URLs to a setting with the `function` property set to a custom name, such as `urls_to_check` (this is not a reserved name from the section "Supported settings `function` values" below). 
+* You can allow the user to add URLs to a setting with the `function` property set to a custom name, such as `urls_to_check` (this is not a reserved name from the section "Supported settings `function` values" below).
 * You specify the parameter `urls` in the `params` section of the `config.json` the following way (`WEBMON_` is the plugin prefix automatically added to all the settings):
 ```json
 {
@@ -451,30 +460,30 @@ During script execution, the app will take the command `"python3 /app/front/plug
 1. The app checks the `params` entries
 2. It finds `"name"  : "urls"`
 3. Checks the type of the `urls` params and finds `"type"  : "setting"`
-4. Gets the setting name from  `"value" : "WEBMON_urls_to_check"` 
+4. Gets the setting name from  `"value" : "WEBMON_urls_to_check"`
    - IMPORTANT: in the `config.json` this setting is identified by `"function":"urls_to_check"`, not `"function":"WEBMON_urls_to_check"`
-   - You can also use a global setting, or a setting from a different plugin  
+   - You can also use a global setting, or a setting from a different plugin
 5. The app gets the user defined value from the setting with the code name `WEBMON_urls_to_check`
-   - let's say the setting with the code name  `WEBMON_urls_to_check` contains 2 values entered by the user: 
+   - let's say the setting with the code name  `WEBMON_urls_to_check` contains 2 values entered by the user:
    - `WEBMON_urls_to_check=['https://google.com','https://duck.com']`
 6. The app takes the value from `WEBMON_urls_to_check` and replaces the `{urls}` wildcard in the setting where `"function":"CMD"`, so you go from:
    - `python3 /app/front/plugins/website_monitor/script.py urls={urls}`
    - to
-   - `python3 /app/front/plugins/website_monitor/script.py urls=https://google.com,https://duck.com` 
+   - `python3 /app/front/plugins/website_monitor/script.py urls=https://google.com,https://duck.com`
 
-Below are some general additional notes, when defining `params`: 
+Below are some general additional notes, when defining `params`:
 
 - `"name":"name_value"` - is used as a wildcard replacement in the `CMD` setting value by using curly brackets `{name_value}`. The wildcard is replaced by the result of the `"value" : "param_value"` and `"type":"type_value"` combo configuration below.
 - `"type":"<sql|setting>"` - is used to specify the type of the params, currently only 2 supported (`sql`,`setting`).
-  - `"type":"sql"` - will execute the SQL query specified in the `value` property. The sql query needs to return only one column. The column is flattened and separated by commas (`,`), e.g: `SELECT devMac from DEVICES` -> `Internet,74:ac:74:ac:74:ac,44:44:74:ac:74:ac`. This is then used to replace the wildcards in the `CMD` setting.  
-  - `"type":"setting"` - The setting code name. A combination of the value from `unique_prefix` + `_` + `function` value, or otherwise the code name you can find in the Settings page under the Setting display name, e.g. `PIHOLE_RUN`. 
+  - `"type":"sql"` - will execute the SQL query specified in the `value` property. The sql query needs to return only one column. The column is flattened and separated by commas (`,`), e.g: `SELECT devMac from DEVICES` -> `Internet,74:ac:74:ac:74:ac,44:44:74:ac:74:ac`. This is then used to replace the wildcards in the `CMD` setting.
+  - `"type":"setting"` - The setting code name. A combination of the value from `unique_prefix` + `_` + `function` value, or otherwise the code name you can find in the Settings page under the Setting display name, e.g. `PIHOLE_RUN`.
 - `"value": "param_value"` - Needs to contain a setting code name or SQL query without wildcards.
 - `"timeoutMultiplier" : true` - used to indicate if the value should multiply the max timeout for the whole script run by the number of values in the given parameter.
 - `"base64": true` - use base64 encoding to pass the value to the script (e.g. if there are spaces)
 
 
 > 🔎Example:
-> 
+>
 > ```json
 > {
 >     "params" : [{
@@ -486,7 +495,7 @@ Below are some general additional notes, when defining `params`:
 >        {
 >            "name"              : "macs",
 >            "type"              : "sql",
->            "value"             : "SELECT devMac from DEVICES"            
+>            "value"             : "SELECT devMac from DEVICES"
 >        },
 >        {
 >            "name"              : "timeout",
@@ -505,7 +514,7 @@ Below are some general additional notes, when defining `params`:
 
 #### ⚙ Setting object structure
 
-> [!NOTE] 
+> [!NOTE]
 > The settings flow and when Plugin specific settings are applied is described under the [Settings system](./SETTINGS_SYSTEM.md).
 
 Required attributes are:
@@ -557,7 +566,7 @@ The UI component is defined as a JSON object containing a list of `elements`. Ea
               { "customParams": "NEWDEV_devIcon,NEWDEV_devIcon_preview" }
             ],
             "transformers": []
-          }          
+          }
         ]
       }
 }
@@ -578,10 +587,10 @@ The code snippet provided demonstrates how the elements are iterated over to gen
 
 Each element may also have associated events (e.g., running a scan or triggering a notification) defined under `Events`.
 
-    
+
 ##### Supported settings `function` values
 
-You can have any `"function": "my_custom_name"` custom name, however, the ones listed below have a specific functionality attached to them. 
+You can have any `"function": "my_custom_name"` custom name, however, the ones listed below have a specific functionality attached to them.
 
 | Setting | Description |
 | ------- | ----------- |
@@ -607,11 +616,11 @@ You can have any `"function": "my_custom_name"` custom name, however, the ones l
 
 
 > 🔎 Example:
-> 
+>
 > ```json
 > {
->     "function": "RUN",            
->     "type": {"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]},            
+>     "function": "RUN",
+>     "type": {"dataType":"string", "elements": [{"elementType" : "select", "elementOptions" : [] ,"transformers": []}]},
 >     "default_value":"disabled",
 >     "options": ["disabled", "once", "schedule", "always_after_scan", "on_new_device"],
 >     "localized": ["name", "description"],
@@ -628,18 +637,18 @@ You can have any `"function": "my_custom_name"` custom name, however, the ones l
 
 ##### 🌍Localized strings
 
-- `"language_code":"<en_us|es_es|de_de>"`  - code name of the language string. Only these three are currently supported. At least the `"language_code":"en_us"` variant has to be defined. 
+- `"language_code":"<en_us|es_es|de_de>"`  - code name of the language string. Only these three are currently supported. At least the `"language_code":"en_us"` variant has to be defined.
 - `"string"`  - The string to be displayed in the given language.
 
 > 🔎 Example:
-> 
+>
 > ```json
-> 
+>
 >     {
 >         "language_code":"en_us",
 >         "string" : "When to run"
 >     }
-> 
+>
 > ```
 
 ##### UI settings in database_column_definitions
@@ -668,9 +677,9 @@ The UI will adjust how columns are displayed in the UI based on the resolvers de
 | `textbox_save` | Generates an editable and saveable text box that saves values in the database. Primarily intended for the `UserData` database column in the `Plugins_Objects` table. |
 | `url_http_https` | Generates two links with the `https` and `http` prefix as lock icons. |
 | `eval` | Evaluates as JavaScript. Use the variable `value` to use the given column value as input (e.g. `'<b>${value}<b>'` (replace ' with ` in your code) ) |
-            
 
-> [!NOTE] 
+
+> [!NOTE]
 > Supports chaining. You can chain multiple resolvers with `.`. For example `regex.url_http_https`. This will apply the `regex` resolver and then the `url_http_https` resolver.
 
 
@@ -700,12 +709,12 @@ The UI will adjust how columns are displayed in the UI based on the resolvers de
             "column": "Watched_Value1",
             "css_classes": "col-sm-2",
             "show": true,
-            "type": "threshold",            
+            "type": "threshold",
             "default_value":"",
             "options": [
                 {
                     "maximum": 199,
-                    "hexColor": "#792D86"                
+                    "hexColor": "#792D86"
                 },
                 {
                     "maximum": 299,
@@ -729,11 +738,11 @@ The UI will adjust how columns are displayed in the UI based on the resolvers de
                 "language_code":"en_us",
                 "string" : "Status code"
                 }]
-        },        
+        },
         {
             "column": "Status",
             "show": true,
-            "type": "replace",            
+            "type": "replace",
             "default_value":"",
             "options": [
                 {
@@ -759,13 +768,13 @@ The UI will adjust how columns are displayed in the UI based on the resolvers de
             "column": "Watched_Value3",
             "css_classes": "col-sm-1",
             "show": true,
-            "type": "regex.url_http_https",            
+            "type": "regex.url_http_https",
             "default_value":"",
             "options": [
                 {
                     "type": "regex",
                     "param": "([\\d.:]+)"
-                }          
+                }
             ],
             "localized": ["name"],
             "name":[{
