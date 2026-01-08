@@ -290,7 +290,7 @@
     "Events_Tablelenght": "表示中 _MENU_ 件",
     "Events_Tablelenght_all": "全て",
     "Events_Title": "イベント",
-    "FakeMAC_hover": "",
+    "FakeMAC_hover": "自動検出 - デバイスがFAKE MACアドレス（FA:CEまたは00:1Aで始まる）を使用しているかどうかを示します。これは通常、本来のMACアドレスを検出できないプラグインによる生成か、ダミーデバイスの作成によって使用されます。",
     "GRAPHQL_PORT_description": "GraphQLサーバーのポート番号。このホスト上のすべてのアプリケーションおよびNetAlertXインスタンスにおいて、ポートが一意であることを確認してください。",
     "GRAPHQL_PORT_name": "GraphQLポート",
     "Gen_Action": "アクション",
