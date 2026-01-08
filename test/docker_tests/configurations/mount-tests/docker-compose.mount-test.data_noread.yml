@@ -37,7 +37,7 @@ services:
         read_only: false
 
     tmpfs:
-      - "/tmp:mode=1777,uid=20211,gid=20211,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      - "/tmp:mode=1755,uid=20211,gid=20211,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
 
 volumes:
   test_netalertx_data:

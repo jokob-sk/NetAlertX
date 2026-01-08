@@ -23,22 +23,65 @@
 #    - EXEC: Direct entrypoint execution as current user.
 #
 # 2. RUNTIME: ROOT (Container started as user: 0)
-#    A. TARGET: PUID=0 (User requested root)
-#       - Permissions priming skipped (already root).
-#       - EXEC: Direct entrypoint execution as root (with security warning).
-#
-#    B. TARGET: PUID > 0 (User requested privilege drop)
-#       - PRIMING: Attempt chown on /data & /tmp to PUID:PGID.
-#         (Failures logged but non-fatal to support NFS/ReadOnly mounts).
-#       - EXEC: Attempt `su-exec PUID:PGID`.
-#         - Success: Process runs as PUID.
-#         - Failure (Missing CAPS): Fallback to running as root to prevent crash.
-# - If PUID=0, log a warning and run directly.
-# - Otherwise, attempt to prime paths and `su-exec` to PUID:PG
+#    - PRIMING: Always ensure paths exist and chown to requested PUID:PGID
+#      (defaults to 20211). Failures are logged but non-fatal to support
+#      NFS/ReadOnly mounts.
+#    - EXEC: Attempt `su-exec PUID:PGID` (including 0:0) to keep a single
+#      execution path. On failure (missing caps/tool), log and run as root.
+#    - If PUID=0, warn operators that processes remain root-owned.
 
+PROC_MOUNTS_PATH="/proc/mounts"
+PROC_MOUNTS_OVERRIDE_REASON=""
 
+if [ -n "${NETALERTX_PROC_MOUNTS_B64:-}" ]; then
+    PROC_MOUNTS_INLINE_PATH="/tmp/netalertx_proc_mounts_inline"
+    if printf '%s' "${NETALERTX_PROC_MOUNTS_B64}" | base64 -d > "${PROC_MOUNTS_INLINE_PATH}" 2>/dev/null; then
+        chmod 600 "${PROC_MOUNTS_INLINE_PATH}" 2>/dev/null || true
+        PROC_MOUNTS_PATH="${PROC_MOUNTS_INLINE_PATH}"
+        PROC_MOUNTS_OVERRIDE_REASON="inline"
+    else
+        >&2 printf 'Warning: Failed to decode NETALERTX_PROC_MOUNTS_B64; continuing with %s.\n' "${PROC_MOUNTS_PATH}"
+    fi
+elif [ -n "${NETALERTX_PROC_MOUNTS_OVERRIDE:-}" ]; then
+    PROC_MOUNTS_PATH="${NETALERTX_PROC_MOUNTS_OVERRIDE}"
+    PROC_MOUNTS_OVERRIDE_REASON="file"
+fi
+
+if [ "${PROC_MOUNTS_OVERRIDE_REASON}" = "inline" ]; then
+    >&2 echo "Note: Using inline /proc/mounts override for storage-driver detection."
+elif [ "${PROC_MOUNTS_PATH}" != "/proc/mounts" ]; then
+    >&2 printf 'Note: Using override for /proc/mounts at %s\n' "${PROC_MOUNTS_PATH}"
+fi
+
+# Detect AUFS storage driver; emit warnings so operators can take corrective action
+_detect_storage_driver() {
+    local mounts_path="${PROC_MOUNTS_PATH}"
+    if [ ! -r "${mounts_path}" ]; then
+        >&2 printf 'Note: Unable to read %s; assuming non-AUFS storage.\n' "${mounts_path}"
+        echo "other"
+        return
+    fi
+    # Check mounts file to detect if root filesystem uses aufs
+    if grep -qE '^[^ ]+ / aufs ' "${mounts_path}" 2>/dev/null; then
+        echo "aufs"
+    else
+        echo "other"
+    fi
+}
+
+STORAGE_DRIVER="$(_detect_storage_driver)"
 PUID="${PUID:-${NETALERTX_UID:-20211}}"
 PGID="${PGID:-${NETALERTX_GID:-20211}}"
+
+if [ "${STORAGE_DRIVER}" = "aufs" ]; then
+    >&2 cat <<'EOF'
+⚠️  WARNING: Legacy AUFS storage driver detected.
+    AUFS strips file capabilities (setcap) during image extraction which breaks
+    layer-2 scanners (arp-scan, etc.) when running as non-root.
+    Action: set PUID=0 (root) on AUFS hosts or migrate to a supported driver.
+    Details: https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/aufs-capabilities.md
+EOF
+fi
 
 RED=$(printf '\033[1;31m')
 RESET=$(printf '\033[0m')
@@ -130,11 +173,6 @@ if [ "$(id -u)" -ne 0 ]; then
     exec /entrypoint.sh "$@"
 fi
 
-if [ "${PUID}" -eq 0 ]; then
-    >&2 echo "WARNING: Running as root (PUID=0). Prefer a non-root PUID."
-    exec /entrypoint.sh "$@"
-fi
-
 _prime_paths() {
     runtime_root="${NETALERTX_RUNTIME_BASE:-/tmp}"
     paths="/tmp ${NETALERTX_DATA:-/data} ${NETALERTX_CONFIG:-/data/config} ${NETALERTX_DB:-/data/db} ${NETALERTX_LOG:-${runtime_root}/log} ${NETALERTX_PLUGINS_LOG:-${runtime_root}/log/plugins} ${NETALERTX_API:-${runtime_root}/api} ${SYSTEM_SERVICES_RUN:-${runtime_root}/run} ${SYSTEM_SERVICES_RUN_TMP:-${runtime_root}/run/tmp} ${SYSTEM_SERVICES_RUN_LOG:-${runtime_root}/run/logs} ${SYSTEM_SERVICES_ACTIVE_CONFIG:-${runtime_root}/nginx/active-config} ${runtime_root}/nginx"
@@ -153,6 +191,10 @@ _prime_paths() {
     done
 }
 _prime_paths
+
+if [ "${PUID}" -eq 0 ]; then
+    >&2 echo "ℹ️  Running as root (PUID=0). Paths will be owned by root."
+fi
 
 unset NETALERTX_PRIVDROP_FAILED
 if ! su-exec "${PUID}:${PGID}" /entrypoint.sh "$@"; then

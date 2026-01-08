@@ -36,7 +36,7 @@ import pytest
 IMAGE = os.environ.get("NETALERTX_TEST_IMAGE", "netalertx-test")
 GRACE_SECONDS = float(os.environ.get("NETALERTX_TEST_GRACE", "2"))
 DEFAULT_CAPS = ["NET_RAW", "NET_ADMIN", "NET_BIND_SERVICE"]
-SUBPROCESS_TIMEOUT_SECONDS = float(os.environ.get("NETALERTX_TEST_SUBPROCESS_TIMEOUT", "60"))
+SUBPROCESS_TIMEOUT_SECONDS = float(os.environ.get("NETALERTX_TEST_SUBPROCESS_TIMEOUT", "30"))
 
 CONTAINER_TARGETS: dict[str, str] = {
     "data": "/data",
@@ -665,7 +665,7 @@ def _run_container(
         stdout=subprocess.PIPE,  # MUST capture stdout for test assertions and debugging
         stderr=subprocess.PIPE,  # MUST capture stderr for test assertions and debugging
         text=True,
-        timeout=max(SUBPROCESS_TIMEOUT_SECONDS, sleep_seconds),
+        timeout=max(SUBPROCESS_TIMEOUT_SECONDS, sleep_seconds), # Coderabbit - please stop trying to increase the length of timeout.
         check=False,
     )
 
@@ -1372,7 +1372,21 @@ def test_restrictive_permissions_handling(tmp_path: pathlib.Path) -> None:
     assert "permission denied" not in result_root.output.lower()
     assert "unable to write" not in result_root.output.lower()
 
-    _assert_contains(result_root, "NetAlertX is running as ROOT", result_root.args)
+    _assert_contains(
+        result_root,
+        "NetAlertX startup: Running privilege check and path priming as ROOT.",
+        result_root.args,
+    )
+    _assert_contains_any(
+        result_root,
+        [
+            "Running as root (PUID=0). Paths will be owned by root.",
+            "WARNING: Running as root (PUID=0). Prefer a non-root PUID.",
+            "NetAlertX is running as ROOT",
+            "NetAlertX note: current UID 0 GID 0",
+        ],
+        result_root.args,
+    )
 
     check_cmd = [
         "docker", "run", "--rm",
