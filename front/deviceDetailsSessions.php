@@ -105,8 +105,8 @@ function loadSessionsData() {
   // Build API base
   const apiToken = getSetting("API_TOKEN");
 
-  const apiBase = getApiBase();
-  const url = `${apiBase}/sessions/${getMac()}?period=${encodeURIComponent(period)}`;
+  const apiBaseUrl = getApiBase();
+  const url = `${apiBaseUrl}/sessions/${getMac()}?period=${encodeURIComponent(period)}`;
 
   // Call API with Authorization header
   $.ajax({

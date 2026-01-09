@@ -567,7 +567,7 @@ def publish_notifications(db, mqtt_client):
             try:
                 payload = json.loads(payload_str)  # Deserialize JSON string
             except Exception as e:
-                mylog('minimal', [f"[{pluginName}] ⚠ ERROR decoding JSON for notification GUID {notification["GUID"]}: {e}"])
+                mylog('minimal', [f"[{pluginName}] ⚠ ERROR decoding JSON for notification GUID {notification['GUID']}: {e}"])
                 continue  # skip this notification
         else:
             # fallback generic payload (like webhook does)

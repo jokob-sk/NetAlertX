@@ -44,7 +44,6 @@
       case 'ExportCSV':               ExportCSV();                             break; // equivalent: export_devices
       case 'ImportCSV':               ImportCSV();                             break; // equivalent: import_csv
 
-      case 'getDevicesTotals':        getDevicesTotals();                      break; // equivalent: devices_totals
       case 'getDevicesListCalendar':  getDevicesListCalendar();                break; // equivalent: devices_by_status
 
       case 'updateNetworkLeaf':       updateNetworkLeaf();                     break; // equivalent: update_device_column(mac, column_name, column_value)
@@ -337,41 +336,6 @@ function ImportCSV() {
   }
 }
 
-
-//------------------------------------------------------------------------------
-//  Query total numbers of Devices by status
-//------------------------------------------------------------------------------
-function getDevicesTotals() {
-
-  $resultJSON = "";
-
-  if(getCache("getDevicesTotals") != "")
-  {
-    $resultJSON = getCache("getDevicesTotals");
-  } else
-  {
-    global $db;
-
-    // combined query
-    $result = $db->query(
-          'SELECT
-          (SELECT COUNT(*) FROM Devices '. getDeviceCondition ('my').') as devices,
-          (SELECT COUNT(*) FROM Devices '. getDeviceCondition ('connected').') as connected,
-          (SELECT COUNT(*) FROM Devices '. getDeviceCondition ('favorites').') as favorites,
-          (SELECT COUNT(*) FROM Devices '. getDeviceCondition ('new').') as new,
-          (SELECT COUNT(*) FROM Devices '. getDeviceCondition ('down').') as down,
-          (SELECT COUNT(*) FROM Devices '. getDeviceCondition ('archived').') as archived
-    ');
-
-    $row = $result -> fetchArray (SQLITE3_NUM);
-    $resultJSON = json_encode (array ($row[0], $row[1], $row[2], $row[3], $row[4], $row[5]));
-
-    // save to cache
-    setCache("getDevicesTotals", $resultJSON );
-  }
-
-  echo ($resultJSON);
-}
 
 //------------------------------------------------------------------------------
 //  Determine if Random MAC
