@@ -26,8 +26,11 @@ The container is designed to inspect the runtime environment at startup (`/root-
 
 ### Warning Log
 When AUFS is detected without root privileges, the system emits the following warning during startup:
-> ⚠️ **WARNING:** Legacy AUFS storage driver detected. AUFS strips file capabilities (setcap). Layer-2 scanners will fail.
-> **Action:** Set PUID=0 in your config or migrate off AUFS.
+> ⚠️  WARNING: Reduced functionality (AUFS + non-root user).
+> 
+> AUFS strips Linux file capabilities, so tools like arp-scan, nmap, and nbtscan fail when NetAlertX runs as a non-root PUID.
+>
+> **Action:** Set PUID=0 on AUFS hosts for full functionality.
 
 
 ## Security Ramifications
@@ -144,12 +147,15 @@ docker exec netalertx getcap /usr/sbin/arp-scan
 ```
 
 **3. Simulating AUFS (Dev/Test)**
-Developers can force the AUFS logic path on a modern machine by mocking the mounts file:
+Developers can force the AUFS logic path on a modern machine by mocking the mounts file. Note: Docker often restricts direct bind-mounts of host `/proc` paths, so the test suite uses an environment-variable injection instead (see `test_puid_pgid.py`).
 
 ```bash
-echo "none / aufs rw,relatime 0 0" > /tmp/mock_mounts
-docker run --rm -v /tmp/mock_mounts:/proc/mounts:ro netalertx/netalertx
+# Create mock mounts content and encode it as base64
+echo "none / aufs rw,relatime 0 0" | base64
 
+# Run the container passing the encoded mounts via NETALERTX_PROC_MOUNTS_B64
+# (the entrypoint decodes this and uses it instead of reading /proc/mounts directly)
+docker run --rm -e NETALERTX_PROC_MOUNTS_B64="bm9uZSAvIGF1ZnMgcncs..." netalertx/netalertx
 ```
 
 ## Additional Resources

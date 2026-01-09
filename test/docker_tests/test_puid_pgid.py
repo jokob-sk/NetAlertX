@@ -248,20 +248,22 @@ def test_aufs_explicit_root_no_warning() -> None:
         mock_file_path = f"/tmp/mock_mounts_{uuid.uuid4().hex[:8]}"
         with open(mock_file_path, "w") as f:
             f.write(mock_mounts_content)
-        # Run with explicit PUID=0 - should not warn about non-root
-        result = _run_root_entrypoint(
-            env={"PUID": "0", "PGID": "0", "SKIP_TESTS": "1"},
-            volumes=[f"{volume}:/data", f"{mock_file_path}:/proc/mounts:ro"],
-        )
+        try:
+            # Run with explicit PUID=0 - should not warn about non-root
+            result = _run_root_entrypoint(
+                env={"PUID": "0", "PGID": "0", "SKIP_TESTS": "1"},
+                volumes=[f"{volume}:/data", f"{mock_file_path}:/proc/mounts:ro"],
+            )
 
-        combined = (result.stdout or "") + (result.stderr or "")
-        assert result.returncode == 0, f"Container should start: {combined}"
-        assert "Running as root (PUID=0)" in combined, f"Should confirm running as root: {combined}"
-        # Should NOT have the AUFS reduced functionality warning when running as root
-        assert "Reduced functionality (AUFS + non-root user)" not in combined, f"Should not warn when explicitly using root: {combined}"
-
-        # Clean up mock file
-        os.unlink(mock_file_path)
+            combined = (result.stdout or "") + (result.stderr or "")
+            assert result.returncode == 0, f"Container should start: {combined}"
+            assert "Running as root (PUID=0)" in combined, f"Should confirm running as root: {combined}"
+            # Should NOT have the AUFS reduced functionality warning when running as root
+            assert "Reduced functionality (AUFS + non-root user)" not in combined, f"Should not warn when explicitly using root: {combined}"
+        finally:
+            # Clean up mock file
+            if os.path.exists(mock_file_path):
+                os.unlink(mock_file_path)
 
     finally:
         subprocess.run(["docker", "volume", "rm", "-f", volume], check=False, capture_output=True, text=True, timeout=15)
@@ -281,17 +283,19 @@ def test_aufs_non_root_warns() -> None:
         with open(mock_file_path, "w") as f:
             f.write(mock_mounts_content)
 
-        result = _run_root_entrypoint(
-            env={"PUID": "20211", "PGID": "20211"},
-            volumes=[f"{volume}:/data", f"{mock_file_path}:/proc/mounts:ro"],
-        )
+        try:
+            result = _run_root_entrypoint(
+                env={"PUID": "20211", "PGID": "20211"},
+                volumes=[f"{volume}:/data", f"{mock_file_path}:/proc/mounts:ro"],
+            )
 
-        combined = (result.stdout or "") + (result.stderr or "")
-        assert result.returncode == 0, f"Container should continue with warnings: {combined}"
-        assert "Reduced functionality (AUFS + non-root user)" in combined, f"AUFS warning missing: {combined}"
-        assert "aufs-capabilities" in combined, "Warning should link to troubleshooting guide"
-
-        os.unlink(mock_file_path)
+            combined = (result.stdout or "") + (result.stderr or "")
+            assert result.returncode == 0, f"Container should continue with warnings: {combined}"
+            assert "Reduced functionality (AUFS + non-root user)" in combined, f"AUFS warning missing: {combined}"
+            assert "aufs-capabilities" in combined, "Warning should link to troubleshooting guide"
+        finally:
+            if os.path.exists(mock_file_path):
+                os.unlink(mock_file_path)
 
     finally:
         subprocess.run(["docker", "volume", "rm", "-f", volume], check=False, capture_output=True, text=True, timeout=15)

@@ -665,7 +665,7 @@ def _run_container(
         stdout=subprocess.PIPE,  # MUST capture stdout for test assertions and debugging
         stderr=subprocess.PIPE,  # MUST capture stderr for test assertions and debugging
         text=True,
-        timeout=max(SUBPROCESS_TIMEOUT_SECONDS, sleep_seconds), # Coderabbit - please stop trying to increase the length of timeout.
+        timeout=max(SUBPROCESS_TIMEOUT_SECONDS, sleep_seconds),  # Coderabbit - please stop trying to increase the length of timeout.
         check=False,
     )
 
