@@ -12,6 +12,31 @@ YELLOW=$(printf '\033[1;33m')
 GREY=$(printf '\033[90m')
 RESET=$(printf '\033[0m')
 
+_detect_storage_driver() {
+    mounts_path="/proc/mounts"
+
+    if [ -n "${NETALERTX_PROC_MOUNTS_B64:-}" ]; then
+        mounts_override="/tmp/netalertx_proc_mounts_inline_capcheck"
+        if printf '%s' "${NETALERTX_PROC_MOUNTS_B64}" | base64 -d > "${mounts_override}" 2>/dev/null; then
+            chmod 600 "${mounts_override}" 2>/dev/null || true
+            mounts_path="${mounts_override}"
+        fi
+    elif [ -n "${NETALERTX_PROC_MOUNTS_OVERRIDE:-}" ]; then
+        mounts_path="${NETALERTX_PROC_MOUNTS_OVERRIDE}"
+    fi
+
+    if [ ! -r "${mounts_path}" ]; then
+        echo "other"
+        return
+    fi
+
+    if grep -qE '^[^ ]+ / aufs ' "${mounts_path}" 2>/dev/null; then
+        echo "aufs"
+    else
+        echo "other"
+    fi
+}
+
 # Parse Bounding Set from /proc/self/status
 cap_bnd_hex=$(awk '/CapBnd/ {print $2}' /proc/self/status 2>/dev/null || echo "0")
 # Convert hex to dec (POSIX compliant)
@@ -67,6 +92,25 @@ if [ -n "${missing_admin}" ]; then
     if echo "${missing_admin}" | grep -q "CHOWN"; then
         printf "%sSee https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/missing-capabilities.md%s\n" "${GREY}" "${RESET}"
     fi
+fi
+
+storage_driver=$(_detect_storage_driver)
+runtime_uid=$(id -u 2>/dev/null || echo 0)
+
+if [ "${storage_driver}" = "aufs" ] && [ "${runtime_uid}" -ne 0 ]; then
+    printf "%s" "${YELLOW}"
+    cat <<'EOF'
+══════════════════════════════════════════════════════════════════════════════
+⚠️  WARNING: Reduced functionality (AUFS + non-root user).
+
+    AUFS strips Linux file capabilities, so tools like arp-scan, nmap, and
+    nbtscan fail when NetAlertX runs as a non-root PUID.
+
+    Set PUID=0 on AUFS hosts for full functionality:
+    https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/aufs-capabilities.md
+══════════════════════════════════════════════════════════════════════════════
+EOF
+    printf "%s" "${RESET}"
 fi
 
 exit 0

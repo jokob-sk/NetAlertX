@@ -51,7 +51,8 @@ fi
 # hands control back to this script.
 if [ "${ENTRYPOINT_PRIMED:-0}" != "1" ] && [ "$(id -u)" -eq 0 ] && [ -x "/root-entrypoint.sh" ]; then
     >&2 cat <<'EOF'
-NetAlertX is running as ROOT (UID 0). Prefer setting PUID/PGID to 20211 for better isolation.
+ℹ️  NetAlertX startup: Running privilege check and path priming as ROOT.
+    (On modern systems, privileges will be dropped to PUID after setup)
 EOF
     export ENTRYPOINT_PRIMED=1
     exec /root-entrypoint.sh "$@"
