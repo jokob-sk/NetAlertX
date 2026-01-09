@@ -210,23 +210,20 @@
 <div id="scanoutput" style="margin-top: 30px;"></div>
 
 <script>
-
-            const protocol = window.location.protocol;
-            const host = window.location.hostname;
-            const port = getSetting("GRAPHQL_PORT");
+            // Build base URL dynamically
+            const apiBase = getApiBase();
             const apiToken = getSetting("API_TOKEN");
 
         // ----------------------------------------------------------------
         function manualnmapscan(targetip, mode) {
             $("#scanoutput").empty();
 
-
-            const baseUrl = getApiBase();
-
+            // Build base URL dynamically
+            const apiBase = getApiBase();
 
             $.ajax({
                 method: "POST",
-                url: `${baseUrl}/nettools/nmap`,
+                url: `${apiBase}/nettools/nmap`,
                 contentType: "application/json",
                 dataType: "json",
                 data: JSON.stringify({
@@ -265,7 +262,7 @@
 
             $.ajax({
                 method: "GET",
-                url: `${protocol}//${host}:${port}/nettools/speedtest`,
+                url: `${apiBase}/nettools/speedtest`,
                 headers: {
                     "Authorization": "Bearer " + apiToken,
                     "Content-Type": "application/json"
@@ -316,7 +313,7 @@
 
             $.ajax({
                 method: "POST",
-                url: `${protocol}//${host}:${port}/nettools/traceroute`,
+                url: `${apiBase}/nettools/traceroute`,
                 headers: {
                     "Authorization": "Bearer " + apiToken,
                     "Content-Type": "application/json"
@@ -366,7 +363,7 @@
 
             $.ajax({
                 method: "POST",
-                url: `${protocol}//${host}:${port}/nettools/nslookup`,
+                url: `${apiBase}/nettools/nslookup`,
                 headers: {
                     "Authorization": "Bearer " + apiToken,
                     "Content-Type": "application/json"
@@ -450,7 +447,7 @@
 
             $.ajax({
                 method: "POST",
-                url: `${protocol}//${host}:${port}/nettools/wakeonlan`,
+                url: `${apiBase}/nettools/wakeonlan`,
                 headers: {
                     "Authorization": "Bearer " + apiToken,
                     "Content-Type": "application/json"
@@ -492,7 +489,7 @@
 
             $.ajax({
                 method: "POST",
-                url: `${protocol}//${host}:${port}/device/copy`,
+                url: `${apiBase}/device/copy`,
                 headers: {
                     "Authorization": "Bearer " + apiToken,
                     "Content-Type": "application/json"
@@ -585,18 +582,14 @@
                 return;
             }
 
-            const protocol = window.location.protocol;  // "http:" or "https:"
-            const host = window.location.hostname;      // current hostname
-            const port = getSetting("GRAPHQL_PORT");    // your dynamic port
-            const apiToken = getSetting("API_TOKEN");   // optional token if needed
-
             // Build base URL dynamically
-            const baseUrl = getApiBase();
+            const apiBase = getApiBase();
+            const apiToken = getSetting("API_TOKEN");   // optional token if needed
 
             // Delete device events
             $.ajax({
                 method: "DELETE",
-                url: `${baseUrl}/device/${encodeURIComponent(mac)}/events/delete`,
+                url: `${apiBase}/device/${encodeURIComponent(mac)}/events/delete`,
                 headers: {
                     "Authorization": "Bearer " + apiToken
                 },
@@ -641,11 +634,12 @@
                 return;
             }
 
-            const baseUrl = getApiBase();
+            // Build base URL dynamically
+            const apiBase = getApiBase();
 
             $.ajax({
                 method: "POST",
-                url: `${baseUrl}/device/${encodeURIComponent(mac)}/reset-props`,
+                url: `${apiBase}/device/${encodeURIComponent(mac)}/reset-props`,
                 dataType: "json",
                 headers: {
                     "Authorization": "Bearer " + apiToken
@@ -675,7 +669,7 @@
 
             $.ajax({
                 method: "GET",
-                url: `${protocol}//${host}:${port}/nettools/internetinfo`,
+                url: `${apiBase}/nettools/internetinfo`,
                 headers: {
                     "Authorization": "Bearer " + apiToken,
                     "Content-Type": "application/json"
