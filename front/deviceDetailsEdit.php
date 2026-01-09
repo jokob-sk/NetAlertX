@@ -354,9 +354,7 @@ function setDeviceData(direction = '', refreshCallback = '') {
   showSpinner();
 
   const apiToken = getSetting("API_TOKEN"); // dynamic token
-  const host = window.location.hostname;
-  const protocol = window.location.protocol;
-  const port = getSetting("GRAPHQL_PORT");
+  const apiBase = getApiBase();
 
   mac = $('#NEWDEV_devMac').val();
 
@@ -404,7 +402,7 @@ function setDeviceData(direction = '', refreshCallback = '') {
 
 
   $.ajax({
-    url: `${protocol}//${host}:${port}/device/${encodeURIComponent(mac)}`,
+    url: `${apiBase}/device/${encodeURIComponent(mac)}`,
     type: "POST",
     headers: {
       "Authorization": "Bearer " + apiToken,
