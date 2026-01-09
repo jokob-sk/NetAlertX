@@ -210,20 +210,17 @@
 <div id="scanoutput" style="margin-top: 30px;"></div>
 
 <script>
-            // Build base URL dynamically
-            const apiBase = getApiBase();
-            const apiToken = getSetting("API_TOKEN");
+
+        const apiToken = getSetting("API_TOKEN");
+        const apiBaseUrl = getApiBase();
 
         // ----------------------------------------------------------------
         function manualnmapscan(targetip, mode) {
             $("#scanoutput").empty();
 
-            // Build base URL dynamically
-            const apiBase = getApiBase();
-
             $.ajax({
                 method: "POST",
-                url: `${apiBase}/nettools/nmap`,
+                url: `${apiBaseUrl}/nettools/nmap`,
                 contentType: "application/json",
                 dataType: "json",
                 data: JSON.stringify({
@@ -262,7 +259,7 @@
 
             $.ajax({
                 method: "GET",
-                url: `${apiBase}/nettools/speedtest`,
+                url: `${apiBaseUrl}/nettools/speedtest`,
                 headers: {
                     "Authorization": "Bearer " + apiToken,
                     "Content-Type": "application/json"
@@ -313,7 +310,7 @@
 
             $.ajax({
                 method: "POST",
-                url: `${apiBase}/nettools/traceroute`,
+                url: `${apiBaseUrl}/nettools/traceroute`,
                 headers: {
                     "Authorization": "Bearer " + apiToken,
                     "Content-Type": "application/json"
@@ -359,11 +356,9 @@
 
             $("#nslookupoutput").empty();
 
-
-
             $.ajax({
                 method: "POST",
-                url: `${apiBase}/nettools/nslookup`,
+                url: `${apiBaseUrl}/nettools/nslookup`,
                 headers: {
                     "Authorization": "Bearer " + apiToken,
                     "Content-Type": "application/json"
@@ -447,7 +442,7 @@
 
             $.ajax({
                 method: "POST",
-                url: `${apiBase}/nettools/wakeonlan`,
+                url: `${apiBaseUrl}/nettools/wakeonlan`,
                 headers: {
                     "Authorization": "Bearer " + apiToken,
                     "Content-Type": "application/json"
@@ -489,7 +484,7 @@
 
             $.ajax({
                 method: "POST",
-                url: `${apiBase}/device/copy`,
+                url: `${apiBaseUrl}/device/copy`,
                 headers: {
                     "Authorization": "Bearer " + apiToken,
                     "Content-Type": "application/json"
@@ -582,14 +577,14 @@
                 return;
             }
 
-            // Build base URL dynamically
-            const apiBase = getApiBase();
             const apiToken = getSetting("API_TOKEN");   // optional token if needed
+
+
 
             // Delete device events
             $.ajax({
                 method: "DELETE",
-                url: `${apiBase}/device/${encodeURIComponent(mac)}/events/delete`,
+                url: `${apiBaseUrl}/device/${encodeURIComponent(mac)}/events/delete`,
                 headers: {
                     "Authorization": "Bearer " + apiToken
                 },
@@ -634,12 +629,9 @@
                 return;
             }
 
-            // Build base URL dynamically
-            const apiBase = getApiBase();
-
             $.ajax({
                 method: "POST",
-                url: `${apiBase}/device/${encodeURIComponent(mac)}/reset-props`,
+                url: `${apiBaseUrl}/device/${encodeURIComponent(mac)}/reset-props`,
                 dataType: "json",
                 headers: {
                     "Authorization": "Bearer " + apiToken
@@ -669,7 +661,7 @@
 
             $.ajax({
                 method: "GET",
-                url: `${apiBase}/nettools/internetinfo`,
+                url: `${apiBaseUrl}/nettools/internetinfo`,
                 headers: {
                     "Authorization": "Bearer " + apiToken,
                     "Content-Type": "application/json"
