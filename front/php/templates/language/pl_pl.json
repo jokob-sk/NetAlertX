@@ -27,6 +27,8 @@
     "AppEvents_ObjectType": "Typ obiektu",
     "AppEvents_Plugin": "Wtyczka",
     "AppEvents_Type": "Typ",
+    "BACKEND_API_URL_description": "",
+    "BACKEND_API_URL_name": "",
     "BackDevDetail_Actions_Ask_Run": "Czy chcesz wykonać tę akcję?",
     "BackDevDetail_Actions_Not_Registered": "Akcja nie jest zarejestrowana: ",
     "BackDevDetail_Actions_Title_Run": "Uruchom akcję",

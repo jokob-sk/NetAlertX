@@ -44,6 +44,7 @@
   <script src="lib/datatables.net/js/dataTables.select.min.js"></script>
 
   <script src="js/common.js?v=<?php include 'php/templates/version.php'; ?>"></script>
+  <script src="js/api.js?v=<?php include 'php/templates/version.php'; ?>"></script>
   <script src="js/modal.js?v=<?php include 'php/templates/version.php'; ?>"></script>
   <script src="js/tests.js?v=<?php include 'php/templates/version.php'; ?>"></script>
   <script src="js/db_methods.js?v=<?php include 'php/templates/version.php'; ?>"></script>

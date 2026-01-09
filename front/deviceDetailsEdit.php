@@ -43,13 +43,10 @@ function getDeviceData() {
   mac = getMac()
 
   console.log(mac);
-
-  const protocol = window.location.protocol.replace(':', '');
-  const host = window.location.hostname;
   const apiToken = getSetting("API_TOKEN");
-  const port = getSetting("GRAPHQL_PORT");
+  let period = $("#period").val()
 
-  const apiBase = `${protocol}://${host}:${port}`;
+  const apiBase = getApiBase();
   const url = `${apiBase}/device/${mac}?period=${encodeURIComponent(period)}`;
 
   // get data from server

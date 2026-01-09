@@ -27,6 +27,8 @@
     "AppEvents_ObjectType": "Тип об'єкта",
     "AppEvents_Plugin": "Плагін",
     "AppEvents_Type": "Тип",
+    "BACKEND_API_URL_description": "",
+    "BACKEND_API_URL_name": "",
     "BackDevDetail_Actions_Ask_Run": "Ви хочете виконати дію?",
     "BackDevDetail_Actions_Not_Registered": "Дія не зареєстрована: ",
     "BackDevDetail_Actions_Title_Run": "Запустити дію",

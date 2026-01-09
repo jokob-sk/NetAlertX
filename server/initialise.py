@@ -270,6 +270,15 @@ def importConfigs(pm, db, all_plugins):
         "[]",
         "General",
     )
+    conf.BACKEND_API_URL = ccd(
+        "BACKEND_API_URL",
+        "",
+        c_d,
+        "API URL",
+        '{"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]}',
+        "[]",
+        "General",
+    )
     conf.DAYS_TO_KEEP_EVENTS = ccd(
         "DAYS_TO_KEEP_EVENTS",
         90,

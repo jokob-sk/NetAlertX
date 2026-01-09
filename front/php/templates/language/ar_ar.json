@@ -27,6 +27,8 @@
     "AppEvents_ObjectType": "Object Type",
     "AppEvents_Plugin": "المكونات الإضافية",
     "AppEvents_Type": "النوع",
+    "BACKEND_API_URL_description": "",
+    "BACKEND_API_URL_name": "",
     "BackDevDetail_Actions_Ask_Run": "هل تريد تنفيذ هذا الإجراء؟",
     "BackDevDetail_Actions_Not_Registered": "لم يتم تسجيل الإجراء: ",
     "BackDevDetail_Actions_Title_Run": "تنفيذ الإجراء",

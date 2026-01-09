@@ -27,6 +27,8 @@
     "AppEvents_ObjectType": "オブジェクトタイプ",
     "AppEvents_Plugin": "プラグイン",
     "AppEvents_Type": "種別",
+    "BACKEND_API_URL_description": "",
+    "BACKEND_API_URL_name": "",
     "BackDevDetail_Actions_Ask_Run": "このアクションを実行してよろしいですか？",
     "BackDevDetail_Actions_Not_Registered": "登録されていないアクション: ",
     "BackDevDetail_Actions_Title_Run": "アクションを実行",

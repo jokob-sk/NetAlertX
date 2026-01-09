@@ -421,12 +421,9 @@ function getDevicesPresence (status) {
   $('#tableDevicesBox')[0].className = 'box box-'+ color;
   $('#tableDevicesTitle').html (tableTitle);
 
-  const protocol = window.location.protocol.replace(':', '');
-  const host = window.location.hostname;
-  const port = getSetting("GRAPHQL_PORT"); // Or Flask server port
   const apiToken = getSetting("API_TOKEN");
 
-  const apiBase = `${protocol}://${host}:${port}`;
+  const apiBase = getApiBase();
 
   // -----------------------------
   // Load Devices as Resources

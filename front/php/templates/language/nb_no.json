@@ -27,6 +27,8 @@
     "AppEvents_ObjectType": "Objekttype",
     "AppEvents_Plugin": "Programtillegg",
     "AppEvents_Type": "Type",
+    "BACKEND_API_URL_description": "",
+    "BACKEND_API_URL_name": "",
     "BackDevDetail_Actions_Ask_Run": "Vil du utføre handlingen?",
     "BackDevDetail_Actions_Not_Registered": "Handling ikke registrert: ",
     "BackDevDetail_Actions_Title_Run": "Utfør handling",
