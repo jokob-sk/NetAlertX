@@ -221,7 +221,8 @@
             $("#scanoutput").empty();
 
 
-            const baseUrl = `${protocol}//${host}:${port}`;
+            const baseUrl = getApiBase();
+
 
             $.ajax({
                 method: "POST",
@@ -590,7 +591,7 @@
             const apiToken = getSetting("API_TOKEN");   // optional token if needed
 
             // Build base URL dynamically
-            const baseUrl = `${protocol}//${host}:${port}`;
+            const baseUrl = getApiBase();
 
             // Delete device events
             $.ajax({
@@ -640,7 +641,7 @@
                 return;
             }
 
-            const baseUrl = `${protocol}//${host}:${port}`;
+            const baseUrl = getApiBase();
 
             $.ajax({
                 method: "POST",
