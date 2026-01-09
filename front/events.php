@@ -160,11 +160,10 @@ function periodChanged() {
 function getEventsTotals() {
   stopTimerRefreshData();
 
-  const protocol = window.location.protocol.replace(":", "");
-  const host = window.location.hostname;
-  const port = getSetting("GRAPHQL_PORT");
+  // Build API URL
+  const apiBase = getApiBase();
   const apiToken = getSetting("API_TOKEN");
-  const url = `${protocol}://${host}:${port}/sessions/totals?period=${encodeURIComponent(period)}`;
+  const url = `${apiBase}/sessions/totals?period=${encodeURIComponent(period)}`;
 
   $.ajax({
     url,
@@ -207,11 +206,9 @@ function getEvents(type) {
   table.column(7).visible(config.sesionCols);
 
   // Build API URL
-  const protocol = window.location.protocol.replace(":", "");
-  const host = window.location.hostname;
-  const port = getSetting("GRAPHQL_PORT");
+  const apiBase = getApiBase();
   const apiToken = getSetting("API_TOKEN");
-  const url = `${protocol}://${host}:${port}/sessions/session-events?type=${encodeURIComponent(type)}&period=${encodeURIComponent(period)}`;
+  const url = `${apiBase}/sessions/session-events?type=${encodeURIComponent(type)}&period=${encodeURIComponent(period)}`;
 
   table.clear().draw(); // Clear old rows
 
