@@ -336,13 +336,12 @@ function formatDataSize(bytes) {
 
 
 function loadInterfaces() {
+    // Build base URL dynamically
+    const apiBase = getApiBase();
     const apiToken = getSetting("API_TOKEN");
-    const host = window.location.hostname;
-    const protocol = window.location.protocol;
-    const port = getSetting("GRAPHQL_PORT");
 
     $.ajax({
-        url: `${protocol}//${host}:${port}/nettools/interfaces`,
+        url: `${apiBase}/nettools/interfaces`,
         type: "GET",
         headers: {
             "Authorization": "Bearer " + apiToken,
