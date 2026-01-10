@@ -327,10 +327,22 @@ function askDeleteDevicesWithEmptyMACs () {
 // -----------------------------------------------------------
 function deleteDevicesWithEmptyMACs()
 {
-  // Delete device
-  $.get('php/server/devices.php?action=deleteAllWithEmptyMACs', function(msg) {
-    showMessage (msg);
-    write_notification(`[Maintenance] All devices witout a Mac manually deleted`, 'info')
+  const apiBase = getApiBase();
+  const apiToken = getSetting("API_TOKEN");
+  const url = `${apiBase}/devices/empty-macs`;
+
+  $.ajax({
+    url,
+    method: "DELETE",
+    headers: { "Authorization": `Bearer ${apiToken}` },
+    success: function(response) {
+      showMessage(response.success ? "Devices deleted successfully" : (response.error || "Unknown error"));
+      write_notification(`[Maintenance] All devices without a Mac manually deleted`, 'info');
+    },
+    error: function(xhr, status, error) {
+      console.error("Error deleting devices:", status, error);
+      showMessage("Error: " + (xhr.responseJSON?.error || error));
+    }
   });
 }
 
@@ -344,10 +356,24 @@ function askDeleteAllDevices () {
 // -----------------------------------------------------------
 function deleteAllDevices()
 {
-  // Delete device
-  $.get('php/server/devices.php?action=deleteAllDevices', function(msg) {
-    showMessage (msg);
-    write_notification(`[Maintenance] All devices manually deleted`, 'info')
+  const apiBase = getApiBase();
+  const apiToken = getSetting("API_TOKEN");
+  const url = `${apiBase}/devices`;
+
+  $.ajax({
+    url,
+    method: "DELETE",
+    headers: { "Authorization": `Bearer ${apiToken}` },
+    data: JSON.stringify({ macs: null }),
+    contentType: "application/json",
+    success: function(response) {
+      showMessage(response.success ? "All devices deleted successfully" : (response.error || "Unknown error"));
+      write_notification(`[Maintenance] All devices manually deleted`, 'info');
+    },
+    error: function(xhr, status, error) {
+      console.error("Error deleting devices:", status, error);
+      showMessage("Error: " + (xhr.responseJSON?.error || error));
+    }
   });
 }
 
@@ -361,10 +387,22 @@ function askDeleteUnknown () {
 // -----------------------------------------------------------
 function deleteUnknownDevices()
 {
-  // Execute
-  $.get('php/server/devices.php?action=deleteUnknownDevices', function(msg) {
-    showMessage (msg);
-    write_notification(`[Maintenance] Unknown devices manually deleted`, 'info')
+  const apiBase = getApiBase();
+  const apiToken = getSetting("API_TOKEN");
+  const url = `${apiBase}/devices/unknown`;
+
+  $.ajax({
+    url,
+    method: "DELETE",
+    headers: { "Authorization": `Bearer ${apiToken}` },
+    success: function(response) {
+      showMessage(response.success ? "Unknown devices deleted successfully" : (response.error || "Unknown error"));
+      write_notification(`[Maintenance] Unknown devices manually deleted`, 'info');
+    },
+    error: function(xhr, status, error) {
+      console.error("Error deleting unknown devices:", status, error);
+      showMessage("Error: " + (xhr.responseJSON?.error || error));
+    }
   });
 }
 
@@ -378,10 +416,22 @@ function askDeleteEvents () {
 // -----------------------------------------------------------
 function deleteEvents()
 {
-  // Execute
-  $.get('php/server/devices.php?action=deleteEvents', function(msg) {
-    showMessage (msg);
-    write_notification(`[Maintenance] Events manually deleted (all)`, 'info')
+  const apiBase = getApiBase();
+  const apiToken = getSetting("API_TOKEN");
+  const url = `${apiBase}/events`;
+
+  $.ajax({
+    url,
+    method: "DELETE",
+    headers: { "Authorization": `Bearer ${apiToken}` },
+    success: function(response) {
+      showMessage(response.success ? "All events deleted successfully" : (response.error || "Unknown error"));
+      write_notification(`[Maintenance] Events manually deleted (all)`, 'info');
+    },
+    error: function(xhr, status, error) {
+      console.error("Error deleting events:", status, error);
+      showMessage("Error: " + (xhr.responseJSON?.error || error));
+    }
   });
 }
 
@@ -395,10 +445,22 @@ function askDeleteEvents30 () {
 // -----------------------------------------------------------
 function deleteEvents30()
 {
-  // Execute
-  $.get('php/server/devices.php?action=deleteEvents30', function(msg) {
-    showMessage (msg);
-    write_notification(`[Maintenance] Events manually deleted (last 30 days kep)`, 'info')
+  const apiBase = getApiBase();
+  const apiToken = getSetting("API_TOKEN");
+  const url = `${apiBase}/events/30`;
+
+  $.ajax({
+    url,
+    method: "DELETE",
+    headers: { "Authorization": `Bearer ${apiToken}` },
+    success: function(response) {
+      showMessage(response.success ? "Events older than 30 days deleted successfully" : (response.error || "Unknown error"));
+      write_notification(`[Maintenance] Events manually deleted (last 30 days kept)`, 'info');
+    },
+    error: function(xhr, status, error) {
+      console.error("Error deleting events:", status, error);
+      showMessage("Error: " + (xhr.responseJSON?.error || error));
+    }
   });
 }
 
@@ -411,9 +473,21 @@ function askDeleteActHistory () {
 }
 function deleteActHistory()
 {
-  // Execute
-  $.get('php/server/devices.php?action=deleteActHistory', function(msg) {
-    showMessage (msg);
+  const apiBase = getApiBase();
+  const apiToken = getSetting("API_TOKEN");
+  const url = `${apiBase}/history`;
+
+  $.ajax({
+    url,
+    method: "DELETE",
+    headers: { "Authorization": `Bearer ${apiToken}` },
+    success: function(response) {
+      showMessage(response.success ? "History deleted successfully" : (response.error || "Unknown error"));
+    },
+    error: function(xhr, status, error) {
+      console.error("Error deleting history:", status, error);
+      showMessage("Error: " + (xhr.responseJSON?.error || error));
+    }
   });
 }
 
@@ -466,8 +540,47 @@ function DownloadWorkflows()
 // Export CSV
 function ExportCSV()
 {
-  // Execute
-  openInNewTab("php/server/devices.php?action=ExportCSV")
+  const apiBase = getApiBase();
+  const apiToken = getSetting("API_TOKEN");
+  const url = `${apiBase}/devices/export/csv`;
+  
+  fetch(url, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${apiToken}`
+    }
+  })
+  .then(response => {
+    if (!response.ok) {
+      return response.json().then(err => {
+        throw new Error(err.error || 'Export failed');
+      });
+    }
+    return response.blob();
+  })
+  .then(blob => {
+    const downloadUrl = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.style.display = 'none';
+    a.href = downloadUrl;
+    a.download = 'devices.csv';
+    document.body.appendChild(a);
+    
+    // Trigger download
+    a.click();
+    
+    // Cleanup after a short delay
+    setTimeout(() => {
+      window.URL.revokeObjectURL(downloadUrl);
+      document.body.removeChild(a);
+    }, 100);
+    
+    showMessage('Export completed successfully');
+  })
+  .catch(error => {
+    console.error('Export error:', error);
+    showMessage('Error: ' + error.message);
+  });
 }
 
 // -----------------------------------------------------------
@@ -479,10 +592,22 @@ function askImportCSV() {
 }
 function ImportCSV()
 {
-  // Execute
-  $.get('php/server/devices.php?action=ImportCSV', function(msg) {
-    showMessage (msg);
-    write_notification(`[Maintenance] Devices imported from CSV file`, 'info')
+  const apiBase = getApiBase();
+  const apiToken = getSetting("API_TOKEN");
+  const url = `${apiBase}/devices/import`;
+
+  $.ajax({
+    url,
+    method: "POST",
+    headers: { "Authorization": `Bearer ${apiToken}` },
+    success: function(response) {
+      showMessage(response.success ? (response.message || "Devices imported successfully") : (response.error || "Unknown error"));
+      write_notification(`[Maintenance] Devices imported from CSV file`, 'info');
+    },
+    error: function(xhr, status, error) {
+      console.error("Error importing devices:", status, error);
+      showMessage("Error: " + (xhr.responseJSON?.error || error));
+    }
   });
 }
 
@@ -498,20 +623,30 @@ function askImportPastedCSV() {
 function ImportPastedCSV()
 {
   var csv = $('#modal-input-textarea').val();
-
   console.log(csv);
 
   csvBase64 = utf8ToBase64(csv);
-
   console.log(csvBase64);
 
+  const apiBase = getApiBase();
+  const apiToken = getSetting("API_TOKEN");
+  const url = `${apiBase}/devices/import`;
 
-  $.post('php/server/devices.php?action=ImportCSV', { content: csvBase64 }, function(msg) {
-      showMessage(msg);
+  $.ajax({
+    url,
+    method: "POST",
+    headers: { "Authorization": `Bearer ${apiToken}` },
+    data: JSON.stringify({ content: csvBase64 }),
+    contentType: "application/json",
+    success: function(response) {
+      showMessage(response.success ? (response.message || "Devices imported successfully") : (response.error || "Unknown error"));
       write_notification(`[Maintenance] Devices imported from pasted content`, 'info');
+    },
+    error: function(xhr, status, error) {
+      console.error("Error importing devices:", status, error);
+      showMessage("Error: " + (xhr.responseJSON?.error || error));
+    }
   });
-
-
 }
 
 

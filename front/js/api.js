@@ -1,6 +1,6 @@
 function getApiBase()
 {
-    apiBase = getSetting("BACKEND_API_URL");
+    let apiBase = getSetting("BACKEND_API_URL");
 
     if(apiBase == "")
     {

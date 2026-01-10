@@ -388,7 +388,7 @@
     "Maintenance_Tool_ExportCSV": "Devices export (csv)",
     "Maintenance_Tool_ExportCSV_noti": "Devices export (csv)",
     "Maintenance_Tool_ExportCSV_noti_text": "Are you sure you want to generate a CSV file?",
-    "Maintenance_Tool_ExportCSV_text": "Generate a CSV (comma separated value) file containing the list of Devices including the Network relationships between Network Nodes and connected devices. You can also trigger this by accessing this URL <code>your_NetAlertX_url/php/server/devices.php?action=ExportCSV</code> or by enabling the <a href=\"settings.php#CSVBCKP_header\">CSV Backup</a> plugin.",
+    "Maintenance_Tool_ExportCSV_text": "Generate a CSV (comma separated value) file containing the list of Devices including the Network relationships between Network Nodes and connected devices. You can also trigger this by enabling the <a href=\"settings.php#CSVBCKP_header\">CSV Backup</a> plugin.",
     "Maintenance_Tool_ImportCSV": "Devices Import (csv)",
     "Maintenance_Tool_ImportCSV_noti": "Devices Import (csv)",
     "Maintenance_Tool_ImportCSV_noti_text": "Are you sure you want to import the CSV file? This will completely <b>overwrite</b> the devices in your database.",

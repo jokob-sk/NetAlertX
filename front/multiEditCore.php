@@ -2,6 +2,7 @@
   //------------------------------------------------------------------------------
   // check if authenticated
   require_once  $_SERVER['DOCUMENT_ROOT'] . '/php/templates/security.php';
+  require_once $_SERVER['DOCUMENT_ROOT'] . '/php/templates/language/lang.php';
 ?>
 
 <div class="col-md-12">
@@ -331,7 +332,8 @@
         columnValue = inputElement.is(':checked') ? 1 : 0;
     } else {
         // For other input types (like textboxes), simply retrieve their values
-        columnValue = encodeURIComponent(inputElement.val());
+        // Don't encode icons (already base64) or other pre-encoded values
+        columnValue = inputElement.val();
     }
 
     var targetColumns = inputElement.attr('data-my-targetColumns');
@@ -359,10 +361,40 @@
 // newTargetColumnValue: Specifies the new value to be assigned to the specified column(s).
 function executeAction(action, whereColumnName, key, targetColumns, newTargetColumnValue )
 {
-  $.get(`php/server/dbHelper.php?action=${action}&dbtable=Devices&columnName=${whereColumnName}&id=${key}&columns=${targetColumns}&values=${newTargetColumnValue}`, function(data) {
-      // console.log(data);
+  const apiBase = getApiBase();
+  const apiToken = getSetting("API_TOKEN");
+  const url = `${apiBase}/dbquery/${action}`;
 
-      if (sanitize(data) == 'OK') {
+  // Convert comma-separated string to array if needed
+  let idArray = key;
+  if (typeof key === 'string' && key.includes(',')) {
+    idArray = key.split(',');
+  } else if (!Array.isArray(key)) {
+    idArray = [key];
+  }
+
+  // Build request data based on action type
+  const requestData = {
+    dbtable: "Devices",
+    columnName: whereColumnName,
+    id: idArray
+  };
+
+  // Only include columns and values for update action
+  if (action === "update") {
+    // Ensure columns and values are arrays
+    requestData.columns = Array.isArray(targetColumns) ? targetColumns : [targetColumns];
+    requestData.values = Array.isArray(newTargetColumnValue) ? newTargetColumnValue : [newTargetColumnValue];
+  }
+
+  $.ajax({
+    url,
+    method: "POST",
+    headers: { "Authorization": `Bearer ${apiToken}` },
+    data: JSON.stringify(requestData),
+    contentType: "application/json",
+    success: function(response) {
+      if (response.success) {
         showMessage(getString('Gen_DataUpdatedUITakesTime'));
         // Remove navigation prompt "Are you sure you want to leave..."
         window.onbeforeunload = null;
@@ -370,12 +402,18 @@ function executeAction(action, whereColumnName, key, targetColumns, newTargetCol
         // update API endpoints to refresh the UI
         updateApi("devices,appevents")
 
-        write_notification(`[Multi edit] Executed "${action}" on Columns "${targetColumns}" matching "${key}"`, 'info')
+        const columnsMsg = targetColumns ? ` on Columns "${targetColumns}"` : '';
+        write_notification(`[Multi edit] Executed "${action}"${columnsMsg} matching "${key}"`, 'info')
 
       } else {
-        console.error(data);
-        showMessage(getString('Gen_LockedDB'));
+        console.error(response.error || "Unknown error");
+        showMessage(response.error || getString('Gen_LockedDB'));
       }
+    },
+    error: function(xhr, status, error) {
+      console.error("Error executing action:", status, error, xhr.responseJSON);
+      showMessage("Error: " + (xhr.responseJSON?.error || error));
+    }
   });
 }
 
