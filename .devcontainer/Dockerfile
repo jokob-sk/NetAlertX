@@ -281,7 +281,7 @@ RUN chmod +x /entrypoint.sh /root-entrypoint.sh /entrypoint.d/*.sh && \
 
 RUN apk add --no-cache git nano vim jq php83-pecl-xdebug py3-pip nodejs sudo gpgconf pytest \
     pytest-cov zsh alpine-zsh-config shfmt github-cli py3-yaml py3-docker-py docker-cli docker-cli-buildx \
-    docker-cli-compose shellcheck py3-psutil 
+    docker-cli-compose shellcheck py3-psutil chromium chromium-chromedriver
 
 # Install hadolint (Dockerfile linter)
 RUN curl -L https://github.com/hadolint/hadolint/releases/latest/download/hadolint-Linux-x86_64 -o /usr/local/bin/hadolint && \
@@ -307,6 +307,6 @@ RUN mkdir -p /workspaces && \
     chown netalertx:netalertx /home/netalertx && \
     sed -i -e 's#/app:#/workspaces:#' /etc/passwd && \
     find /opt/venv -type d -exec chmod o+rwx {} \;
-    
+
 USER netalertx
 ENTRYPOINT ["/bin/sh","-c","sleep infinity"]
