@@ -34,9 +34,6 @@ RUN apk add --no-cache git nano vim jq php83-pecl-xdebug py3-pip nodejs sudo gpg
 RUN curl -L https://github.com/hadolint/hadolint/releases/latest/download/hadolint-Linux-x86_64 -o /usr/local/bin/hadolint && \
     chmod +x /usr/local/bin/hadolint
 
-# Install Selenium for UI testing
-RUN python3 -m pip install --break-system-packages selenium
-
 RUN install -d -o netalertx -g netalertx -m 755 /services/php/modules && \
     cp -a /usr/lib/php83/modules/. /services/php/modules/ && \
     echo "${NETALERTX_USER} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
