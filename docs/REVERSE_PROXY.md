@@ -1066,7 +1066,11 @@ NoNewPrivileges=true
 ### Firewall Setup
 Depending on which GNU/Linux Distribution you are running, it might be required to open up some Firewall Ports in order to be able to access the Endpoints from outside the Host itself.
 
-This is for instance the Case for Fedora Linux.
+This is for instance the Case for Fedora Linux, where I had to open:
+- Port 20212 for external GraphQL Access (both TCP & UDP are open, unsure if UDP is required)
+- Port 9443 for external Authentik Outpost Proxy Access (both TCP & UDP are open, unsure if UDP is required)
+
+![Fedora Firewall Configuration](./img/REVERSE_PROXY/fedora-firewall.png)
 
 ### Authentik Setup
 In order to enable Single Sign On (SSO) with Authentik, you will need to create a Provider, an Application and an Outpost.
