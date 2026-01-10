@@ -568,7 +568,7 @@ The Traffic Flow will therefore be as follows:
 - Authentik Outpost: Client accesses `https://authentik.MYDOMAIN.TLD:9443` -> reverse Proxy to internal Port 6000 (Authentik Outpost Proxy - unencrypted)
 
 ### Security Considerations
-[!WARNING]  
+> [!WARNING]  
 > By default Caddy runs as `root` which is a Security Risk.
 > In order to solve this, it's recommended to create an unprivileged User `caddy` and Group `caddy` on the Host:
 > ```
@@ -1131,7 +1131,7 @@ Wait a few Seconds for the Outpost to be created. Once it appears in the List, c
 Take note of that Token. You will need it for the Authentik Outpost Proxy Container, which will read it as the `AUTHENTIK_TOKEN` Environment Variable.
 
 ### NGINX Configuration inside NetAlertX Container
-[!NOTE]  
+> [!NOTE]  
 > This is something that was implemented based on the previous Content of this Reverse Proxy Document.
 > Due to some Buffer Warnings/Errors in the Logs as well as some other Issues I was experiencing, I increased a lot the client_body_buffer_size and large_client_header_buffers Parameters, although these might not be required anymore.
 > Further Testing might be required.
