@@ -28,6 +28,13 @@ trap forward_signal INT TERM
 
 echo "Starting /usr/sbin/php-fpm83 -y \"${PHP_FPM_CONFIG_FILE}\" -F (tee stderr to app.php_errors.log)"
 php_fpm_cmd=(/usr/sbin/php-fpm83 -y "${PHP_FPM_CONFIG_FILE}" -F)
+
+#In the event PUID is 0 we need to run php-fpm as root
+#This is useful on legacy systems where we cannot provision root access to a binary
+if [[ $(id -u) -eq 0 ]]; then
+  php_fpm_cmd+=(-R)
+fi
+
 "${php_fpm_cmd[@]}" 2> >(tee -a "${LOG_APP_PHP_ERRORS}" >&2) &
 php_fpm_pid=$!
 

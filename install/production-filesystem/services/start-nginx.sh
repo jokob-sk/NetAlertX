@@ -35,9 +35,16 @@ done
 
 TEMP_CONFIG_FILE=$(mktemp "${TMP_DIR}/netalertx.conf.XXXXXX")
 
+#In the event PUID is 0 we need to run nginx as root
+#This is useful on legacy systems where we cannot provision root access to a binary
+export NGINX_USER_DIRECTIVE=""
+if [ "$(id -u)" -eq 0 ]; then
+    NGINX_USER_DIRECTIVE="user root;"
+fi
+
 # Shell check doesn't recognize envsubst variables
 # shellcheck disable=SC2016
-if envsubst '${LISTEN_ADDR} ${PORT}' < "${SYSTEM_NGINX_CONFIG_TEMPLATE}" > "${TEMP_CONFIG_FILE}" 2>/dev/null; then
+if envsubst '${LISTEN_ADDR} ${PORT} ${NGINX_USER_DIRECTIVE}' < "${SYSTEM_NGINX_CONFIG_TEMPLATE}" > "${TEMP_CONFIG_FILE}" 2>/dev/null; then
 	mv "${TEMP_CONFIG_FILE}" "${SYSTEM_SERVICES_ACTIVE_CONFIG_FILE}"
 else
 	echo "Note: Unable to write to ${SYSTEM_SERVICES_ACTIVE_CONFIG_FILE}. Using default configuration."
