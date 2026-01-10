@@ -79,180 +79,70 @@ def test_devices_totals_api(api_token):
     assert len(data) > 0, "Response should contain data"
 
 
-def test_add_device_with_random_data(driver, api_token):
-    """Test: Add new device with random MAC and IP via UI"""
+def test_add_device_with_generated_mac_ip(driver, api_token):
+    """Add a new device using the UI, always clicking Generate MAC/IP buttons"""
     import requests
-    import random
+    import time
 
     driver.get(f"{BASE_URL}/devices.php")
     time.sleep(2)
 
-    # Find and click the "Add Device" button (common patterns)
+    # --- Click "Add Device" ---
     add_buttons = driver.find_elements(By.CSS_SELECTOR, "button#btnAddDevice, button[onclick*='addDevice'], a[href*='deviceDetails.php?mac='], .btn-add-device")
-
-    if len(add_buttons) == 0:
-        # Try finding by text
-        add_buttons = driver.find_elements(By.XPATH, "//button[contains(text(), 'Add') or contains(text(), 'New')] | //a[contains(text(), 'Add') or contains(text(), 'New')]")
-
-    if len(add_buttons) == 0:
-        # No add device button found - skip this test
-        assert True, "Add device functionality not available on this page"
+    if not add_buttons:
+        add_buttons = driver.find_elements(By.XPATH, "//button[contains(text(),'Add') or contains(text(),'New')] | //a[contains(text(),'Add') or contains(text(),'New')]")
+    if not add_buttons:
+        assert True, "Add device button not found, skipping test"
         return
-
-    # Click the button
     add_buttons[0].click()
-    time.sleep(3)
+    time.sleep(2)
 
-    # Check current URL - might have navigated to deviceDetails page
-    current_url = driver.current_url
+    # --- Helper to click generate button for a field ---
+    def click_generate_button(field_id):
+        btn = driver.find_element(By.CSS_SELECTOR, f"span[onclick*='generate_{field_id}']")
+        driver.execute_script("arguments[0].click();", btn)
+        time.sleep(0.5)
+        # Return the new value
+        inp = driver.find_element(By.ID, field_id)
+        return inp.get_attribute("value")
 
-    # Look for MAC field with more flexible selectors
-    mac_field = None
-    mac_selectors = [
-        "input#mac", "input#deviceMac", "input#txtMAC",
-        "input[name='mac']", "input[name='deviceMac']",
-        "input[placeholder*='MAC' i]", "input[placeholder*='Address' i]"
-    ]
+    # --- Generate MAC ---
+    test_mac = click_generate_button("NEWDEV_devMac")
+    assert test_mac, "MAC should be generated"
 
-    for selector in mac_selectors:
-        try:
-            fields = driver.find_elements(By.CSS_SELECTOR, selector)
-            if len(fields) > 0 and fields[0].is_displayed():
-                mac_field = fields[0]
-                break
-        except Exception:
-            continue
+    # --- Generate IP ---
+    test_ip = click_generate_button("NEWDEV_devLastIP")
+    assert test_ip, "IP should be generated"
 
-    if mac_field is None:
-        # Try finding any input that looks like it could be for MAC
-        all_inputs = driver.find_elements(By.TAG_NAME, "input")
-        for inp in all_inputs:
-            input_id = inp.get_attribute("id") or ""
-            input_name = inp.get_attribute("name") or ""
-            input_placeholder = inp.get_attribute("placeholder") or ""
-            if "mac" in input_id.lower() or "mac" in input_name.lower() or "mac" in input_placeholder.lower():
-                if inp.is_displayed():
-                    mac_field = inp
-                    break
+    # --- Fill Name ---
+    name_field = driver.find_element(By.ID, "NEWDEV_devName")
+    name_field.clear()
+    name_field.send_keys("Test Device Selenium")
 
-    if mac_field is None:
-        # UI doesn't have device add form - skip test
-        assert True, "Device add form not found - functionality may not be available"
-        return
-
-    # Generate random MAC
-    random_mac = f"00:11:22:{random.randint(0,255):02X}:{random.randint(0,255):02X}:{random.randint(0,255):02X}"
-
-    # Find and click "Generate Random MAC" button if it exists
-    random_mac_buttons = driver.find_elements(By.CSS_SELECTOR, "button[onclick*='randomMAC'], button[onclick*='generateMAC'], #btnRandomMAC, button[onclick*='Random']")
-    if len(random_mac_buttons) > 0:
-        try:
-            driver.execute_script("arguments[0].click();", random_mac_buttons[0])
-            time.sleep(1)
-            # Re-get the MAC value after random generation
-            test_mac = mac_field.get_attribute("value")
-        except Exception:
-            # Random button didn't work, enter manually
-            mac_field.clear()
-            mac_field.send_keys(random_mac)
-            test_mac = random_mac
-    else:
-        # No random button, enter manually
-        mac_field.clear()
-        mac_field.send_keys(random_mac)
-        test_mac = random_mac
-
-    assert len(test_mac) > 0, "MAC address should be filled"
-
-    # Look for IP field (optional)
-    ip_field = None
-    ip_selectors = ["input#ip", "input#deviceIP", "input#txtIP", "input[name='ip']", "input[placeholder*='IP' i]"]
-    for selector in ip_selectors:
-        try:
-            fields = driver.find_elements(By.CSS_SELECTOR, selector)
-            if len(fields) > 0 and fields[0].is_displayed():
-                ip_field = fields[0]
-                break
-        except Exception:
-            continue
-
-    if ip_field:
-        # Find and click "Generate Random IP" button if it exists
-        random_ip_buttons = driver.find_elements(By.CSS_SELECTOR, "button[onclick*='randomIP'], button[onclick*='generateIP'], #btnRandomIP")
-        if len(random_ip_buttons) > 0:
-            try:
-                driver.execute_script("arguments[0].click();", random_ip_buttons[0])
-                time.sleep(0.5)
-            except:
-                pass
-
-        # If IP is still empty, enter manually
-        if not ip_field.get_attribute("value"):
-            random_ip = f"192.168.1.{random.randint(100,250)}"
-            ip_field.clear()
-            ip_field.send_keys(random_ip)
-
-    # Fill in device name (optional)
-    name_field = None
-    name_selectors = ["input#name", "input#deviceName", "input#txtName", "input[name='name']", "input[placeholder*='Name' i]"]
-    for selector in name_selectors:
-        try:
-            fields = driver.find_elements(By.CSS_SELECTOR, selector)
-            if len(fields) > 0 and fields[0].is_displayed():
-                name_field = fields[0]
-                break
-        except:
-            continue
-
-    if name_field:
-        name_field.clear()
-        name_field.send_keys("Test Device Selenium")
-
-    # Find and click Save button
+    # --- Click Save ---
     save_buttons = driver.find_elements(By.CSS_SELECTOR, "button#btnSave, button#save, button[type='submit'], button.btn-primary, button[onclick*='save' i]")
-    if len(save_buttons) == 0:
-        save_buttons = driver.find_elements(By.XPATH, "//button[contains(translate(text(), 'SAVE', 'save'), 'save')]")
-
-    if len(save_buttons) == 0:
-        # No save button found - skip test
-        assert True, "Save button not found - test incomplete"
+    if not save_buttons:
+        save_buttons = driver.find_elements(By.XPATH, "//button[contains(translate(text(),'SAVE','save'),'save')]")
+    if not save_buttons:
+        assert True, "Save button not found, skipping test"
         return
-
-    # Click save
     driver.execute_script("arguments[0].click();", save_buttons[0])
     time.sleep(3)
 
-    # Verify device was saved via API
+    # --- Verify device via API ---
     headers = {"Authorization": f"Bearer {api_token}"}
-    verify_response = requests.get(
-        f"{API_BASE_URL}/device/{test_mac}",
-        headers=headers
-    )
-
+    verify_response = requests.get(f"{API_BASE_URL}/device/{test_mac}", headers=headers)
     if verify_response.status_code == 200:
-        # Device was created successfully
         device_data = verify_response.json()
         assert device_data is not None, "Device should exist in database"
 
-        # Cleanup: Delete the test device
-        try:
-            delete_response = requests.delete(
-                f"{API_BASE_URL}/device/{test_mac}",
-                headers=headers
-            )
-        except:
-            pass  # Delete might not be supported
     else:
-        # Check if device appears in the UI
+        # Fallback: check UI
         driver.get(f"{BASE_URL}/devices.php")
         time.sleep(2)
-
-        # If device is in page source, test passed even if API failed
         if test_mac in driver.page_source or "Test Device Selenium" in driver.page_source:
             assert True, "Device appears in UI"
         else:
-            # Can't verify - just check that save didn't produce visible errors
-            # Look for actual error messages (not JavaScript code)
-            error_indicators = driver.find_elements(By.CSS_SELECTOR, ".alert-danger, .error-message, .callout-danger")
-            has_error = any(elem.is_displayed() and len(elem.text) > 0 for elem in error_indicators)
-            assert not has_error, "Save should not produce visible error messages"
+            error_elements = driver.find_elements(By.CSS_SELECTOR, ".alert-danger, .error-message, .callout-danger")
+            has_error = any(elem.is_displayed() and elem.text for elem in error_elements)
+            assert not has_error, "Save should not produce visible errors"
