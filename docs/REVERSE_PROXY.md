@@ -516,27 +516,27 @@ Mapping the updated file (on the local filesystem at `/appl/docker/netalertx/def
 This Setup assumes:
 1. Authentik Installation running on a separate Host at `https://authentik.MYDOMAIN.TLD`
 2. Container Management is done on Baremetal OR in a Virtual Machine (KVM/Xen/ESXi/..., no LXC Containers !):
-   a. Docker and Docker Compose configured locally running as Root (needed for `network_mode: host`) OR
-   b. Podman (optionally `podman-compose`) configured locally running as Root (needed for `network_mode: host`)
+    a. Docker and Docker Compose configured locally running as Root (needed for `network_mode: host`) OR
+    b. Podman (optionally `podman-compose`) configured locally running as Root (needed for `network_mode: host`)
 3. TLS Certificates are already pre-obtained and located at `/var/lib/containers/certificates/letsencrypt/MYDOMAIN.TLD`.
    I use the `certbot/dns-cloudflare` Podman Container on a separate Host to obtain the Certificates which I then distribute internally.
    This Container uses the Wildcard Top-Level Domain Certificate which is valid for `MYDOMAIN.TLD` and `*.MYDOMAIN.TLD`.
 4. Proxied Access
-   a. NetAlertX Web Interface is accessible via Caddy Reverse Proxy at `https://netalertx.MYDOMAIN.TLD` (default HTTPS Port 443: `https://netalertx.MYDOMAIN.TLD:443`) with `REPORT_DASHBOARD_URL=https://netalertx.MYDOMAIN.TLD`
-   b. NetAlertX GraphQL Interface is accessible via Caddy Reverse Proxy at `https://netalertx.MYDOMAIN.TLD:20212` with `BACKEND_API_URL=https://netalertx.MYDOMAIN.TLD:20212`
-   c. Authentik Proxy Outpost is accessible via Caddy Reverse Proxy at `https://netalertx.MYDOMAIN.TLD:9443`
+    a. NetAlertX Web Interface is accessible via Caddy Reverse Proxy at `https://netalertx.MYDOMAIN.TLD` (default HTTPS Port 443: `https://netalertx.MYDOMAIN.TLD:443`) with `REPORT_DASHBOARD_URL=https://netalertx.MYDOMAIN.TLD`
+    b. NetAlertX GraphQL Interface is accessible via Caddy Reverse Proxy at `https://netalertx.MYDOMAIN.TLD:20212` with `BACKEND_API_URL=https://netalertx.MYDOMAIN.TLD:20212`
+    c. Authentik Proxy Outpost is accessible via Caddy Reverse Proxy at `https://netalertx.MYDOMAIN.TLD:9443`
 5. Internal Ports
-   a. NGINX Web Server is set to listen on internal Port 20211 set via `PORT=20211`
-   b. Python Web Server is set to listen on internal Port `GRAPHQL_PORT=20219`
-   c. Authentik Proxy Outpost is listening on internal Port `AUTHENTIK_LISTEN__HTTP=[::1]:6000` (unencrypted) and Port `AUTHENTIK_LISTEN__HTTPS=[::1]:6443` (encrypted)
+    a. NGINX Web Server is set to listen on internal Port 20211 set via `PORT=20211`
+    b. Python Web Server is set to listen on internal Port `GRAPHQL_PORT=20219`
+    c. Authentik Proxy Outpost is listening on internal Port `AUTHENTIK_LISTEN__HTTP=[::1]:6000` (unencrypted) and Port `AUTHENTIK_LISTEN__HTTPS=[::1]:6443` (encrypted)
 8. Some further Configuration for Caddy is performed in Terms of Logging, SSL Certificates, etc
 
 It's also possible to [let Caddy automatically request & keep TLS Certificates up-to-date](https://caddyserver.com/docs/automatic-https), although please keep in mind that:
 1. You risk enumerating your LAN. Every Domain/Subdomain for which Caddy requests a TLS Certificate for you will result in that Host to be listed on [List of Letsencrypt Certificates issued](https://crt.sh/).
 2. You need to either:
-   a. Open Port 80 for external Access ([HTTP challenge](https://caddyserver.com/docs/automatic-https#http-challenge)) in order for Letsencrypt to verify the Ownership of the Domain/Subdomain
-   b. Open Port 443 for external Access ([TLS-ALPN challenge](https://caddyserver.com/docs/automatic-https#tls-alpn-challenge)) in order for Letsencrypt to verify the Ownership of the Domain/Subdomain
-   c. Give Caddy the Credentials to update the DNS Records at your DNS Provider ([DNS challenge](https://caddyserver.com/docs/automatic-https#dns-challenge))
+    a. Open Port 80 for external Access ([HTTP challenge](https://caddyserver.com/docs/automatic-https#http-challenge)) in order for Letsencrypt to verify the Ownership of the Domain/Subdomain
+    b. Open Port 443 for external Access ([TLS-ALPN challenge](https://caddyserver.com/docs/automatic-https#tls-alpn-challenge)) in order for Letsencrypt to verify the Ownership of the Domain/Subdomain
+    c. Give Caddy the Credentials to update the DNS Records at your DNS Provider ([DNS challenge](https://caddyserver.com/docs/automatic-https#dns-challenge))
 
 You can also decide to deploy your own Certificates & Certification Authority, either manually with OpenSSL, or by using something like [mkcert](https://github.com/FiloSottile/mkcert).
 
@@ -549,8 +549,8 @@ In Terms of IP Stack Used:
 ### Flow
 The Traffic Flow will therefore be as follows:
 - Web GUI:
-  a. Client accesses `http://authentik.MYDOMAIN.TLD:80`: default (built-in Caddy) Redirect to `https://authentik.MYDOMAIN.TLD:443`
-  b. Client accesses `https://authentik.MYDOMAIN.TLD:443` -> reverse Proxy to internal Port 20211 (NetAlertX Web GUI / NGINX - unencrypted)
+   a. Client accesses `http://authentik.MYDOMAIN.TLD:80`: default (built-in Caddy) Redirect to `https://authentik.MYDOMAIN.TLD:443`
+   b. Client accesses `https://authentik.MYDOMAIN.TLD:443` -> reverse Proxy to internal Port 20211 (NetAlertX Web GUI / NGINX - unencrypted)
 - GraphQL: Client accesses `https://authentik.MYDOMAIN.TLD:20212` -> reverse Proxy to internal Port 20219 (NetAlertX GraphQL - unencrypted)
 - Authentik Outpost: Client accesses `https://authentik.MYDOMAIN.TLD:9443` -> reverse Proxy to internal Port 6000 (Authentik Outpost Proxy - unencrypted)
 
