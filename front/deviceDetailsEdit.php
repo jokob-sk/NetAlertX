@@ -46,8 +46,8 @@ function getDeviceData() {
   const apiToken = getSetting("API_TOKEN");
   let period = $("#period").val()
 
-  const apiBase = getApiBase();
-  const url = `${apiBase}/device/${mac}?period=${encodeURIComponent(period)}`;
+  const apiBaseUrl = getApiBase();
+  const url = `${apiBaseUrl}/device/${mac}?period=${encodeURIComponent(period)}`;
 
   // get data from server
   $.ajax({
@@ -89,7 +89,7 @@ function getDeviceData() {
           ]
         };
 
-        const graphQlUrl = `${apiBase}/graphql`;
+        const graphQlUrl = `${apiBaseUrl}/graphql`;
 
         $.ajax({
           url: graphQlUrl,
@@ -354,7 +354,7 @@ function setDeviceData(direction = '', refreshCallback = '') {
   showSpinner();
 
   const apiToken = getSetting("API_TOKEN"); // dynamic token
-  const apiBase = getApiBase();
+  const apiBaseUrl = getApiBase();
 
   mac = $('#NEWDEV_devMac').val();
 
@@ -402,7 +402,7 @@ function setDeviceData(direction = '', refreshCallback = '') {
 
 
   $.ajax({
-    url: `${apiBase}/device/${encodeURIComponent(mac)}`,
+    url: `${apiBaseUrl}/device/${encodeURIComponent(mac)}`,
     type: "POST",
     headers: {
       "Authorization": "Bearer " + apiToken,

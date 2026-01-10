@@ -38,8 +38,8 @@
   function loadPresenceData() {
     const apiToken = getSetting("API_TOKEN");
 
-    const apiBase = getApiBase();
-    const url = `${apiBase}/sessions/calendar`;
+    const apiBaseUrl = getApiBase();
+    const url = `${apiBaseUrl}/sessions/calendar`;
 
     $('#calendar').fullCalendar('removeEventSources');
 

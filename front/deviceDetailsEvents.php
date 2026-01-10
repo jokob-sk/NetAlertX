@@ -50,8 +50,8 @@ function loadEventsData() {
 
   const apiToken = getSetting("API_TOKEN");
 
-  const apiBase = getApiBase();
-  const url = `${apiBase}/dbquery/read`;
+  const apiBaseUrl = getApiBase();
+  const url = `${apiBaseUrl}/dbquery/read`;
 
   $.ajax({
     url: url,

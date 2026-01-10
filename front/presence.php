@@ -352,25 +352,60 @@ function initializeCalendar () {
 
 
 // -----------------------------------------------------------------------------
+/**
+ * Fetch device totals from the API and update dashboard counters.
+ *
+ * This function:
+ *  - Stops the automatic refresh timer
+ *  - Calls the `/devices/totals` API endpoint using Bearer token authentication
+ *  - Updates the device summary boxes (all, connected, favorites, new, down, archived)
+ *  - Restarts the refresh timer after completion
+ *
+ * Expected API response format:
+ *   [
+ *     devices,     // Total devices
+ *     connected,   // Currently connected devices
+ *     favorites,   // Favorite devices
+ *     new,         // Newly discovered devices
+ *     down,        // Devices marked as down
+ *     archived     // Archived / hidden devices
+ *   ]
+ */
 function getDevicesTotals () {
   // stop timer
   stopTimerRefreshData();
 
-  // get totals and put in boxes
-  $.get('php/server/devices.php?action=getDevicesTotals', function(data) {
-    var totalsDevices = JSON.parse(data);
+  const apiToken   = getSetting("API_TOKEN");
+  const apiBaseUrl = getApiBase();
+  const totalsUrl  = `${apiBaseUrl}/devices/totals`;
 
-    $('#devicesAll').html        (totalsDevices[0].toLocaleString());
-    $('#devicesConnected').html  (totalsDevices[1].toLocaleString());
-    $('#devicesFavorites').html  (totalsDevices[2].toLocaleString());
-    $('#devicesNew').html        (totalsDevices[3].toLocaleString());
-    $('#devicesDown').html       (totalsDevices[4].toLocaleString());
-    $('#devicesHidden').html     (totalsDevices[5].toLocaleString());
+  $.ajax({
+    url: totalsUrl,
+    method: "GET",
+    headers: {
+      "Authorization": `Bearer ${apiToken}`
+    },
+    success: function (totalsDevices) {
 
-    // Timer for refresh data
-    newTimerRefreshData (getDevicesTotals);
-  } );
+      $('#devicesAll').html        (totalsDevices[0].toLocaleString());
+      $('#devicesConnected').html  (totalsDevices[1].toLocaleString());
+      $('#devicesFavorites').html  (totalsDevices[2].toLocaleString());
+      $('#devicesNew').html        (totalsDevices[3].toLocaleString());
+      $('#devicesDown').html       (totalsDevices[4].toLocaleString());
+      $('#devicesHidden').html     (totalsDevices[5].toLocaleString());
+
+      // Timer for refresh data
+      newTimerRefreshData(getDevicesTotals);
+    },
+    error: function (xhr) {
+      console.error("Failed to load device totals:", xhr.responseText);
+
+      // Ensure refresh loop continues even on failure
+      newTimerRefreshData(getDevicesTotals);
+    }
+  });
 }
+
 
 
 // -----------------------------------------------------------------------------
@@ -423,12 +458,12 @@ function getDevicesPresence (status) {
 
   const apiToken = getSetting("API_TOKEN");
 
-  const apiBase = getApiBase();
+  const apiBaseUrl = getApiBase();
 
   // -----------------------------
   // Load Devices as Resources
   // -----------------------------
-  const devicesUrl = `${apiBase}/devices/by-status?status=${deviceStatus}`;
+  const devicesUrl = `${apiBaseUrl}/devices/by-status?status=${deviceStatus}`;
 
   $.ajax({
     url: devicesUrl,
@@ -451,7 +486,7 @@ function getDevicesPresence (status) {
   // -----------------------------
   // Load Events
   // -----------------------------
-  const eventsUrl = `${apiBase}/sessions/calendar?start=${startDate}&end=${endDate}`;
+  const eventsUrl = `${apiBaseUrl}/sessions/calendar?start=${startDate}&end=${endDate}`;
 
   $('#calendar').fullCalendar('removeEventSources');
   $('#calendar').fullCalendar('addEventSource', {

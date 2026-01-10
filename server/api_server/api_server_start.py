@@ -275,7 +275,8 @@ def api_update_device_column(mac):
     column_name = data.get("columnName")
     column_value = data.get("columnValue")
 
-    if not column_name or not column_value:
+    # columnName is required, but columnValue can be empty string (e.g., for unassigning)
+    if not column_name or "columnValue" not in data:
         return jsonify({"success": False, "message": "ERROR: Missing parameters", "error": "columnName and columnValue are required"}), 400
 
     device_handler = DeviceInstance()

@@ -686,26 +686,43 @@ function numberArrayFromString(data)
 }
 
 // -----------------------------------------------------------------------------
-function saveData(functionName, id, value) {
+// Update network parent/child relationship (network tree)
+function updateNetworkLeaf(leafMac, parentMac) {
+  const apiBase = getApiBase();
+  const apiToken = getSetting("API_TOKEN");
+  const url = `${apiBase}/device/${leafMac}/update-column`;
+
   $.ajax({
-    method: "GET",
-    url: "php/server/devices.php",
-    data: { action: functionName, id: id, value:value  },
-    success: function(data) {
-
-        if(sanitize(data) == 'OK')
-        {
-          showMessage("Saved")
-          // Remove navigation prompt "Are you sure you want to leave..."
-          window.onbeforeunload = null;
-        } else
-        {
-          showMessage("ERROR")
-        }
-
+    method: "POST",
+    url: url,
+    headers: { "Authorization": `Bearer ${apiToken}` },
+    data: JSON.stringify({ columnName: "devParentMAC", columnValue: parentMac }),
+    contentType: "application/json",
+    success: function(response) {
+      if(response.success) {
+        showMessage("Saved");
+        // Remove navigation prompt "Are you sure you want to leave..."
+        window.onbeforeunload = null;
+      } else {
+        showMessage("ERROR: " + (response.error || "Unknown error"));
       }
+    },
+    error: function(xhr, status, error) {
+      console.error("Error updating network leaf:", status, error);
+      showMessage("ERROR: " + (xhr.responseJSON?.error || error));
+    }
   });
+}
 
+// -----------------------------------------------------------------------------
+// Legacy function wrapper for backward compatibility
+function saveData(functionName, id, value) {
+  if (functionName === 'updateNetworkLeaf') {
+    updateNetworkLeaf(id, value);
+  } else {
+    console.warn("saveData called with unknown functionName:", functionName);
+    showMessage("ERROR: Unknown function");
+  }
 }
 
 

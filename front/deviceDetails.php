@@ -418,8 +418,8 @@ async function renderSmallBoxes() {
         // Get data from the server
         const apiToken = getSetting("API_TOKEN");
 
-        const apiBase = getApiBase();
-        const url = `${apiBase}/device/${getMac()}?period=${encodeURIComponent(period)}`;
+        const apiBaseUrl = getApiBase();
+        const url = `${apiBaseUrl}/device/${getMac()}?period=${encodeURIComponent(period)}`;
 
         const response = await fetch(url, {
           method: "GET",

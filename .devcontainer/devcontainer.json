@@ -47,7 +47,7 @@
   },
 
   "postCreateCommand": {
-      "Install Pip Requirements": "/opt/venv/bin/pip3 install pytest docker debugpy",
+      "Install Pip Requirements": "/opt/venv/bin/pip3 install pytest docker debugpy selenium",
       "Workspace Instructions": "printf '\n\n� DevContainer Ready! Starting Services...\n\n📁 To access /tmp folders in the workspace:\n   File → Open Workspace from File → NetAlertX.code-workspace\n\n📖 See .devcontainer/WORKSPACE.md for details\n\n'"
   },
   "postStartCommand": {

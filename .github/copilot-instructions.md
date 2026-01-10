@@ -65,6 +65,7 @@ Backend loop phases (see `server/__main__.py` and `server/plugin.py`): `once`, `
 - Run a plugin manually: `python3 front/plugins/<code_name>/script.py` (ensure `sys.path` includes `/app/front/plugins` and `/app/server` like the template).
 - Testing: pytest available via Alpine packages. Tests live in `test/`; app code is under `server/`. PYTHONPATH is preconfigured to include workspace and `/opt/venv` site‑packages.
 - **Subprocess calls:** ALWAYS set explicit timeouts. Default to 60s minimum unless plugin config specifies otherwise. Nested subprocess calls (e.g., plugins calling external tools) need their own timeout - outer plugin timeout won't save you.
+- you need to set the BACKEND_API_URL setting (e.g. in teh app.conf file or via the APP_CONF_OVERRIDE env variable) to the backend api port url , e.g. https://something-20212.app.github.dev/ depending on your github codespace url.
 
 ## What “done right” looks like
 - When adding a plugin, start from `front/plugins/__template`, implement with `plugin_helper`, define manifest settings, and wire phase via `<PREF>_RUN`. Verify logs in `/tmp/log/plugins/` and data in `api/*.json`.

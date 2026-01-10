@@ -378,14 +378,27 @@ function overwriteIconType()
     )
   `;
 
-  const apiUrl = `php/server/dbHelper.php?action=write&rawSql=${btoa(encodeURIComponent(rawSql))}`;
+  const apiBase = getApiBase();
+  const apiToken = getSetting("API_TOKEN");
+  const url = `${apiBase}/dbquery/write`;
 
-  $.get(apiUrl, function(response) {
-    if (response === 'OK') {
-      showMessage (response);
-      updateApi("devices")
-    } else {
-      showMessage (response, 3000, "modal_red");
+  $.ajax({
+    url,
+    method: "POST",
+    headers: { "Authorization": `Bearer ${apiToken}` },
+    data: JSON.stringify({ rawSql: btoa(unescape(encodeURIComponent(rawSql))) }),
+    contentType: "application/json",
+    success: function(response) {
+      if (response.success) {
+        showMessage("OK");
+        updateApi("devices");
+      } else {
+        showMessage(response.error || "Unknown error", 3000, "modal_red");
+      }
+    },
+    error: function(xhr, status, error) {
+      console.error("Error updating icons:", status, error);
+      showMessage("Error: " + (xhr.responseJSON?.error || error), 3000, "modal_red");
     }
   });
 }
