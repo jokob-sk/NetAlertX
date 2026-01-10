@@ -35,7 +35,7 @@ RUN curl -L https://github.com/hadolint/hadolint/releases/latest/download/hadoli
     chmod +x /usr/local/bin/hadolint
 
 # Install Selenium for UI testing
-RUN pip install --break-system-packages selenium
+RUN python3 -m pip install --break-system-packages selenium
 
 RUN install -d -o netalertx -g netalertx -m 755 /services/php/modules && \
     cp -a /usr/lib/php83/modules/. /services/php/modules/ && \
