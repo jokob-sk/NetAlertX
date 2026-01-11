@@ -388,7 +388,7 @@
     "Maintenance_Tool_ExportCSV": "Експорт пристроїв (csv)",
     "Maintenance_Tool_ExportCSV_noti": "Експорт пристроїв (csv)",
     "Maintenance_Tool_ExportCSV_noti_text": "Ви впевнені, що хочете створити файл CSV?",
-    "Maintenance_Tool_ExportCSV_text": "Створіть файл CSV (значення, розділене комами), що містить список пристроїв, включаючи мережеві зв’язки між мережевими вузлами та підключеними пристроями. Ви також можете активувати це, перейшовши за цією URL-адресою <code>your_NetAlertX_url/php/server/devices.php?action=ExportCSV</code> або ввімкнувши <a href=\"settings.php#CSVBCKP_header\">Резервне копіювання CSV</a > плагін.",
+    "Maintenance_Tool_ExportCSV_text": "Створіть файл CSV (значення, розділене комами), який містить список пристроїв, включаючи мережеві зв\"язки між мережевими вузлами та підключеними пристроями. Ви також можете запустити це, увімкнувши плагін <a href=\"settings.php#CSVBCKP_header\">CSV Backup</a>.",
     "Maintenance_Tool_ImportCSV": "Імпорт пристроїв (csv)",
     "Maintenance_Tool_ImportCSV_noti": "Імпорт пристроїв (csv)",
     "Maintenance_Tool_ImportCSV_noti_text": "Ви впевнені, що бажаєте імпортувати файл CSV? Це повністю <b>перезапише</b> пристрої у вашій базі даних.",
