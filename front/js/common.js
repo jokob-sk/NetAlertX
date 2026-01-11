@@ -1586,12 +1586,16 @@ function restartBackend() {
 
   modalEventStatusId = 'modal-message-front-event'
 
+  const apiToken = getSetting("API_TOKEN");
+  const apiBaseUrl = getApiBase();
+  const url = `${apiBaseUrl}/logs/add-to-execution-queue`;
+
   // Execute
   $.ajax({
       method: "POST",
-      url: "/logs/add-to-execution-queue",
+      url: url,
       headers: {
-        "Authorization": "Bearer " + getSetting("API_TOKEN"),
+        "Authorization": "Bearer " + apiToken,
         "Content-Type": "application/json"
       },
       data: JSON.stringify({ action: `${getGuid()}|cron_restart_backend` }),
