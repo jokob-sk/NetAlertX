@@ -568,6 +568,7 @@ The Traffic Flow will therefore be as follows:
 - Authentik Outpost: Client accesses `https://authentik.MYDOMAIN.TLD:9443` -> reverse Proxy to internal Port 6000 (Authentik Outpost Proxy - unencrypted)
 
 ### Security Considerations
+#### Caddy should be run rootless
 > [!WARNING]  
 > By default Caddy runs as `root` which is a Security Risk.
 > In order to solve this, it's recommended to create an unprivileged User `caddy` and Group `caddy` on the Host:
@@ -638,6 +639,10 @@ nogroup:x:65533:
 nobody:x:65534:
 caddy:x:980:
 ```
+
+#### Authentication of GraphQL Endpoint
+> [!WARNING]  
+> Currently the GraphQL Endpoint is NOT authenticated !
 
 ### Environment Files
 Depending on the Preference of the User (Environment Variables defined in Compose/Quadlet or in external `.env` File[s]), it might be prefereable to place at least some Environment Variables in external `.env` and `.env.<application>` Files.
@@ -1373,3 +1378,13 @@ http {
 }
 ```
 
+### Login
+Now try to login by visiting `https://netalertx.MYDOMAIN.TLD`.
+
+You should be greeted with a Login Screen by Authentik.
+
+If you are already logged in Authentik, log out first. You can do that by visiting `https://netalertx.MYDOMAIN.TLD/outpost.goauthentik.io/sign_out`, then click on `Log out of authentik` (2nd Button). Or you can just sign out from your Authentik Admin Panel at `https://authentik.MYDOMAIN.TLD`.
+
+If everything works as expected, then you can now set `SETPWD_enable_password=false` to disable double Authentication.
+
+![Authentik Login Screen](./img/REVERSE_PROXY/authentik-login.png)
