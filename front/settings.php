@@ -24,8 +24,6 @@ if (!file_exists($confPath) && file_exists('../config/app.conf')) {
     $confPath = '../config/app.conf';
 }
 
-checkPermissions([$dbPath, $confPath]);
-
 // get settings from the API json file
 
 // path to your JSON file

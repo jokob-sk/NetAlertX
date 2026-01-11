@@ -278,23 +278,4 @@ function encode_single_quotes ($val) {
   return $result;
 }
 
-// -------------------------------------------------------------------------------------------
-function checkPermissions($files)
-{
-  foreach ($files as $file)
-  {
-
-    // // make sure the file ownership is correct
-    // chown($file, 'nginx');
-    // chgrp($file, 'www-data');
-
-    // check access to database
-    if(file_exists($file) != 1)
-    {
-      $message = "File '".$file."' not found or inaccessible. Correct file permissions, create one yourself or generate a new one in 'Settings' by clicking the 'Save' button.";
-      displayMessage($message, TRUE);
-    }
-  }
-}
-
 ?>
