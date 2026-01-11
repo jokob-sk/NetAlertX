@@ -170,7 +170,7 @@ def test_save_settings_no_loss_of_data(driver):
         plugins_keep_hist_input = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.ID, "PLUGINS_KEEP_HIST"))
         )
-    except:
+    except Exception:
         assert True, "PLUGINS_KEEP_HIST input not found, skipping test"
         return
 
@@ -216,7 +216,7 @@ def test_save_settings_no_loss_of_data(driver):
         assert response.status_code == 200, f"API returned {response.status_code}: {response.text}"
 
         data = response.json()
-        assert data.get("success") == True, f"API returned success=false: {data}"
+        assert data.get("success"), f"API returned success=false: {data}"
 
         saved_value = str(data.get("value"))
         print(f"API /settings/PLUGINS_KEEP_HIST returned: {saved_value}")
