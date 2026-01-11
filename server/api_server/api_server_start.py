@@ -58,6 +58,9 @@ from .mcp_endpoint import (  # noqa: E402 [flake8 lint suppression]
     mcp_messages,
     openapi_spec
 )
+from .sse_endpoint import (  # noqa: E402 [flake8 lint suppression]
+    create_sse_endpoint
+)
 # tools and mcp routes have been moved into this module (api_server_start)
 
 # Flask application
@@ -81,7 +84,8 @@ CORS(
         r"/logs/*": {"origins": "*"},
         r"/api/tools/*": {"origins": "*"},
         r"/auth/*": {"origins": "*"},
-        r"/mcp/*": {"origins": "*"}
+        r"/mcp/*": {"origins": "*"},
+        r"/sse/*": {"origins": "*"}
     },
     supports_credentials=True,
     allow_headers=["Authorization", "Content-Type"],
@@ -1084,8 +1088,16 @@ def check_auth():
 # Background Server Start
 # --------------------------
 def is_authorized():
-    token = request.headers.get("Authorization")
-    is_authorized = token == f"Bearer {get_setting_value('API_TOKEN')}"
+    expected_token = get_setting_value('API_TOKEN')
+
+    # Check Authorization header first (primary method)
+    auth_header = request.headers.get("Authorization", "")
+    header_token = auth_header.split()[-1] if auth_header.startswith("Bearer ") else ""
+
+    # Also check query string token (for SSE and other streaming endpoints)
+    query_token = request.args.get("token", "")
+
+    is_authorized = (header_token == expected_token) or (query_token == expected_token)
 
     if not is_authorized:
         msg = "[api] Unauthorized access attempt - make sure your GRAPHQL_PORT and API_TOKEN settings are correct."
@@ -1093,6 +1105,10 @@ def is_authorized():
         mylog("verbose", [msg])
 
     return is_authorized
+
+
+# Mount SSE endpoints after is_authorized is defined (avoid circular import)
+create_sse_endpoint(app, is_authorized)
 
 
 def start_server(graphql_port, app_state):

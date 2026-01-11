@@ -11,5 +11,6 @@ function getApiBase()
         apiBase = `${protocol}://${host}:${port}`;
     }
 
-    return apiBase;
+    // Remove trailing slash for consistency
+    return apiBase.replace(/\/$/, '');
 }

@@ -1636,9 +1636,18 @@ function clearCache() {
   }, 500);
 }
 
-// -----------------------------------------------------------------------------
-// Function to check if cache needs to be refreshed because of setting changes
+// ===================================================================
+// DEPRECATED: checkSettingChanges() - Replaced by SSE-based manager
+// Settings changes are now handled via SSE events
+// Kept for backward compatibility, will be removed in future version
+// ===================================================================
 function checkSettingChanges() {
+  // SSE manager handles settings_changed events now
+  if (typeof netAlertXStateManager !== 'undefined' && netAlertXStateManager.initialized) {
+    return; // SSE handles this now
+  }
+
+  // Fallback for backward compatibility
   $.get('php/server/query_json.php', { file: 'app_state.json', nocache: Date.now() }, function(appState) {
     const importedMilliseconds = parseInt(appState["settingsImported"] * 1000);
     const lastReloaded = parseInt(sessionStorage.getItem(sessionStorageKey + '_time'));
@@ -1652,7 +1661,7 @@ function checkSettingChanges() {
   });
 }
 
-// -----------------------------------------------------------------------------
+// ===================================================================
 // Display spinner and reload page if not yet initialized
 async function handleFirstLoad(callback) {
   if (!isAppInitialized()) {
@@ -1661,7 +1670,7 @@ async function handleFirstLoad(callback) {
   }
 }
 
-// -----------------------------------------------------------------------------
+// ===================================================================
 // Execute callback once the app is initialized and GraphQL server is running
 async function callAfterAppInitialized(callback) {
   if (!isAppInitialized() || !(await isGraphQLServerRunning())) {
@@ -1673,7 +1682,7 @@ async function callAfterAppInitialized(callback) {
   }
 }
 
-// -----------------------------------------------------------------------------
+// ===================================================================
 // Polling function to repeatedly check if the server is running
 async function waitForGraphQLServer() {
   const pollInterval = 2000; // 2 seconds between each check

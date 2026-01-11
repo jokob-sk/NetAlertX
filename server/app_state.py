@@ -5,6 +5,7 @@ from const import applicationPath, apiPath
 from logger import mylog
 from helper import checkNewVersion
 from utils.datetime_utils import timeNowDB, timeNow
+from api_server.sse_broadcast import broadcast_state_update
 
 # Register NetAlertX directories using runtime configuration
 INSTALL_PATH = applicationPath
@@ -150,6 +151,12 @@ class app_state_class:
                     json_file.write(json_data)
             except (TypeError, ValueError) as e:
                 mylog("none", [f"[app_state_class] Failed to serialize object to JSON: {e}"],)
+
+            # Broadcast state change via SSE if available
+            try:
+                broadcast_state_update(self.currentState, self.settingsImported, timestamp=self.lastUpdated)
+            except Exception as e:
+                mylog("none", [f"[app_state] SSE broadcast: {e}"])
 
         return
 
