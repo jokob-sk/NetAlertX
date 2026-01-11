@@ -44,67 +44,7 @@ switch ($FUNCTION) {
 }
 
 
-// ----------------------------------------------------------------------------------------
-// 🔺----- API ENDPOINTS SUPERSEDED -----🔺
-// check server/api_server/api_server_start.py for equivalents
-// equivalent: /messaging/in-app/write
-// 🔺----- API ENDPOINTS SUPERSEDED -----🔺
-function displayMessage($message, $logAlert = FALSE, $logConsole = TRUE, $logFile = TRUE, $logEcho = FALSE)
-{
-  global $logFolderPath, $log_file, $timestamp;
 
-  // sanitize
-  $message = str_replace(array("\n", "\r", PHP_EOL), '', $message);
-
-  echo "<script>function escape(html, encode) {
-    return html.replace(!encode ? /&(?!#?\w+;)/g : /&/g, '&amp;')
-      .replace(/\t/g, '')
-  }</script>";
-
-  // Javascript Alert pop-up
-  if($logAlert)
-  {
-    echo '<script>alert(escape("'.$message.'"));</script>';
-  }
-
-  // F12 Browser dev console
-  if($logConsole)
-  {
-    echo '<script>console.log(escape("'.str_replace('"',"'",$message).'"));</script>';
-  }
-
-  //File
-  if($logFile)
-  {
-
-    if (is_writable($logFolderPath.$log_file)) {
-
-
-        if(file_exists($logFolderPath.$log_file) != 1) // file doesn't exist, create one
-        {
-          $log = fopen($logFolderPath.$log_file, "w") or die("Unable to open file!");
-        }else // file exists, append
-        {
-          $log = fopen($logFolderPath.$log_file, "a") or die("Unable to open file - Permissions issue!");
-        }
-
-        fwrite($log, "[".$timestamp. "] " . str_replace('<br>',"\n   ",str_replace('<br/>',"\n   ",$message)).PHP_EOL."" );
-        fclose($log);
-
-    } else {
-        echo 'The file is not writable: '.$logFolderPath.$log_file;
-    }
-
-
-  }
-
-  //echo
-  if($logEcho)
-  {
-    echo $message;
-  }
-
-}
 
 
 // -------------------------------------------------------------------------------------------
@@ -118,12 +58,12 @@ function saveSettings()
 
   if(file_exists( $fullConfPath) != 1)
   {
-    displayMessage('File "'.$fullConfPath.'" not found or missing read permissions. Creating a new <code>'.$config_file.'</code> file.', FALSE, TRUE, TRUE, TRUE);
+    displayInAppNoti('File "'.$fullConfPath.'" not found or missing read permissions. Creating a new config file.', 'warning');
   }
   // create a backup copy
   elseif (!copy($fullConfPath, $new_location))
   {
-    displayMessage("Failed to copy file ".$fullConfPath." to ".$new_location." <br/> Check your permissions to allow read/write access to the /config folder.", FALSE, TRUE, TRUE, TRUE);
+    displayInAppNoti("Failed to copy file ".$fullConfPath." to ".$new_location." Check your permissions to allow read/write access to the /config folder.", 'error');
   }
 
 
@@ -277,5 +217,40 @@ function encode_single_quotes ($val) {
   $result = str_replace ('\'','{s-quote}',$val);
   return $result;
 }
+// -------------------------------------------------------------------------------------------
+// Helper function to send notifications via the backend API endpoint
+// -------------------------------------------------------------------------------------------
+function displayInAppNoti($message, $level = 'error') {
+    try {
+        $apiBase = getSettingValue('BACKEND_API_URL') ?: 'http://localhost:20212';
+        $apiToken = getSettingValue('API_TOKEN') ?: '';
 
+        if (empty($apiToken)) {
+            // If no token available, silently fail (don't break the application)
+            return;
+        }
+
+        $url = rtrim($apiBase, '/') . '/messaging/in-app/write';
+        $payload = json_encode([
+            'message' => $message,
+            'level' => $level
+        ]);
+
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Content-Type: application/json',
+            'Authorization: Bearer ' . $apiToken,
+            'Content-Length: ' . strlen($payload)
+        ]);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+
+        curl_exec($ch);
+        curl_close($ch);
+    } catch (Exception $e) {
+        // Silently fail if notification sending fails
+    }
+}
 ?>

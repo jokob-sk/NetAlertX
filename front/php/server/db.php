@@ -1,7 +1,7 @@
 <?php
 //------------------------------------------------------------------------------
 //  NetAlertX
-//  Open Source Network Guard / WIFI & LAN intrusion detector 
+//  Open Source Network Guard / WIFI & LAN intrusion detector
 //
 //  db.php - Front module. Server side. DB common file
 //------------------------------------------------------------------------------
@@ -71,7 +71,7 @@ function SQLite3_connect($trytoreconnect = true, $retryCount = 0) {
         if (!is_dir($lockDir) && !@mkdir($lockDir, 0775, true)) {
             die("Log directory not found and could not be created: $lockDir");
         }
-       
+
 
         // Write unlock status to the locked file
         file_put_contents($DBFILE_LOCKED_FILE, '0');
@@ -97,14 +97,14 @@ function SQLite3_connect($trytoreconnect = true, $retryCount = 0) {
         } else {
             // Maximum retries reached, hide loading spinner and show failure alert
             $message = 'Failed to connect to database after ' . $retryCount . ' retries.';
-            write_notification($message);
+            displayInAppNoti($message);
             return false; // Or handle the failure appropriately
         }
     }
 }
 
 //------------------------------------------------------------------------------
-// ->query override to handle retries 
+// ->query override to handle retries
 //------------------------------------------------------------------------------
 class CustomDatabaseWrapper {
     private $sqlite;
@@ -123,72 +123,72 @@ class CustomDatabaseWrapper {
       // Check if the query is an UPDATE, DELETE, or INSERT
       $queryType = strtoupper(substr(trim($query), 0, strpos(trim($query), ' ')));
       $isModificationQuery = in_array($queryType, ['UPDATE', 'DELETE', 'INSERT']);
-  
+
       $attempts = 0;
         while ($attempts < $this->maxRetries) {
 
           $result = false;
 
           try {
-            $result = $this->sqlite->query($query);   
+            $result = $this->sqlite->query($query);
           } catch (Exception $exception) {
             // continue unless maxRetries reached
             if($attempts > $this->maxRetries)
             {
               throw $exception;
-            }            
-          }                     
+            }
+          }
 
           if ($result !== false and $result !== null) {
 
             $this->query_log_remove($query);
-              
+
             return $result;
           }
 
-          $this->query_log_add($query);          
+          $this->query_log_add($query);
 
           $attempts++;
           usleep($this->retryDelay * 1000 * $attempts); // Retry delay in milliseconds
         }
 
         // If all retries failed, throw an exception or handle the error as needed
-        // Add '0' to indicate that the database is not locked/execution failed 
+        // Add '0' to indicate that the database is not locked/execution failed
         file_put_contents($DBFILE_LOCKED_FILE, '0');
 
-        $message = 'Error executing query (attempts: ' . $attempts . '), query: ' . $query;        
+        $message = 'Error executing query (attempts: ' . $attempts . '), query: ' . $query;
         // write_notification($message);
-        error_log("Query failed after {$this->maxRetries} attempts: " . $this->sqlite->lastErrorMsg());        
+        error_log("Query failed after {$this->maxRetries} attempts: " . $this->sqlite->lastErrorMsg());
         return false;
     }
 
     public function query_log_add($query)
     {
         global $DBFILE_LOCKED_FILE;
-    
+
         // Remove new lines from the query
         $query = str_replace(array("\r", "\n"), ' ', $query);
-    
+
         // Generate a hash of the query
         $queryHash = md5($query);
-    
+
         // Log the query being attempted along with timestamp and query hash
         $executionLog = "1|" . date('Y-m-d H:i:s') . "|$queryHash|$query";
         error_log("Attempting to write '$executionLog' to execution log file after failed query: $query");
         file_put_contents($DBFILE_LOCKED_FILE, $executionLog . PHP_EOL, FILE_APPEND);
         error_log("Execution log file content after failed query attempt: " . file_get_contents($DBFILE_LOCKED_FILE));
     }
-    
+
     public function query_log_remove($query)
     {
         global $DBFILE_LOCKED_FILE;
 
         // Remove new lines from the query
         $query = str_replace(array("\r", "\n"), ' ', $query);
-    
+
         // Generate a hash of the query
         $queryHash = md5($query);
-    
+
         // Remove the entry corresponding to the finished query from the execution log based on query hash
         $executionLogs = file($DBFILE_LOCKED_FILE, FILE_IGNORE_NEW_LINES);
         $executionLogs = array_filter($executionLogs, function($log) use ($queryHash) {
@@ -218,8 +218,8 @@ function OpenDB($DBPath = null) {
     if (strlen($DBFILE) == 0) {
         $message = 'Database not available';
         echo '<script>alert("'.$message.'")</script>';
-        write_notification($message);
-        
+        displayInAppNoti($message);
+
         die('<div style="padding-left:150px">'.$message.'</div>');
     }
 
@@ -228,7 +228,7 @@ function OpenDB($DBPath = null) {
     } catch (Exception $e) {
         $message = "Error connecting to the database";
         echo '<script>alert("'.$message.': '.$e->getMessage().'")</script>';
-        write_notification($message);
+        displayInAppNoti($message);
         die('<div style="padding-left:150px">'.$message.'</div>');
     }
 
