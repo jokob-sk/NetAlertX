@@ -84,7 +84,7 @@ class NetAlertXStateManager {
    */
   processSSEEvent(eventText) {
     if (!eventText || !eventText.trim()) return;
-    
+
     const lines = eventText.split('\n');
     let eventType = null, eventData = null;
 
