@@ -48,7 +48,7 @@ if ($method === 'GET') {
     $apiRoot = getenv('NETALERTX_API') ?: '/tmp/api';
     $file_path = rtrim($apiRoot, '/') . '/table_devices.json';
 
-    $data = file_get_contents($file_path);   
+    $data = file_get_contents($file_path);
 
     // Prepare the data to return as a JSON response
     $response_data = base64_encode($data);
@@ -75,7 +75,7 @@ else if ($method === 'POST') {
     // // check location
     // if (!is_dir($storage_path)) {
     //     echo "Could not open folder: {$storage_path}";
-    //     write_notification("[Plugin: SYNC] Could not open folder: {$storage_path}", "alert"); 
+    //     write_notification("[Plugin: SYNC] Could not open folder: {$storage_path}", "alert");
     //     http_response_code(500);
     //     exit;
     // }

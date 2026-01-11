@@ -30,6 +30,10 @@ def get_api_token():
     return None
 
 
+# Load API_TOKEN at module initialization
+API_TOKEN = get_api_token()
+
+
 def get_driver(download_dir=None):
     """Create a Selenium WebDriver for Chrome/Chromium
 

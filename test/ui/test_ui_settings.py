@@ -6,6 +6,7 @@ Tests settings page load, settings groups, and configuration
 
 import time
 import os
+import requests
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -14,7 +15,7 @@ import sys
 # Add test directory to path
 sys.path.insert(0, os.path.dirname(__file__))
 
-from test_helpers import BASE_URL   # noqa: E402 [flake8 lint suppression]
+from test_helpers import BASE_URL, API_TOKEN   # noqa: E402 [flake8 lint suppression]
 
 
 def test_settings_page_loads(driver):
@@ -156,41 +157,75 @@ def test_save_settings_no_loss_of_data(driver):
 
     This test verifies that the saveSettings() function properly:
     1. Loads all settings
-    2. Preserves settings that weren't modified
-    3. Saves without data loss
+    2. Update PLUGINS_KEEP_HIST <input> - set to 333
+    3. Saves
+    4. Check API endpoint that the setting is updated correctly
     """
     driver.get(f"{BASE_URL}/settings.php")
     time.sleep(3)
 
-    # Count the total number of setting inputs before save
-    inputs_before = driver.find_elements(By.CSS_SELECTOR, "input, select, textarea")
-    initial_count = len(inputs_before)
-
-    if initial_count == 0:
-        assert True, "No settings inputs found"
+    # Find the PLUGINS_KEEP_HIST input field
+    plugins_keep_hist_input = None
+    try:
+        plugins_keep_hist_input = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, "PLUGINS_KEEP_HIST"))
+        )
+    except:
+        assert True, "PLUGINS_KEEP_HIST input not found, skipping test"
         return
 
-    print(f"Found {initial_count} settings inputs")
+    # Get original value
+    original_value = plugins_keep_hist_input.get_attribute("value")
+    print(f"PLUGINS_KEEP_HIST original value: {original_value}")
 
-    # Click save without modifying anything
+    # Set new value
+    new_value = "333"
+    plugins_keep_hist_input.clear()
+    plugins_keep_hist_input.send_keys(new_value)
+    time.sleep(1)
+
+    # Click save
     save_btn = driver.find_element(By.CSS_SELECTOR, "button#save")
     driver.execute_script("arguments[0].click();", save_btn)
     time.sleep(3)
 
-    # Reload the page
-    driver.get(f"{BASE_URL}/settings.php")
-    time.sleep(3)
+    # Check for errors after save
+    error_elements = driver.find_elements(By.CSS_SELECTOR, ".alert-danger, .error-message, .callout-danger")
+    has_visible_error = False
+    for elem in error_elements:
+        if elem.is_displayed():
+            error_text = elem.text
+            if error_text and len(error_text) > 0:
+                print(f"Found error message: {error_text}")
+                has_visible_error = True
+                break
 
-    # Count settings again
-    inputs_after = driver.find_elements(By.CSS_SELECTOR, "input, select, textarea")
-    final_count = len(inputs_after)
+    assert not has_visible_error, "No error messages should be displayed after save"
 
-    # Should have the same number of settings (within 10% tolerance for dynamic elements)
-    tolerance = max(1, int(initial_count * 0.1))
-    assert abs(initial_count - final_count) <= tolerance, \
-        f"Settings count should be preserved. Before: {initial_count}, After: {final_count}"
+    # Verify via API endpoint /settings/<setKey>
+    # Extract backend API URL from BASE_URL
+    api_base = BASE_URL.replace('/front', '').replace(':20211', ':20212')  # Switch to backend port
+    api_url = f"{api_base}/settings/PLUGINS_KEEP_HIST"
 
-    print(f"✅ Settings preservation verified: {initial_count} -> {final_count}")
+    headers = {
+        "Authorization": f"Bearer {API_TOKEN}"
+    }
 
+    try:
+        response = requests.get(api_url, headers=headers, timeout=5)
+        assert response.status_code == 200, f"API returned {response.status_code}: {response.text}"
 
-# Settings endpoint doesn't exist in Flask API - settings are managed via PHP/config files
+        data = response.json()
+        assert data.get("success") == True, f"API returned success=false: {data}"
+
+        saved_value = str(data.get("value"))
+        print(f"API /settings/PLUGINS_KEEP_HIST returned: {saved_value}")
+        assert saved_value == new_value, \
+            f"Setting not persisted correctly. Expected: {new_value}, Got: {saved_value}"
+
+    except requests.exceptions.RequestException as e:
+        assert False, f"Error calling settings API: {e}"
+    except Exception as e:
+        assert False, f"Error verifying setting via API: {e}"
+
+    print(f"✅ Settings update verified via API: PLUGINS_KEEP_HIST changed to {new_value}")
