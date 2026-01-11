@@ -1591,7 +1591,7 @@ function restartBackend() {
       method: "POST",
       url: "/logs/add-to-execution-queue",
       headers: {
-        "Authorization": "Bearer " + getApiToken(),
+        "Authorization": "Bearer " + getSetting("API_TOKEN"),
         "Content-Type": "application/json"
       },
       data: JSON.stringify({ action: `${getGuid()}|cron_restart_backend` }),
