@@ -69,6 +69,8 @@ services:
       PORT: ${PORT:-20211}                                   # Application port
       GRAPHQL_PORT: ${GRAPHQL_PORT:-20212}                   # GraphQL API port (passed into APP_CONF_OVERRIDE at runtime)
   #    NETALERTX_DEBUG: ${NETALERTX_DEBUG:-0}                 # 0=kill all services and restart if any dies. 1 keeps running dead services.
+  #    PUID: 20211                             # Runtime PUID override, set to 0 to run as root
+  #    PGID: 20211                             # Runtime PGID override
 
     # Resource limits to prevent resource exhaustion
     mem_limit: 2048m            # Maximum memory usage
