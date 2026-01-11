@@ -1,5 +1,9 @@
 # Reverse Proxy Configuration
 
+> [!NOTE]
+> This is community-contributed. Due to environment, setup, or networking differences, results may vary. Please open a PR to improve it instead of creating an issue, as the maintainer is not actively maintaining it.
+
+
 > [!TIP]
 > You will need to specify the `BACKEND_API_URL` setting if you are running reverse proxies. This is the URL that points to the backend server url (including your `GRAPHQL_PORT`)
 >
@@ -508,3 +512,5 @@ Mapping the updated file (on the local filesystem at `/appl/docker/netalertx/def
     - /appl/docker/netalertx/default:/etc/nginx/sites-available/default
 ...
 ```
+
+

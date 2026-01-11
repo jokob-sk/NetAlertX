@@ -84,10 +84,10 @@
           { "elementType": "select", "elementOptions": [], "transformers": [] }
         ]
       },
-      "default_value": "ping",
+      "default_value": "fping",
       "options": [
-        "ping",
-        "fping"
+        "fping",
+        "ping"
       ],
       "localized": ["name", "description"],
       "name": [

@@ -48,7 +48,7 @@ See alternative [docked-compose examples](https://github.com/jokob-sk/NetAlertX/
 
 | Variable | Description | Example/Default Value |
 | :------------- |:------------------------| -----:|
-| `PUID`      |Runtime UID override  |  `20211` |
+| `PUID`      |Runtime UID override, Set to `0` to run as root. |  `20211` |
 | `PGID`      |Runtime GID override  |  `20211` |
 | `PORT`      |Port of the web interface  |  `20211` |
 | `LISTEN_ADDR`      |Set the specific IP Address for the listener address for the nginx webserver (web interface). This could be useful when using multiple subnets to hide the web interface from all untrusted networks. |  `0.0.0.0` |

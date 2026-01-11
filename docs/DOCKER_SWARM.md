@@ -1,5 +1,9 @@
 # Docker Swarm Deployment Guide (IPvlan)
 
+> [!NOTE]
+> This is community-contributed. Due to environment, setup, or networking differences, results may vary. Please open a PR to improve it instead of creating an issue, as the maintainer is not actively maintaining it.
+
+
 This guide describes how to deploy **NetAlertX** in a **Docker Swarm** environment using an `ipvlan` network. This enables the container to receive a LAN IP address directly, which is ideal for network monitoring.
 
 ---
@@ -67,5 +71,4 @@ networks:
 * Replace `eno1` with your interface, IP addresses, and volume paths to match your environment.
 * Make sure the assigned IP (`192.168.1.240` above) is not in use or managed by DHCP.
 * You may also use a node label constraint instead of `node.role == manager` for more control.
-
 
