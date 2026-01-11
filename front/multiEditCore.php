@@ -175,7 +175,7 @@
                     }
 
 
-                  } else if (elementType === 'input'){
+                  } else if (elementType === 'input' || elementType === 'textarea'){
 
                     // Add classes specifically for checkboxes
                     inputType === 'checkbox' ?  inputClass = 'checkbox' : inputClass = 'form-control';
