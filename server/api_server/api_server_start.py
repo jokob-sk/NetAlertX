@@ -2,6 +2,8 @@ import threading
 import sys
 import os
 
+# flake8: noqa: E402
+
 from flask import Flask, request, jsonify, Response
 from models.device_instance import DeviceInstance  # noqa: E402
 from flask_cors import CORS
@@ -10,15 +12,15 @@ from flask_cors import CORS
 INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from logger import mylog  # noqa: E402 [flake8 lint suppression]
-from helper import get_setting_value  # noqa: E402 [flake8 lint suppression]
-from db.db_helper import get_date_from_period  # noqa: E402 [flake8 lint suppression]
-from app_state import updateState  # noqa: E402 [flake8 lint suppression]
+from logger import mylog
+from helper import get_setting_value
+from db.db_helper import get_date_from_period
+from app_state import updateState
 
-from .graphql_endpoint import devicesSchema  # noqa: E402 [flake8 lint suppression]
-from .history_endpoint import delete_online_history  # noqa: E402 [flake8 lint suppression]
-from .prometheus_endpoint import get_metric_stats  # noqa: E402 [flake8 lint suppression]
-from .sessions_endpoint import (  # noqa: E402 [flake8 lint suppression]
+from .graphql_endpoint import devicesSchema
+from .history_endpoint import delete_online_history
+from .prometheus_endpoint import get_metric_stats
+from .sessions_endpoint import (
     get_sessions,
     delete_session,
     create_session,
@@ -26,7 +28,7 @@ from .sessions_endpoint import (  # noqa: E402 [flake8 lint suppression]
     get_device_sessions,
     get_session_events
 )
-from .nettools_endpoint import (  # noqa: E402 [flake8 lint suppression]
+from .nettools_endpoint import (
     wakeonlan,
     traceroute,
     speedtest,
@@ -35,17 +37,17 @@ from .nettools_endpoint import (  # noqa: E402 [flake8 lint suppression]
     internet_info,
     network_interfaces
 )
-from .dbquery_endpoint import read_query, write_query, update_query, delete_query  # noqa: E402 [flake8 lint suppression]
-from .sync_endpoint import handle_sync_post, handle_sync_get  # noqa: E402 [flake8 lint suppression]
-from .logs_endpoint import clean_log  # noqa: E402 [flake8 lint suppression]
-from models.user_events_queue_instance import UserEventsQueueInstance  # noqa: E402 [flake8 lint suppression]
+from .dbquery_endpoint import read_query, write_query, update_query, delete_query
+from .sync_endpoint import handle_sync_post, handle_sync_get
+from .logs_endpoint import clean_log
+from models.user_events_queue_instance import UserEventsQueueInstance
 
-from models.event_instance import EventInstance  # noqa: E402 [flake8 lint suppression]
+from models.event_instance import EventInstance
 # Import tool logic from the MCP/tools module to reuse behavior (no blueprints)
-from plugin_helper import is_mac  # noqa: E402 [flake8 lint suppression]
+from plugin_helper import is_mac
 # is_mac is provided in mcp_endpoint and used by those handlers
 # mcp_endpoint contains helper functions; routes moved into this module to keep a single place for routes
-from messaging.in_app import (  # noqa: E402 [flake8 lint suppression]
+from messaging.in_app import (
     write_notification,
     mark_all_notifications_read,
     delete_notifications,
@@ -53,11 +55,15 @@ from messaging.in_app import (  # noqa: E402 [flake8 lint suppression]
     delete_notification,
     mark_notification_as_read
 )
-from .mcp_endpoint import (  # noqa: E402 [flake8 lint suppression]
+from .mcp_endpoint import (
     mcp_sse,
     mcp_messages,
     openapi_spec
 )
+# validation and schemas for MCP v2
+from .validation import validate_request
+from .schemas import DeviceSearchRequest, DeviceListRequest, WakeOnLanRequest, TriggerScanRequest, TracerouteRequest, RecentEventsRequest
+
 # tools and mcp routes have been moved into this module (api_server_start)
 
 # Flask application
@@ -81,7 +87,8 @@ CORS(
         r"/logs/*": {"origins": "*"},
         r"/api/tools/*": {"origins": "*"},
         r"/auth/*": {"origins": "*"},
-        r"/mcp/*": {"origins": "*"}
+        r"/mcp/*": {"origins": "*"},
+        r"/openapi.json": {"origins": "*"}
     },
     supports_credentials=True,
     allow_headers=["Authorization", "Content-Type"],
@@ -93,6 +100,8 @@ CORS(
 
 BACKEND_PORT = get_setting_value("GRAPHQL_PORT")
 API_BASE_URL = f"http://localhost:{BACKEND_PORT}"
+
+
 
 
 @app.route('/mcp/sse', methods=['GET', 'POST'])
@@ -421,25 +430,45 @@ def api_devices_totals():
 
 
 @app.route('/mcp/sse/devices/by-status', methods=['GET', 'POST'])
-@app.route("/devices/by-status", methods=["GET"])
-def api_devices_by_status():
+@app.route("/devices/by-status", methods=["GET", "POST"])
+@validate_request(
+    operation_id="list_devices_by_status",
+    summary="List Devices by Status",
+    description="List devices filtered by their online/offline status.",
+    request_model=DeviceListRequest
+)
+def api_devices_by_status(payload: DeviceListRequest = None):
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
 
-    status = request.args.get("status", "") if request.args else None
+    status = None
+    if payload and payload.status:
+        status = payload.status
+    elif request.args:
+        status = request.args.get("status")
+
     device_handler = DeviceInstance()
     return jsonify(device_handler.getByStatus(status))
 
 
 @app.route('/mcp/sse/devices/search', methods=['POST'])
 @app.route('/devices/search', methods=['POST'])
-def api_devices_search():
+@validate_request(
+    operation_id="search_devices",
+    summary="Search Devices",
+    description="Search for devices based on various criteria like name, IP, MAC, or vendor.",
+    request_model=DeviceSearchRequest
+)
+def api_devices_search(payload: DeviceSearchRequest = None):
     """Device search: accepts 'query' in JSON and maps to device info/search."""
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
 
-    data = request.get_json(silent=True) or {}
-    query = data.get('query')
+    if payload:
+        query = payload.query
+    else:
+        data = request.get_json(silent=True) or {}
+        query = data.get('query')
 
     if not query:
         return jsonify({"success": False, "message": "Missing 'query' parameter", "error": "Missing query"}), 400
@@ -513,13 +542,24 @@ def api_devices_network_topology():
 # --------------------------
 @app.route('/mcp/sse/nettools/wakeonlan', methods=['POST'])
 @app.route("/nettools/wakeonlan", methods=["POST"])
-def api_wakeonlan():
+@validate_request(
+    operation_id="wake_on_lan",
+    summary="Wake-on-LAN",
+    description="Send a Wake-on-LAN magic packet to wake up a device.",
+    request_model=WakeOnLanRequest
+)
+def api_wakeonlan(payload: WakeOnLanRequest = None):
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
 
-    data = request.json or {}
-    mac = data.get("devMac")
-    ip = data.get("devLastIP") or data.get('ip')
+    if payload:
+        mac = payload.devMac
+        ip = payload.devLastIP
+    else:
+        data = request.json or {}
+        mac = data.get("devMac")
+        ip = data.get("devLastIP") or data.get('ip')
+
     if not mac and ip:
 
         device_handler = DeviceInstance()
@@ -539,10 +579,22 @@ def api_wakeonlan():
 
 @app.route('/mcp/sse/nettools/traceroute', methods=['POST'])
 @app.route("/nettools/traceroute", methods=["POST"])
-def api_traceroute():
+@validate_request(
+    operation_id="perform_traceroute",
+    summary="Traceroute",
+    description="Perform a traceroute to a target IP address.",
+    request_model=TracerouteRequest
+)
+def api_traceroute(payload: TracerouteRequest = None):
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
-    ip = request.json.get("devLastIP")
+
+    if payload:
+        ip = payload.devLastIP
+    else:
+        ip = request.json.get("devLastIP")
+
+    # Validation logic below handles None (though Pydantic prevents None if required)
     return traceroute(ip)
 
 
@@ -604,12 +656,21 @@ def api_network_interfaces():
 
 @app.route('/mcp/sse/nettools/trigger-scan', methods=['POST'])
 @app.route("/nettools/trigger-scan", methods=["GET"])
-def api_trigger_scan():
+@validate_request(
+    operation_id="trigger_network_scan",
+    summary="Trigger Network Scan",
+    description="Trigger a network scan to discover devices. Specify scan type matching an enabled plugin.",
+    request_model=TriggerScanRequest
+)
+def api_trigger_scan(payload: TriggerScanRequest = None):
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
 
-    data = request.get_json(silent=True) or {}
-    scan_type = data.get('type', 'ARPSCAN')
+    if payload:
+        scan_type = payload.type
+    else:
+        data = request.get_json(silent=True) or {}
+        scan_type = data.get('type', 'ARPSCAN')
 
     # Validate scan type
     loaded_plugins = get_setting_value('LOADED_PLUGINS')
@@ -787,6 +848,7 @@ def api_create_event(mac):
 
 @app.route("/events/<mac>", methods=["DELETE"])
 def api_events_by_mac(mac):
+    """Delete events for a specific device MAC; string converter keeps this distinct from /events/<int:days>."""
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
 
@@ -843,8 +905,26 @@ def api_get_events_totals():
 
 @app.route('/mcp/sse/events/recent', methods=['GET', 'POST'])
 @app.route('/events/recent', methods=['GET'])
-def api_events_default_24h():
-    return api_events_recent(24)  # Reuse handler
+@validate_request(
+    operation_id="get_recent_events",
+    summary="Get Recent Events",
+    description="Get recent events from the system.",
+    request_model=RecentEventsRequest
+)
+def api_events_default_24h(payload: RecentEventsRequest = None):
+    if not is_authorized():
+        return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
+
+    hours = 24
+    if payload and payload.hours:
+        hours = payload.hours
+    elif request.args:
+        try:
+            hours = int(request.args.get("hours", 24))
+        except (ValueError, TypeError):
+            hours = 24
+
+    return api_events_recent(hours)
 
 
 @app.route('/mcp/sse/events/last', methods=['GET', 'POST'])

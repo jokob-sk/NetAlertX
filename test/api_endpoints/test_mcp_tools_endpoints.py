@@ -1,14 +1,9 @@
-import sys
-import os
 import pytest
 from unittest.mock import patch, MagicMock
 from datetime import datetime
 
-INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
-sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
-
-from helper import get_setting_value  # noqa: E402
-from api_server.api_server_start import app  # noqa: E402
+from api_server.api_server_start import app
+from helper import get_setting_value
 
 
 @pytest.fixture(scope="session")
@@ -170,9 +165,10 @@ def test_get_network_topology(mock_db_conn, client, api_token):
     assert response.status_code == 200
     data = response.get_json()
     assert len(data["nodes"]) == 2
-    assert len(data["links"]) == 1
-    assert data["links"][0]["source"] == "AA:AA:AA:AA:AA:AA"
-    assert data["links"][0]["target"] == "BB:BB:BB:BB:BB:BB"
+    links = data.get("links", [])
+    assert len(links) == 1
+    assert links[0]["source"] == "AA:AA:AA:AA:AA:AA"
+    assert links[0]["target"] == "BB:BB:BB:BB:BB:BB"
 
 
 # --- get_recent_alerts Tests ---
@@ -196,6 +192,8 @@ def test_get_recent_alerts(mock_db_conn, client, api_token):
     data = response.get_json()
     assert data["success"] is True
     assert data["hours"] == 24
+    assert "count" in data
+    assert "events" in data
 
 
 # --- Device Alias Tests ---
@@ -257,7 +255,7 @@ def test_wol_wake_device_invalid_mac(client, api_token):
                            json=payload,
                            headers=auth_headers(api_token))
 
-    assert response.status_code == 400
+    assert response.status_code == 422
     data = response.get_json()
     assert data["success"] is False
 
@@ -270,6 +268,7 @@ def test_wol_wake_device_invalid_mac(client, api_token):
 def test_get_latest_device(mock_db_conn, client, api_token):
     """Test get_latest_device endpoint."""
     # Mock database connection for latest device query
+    # API uses getLatest() which calls _fetchone
     mock_conn = MagicMock()
     mock_execute_result = MagicMock()
     mock_execute_result.fetchone.return_value = {
@@ -430,8 +429,9 @@ def test_mcp_traceroute_missing_ip(mock_traceroute, client, api_token):
                            json=payload,
                            headers=auth_headers(api_token))
 
-    assert response.status_code == 400
+    assert response.status_code == 422
     data = response.get_json()
     assert data["success"] is False
     assert "error" in data
-    mock_traceroute.assert_called_once_with(None)
+    mock_traceroute.assert_not_called()
+    # mock_traceroute.assert_called_once_with(None)
