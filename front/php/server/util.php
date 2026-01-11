@@ -3,7 +3,7 @@
 //  NetAlertX
 //  Open Source Network Guard / WIFI & LAN intrusion detector
 //
-//  util.php - Front module. Server side. Common generic functions
+//  util.php - Front module. Server side. Settings and utility functions
 //------------------------------------------------------------------------------
 #  Puche 2021 / 2022+ jokob             jokob@duck.com                GNU GPLv3
 //------------------------------------------------------------------------------
@@ -18,7 +18,6 @@ require_once  $_SERVER['DOCUMENT_ROOT'] . '/php/templates/security.php';
 
 $FUNCTION = [];
 $SETTINGS = [];
-$ACTION   = "";
 
 // init request params
 if(array_key_exists('function', $_REQUEST) != FALSE)
@@ -39,142 +38,11 @@ switch ($FUNCTION) {
       saveSettings();
       break;
 
-  case 'cleanLog':
-
-      cleanLog($SETTINGS);
-      break;
-
-  case 'addToExecutionQueue':
-
-      if(array_key_exists('action', $_REQUEST) != FALSE)
-      {
-        $ACTION = $_REQUEST['action'];
-      }
-
-      addToExecutionQueue($ACTION);
-      break;
-
   default:
       // Handle any other cases or errors if needed
       break;
 }
 
-
-//------------------------------------------------------------------------------
-// Formatting data functions
-//------------------------------------------------------------------------------
-// Creates a PHP array from a string representing a python array (input format ['...','...'])
-// Only supports:
-//      - one level arrays, not nested ones
-//      - single quotes
-function createArray($input){
-
-  // empty array
-  if($input == '[]')
-  {
-    return [];
-  }
-
-  // regex patterns
-  $patternBrackets = '/(^\s*\[)|(\]\s*$)/';
-  $patternQuotes = '/(^\s*\')|(\'\s*$)/';
-  $replacement = '';
-
-  // remove brackets
-  $noBrackets = preg_replace($patternBrackets, $replacement, $input);
-
-  $options = array();
-
-  // create array
-  $optionsTmp = explode(",", $noBrackets);
-
-  // handle only one item in array
-  if(count($optionsTmp) == 0)
-  {
-    return [preg_replace($patternQuotes, $replacement, $noBrackets)];
-  }
-
-  // remove quotes
-  foreach ($optionsTmp as $item)
-  {
-    array_push($options, preg_replace($patternQuotes, $replacement, $item) );
-  }
-
-  return $options;
-}
-
-// -------------------------------------------------------------------------------------------
-// For debugging - Print arrays
-function printArray ($array) {
-  echo '[';
-  foreach ($array as $val)
-  {
-    if(is_array($val))
-    {
-      echo '<br/>';
-      printArray($val);
-    } else
-    {
-      echo $val.', ';
-    }
-  }
-  echo ']<br/>';
-}
-
-// -------------------------------------------------------------------------------------------
-function formatDate ($date1) {
-  return date_format (new DateTime ($date1) , 'Y-m-d   H:i');
-}
-
-// -------------------------------------------------------------------------------------------
-function formatDateDiff ($date1, $date2) {
-  return date_diff (new DateTime ($date1), new DateTime ($date2 ) )-> format ('%ad   %H:%I');
-}
-
-// -------------------------------------------------------------------------------------------
-function formatDateISO ($date1) {
-  return date_format (new DateTime ($date1),'c');
-}
-
-// -------------------------------------------------------------------------------------------
-function formatEventDate ($date1, $eventType) {
-  if (!empty ($date1) ) {
-    $ret = formatDate ($date1);
-  } elseif ($eventType == '<missing event>') {
-    $ret = '<missing event>';
-  } else {
-    $ret = '<Still Connected>';
-  }
-
-  return $ret;
-}
-
-// -------------------------------------------------------------------------------------------
-function formatIPlong ($IP) {
-  return sprintf('%u', ip2long($IP) );
-}
-
-
-//------------------------------------------------------------------------------
-// Other functions
-//------------------------------------------------------------------------------
-function checkPermissions($files)
-{
-  foreach ($files as $file)
-  {
-
-    // // make sure the file ownership is correct
-    // chown($file, 'nginx');
-    // chgrp($file, 'www-data');
-
-    // check access to database
-    if(file_exists($file) != 1)
-    {
-      $message = "File '".$file."' not found or inaccessible. Correct file permissions, create one yourself or generate a new one in 'Settings' by clicking the 'Save' button.";
-      displayMessage($message, TRUE);
-    }
-  }
-}
 
 // ----------------------------------------------------------------------------------------
 // 🔺----- API ENDPOINTS SUPERSEDED -----🔺
@@ -238,65 +106,8 @@ function displayMessage($message, $logAlert = FALSE, $logConsole = TRUE, $logFil
 
 }
 
-// 🔺----- API ENDPOINTS SUPERSEDED -----🔺
-// check server/api_server/api_server_start.py for equivalents
-// equivalent: /logs/add-to-execution-queue
-// 🔺----- API ENDPOINTS SUPERSEDED -----🔺
-// ----------------------------------------------------------------------------------------
-// Adds an action to perform into the execution_queue.log file
-function addToExecutionQueue($action)
-{
-    global $logFolderPath, $timestamp;
 
-    $logFile = 'execution_queue.log';
-    $fullPath = $logFolderPath . $logFile;
-
-    // Open the file or skip if it can't be opened
-    if ($file = fopen($fullPath, 'a')) {
-        fwrite($file, "[" . $timestamp . "]|" . $action . PHP_EOL);
-        fclose($file);
-        displayMessage('Action "'.$action.'" added to the execution queue.', false, true, true, true);
-    } else {
-        displayMessage('Log file not found or couldn\'t be created.', false, true, true, true);
-    }
-}
-
-
-
-// ----------------------------------------------------------------------------------------
-// 🔺----- API ENDPOINTS SUPERSEDED -----🔺
-// check server/api_server/api_server_start.py for equivalents
-// equivalent: /logs DELETE
-// 🔺----- API ENDPOINTS SUPERSEDED -----🔺
-function cleanLog($logFile)
-{
-  global $logFolderPath, $timestamp;
-
-  $path = "";
-
-  $allowedFiles = ['app.log', 'app_front.log', 'IP_changes.log', 'stdout.log', 'stderr.log', 'app.php_errors.log', 'execution_queue.log', 'db_is_locked.log', 'nginx-error.log', 'cron.log'];
-
-  if(in_array($logFile, $allowedFiles))
-  {
-    $path = $logFolderPath.$logFile;
-  }
-
-  if($path != "")
-  {
-    // purge content
-    $file = fopen($path, "w") or die("Unable to open file!");
-    fwrite($file, "");
-    fclose($file);
-    displayMessage('File <code>'.$logFile.'</code> purged.', FALSE, TRUE, TRUE, TRUE);
-  } else
-  {
-    displayMessage('File <code>'.$logFile.'</code> is not allowed to be purged.', FALSE, TRUE, TRUE, TRUE);
-  }
-}
-
-
-
-// ----------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------
 function saveSettings()
 {
   global $SETTINGS, $FUNCTION, $config_file, $fullConfPath, $configFolderPath, $timestamp;
@@ -356,9 +167,6 @@ function saveSettings()
       $dataType     = $setting[2];
       $settingValue = $setting[3];
 
-      // // Parse the settingType JSON
-      // $settingType = json_decode($settingTypeJson, true);
-
       // Sanity check
       if($setKey == "UI_LANG" && $settingValue == "") {
           echo "🔴 Error: important settings missing. Refresh the page with 🔃 on the top and try again.";
@@ -413,9 +221,6 @@ function saveSettings()
   $txt = $txt."#-------------------IMPORTANT INFO-------------------#\n";
 
   // open new file and write the new configuration
-  // Create a temporary file
-  $tempConfPath = $fullConfPath . ".tmp";
-
   // Backup the original file
   if (file_exists($fullConfPath)) {
     copy($fullConfPath, $fullConfPath . ".bak");
@@ -426,29 +231,10 @@ function saveSettings()
   fwrite($file, $txt);
   fclose($file);
 
-  // displayMessage(lang('settings_saved'),
-  //   FALSE, TRUE, TRUE, TRUE);
-
   echo "OK";
 
 }
 
-// -------------------------------------------------------------------------------------------
-// 🔺----- API ENDPOINTS SUPERSEDED -----🔺
-// check server/api_server/api_server_start.py for equivalents
-// equivalent: /graphql LangStrings endpoint
-// 🔺----- API ENDPOINTS SUPERSEDED -----🔺
-function getString ($setKey, $default) {
-
-  $result = lang($setKey);
-
-  if ($result )
-  {
-    return $result;
-  }
-
-  return $default;
-}
 // -------------------------------------------------------------------------------------------
 // 🔺----- API ENDPOINTS SUPERSEDED -----🔺
 // check server/api_server/api_server_start.py for equivalents
@@ -479,7 +265,6 @@ function getSettingValue($setKey) {
   foreach ($data['data'] as $setting) {
       if ($setting['setKey'] === $setKey) {
           return $setting['setValue'];
-          // echo $setting['setValue'];
       }
   }
 
@@ -488,166 +273,28 @@ function getSettingValue($setKey) {
 }
 
 // -------------------------------------------------------------------------------------------
-
-
 function encode_single_quotes ($val) {
-
   $result = str_replace ('\'','{s-quote}',$val);
-
   return $result;
 }
 
 // -------------------------------------------------------------------------------------------
-
-function getDateFromPeriod () {
-
-  $periodDate = $_REQUEST['period'];
-
-  $periodDateSQL = "";
-  $days = "";
-
-  switch ($periodDate) {
-    case '7 days':
-      $days = "7";
-      break;
-    case '1 month':
-      $days = "30";
-      break;
-    case '1 year':
-      $days = "365";
-      break;
-    case '100 years':
-      $days = "3650"; //10 years
-      break;
-    default:
-      $days = "1";
-  }
-
-  $periodDateSQL = "-".$days." day";
-
-  return " date('now', '".$periodDateSQL."') ";
-
-  // $period = $_REQUEST['period'];
-  // return '"'. date ('Y-m-d', strtotime ('+2 day -'. $period) ) .'"';
-}
-
-
-
-// -------------------------------------------------------------------------------------------
-function quotes ($text) {
-  return str_replace ('"','""',$text);
-}
-
-// -------------------------------------------------------------------------------------------
-function logServerConsole ($text) {
-  $x = array();
-  $y = $x['__________'. $text .'__________'];
-}
-
-// -------------------------------------------------------------------------------------------
-function handleNull ($text, $default = "") {
-  if($text == NULL || $text == 'NULL')
+function checkPermissions($files)
+{
+  foreach ($files as $file)
   {
-    return $default;
-  } else
-  {
-    return $text;
-  }
 
-}
+    // // make sure the file ownership is correct
+    // chown($file, 'nginx');
+    // chgrp($file, 'www-data');
 
-// -------------------------------------------------------------------------------------------
-// Encode special chars
-function encodeSpecialChars($str) {
-  return str_replace(
-      ['&', '<', '>', '"', "'"],
-      ['&amp;', '&lt;', '&gt;', '&quot;', '&#039;'],
-      $str
-  );
-}
-
-// -------------------------------------------------------------------------------------------
-// Decode special chars
-function decodeSpecialChars($str) {
-  return str_replace(
-      ['&amp;', '&lt;', '&gt;', '&quot;', '&#039;'],
-      ['&', '<', '>', '"', "'"],
-      $str
-  );
-}
-
-
-// -------------------------------------------------------------------------------------------
-// used in Export CSV
-function getDevicesColumns(){
-
-  $columns = ["devMac",
-              "devName",
-              "devOwner",
-              "devType",
-              "devVendor",
-              "devFavorite",
-              "devGroup",
-              "devComments",
-              "devFirstConnection",
-              "devLastConnection",
-              "devLastIP",
-              "devStaticIP",
-              "devScan",
-              "devLogEvents",
-              "devAlertEvents",
-              "devAlertDown",
-              "devSkipRepeated",
-              "devLastNotification",
-              "devPresentLastScan",
-              "devIsNew",
-              "devLocation",
-              "devIsArchived",
-              "devParentPort",
-              "devParentMAC",
-              "devIcon",
-              "devGUID",
-              "devSyncHubNode",
-              "devSite",
-              "devSSID",
-              "devSourcePlugin",
-              "devCustomProps",
-              "devFQDN",
-              "devParentRelType",
-              "devReqNicsOnline"
-            ];
-
-  return $columns;
-}
-
-
-function generateGUID() {
-  return sprintf(
-      '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-      random_int(0, 0xffff), random_int(0, 0xffff),
-      random_int(0, 0xffff),
-      random_int(0, 0x0fff) | 0x4000, // Version 4 UUID
-      random_int(0, 0x3fff) | 0x8000, // Variant 1
-      random_int(0, 0xffff), random_int(0, 0xffff), random_int(0, 0xffff)
-  );
-}
-
-//------------------------------------------------------------------------------
-//  Simple cookie cache
-//------------------------------------------------------------------------------
-function getCache($key) {
-  if( isset($_COOKIE[$key]))
-  {
-    return $_COOKIE[$key];
-  }else
-  {
-    return "";
+    // check access to database
+    if(file_exists($file) != 1)
+    {
+      $message = "File '".$file."' not found or inaccessible. Correct file permissions, create one yourself or generate a new one in 'Settings' by clicking the 'Save' button.";
+      displayMessage($message, TRUE);
+    }
   }
 }
-// -------------------------------------------------------------------------------------------
-function setCache($key, $value, $expireMinutes = 5) {
-  setcookie($key,  $value, time()+$expireMinutes*60, "/","", 0);
-}
-
 
 ?>

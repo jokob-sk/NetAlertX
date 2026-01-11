@@ -1339,11 +1339,19 @@ function updateApi(apiEndpoints)
   // value has to be in format event|param. e.g. run|ARPSCAN
   action = `${getGuid()}|update_api|${apiEndpoints}`
 
+  // Get data from the server
+  const apiToken = getSetting("API_TOKEN");
+  const apiBaseUrl = getApiBase();
+  const url = `${apiBaseUrl}/logs/add-to-execution-queue`;
 
   $.ajax({
     method: "POST",
-    url: "php/server/util.php",
-    data: { function: "addToExecutionQueue", action: action  },
+    url: url,
+    headers: {
+      "Authorization": "Bearer " + apiToken,
+      "Content-Type": "application/json"
+    },
+    data: JSON.stringify({ action: action }),
     success: function(data, textStatus) {
         console.log(data)
     }
@@ -1581,8 +1589,12 @@ function restartBackend() {
   // Execute
   $.ajax({
       method: "POST",
-      url: "php/server/util.php",
-      data: { function: "addToExecutionQueue", action: `${getGuid()}|cron_restart_backend`  },
+      url: "/logs/add-to-execution-queue",
+      headers: {
+        "Authorization": "Bearer " + getApiToken(),
+        "Content-Type": "application/json"
+      },
+      data: JSON.stringify({ action: `${getGuid()}|cron_restart_backend` }),
       success: function(data, textStatus) {
           // showModalOk ('Result', data );
 

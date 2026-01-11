@@ -291,10 +291,19 @@ function execute_settingEvent(element) {
     // value has to be in format event|param. e.g. run|ARPSCAN
     action = `${getGuid()}|${feEvent}|${fePlugin}`
 
+    // Get data from the server
+    const apiToken = getSetting("API_TOKEN");
+    const apiBaseUrl = getApiBase();
+    const url = `${apiBaseUrl}/logs/add-to-execution-queue`;
+
     $.ajax({
       method: "POST",
-      url: "php/server/util.php",
-      data: { function: "addToExecutionQueue", action: action  },
+      url: url,
+      headers: {
+        "Authorization": "Bearer " + apiToken,
+        "Content-Type": "application/json"
+      },
+      data: JSON.stringify({ action: action }),
       success: function(data, textStatus) {
           // showModalOk ('Result', data );
 

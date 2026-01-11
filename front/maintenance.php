@@ -543,7 +543,7 @@ function ExportCSV()
   const apiBase = getApiBase();
   const apiToken = getSetting("API_TOKEN");
   const url = `${apiBase}/devices/export/csv`;
-  
+
   fetch(url, {
     method: 'GET',
     headers: {
@@ -565,16 +565,16 @@ function ExportCSV()
     a.href = downloadUrl;
     a.download = 'devices.csv';
     document.body.appendChild(a);
-    
+
     // Trigger download
     a.click();
-    
+
     // Cleanup after a short delay
     setTimeout(() => {
       window.URL.revokeObjectURL(downloadUrl);
       document.body.removeChild(a);
     }, 100);
-    
+
     showMessage('Export completed successfully');
   })
   .catch(error => {
@@ -673,13 +673,25 @@ function performLogManage() {
   console.log("targetLogFile:" + targetLogFile)
   console.log("logFileAction:" + logFileAction)
 
+  // Get API token and base URL
+  const apiToken = getSetting("API_TOKEN");
+  const apiBaseUrl = getApiBase();
+  const url = `${apiBaseUrl}/logs?file=${encodeURIComponent(targetLogFile)}`;
+
   $.ajax({
-    method: "POST",
-    url: "php/server/util.php",
-    data: { function: logFileAction, settings: targetLogFile  },
+    method: "DELETE",
+    url: url,
+    headers: {
+      "Authorization": "Bearer " + apiToken,
+      "Content-Type": "application/json"
+    },
     success: function(data, textStatus) {
-        showModalOk ('Result', data );
+        showModalOk('Result', data.message || 'Log file purged successfully');
         write_notification(`[Maintenance] Log file "${targetLogFile}" manually purged`, 'info')
+    },
+    error: function(xhr, status, error) {
+      console.error("Error purging log file:", status, error);
+      showModalOk('Error', xhr.responseJSON?.error || error);
     }
   })
 }

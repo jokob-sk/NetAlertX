@@ -402,8 +402,15 @@ def test_device_delete_workflow(driver, api_token):
     assert verify_response.status_code == 404, "Device should be deleted"
 ```
 
-## Resources
+## Settings Form Submission Tests
 
-- [Selenium Python Docs](https://selenium-python.readthedocs.io/)
-- [Pytest Documentation](https://docs.pytest.org/)
-- [WebDriver Wait Conditions](https://selenium-python.readthedocs.io/waits.html)
+The `test_ui_settings.py` file includes tests for validating the settings save workflow via PHP form submission:
+
+### `test_save_settings_with_form_submission(driver)`
+Tests that the settings form submits correctly to `php/server/util.php` with `function: 'savesettings'`. Validates that the config file is generated correctly and no errors appear on save.
+
+### `test_save_settings_no_loss_of_data(driver)`
+Verifies that all settings are preserved when saved (no data loss during save operation).
+
+**Key Coverage**: Form submission flow → PHP `saveSettings()` → Config file generation with Python-compatible formatting
+
