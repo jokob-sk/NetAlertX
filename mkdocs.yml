@@ -18,6 +18,18 @@ nav:
         - Docker File Permissions: FILE_PERMISSIONS.md
         - Docker Updates: UPDATES.md
         - Docker Maintenance: DOCKER_MAINTENANCE.md
+      - Docker Startup Troubleshooting:
+        - Aufs capabilities: docker-troubleshooting/aufs-capabilities.md
+        - Excessive capabilities: docker-troubleshooting/excessive-capabilities.md
+        - File permissions: docker-troubleshooting/file-permissions.md
+        - Incorrect user: docker-troubleshooting/incorrect-user.md
+        - Missing capabilities: docker-troubleshooting/missing-capabilities.md
+        - Mount issues: docker-troubleshooting/mount-configuration-issues.md
+        - Network mode: docker-troubleshooting/network-mode.md
+        - Nginx mount: docker-troubleshooting/nginx-configuration-mount.md
+        - Port conflicts: docker-troubleshooting/port-conflicts.md
+        - Read only: docker-troubleshooting/read-only-filesystem.md
+        - Running as root: docker-troubleshooting/running-as-root.md
       - Other:
         - Synology Guide: SYNOLOGY_GUIDE.md
         - Portainer Stacks: DOCKER_PORTAINER.md
