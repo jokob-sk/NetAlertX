@@ -26,7 +26,7 @@ The database and device structure may change with new releases. When using the C
 ![Maintenance > CSV Export](./img/DEVICES_BULK_EDITING/MAINTENANCE_CSV_EXPORT.png)
 
 > [!NOTE]
-> The file containing a list of Devices including the Network relationships between Network Nodes and connected devices. You can also trigger this by acessing this URL: `<server>:20211/php/server/devices.php?action=ExportCSV` or via the `CSV Backup` plugin. (💡 You can schedule this)
+> The file containing a list of Devices including the Network relationships between Network Nodes and connected devices. You can also trigger this with the `CSV Backup` plugin. (💡 You can schedule this)
 
 ![Settings > CSV Backup](./img/DEVICES_BULK_EDITING/CSV_BACKUP_SETTINGS.png)
 
