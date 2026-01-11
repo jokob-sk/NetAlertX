@@ -118,11 +118,14 @@ curl -X DELETE "http://<server_ip>:<GRAPHQL_PORT>/sessions/delete" \
   ```
 #### `curl` Example
 
+**get sessions for mac**
+
 ```bash
 curl -X GET "http://<server_ip>:<GRAPHQL_PORT>/sessions/list?mac=AA:BB:CC:DD:EE:FF&start_date=2025-08-01&end_date=2025-08-21" \
   -H "Authorization: Bearer <API_TOKEN>" \
   -H "Accept: application/json"
 ```
+
 ---
 
 ### Calendar View of Sessions

@@ -173,10 +173,6 @@ Now, any files created by NetAlertX in `/data/config` will appear in your `/loca
 
 This same method works for mounting other things, like custom plugins or enterprise NGINX files, as shown in the commented-out examples in the baseline file.
 
-## Example Configuration Summaries
-
-Here are the essential modifications for common alternative setups.
-
 ### Example 2: External `.env` File for Paths
 
 This method is useful for keeping your paths and other settings separate from your main compose file, making it more portable.
