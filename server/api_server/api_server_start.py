@@ -55,15 +55,14 @@ from messaging.in_app import (  # noqa: E402 [flake8 lint suppression]
     delete_notification,
     mark_notification_as_read
 )
-from .mcp_endpoint import (  # noqa: E402 [flake8 lint suppression]
+from .mcp_endpoint import (
     mcp_sse,
     mcp_messages,
     openapi_spec
-)
+)  # noqa: E402 [flake8 lint suppression]
 # validation and schemas for MCP v2
 from .validation import validate_request  # noqa: E402 [flake8 lint suppression]
-from .schemas import  # noqa: E402 [flake8 lint suppression]
-(
+from .schemas import (  # noqa: E402 [flake8 lint suppression]
     DeviceSearchRequest,
     DeviceListRequest,
     WakeOnLanRequest,
