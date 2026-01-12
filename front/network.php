@@ -101,13 +101,25 @@
       ON (t1.node_mac = t2.node_mac_2)
     `;
 
-    const apiUrl = `php/server/dbHelper.php?action=read&rawSql=${btoa(encodeURIComponent(rawSql))}`;
+    const apiBase = getApiBase();
+    const apiToken = getSetting("API_TOKEN");
+    const url = `${apiBase}/dbquery/read`;
 
-    $.get(apiUrl, function (data) {
-      const nodes = JSON.parse(data);
-      renderNetworkTabs(nodes);
-      loadUnassignedDevices();
-      checkTabsOverflow();
+    $.ajax({
+      url,
+      method: "POST",
+      headers: { "Authorization": `Bearer ${apiToken}` },
+      data: JSON.stringify({ rawSql: btoa(unescape(encodeURIComponent(rawSql))) }),
+      contentType: "application/json",
+      success: function(data) {
+        const nodes = data.results || [];
+        renderNetworkTabs(nodes);
+        loadUnassignedDevices();
+        checkTabsOverflow();
+      },
+      error: function(xhr, status, error) {
+        console.error("Error loading network nodes:", status, error);
+      }
     });
   }
 
@@ -222,22 +234,30 @@
 
   // ----------------------------------------------------
   function loadDeviceTable({ sql, containerSelector, tableId, wrapperHtml = null, assignMode = true }) {
-    const apiUrl = `php/server/dbHelper.php?action=read&rawSql=${btoa(encodeURIComponent(sql))}`;
+    const apiBase = getApiBase();
+    const apiToken = getSetting("API_TOKEN");
+    const url = `${apiBase}/dbquery/read`;
 
-    $.get(apiUrl, function (data) {
-      const devices = JSON.parse(data);
-      const $container = $(containerSelector);
+    $.ajax({
+      url,
+      method: "POST",
+      headers: { "Authorization": `Bearer ${apiToken}` },
+      data: JSON.stringify({ rawSql: btoa(unescape(encodeURIComponent(sql))) }),
+      contentType: "application/json",
+      success: function(data) {
+        const devices = data.results || [];
+        const $container = $(containerSelector);
 
-      // end if nothing to show
-      if(devices.length == 0)
-      {
-        return;
-      }
+        // end if nothing to show
+        if(devices.length == 0)
+        {
+          return;
+        }
 
 
-      $container.html(wrapperHtml);
+        $container.html(wrapperHtml);
 
-      const $table = $(`#${tableId}`);
+        const $table = $(`#${tableId}`);
 
       const columns = [
         {
@@ -313,15 +333,19 @@
           createdRow: function (row, data) {
             $(row).attr('data-mac', data.devMac);
           }
-        }
+      };
 
       if ($.fn.DataTable.isDataTable($table)) {
         $table.DataTable(tableConfig).clear().rows.add(devices).draw();
       } else {
         $table.DataTable(tableConfig);
       }
-    });
-  }
+    },
+    error: function(xhr, status, error) {
+      console.error("Error loading device table:", status, error);
+    }
+  });
+}
 
   // ----------------------------------------------------
   function loadUnassignedDevices() {
@@ -409,25 +433,31 @@
     FROM Devices a
   `;
 
-  const apiUrl = `php/server/dbHelper.php?action=read&rawSql=${btoa(encodeURIComponent(rawSql))}`;
+  const apiBase = getApiBase();
+  const apiToken = getSetting("API_TOKEN");
+  const url = `${apiBase}/dbquery/read`;
 
-  $.get(apiUrl, function (data) {
+  $.ajax({
+    url,
+    method: "POST",
+    headers: { "Authorization": `Bearer ${apiToken}` },
+    data: JSON.stringify({ rawSql: btoa(unescape(encodeURIComponent(rawSql))) }),
+    contentType: "application/json",
+    success: function(data) {
+      console.log(data);
 
-    console.log(data);
+      const allDevices = data.results || [];
 
-    const parsed = JSON.parse(data);
-    const allDevices = parsed;
-
-    console.log(allDevices);
+      console.log(allDevices);
 
 
-    if (!allDevices || allDevices.length === 0) {
-      showModalOK(getString('Gen_Warning'), getString('Network_NoDevices'));
-      return;
-    }
+      if (!allDevices || allDevices.length === 0) {
+        showModalOK(getString('Gen_Warning'), getString('Network_NoDevices'));
+        return;
+      }
 
-    // Count totals for UI
-    let archivedCount = 0;
+      // Count totals for UI
+      let archivedCount = 0;
     let offlineCount = 0;
 
     allDevices.forEach(device => {
@@ -488,7 +518,11 @@
     initTree(getHierarchy());
     loadNetworkNodes();
     attachTreeEvents();
-  });
+  },
+  error: function(xhr, status, error) {
+    console.error("Error loading topology data:", status, error);
+  }
+});
 
 </script>
 

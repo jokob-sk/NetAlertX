@@ -27,6 +27,8 @@
     "AppEvents_ObjectType": "Nesne Tipi",
     "AppEvents_Plugin": "Eklenti",
     "AppEvents_Type": "Tür",
+    "BACKEND_API_URL_description": "",
+    "BACKEND_API_URL_name": "",
     "BackDevDetail_Actions_Ask_Run": "İşlemi gerçekleştirmek istiyor musunuz?",
     "BackDevDetail_Actions_Not_Registered": "Eylem kaydedilmedi: ",
     "BackDevDetail_Actions_Title_Run": "Eylemi çalıştır",

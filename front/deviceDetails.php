@@ -416,13 +416,10 @@ async function renderSmallBoxes() {
         showSpinner();
 
         // Get data from the server
-        const protocol = window.location.protocol.replace(':', '');
-        const host = window.location.hostname;
         const apiToken = getSetting("API_TOKEN");
-        const port = getSetting("GRAPHQL_PORT"); // same port your Flask app runs on
 
-        const apiBase = `${protocol}://${host}:${port}`;
-        const url = `${apiBase}/device/${getMac()}?period=${encodeURIComponent(period)}`;
+        const apiBaseUrl = getApiBase();
+        const url = `${apiBaseUrl}/device/${getMac()}?period=${encodeURIComponent(period)}`;
 
         const response = await fetch(url, {
           method: "GET",

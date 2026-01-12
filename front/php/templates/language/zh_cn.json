@@ -27,6 +27,8 @@
     "AppEvents_ObjectType": "对象类型",
     "AppEvents_Plugin": "插件",
     "AppEvents_Type": "类型",
+    "BACKEND_API_URL_description": "",
+    "BACKEND_API_URL_name": "",
     "BackDevDetail_Actions_Ask_Run": "您要执行此操作吗？",
     "BackDevDetail_Actions_Not_Registered": "未注册的操作： ",
     "BackDevDetail_Actions_Title_Run": "运行动作",

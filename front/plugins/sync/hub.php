@@ -17,7 +17,7 @@ function checkAuthorization($method) {
     if ($auth_header !== $expected_token) {
         http_response_code(403);
         echo 'Forbidden';
-        write_notification("[Plugin: SYNC] Incoming data: Incorrect API Token (".$method.")", "alert");
+        displayInAppNoti("[Plugin: SYNC] Incoming data: Incorrect API Token (".$method.")", "error");
         exit;
     }
 }
@@ -48,7 +48,7 @@ if ($method === 'GET') {
     $apiRoot = getenv('NETALERTX_API') ?: '/tmp/api';
     $file_path = rtrim($apiRoot, '/') . '/table_devices.json';
 
-    $data = file_get_contents($file_path);   
+    $data = file_get_contents($file_path);
 
     // Prepare the data to return as a JSON response
     $response_data = base64_encode($data);
@@ -56,7 +56,7 @@ if ($method === 'GET') {
     // Return JSON response
     jsonResponse(200, $response_data, 'OK');
 
-    write_notification("[Plugin: SYNC] Data sent", "info");
+    displayInAppNoti("[Plugin: SYNC] Data sent", "info");
 
 }
 // receiving data (this is a HUB)
@@ -75,7 +75,7 @@ else if ($method === 'POST') {
     // // check location
     // if (!is_dir($storage_path)) {
     //     echo "Could not open folder: {$storage_path}";
-    //     write_notification("[Plugin: SYNC] Could not open folder: {$storage_path}", "alert"); 
+    //     write_notification("[Plugin: SYNC] Could not open folder: {$storage_path}", "alert");
     //     http_response_code(500);
     //     exit;
     // }
@@ -93,11 +93,11 @@ else if ($method === 'POST') {
     file_put_contents($file_path_new, $data);
     http_response_code(200);
     echo 'Data received and stored successfully';
-    write_notification("[Plugin: SYNC] Data received ({$file_path_new})", "info");
+    displayInAppNoti("[Plugin: SYNC] Data received ({$file_path_new})", "info");
 
 } else {
     http_response_code(405);
     echo 'Method Not Allowed';
-    write_notification("[Plugin: SYNC] Method Not Allowed", "alert");
+    displayInAppNoti("[Plugin: SYNC] Method Not Allowed", "error");
 }
 ?>

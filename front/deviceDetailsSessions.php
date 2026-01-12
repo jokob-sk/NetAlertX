@@ -103,13 +103,10 @@ function loadSessionsData() {
   showSpinner();
 
   // Build API base
-  const protocol = window.location.protocol.replace(':', '');
-  const host = window.location.hostname;
-  const port = getSetting("GRAPHQL_PORT"); // or whatever port your Flask API runs on
   const apiToken = getSetting("API_TOKEN");
 
-  const apiBase = `${protocol}://${host}:${port}`;
-  const url = `${apiBase}/sessions/${getMac()}?period=${encodeURIComponent(period)}`;
+  const apiBaseUrl = getApiBase();
+  const url = `${apiBaseUrl}/sessions/${getMac()}?period=${encodeURIComponent(period)}`;
 
   // Call API with Authorization header
   $.ajax({

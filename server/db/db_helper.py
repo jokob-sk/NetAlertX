@@ -75,6 +75,28 @@ def row_to_json(names, row):
 
 
 # -------------------------------------------------------------------------------
+def safe_int(setting_name):
+    """
+    Helper to ensure integer values are valid (not empty strings or None).
+
+    Parameters:
+        setting_name (str): The name of the setting to retrieve.
+
+    Returns:
+        int: The setting value as an integer if valid, otherwise 0.
+    """
+    # Import here to avoid circular dependency
+    from helper import get_setting_value
+    try:
+        val = get_setting_value(setting_name)
+        if val in ['', None, 'None', 'null']:
+            return 0
+        return int(val)
+    except (ValueError, TypeError, Exception):
+        return 0
+
+
+# -------------------------------------------------------------------------------
 def sanitize_SQL_input(val):
     """
     Sanitize a value for use in SQL queries by replacing single quotes in strings.

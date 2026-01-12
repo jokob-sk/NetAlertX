@@ -441,14 +441,19 @@ function safeDecodeURIComponent(content) {
 // -----------------------------------------------------------------------------
 // Backend notification Polling
 // -----------------------------------------------------------------------------
-// Function to check for notifications
+/**
+ * Check for new notifications and display them
+ * Now powered by SSE (Server-Sent Events) instead of polling
+ * The unread count is updated in real-time by sse_manager.js
+ */
 function checkNotification() {
-  const notificationEndpoint = 'php/server/utilNotification.php?action=get_unread_notifications';
-  const phpEndpoint = 'php/server/utilNotification.php';
+  const apiToken = getSetting("API_TOKEN");
+  const notificationEndpoint = `${getApiBase()}/messaging/in-app/unread`;
 
   $.ajax({
     url: notificationEndpoint,
     type: 'GET',
+    headers: { "Authorization": `Bearer ${apiToken}` },
     success: function(response) {
       // console.log(response);
 
@@ -456,7 +461,6 @@ function checkNotification() {
       {
         // Find the oldest unread notification with level "interrupt"
         const oldestInterruptNotification = response.find(notification => notification.read === 0 && notification.level === "interrupt");
-        const allUnreadNotification = response.filter(notification => notification.read === 0 && notification.level === "alert");
 
         if (oldestInterruptNotification) {
           // Show modal dialog with the oldest unread notification
@@ -469,14 +473,12 @@ function checkNotification() {
           if($("#modal-ok").is(":visible") == false)
           {
             showModalOK("Notification", decodedContent, function() {
-              // Mark the notification as read
-              $.ajax({
-                url: phpEndpoint,
-                type: 'GET',
-                data: {
-                  action: 'mark_notification_as_read',
-                  guid: oldestInterruptNotification.guid
-                },
+            const apiToken = getSetting("API_TOKEN");
+            // Mark the notification as read
+            $.ajax({
+              url: `${getApiBase()}/messaging/in-app/read/${oldestInterruptNotification.guid}`,
+                type: 'POST',
+                headers: { "Authorization": `Bearer ${apiToken}` },
                 success: function(response) {
                   console.log(response);
                   // After marking the notification as read, check for the next one
@@ -493,8 +495,6 @@ function checkNotification() {
             });
           }
         }
-
-        handleUnreadNotifications(allUnreadNotification.length)
       }
     },
     error: function() {
@@ -578,27 +578,29 @@ function addOrUpdateNumberBrackets(input, count) {
 }
 
 
-// Start checking for notifications periodically
-setInterval(checkNotification, 3000);
+// Check for interrupt-level notifications (modal display) less frequently now that count is via SSE
+// This still polls for interrupt notifications to display them in modals
+setInterval(checkNotification, 10000);  // Every 10 seconds instead of 3 seconds (SSE handles count updates)
 
 // --------------------------------------------------
 // User notification handling methods
 // --------------------------------------------------
 
-const phpEndpoint = 'php/server/utilNotification.php';
-
 // --------------------------------------------------
 // Write a notification
 function write_notification(content, level) {
+  const apiBase = getApiBase();
+  const apiToken = getSetting("API_TOKEN");
 
   $.ajax({
-    url: phpEndpoint, // Change this to the path of your PHP script
-    type: 'GET',
-    data: {
-      action: 'write_notification',
+    url: `${apiBase}/messaging/in-app/write`,
+    type: 'POST',
+    headers: { "Authorization": `Bearer ${apiToken}` },
+    data: JSON.stringify({
       content: content,
       level: level
-    },
+    }),
+    contentType: "application/json",
     success: function(response) {
       console.log('Notification written successfully.');
     },
@@ -609,53 +611,58 @@ function write_notification(content, level) {
 }
 
 // --------------------------------------------------
-// Write a notification
+// Mark a notification as read
 function markNotificationAsRead(guid) {
+  const apiBase = getApiBase();
+  const apiToken = getSetting("API_TOKEN");
 
   $.ajax({
-    url: phpEndpoint,
-    type: 'GET',
-    data: {
-    action: 'mark_notification_as_read',
-    guid: guid
-    },
+    url: `${apiBase}/messaging/in-app/read/${guid}`,
+    type: 'POST',
+    headers: { "Authorization": `Bearer ${apiToken}` },
     success: function(response) {
-    console.log(response);
-    // Perform any further actions after marking the notification as read here
-    showMessage(getString("Gen_Okay"))
+      console.log("Mark notification response:", response);
+      if (response.success) {
+        showMessage(getString("Gen_Okay"));
+        // Reload the page to refresh notifications
+        setTimeout(() => window.location.reload(), 500);
+      } else {
+        console.error("Failed to mark notification as read:", response.error);
+        showMessage("Error: " + (response.error || "Unknown error"));
+      }
     },
     error: function(xhr, status, error) {
-    console.error("Error marking notification as read:", status, error);
+      console.error("Error marking notification as read:", status, error, xhr.responseJSON);
+      showMessage("Error: " + (xhr.responseJSON?.error || error));
     },
     complete: function() {
-    // Perform any cleanup tasks here
+      // Perform any cleanup tasks here
     }
   });
-  }
+}
 
 // --------------------------------------------------
 // Remove a notification
 function removeNotification(guid) {
+  const apiBase = getApiBase();
+  const apiToken = getSetting("API_TOKEN");
 
   $.ajax({
-    url: phpEndpoint,
-    type: 'GET',
-    data: {
-    action: 'remove_notification',
-    guid: guid
-    },
+    url: `${apiBase}/messaging/in-app/delete/${guid}`,
+    type: 'DELETE',
+    headers: { "Authorization": `Bearer ${apiToken}` },
     success: function(response) {
-    console.log(response);
-    // Perform any further actions after marking the notification as read here
-    showMessage(getString("Gen_Okay"))
+      console.log(response);
+      // Perform any further actions after removing the notification here
+      showMessage(getString("Gen_Okay"))
     },
     error: function(xhr, status, error) {
-    console.error("Error removing notification:", status, error);
+      console.error("Error removing notification:", status, error);
     },
     complete: function() {
-    // Perform any cleanup tasks here
+      // Perform any cleanup tasks here
     }
   });
-  }
+}
 
 

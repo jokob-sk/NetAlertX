@@ -33,13 +33,23 @@ function deleteDevice() {
   // Check MAC
   mac = getMac()
 
-  // Delete device
-  $.get('php/server/devices.php?action=deleteDevice&mac=' + mac, function (msg) {
-    showMessage(msg);
-  });
+  const apiBase = getApiBase();
+  const apiToken = getSetting("API_TOKEN");
+  const url = `${apiBase}/device/${mac}/delete`;
 
-  // refresh API
-  updateApi("devices,appevents")
+  $.ajax({
+    url,
+    method: "DELETE",
+    headers: { "Authorization": `Bearer ${apiToken}` },
+    success: function(response) {
+      showMessage(response.success ? "Device deleted successfully" : (response.error || "Unknown error"));
+      updateApi("devices,appevents");
+    },
+    error: function(xhr, status, error) {
+      console.error("Error deleting device:", status, error);
+      showMessage("Error: " + (xhr.responseJSON?.error || error));
+    }
+  });
 }
 
 // -----------------------------------------------------------------------------
@@ -47,16 +57,23 @@ function deleteDeviceByMac(mac) {
   // Check MAC
   mac = getMac()
 
-  // alert(mac)
-  // return;
+  const apiBase = getApiBase();
+  const apiToken = getSetting("API_TOKEN");
+  const url = `${apiBase}/device/${mac}/delete`;
 
-  // Delete device
-  $.get('php/server/devices.php?action=deleteDevice&mac=' + mac, function (msg) {
-    showMessage(msg);
+  $.ajax({
+    url,
+    method: "DELETE",
+    headers: { "Authorization": `Bearer ${apiToken}` },
+    success: function(response) {
+      showMessage(response.success ? "Device deleted successfully" : (response.error || "Unknown error"));
+      updateApi("devices,appevents");
+    },
+    error: function(xhr, status, error) {
+      console.error("Error deleting device:", status, error);
+      showMessage("Error: " + (xhr.responseJSON?.error || error));
+    }
   });
-
-  // refresh API
-  updateApi("devices,appevents")
 }
 
 

@@ -29,6 +29,8 @@
     "AppEvents_Type": "Typ",
     "Apprise_display_name": "Apprise",
     "Apprise_icon": "<i class=\"fa fa-bullhorn\"></i>",
+    "BACKEND_API_URL_description": "",
+    "BACKEND_API_URL_name": "",
     "BackDevDetail_Actions_Ask_Run": "Möchtest du die Aktion ausführen?",
     "BackDevDetail_Actions_Not_Registered": "Aktion nicht registriert: ",
     "BackDevDetail_Actions_Title_Run": "Aktion ausführen",

@@ -1,5 +1,17 @@
 # Reverse Proxy Configuration
 
+> [!NOTE]
+> This is community-contributed. Due to environment, setup, or networking differences, results may vary. Please open a PR to improve it instead of creating an issue, as the maintainer is not actively maintaining it.
+
+
+> [!TIP]
+> You will need to specify the `BACKEND_API_URL` setting if you are running reverse proxies. This is the URL that points to the backend server url (including your `GRAPHQL_PORT`)
+>
+> ![BACKEND_API_URL setting](./img/REVERSE_PROXY/BACKEND_API_URL.png)
+> ![NPM set up](./img/REVERSE_PROXY/nginx_proxy_manager_npm.png)
+
+## NGINX HTTP Configuration (Direct Path)
+
 > Submitted by amazing [cvc90](https://github.com/cvc90) 🙏
 
 > [!NOTE]
@@ -9,8 +21,6 @@
 > The docker one can be found in the [install](https://github.com/jokob-sk/NetAlertX/tree/main/install) folder. Map, or use, the one appropriate for your setup.
 
 <br/>
-
-## NGINX HTTP Configuration (Direct Path)
 
 1. On your NGINX server, create a new file called /etc/nginx/sites-available/netalertx
 
@@ -502,3 +512,5 @@ Mapping the updated file (on the local filesystem at `/appl/docker/netalertx/def
     - /appl/docker/netalertx/default:/etc/nginx/sites-available/default
 ...
 ```
+
+

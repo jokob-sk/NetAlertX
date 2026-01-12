@@ -686,26 +686,43 @@ function numberArrayFromString(data)
 }
 
 // -----------------------------------------------------------------------------
-function saveData(functionName, id, value) {
+// Update network parent/child relationship (network tree)
+function updateNetworkLeaf(leafMac, parentMac) {
+  const apiBase = getApiBase();
+  const apiToken = getSetting("API_TOKEN");
+  const url = `${apiBase}/device/${leafMac}/update-column`;
+
   $.ajax({
-    method: "GET",
-    url: "php/server/devices.php",
-    data: { action: functionName, id: id, value:value  },
-    success: function(data) {
-
-        if(sanitize(data) == 'OK')
-        {
-          showMessage("Saved")
-          // Remove navigation prompt "Are you sure you want to leave..."
-          window.onbeforeunload = null;
-        } else
-        {
-          showMessage("ERROR")
-        }
-
+    method: "POST",
+    url: url,
+    headers: { "Authorization": `Bearer ${apiToken}` },
+    data: JSON.stringify({ columnName: "devParentMAC", columnValue: parentMac }),
+    contentType: "application/json",
+    success: function(response) {
+      if(response.success) {
+        showMessage("Saved");
+        // Remove navigation prompt "Are you sure you want to leave..."
+        window.onbeforeunload = null;
+      } else {
+        showMessage("ERROR: " + (response.error || "Unknown error"));
       }
+    },
+    error: function(xhr, status, error) {
+      console.error("Error updating network leaf:", status, error);
+      showMessage("ERROR: " + (xhr.responseJSON?.error || error));
+    }
   });
+}
 
+// -----------------------------------------------------------------------------
+// Legacy function wrapper for backward compatibility
+function saveData(functionName, id, value) {
+  if (functionName === 'updateNetworkLeaf') {
+    updateNetworkLeaf(id, value);
+  } else {
+    console.warn("saveData called with unknown functionName:", functionName);
+    showMessage("ERROR: Unknown function");
+  }
 }
 
 
@@ -1322,11 +1339,19 @@ function updateApi(apiEndpoints)
   // value has to be in format event|param. e.g. run|ARPSCAN
   action = `${getGuid()}|update_api|${apiEndpoints}`
 
+  // Get data from the server
+  const apiToken = getSetting("API_TOKEN");
+  const apiBaseUrl = getApiBase();
+  const url = `${apiBaseUrl}/logs/add-to-execution-queue`;
 
   $.ajax({
     method: "POST",
-    url: "php/server/util.php",
-    data: { function: "addToExecutionQueue", action: action  },
+    url: url,
+    headers: {
+      "Authorization": "Bearer " + apiToken,
+      "Content-Type": "application/json"
+    },
+    data: JSON.stringify({ action: action }),
     success: function(data, textStatus) {
         console.log(data)
     }
@@ -1561,11 +1586,19 @@ function restartBackend() {
 
   modalEventStatusId = 'modal-message-front-event'
 
+  const apiToken = getSetting("API_TOKEN");
+  const apiBaseUrl = getApiBase();
+  const url = `${apiBaseUrl}/logs/add-to-execution-queue`;
+
   // Execute
   $.ajax({
       method: "POST",
-      url: "php/server/util.php",
-      data: { function: "addToExecutionQueue", action: `${getGuid()}|cron_restart_backend`  },
+      url: url,
+      headers: {
+        "Authorization": "Bearer " + apiToken,
+        "Content-Type": "application/json"
+      },
+      data: JSON.stringify({ action: `${getGuid()}|cron_restart_backend` }),
       success: function(data, textStatus) {
           // showModalOk ('Result', data );
 
@@ -1603,9 +1636,18 @@ function clearCache() {
   }, 500);
 }
 
-// -----------------------------------------------------------------------------
-// Function to check if cache needs to be refreshed because of setting changes
+// ===================================================================
+// DEPRECATED: checkSettingChanges() - Replaced by SSE-based manager
+// Settings changes are now handled via SSE events
+// Kept for backward compatibility, will be removed in future version
+// ===================================================================
 function checkSettingChanges() {
+  // SSE manager handles settings_changed events now
+  if (typeof netAlertXStateManager !== 'undefined' && netAlertXStateManager.initialized) {
+    return; // SSE handles this now
+  }
+
+  // Fallback for backward compatibility
   $.get('php/server/query_json.php', { file: 'app_state.json', nocache: Date.now() }, function(appState) {
     const importedMilliseconds = parseInt(appState["settingsImported"] * 1000);
     const lastReloaded = parseInt(sessionStorage.getItem(sessionStorageKey + '_time'));
@@ -1619,7 +1661,7 @@ function checkSettingChanges() {
   });
 }
 
-// -----------------------------------------------------------------------------
+// ===================================================================
 // Display spinner and reload page if not yet initialized
 async function handleFirstLoad(callback) {
   if (!isAppInitialized()) {
@@ -1628,7 +1670,7 @@ async function handleFirstLoad(callback) {
   }
 }
 
-// -----------------------------------------------------------------------------
+// ===================================================================
 // Execute callback once the app is initialized and GraphQL server is running
 async function callAfterAppInitialized(callback) {
   if (!isAppInitialized() || !(await isGraphQLServerRunning())) {
@@ -1640,7 +1682,7 @@ async function callAfterAppInitialized(callback) {
   }
 }
 
-// -----------------------------------------------------------------------------
+// ===================================================================
 // Polling function to repeatedly check if the server is running
 async function waitForGraphQLServer() {
   const pollInterval = 2000; // 2 seconds between each check

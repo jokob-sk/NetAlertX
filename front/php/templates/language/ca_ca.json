@@ -27,6 +27,8 @@
     "AppEvents_ObjectType": "Tipus d'objecte",
     "AppEvents_Plugin": "Plugin",
     "AppEvents_Type": "Tipus",
+    "BACKEND_API_URL_description": "",
+    "BACKEND_API_URL_name": "",
     "BackDevDetail_Actions_Ask_Run": "Vol executar aquesta comanda?",
     "BackDevDetail_Actions_Not_Registered": "Comanda no registrada: ",
     "BackDevDetail_Actions_Title_Run": "Executar la comanda",

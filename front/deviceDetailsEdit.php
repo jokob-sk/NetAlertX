@@ -43,14 +43,11 @@ function getDeviceData() {
   mac = getMac()
 
   console.log(mac);
-
-  const protocol = window.location.protocol.replace(':', '');
-  const host = window.location.hostname;
   const apiToken = getSetting("API_TOKEN");
-  const port = getSetting("GRAPHQL_PORT");
+  let period = $("#period").val()
 
-  const apiBase = `${protocol}://${host}:${port}`;
-  const url = `${apiBase}/device/${mac}?period=${encodeURIComponent(period)}`;
+  const apiBaseUrl = getApiBase();
+  const url = `${apiBaseUrl}/device/${mac}?period=${encodeURIComponent(period)}`;
 
   // get data from server
   $.ajax({
@@ -92,7 +89,7 @@ function getDeviceData() {
           ]
         };
 
-        const graphQlUrl = `${apiBase}/graphql`;
+        const graphQlUrl = `${apiBaseUrl}/graphql`;
 
         $.ajax({
           url: graphQlUrl,
@@ -357,9 +354,7 @@ function setDeviceData(direction = '', refreshCallback = '') {
   showSpinner();
 
   const apiToken = getSetting("API_TOKEN"); // dynamic token
-  const host = window.location.hostname;
-  const protocol = window.location.protocol;
-  const port = getSetting("GRAPHQL_PORT");
+  const apiBaseUrl = getApiBase();
 
   mac = $('#NEWDEV_devMac').val();
 
@@ -407,7 +402,7 @@ function setDeviceData(direction = '', refreshCallback = '') {
 
 
   $.ajax({
-    url: `${protocol}//${host}:${port}/device/${encodeURIComponent(mac)}`,
+    url: `${apiBaseUrl}/device/${encodeURIComponent(mac)}`,
     type: "POST",
     headers: {
       "Authorization": "Bearer " + apiToken,

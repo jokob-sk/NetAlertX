@@ -1,8 +1,8 @@
 ## Authelia support
 
-> [!WARNING] 
->
-> This is community contributed content and work in progress. Contributions are welcome. 
+> [!NOTE]
+> This is community-contributed. Due to environment, setup, or networking differences, results may vary. Please open a PR to improve it instead of creating an issue, as the maintainer is not actively maintaining it.
+
 
 ```yaml
 theme: dark

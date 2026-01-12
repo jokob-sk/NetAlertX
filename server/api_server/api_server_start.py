@@ -64,6 +64,9 @@ from .mcp_endpoint import (
 from .validation import validate_request
 from .schemas import DeviceSearchRequest, DeviceListRequest, WakeOnLanRequest, TriggerScanRequest, TracerouteRequest, RecentEventsRequest
 
+from .sse_endpoint import (  # noqa: E402 [flake8 lint suppression]
+    create_sse_endpoint
+)
 # tools and mcp routes have been moved into this module (api_server_start)
 
 # Flask application
@@ -89,6 +92,7 @@ CORS(
         r"/auth/*": {"origins": "*"},
         r"/mcp/*": {"origins": "*"},
         r"/openapi.json": {"origins": "*"}
+        r"/sse/*": {"origins": "*"}
     },
     supports_credentials=True,
     allow_headers=["Authorization", "Content-Type"],
@@ -284,7 +288,8 @@ def api_update_device_column(mac):
     column_name = data.get("columnName")
     column_value = data.get("columnValue")
 
-    if not column_name or not column_value:
+    # columnName is required, but columnValue can be empty string (e.g., for unassigning)
+    if not column_name or "columnValue" not in data:
         return jsonify({"success": False, "message": "ERROR: Missing parameters", "error": "columnName and columnValue are required"}), 400
 
     device_handler = DeviceInstance()
@@ -1163,8 +1168,16 @@ def check_auth():
 # Background Server Start
 # --------------------------
 def is_authorized():
-    token = request.headers.get("Authorization")
-    is_authorized = token == f"Bearer {get_setting_value('API_TOKEN')}"
+    expected_token = get_setting_value('API_TOKEN')
+
+    # Check Authorization header first (primary method)
+    auth_header = request.headers.get("Authorization", "")
+    header_token = auth_header.split()[-1] if auth_header.startswith("Bearer ") else ""
+
+    # Also check query string token (for SSE and other streaming endpoints)
+    query_token = request.args.get("token", "")
+
+    is_authorized = (header_token == expected_token) or (query_token == expected_token)
 
     if not is_authorized:
         msg = "[api] Unauthorized access attempt - make sure your GRAPHQL_PORT and API_TOKEN settings are correct."
@@ -1172,6 +1185,10 @@ def is_authorized():
         mylog("verbose", [msg])
 
     return is_authorized
+
+
+# Mount SSE endpoints after is_authorized is defined (avoid circular import)
+create_sse_endpoint(app, is_authorized)
 
 
 def start_server(graphql_port, app_state):

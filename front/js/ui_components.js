@@ -291,10 +291,19 @@ function execute_settingEvent(element) {
     // value has to be in format event|param. e.g. run|ARPSCAN
     action = `${getGuid()}|${feEvent}|${fePlugin}`
 
+    // Get data from the server
+    const apiToken = getSetting("API_TOKEN");
+    const apiBaseUrl = getApiBase();
+    const url = `${apiBaseUrl}/logs/add-to-execution-queue`;
+
     $.ajax({
       method: "POST",
-      url: "php/server/util.php",
-      data: { function: "addToExecutionQueue", action: action  },
+      url: url,
+      headers: {
+        "Authorization": "Bearer " + apiToken,
+        "Content-Type": "application/json"
+      },
+      data: JSON.stringify({ action: action }),
       success: function(data, textStatus) {
           // showModalOk ('Result', data );
 
@@ -378,14 +387,27 @@ function overwriteIconType()
     )
   `;
 
-  const apiUrl = `php/server/dbHelper.php?action=write&rawSql=${btoa(encodeURIComponent(rawSql))}`;
+  const apiBase = getApiBase();
+  const apiToken = getSetting("API_TOKEN");
+  const url = `${apiBase}/dbquery/write`;
 
-  $.get(apiUrl, function(response) {
-    if (response === 'OK') {
-      showMessage (response);
-      updateApi("devices")
-    } else {
-      showMessage (response, 3000, "modal_red");
+  $.ajax({
+    url,
+    method: "POST",
+    headers: { "Authorization": `Bearer ${apiToken}` },
+    data: JSON.stringify({ rawSql: btoa(unescape(encodeURIComponent(rawSql))) }),
+    contentType: "application/json",
+    success: function(response) {
+      if (response.success) {
+        showMessage("OK");
+        updateApi("devices");
+      } else {
+        showMessage(response.error || "Unknown error", 3000, "modal_red");
+      }
+    },
+    error: function(xhr, status, error) {
+      console.error("Error updating icons:", status, error);
+      showMessage("Error: " + (xhr.responseJSON?.error || error), 3000, "modal_red");
     }
   });
 }

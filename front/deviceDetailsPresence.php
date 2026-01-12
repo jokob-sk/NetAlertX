@@ -36,13 +36,10 @@
   // ---------------------------------------
   // query data
   function loadPresenceData() {
-    const protocol = window.location.protocol.replace(":", "");
-    const host = window.location.hostname;
-    const port = getSetting("GRAPHQL_PORT");
     const apiToken = getSetting("API_TOKEN");
 
-    const apiBase = `${protocol}://${host}:${port}`;
-    const url = `${apiBase}/sessions/calendar`;
+    const apiBaseUrl = getApiBase();
+    const url = `${apiBaseUrl}/sessions/calendar`;
 
     $('#calendar').fullCalendar('removeEventSources');
 

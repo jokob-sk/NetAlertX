@@ -31,55 +31,6 @@ function getExternalIp() {
 // Network
 // ----------------------------------------------------------
 
-// External IP
-$externalIp = getExternalIp();
-
-// Server Name
-$network_NAME = gethostname() ?: lang('Systeminfo_Network_Server_Name_String');
-
-// HTTPS Check
-$network_HTTPS = isset($_SERVER['HTTPS']) ? 'Yes (HTTPS)' : lang('Systeminfo_Network_Secure_Connection_String');
-
-// Query String
-$network_QueryString = !empty($_SERVER['QUERY_STRING'])
-    ? $_SERVER['QUERY_STRING']
-    : lang('Systeminfo_Network_Server_Query_String');
-
-// Referer
-$network_referer = !empty($_SERVER['HTTP_REFERER'])
-    ? $_SERVER['HTTP_REFERER']
-    : lang('Systeminfo_Network_HTTP_Referer_String');
-
-
-// ----------------------------------------------------
-// Network Hardware Stats
-// ----------------------------------------------------
-
-
-// External IP
-$externalIp = getExternalIp();
-
-// Server Name
-$network_NAME = gethostname() ?: lang('Systeminfo_Network_Server_Name_String');
-
-// HTTPS Check
-$network_HTTPS = isset($_SERVER['HTTPS']) ? 'Yes (HTTPS)' : lang('Systeminfo_Network_Secure_Connection_String');
-
-// Query String
-$network_QueryString = !empty($_SERVER['QUERY_STRING'])
-    ? $_SERVER['QUERY_STRING']
-    : lang('Systeminfo_Network_Server_Query_String');
-
-// Referer
-$network_referer = !empty($_SERVER['HTTP_REFERER'])
-    ? $_SERVER['HTTP_REFERER']
-    : lang('Systeminfo_Network_HTTP_Referer_String');
-
-
-
-// ----------------------------------------------------
-// Network Stats (General)
-// ----------------------------------------------------
 
 // External IP
 $externalIp = getExternalIp();
@@ -336,13 +287,12 @@ function formatDataSize(bytes) {
 
 
 function loadInterfaces() {
+    // Build base URL dynamically
+    const apiBase = getApiBase();
     const apiToken = getSetting("API_TOKEN");
-    const host = window.location.hostname;
-    const protocol = window.location.protocol;
-    const port = getSetting("GRAPHQL_PORT");
 
     $.ajax({
-        url: `${protocol}//${host}:${port}/nettools/interfaces`,
+        url: `${apiBase}/nettools/interfaces`,
         type: "GET",
         headers: {
             "Authorization": "Bearer " + apiToken,

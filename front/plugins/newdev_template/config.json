@@ -522,7 +522,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "The MAC address of the device. Uneditable - Autodetected."
+          "string": "The MAC address of the device. Uneditable - Autodetected. Database column name: <code>devMac</code>."
         }
       ]
     },
@@ -554,7 +554,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "The last known IP address of the device. Uneditable - Autodetected."
+          "string": "The last known IP address of the device. Uneditable - Autodetected. Database column name: <code>devLastIP</code>."
         }
       ]
     },
@@ -590,7 +590,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "The name of the device. If the value is set to <code>(unknown)</code> or <code>(name not found)</code> the application will try to discover the name of the device."
+          "string": "The name of the device. If the value is set to <code>(unknown)</code> or <code>(name not found)</code> the application will try to discover the name of the device. Database column name: <code>devName</code>."
         }
       ]
     },
@@ -661,7 +661,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "The icon associated with the device. Check the <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/ICONS.md\" target=\"_blank\">documentation on icons</a> for more details."
+          "string": "The icon associated with the device. Check the <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/ICONS.md\" target=\"_blank\">documentation on icons</a> for more details.  Database column name: <code>devIcon</code>."
         }
       ]
     },
@@ -705,7 +705,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "The owner of the device."
+          "string": "The owner of the device. Database column name: <code>devOwner</code>."
         }
       ]
     },
@@ -754,7 +754,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "The type of the device. Custom Network device types from the <code>NETWORK_DEVICE_TYPES</code> setting are not automatically added, you need to add it via the <code>+</code> button onthe device itself."
+          "string": "The type of the device. Custom Network device types from the <code>NETWORK_DEVICE_TYPES</code> setting are not automatically added, you need to add it via the <code>+</code> button onthe device itself. Database column name: <code>devType</code>."
         }
       ]
     },
@@ -786,7 +786,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "The vendor of the device. If set to empty or <code>(unknown)</code> the app will try to auto-detect it."
+          "string": "The vendor of the device. If set to empty or <code>(unknown)</code> the app will try to auto-detect it. Database column name: <code>devVendor</code>."
         }
       ]
     },
@@ -821,7 +821,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Indicates whether the device is marked as a favorite."
+          "string": "Indicates whether the device is marked as a favorite. Database column name: <code>devFavorite</code>."
         }
       ]
     },
@@ -865,7 +865,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "The group to which the device belongs."
+          "string": "The group to which the device belongs. Database column name: <code>devGroup</code>."
         }
       ]
     },
@@ -909,7 +909,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "The location of the device."
+          "string": "The location of the device. Database column name: <code>devLocation</code>."
         }
       ]
     },
@@ -940,7 +940,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Additional comments or notes about the device."
+          "string": "Additional comments or notes about the device. Database column name: <code>devComments</code>."
         }
       ]
     },
@@ -976,7 +976,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "The date and time of the first connection with the device. Uneditable - Autodetected."
+          "string": "The date and time of the first connection with the device. Uneditable - Autodetected. Database column name: <code>devFirstConnection</code>."
         }
       ]
     },
@@ -1012,7 +1012,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "The date and time of the last seen connection with the device. Uneditable - Autodetected."
+          "string": "The date and time of the last seen connection with the device. Uneditable - Autodetected. Database column name: <code>devLastConnection</code>."
         }
       ]
     },
@@ -1047,7 +1047,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Indicates whether the device has a static IP address."
+          "string": "Indicates whether the device has a static IP address. Database column name: <code>devStaticIP</code>."
         }
       ]
     },
@@ -1082,7 +1082,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Select if the device should be scanned."
+          "string": "Select if the device should be scanned. Database column name: <code>devScan</code>."
         }
       ]
     },
@@ -1117,7 +1117,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Indicates whether events related to the device shouldbe logged."
+          "string": "Indicates whether events related to the device shouldbe logged. Database column name: <code>devLogEvents</code>."
         }
       ]
     },
@@ -1152,7 +1152,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Indicates whether events related to the device should trigger alerts. The default value of the <code>Alert Events</code> checkbox. Down and New Device notifications are always sent unless unselected in <code>NTFPRCS_INCLUDED_SECTIONS</code>."
+          "string": "Indicates whether events related to the device should trigger alerts. The default value of the <code>Alert Events</code> checkbox. Down and New Device notifications are always sent unless unselected in <code>NTFPRCS_INCLUDED_SECTIONS</code>. Database column name: <code>devAlertEvents</code>."
         }
       ]
     },
@@ -1187,7 +1187,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Indicates whether an alert should be triggered when the device goes down. The device has to be down for longer than the time set in the <b>Alert Down After</b> <code>NTFPRCS_alert_down_time</code> setting."
+          "string": "Indicates whether an alert should be triggered when the device goes down. The device has to be down for longer than the time set in the <b>Alert Down After</b> <code>NTFPRCS_alert_down_time</code> setting. Database column name: <code>devAlertDown</code>."
         }
       ]
     },
@@ -1227,7 +1227,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Enter number of <b>hours</b> for which repeated notifications should be ignored for. If you select <code>0</code> then you get notified on all events."
+          "string": "Enter number of <b>hours</b> for which repeated notifications should be ignored for. If you select <code>0</code> then you get notified on all events. Database column name: <code>devSkipRepeated</code>."
         }
       ]
     },
@@ -1263,7 +1263,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "The date and time of the last notification sent for the device. Uneditable - Autodetected."
+          "string": "The date and time of the last notification sent for the device. Uneditable - Autodetected. Database column name: <code>devLastNotification</code>."
         }
       ]
     },
@@ -1298,7 +1298,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Indicates whether the device should be marked as present after detected in a scan."
+          "string": "Indicates whether the device was present in a scan. Database column name: <code>devPresentLastScan</code>."
         }
       ]
     },
@@ -1333,7 +1333,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Indicates whether the device is considered a new device. The default value of the <code>New Device</code> checkbox. If checked this will show the New status for the device and include it in lists when the New Devices filter is active. Doesn't affect notifications."
+          "string": "Indicates whether the device is considered a new device. The default value of the <code>New Device</code> checkbox. If checked this will show the New status for the device and include it in lists when the New Devices filter is active. Doesn't affect notifications. Database column name: <code>devIsNew</code>."
         }
       ]
     },
@@ -1368,7 +1368,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Indicates whether the device is archived. If you archive a device and the device is offline it will be hidden from My Devices."
+          "string": "Indicates whether the device is archived. If you archive a device and the device is offline it will be hidden from My Devices. Database column name: <code>devIsArchived</code>."
         }
       ]
     },
@@ -1396,7 +1396,7 @@
         {
           "name": "value",
           "type": "sql",
-          "value": "SELECT '❌None' as name, '' as id UNION SELECT devName as name, devMac as id FROM Devices WHERE EXISTS (SELECT 1 FROM Settings WHERE setKey = 'NETWORK_DEVICE_TYPES' AND LOWER(setValue) LIKE '%' || LOWER(devType) || '%' AND devType <> '')"
+          "value": "SELECT '❌None' as name, '' as id UNION SELECT devName as name, devMac as id FROM Devices WHERE devIsArchived == 0 AND EXISTS (SELECT 1 FROM Settings WHERE setKey = 'NETWORK_DEVICE_TYPES' AND LOWER(setValue) LIKE '%' || LOWER(devType) || '%' AND devType <> '')"
         },
         {
           "name": "target_macs",
@@ -1417,7 +1417,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "The MAC address of the Parent network node."
+          "string": "The MAC address of the Parent network node. Database column name: <code>devParentMAC</code>."
         }
       ]
     },
@@ -1451,7 +1451,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Defines the relationship between this device and its parent. Selecting <code>nic</code> links it as a network interface, allowing the parent’s online status to be evaluated using its <code>devReqNicsOnline</code> (“Require NICs Online”) setting. Some relationship types may hide the device from lists; see the <code>UI_hide_rel_types</code> setting for details."
+          "string": "Defines the relationship between this device and its parent. Selecting <code>nic</code> links it as a network interface, allowing the parent’s online status to be evaluated using its <code>devReqNicsOnline</code> (“Require NICs Online”) setting. Some relationship types may hide the device from lists; see the <code>UI_hide_rel_types</code> setting for details. Database column name: <code>devParentRelType</code>."
         }
       ]
     },
@@ -1482,7 +1482,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "The port number of the network node."
+          "string": "The port number of the network node. Database column name: <code>devParentPort</code>."
         }
       ]
     },
@@ -1510,7 +1510,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Children nodes assigned to this device. Navigate to the child device directly to edit the relationship and details."
+          "string": "Children nodes assigned to this device. Navigate to the child device directly to edit the relationship and details. Database column name: <code>N/A</code> (evaluated dynamically)."
         }
       ]
     },
@@ -1541,7 +1541,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "The network SSID."
+          "string": "The network SSID. Database column name: <code>devSSID</code>."
         }
       ]
     },
@@ -1584,7 +1584,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "The network site."
+          "string": "The network site. Database column name: <code>devSite</code>."
         }
       ]
     },
@@ -1620,7 +1620,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "The name of the Sync Node. Uneditable - Auto-populated via the <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/sync/README.md\" target=\"_blank\">Sync plugin</a> if enabled."
+          "string": "The name of the Sync Node. Uneditable - Auto-populated via the <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/front/plugins/sync/README.md\" target=\"_blank\">Sync plugin</a> if enabled. Database column name: <code>devSyncHubNode</code>."
         }
       ]
     },
@@ -1726,7 +1726,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Custom device properties to store additional data or to perform an action on the device. Check the <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/CUSTOM_PROPERTIES.md\" target=\"_blank\">documentation on Custom Properties</a> for additional details."
+          "string": "Custom device properties to store additional data or to perform an action on the device. Check the <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/CUSTOM_PROPERTIES.md\" target=\"_blank\">documentation on Custom Properties</a> for additional details. Database column name: <code>devCustomProps</code>."
         }
       ]
     },
@@ -1762,7 +1762,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Fully Qualified Domain Name - Autodetected and Uneditable. Can be auto-refreshed by enabling the <code>REFRESH_FQDN</code> setting."
+          "string": "Fully Qualified Domain Name - Autodetected and Uneditable. Can be auto-refreshed by enabling the <code>REFRESH_FQDN</code> setting. Database column name: <code>devFQDN</code>."
         }
       ]
     },
@@ -1797,7 +1797,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Indicates whether this device should be considered online only if all associated NICs (devices with the <code>nic</code> relationship type) are online. If disabled, the device is considered online if any NIC is online."
+          "string": "Indicates whether this device should be considered online only if all associated NICs (devices with the <code>nic</code> relationship type) are online. If disabled, the device is considered online if any NIC is online. Database column name: <code>devReqNicsOnline</code>."
         }
       ]
     },
@@ -1825,7 +1825,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Children nodes with the <code>nic</code> Relationship Type. Navigate to the child device directly to edit the relationship and details."
+          "string": "Children nodes with the <code>nic</code> Relationship Type. Navigate to the child device directly to edit the relationship and details. Database column name: <code>N/A</code> (evaluated dynamically)."
         }
       ]
     }

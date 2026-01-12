@@ -32,27 +32,62 @@ function renderList(
       // remove first item containing the SQL query
       options.shift();
 
-      const apiUrl = `php/server/dbHelper.php?action=read&rawSql=${btoa(encodeURIComponent(sqlQuery))}`;
+      const apiBase = getApiBase();
+      const apiToken = getSetting("API_TOKEN");
+      const url = `${apiBase}/dbquery/read`;
 
-      $.get(apiUrl, function (sqlOptionsData) {
-        
-        // Parse the returned SQL data 
-        const sqlOption = JSON.parse(sqlOptionsData);
+      // Unicode-safe base64 encoding
+      const base64Sql = btoa(unescape(encodeURIComponent(sqlQuery)));
 
-        // Concatenate options from SQL query with the supplied options
-        options = options.concat(sqlOption);
-        
+      $.ajax({
+        url,
+        method: "POST",
+        headers: { "Authorization": `Bearer ${apiToken}` },
+        data: JSON.stringify({ rawSql: base64Sql }),
+        contentType: "application/json",
+        success: function(data) {
+          console.log("SQL query response:", data);
 
-        // Process the combined options
-        setTimeout(() => {
-          processDataCallback(
-            options,
-            valuesArray,
-            targetField,
-            transformers,
-            placeholder
-          );
-        }, 1);
+          // Parse the returned SQL data
+          let sqlOption = [];
+          if (data && data.success && data.results) {
+            sqlOption = data.results;
+          } else if (Array.isArray(data)) {
+            // Fallback for direct array response
+            sqlOption = data;
+          } else {
+            console.warn("Unexpected response format:", data);
+          }
+
+          // Concatenate options from SQL query with the supplied options
+          options = options.concat(sqlOption);
+
+          console.log("Combined options:", options);
+
+          // Process the combined options
+          setTimeout(() => {
+            processDataCallback(
+              options,
+              valuesArray,
+              targetField,
+              transformers,
+              placeholder
+            );
+          }, 1);
+        },
+        error: function(xhr, status, error) {
+          console.error("Error loading SQL options:", status, error, xhr.responseJSON);
+          // Process original options anyway
+          setTimeout(() => {
+            processDataCallback(
+              options,
+              valuesArray,
+              targetField,
+              transformers,
+              placeholder
+            );
+          }, 1);
+        }
       });
     } else {
       // No SQL query, directly process the supplied options
@@ -85,7 +120,7 @@ function renderList(
 // Check if database is locked
 function checkDbLock() {
   $.ajax({
-    url: "php/server/query_logs.php?file=db_is_locked.log", 
+    url: "php/server/query_logs.php?file=db_is_locked.log",
     type: "GET",
 
     success: function (response) {

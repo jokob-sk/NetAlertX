@@ -52,7 +52,7 @@ Backend loop phases (see `server/__main__.py` and `server/plugin.py`): `once`, `
 
 ## Conventions & helpers to reuse
 - Settings: add/modify via `ccd()` in `server/initialise.py` or per‑plugin manifest. Never hardcode ports or secrets; use `get_setting_value()`.
-- Logging: use `mylog(level, [message])`; levels: none/minimal/verbose/debug/trace. `none` is used for most important messages that should always appear, such as exceptions.
+- Logging: use `mylog(level, [message])`; levels: none/minimal/verbose/debug/trace. `none` is used for most important messages that should always appear, such as exceptions. Do NOT use `error` as level.
 - Time/MAC/strings: `server/utils/datetime_utils.py` (`timeNowDB`), `front/plugins/plugin_helper.py` (`normalize_mac`), `server/helper.py` (sanitizers). Validate MACs before DB writes.
 - DB helpers: prefer `server/db/db_helper.py` functions (e.g., `get_table_json`, device condition helpers) over raw SQL in new paths.
 
@@ -65,11 +65,15 @@ Backend loop phases (see `server/__main__.py` and `server/plugin.py`): `once`, `
 - Run a plugin manually: `python3 front/plugins/<code_name>/script.py` (ensure `sys.path` includes `/app/front/plugins` and `/app/server` like the template).
 - Testing: pytest available via Alpine packages. Tests live in `test/`; app code is under `server/`. PYTHONPATH is preconfigured to include workspace and `/opt/venv` site‑packages.
 - **Subprocess calls:** ALWAYS set explicit timeouts. Default to 60s minimum unless plugin config specifies otherwise. Nested subprocess calls (e.g., plugins calling external tools) need their own timeout - outer plugin timeout won't save you.
+- you need to set the BACKEND_API_URL setting (e.g. in teh app.conf file or via the APP_CONF_OVERRIDE env variable) to the backend api port url , e.g. https://something-20212.app.github.dev/ depending on your github codespace url.
 
 ## What “done right” looks like
 - When adding a plugin, start from `front/plugins/__template`, implement with `plugin_helper`, define manifest settings, and wire phase via `<PREF>_RUN`. Verify logs in `/tmp/log/plugins/` and data in `api/*.json`.
 - When introducing new config, define it once (core `ccd()` or plugin manifest) and read it via helpers everywhere.
 - When exposing new server functionality, add endpoints in `server/api_server/*` and keep authorization consistent; update UI by reading/writing JSON cache rather than bypassing the pipeline.
+- Always try following the DRY principle, do not re-implement functionality, but re-use existing methods where possible, or refactor to use a common method that is called multiple times
+- If new functionality needs to be added, look at impenting it into existing handlers (e.g. `DeviceInstance` in `server/models/device_instance.py`) or create a new one if it makes sense. Do not access the DB from otehr application layers.
+- Code files shoudln't be longer than 500 lines of code
 
 ## Useful references
 - Docs: `docs/PLUGINS_DEV.md`, `docs/SETTINGS_SYSTEM.md`, `docs/API_*.md`, `docs/DEBUG_*.md`

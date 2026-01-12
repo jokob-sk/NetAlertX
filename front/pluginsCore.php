@@ -13,16 +13,16 @@
     </div>
   </div>
   <div class="nav-tabs-custom plugin-content" style="margin-bottom: 0px;">
-    
+
     <ul id="tabs-location" class="nav nav-tabs col-sm-2 ">
       <!-- PLACEHOLDER -->
-    </ul>  
-    <div id="tabs-content-location-wrap" class="tab-content col-sm-10"> 
-      <div id="tabs-content-location" class="tab-content col-sm-12"> 
+    </ul>
+    <div id="tabs-content-location-wrap" class="tab-content col-sm-10">
+      <div id="tabs-content-location" class="tab-content col-sm-12">
         <!-- PLACEHOLDER -->
-      </div>   
-    </div>   
-  
+      </div>
+    </div>
+
 </section>
 
 <script>
@@ -44,9 +44,9 @@ function initMacFilter() {
   else
   {
     $("#txtMacFilter").val("--");
-  }  
+  }
 
-  return mac;  
+  return mac;
 }
 
 // -----------------------------------------------
@@ -85,7 +85,7 @@ function initFields() {
 
 // -----------------------------------------------------------------------------
 // Get form control according to the column definition from config.json > database_column_definitions
-function getFormControl(dbColumnDef, value, index) {  
+function getFormControl(dbColumnDef, value, index) {
 
   result = ''
 
@@ -94,18 +94,18 @@ function getFormControl(dbColumnDef, value, index) {
     value = dbColumnDef.mapped_to_column_data.value;
   }
 
-   
+
   result = processColumnValue(dbColumnDef, value, index, dbColumnDef.type)
 
   return result;
 }
 
 // -----------------------------------------------------------------------------
-// Process column value 
+// Process column value
 function processColumnValue(dbColumnDef, value, index, type) {
   if (type.includes('.')) {
   const typeParts = type.split('.');
-  
+
   // recursion
   for (const typePart of typeParts) {
     value = processColumnValue(dbColumnDef, value, index, typePart)
@@ -115,13 +115,13 @@ function processColumnValue(dbColumnDef, value, index, type) {
   // pick form control based on the supplied type
   switch(type)
   {
-    case 'label':      
+    case 'label':
       value = `<span>${value}<span>`;
       break;
-    case 'none':      
+    case 'none':
       value = `${value}`;
       break;
-    case 'textarea_readonly':      
+    case 'textarea_readonly':
       value = `<textarea cols="70" rows="3" wrap="off" readonly style="white-space: pre-wrap;">
           ${value.replace(/^b'(.*)'$/gm, '$1').replace(/\\n/g, '\n').replace(/\\r/g, '\r')}
           </textarea>`;
@@ -143,7 +143,7 @@ function processColumnValue(dbColumnDef, value, index, type) {
       value = `<span><a href="${value}" target="_blank">${value}</a><span>`;
       break;
     case 'url_http_https':
-      
+
       value = `<span>
             <a href="http://${value}" target="_blank">
               <i class="fa fa-lock-open "></i>
@@ -155,9 +155,9 @@ function processColumnValue(dbColumnDef, value, index, type) {
           <span>`;
       break;
     case 'device_name_mac':
-      value = `<div class="text-center"> ${value} 
-                <br/> 
-                (${createDeviceLink(value)}) 
+      value = `<div class="text-center"> ${value}
+                <br/>
+                (${createDeviceLink(value)})
               </div>`;
       break;
     case 'device_mac':
@@ -166,12 +166,12 @@ function processColumnValue(dbColumnDef, value, index, type) {
     case 'device_ip':
       value = `<span class="anonymizeIp"><a href="#" onclick="navigateToDeviceWithIp('${value}')" >${value}</a><span>`;
       break;
-    case 'threshold': 
+    case 'threshold':
 
       valueTmp = ''
 
       $.each(dbColumnDef.options, function(index, obj) {
-        if(Number(value) < Number(obj.maximum) && valueTmp == '') 
+        if(Number(value) < Number(obj.maximum) && valueTmp == '')
         {
           valueTmp = `<div class="thresholdFormControl" style="background-color:${obj.hexColor}">${value}</div>`
           // return;
@@ -181,7 +181,7 @@ function processColumnValue(dbColumnDef, value, index, type) {
       value = valueTmp;
 
       break;
-    case 'replace': 
+    case 'replace':
       $.each(dbColumnDef.options, function(index, obj) {
         if(value == obj.equals)
         {
@@ -190,22 +190,22 @@ function processColumnValue(dbColumnDef, value, index, type) {
       });
       break;
     case 'regex':
-      
+
       for (const option of dbColumnDef.options) {
         if (option.type === type) {
-          
+
           const regexPattern = new RegExp(option.param);
           const match = value.match(regexPattern);
           if (match) {
             // Return the first match
             value =  match[0];
-          
+
           }
         }
       }
       break;
     case 'eval':
-      
+
       for (const option of dbColumnDef.options) {
         if (option.type === type) {
           // console.log(option.param)
@@ -213,9 +213,9 @@ function processColumnValue(dbColumnDef, value, index, type) {
         }
       }
       break;
-      
+
     default:
-      value = value + `<div style='text-align:center' title="${getString("Plugins_no_control")}"><i class='fa-solid fa-circle-question'></i></div>` ;       
+      value = value + `<div style='text-align:center' title="${getString("Plugins_no_control")}"><i class='fa-solid fa-circle-question'></i></div>` ;
   }
   }
 
@@ -236,22 +236,38 @@ function genericSaveData (id) {
   console.log(index)
   console.log(columnValue)
 
-  $.get(`php/server/dbHelper.php?action=update&dbtable=Plugins_Objects&columnName=Index&id=${index}&columns=UserData&values=${columnValue}`, function(data) {
-  
-    // var result = JSON.parse(data);
-    // console.log(data) 
+  const apiBase = getApiBase();
+  const apiToken = getSetting("API_TOKEN");
+  const url = `${apiBase}/dbquery/update`;
 
-    if(sanitize(data) == 'OK')
-    {      
-      showMessage('<?= lang('Gen_DataUpdatedUITakesTime');?>')      
-      // Remove navigation prompt "Are you sure you want to leave..."
-      window.onbeforeunload = null;
-    } else
-    {
-      showMessage('<?= lang('Gen_LockedDB');?>')       
-    }    
-
-  });  
+  $.ajax({
+    url,
+    method: "POST",
+    headers: { "Authorization": `Bearer ${apiToken}` },
+    data: JSON.stringify({
+      dbtable: "Plugins_Objects",
+      columnName: "Index",
+      id: index,
+      columns: "UserData",
+      values: columnValue
+    }),
+    contentType: "application/json",
+    success: function(response) {
+      if(response.success)
+      {
+        showMessage('<?= lang('Gen_DataUpdatedUITakesTime');?>')
+        // Remove navigation prompt "Are you sure you want to leave..."
+        window.onbeforeunload = null;
+      } else
+      {
+        showMessage('<?= lang('Gen_LockedDB');?>')
+      }
+    },
+    error: function(xhr, status, error) {
+      console.error("Error saving data:", status, error);
+      showMessage('<?= lang('Gen_LockedDB');?>');
+    }
+  });
 }
 
 
@@ -307,15 +323,15 @@ function generateTabs() {
       stats = createTabContent(pluginObj, assignActive); // Create the content for each tab
 
       if(stats.objectDataCount > 0)
-      {        
+      {
         createTabHeader(pluginObj, stats, assignActive); // Create the header for each tab
         assignActive = false; // only mark first with content active
       }
     }
-  });  
-    
+  });
 
-  
+
+
   hideSpinner()
 }
 
@@ -329,7 +345,7 @@ function resetTabs() {
 // left headers
 function createTabHeader(pluginObj, stats, assignActive) {
   const prefix = pluginObj.unique_prefix; // Get the unique prefix for the plugin
-  
+
   // Determine the active class for the first tab
   assignActive ? activeClass = "active" : activeClass = "";
 
@@ -338,12 +354,12 @@ function createTabHeader(pluginObj, stats, assignActive) {
     <li class="left-nav ${activeClass} ">
       <a class="col-sm-12 textOverflow" href="#${prefix}" data-plugin-prefix="${prefix}" id="${prefix}_id" data-toggle="tab">
         ${getString(`${prefix}_icon`)} ${getString(`${prefix}_display_name`)}
-        
+
       </a>
-      ${stats.objectDataCount > 0 ? `<div class="pluginBadgeWrap"><span title="" class="badge pluginBadge" >${stats.objectDataCount}</span></div>` : ""}      
+      ${stats.objectDataCount > 0 ? `<div class="pluginBadgeWrap"><span title="" class="badge pluginBadge" >${stats.objectDataCount}</span></div>` : ""}
     </li>
   `);
-  
+
 }
 
 // ---------------------------------------------------------------
@@ -351,7 +367,7 @@ function createTabHeader(pluginObj, stats, assignActive) {
 function createTabContent(pluginObj, assignActive) {
   const prefix = pluginObj.unique_prefix; // Get the unique prefix for the plugin
   const colDefinitions = getColumnDefinitions(pluginObj); // Get column definitions for DataTables
-  
+
   // Get data for events, objects, and history related to the plugin
   const objectData = getObjectData(prefix, colDefinitions, pluginObj);
   const eventData = getEventData(prefix, colDefinitions, pluginObj);
@@ -362,9 +378,9 @@ function createTabContent(pluginObj, assignActive) {
     <div id="${prefix}" class="tab-pane ${objectData.length > 0 && assignActive? 'active' : ''}">
       ${generateTabNavigation(prefix, objectData.length, eventData.length, historyData.length)} <!-- Create tab navigation -->
       <div class="tab-content">
-        ${generateDataTable(prefix, 'Objects', objectData, colDefinitions)} 
-        ${generateDataTable(prefix, 'Events', eventData, colDefinitions)} 
-        ${generateDataTable(prefix, 'History', historyData, colDefinitions)} 
+        ${generateDataTable(prefix, 'Objects', objectData, colDefinitions)}
+        ${generateDataTable(prefix, 'Events', eventData, colDefinitions)}
+        ${generateDataTable(prefix, 'History', historyData, colDefinitions)}
       </div>
       <div class='plugins-description'>
         ${getString(`${prefix}_description`)} <!-- Display the plugin description -->
@@ -376,10 +392,10 @@ function createTabContent(pluginObj, assignActive) {
   // Initialize DataTables for the respective sections
   initializeDataTables(prefix, objectData, eventData, historyData, colDefinitions);
 
-  return { 
-            "objectDataCount": objectData.length, 
-            "eventDataCount": eventData.length, 
-            "historyDataCount": historyData.length 
+  return {
+            "objectDataCount": objectData.length,
+            "eventDataCount": eventData.length,
+            "historyDataCount": historyData.length
          }
 }
 
@@ -403,13 +419,13 @@ function getObjectData(prefix, colDefinitions, pluginObj) {
 }
 
 function getHistoryData(prefix, colDefinitions, pluginObj) {
-  
+
   return pluginHistory
   .filter(history => history.Plugin === prefix && shouldBeShown(history, pluginObj)) // First, filter based on the plugin prefix
     .sort((a, b) => b.Index - a.Index) // Then, sort by the Index field in descending order
     .slice(0, 50) // Limit the result to the first 50 entries
-    .map(object => 
-        colDefinitions.map(colDef => 
+    .map(object =>
+        colDefinitions.map(colDef =>
             getFormControl(colDef, object[colDef.column], object["Index"], colDefinitions, object)
         )
     );
@@ -437,7 +453,7 @@ function generateTabNavigation(prefix, objectCount, eventCount, historyCount) {
 function generateDataTable(prefix, tableType, data, colDefinitions) {
   // Generate HTML for a DataTable and associated buttons for a given table type
   const headersHtml = colDefinitions.map(colDef => `<th class="${colDef.css_classes}">${getString(`${prefix}_${colDef.column}_name`)}</th>`).join('');
-  
+
   return `
     <div id="${tableType.toLowerCase()}Target_${prefix}" class="tab-pane ${tableType == "Objects" ? "active":""}">
       <table id="${tableType.toLowerCase()}Table_${prefix}" class="display table table-striped table-stretched" data-my-dbtable="Plugins_${tableType}">
@@ -485,43 +501,43 @@ function initializeDataTables(prefix, objectData, eventData, historyData, colDef
 // --------------------------------------------------------
 // Filter method that determines if an entry should be shown
 function shouldBeShown(entry, pluginObj)
-{  
+{
   if (pluginObj.hasOwnProperty('data_filters')) {
-    
+
     let dataFilters = pluginObj.data_filters;
 
     // Loop through 'data_filters' array and appply filters on individual plugin entries
     for (let i = 0; i < dataFilters.length; i++) {
-      
+
       compare_field_id = dataFilters[i].compare_field_id;
       compare_column = dataFilters[i].compare_column;
       compare_operator = dataFilters[i].compare_operator;
       compare_js_template = dataFilters[i].compare_js_template;
       compare_use_quotes = dataFilters[i].compare_use_quotes;
       compare_field_id_value = $(`#${compare_field_id}`).val();
-      
+
       // console.log(compare_field_id_value);
       // console.log(compare_field_id);
-      
+
 
       // apply filter if the filter field has a valid value
-      if(compare_field_id_value != undefined && compare_field_id_value != '--') 
+      if(compare_field_id_value != undefined && compare_field_id_value != '--')
       {
-        // valid value        
-        // resolve the left and right part of the comparison 
+        // valid value
+        // resolve the left and right part of the comparison
         let left = compare_js_template.replace('{value}', `${compare_field_id_value}`)
         let right = compare_js_template.replace('{value}', `${entry[compare_column]}`)
 
         // include wrapper quotes if specified
-        compare_use_quotes ? quotes = '"' : quotes = ''         
+        compare_use_quotes ? quotes = '"' : quotes = ''
 
         result =  eval(
-                quotes +  `${eval(left)}` + quotes + 
-                        ` ${compare_operator} ` + 
-                quotes +  `${eval(right)}` + quotes 
-              ); 
+                quotes +  `${eval(left)}` + quotes +
+                        ` ${compare_operator} ` +
+                quotes +  `${eval(right)}` + quotes
+              );
 
-        return result;                
+        return result;
       }
     }
   }
@@ -545,14 +561,28 @@ function purgeAll(callback) {
 
 // --------------------------------------------------------
 function purgeAllExecute() {
+  const apiBase = getApiBase();
+  const apiToken = getSetting("API_TOKEN");
+  const url = `${apiBase}/dbquery/delete`;
+
   $.ajax({
     method: "POST",
-    url: "php/server/dbHelper.php",
-    data: { action: "delete", dbtable: dbTable, columnName: 'Plugin', id:plugPrefix },
-    success: function(data, textStatus) {
-      showModalOk ('Result', data );
+    url: url,
+    headers: { "Authorization": `Bearer ${apiToken}` },
+    data: JSON.stringify({
+      dbtable: dbTable,
+      columnName: 'Plugin',
+      id: plugPrefix
+    }),
+    contentType: "application/json",
+    success: function(response, textStatus) {
+      showModalOk('Result', response.success ? "Deleted successfully" : (response.error || "Unknown error"));
+    },
+    error: function(xhr, status, error) {
+      console.error("Error deleting:", status, error);
+      showModalOk('Result', "Error: " + (xhr.responseJSON?.error || error));
     }
-  })
+  });
 }
 
 // --------------------------------------------------------
@@ -578,15 +608,29 @@ function deleteListed(plugPrefixArg, dbTableArg) {
 
 // --------------------------------------------------------
 function deleteListedExecute() {
+  const apiBase = getApiBase();
+  const apiToken = getSetting("API_TOKEN");
+  const url = `${apiBase}/dbquery/delete`;
+
   $.ajax({
     method: "POST",
-    url: "php/server/dbHelper.php",
-    data: { action: "delete", dbtable: dbTable, columnName: 'Index', id:idArr.toString() },
-    success: function(data, textStatus) {
+    url: url,
+    headers: { "Authorization": `Bearer ${apiToken}` },
+    data: JSON.stringify({
+      dbtable: dbTable,
+      columnName: 'Index',
+      id: idArr.toString()
+    }),
+    contentType: "application/json",
+    success: function(response, textStatus) {
       updateApi("plugins_objects")
-      showModalOk('Result', data);      
+      showModalOk('Result', response.success ? "Deleted successfully" : (response.error || "Unknown error"));
+    },
+    error: function(xhr, status, error) {
+      console.error("Error deleting:", status, error);
+      showModalOk('Result', "Error: " + (xhr.responseJSON?.error || error));
     }
-  })
+  });
 }
 
 
@@ -607,7 +651,7 @@ if (!$('.plugin-content:visible').length) {
   updater();
 }
 else
-{  
+{
   initFields();
 }
 

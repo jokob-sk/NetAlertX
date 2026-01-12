@@ -48,13 +48,10 @@ function loadEventsData() {
       )
   `;
 
-  const protocol = window.location.protocol.replace(':', '');
-  const host = window.location.hostname;
-  const port = getSetting("GRAPHQL_PORT");
   const apiToken = getSetting("API_TOKEN");
 
-  const apiBase = `${protocol}://${host}:${port}`;
-  const url = `${apiBase}/dbquery/read`;
+  const apiBaseUrl = getApiBase();
+  const url = `${apiBaseUrl}/dbquery/read`;
 
   $.ajax({
     url: url,

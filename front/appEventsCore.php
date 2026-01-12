@@ -23,11 +23,9 @@ showSpinner()
 
 $(document).ready(function () {
 
-  const protocol = window.location.protocol.replace(':', '');
-  const host = window.location.hostname;
   const apiToken = getSetting("API_TOKEN");
-  const port = getSetting("GRAPHQL_PORT");
-  const graphqlUrl = `${protocol}://${host}:${port}/graphql`;
+  const apiBase = getApiBase();
+  const graphqlUrl = `${apiBase}/graphql`;
 
   $('#appevents-table').DataTable({
     processing: true,
