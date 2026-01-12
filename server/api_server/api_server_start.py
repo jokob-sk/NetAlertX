@@ -12,15 +12,15 @@ from flask_cors import CORS
 INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
-from logger import mylog
-from helper import get_setting_value
-from db.db_helper import get_date_from_period
-from app_state import updateState
+from logger import mylog  # noqa: E402 [flake8 lint suppression]
+from helper import get_setting_value  # noqa: E402 [flake8 lint suppression]
+from db.db_helper import get_date_from_period  # noqa: E402 [flake8 lint suppression]
+from app_state import updateState  # noqa: E402 [flake8 lint suppression]
 
-from .graphql_endpoint import devicesSchema
-from .history_endpoint import delete_online_history
-from .prometheus_endpoint import get_metric_stats
-from .sessions_endpoint import (
+from .graphql_endpoint import devicesSchema  # noqa: E402 [flake8 lint suppression]
+from .history_endpoint import delete_online_history  # noqa: E402 [flake8 lint suppression]
+from .prometheus_endpoint import get_metric_stats  # noqa: E402 [flake8 lint suppression]
+from .sessions_endpoint import (  # noqa: E402 [flake8 lint suppression]
     get_sessions,
     delete_session,
     create_session,
@@ -28,7 +28,7 @@ from .sessions_endpoint import (
     get_device_sessions,
     get_session_events
 )
-from .nettools_endpoint import (
+from .nettools_endpoint import (  # noqa: E402 [flake8 lint suppression]
     wakeonlan,
     traceroute,
     speedtest,
@@ -37,17 +37,17 @@ from .nettools_endpoint import (
     internet_info,
     network_interfaces
 )
-from .dbquery_endpoint import read_query, write_query, update_query, delete_query
-from .sync_endpoint import handle_sync_post, handle_sync_get
-from .logs_endpoint import clean_log
-from models.user_events_queue_instance import UserEventsQueueInstance
+from .dbquery_endpoint import read_query, write_query, update_query, delete_query  # noqa: E402 [flake8 lint suppression]
+from .sync_endpoint import handle_sync_post, handle_sync_get  # noqa: E402 [flake8 lint suppression]
+from .logs_endpoint import clean_log  # noqa: E402 [flake8 lint suppression]
+from models.user_events_queue_instance import UserEventsQueueInstance  # noqa: E402 [flake8 lint suppression]
 
-from models.event_instance import EventInstance
+from models.event_instance import EventInstance  # noqa: E402 [flake8 lint suppression]
 # Import tool logic from the MCP/tools module to reuse behavior (no blueprints)
-from plugin_helper import is_mac
+from plugin_helper import is_mac  # noqa: E402 [flake8 lint suppression]
 # is_mac is provided in mcp_endpoint and used by those handlers
 # mcp_endpoint contains helper functions; routes moved into this module to keep a single place for routes
-from messaging.in_app import (
+from messaging.in_app import (  # noqa: E402 [flake8 lint suppression]
     write_notification,
     mark_all_notifications_read,
     delete_notifications,
@@ -55,14 +55,22 @@ from messaging.in_app import (
     delete_notification,
     mark_notification_as_read
 )
-from .mcp_endpoint import (
+from .mcp_endpoint import (  # noqa: E402 [flake8 lint suppression]
     mcp_sse,
     mcp_messages,
     openapi_spec
 )
 # validation and schemas for MCP v2
-from .validation import validate_request
-from .schemas import DeviceSearchRequest, DeviceListRequest, WakeOnLanRequest, TriggerScanRequest, TracerouteRequest, RecentEventsRequest
+from .validation import validate_request  # noqa: E402 [flake8 lint suppression]
+from .schemas import  # noqa: E402 [flake8 lint suppression]
+(
+    DeviceSearchRequest,
+    DeviceListRequest,
+    WakeOnLanRequest,
+    TriggerScanRequest,
+    TracerouteRequest,
+    RecentEventsRequest
+)
 
 from .sse_endpoint import (  # noqa: E402 [flake8 lint suppression]
     create_sse_endpoint
