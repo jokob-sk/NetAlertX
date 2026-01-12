@@ -375,7 +375,7 @@
     "Maint_Restart_Server_noti_text": "Estàs segur que vols reiniciar el servidor backend? Això pot causar incongruència a l'aplicació. Abans fes còpia de seguretat de la vostra configuració. <br/> <br/> Nota: Això pot durar uns quants minuts.",
     "Maintenance_InitCheck": "Init Check",
     "Maintenance_InitCheck_Checking": "Comprovant…",
-    "Maintenance_InitCheck_QuickSetupGuide": "Assegureu-vos de seguir la guia <a href=\"https://jokob-sk.github.io/NetAlertX/INITIAL_SETUP/\" target=\"_blank\"> de configuració ràpida</a>.",
+    "Maintenance_InitCheck_QuickSetupGuide": "Assegureu-vos de seguir la guia <a href=\"https://docs.netalertx.com/INITIAL_SETUP/\" target=\"_blank\"> de configuració ràpida</a>.",
     "Maintenance_InitCheck_Success": "Aplicació inicialitzada amb èxit!",
     "Maintenance_ReCheck": "Tornar a comprovar",
     "Maintenance_Running_Version": "Versió instal·lada",

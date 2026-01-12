@@ -80,7 +80,6 @@ Backend loop phases (see `server/__main__.py` and `server/plugin.py`): `once`, `
 - Logs: All logs are under `/tmp/log/`. Plugin logs are very shortly under `/tmp/log/plugins/` until picked up by the server.
   - plugin logs: `/tmp/log/plugins/*.log`
   - backend logs: `/tmp/log/stdout.log` and `/tmp/log/stderr.log`
-  - frontend commands logs: `/tmp/log/app_front.log`
   - php errors: `/tmp/log/app.php_errors.log`
   - nginx logs: `/tmp/log/nginx-access.log` and `/tmp/log/nginx-error.log`
 

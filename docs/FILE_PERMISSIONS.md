@@ -38,6 +38,8 @@ NetAlertX requires certain paths to be writable at runtime. These paths should b
 
 > All these paths will have **UID 20211 / GID 20211** inside the container. Files on the host will appear owned by `20211:20211`.
 
+## Eunning as `root`
+
 You can change the default PUID and GUID with env variables:
 
 ```yaml

@@ -375,7 +375,7 @@
     "Maint_Restart_Server_noti_text": "Czy na pewno chcesz zrestartować serwer zaplecza (backend)? Może to spowodować niespójność działania aplikacji. Najpierw wykonaj kopię zapasową swojej konfiguracji. <br/><br/> Uwaga: To może potrwać kilka minut.",
     "Maintenance_InitCheck": "Wstępna kontrola",
     "Maintenance_InitCheck_Checking": "Sprawdzanie…",
-    "Maintenance_InitCheck_QuickSetupGuide": "Upewnij się, że postępowałeś zgodnie z <a href=\"https://jokob-sk.github.io/NetAlertX/INITIAL_SETUP/\" target=\"_blank\">krótką instrukcją konfiguracji</a>.",
+    "Maintenance_InitCheck_QuickSetupGuide": "Upewnij się, że postępowałeś zgodnie z <a href=\"https://docs.netalertx.com/INITIAL_SETUP/\" target=\"_blank\">krótką instrukcją konfiguracji</a>.",
     "Maintenance_InitCheck_Success": "Aplikacja została pomyślnie zainicjowana!",
     "Maintenance_ReCheck": "Ponów sprawdzenie",
     "Maintenance_Running_Version": "Zainstalowana wersja",
