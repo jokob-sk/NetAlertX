@@ -91,7 +91,7 @@ CORS(
         r"/api/tools/*": {"origins": "*"},
         r"/auth/*": {"origins": "*"},
         r"/mcp/*": {"origins": "*"},
-        r"/openapi.json": {"origins": "*"}
+        r"/openapi.json": {"origins": "*"},
         r"/sse/*": {"origins": "*"}
     },
     supports_credentials=True,
