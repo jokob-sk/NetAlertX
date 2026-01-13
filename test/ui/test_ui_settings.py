@@ -6,7 +6,6 @@ Tests settings page load, settings groups, and configuration
 
 import time
 import os
-import requests
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -15,7 +14,7 @@ import sys
 # Add test directory to path
 sys.path.insert(0, os.path.dirname(__file__))
 
-from test_helpers import BASE_URL, API_TOKEN   # noqa: E402 [flake8 lint suppression]
+from test_helpers import BASE_URL   # noqa: E402 [flake8 lint suppression]
 
 
 def test_settings_page_loads(driver):
