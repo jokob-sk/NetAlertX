@@ -375,7 +375,7 @@
     "Maint_Restart_Server_noti_text": "Sei sicuro di voler riavviare il server backend? Questo potrebbe causare incoerenze dell'app. Prima esegui il backup della tua configurazione. <br/> <br/> Nota: l'operazione potrebbe richiedere alcuni minuti.",
     "Maintenance_InitCheck": "Controllo iniziale",
     "Maintenance_InitCheck_Checking": "Controllo in corso…",
-    "Maintenance_InitCheck_QuickSetupGuide": "Assicurati di aver seguito la <a href=\"https://jokob-sk.github.io/NetAlertX/INITIAL_SETUP/\" target=\"_blank\">guida di configurazione rapida</a>.",
+    "Maintenance_InitCheck_QuickSetupGuide": "Assicurati di aver seguito la <a href=\"https://docs.netalertx.com/INITIAL_SETUP/\" target=\"_blank\">guida di configurazione rapida</a>.",
     "Maintenance_InitCheck_Success": "Applicazione inizializzata con successo!",
     "Maintenance_ReCheck": "Riprova controllo",
     "Maintenance_Running_Version": "Versione installata",

@@ -375,7 +375,7 @@
     "Maint_Restart_Server_noti_text": "Are you sure you want to restart the backend server? This may casue app inconsistency. Backup your setup first. <br/> <br/> Note: This may take a few minutes.",
     "Maintenance_InitCheck": "Init check",
     "Maintenance_InitCheck_Checking": "Checking…",
-    "Maintenance_InitCheck_QuickSetupGuide": "Make sure you followed the <a href=\"https://jokob-sk.github.io/NetAlertX/INITIAL_SETUP/\" target=\"_blank\">quick setup guide</a>.",
+    "Maintenance_InitCheck_QuickSetupGuide": "Make sure you followed the <a href=\"https://docs.netalertx.com/INITIAL_SETUP/\" target=\"_blank\">quick setup guide</a>.",
     "Maintenance_InitCheck_Success": "Application initialized succesfully!",
     "Maintenance_ReCheck": "Retry check",
     "Maintenance_Running_Version": "Installed version",

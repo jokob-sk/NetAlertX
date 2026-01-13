@@ -375,7 +375,7 @@
     "Maint_Restart_Server_noti_text": "您确定要重新启动后端服务器吗？这可能会导致应用程序不一致。请先备份您的设置。<br/> <br/> 注意：这可能需要几分钟。",
     "Maintenance_InitCheck": "初步检查",
     "Maintenance_InitCheck_Checking": "查看中…",
-    "Maintenance_InitCheck_QuickSetupGuide": "确保您遵循<a href=\"https://jokob-sk.github.io/NetAlertX/INITIAL_SETUP/\" target=\"_blank\">快速设置指南</a>。",
+    "Maintenance_InitCheck_QuickSetupGuide": "确保您遵循<a href=\"https://docs.netalertx.com/INITIAL_SETUP/\" target=\"_blank\">快速设置指南</a>。",
     "Maintenance_InitCheck_Success": "应用程序启动成功！",
     "Maintenance_ReCheck": "重试检查",
     "Maintenance_Running_Version": "安装版本",

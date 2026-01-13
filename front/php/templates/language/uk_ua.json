@@ -375,7 +375,7 @@
     "Maint_Restart_Server_noti_text": "Ви впевнені, що бажаєте перезапустити внутрішній сервер? Це може спричинити неузгодженість програми. Спершу створіть резервну копію налаштувань. <br/> <br/> Примітка. Це може зайняти кілька хвилин.",
     "Maintenance_InitCheck": "Перевірка ініціалізації",
     "Maintenance_InitCheck_Checking": "Перевірка…",
-    "Maintenance_InitCheck_QuickSetupGuide": "Переконайтеся, що ви дотримувалися інструкцій у <a href=\"https://jokob-sk.github.io/NetAlertX/INITIAL_SETUP/\" target=\"_blank\">короткому посібнику з налаштування</a>.",
+    "Maintenance_InitCheck_QuickSetupGuide": "Переконайтеся, що ви дотримувалися інструкцій у <a href=\"https://docs.netalertx.com/INITIAL_SETUP/\" target=\"_blank\">короткому посібнику з налаштування</a>.",
     "Maintenance_InitCheck_Success": "Застосунок успішно ініціалізовано!",
     "Maintenance_ReCheck": "Повторна спроба перевірки",
     "Maintenance_Running_Version": "Встановлена версія",

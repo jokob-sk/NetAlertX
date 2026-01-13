@@ -375,7 +375,7 @@
     "Maint_Restart_Server_noti_text": "バックエンドサーバーを再起動してもよろしいですか？アプリの不整合が発生する可能性があります。まず設定のバックアップを行ってください。<br/> <br/> 注：この操作には数分かかる場合があります。",
     "Maintenance_InitCheck": "初期化チェック",
     "Maintenance_InitCheck_Checking": "確認中…",
-    "Maintenance_InitCheck_QuickSetupGuide": "<a href=\"https://jokob-sk.github.io/NetAlertX/INITIAL_SETUP/\" target=\"_blank\">クイックセットアップガイド</a>に従ったことを確認してください。",
+    "Maintenance_InitCheck_QuickSetupGuide": "<a href=\"https://docs.netalertx.com/INITIAL_SETUP/\" target=\"_blank\">クイックセットアップガイド</a>に従ったことを確認してください。",
     "Maintenance_InitCheck_Success": "アプリケーションの初期化に成功！",
     "Maintenance_ReCheck": "再試行チェック",
     "Maintenance_Running_Version": "インストールバージョン",

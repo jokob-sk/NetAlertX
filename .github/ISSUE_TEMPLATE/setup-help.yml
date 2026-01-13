@@ -21,7 +21,7 @@ body:
     label: Did I research?
     description: Please confirm you checked the usual places before opening a setup support request.
     options:
-    - label: I have searched the docs https://jokob-sk.github.io/NetAlertX/
+    - label: I have searched the docs https://docs.netalertx.com/
       required: true
     - label: I have searched the existing open and closed issues
       required: true

@@ -34,7 +34,7 @@ Get visibility of what's going on on your WIFI/LAN network and enable presence d
 ## 🚀 Quick Start
 
 > [!WARNING]
-> ⚠️ **Important:** The docker-compose has recently changed. Carefully read the [Migration guide](https://jokob-sk.github.io/NetAlertX/MIGRATION/?h=migrat#12-migration-from-netalertx-v25524) for detailed instructions.
+> ⚠️ **Important:** The docker-compose has recently changed. Carefully read the [Migration guide](https://docs.netalertx.com/MIGRATION/?h=migrat#12-migration-from-netalertx-v25524) for detailed instructions.
 
 Start NetAlertX in seconds with Docker:
 
@@ -60,14 +60,14 @@ docker compose up --force-recreate --build
 # To customize: edit docker-compose.yaml and run that last command again
 ```
 
-Need help configuring it? Check the [usage guide](https://github.com/jokob-sk/NetAlertX/blob/main/docs/README.md) or [full documentation](https://jokob-sk.github.io/NetAlertX/).
+Need help configuring it? Check the [usage guide](https://github.com/jokob-sk/NetAlertX/blob/main/docs/README.md) or [full documentation](https://docs.netalertx.com/).
 
 For Home Assistant users: [Click here to add NetAlertX](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Falexbelgium%2Fhassio-addons)
 
 For other install methods, check the [installation docs](#-documentation)
 
 
-| [📑 Docker guide](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DOCKER_INSTALLATION.md) | [🚀 Releases](https://github.com/jokob-sk/NetAlertX/releases) | [📚 Docs](https://jokob-sk.github.io/NetAlertX/) | [🔌 Plugins](https://github.com/jokob-sk/NetAlertX/blob/main/docs/PLUGINS.md) | [🤖 Ask AI](https://gurubase.io/g/netalertx)
+| [📑 Docker guide](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DOCKER_INSTALLATION.md) | [🚀 Releases](https://github.com/jokob-sk/NetAlertX/releases) | [📚 Docs](https://docs.netalertx.com/) | [🔌 Plugins](https://github.com/jokob-sk/NetAlertX/blob/main/docs/PLUGINS.md) | [🤖 Ask AI](https://gurubase.io/g/netalertx)
 |----------------------| ----------------------|  ----------------------| ----------------------| ----------------------|
 
 ![showcase][showcase]
@@ -117,7 +117,7 @@ Supported browsers: Chrome, Firefox
 - [[Development] API docs](https://github.com/jokob-sk/NetAlertX/blob/main/docs/API.md)
 - [[Development] Custom Plugins](https://github.com/jokob-sk/NetAlertX/blob/main/docs/PLUGINS_DEV.md)
 
-...or explore all the [documentation here](https://jokob-sk.github.io/NetAlertX/).
+...or explore all the [documentation here](https://docs.netalertx.com/).
 
 ## 🔐 Security & Privacy
 
@@ -156,7 +156,7 @@ A: In the `/data/config` and `/data/db` folders. Back up these folders regularly
 - Notification throttling may be needed for large networks to prevent spam.
 - On some systems, elevated permissions (like `CAP_NET_RAW`) may be needed for low-level scanning.
 
-Check the [GitHub Issues](https://github.com/jokob-sk/NetAlertX/issues) for the latest bug reports and solutions and consult [the official documentation](https://jokob-sk.github.io/NetAlertX/).
+Check the [GitHub Issues](https://github.com/jokob-sk/NetAlertX/issues) for the latest bug reports and solutions and consult [the official documentation](https://docs.netalertx.com/).
 
 ## 📃 Everything else
 <!--- --------------------------------------------------------------------- --->

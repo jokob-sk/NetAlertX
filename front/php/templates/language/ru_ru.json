@@ -375,7 +375,7 @@
     "Maint_Restart_Server_noti_text": "Вы уверены, что хотите перезапустить внутренний сервер? Это может привести к несогласованности работы приложения. Сначала создайте резервную копию настроек. <br/> <br/> Примечание: Это может занять несколько минут.",
     "Maintenance_InitCheck": "Инициализация проверки",
     "Maintenance_InitCheck_Checking": "Проверяется…",
-    "Maintenance_InitCheck_QuickSetupGuide": "Убедитесь, что вы следовали быстрому руководству по настройке <a href=\"https://jokob-sk.github.io/NetAlertX/INITIAL_SETUP/\" target=\"_blank\"></a>.",
+    "Maintenance_InitCheck_QuickSetupGuide": "Убедитесь, что вы следовали быстрому руководству по настройке <a href=\"https://docs.netalertx.com/INITIAL_SETUP/\" target=\"_blank\"></a>.",
     "Maintenance_InitCheck_Success": "Приложение инициализировано успешно!",
     "Maintenance_ReCheck": "Повторить проверку",
     "Maintenance_Running_Version": "Установленная версия",
