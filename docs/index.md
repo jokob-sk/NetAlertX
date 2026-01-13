@@ -6,30 +6,6 @@ hide:
 
 # NetAlertX Documentation
 
-<div class="grid cards" markdown="1">
-
-- type: card
-  title: "🚨 Network Alerts"
-  text: "Real-time notifications for devices and network events."
-  icon: bell
-
-- type: card
-  title: "🌐 Network Discovery"
-  text: "Automatic detection of devices on your network."
-  icon: network-wired
-
-- type: card
-  title: "🔌 Broad Set of Plugins"
-  text: "Supports over 80 integrations via Apprise and more."
-  icon: plug
-
-- type: card
-  title: "🏠 Home Assistant Support"
-  text: "Full integration for smart home automation."
-  icon: home
-
-</div>
-
 Welcome to the official NetAlertX documentation! NetAlertX is a powerful tool designed to simplify the management and monitoring of your network. Below, you will find guides and resources to help you set up, configure, and troubleshoot your NetAlertX instance.
 
 ![Preview](./img/devices_split.png)
