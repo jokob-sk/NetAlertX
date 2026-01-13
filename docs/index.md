@@ -1,4 +1,19 @@
+---
+hide:
+  - navigation
+  - toc
+---
+
 # NetAlertX Documentation
+
+<div class="grid cards" markdown>
+
+-   🚨 **Network alerts**
+-   🌐 **Network discovery**
+-   🔌 **Broad set of Plugins**
+-   🏠 **Home Assistant support**
+
+</div>
 
 Welcome to the official NetAlertX documentation! NetAlertX is a powerful tool designed to simplify the management and monitoring of your network. Below, you will find guides and resources to help you set up, configure, and troubleshoot your NetAlertX instance.
 
@@ -15,7 +30,7 @@ NetAlertX provides contextual help within the application:
 
 ## Installation Guides
 
-The app can be installed different ways, with the best support of the docker-based deployments. This includes the Home Assistant and Unraid installation approaches. See details below. 
+The app can be installed different ways, with the best support of the docker-based deployments. This includes the Home Assistant and Unraid installation approaches. See details below.
 
 ### Docker (Fully Supported)
 
@@ -29,13 +44,13 @@ This guide will take you through the process of setting up NetAlertX using Docke
 
 You can install NetAlertX also as a Home Assistant addon [![Home Assistant](https://img.shields.io/badge/Repo-blue?logo=home-assistant&style=for-the-badge&color=0aa8d2&logoColor=fff&label=Add)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Falexbelgium%2Fhassio-addons) via the [alexbelgium/hassio-addons](https://github.com/alexbelgium/hassio-addons/) repository. This is only possible if you run a supervised instance of Home Assistant. If not, you can still run NetAlertX in a separate Docker container and follow this guide to configure MQTT.
 
-- [[Installation] Home Assistant](https://github.com/alexbelgium/hassio-addons/tree/master/netalertx) 
+- [[Installation] Home Assistant](https://github.com/alexbelgium/hassio-addons/tree/master/netalertx)
 
 ### Unraid (Partial Support)
 
-The Unraid template was created by the community, so it's only partially supported. Alternatively, here is [another version of the Unraid template](https://github.com/jokob-sk/NetAlertX-unraid). 
+The Unraid template was created by the community, so it's only partially supported. Alternatively, here is [another version of the Unraid template](https://github.com/jokob-sk/NetAlertX-unraid).
 
-- [[Installation] Unraid App](https://unraid.net/community/apps) 
+- [[Installation] Unraid App](https://unraid.net/community/apps)
 
 ### Bare-Metal Installation (Experimental)
 
@@ -55,7 +70,7 @@ If you need help or run into issues, here are some resources to guide you:
   - [Check common issues](./DEBUG_TIPS.md#common-issues) to see if your problem has already been reported.
   - [Look at closed issues](https://github.com/jokob-sk/NetAlertX/issues?q=is%3Aissue+is%3Aclosed) for possible solutions to past problems.
   - **Enable debugging** to gather more information: [Debug Guide](./DEBUG_TIPS.md).
-  
+
 **Need more help?** Join the community discussions or submit a support request:
 
   - Visit the [GitHub Discussions](https://github.com/jokob-sk/NetAlertX/discussions) for community support.
