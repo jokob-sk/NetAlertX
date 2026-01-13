@@ -340,3 +340,57 @@ See [PLUGINS_DEV_SETTINGS.md](PLUGINS_DEV_SETTINGS.md) for complete settings doc
 [screen3]: https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/plugins_json_settings.png      "Screen 3"
 [screen4]: https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/plugins_json_ui.png            "Screen 4"
 [screen5]: https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/plugins_device_details.png     "Screen 5"
+
+## Quick Reference: Key Concepts
+
+### Plugin Output Format
+```
+Object_PrimaryID|Object_SecondaryID|DateTime|Watched_Value1|Watched_Value2|Watched_Value3|Watched_Value4|Extra|ForeignKey
+```
+9 required columns, 4 optional helpers = 13 max
+
+See: [Data Contract](PLUGINS_DEV_DATA_CONTRACT.md)
+
+### Plugin Metadata (config.json)
+```json
+{
+  "code_name": "my_plugin",           // Folder name
+  "unique_prefix": "MYPLN",           // Settings prefix
+  "display_name": [...],              // UI label
+  "data_source": "script",            // Where data comes from
+  "settings": [...],                  // User configurable
+  "database_column_definitions": [...] // How to display
+}
+```
+
+See: [Full Guide](PLUGINS_DEV.md), [Settings](PLUGINS_DEV_SETTINGS.md)
+
+### Reserved Settings
+- `RUN` - When to execute (disabled, once, schedule, always_after_scan, etc.)
+- `RUN_SCHD` - Cron schedule
+- `CMD` - Command/script to execute
+- `RUN_TIMEOUT` - Max execution time
+- `WATCH` - Monitor for changes
+- `REPORT_ON` - Notification trigger
+
+See: [Settings System](PLUGINS_DEV_SETTINGS.md)
+
+### Display Types
+`label`, `device_mac`, `device_ip`, `url`, `threshold`, `replace`, `regex`, `textbox_save`, and more.
+
+See: [UI Components](PLUGINS_DEV_UI_COMPONENTS.md)
+
+---
+
+## Tools & References
+
+- **Template Plugin:** `/app/front/plugins/__template/` - Start here!
+- **Helper Library:** `/app/front/plugins/plugin_helper.py` - Use for output formatting
+- **Settings Helper:** `/app/server/helper.py` - Use `get_setting_value()` in scripts
+- **Example Plugins:** `/app/front/plugins/*/` - Study working implementations
+- **Logs:** `/tmp/log/plugins/` - Plugin output and execution logs
+- **Backend Logs:** `/tmp/log/stdout.log` - Core system logs
+
+---
+
+

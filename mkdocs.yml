@@ -52,6 +52,7 @@ nav:
       - Advanced guides:
         - Remote Networks: REMOTE_NETWORKS.md
         - Notifications Guide: NOTIFICATIONS.md
+        - Custom PUID/GUID: PUID_PGID_SECURITY.md
         - Name Resolution: NAME_RESOLUTION.md
         - Authelia: AUTHELIA.md
         - Performance: PERFORMANCE.md
@@ -90,6 +91,7 @@ nav:
         - Environment Setup: DEV_ENV_SETUP.md
         - Builds: BUILDS.md
         - Devcontainer: DEV_DEVCONTAINER.md
+        - Devcontainer Ports: DEV_PORTS_HOST_MODE.md
         - Custom Plugins:
           - Overview: PLUGINS_DEV.md
           - Quick Start: PLUGINS_DEV_QUICK_START.md
@@ -115,6 +117,8 @@ nav:
         - Net Tools: API_NETTOOLS.md
         - Online History: API_ONLINEHISTORY.md
         - Sync: API_SYNC.md
+        - Logs: API_LOGS.md
+        - SSE: API_SSE.md
         - GraphQL: API_GRAPHQL.md
         - DB query: API_DBQUERY.md
         - MCP: API_MCP.md
