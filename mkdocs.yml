@@ -89,8 +89,14 @@ nav:
         - Environment Setup: DEV_ENV_SETUP.md
         - Builds: BUILDS.md
         - Devcontainer: DEV_DEVCONTAINER.md
-        - Custom Plugins: PLUGINS_DEV.md
-        - Plugin Config: PLUGINS_DEV_CONFIG.md
+        - Custom Plugins:
+          - Overview: PLUGINS_DEV.md
+          - Quick Start: PLUGINS_DEV_QUICK_START.md
+          - Data Contract: PLUGINS_DEV_DATA_CONTRACT.md
+          - Settings System: PLUGINS_DEV_SETTINGS.md
+          - Data Sources: PLUGINS_DEV_DATASOURCES.md
+          - UI Components: PLUGINS_DEV_UI_COMPONENTS.md
+          - Config Lifecycle: PLUGINS_DEV_CONFIG.md
         - Frontend Development: FRONTEND_DEVELOPMENT.md
         - Database: DATABASE.md
         - Settings: SETTINGS_SYSTEM.md
