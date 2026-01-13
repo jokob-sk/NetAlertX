@@ -71,7 +71,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Enable a regular scan of your devices with PING to determine their status. If you select <code>schedule</code> the interval from below is applied, for which the recommendation is to <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/NOTIFICATIONS.md\" target=\"_blank\">align all scan schedules</a> otherwise false down reports will be generated."
+          "string": "Enable a regular scan of your devices with PING to determine their status. If you select <code>schedule</code> the interval from below is applied, for which the recommendation is to <a href=\"https://docs.netalertx.com/NOTIFICATIONS\" target=\"_blank\">align all scan schedules</a> otherwise false down reports will be generated."
         }
       ]
     },

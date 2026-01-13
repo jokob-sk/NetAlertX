@@ -6,7 +6,7 @@
 
 # NetAlertX - Network scanner & notification framework
 
-| [📑 Docker guide](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DOCKER_INSTALLATION.md) | [🚀 Releases](https://github.com/jokob-sk/NetAlertX/releases) | [📚 Docs](https://docs.netalertx.com/) | [🔌 Plugins](https://github.com/jokob-sk/NetAlertX/blob/main/docs/PLUGINS.md) | [🤖 Ask AI](https://gurubase.io/g/netalertx)
+| [📑 Docker guide](https://docs.netalertx.com/DOCKER_INSTALLATION) | [🚀 Releases](https://github.com/jokob-sk/NetAlertX/releases) | [📚 Docs](https://docs.netalertx.com/) | [🔌 Plugins](https://docs.netalertx.com/PLUGINS) | [🤖 Ask AI](https://gurubase.io/g/netalertx)
 |----------------------| ----------------------|  ----------------------| ----------------------| ----------------------|
 
 <a href="https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/GENERAL/github_social_image.jpg" target="_blank">
@@ -16,12 +16,12 @@
 Head to [https://netalertx.com/](https://netalertx.com/) for more gifs and screenshots 📷.
 
 > [!NOTE]
-> There is also an experimental 🧪 [bare-metal install](https://github.com/jokob-sk/NetAlertX/blob/main/docs/HW_INSTALL.md) method available.
+> There is also an experimental 🧪 [bare-metal install](https://docs.netalertx.com/HW_INSTALL) method available.
 
 ## 📕 Basic Usage
 
 > [!WARNING]
-> You will have to run the container on the `host` network and specify `SCAN_SUBNETS` unless you use other [plugin scanners](https://github.com/jokob-sk/NetAlertX/blob/main/docs/PLUGINS.md). The initial scan can take a few minutes, so please wait 5-10 minutes for the initial discovery to finish.
+> You will have to run the container on the `host` network and specify `SCAN_SUBNETS` unless you use other [plugin scanners](https://docs.netalertx.com/PLUGINS). The initial scan can take a few minutes, so please wait 5-10 minutes for the initial discovery to finish.
 
 ```bash
 docker run -d --rm --network=host \
@@ -35,7 +35,7 @@ docker run -d --rm --network=host \
 
 > Runtime UID/GID: The image defaults to a service user `netalertx` (UID/GID 20211). A separate readonly lock owner also uses UID/GID 20211 for 004/005 immutability. You can override the runtime UID/GID at build (ARG) or run (`--user` / compose `user:`) but must align writable mounts (`/data`, `/tmp*`) and tmpfs `uid/gid` to that choice.
 
-See alternative [docked-compose examples](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DOCKER_COMPOSE.md).
+See alternative [docked-compose examples](https://docs.netalertx.com/DOCKER_COMPOSE).
 
 ### Default ports
 
@@ -52,7 +52,7 @@ See alternative [docked-compose examples](https://github.com/jokob-sk/NetAlertX/
 | `PGID`      |Runtime GID override  |  `20211` |
 | `PORT`      |Port of the web interface  |  `20211` |
 | `LISTEN_ADDR`      |Set the specific IP Address for the listener address for the nginx webserver (web interface). This could be useful when using multiple subnets to hide the web interface from all untrusted networks. |  `0.0.0.0` |
-|`LOADED_PLUGINS` | Default [plugins](https://github.com/jokob-sk/NetAlertX/blob/main/docs/PLUGINS.md) to load. Plugins cannot be loaded with `APP_CONF_OVERRIDE`, you need to use this variable instead and then specify the plugins settings with `APP_CONF_OVERRIDE`. |  `["PIHOLE","ASUSWRT"]` |
+|`LOADED_PLUGINS` | Default [plugins](https://docs.netalertx.com/PLUGINS) to load. Plugins cannot be loaded with `APP_CONF_OVERRIDE`, you need to use this variable instead and then specify the plugins settings with `APP_CONF_OVERRIDE`. |  `["PIHOLE","ASUSWRT"]` |
 |`APP_CONF_OVERRIDE` | JSON override for settings (except `LOADED_PLUGINS`).   |  `{"SCAN_SUBNETS":"['192.168.1.0/24 --interface=eth1']","GRAPHQL_PORT":"20212"}` |
 |`ALWAYS_FRESH_INSTALL` | ⚠ If `true` will delete the content of the `/db` & `/config` folders. For testing purposes. Can be coupled with [watchtower](https://github.com/containrrr/watchtower) to have an always freshly installed `netalertx`/`netalertx-dev` image.   |    `true` |
 
@@ -61,16 +61,16 @@ See alternative [docked-compose examples](https://github.com/jokob-sk/NetAlertX/
 ### Docker paths
 
 > [!NOTE]
-> See also [Backup strategies](https://github.com/jokob-sk/NetAlertX/blob/main/docs/BACKUPS.md).
+> See also [Backup strategies](https://docs.netalertx.com/BACKUPS).
 
 | Required | Path | Description |
 | :------------- | :------------- | :-------------|
 | ✅ | `:/data` | Folder which needs to contain a `/db` and `/config` sub-folders. |
 | ✅ | `/etc/localtime:/etc/localtime:ro` | Ensuring the timezone is the same as on the server.  |
 | | `:/tmp/log` |  Logs folder useful for debugging if you have issues setting up the container  |
-| | `:/tmp/api` |  The [API endpoint](https://github.com/jokob-sk/NetAlertX/blob/main/docs/API.md) containing static (but regularly updated) json and other files. Path configurable via `NETALERTX_API` environment variable.   |
-| | `:/app/front/plugins/<plugin>/ignore_plugin` | Map a file `ignore_plugin` to ignore a plugin. Plugins can be soft-disabled via settings. More in the [Plugin docs](https://github.com/jokob-sk/NetAlertX/blob/main/docs/PLUGINS.md).  |
-| | `:/etc/resolv.conf` | Use a custom `resolv.conf` file for [better name resolution](https://github.com/jokob-sk/NetAlertX/blob/main/docs/REVERSE_DNS.md).  |
+| | `:/tmp/api` |  The [API endpoint](https://docs.netalertx.com/API) containing static (but regularly updated) json and other files. Path configurable via `NETALERTX_API` environment variable.   |
+| | `:/app/front/plugins/<plugin>/ignore_plugin` | Map a file `ignore_plugin` to ignore a plugin. Plugins can be soft-disabled via settings. More in the [Plugin docs](https://docs.netalertx.com/PLUGINS).  |
+| | `:/etc/resolv.conf` | Use a custom `resolv.conf` file for [better name resolution](https://docs.netalertx.com/REVERSE_DNS).  |
 
 ### Folder structure
 
@@ -100,23 +100,23 @@ sudo chmod -R a+rwx /local_data_dir
 
 #### Setting up scanners
 
-You have to specify which network(s) should be scanned. This is done by entering subnets that are accessible from the host. If you use the default `ARPSCAN` plugin, you have to specify at least one valid subnet and interface in the `SCAN_SUBNETS` setting. See the documentation on [How to set up multiple SUBNETS, VLANs and what are limitations](https://github.com/jokob-sk/NetAlertX/blob/main/docs/SUBNETS.md) for troubleshooting and more advanced scenarios.
+You have to specify which network(s) should be scanned. This is done by entering subnets that are accessible from the host. If you use the default `ARPSCAN` plugin, you have to specify at least one valid subnet and interface in the `SCAN_SUBNETS` setting. See the documentation on [How to set up multiple SUBNETS, VLANs and what are limitations](https://docs.netalertx.com/SUBNETS) for troubleshooting and more advanced scenarios.
 
-If you are running PiHole you can synchronize devices directly. Check the [PiHole configuration guide](https://github.com/jokob-sk/NetAlertX/blob/main/docs/PIHOLE_GUIDE.md) for details.
+If you are running PiHole you can synchronize devices directly. Check the [PiHole configuration guide](https://docs.netalertx.com/PIHOLE_GUIDE) for details.
 
 > [!NOTE]
-> You can bulk-import devices via the [CSV import method](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEVICES_BULK_EDITING.md).
+> You can bulk-import devices via the [CSV import method](https://docs.netalertx.com/DEVICES_BULK_EDITING).
 
 #### Community guides
 
-You can read or watch several [community configuration guides](https://github.com/jokob-sk/NetAlertX/blob/main/docs/COMMUNITY_GUIDES.md) in Chinese, Korean, German, or French.
+You can read or watch several [community configuration guides](https://docs.netalertx.com/COMMUNITY_GUIDES) in Chinese, Korean, German, or French.
 
 > Please note these might be outdated. Rely on official documentation first.
 
 #### Common issues
 
 - Before creating a new issue, please check if a similar issue was [already resolved](https://github.com/jokob-sk/NetAlertX/issues?q=is%3Aissue+is%3Aclosed).
-- Check also common issues and [debugging tips](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEBUG_TIPS.md).
+- Check also common issues and [debugging tips](https://docs.netalertx.com/DEBUG_TIPS).
 
 ## 💙 Support me
 

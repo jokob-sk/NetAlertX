@@ -67,7 +67,7 @@ def main():
                 # helpVal1  = "Something1",  # Optional Helper values to be passed for mapping into the app
                 # helpVal2  = "Something1",  # If you need to use even only 1, add the remaining ones too
                 # helpVal3  = "Something1",  # and set them to 'null'. Check the the docs for details:
-                # helpVal4  = "Something1",  # https://github.com/jokob-sk/NetAlertX/blob/main/docs/PLUGINS_DEV.md
+                # helpVal4  = "Something1",  # https://docs.netalertx.com/PLUGINS_DEV
             )
 
         mylog('verbose', [f'[{pluginName}] New entries: "{len(device_data)}"'])

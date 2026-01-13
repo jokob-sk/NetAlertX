@@ -75,7 +75,7 @@ def ensure_column(sql, table: str, column_name: str, column_type: str) -> bool:
                 f"(missing: {', '.join(missing) if missing else 'none'}, "
                 f"extra: {', '.join(extra) if extra else 'none'}) - "
                 "aborting schema change to prevent corruption. "
-                "Check https://github.com/jokob-sk/NetAlertX/blob/main/docs/UPDATES.md"
+                "Check https://docs.netalertx.com/UPDATES"
             )
             mylog("none", [msg])
             write_notification(msg)

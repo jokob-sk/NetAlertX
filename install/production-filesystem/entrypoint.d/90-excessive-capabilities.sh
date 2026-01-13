@@ -12,7 +12,7 @@ if [ "${NETALERTX_DEBUG}" = "1" ]; then
 fi
 
 # Get bounding capabilities from /proc/self/status (what can be acquired)
-BND_HEX=$(grep '^CapBnd:' /proc/self/status 2>/dev/null | awk '{print $2}' | tr -d '\t')  
+BND_HEX=$(grep '^CapBnd:' /proc/self/status 2>/dev/null | awk '{print $2}' | tr -d '\t')
 
 if [ -z "$BND_HEX" ]; then
     exit 0
@@ -32,10 +32,10 @@ if [ "$EXTRA" -ne 0 ]; then
 ══════════════════════════════════════════════════════════════════════════════
 ⚠️  Warning: Excessive capabilities detected (bounding caps: 0x$BND_HEX).
 
-    Only CHOWN, SETGID, SETUID, NET_ADMIN, NET_BIND_SERVICE, and NET_RAW are 
+    Only CHOWN, SETGID, SETUID, NET_ADMIN, NET_BIND_SERVICE, and NET_RAW are
     required in this container. Please remove unnecessary capabilities.
 
-    https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/excessive-capabilities.md
+    https://docs.netalertx.com/docker-troubleshooting/excessive-capabilities
 ══════════════════════════════════════════════════════════════════════════════
 EOF
 fi

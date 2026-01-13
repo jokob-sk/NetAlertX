@@ -59,7 +59,7 @@ RESET=$(printf '\033[0m')
         docker run --network=host --cap-add=NET_RAW --cap-add=NET_ADMIN --cap-add=NET_BIND_SERVICE
     or set "network_mode: host" in docker-compose.yml.
 
-    https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/network-mode.md
+    https://docs.netalertx.com/docker-troubleshooting/network-mode
 ══════════════════════════════════════════════════════════════════════════════
 EOF
 >&2 printf "%s" "${RESET}"

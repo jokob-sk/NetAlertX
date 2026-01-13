@@ -328,7 +328,8 @@ Control plugin execution priority. Higher priority plugins run first.
 - `Layer_2`
 - ...
 
-### Example: Multi-Source Device Discovery
+### Example: Device Discovery
+
 
 ```json
 {
@@ -339,6 +340,7 @@ Control plugin execution priority. Higher priority plugins run first.
   "mapped_to_table": "CurrentScan"
 }
 ```
+
 ---
 
 ## Performance Considerations

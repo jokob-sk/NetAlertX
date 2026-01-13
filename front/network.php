@@ -11,7 +11,7 @@
 <!-- Page ------------------------------------------------------------------ -->
 <div class="content-wrapper">
   <span class="helpIcon">
-    <a target="_blank" href="https://github.com/jokob-sk/NetAlertX/blob/main/docs/NETWORK_TREE.md">
+    <a target="_blank" href="https://docs.netalertx.com/NETWORK_TREE">
       <i class="fa fa-circle-question"></i>
     </a>
   </span>

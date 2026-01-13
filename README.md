@@ -6,7 +6,7 @@
 
 # NetAlertX - Network, presence scanner and alert framework
 
-Get visibility of what's going on on your WIFI/LAN network and enable presence detection of important devices. Schedule scans for devices, port changes and get alerts if unknown devices or changes are found. Write your own [Plugin](https://github.com/jokob-sk/NetAlertX/tree/main/docs/PLUGINS.md#readme) with auto-generated UI and in-build notification system. Build out and easily maintain your network source of truth (NSoT) and device inventory.
+Get visibility of what's going on on your WIFI/LAN network and enable presence detection of important devices. Schedule scans for devices, port changes and get alerts if unknown devices or changes are found. Write your own [Plugin](https://docs.netalertx.com/PLUGINS#readme) with auto-generated UI and in-build notification system. Build out and easily maintain your network source of truth (NSoT) and device inventory.
 
 ## 📋 Table of Contents
 
@@ -60,14 +60,14 @@ docker compose up --force-recreate --build
 # To customize: edit docker-compose.yaml and run that last command again
 ```
 
-Need help configuring it? Check the [usage guide](https://github.com/jokob-sk/NetAlertX/blob/main/docs/README.md) or [full documentation](https://docs.netalertx.com/).
+Need help configuring it? Check the [usage guide](https://docs.netalertx.com/README) or [full documentation](https://docs.netalertx.com/).
 
 For Home Assistant users: [Click here to add NetAlertX](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Falexbelgium%2Fhassio-addons)
 
 For other install methods, check the [installation docs](#-documentation)
 
 
-| [📑 Docker guide](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DOCKER_INSTALLATION.md) | [🚀 Releases](https://github.com/jokob-sk/NetAlertX/releases) | [📚 Docs](https://docs.netalertx.com/) | [🔌 Plugins](https://github.com/jokob-sk/NetAlertX/blob/main/docs/PLUGINS.md) | [🤖 Ask AI](https://gurubase.io/g/netalertx)
+| [📑 Docker guide](https://docs.netalertx.com/DOCKER_INSTALLATION) | [🚀 Releases](https://github.com/jokob-sk/NetAlertX/releases) | [📚 Docs](https://docs.netalertx.com/) | [🔌 Plugins](https://docs.netalertx.com/PLUGINS) | [🤖 Ask AI](https://gurubase.io/g/netalertx)
 |----------------------| ----------------------|  ----------------------| ----------------------| ----------------------|
 
 ![showcase][showcase]
@@ -88,7 +88,7 @@ For other install methods, check the [installation docs](#-documentation)
 
 ### Scanners
 
-The app scans your network for **New devices**, **New connections** (re-connections), **Disconnections**, **"Always Connected" devices down**, Devices **IP changes** and **Internet IP address changes**. Discovery & scan methods include: **arp-scan**,  **Pi-hole - DB import**,  **Pi-hole - DHCP leases import**, **Generic DHCP leases import**, **UNIFI controller import**, **SNMP-enabled router import**. Check the [Plugins](https://github.com/jokob-sk/NetAlertX/tree/main/docs/PLUGINS.md#readme) docs for a full list of avaliable plugins.
+The app scans your network for **New devices**, **New connections** (re-connections), **Disconnections**, **"Always Connected" devices down**, Devices **IP changes** and **Internet IP address changes**. Discovery & scan methods include: **arp-scan**,  **Pi-hole - DB import**,  **Pi-hole - DHCP leases import**, **Generic DHCP leases import**, **UNIFI controller import**, **SNMP-enabled router import**. Check the [Plugins](https://docs.netalertx.com/PLUGINS#readme) docs for a full list of avaliable plugins.
 
 ### Notification gateways
 
@@ -96,12 +96,12 @@ Send notifications to more than 80+ services, including Telegram via [Apprise](h
 
 ### Integrations and Plugins
 
-Feed your data and device changes into [Home Assistant](https://github.com/jokob-sk/NetAlertX/blob/main/docs/HOME_ASSISTANT.md), read [API endpoints](https://github.com/jokob-sk/NetAlertX/blob/main/docs/API.md), or use [Webhooks](https://github.com/jokob-sk/NetAlertX/blob/main/docs/WEBHOOK_N8N.md) to setup custom automation flows. You can also
-build your own scanners with the [Plugin system](https://github.com/jokob-sk/NetAlertX/tree/main/docs/PLUGINS.md#readme) in as little as [15 minutes](https://www.youtube.com/watch?v=cdbxlwiWhv8).
+Feed your data and device changes into [Home Assistant](https://docs.netalertx.com/HOME_ASSISTANT), read [API endpoints](https://docs.netalertx.com/API), or use [Webhooks](https://docs.netalertx.com/WEBHOOK_N8N) to setup custom automation flows. You can also
+build your own scanners with the [Plugin system](https://docs.netalertx.com/PLUGINS#readme) in as little as [15 minutes](https://www.youtube.com/watch?v=cdbxlwiWhv8).
 
 ### Workflows
 
-The [workflows module](https://github.com/jokob-sk/NetAlertX/blob/main/docs/WORKFLOWS.md) allows to automate repetitive tasks, making network management more efficient. Whether you need to assign newly discovered devices to a specific Network Node, auto-group devices from a given vendor, unarchive a device if detected online, or automatically delete devices, this module provides the flexibility to tailor the automations to your needs.
+The [workflows module](https://docs.netalertx.com/WORKFLOWS) allows to automate repetitive tasks, making network management more efficient. Whether you need to assign newly discovered devices to a specific Network Node, auto-group devices from a given vendor, unarchive a device if detected online, or automatically delete devices, this module provides the flexibility to tailor the automations to your needs.
 
 
 ## 📚 Documentation
@@ -109,13 +109,13 @@ The [workflows module](https://github.com/jokob-sk/NetAlertX/blob/main/docs/WORK
 
 Supported browsers: Chrome, Firefox
 
-- [[Installation] Docker](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DOCKER_INSTALLATION.md)
+- [[Installation] Docker](https://docs.netalertx.com/DOCKER_INSTALLATION)
 - [[Installation] Home Assistant](https://github.com/alexbelgium/hassio-addons/tree/master/netalertx)
-- [[Installation] Bare metal](https://github.com/jokob-sk/NetAlertX/blob/main/docs/HW_INSTALL.md)
+- [[Installation] Bare metal](https://docs.netalertx.com/HW_INSTALL)
 - [[Installation] Unraid App](https://unraid.net/community/apps)
-- [[Setup] Usage and Configuration](https://github.com/jokob-sk/NetAlertX/blob/main/docs/README.md)
-- [[Development] API docs](https://github.com/jokob-sk/NetAlertX/blob/main/docs/API.md)
-- [[Development] Custom Plugins](https://github.com/jokob-sk/NetAlertX/blob/main/docs/PLUGINS_DEV.md)
+- [[Setup] Usage and Configuration](https://docs.netalertx.com/README)
+- [[Development] API docs](https://docs.netalertx.com/API)
+- [[Development] Custom Plugins](https://docs.netalertx.com/PLUGINS_DEV)
 
 ...or explore all the [documentation here](https://docs.netalertx.com/).
 
@@ -143,7 +143,7 @@ A: Yes, but some scanners (e.g. ARP) work best on Ethernet. For Wi-Fi, try SNMP,
 A: No. All scans and data remain local, unless you set up cloud-based notifications.
 
 **Q: Can I use this without Docker?**
-A: Yes! You can install it bare-metal. See the [bare metal installation guide](https://github.com/jokob-sk/NetAlertX/blob/main/docs/HW_INSTALL.md).
+A: Yes! You can install it bare-metal. See the [bare metal installation guide](https://docs.netalertx.com/HW_INSTALL).
 
 **Q: Where is the data stored?**
 A: In the `/data/config` and `/data/db` folders. Back up these folders regularly.
@@ -151,7 +151,7 @@ A: In the `/data/config` and `/data/db` folders. Back up these folders regularly
 
 ## 🐞 Known Issues
 
-- Some scanners (e.g. ARP) may not detect devices on different subnets. See the [Remote networks guide](https://github.com/jokob-sk/NetAlertX/blob/main/docs/REMOTE_NETWORKS.md) for workarounds.
+- Some scanners (e.g. ARP) may not detect devices on different subnets. See the [Remote networks guide](https://docs.netalertx.com/REMOTE_NETWORKS) for workarounds.
 - Wi-Fi-only networks may require alternate scanners for accurate detection.
 - Notification throttling may be needed for large networks to prevent spam.
 - On some systems, elevated permissions (like `CAP_NET_RAW`) may be needed for low-level scanning.

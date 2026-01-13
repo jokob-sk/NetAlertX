@@ -1,5 +1,5 @@
 <span class="helpIcon">
-    <a target="_blank" href="https://github.com/jokob-sk/NetAlertX/blob/main/docs/WORKFLOWS_DEBUGGING.md">
+    <a target="_blank" href="https://docs.netalertx.com/WORKFLOWS_DEBUGGING">
       <i class="fa fa-circle-question"></i>
     </a>
   </span>

@@ -661,7 +661,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "The icon associated with the device. Check the <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/ICONS.md\" target=\"_blank\">documentation on icons</a> for more details.  Database column name: <code>devIcon</code>."
+          "string": "The icon associated with the device. Check the <a href=\"https://docs.netalertx.com/ICONS\" target=\"_blank\">documentation on icons</a> for more details.  Database column name: <code>devIcon</code>."
         }
       ]
     },
@@ -1726,7 +1726,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Custom device properties to store additional data or to perform an action on the device. Check the <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/CUSTOM_PROPERTIES.md\" target=\"_blank\">documentation on Custom Properties</a> for additional details. Database column name: <code>devCustomProps</code>."
+          "string": "Custom device properties to store additional data or to perform an action on the device. Check the <a href=\"https://docs.netalertx.com/CUSTOM_PROPERTIES\" target=\"_blank\">documentation on Custom Properties</a> for additional details. Database column name: <code>devCustomProps</code>."
         }
       ]
     },

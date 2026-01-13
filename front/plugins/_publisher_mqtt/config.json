@@ -312,7 +312,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Enable sending notifications via <a target=\"_blank\" href=\"https://www.home-assistant.io/integrations/mqtt/\">MQTT</a> to your Home Assistance instance. Usually, <code>on_notification</code> is recommended. See the <a target=\"_blank\" href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/HOME_ASSISTANT.md\">NetAlertX Home Assistant guide</a> for details."
+          "string": "Enable sending notifications via <a target=\"_blank\" href=\"https://www.home-assistant.io/integrations/mqtt/\">MQTT</a> to your Home Assistance instance. Usually, <code>on_notification</code> is recommended. See the <a target=\"_blank\" href=\"https://docs.netalertx.com/HOME_ASSISTANT\">NetAlertX Home Assistant guide</a> for details."
         },
         {
           "language_code": "es_es",

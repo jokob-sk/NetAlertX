@@ -111,7 +111,7 @@ function getDeviceData() {
               // Group for device main information
               DevDetail_MainInfo_Title: {
                 data: ["devMac", "devLastIP", "devName", "devOwner", "devType", "devVendor", "devGroup", "devIcon", "devLocation", "devComments"],
-                docs: "https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEVICE_MANAGEMENT.md",
+                docs: "https://docs.netalertx.com/DEVICE_MANAGEMENT",
                 iconClass: "fa fa-pencil",
                 inputGroupClasses: "field-group main-group col-lg-4 col-sm-6 col-xs-12",
                 labelClasses: "col-sm-4 col-xs-12 control-label",
@@ -120,7 +120,7 @@ function getDeviceData() {
               // Group for event and alert settings
               DevDetail_EveandAl_Title: {
                 data: ["devAlertEvents", "devAlertDown", "devSkipRepeated", "devReqNicsOnline", "devChildrenNicsDynamic"],
-                docs: "https://github.com/jokob-sk/NetAlertX/blob/main/docs/NOTIFICATIONS.md",
+                docs: "https://docs.netalertx.com/NOTIFICATIONS",
                 iconClass: "fa fa-bell",
                 inputGroupClasses: "field-group alert-group col-lg-4 col-sm-6 col-xs-12",
                 labelClasses: "col-sm-4 col-xs-12 control-label",
@@ -129,7 +129,7 @@ function getDeviceData() {
               // Group for network details
               DevDetail_MainInfo_Network_Title: {
                 data: ["devParentMAC", "devParentRelType", "devParentPort", "devSSID", "devSite", "devSyncHubNode"],
-                docs: "https://github.com/jokob-sk/NetAlertX/blob/main/docs/NETWORK_TREE.md",
+                docs: "https://docs.netalertx.com/NETWORK_TREE",
                 iconClass: "fa fa-sitemap fa-rotate-270",
                 inputGroupClasses: "field-group network-group col-lg-4 col-sm-6 col-xs-12",
                 labelClasses: "col-sm-4 col-xs-12 control-label",
@@ -138,7 +138,7 @@ function getDeviceData() {
               // Group for other fields like static IP, archived status, etc.
               DevDetail_DisplayFields_Title: {
                 data: ["devStaticIP", "devIsNew", "devFavorite", "devIsArchived"],
-                docs: "https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEVICE_DISPLAY_SETTINGS.md",
+                docs: "https://docs.netalertx.com/DEVICE_DISPLAY_SETTINGS",
                 iconClass: "fa fa-list-check",
                 inputGroupClasses: "field-group display-group col-lg-4 col-sm-6 col-xs-12",
                 labelClasses: "col-sm-4 col-xs-12 control-label",
@@ -147,7 +147,7 @@ function getDeviceData() {
               // Group for session information
               DevDetail_SessionInfo_Title: {
                 data: ["devStatus", "devLastConnection", "devFirstConnection", "devFQDN"],
-                docs: "https://github.com/jokob-sk/NetAlertX/blob/main/docs/SESSION_INFO.md",
+                docs: "https://docs.netalertx.com/SESSION_INFO",
                 iconClass: "fa fa-calendar",
                 inputGroupClasses: "field-group session-group col-lg-4 col-sm-6 col-xs-12",
                 labelClasses: "col-sm-4 col-xs-12 control-label",
@@ -156,7 +156,7 @@ function getDeviceData() {
               // Group for Children.
               DevDetail_Children_Title: {
                 data: ["devChildrenDynamic"],
-                docs: "https://github.com/jokob-sk/NetAlertX/blob/main/docs/NETWORK_TREE.md",
+                docs: "https://docs.netalertx.com/NETWORK_TREE",
                 iconClass: "fa fa-list",
                 inputGroupClasses: "field-group cutprop-group col-lg-6 col-sm-12 col-xs-12",
                 labelClasses: "col-sm-12 col-xs-12 control-label",
@@ -165,7 +165,7 @@ function getDeviceData() {
               // Group for Custom properties.
               DevDetail_CustomProperties_Title: {
                 data: ["devCustomProps"],
-                docs: "https://github.com/jokob-sk/NetAlertX/blob/main/docs/CUSTOM_PROPERTIES.md",
+                docs: "https://docs.netalertx.com/CUSTOM_PROPERTIES",
                 iconClass: "fa fa-list",
                 inputGroupClasses: "field-group cutprop-group col-lg-6 col-sm-12 col-xs-12",
                 labelClasses: "col-sm-12 col-xs-12 control-label",
@@ -223,7 +223,7 @@ function getDeviceData() {
                   if (setting.setKey == "NEWDEV_devMac" && deviceData["devIsRandomMAC"] == true) {
                     inlineControl += `<span class="input-group-addon pointer"
                         title="${getString("RandomMAC_hover")}">
-                        <a href="https://github.com/jokob-sk/NetAlertX/blob/main/docs/RANDOM_MAC.md" target="_blank">
+                        <a href="https://docs.netalertx.com/RANDOM_MAC" target="_blank">
                           <i class="fa-solid fa-shuffle"></i>
                         </a>
                       </span>`;

@@ -1,7 +1,7 @@
 {
     "API_CUSTOM_SQL_description": "يمكنك تحديد استعلام SQL مخصص يقوم بإنشاء ملف JSON، ثم يتم عرضه عبر <a href=\"/php/server/query_json.php?file=table_custom_endpoint.json\" target=\"_blank\"><code>نقطة نهاية ملف table_custom_endpoint.json</code></a>.",
     "API_CUSTOM_SQL_name": "نقطة نهاية مخصصة",
-    "API_TOKEN_description": "رمز API للتواصل الآمن. قم بإنشاء واحد أو أدخل أي قيمة. يتم إرساله في رأس الطلب ويُستخدم في إضافة <code>SYNC</code>، خادم GraphQL ونقاط نهاية API الأخرى. يمكنك استخدام نقاط نهاية API لإنشاء تكاملات مخصصة كما هو موضح في <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/API.md\" target=\"_blank\">توثيق API</a>.",
+    "API_TOKEN_description": "رمز API للتواصل الآمن. قم بإنشاء واحد أو أدخل أي قيمة. يتم إرساله في رأس الطلب ويُستخدم في إضافة <code>SYNC</code>، خادم GraphQL ونقاط نهاية API الأخرى. يمكنك استخدام نقاط نهاية API لإنشاء تكاملات مخصصة كما هو موضح في <a href=\"https://docs.netalertx.com/API\" target=\"_blank\">توثيق API</a>.",
     "API_TOKEN_name": "رمز API",
     "API_display_name": "API",
     "API_icon": "<i class=\"fa fa-arrow-down-up-across-line\"></i>",
