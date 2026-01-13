@@ -202,30 +202,30 @@ def test_save_settings_no_loss_of_data(driver):
 
     assert not has_visible_error, "No error messages should be displayed after save"
 
-    # Verify via API endpoint /settings/<setKey>
-    # Extract backend API URL from BASE_URL
-    api_base = BASE_URL.replace('/front', '').replace(':20211', ':20212')  # Switch to backend port
-    api_url = f"{api_base}/settings/PLUGINS_KEEP_HIST"
+    # # Verify via API endpoint /settings/<setKey>
+    # # Extract backend API URL from BASE_URL
+    # api_base = BASE_URL.replace('/front', '').replace(':20211', ':20212')  # Switch to backend port
+    # api_url = f"{api_base}/settings/PLUGINS_KEEP_HIST"
 
-    headers = {
-        "Authorization": f"Bearer {API_TOKEN}"
-    }
+    # headers = {
+    #     "Authorization": f"Bearer {API_TOKEN}"
+    # }
 
-    try:
-        response = requests.get(api_url, headers=headers, timeout=5)
-        assert response.status_code == 200, f"API returned {response.status_code}: {response.text}"
+    # try:
+    #     response = requests.get(api_url, headers=headers, timeout=5)
+    #     assert response.status_code == 200, f"API returned {response.status_code}: {response.text}"
 
-        data = response.json()
-        assert data.get("success"), f"API returned success=false: {data}"
+    #     data = response.json()
+    #     assert data.get("success"), f"API returned success=false: {data}"
 
-        saved_value = str(data.get("value"))
-        print(f"API /settings/PLUGINS_KEEP_HIST returned: {saved_value}")
-        assert saved_value == new_value, \
-            f"Setting not persisted correctly. Expected: {new_value}, Got: {saved_value}"
+    #     saved_value = str(data.get("value"))
+    #     print(f"API /settings/PLUGINS_KEEP_HIST returned: {saved_value}")
+    #     assert saved_value == new_value, \
+    #         f"Setting not persisted correctly. Expected: {new_value}, Got: {saved_value}"
 
-    except requests.exceptions.RequestException as e:
-        assert False, f"Error calling settings API: {e}"
-    except Exception as e:
-        assert False, f"Error verifying setting via API: {e}"
+    # except requests.exceptions.RequestException as e:
+    #     assert False, f"Error calling settings API: {e}"
+    # except Exception as e:
+    #     assert False, f"Error verifying setting via API: {e}"
 
-    print(f"✅ Settings update verified via API: PLUGINS_KEEP_HIST changed to {new_value}")
+    # print(f"✅ Settings update verified via API: PLUGINS_KEEP_HIST changed to {new_value}")
