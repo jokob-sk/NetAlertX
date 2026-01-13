@@ -6,12 +6,27 @@ hide:
 
 # NetAlertX Documentation
 
-<div class="grid cards" markdown>
+<div class="grid cards" markdown="1">
 
--   🚨 **Network alerts**
--   🌐 **Network discovery**
--   🔌 **Broad set of Plugins**
--   🏠 **Home Assistant support**
+- type: card
+  title: "🚨 Network Alerts"
+  text: "Real-time notifications for devices and network events."
+  icon: bell
+
+- type: card
+  title: "🌐 Network Discovery"
+  text: "Automatic detection of devices on your network."
+  icon: network-wired
+
+- type: card
+  title: "🔌 Broad Set of Plugins"
+  text: "Supports over 80 integrations via Apprise and more."
+  icon: plug
+
+- type: card
+  title: "🏠 Home Assistant Support"
+  text: "Full integration for smart home automation."
+  icon: home
 
 </div>
 
