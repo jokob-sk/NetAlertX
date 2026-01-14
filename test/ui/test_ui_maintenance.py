@@ -8,10 +8,12 @@ import time
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+import pytest
 
 from test_helpers import BASE_URL, api_get
 
 
+@pytest.mark.ui
 def test_maintenance_page_loads(driver):
     """Test: Maintenance page loads successfully"""
     driver.get(f"{BASE_URL}/maintenance.php")
@@ -22,6 +24,7 @@ def test_maintenance_page_loads(driver):
     assert "Maintenance" in driver.page_source, "Page should show Maintenance content"
 
 
+@pytest.mark.ui
 def test_export_buttons_present(driver):
     """Test: Export buttons are visible"""
     driver.get(f"{BASE_URL}/maintenance.php")
@@ -30,6 +33,7 @@ def test_export_buttons_present(driver):
     assert len(export_btn) > 0, "Export CSV button should be present"
 
 
+@pytest.mark.ui
 def test_export_csv_button_works(driver):
     """Test: CSV export button triggers download"""
     import os
@@ -82,6 +86,7 @@ def test_export_csv_button_works(driver):
         assert True, "Export button not found on this page"
 
 
+@pytest.mark.ui
 def test_import_section_present(driver):
     """Test: Import section is rendered or page loads without errors"""
     driver.get(f"{BASE_URL}/maintenance.php")
@@ -91,6 +96,7 @@ def test_import_section_present(driver):
     assert "maintenance" in driver.page_source.lower() or len(driver.page_source) > 100, "Page should load content"
 
 
+@pytest.mark.ui
 def test_delete_buttons_present(driver):
     """Test: Delete operation buttons are visible (at least some)"""
     driver.get(f"{BASE_URL}/maintenance.php")
@@ -109,6 +115,7 @@ def test_delete_buttons_present(driver):
     assert sum(found) >= 2, f"At least 2 delete buttons should be present, found: {sum(found)}/{len(buttons)}"
 
 
+@pytest.mark.ui
 def test_csv_export_api(api_token):
     """Test: CSV export endpoint returns data"""
     response = api_get("/devices/export/csv", api_token)

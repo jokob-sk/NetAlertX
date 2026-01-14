@@ -8,6 +8,7 @@ import time
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+import pytest
 
 import sys
 import os
@@ -18,6 +19,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 from test_helpers import BASE_URL, API_BASE_URL, api_get   # noqa: E402 [flake8 lint suppression]
 
 
+@pytest.mark.ui
 def test_device_list_page_loads(driver):
     """Test: Device list page loads successfully"""
     driver.get(f"{BASE_URL}/devices.php")
@@ -28,6 +30,7 @@ def test_device_list_page_loads(driver):
     assert "device" in driver.page_source.lower(), "Page should contain device content"
 
 
+@pytest.mark.ui
 def test_devices_table_present(driver):
     """Test: Devices table is rendered"""
     driver.get(f"{BASE_URL}/devices.php")
@@ -36,6 +39,7 @@ def test_devices_table_present(driver):
     assert len(table) > 0, "Devices table should be present"
 
 
+@pytest.mark.ui
 def test_device_search_works(driver):
     """Test: Device search/filter functionality works"""
     driver.get(f"{BASE_URL}/devices.php")
@@ -60,6 +64,7 @@ def test_device_search_works(driver):
         assert len(driver.page_source) > 100, "Page should load content"
 
 
+@pytest.mark.ui
 def test_devices_api(api_token):
     """Test: Devices API endpoint returns data"""
     response = api_get("/devices", api_token)
@@ -69,6 +74,7 @@ def test_devices_api(api_token):
     assert isinstance(data, (list, dict)), "API should return list or dict"
 
 
+@pytest.mark.ui
 def test_devices_totals_api(api_token):
     """Test: Devices totals API endpoint works"""
     response = api_get("/devices/totals", api_token)
@@ -79,6 +85,7 @@ def test_devices_totals_api(api_token):
     assert len(data) > 0, "Response should contain data"
 
 
+@pytest.mark.ui
 def test_add_device_with_generated_mac_ip(driver, api_token):
     """Add a new device using the UI, always clicking Generate MAC/IP buttons"""
     import requests

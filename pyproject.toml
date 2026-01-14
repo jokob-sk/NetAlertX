@@ -8,6 +8,7 @@ markers = [
 	"docker: requires docker socket and elevated container permissions",
 	"compose: Tests docker compose files. Slow.",
 	"feature_complete: extended coverage suite not run by default",
+	"ui: UI tests verifying frontend functionality",
 ]
 [tool.ruff]
 line-length = 180
