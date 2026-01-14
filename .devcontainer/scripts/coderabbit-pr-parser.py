@@ -91,9 +91,8 @@ def extract_ai_tasks(text):
         parts = re.split(split_pattern, ai_text)
 
         if len(parts) > 1:
-            for i in range(1, len(parts), 2):
-                header = parts[i].strip()
-                content = parts[i + 1]
+            for header, content in zip(parts[1::2], parts[2::2]):
+                header = header.strip()
                 # Split by bullet points if they exist, or take the whole block
                 # Looking for newlines followed by a dash or just the content
                 cleaned_sub = clean_block(content)

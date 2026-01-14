@@ -1684,7 +1684,11 @@ def start_server(graphql_port, app_state):
         # Start Flask app in a separate thread
         thread = threading.Thread(
             target=lambda: app.run(
-                host="0.0.0.0", port=graphql_port, debug=True, use_reloader=False, threaded=True
+                host="0.0.0.0",
+                port=graphql_port,
+                debug=get_setting_value("FLASK_DEBUG", False),
+                use_reloader=False,
+                threaded=True,
             )
         )
         thread.start()
