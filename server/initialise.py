@@ -374,6 +374,15 @@ def importConfigs(pm, db, all_plugins):
         "[]",
         "General",
     )
+    conf.FLASK_DEBUG = ccd(
+        "FLASK_DEBUG",
+        False,
+        c_d,
+        "Flask debug",
+        '{"dataType":"boolean", "elements": [{"elementType" : "input", "elementOptions" : [{"type": "checkbox"}] ,"transformers": []}]}',
+        "[]",
+        "General",
+    )
     conf.API_TOKEN = ccd(
         "API_TOKEN",
         "t_" + generate_random_string(20),
