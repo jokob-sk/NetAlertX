@@ -204,13 +204,14 @@ _openapi_spec_cache: Optional[Dict[str, Any]] = None
 _spec_cache_lock = threading.Lock()
 
 
-def get_openapi_spec(force_refresh: bool = False, servers: Optional[List[Dict[str, str]]] = None) -> Dict[str, Any]:
+def get_openapi_spec(force_refresh: bool = False, servers: Optional[List[Dict[str, str]]] = None, flask_app: Optional[Any] = None) -> Dict[str, Any]:
     """
     Get the OpenAPI specification, using cache when available.
 
     Args:
         force_refresh: If True, regenerate spec even if cached
         servers: Optional custom servers list
+        flask_app: Optional Flask app for dynamic introspection
 
     Returns:
         OpenAPI specification dictionary
@@ -220,14 +221,14 @@ def get_openapi_spec(force_refresh: bool = False, servers: Optional[List[Dict[st
     with _spec_cache_lock:
         # If custom servers are provided, we always regenerate or at least update the cached one
         if servers:
-            spec = generate_openapi_spec(servers=servers)
+            spec = generate_openapi_spec(servers=servers, flask_app=flask_app)
             # We don't necessarily want to cache a prefixed version as the "main" one
             # if multiple prefixes are used, so we just return it.
             return spec
 
         if _openapi_spec_cache is None or force_refresh:
             try:
-                _openapi_spec_cache = generate_openapi_spec()
+                _openapi_spec_cache = generate_openapi_spec(flask_app=flask_app)
                 mylog("verbose", ["[MCP] Generated OpenAPI spec from registry"])
             except Exception as e:
                 mylog("none", [f"[MCP] Failed to generate OpenAPI spec: {e}"])
@@ -248,6 +249,7 @@ def openapi_spec():
     Returns:
         flask.Response: JSON response containing the OpenAPI spec.
     """
+    from flask import current_app
     mylog("verbose", ["[MCP] OpenAPI spec requested"])
 
     # Detect base path from proxy headers
@@ -261,7 +263,7 @@ def openapi_spec():
     if prefix:
         servers = [{"url": prefix, "description": "Proxied server"}]
 
-    spec = get_openapi_spec(servers=servers)
+    spec = get_openapi_spec(servers=servers, flask_app=current_app)
     return jsonify(spec)
 
 
@@ -438,7 +440,8 @@ def process_mcp_request(data: Dict[str, Any], session_id: Optional[str] = None) 
     # tools/list - List available tools
     # -------------------------------------------------------------------------
     if method == "tools/list":
-        spec = get_openapi_spec()
+        from flask import current_app
+        spec = get_openapi_spec(flask_app=current_app)
         tools = map_openapi_to_mcp_tools(spec)
 
         return {

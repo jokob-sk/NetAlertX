@@ -31,14 +31,164 @@ Usage:
 from __future__ import annotations
 
 import threading
-from typing import Optional, Type, Any, Dict, List, Literal
-from pydantic import BaseModel
+import json
+from functools import wraps
+from typing import Optional, Type, Any, Dict, List, Literal, Callable
+from flask import request, jsonify
+from pydantic import BaseModel, ValidationError
+from werkzeug.exceptions import BadRequest
+import graphene
+
+from logger import mylog
 
 # Thread-safe registry
 _registry: List[Dict[str, Any]] = []
 _registry_lock = threading.Lock()
 _operation_ids: set = set()
 _disabled_tools: set = set()
+
+# =============================================================================
+# VALIDATION DECORATOR (Merged from validation.py)
+# =============================================================================
+
+def validate_request(
+    operation_id: str,
+    summary: str,
+    description: str,
+    request_model: Optional[Type[BaseModel]] = None,
+    response_model: Optional[Type[BaseModel]] = None,
+    tags: Optional[list[str]] = None,
+    path_params: Optional[list[dict]] = None,
+    query_params: Optional[list[dict]] = None,
+    validation_error_code: int = 422
+):
+    """
+    Decorator to register a Flask route with the OpenAPI registry and validate incoming requests.
+
+    Features:
+    - Auto-registers the endpoint with the OpenAPI spec generator.
+    - Validates JSON body against `request_model` (for POST/PUT).
+    - Injects the validated Pydantic model as the first argument to the view function.
+    - Returns 422 (default) if validation fails.
+    """
+    
+    def decorator(f: Callable) -> Callable:
+        f._openapi_metadata = {
+            "operation_id": operation_id,
+            "summary": summary,
+            "description": description,
+            "request_model": request_model,
+            "response_model": response_model,
+            "tags": tags,
+            "path_params": path_params,
+            "query_params": query_params
+        }
+
+        @wraps(f)
+        def wrapper(*args, **kwargs):
+            validated_instance = None
+
+            if request_model:
+                if request.method in ["POST", "PUT", "PATCH"]:
+                    if not request.is_json and request.content_length:
+                        pass
+
+                    try:
+                        data = request.get_json() or {}
+                        validated_instance = request_model(**data)
+                    except ValidationError as e:
+                        mylog("verbose", [f"[Validation] Error for {operation_id}: {e}"])
+                        
+                        # Construct a legacy-compatible error message if possible
+                        error_msg = "Validation Error"
+                        if e.errors():
+                            err = e.errors()[0]
+                            if err['type'] == 'missing':
+                                error_msg = f"Missing required '{err['loc'][0]}'"
+                            else:
+                                error_msg = f"Validation Error: {err['msg']}"
+
+                        return jsonify({
+                            "success": False,
+                            "error": error_msg,
+                            "details": json.loads(e.json())
+                        }), validation_error_code
+                    except BadRequest as e:
+                        mylog("verbose", [f"[Validation] Invalid JSON for {operation_id}: {e}"])
+                        return jsonify({
+                            "success": False,
+                            "error": "Invalid JSON",
+                            "message": "Request body must be valid JSON"
+                        }), 400
+                    except Exception as e:
+                        mylog("verbose", [f"[Validation] Malformed request for {operation_id}: {e}"])
+                        return jsonify({
+                            "success": False,
+                            "error": "Invalid Request",
+                            "message": "Unable to process request body"
+                        }), 400
+
+            if validated_instance:
+                kwargs['payload'] = validated_instance
+
+            try:
+                return f(*args, **kwargs)
+            except TypeError as e:
+                if "got an unexpected keyword argument 'payload'" in str(e):
+                    mylog("none", [f"[Validation] Endpoint {operation_id} does not accept 'payload' argument!"])
+                    if 'payload' in kwargs:
+                        del kwargs['payload']
+                    return f(*args, **kwargs)
+                raise e
+
+        return wrapper
+    return decorator
+_registry: List[Dict[str, Any]] = []
+_registry_lock = threading.Lock()
+_operation_ids: set = set()
+_disabled_tools: set = set()
+
+
+def introspect_graphql_schema(schema: graphene.Schema):
+    """
+    Introspect the GraphQL schema and register endpoints in the OpenAPI registry.
+    This bridges the 'living code' (GraphQL) to the OpenAPI spec.
+    """
+    # Graphene schema introspection
+    graphql_schema = schema.graphql_schema
+    query_type = graphql_schema.query_type
+
+    if not query_type:
+        return
+
+    # We register the main /graphql endpoint once
+    register_tool(
+        path="/graphql",
+        method="POST",
+        operation_id="graphql_query",
+        summary="GraphQL Endpoint",
+        description="Execute arbitrary GraphQL queries against the system schema.",
+        tags=["graphql"]
+    )
+
+    # For MCP and simple REST clients, we expose Query fields as individual endpoints
+    for field_name, field in query_type.fields.items():
+        path = f"/graphql/{field_name}"
+        operation_id = f"gql_query_{field_name}"
+        
+        # Extract description from Graphene field
+        description = field.description or f"GraphQL Query for {field_name}"
+        
+        # Register the tool
+        register_tool(
+            path=path,
+            method="GET",
+            operation_id=operation_id,
+            summary=f"Query {field_name}",
+            description=description,
+            tags=["graphql"]
+        )
+
 
 
 class DuplicateOperationIdError(Exception):
@@ -216,12 +366,43 @@ def _build_parameters(entry: Dict[str, Any]) -> List[Dict[str, Any]]:
     return parameters
 
 
-def _build_request_body(model: Optional[Type[BaseModel]]) -> Optional[Dict[str, Any]]:
+def _extract_definitions(schema: Dict[str, Any], definitions: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Recursively extract $defs from a schema and move them to the definitions dict.
+    Also rewrite $ref to point to #/components/schemas/.
+    """
+    if not isinstance(schema, dict):
+        return schema
+
+    # Extract definitions
+    if "$defs" in schema:
+        for name, definition in schema["$defs"].items():
+            # Recursively process the definition itself before adding it
+            definitions[name] = _extract_definitions(definition, definitions)
+        del schema["$defs"]
+
+    # Rewrite references
+    if "$ref" in schema and schema["$ref"].startswith("#/$defs/"):
+        ref_name = schema["$ref"].split("/")[-1]
+        schema["$ref"] = f"#/components/schemas/{ref_name}"
+
+    # Recursively process properties
+    for key, value in schema.items():
+        if isinstance(value, dict):
+            schema[key] = _extract_definitions(value, definitions)
+        elif isinstance(value, list):
+            schema[key] = [_extract_definitions(item, definitions) for item in value]
+
+    return schema
+
+
+def _build_request_body(model: Optional[Type[BaseModel]], definitions: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     """Build OpenAPI requestBody from Pydantic model."""
     if model is None:
         return None
 
     schema = pydantic_to_json_schema(model)
+    schema = _extract_definitions(schema, definitions)
 
     return {
         "required": True,
@@ -231,6 +412,62 @@ def _build_request_body(model: Optional[Type[BaseModel]]) -> Optional[Dict[str, 
             }
         }
     }
+
+
+def _build_responses(
+    response_model: Optional[Type[BaseModel]], definitions: Dict[str, Any]
+) -> Dict[str, Any]:
+    """Build OpenAPI responses object."""
+    responses = {}
+
+    # Success response (200)
+    if response_model:
+        # Strip validation from response schema to save tokens
+        schema = _strip_validation(pydantic_to_json_schema(response_model))
+        schema = _extract_definitions(schema, definitions)
+        responses["200"] = {
+            "description": "Successful response",
+            "content": {
+                "application/json": {
+                    "schema": schema
+                }
+            }
+        }
+    else:
+        responses["200"] = {
+            "description": "Successful response",
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "success": {"type": "boolean"},
+                            "message": {"type": "string"}
+                        }
+                    }
+                }
+            }
+        }
+
+    # Standard error responses - MINIMIZED context
+    # Annotate that these errors can occur, but provide no schema/content to save tokens.
+    # The LLM knows what "Bad Request" or "Not Found" means.
+    error_codes = {
+        "400": "Bad Request",
+        "401": "Unauthorized",
+        "403": "Forbidden",
+        "404": "Not Found",
+        "422": "Validation Error",
+        "500": "Internal Server Error"
+    }
+
+    for code, desc in error_codes.items():
+        responses[code] = {
+            "description": desc
+            # No "content" schema provided
+        }
+
+    return responses
 
 
 def _strip_validation(schema: Dict[str, Any]) -> Dict[str, Any]:
@@ -277,61 +514,6 @@ def _strip_validation(schema: Dict[str, Any]) -> Dict[str, Any]:
     return clean_schema
 
 
-def _build_responses(
-    response_model: Optional[Type[BaseModel]]
-) -> Dict[str, Any]:
-    """Build OpenAPI responses object."""
-    responses = {}
-
-    # Success response (200)
-    if response_model:
-        # Strip validation from response schema to save tokens
-        schema = _strip_validation(pydantic_to_json_schema(response_model))
-        responses["200"] = {
-            "description": "Successful response",
-            "content": {
-                "application/json": {
-                    "schema": schema
-                }
-            }
-        }
-    else:
-        responses["200"] = {
-            "description": "Successful response",
-            "content": {
-                "application/json": {
-                    "schema": {
-                        "type": "object",
-                        "properties": {
-                            "success": {"type": "boolean"},
-                            "message": {"type": "string"}
-                        }
-                    }
-                }
-            }
-        }
-
-    # Standard error responses - MINIMIZED context
-    # Annotate that these errors can occur, but provide no schema/content to save tokens.
-    # The LLM knows what "Bad Request" or "Not Found" means.
-    error_codes = {
-        "400": "Bad Request",
-        "401": "Unauthorized",
-        "403": "Forbidden",
-        "404": "Not Found",
-        "422": "Validation Error",
-        "500": "Internal Server Error"
-    }
-
-    for code, desc in error_codes.items():
-        responses[code] = {
-            "description": desc
-            # No "content" schema provided
-        }
-
-    return responses
-
-
 def _flatten_defs(spec: Dict[str, Any]) -> None:
     """
     Experimental: Flatten $defs if they are single-use or small.
@@ -342,13 +524,96 @@ def _flatten_defs(spec: Dict[str, Any]) -> None:
     pass
 
 
+def introspect_flask_app(app: Any):
+    """
+    Introspect the Flask application to find routes decorated with @validate_request
+    and register them in the OpenAPI registry.
+    """
+    registered_ops = set()
+    for rule in app.url_map.iter_rules():
+        view_func = app.view_functions.get(rule.endpoint)
+        if not view_func:
+            continue
+            
+        # Check for our decorator's metadata
+        metadata = getattr(view_func, "_openapi_metadata", None)
+        if not metadata:
+            # Fallback for wrapped functions
+            if hasattr(view_func, "__wrapped__"):
+                metadata = getattr(view_func.__wrapped__, "_openapi_metadata", None)
+                
+        if metadata:
+            op_id = metadata["operation_id"]
+            
+            # Register the tool with real path and method from Flask
+            for method in rule.methods:
+                if method in ("OPTIONS", "HEAD"):
+                    continue
+                
+                # Create a unique key for this path/method/op combination if needed,
+                # but operationId must be unique globally. 
+                # If the same function is mounted on multiple paths, we append a suffix
+                path = str(rule).replace("<", "{").replace(">", "}")
+                
+                # Check if this operation (path + method) is already registered
+                op_key = f"{method}:{path}"
+                if op_key in registered_ops:
+                    continue
+                
+                # Determine tags
+                tags = metadata.get("tags") or ["rest"]
+                if path.startswith("/mcp/"):
+                    # Move specific tags to secondary position or just add MCP
+                    if "rest" in tags:
+                        tags.remove("rest")
+                    if "mcp" not in tags:
+                        tags.append("mcp")
+                
+                # Ensure unique operationId
+                unique_op_id = op_id
+                count = 1
+                while unique_op_id in _operation_ids:
+                    unique_op_id = f"{op_id}_{count}"
+                    count += 1
+                    
+                register_tool(
+                    path=path,
+                    method=method,
+                    operation_id=unique_op_id,
+                    summary=metadata["summary"],
+                    description=metadata["description"],
+                    request_model=metadata.get("request_model"),
+                    response_model=metadata.get("response_model"),
+                    path_params=metadata.get("path_params"),
+                    query_params=metadata.get("query_params"),
+                    tags=tags
+                )
+                registered_ops.add(op_key)
+
 def generate_openapi_spec(
     title: str = "NetAlertX API",
     version: str = "2.0.0",
     description: str = "NetAlertX Network Monitoring API - MCP Compatible",
-    servers: Optional[List[Dict[str, str]]] = None
+    servers: Optional[List[Dict[str, str]]] = None,
+    flask_app: Optional[Any] = None
 ) -> Dict[str, Any]:
     """Assemble a complete OpenAPI specification from the registered endpoints."""
+    
+    # If no app provided and registry is empty, try to use the one from api_server_start
+    if not flask_app and not _registry:
+        try:
+            from .api_server_start import app as start_app
+            flask_app = start_app
+        except (ImportError, AttributeError):
+            pass
+
+    # If we are in "dynamic mode", we rebuild the registry from code
+    if flask_app:
+        from .graphql_endpoint import devicesSchema
+        clear_registry()
+        introspect_graphql_schema(devicesSchema)
+        introspect_flask_app(flask_app)
+
     spec = {
         "openapi": "3.1.0",
         "info": {
@@ -371,11 +636,14 @@ def generate_openapi_spec(
                     "scheme": "bearer",
                     "description": "API token from NetAlertX settings (API_TOKEN)"
                 }
-            }
+            },
+            "schemas": {}
         },
         "paths": {},
         "tags": []
     }
+
+    definitions = {}
 
     # Collect unique tags
     tag_set = set()
@@ -410,13 +678,13 @@ def generate_openapi_spec(
 
             # Add request body for POST/PUT/PATCH
             if method in ("post", "put", "patch") and entry.get("request_model"):
-                request_body = _build_request_body(entry["request_model"])
+                request_body = _build_request_body(entry["request_model"], definitions)
                 if request_body:
                     operation["requestBody"] = request_body
 
             # Add responses
             operation["responses"] = _build_responses(
-                entry.get("response_model")
+                entry.get("response_model"), definitions
             )
 
             spec["paths"][path][method] = operation
@@ -424,6 +692,8 @@ def generate_openapi_spec(
             # Collect tags
             for tag in entry["tags"]:
                 tag_set.add(tag)
+
+    spec["components"]["schemas"] = definitions
 
     # Build tags array with descriptions
     tag_descriptions = {
@@ -446,823 +716,8 @@ def generate_openapi_spec(
     return spec
 
 
-# =============================================================================
-# REGISTER ALL NETALERTX ENDPOINTS
-# =============================================================================
-
-def _register_all_endpoints():
-    """Register all NetAlertX API endpoints."""
-    # Import schemas here to avoid circular imports
-    from .schemas import (
-        DeviceSearchRequest, DeviceSearchResponse,
-        DeviceListRequest, DeviceListResponse,
-        DeviceInfo, DeviceExportResponse,
-        GetDeviceResponse, DeviceUpdateRequest,
-        SetDeviceAliasRequest, BaseResponse,
-        DeviceTotalsResponse, DeleteDevicesRequest,
-        DeviceImportRequest, DeviceImportResponse,
-        UpdateDeviceColumnRequest, CopyDeviceRequest,
-        TriggerScanRequest, TriggerScanResponse,
-        OpenPortsRequest, OpenPortsResponse,
-        WakeOnLanRequest, WakeOnLanResponse,
-        TracerouteRequest, TracerouteResponse,
-        NmapScanRequest, NslookupRequest,
-        RecentEventsResponse, LastEventsResponse,
-        NetworkTopologyResponse, CreateEventRequest,
-        CreateSessionRequest, DeleteSessionRequest,
-        CreateNotificationRequest, SyncPushRequest,
-        SyncPullResponse, DbQueryRequest,
-        DbQueryResponse, DbQueryUpdateRequest,
-        DbQueryDeleteRequest, AddToQueueRequest,
-        GetSettingResponse
-    )
-
-    # -------------------------------------------------------------------------
-    # DEVICES
-    # -------------------------------------------------------------------------
-    register_tool(
-        path="/devices/search",
-        method="POST",
-        operation_id="search_devices",
-        summary="Search Devices",
-        description="Search for devices based on various criteria like name, IP, MAC, or vendor. "
-                    "Returns matching devices with full details.",
-        request_model=DeviceSearchRequest,
-        response_model=DeviceSearchResponse,
-        tags=["devices"]
-    )
-
-    register_tool(
-        path="/devices/by-status",
-        method="POST",
-        operation_id="list_devices_by_status",
-        summary="List Devices by Status",
-        description="List devices filtered by their online/offline status. "
-                    "Accepts optional 'status' field (online/offline/all).",
-        request_model=DeviceListRequest,
-        response_model=DeviceListResponse,
-        tags=["devices"]
-    )
-
-    register_tool(
-        path="/device/{mac}",
-        method="GET",
-        operation_id="get_device_info",
-        summary="Get Device Info",
-        description="Retrieve detailed information about a specific device by MAC address.",
-        path_params=[{
-            "name": "mac",
-            "description": "Device MAC address (e.g., 00:11:22:33:44:55)",
-            "schema": {"type": "string", "pattern": "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$"}
-        }],
-        response_model=DeviceInfo,
-        tags=["devices"]
-    )
-
-    register_tool(
-        path="/device/{mac}",
-        method="POST",
-        operation_id="update_device",
-        summary="Update Device",
-        description="Update a device's fields or create a new one if createNew is set to True.",
-        path_params=[{
-            "name": "mac",
-            "description": "Device MAC address",
-            "schema": {"type": "string"}
-        }],
-        request_model=DeviceUpdateRequest,
-        response_model=BaseResponse,
-        tags=["devices"]
-    )
-
-    register_tool(
-        path="/device/{mac}/delete",
-        method="DELETE",
-        operation_id="delete_device",
-        summary="Delete Device",
-        description="Delete a device by MAC address.",
-        path_params=[{
-            "name": "mac",
-            "description": "Device MAC address",
-            "schema": {"type": "string"}
-        }],
-        response_model=BaseResponse,
-        tags=["devices"]
-    )
-
-    register_tool(
-        path="/device/{mac}/events/delete",
-        method="DELETE",
-        operation_id="delete_device_events",
-        summary="Delete Device Events",
-        description="Delete all events associated with a device.",
-        path_params=[{
-            "name": "mac",
-            "description": "Device MAC address",
-            "schema": {"type": "string"}
-        }],
-        response_model=BaseResponse,
-        tags=["devices"]
-    )
-
-    register_tool(
-        path="/device/{mac}/reset-props",
-        method="POST",
-        operation_id="reset_device_props",
-        summary="Reset Device Props",
-        description="Reset custom properties of a device.",
-        path_params=[{
-            "name": "mac",
-            "description": "Device MAC address",
-            "schema": {"type": "string"}
-        }],
-        response_model=BaseResponse,
-        tags=["devices"]
-    )
-
-    register_tool(
-        path="/device/{mac}/set-alias",
-        method="POST",
-        operation_id="set_device_alias",
-        summary="Set Device Alias",
-        description="Set or update the display name/alias for a device.",
-        path_params=[{
-            "name": "mac",
-            "description": "Device MAC address",
-            "schema": {"type": "string"}
-        }],
-        request_model=SetDeviceAliasRequest,
-        response_model=BaseResponse,
-        tags=["devices"]
-    )
-
-    register_tool(
-        path="/devices",
-        method="GET",
-        operation_id="get_all_devices",
-        summary="Get All Devices",
-        description="Retrieve a list of all devices in the system.",
-        response_model=DeviceListResponse,
-        tags=["devices"]
-    )
-
-    register_tool(
-        path="/devices",
-        method="DELETE",
-        operation_id="delete_devices",
-        summary="Delete Multiple Devices",
-        description="Delete multiple devices by MAC address.",
-        request_model=DeleteDevicesRequest,
-        response_model=BaseResponse,
-        tags=["devices"]
-    )
-
-    register_tool(
-        path="/devices/empty-macs",
-        method="DELETE",
-        operation_id="delete_empty_mac_devices",
-        summary="Delete Devices with Empty MACs",
-        description="Delete all devices that do not have a valid MAC address.",
-        response_model=BaseResponse,
-        tags=["devices"]
-    )
-
-    register_tool(
-        path="/devices/unknown",
-        method="DELETE",
-        operation_id="delete_unknown_devices",
-        summary="Delete Unknown Devices",
-        description="Delete devices marked as unknown.",
-        response_model=BaseResponse,
-        tags=["devices"]
-    )
-
-    register_tool(
-        path="/devices/totals",
-        method="GET",
-        operation_id="get_device_totals",
-        summary="Get Device Totals",
-        description="Get device statistics including total count, online/offline counts, "
-                    "new devices, and archived devices.",
-        response_model=DeviceTotalsResponse,
-        tags=["devices"]
-    )
-
-    register_tool(
-        path="/devices/latest",
-        method="GET",
-        operation_id="get_latest_device",
-        summary="Get Latest Device",
-        description="Get information about the most recently seen/discovered device.",
-        response_model=GetDeviceResponse,
-        tags=["devices"]
-    )
-
-    register_tool(
-        path="/devices/favorite",
-        method="GET",
-        operation_id="get_favorite_devices",
-        summary="Get Favorite Devices",
-        description="Get list of devices marked as favorites.",
-        response_model=DeviceListResponse,
-        tags=["devices"]
-    )
-
-    register_tool(
-        path="/devices/export",
-        method="GET",
-        operation_id="export_devices",
-        summary="Export Devices",
-        description="Export all devices in CSV or JSON format. "
-                    "Use 'format' query parameter (csv/json, defaults to csv).",
-        query_params=[{
-            "name": "format",
-            "description": "Export format: csv or json",
-            "required": False,
-            "schema": {"type": "string", "enum": ["csv", "json"], "default": "csv"}
-        }],
-        response_model=DeviceExportResponse,
-        tags=["devices"]
-    )
-
-    register_tool(
-        path="/devices/import",
-        method="POST",
-        operation_id="import_devices",
-        summary="Import Devices",
-        description="Import devices from CSV or JSON content. "
-                    "Content should be base64-encoded or sent as multipart file upload.",
-        request_model=DeviceImportRequest,
-        response_model=DeviceImportResponse,
-        tags=["devices"]
-    )
-
-    register_tool(
-        path="/devices/network/topology",
-        method="GET",
-        operation_id="get_network_topology",
-        summary="Get Network Topology",
-        description="Retrieve the network topology information showing device connections "
-                    "and network structure.",
-        response_model=NetworkTopologyResponse,
-        tags=["devices"]
-    )
-
-    register_tool(
-        path="/device/{mac}/update-column",
-        method="POST",
-        operation_id="update_device_column",
-        summary="Update Device Column",
-        description="Update a specific database column for a device. "
-                    "Available columns include: devName, devType, devVendor, devNote, devGroup, etc.",
-        path_params=[{
-            "name": "mac",
-            "description": "Device MAC address",
-            "schema": {"type": "string"}
-        }],
-        request_model=UpdateDeviceColumnRequest,
-        response_model=BaseResponse,
-        tags=["devices"]
-    )
-
-    register_tool(
-        path="/device/copy",
-        method="POST",
-        operation_id="copy_device",
-        summary="Copy Device Settings",
-        description="Copy settings and history from one device MAC address to another.",
-        request_model=CopyDeviceRequest,
-        response_model=BaseResponse,
-        tags=["devices"]
-    )
-
-    # -------------------------------------------------------------------------
-    # SETTINGS
-    # -------------------------------------------------------------------------
-    register_tool(
-        path="/settings/{key}",
-        method="GET",
-        operation_id="get_setting",
-        summary="Get Setting",
-        description="Retrieve the value of a specific setting by key.",
-        path_params=[{
-            "name": "key",
-            "description": "Setting key",
-            "schema": {"type": "string"}
-        }],
-        response_model=GetSettingResponse,
-        tags=["settings"]
-    )
-
-    # -------------------------------------------------------------------------
-    # NETWORK TOOLS
-    # -------------------------------------------------------------------------
-    register_tool(
-        path="/nettools/trigger-scan",
-        method="POST",
-        operation_id="trigger_network_scan",
-        summary="Trigger Network Scan",
-        description="Trigger a network scan to discover devices. "
-                    "Specify scan type (ARPSCAN, NMAPDEV, NMAP) matching an enabled plugin.",
-        request_model=TriggerScanRequest,
-        response_model=TriggerScanResponse,
-        tags=["nettools"]
-    )
-
-    register_tool(
-        path="/device/open_ports",
-        method="POST",
-        operation_id="get_open_ports",
-        summary="Get Open Ports",
-        description="Retrieve open ports for a target IP or MAC address. "
-                    "Returns cached NMAP scan results. Trigger a scan first if no data exists.",
-        request_model=OpenPortsRequest,
-        response_model=OpenPortsResponse,
-        tags=["nettools"]
-    )
-
-    register_tool(
-        path="/nettools/wakeonlan",
-        method="POST",
-        operation_id="wake_on_lan",
-        summary="Wake-on-LAN",
-        description="Send a Wake-on-LAN magic packet to wake up a device. "
-                    "Provide either MAC address directly or IP (MAC will be resolved).",
-        request_model=WakeOnLanRequest,
-        response_model=WakeOnLanResponse,
-        tags=["nettools"]
-    )
-
-    register_tool(
-        path="/nettools/traceroute",
-        method="POST",
-        operation_id="perform_traceroute",
-        summary="Traceroute",
-        description="Perform a traceroute to a target IP address, showing network hops.",
-        request_model=TracerouteRequest,
-        response_model=TracerouteResponse,
-        tags=["nettools"]
-    )
-
-    register_tool(
-        path="/nettools/speedtest",
-        method="GET",
-        operation_id="run_speedtest",
-        summary="Run Speedtest",
-        description="Run an internet speed test.",
-        response_model=BaseResponse,
-        tags=["nettools"]
-    )
-
-    register_tool(
-        path="/nettools/nslookup",
-        method="POST",
-        operation_id="run_nslookup",
-        summary="NSLookup",
-        description="Perform a DNS lookup for a given IP.",
-        request_model=NslookupRequest,
-        response_model=BaseResponse,
-        tags=["nettools"]
-    )
-
-    register_tool(
-        path="/nettools/nmap",
-        method="POST",
-        operation_id="run_nmap",
-        summary="Run NMAP",
-        description="Run an NMAP scan on a target.",
-        request_model=NmapScanRequest,
-        response_model=BaseResponse,
-        tags=["nettools"]
-    )
-
-    register_tool(
-        path="/nettools/internetinfo",
-        method="GET",
-        operation_id="get_internet_info",
-        summary="Get Internet Info",
-        description="Retrieve public internet connection information.",
-        response_model=BaseResponse,
-        tags=["nettools"]
-    )
-
-    register_tool(
-        path="/nettools/interfaces",
-        method="GET",
-        operation_id="get_network_interfaces",
-        summary="Get Network Interfaces",
-        description="Retrieve information about network interfaces on the server.",
-        response_model=BaseResponse,
-        tags=["nettools"]
-    )
-
-    # -------------------------------------------------------------------------
-    # EVENTS
-    # -------------------------------------------------------------------------
-    register_tool(
-        path="/events/create/{mac}",
-        method="POST",
-        operation_id="create_device_event",
-        summary="Create Event",
-        description="Manually create an event for a device.",
-        path_params=[{
-            "name": "mac",
-            "description": "Device MAC address",
-            "schema": {"type": "string"}
-        }],
-        request_model=CreateEventRequest,
-        response_model=BaseResponse,
-        tags=["events"]
-    )
-
-    register_tool(
-        path="/events/{mac}",
-        method="DELETE",
-        operation_id="delete_events_by_mac",
-        summary="Delete Events by MAC",
-        description="Delete all events for a specific device MAC address.",
-        path_params=[{
-            "name": "mac",
-            "description": "Device MAC address",
-            "schema": {"type": "string"}
-        }],
-        response_model=BaseResponse,
-        tags=["events"]
-    )
-
-    register_tool(
-        path="/events",
-        method="DELETE",
-        operation_id="delete_all_events",
-        summary="Delete All Events",
-        description="Delete all events in the system.",
-        response_model=BaseResponse,
-        tags=["events"]
-    )
-
-    register_tool(
-        path="/events",
-        method="GET",
-        operation_id="get_all_events",
-        summary="Get Events",
-        description="Retrieve a list of events, optionally filtered by MAC.",
-        query_params=[{
-            "name": "mac",
-            "description": "Filter by Device MAC",
-            "required": False,
-            "schema": {"type": "string"}
-        }],
-        response_model=BaseResponse,
-        tags=["events"]
-    )
-
-    register_tool(
-        path="/events/{days}",
-        method="DELETE",
-        operation_id="delete_old_events",
-        summary="Delete Old Events",
-        description="Delete events older than a specified number of days.",
-        path_params=[{
-            "name": "days",
-            "description": "Number of days",
-            "schema": {"type": "integer"}
-        }],
-        response_model=BaseResponse,
-        tags=["events"]
-    )
-
-    register_tool(
-        path="/events/recent",
-        method="GET",
-        operation_id="get_recent_events",
-        summary="Get Recent Events",
-        description="Get recent events/alerts from the system. "
-                    "Defaults to last 24 hours. Use query params to adjust timeframe.",
-        query_params=[{
-            "name": "hours",
-            "description": "Number of hours to look back",
-            "required": False,
-            "schema": {"type": "integer", "default": 24, "minimum": 1, "maximum": 720}
-        }],
-        response_model=RecentEventsResponse,
-        tags=["events"]
-    )
-
-    register_tool(
-        path="/events/last",
-        method="GET",
-        operation_id="get_last_events",
-        summary="Get Last Events",
-        description="Get the most recent 10 events logged in the system.",
-        response_model=LastEventsResponse,
-        tags=["events"]
-    )
-
-    register_tool(
-        path="/sessions/totals",
-        method="GET",
-        operation_id="get_event_totals",
-        summary="Get Event Totals",
-        description="Get event and session totals over a specified period.",
-        query_params=[{
-            "name": "period",
-            "description": "Time period (e.g., '7 days')",
-            "required": False,
-            "schema": {"type": "string", "default": "7 days"}
-        }],
-        response_model=BaseResponse,
-        tags=["events"]
-    )
-
-    # -------------------------------------------------------------------------
-    # SESSIONS
-    # -------------------------------------------------------------------------
-    register_tool(
-        path="/sessions/create",
-        method="POST",
-        operation_id="create_session",
-        summary="Create Session",
-        description="Manually create a session record.",
-        request_model=CreateSessionRequest,
-        response_model=BaseResponse,
-        tags=["sessions"]
-    )
-
-    register_tool(
-        path="/sessions/delete",
-        method="DELETE",
-        operation_id="delete_session",
-        summary="Delete Session",
-        description="Delete sessions for a specific device.",
-        request_model=DeleteSessionRequest,
-        response_model=BaseResponse,
-        tags=["sessions"]
-    )
-
-    register_tool(
-        path="/sessions/list",
-        method="GET",
-        operation_id="list_sessions",
-        summary="List Sessions",
-        description="List sessions filtered by criteria.",
-        query_params=[
-            {"name": "mac", "required": False, "schema": {"type": "string"}},
-            {"name": "start_date", "required": False, "schema": {"type": "string"}},
-            {"name": "end_date", "required": False, "schema": {"type": "string"}}
-        ],
-        response_model=BaseResponse,
-        tags=["sessions"]
-    )
-
-    register_tool(
-        path="/sessions/calendar",
-        method="GET",
-        operation_id="get_sessions_calendar",
-        summary="Get Sessions Calendar",
-        description="Get sessions in a format suitable for calendar display.",
-        query_params=[
-            {"name": "start", "required": False, "schema": {"type": "string"}},
-            {"name": "end", "required": False, "schema": {"type": "string"}},
-            {"name": "mac", "required": False, "schema": {"type": "string"}}
-        ],
-        response_model=BaseResponse,
-        tags=["sessions"]
-    )
-
-    register_tool(
-        path="/sessions/{mac}",
-        method="GET",
-        operation_id="get_device_sessions",
-        summary="Get Device Sessions",
-        description="Get sessions for a specific device over a period.",
-        path_params=[{
-            "name": "mac",
-            "description": "Device MAC address",
-            "schema": {"type": "string"}
-        }],
-        query_params=[{
-            "name": "period",
-            "required": False,
-            "schema": {"type": "string", "default": "1 day"}
-        }],
-        response_model=BaseResponse,
-        tags=["sessions"]
-    )
-
-    register_tool(
-        path="/sessions/session-events",
-        method="GET",
-        operation_id="get_session_events_summary",
-        summary="Get Session Events Summary",
-        description="Get a summary of session events.",
-        query_params=[
-            {"name": "type", "required": False, "schema": {"type": "string", "default": "all"}},
-            {"name": "period", "required": False, "schema": {"type": "string", "default": "7 days"}}
-        ],
-        response_model=BaseResponse,
-        tags=["sessions"]
-    )
-
-    # -------------------------------------------------------------------------
-    # MESSAGING
-    # -------------------------------------------------------------------------
-    register_tool(
-        path="/messaging/in-app/write",
-        method="POST",
-        operation_id="write_notification",
-        summary="Write Notification",
-        description="Create a new in-app notification.",
-        request_model=CreateNotificationRequest,
-        response_model=BaseResponse,
-        tags=["messaging"]
-    )
-
-    register_tool(
-        path="/messaging/in-app/unread",
-        method="GET",
-        operation_id="get_unread_notifications",
-        summary="Get Unread Notifications",
-        description="Retrieve all unread in-app notifications.",
-        response_model=BaseResponse,  # Can refine to list model later
-        tags=["messaging"]
-    )
-
-    register_tool(
-        path="/messaging/in-app/read/all",
-        method="POST",
-        operation_id="mark_all_notifications_read",
-        summary="Mark All Read",
-        description="Mark all in-app notifications as read.",
-        response_model=BaseResponse,
-        tags=["messaging"]
-    )
-
-    register_tool(
-        path="/messaging/in-app/delete",
-        method="DELETE",
-        operation_id="delete_all_notifications",
-        summary="Delete All Notifications",
-        description="Delete all in-app notifications.",
-        response_model=BaseResponse,
-        tags=["messaging"]
-    )
-
-    register_tool(
-        path="/messaging/in-app/delete/{guid}",
-        method="DELETE",
-        operation_id="delete_notification",
-        summary="Delete Notification",
-        description="Delete a specific notification by GUID.",
-        path_params=[{
-            "name": "guid",
-            "description": "Notification GUID",
-            "schema": {"type": "string"}
-        }],
-        response_model=BaseResponse,
-        tags=["messaging"]
-    )
-
-    register_tool(
-        path="/messaging/in-app/read/{guid}",
-        method="POST",
-        operation_id="mark_notification_read",
-        summary="Mark Notification Read",
-        description="Mark a specific notification as read by GUID.",
-        path_params=[{
-            "name": "guid",
-            "description": "Notification GUID",
-            "schema": {"type": "string"}
-        }],
-        response_model=BaseResponse,
-        tags=["messaging"]
-    )
-
-    # -------------------------------------------------------------------------
-    # SYNC
-    # -------------------------------------------------------------------------
-    register_tool(
-        path="/sync",
-        method="GET",
-        operation_id="sync_pull",
-        summary="Sync Pull",
-        description="Pull data for synchronization.",
-        response_model=SyncPullResponse,
-        tags=["sync"]
-    )
-
-    register_tool(
-        path="/sync",
-        method="POST",
-        operation_id="sync_push",
-        summary="Sync Push",
-        description="Push data for synchronization.",
-        request_model=SyncPushRequest,
-        response_model=BaseResponse,
-        tags=["sync"]
-    )
-
-    # -------------------------------------------------------------------------
-    # HISTORY & LOGS & METRICS
-    # -------------------------------------------------------------------------
-    register_tool(
-        path="/history",
-        method="DELETE",
-        operation_id="delete_online_history",
-        summary="Delete Online History",
-        description="Delete all online history records.",
-        response_model=BaseResponse,
-        tags=["logs"]
-    )
-
-    register_tool(
-        path="/logs",
-        method="DELETE",
-        operation_id="clean_log",
-        summary="Clean Log",
-        description="Clean or truncate a specified log file.",
-        query_params=[{
-            "name": "file",
-            "description": "Log file name",
-            "required": True,
-            "schema": {"type": "string"}
-        }],
-        response_model=BaseResponse,
-        tags=["logs"]
-    )
-
-    register_tool(
-        path="/logs/add-to-execution-queue",
-        method="POST",
-        operation_id="add_to_execution_queue",
-        summary="Add to Execution Queue",
-        description="Add an action to the system execution queue.",
-        request_model=AddToQueueRequest,
-        response_model=BaseResponse,
-        tags=["logs"]
-    )
-
-    register_tool(
-        path="/metrics",
-        method="GET",
-        operation_id="get_metrics",
-        summary="Get Metrics",
-        description="Get Prometheus-compatible metrics.",
-        response_model=None,  # Returns plain text
-        tags=["logs"]
-    )
-
-    # -------------------------------------------------------------------------
-    # DB QUERY
-    # -------------------------------------------------------------------------
-    register_tool(
-        path="/dbquery/read",
-        method="POST",
-        operation_id="db_read",
-        summary="DB Read Query",
-        description="Execute a raw SQL SELECT query.",
-        request_model=DbQueryRequest,
-        response_model=DbQueryResponse,
-        tags=["dbquery"]
-    )
-
-    register_tool(
-        path="/dbquery/write",
-        method="POST",
-        operation_id="db_write",
-        summary="DB Write Query",
-        description="Execute a raw SQL INSERT/UPDATE/DELETE query.",
-        request_model=DbQueryRequest,
-        response_model=BaseResponse,
-        tags=["dbquery"]
-    )
-
-    register_tool(
-        path="/dbquery/update",
-        method="POST",
-        operation_id="db_update",
-        summary="DB Update",
-        description="Update database records using structured parameters.",
-        request_model=DbQueryUpdateRequest,
-        response_model=BaseResponse,
-        tags=["dbquery"]
-    )
-
-    register_tool(
-        path="/dbquery/delete",
-        method="POST",
-        operation_id="db_delete",
-        summary="DB Delete",
-        description="Delete database records using structured parameters.",
-        request_model=DbQueryDeleteRequest,
-        response_model=BaseResponse,
-        tags=["dbquery"]
-    )
-
-
 # Initialize registry on module load
-try:
-    _register_all_endpoints()
-except Exception as e:
-    # Log but don't crash import - allows for testing
-    import sys
-    print(f"Warning: Failed to register endpoints: {e}", file=sys.stderr)
+# Registry is now populated dynamically via introspection in generate_openapi_spec
+def _register_all_endpoints():
+    """Dummy function for compatibility with legacy tests."""
+    pass

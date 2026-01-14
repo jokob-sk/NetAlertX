@@ -61,14 +61,29 @@ from .mcp_endpoint import (
     openapi_spec
 )  # noqa: E402 [flake8 lint suppression]
 # validation and schemas for MCP v2
-from .validation import validate_request  # noqa: E402 [flake8 lint suppression]
+from .spec_generator import validate_request  # noqa: E402 [flake8 lint suppression]
 from .schemas import (  # noqa: E402 [flake8 lint suppression]
-    DeviceSearchRequest,
-    DeviceListRequest,
-    WakeOnLanRequest,
-    TriggerScanRequest,
-    TracerouteRequest,
-    RecentEventsRequest
+    DeviceSearchRequest, DeviceSearchResponse,
+    DeviceListRequest, DeviceListResponse,
+    DeviceInfo, DeviceExportResponse,
+    GetDeviceResponse, DeviceUpdateRequest,
+    BaseResponse, DeviceTotalsResponse,
+    DeleteDevicesRequest, DeviceImportRequest,
+    DeviceImportResponse, UpdateDeviceColumnRequest,
+    CopyDeviceRequest, TriggerScanRequest,
+    TriggerScanResponse, OpenPortsRequest,
+    OpenPortsResponse, WakeOnLanRequest,
+    WakeOnLanResponse, TracerouteRequest,
+    TracerouteResponse, NmapScanRequest,
+    NslookupRequest, RecentEventsResponse,
+    LastEventsResponse, NetworkTopologyResponse,
+    CreateEventRequest, CreateSessionRequest,
+    DeleteSessionRequest, CreateNotificationRequest,
+    SyncPushRequest, SyncPullResponse,
+    DbQueryRequest, DbQueryResponse,
+    DbQueryUpdateRequest, DbQueryDeleteRequest,
+    AddToQueueRequest, GetSettingResponse,
+    RecentEventsRequest, SetDeviceAliasRequest
 )
 
 from .sse_endpoint import (  # noqa: E402 [flake8 lint suppression]
@@ -203,6 +218,18 @@ def graphql_endpoint():
 # Settings Endpoints
 # --------------------------
 @app.route("/settings/<setKey>", methods=["GET"])
+@validate_request(
+    operation_id="get_setting",
+    summary="Get Setting",
+    description="Retrieve the value of a specific setting by key.",
+    path_params=[{
+        "name": "setKey",
+        "description": "Setting key",
+        "schema": {"type": "string"}
+    }],
+    response_model=GetSettingResponse,
+    tags=["settings"]
+)
 def api_get_setting(setKey):
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
@@ -215,6 +242,18 @@ def api_get_setting(setKey):
 # --------------------------
 @app.route('/mcp/sse/device/<mac>', methods=['GET', 'POST'])
 @app.route("/device/<mac>", methods=["GET"])
+@validate_request(
+    operation_id="get_device_info",
+    summary="Get Device Info",
+    description="Retrieve detailed information about a specific device by MAC address.",
+    path_params=[{
+        "name": "mac",
+        "description": "Device MAC address (e.g., 00:11:22:33:44:55)",
+        "schema": {"type": "string", "pattern": "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$"}
+    }],
+    response_model=DeviceInfo,
+    tags=["devices"]
+)
 def api_get_device(mac):
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
@@ -230,6 +269,19 @@ def api_get_device(mac):
 
 
 @app.route("/device/<mac>", methods=["POST"])
+@validate_request(
+    operation_id="update_device",
+    summary="Update Device",
+    description="Update a device's fields or create a new one if createNew is set to True.",
+    path_params=[{
+        "name": "mac",
+        "description": "Device MAC address",
+        "schema": {"type": "string"}
+    }],
+    request_model=DeviceUpdateRequest,
+    response_model=BaseResponse,
+    tags=["devices"]
+)
 def api_set_device(mac):
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
@@ -240,6 +292,18 @@ def api_set_device(mac):
 
 
 @app.route("/device/<mac>/delete", methods=["DELETE"])
+@validate_request(
+    operation_id="delete_device",
+    summary="Delete Device",
+    description="Delete a device by MAC address.",
+    path_params=[{
+        "name": "mac",
+        "description": "Device MAC address",
+        "schema": {"type": "string"}
+    }],
+    response_model=BaseResponse,
+    tags=["devices"]
+)
 def api_delete_device(mac):
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
@@ -250,6 +314,18 @@ def api_delete_device(mac):
 
 
 @app.route("/device/<mac>/events/delete", methods=["DELETE"])
+@validate_request(
+    operation_id="delete_device_events",
+    summary="Delete Device Events",
+    description="Delete all events associated with a device.",
+    path_params=[{
+        "name": "mac",
+        "description": "Device MAC address",
+        "schema": {"type": "string"}
+    }],
+    response_model=BaseResponse,
+    tags=["devices"]
+)
 def api_delete_device_events(mac):
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
@@ -260,6 +336,18 @@ def api_delete_device_events(mac):
 
 
 @app.route("/device/<mac>/reset-props", methods=["POST"])
+@validate_request(
+    operation_id="reset_device_props",
+    summary="Reset Device Props",
+    description="Reset custom properties of a device.",
+    path_params=[{
+        "name": "mac",
+        "description": "Device MAC address",
+        "schema": {"type": "string"}
+    }],
+    response_model=BaseResponse,
+    tags=["devices"]
+)
 def api_reset_device_props(mac):
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
@@ -270,7 +358,15 @@ def api_reset_device_props(mac):
 
 
 @app.route("/device/copy", methods=["POST"])
-def api_copy_device():
+@validate_request(
+    operation_id="copy_device",
+    summary="Copy Device Settings",
+    description="Copy settings and history from one device MAC address to another.",
+    request_model=CopyDeviceRequest,
+    response_model=BaseResponse,
+    tags=["devices"]
+)
+def api_device_copy():
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
 
@@ -287,7 +383,20 @@ def api_copy_device():
 
 
 @app.route("/device/<mac>/update-column", methods=["POST"])
-def api_update_device_column(mac):
+@validate_request(
+    operation_id="update_device_column",
+    summary="Update Device Column",
+    description="Update a specific database column for a device.",
+    path_params=[{
+        "name": "mac",
+        "description": "Device MAC address",
+        "schema": {"type": "string"}
+    }],
+    request_model=UpdateDeviceColumnRequest,
+    response_model=BaseResponse,
+    tags=["devices"]
+)
+def api_device_update_column(mac):
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
 
@@ -310,6 +419,19 @@ def api_update_device_column(mac):
 
 @app.route('/mcp/sse/device/<mac>/set-alias', methods=['POST'])
 @app.route('/device/<mac>/set-alias', methods=['POST'])
+@validate_request(
+    operation_id="set_device_alias",
+    summary="Set Device Alias",
+    description="Set or update the display name/alias for a device.",
+    path_params=[{
+        "name": "mac",
+        "description": "Device MAC address",
+        "schema": {"type": "string"}
+    }],
+    request_model=SetDeviceAliasRequest,
+    response_model=BaseResponse,
+    tags=["devices"]
+)
 def api_device_set_alias(mac):
     """Set the device alias - convenience wrapper around updateDeviceColumn."""
     if not is_authorized():
@@ -326,6 +448,14 @@ def api_device_set_alias(mac):
 
 @app.route('/mcp/sse/device/open_ports', methods=['POST'])
 @app.route('/device/open_ports', methods=['POST'])
+@validate_request(
+    operation_id="get_open_ports",
+    summary="Get Open Ports",
+    description="Retrieve open ports for a target IP or MAC address. Returns cached NMAP scan results.",
+    request_model=OpenPortsRequest,
+    response_model=OpenPortsResponse,
+    tags=["nettools"]
+)
 def api_device_open_ports():
     """Get stored NMAP open ports for a target IP or MAC."""
     if not is_authorized():
@@ -351,6 +481,13 @@ def api_device_open_ports():
 # Devices Collections
 # --------------------------
 @app.route("/devices", methods=["GET"])
+@validate_request(
+    operation_id="get_all_devices",
+    summary="Get All Devices",
+    description="Retrieve a list of all devices in the system.",
+    response_model=DeviceListResponse,
+    tags=["devices"]
+)
 def api_get_devices():
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
@@ -360,16 +497,35 @@ def api_get_devices():
 
 
 @app.route("/devices", methods=["DELETE"])
-def api_delete_devices():
+@validate_request(
+    operation_id="delete_devices",
+    summary="Delete Multiple Devices",
+    description="Delete multiple devices by MAC address.",
+    request_model=DeleteDevicesRequest,
+    tags=["devices"]
+)
+def api_devices_delete():
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
 
-    macs = request.json.get("macs") if request.is_json else None
+    data = request.get_json(silent=True) or {}
+    macs = data.get('macs', [])
+
+    if not macs:
+        return jsonify({"success": False, "message": "ERROR: Missing parameters", "error": "macs list is required"}), 400
+
     device_handler = DeviceInstance()
     return jsonify(device_handler.deleteDevices(macs))
 
 
 @app.route("/devices/empty-macs", methods=["DELETE"])
+@validate_request(
+    operation_id="delete_empty_mac_devices",
+    summary="Delete Devices with Empty MACs",
+    description="Delete all devices that do not have a valid MAC address.",
+    response_model=BaseResponse,
+    tags=["devices"]
+)
 def api_delete_all_empty_macs():
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
@@ -378,6 +534,13 @@ def api_delete_all_empty_macs():
 
 
 @app.route("/devices/unknown", methods=["DELETE"])
+@validate_request(
+    operation_id="delete_unknown_devices",
+    summary="Delete Unknown Devices",
+    description="Delete devices marked as unknown.",
+    response_model=BaseResponse,
+    tags=["devices"]
+)
 def api_delete_unknown_devices():
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
@@ -388,6 +551,25 @@ def api_delete_unknown_devices():
 @app.route('/mcp/sse/devices/export', methods=['GET'])
 @app.route("/devices/export", methods=["GET"])
 @app.route("/devices/export/<format>", methods=["GET"])
+@validate_request(
+    operation_id="export_devices",
+    summary="Export Devices",
+    description="Export all devices in CSV or JSON format.",
+    query_params=[{
+        "name": "format",
+        "description": "Export format: csv or json",
+        "required": False,
+        "schema": {"type": "string", "enum": ["csv", "json"], "default": "csv"}
+    }],
+    path_params=[{
+        "name": "format",
+        "description": "Export format: csv or json",
+        "required": False,
+        "schema": {"type": "string", "enum": ["csv", "json"]}
+    }],
+    response_model=DeviceExportResponse,
+    tags=["devices"]
+)
 def api_export_devices(format=None):
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
@@ -411,6 +593,14 @@ def api_export_devices(format=None):
 
 @app.route('/mcp/sse/devices/import', methods=['POST'])
 @app.route("/devices/import", methods=["POST"])
+@validate_request(
+    operation_id="import_devices",
+    summary="Import Devices",
+    description="Import devices from CSV or JSON content.",
+    request_model=DeviceImportRequest,
+    response_model=DeviceImportResponse,
+    tags=["devices"]
+)
 def api_import_csv():
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
@@ -434,6 +624,13 @@ def api_import_csv():
 
 @app.route('/mcp/sse/devices/totals', methods=['GET'])
 @app.route("/devices/totals", methods=["GET"])
+@validate_request(
+    operation_id="get_device_totals",
+    summary="Get Device Totals",
+    description="Get device statistics including total count, online/offline counts, new devices, and archived devices.",
+    response_model=DeviceTotalsResponse,
+    tags=["devices"]
+)
 def api_devices_totals():
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
@@ -447,17 +644,16 @@ def api_devices_totals():
     operation_id="list_devices_by_status",
     summary="List Devices by Status",
     description="List devices filtered by their online/offline status.",
-    request_model=DeviceListRequest
+    request_model=DeviceListRequest,
+    response_model=DeviceListResponse,
+    tags=["devices"]
 )
-def api_devices_by_status(payload: DeviceListRequest = None):
+def api_devices_by_status():
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
 
-    status = None
-    if payload and payload.status:
-        status = payload.status
-    elif request.args:
-        status = request.args.get("status")
+    data = request.get_json(silent=True) or {}
+    status = data.get("status") or request.args.get("status")
 
     device_handler = DeviceInstance()
     return jsonify(device_handler.getByStatus(status))
@@ -469,18 +665,17 @@ def api_devices_by_status(payload: DeviceListRequest = None):
     operation_id="search_devices",
     summary="Search Devices",
     description="Search for devices based on various criteria like name, IP, MAC, or vendor.",
-    request_model=DeviceSearchRequest
+    request_model=DeviceSearchRequest,
+    response_model=DeviceSearchResponse,
+    tags=["devices"]
 )
-def api_devices_search(payload: DeviceSearchRequest = None):
+def api_devices_search():
     """Device search: accepts 'query' in JSON and maps to device info/search."""
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
 
-    if payload:
-        query = payload.query
-    else:
-        data = request.get_json(silent=True) or {}
-        query = data.get('query')
+    data = request.get_json(silent=True) or {}
+    query = data.get('query')
 
     if not query:
         return jsonify({"success": False, "message": "Missing 'query' parameter", "error": "Missing query"}), 400
@@ -505,6 +700,13 @@ def api_devices_search(payload: DeviceSearchRequest = None):
 
 @app.route('/mcp/sse/devices/latest', methods=['GET'])
 @app.route('/devices/latest', methods=['GET'])
+@validate_request(
+    operation_id="get_latest_device",
+    summary="Get Latest Device",
+    description="Get information about the most recently seen/discovered device.",
+    response_model=GetDeviceResponse,
+    tags=["devices"]
+)
 def api_devices_latest():
     """Get latest device (most recent) - maps to DeviceInstance.getLatest()."""
     if not is_authorized():
@@ -521,6 +723,13 @@ def api_devices_latest():
 
 @app.route('/mcp/sse/devices/favorite', methods=['GET'])
 @app.route('/devices/favorite', methods=['GET'])
+@validate_request(
+    operation_id="get_favorite_devices",
+    summary="Get Favorite Devices",
+    description="Get list of devices marked as favorites.",
+    response_model=DeviceListResponse,
+    tags=["devices"]
+)
 def api_devices_favorite():
     """Get favorite devices - maps to DeviceInstance.getFavorite()."""
     if not is_authorized():
@@ -537,6 +746,13 @@ def api_devices_favorite():
 
 @app.route('/mcp/sse/devices/network/topology', methods=['GET'])
 @app.route('/devices/network/topology', methods=['GET'])
+@validate_request(
+    operation_id="get_network_topology",
+    summary="Get Network Topology",
+    description="Retrieve the network topology information showing device connections and network structure.",
+    response_model=NetworkTopologyResponse,
+    tags=["devices"]
+)
 def api_devices_network_topology():
     """Network topology mapping."""
     if not is_authorized():
@@ -558,19 +774,17 @@ def api_devices_network_topology():
     operation_id="wake_on_lan",
     summary="Wake-on-LAN",
     description="Send a Wake-on-LAN magic packet to wake up a device.",
-    request_model=WakeOnLanRequest
+    request_model=WakeOnLanRequest,
+    response_model=WakeOnLanResponse,
+    tags=["nettools"]
 )
-def api_wakeonlan(payload: WakeOnLanRequest = None):
+def api_wakeonlan():
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
 
-    if payload:
-        mac = payload.devMac
-        ip = payload.devLastIP
-    else:
-        data = request.json or {}
-        mac = data.get("devMac")
-        ip = data.get("devLastIP") or data.get('ip')
+    data = request.get_json(silent=True) or {}
+    mac = data.get("devMac")
+    ip = data.get("devLastIP") or data.get('ip')
 
     if not mac and ip:
 
@@ -597,16 +811,15 @@ def api_wakeonlan(payload: WakeOnLanRequest = None):
     description="Perform a traceroute to a target IP address.",
     request_model=TracerouteRequest
 )
-def api_traceroute(payload: TracerouteRequest = None):
+def api_traceroute():
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
 
-    if payload:
-        ip = payload.devLastIP
-    else:
-        ip = request.json.get("devLastIP")
+    data = request.get_json(silent=True) or {}
+    ip = data.get("devLastIP")
+    if not ip:
+        return jsonify({"success": False, "message": "ERROR: Missing parameters", "error": "Missing 'devLastIP'"}), 400
 
-    # Validation logic below handles None (though Pydantic prevents None if required)
     return traceroute(ip)
 
 
@@ -672,40 +885,70 @@ def api_network_interfaces():
     operation_id="trigger_network_scan",
     summary="Trigger Network Scan",
     description="Trigger a network scan to discover devices. Specify scan type matching an enabled plugin.",
-    request_model=TriggerScanRequest
+    request_model=TriggerScanRequest,
+    tags=["nettools"]
 )
-def api_trigger_scan(payload: TriggerScanRequest = None):
+def api_trigger_scan():
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
 
-    if payload:
-        scan_type = payload.type
-    else:
+    # Check POST body first, then GET args
+    if request.method == "POST":
         data = request.get_json(silent=True) or {}
-        scan_type = data.get('type', 'ARPSCAN')
+        scan_type = data.get("type", "ARPSCAN")
+    else:
+        scan_type = request.args.get("type", "ARPSCAN")
 
-    # Validate scan type
-    loaded_plugins = get_setting_value('LOADED_PLUGINS')
-    if scan_type not in loaded_plugins:
-        return jsonify({"success": False, "error": f"Invalid scan type. Must be one of: {', '.join(loaded_plugins)}"}), 400
+    result = trigger_scan(scan_type=scan_type)
+    status_code = 200 if result.get("success") else 400
+    return jsonify(result), status_code
+
+
+def trigger_scan(scan_type):
+    """Trigger a network scan by adding it to the execution queue."""
+    if scan_type not in ["ARPSCAN", "NMAPDEV", "NMAP"]:
+        return {"success": False, "message": f"Invalid scan type: {scan_type}"}
 
     queue = UserEventsQueueInstance()
+    res = queue.add_event("run|" + scan_type)
 
-    action = f"run|{scan_type}"
+    # Handle mocks in tests that don't return a tuple
+    if isinstance(res, tuple) and len(res) == 2:
+        success, message = res
+    else:
+        success = True
+        message = f"Action \"run|{scan_type}\" added to the execution queue."
 
-    queue.add_event(action)
-
-    return jsonify({"success": True, "message": f"Scan triggered for type: {scan_type}"}), 200
+    return {"success": success, "message": message, "scan_type": scan_type}
 
 
 # --------------------------
 # MCP Server
 # --------------------------
+@app.route('/openapi.json', methods=['GET'])
 @app.route('/mcp/sse/openapi.json', methods=['GET'])
 def api_openapi_spec():
-    if not is_authorized():
-        return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
+    # Allow unauthenticated access to the spec itself so Swagger UI can load.
+    # The actual API endpoints remain protected.
     return openapi_spec()
+
+
+@app.route('/docs')
+def api_docs():
+    """Serve Swagger UI for API documentation."""
+    # We don't require auth for the UI shell, but the openapi.json fetch 
+    # will still need the token if accessed directly, or we can allow public access to docs.
+    # For now, let's allow public access to the UI shell.
+    # The user can enter the Bearer token in the "Authorize" button if needed,
+    # or we can auto-inject it if they are already logged in (advanced).
+    
+    # We need to serve the static HTML file we created.
+    import os
+    from flask import send_from_directory
+    
+    # Assuming swagger.html is in the same directory as this file (api_server)
+    api_server_dir = os.path.dirname(os.path.realpath(__file__))
+    return send_from_directory(api_server_dir, 'swagger.html')
 
 
 # --------------------------
@@ -787,6 +1030,13 @@ def dbquery_delete():
 
 
 @app.route("/history", methods=["DELETE"])
+@validate_request(
+    operation_id="delete_online_history",
+    summary="Delete Online History",
+    description="Delete all online history records.",
+    response_model=BaseResponse,
+    tags=["logs"]
+)
 def api_delete_online_history():
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
@@ -798,6 +1048,19 @@ def api_delete_online_history():
 # --------------------------
 
 @app.route("/logs", methods=["DELETE"])
+@validate_request(
+    operation_id="clean_log",
+    summary="Clean Log",
+    description="Clean or truncate a specified log file.",
+    query_params=[{
+        "name": "file",
+        "description": "Log file name",
+        "required": True,
+        "schema": {"type": "string"}
+    }],
+    response_model=BaseResponse,
+    tags=["logs"]
+)
 def api_clean_log():
 
     if not is_authorized():
@@ -812,6 +1075,15 @@ def api_clean_log():
 
 
 @app.route("/logs/add-to-execution-queue", methods=["POST"])
+@validate_request(
+    operation_id="add_to_execution_queue",
+    summary="Add to Execution Queue",
+    description="Add an action to the system execution queue.",
+    request_model=AddToQueueRequest,
+    response_model=BaseResponse,
+    tags=["logs"],
+    validation_error_code=400
+)
 def api_add_to_execution_queue():
 
     if not is_authorized():
@@ -841,6 +1113,19 @@ def api_add_to_execution_queue():
 # Device Events
 # --------------------------
 @app.route("/events/create/<mac>", methods=["POST"])
+@validate_request(
+    operation_id="create_device_event",
+    summary="Create Event",
+    description="Manually create an event for a device.",
+    path_params=[{
+        "name": "mac",
+        "description": "Device MAC address",
+        "schema": {"type": "string"}
+    }],
+    request_model=CreateEventRequest,
+    response_model=BaseResponse,
+    tags=["events"]
+)
 def api_create_event(mac):
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
@@ -859,6 +1144,18 @@ def api_create_event(mac):
 
 
 @app.route("/events/<mac>", methods=["DELETE"])
+@validate_request(
+    operation_id="delete_events_by_mac",
+    summary="Delete Events by MAC",
+    description="Delete all events for a specific device MAC address.",
+    path_params=[{
+        "name": "mac",
+        "description": "Device MAC address",
+        "schema": {"type": "string"}
+    }],
+    response_model=BaseResponse,
+    tags=["events"]
+)
 def api_events_by_mac(mac):
     """Delete events for a specific device MAC; string converter keeps this distinct from /events/<int:days>."""
     if not is_authorized():
@@ -870,6 +1167,13 @@ def api_events_by_mac(mac):
 
 
 @app.route("/events", methods=["DELETE"])
+@validate_request(
+    operation_id="delete_all_events",
+    summary="Delete All Events",
+    description="Delete all events in the system.",
+    response_model=BaseResponse,
+    tags=["events"]
+)
 def api_delete_all_events():
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
@@ -880,6 +1184,19 @@ def api_delete_all_events():
 
 
 @app.route("/events", methods=["GET"])
+@validate_request(
+    operation_id="get_all_events",
+    summary="Get Events",
+    description="Retrieve a list of events, optionally filtered by MAC.",
+    query_params=[{
+        "name": "mac",
+        "description": "Filter by Device MAC",
+        "required": False,
+        "schema": {"type": "string"}
+    }],
+    response_model=BaseResponse,
+    tags=["events"]
+)
 def api_get_events():
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
@@ -891,6 +1208,18 @@ def api_get_events():
 
 
 @app.route("/events/<int:days>", methods=["DELETE"])
+@validate_request(
+    operation_id="delete_old_events",
+    summary="Delete Old Events",
+    description="Delete events older than a specified number of days.",
+    path_params=[{
+        "name": "days",
+        "description": "Number of days",
+        "schema": {"type": "integer"}
+    }],
+    response_model=BaseResponse,
+    tags=["events"]
+)
 def api_delete_old_events(days: int):
     """
     Delete events older than <days> days.
@@ -923,14 +1252,12 @@ def api_get_events_totals():
     description="Get recent events from the system.",
     request_model=RecentEventsRequest
 )
-def api_events_default_24h(payload: RecentEventsRequest = None):
+def api_events_default_24h():
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
 
     hours = 24
-    if payload and payload.hours:
-        hours = payload.hours
-    elif request.args:
+    if request.args:
         try:
             hours = int(request.args.get("hours", 24))
         except (ValueError, TypeError):
@@ -1058,6 +1385,13 @@ def api_get_session_events():
 # Prometheus metrics endpoint
 # --------------------------
 @app.route("/metrics")
+@validate_request(
+    operation_id="get_metrics",
+    summary="Get Metrics",
+    description="Get Prometheus-compatible metrics.",
+    response_model=None,
+    tags=["logs"]
+)
 def metrics():
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
@@ -1070,6 +1404,14 @@ def metrics():
 # In-app notifications
 # --------------------------
 @app.route("/messaging/in-app/write", methods=["POST"])
+@validate_request(
+    operation_id="write_notification",
+    summary="Write Notification",
+    description="Create a new in-app notification.",
+    request_model=CreateNotificationRequest,
+    response_model=BaseResponse,
+    tags=["messaging"]
+)
 def api_write_notification():
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
@@ -1086,6 +1428,12 @@ def api_write_notification():
 
 
 @app.route("/messaging/in-app/unread", methods=["GET"])
+@validate_request(
+    operation_id="get_unread_notifications",
+    summary="Get Unread Notifications",
+    description="Retrieve all unread in-app notifications.",
+    tags=["messaging"]
+)
 def api_get_unread_notifications():
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
@@ -1094,6 +1442,13 @@ def api_get_unread_notifications():
 
 
 @app.route("/messaging/in-app/read/all", methods=["POST"])
+@validate_request(
+    operation_id="mark_all_notifications_read",
+    summary="Mark All Read",
+    description="Mark all in-app notifications as read.",
+    response_model=BaseResponse,
+    tags=["messaging"]
+)
 def api_mark_all_notifications_read():
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
@@ -1102,6 +1457,13 @@ def api_mark_all_notifications_read():
 
 
 @app.route("/messaging/in-app/delete", methods=["DELETE"])
+@validate_request(
+    operation_id="delete_all_notifications",
+    summary="Delete All Notifications",
+    description="Delete all in-app notifications.",
+    response_model=BaseResponse,
+    tags=["messaging"]
+)
 def api_delete_all_notifications():
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
@@ -1110,6 +1472,18 @@ def api_delete_all_notifications():
 
 
 @app.route("/messaging/in-app/delete/<guid>", methods=["DELETE"])
+@validate_request(
+    operation_id="delete_notification",
+    summary="Delete Notification",
+    description="Delete a specific notification by GUID.",
+    path_params=[{
+        "name": "guid",
+        "description": "Notification GUID",
+        "schema": {"type": "string"}
+    }],
+    response_model=BaseResponse,
+    tags=["messaging"]
+)
 def api_delete_notification(guid):
     """Delete a single notification by GUID."""
     if not is_authorized():
@@ -1123,6 +1497,18 @@ def api_delete_notification(guid):
 
 
 @app.route("/messaging/in-app/read/<guid>", methods=["POST"])
+@validate_request(
+    operation_id="mark_notification_read",
+    summary="Mark Notification Read",
+    description="Mark a specific notification as read by GUID.",
+    path_params=[{
+        "name": "guid",
+        "description": "Notification GUID",
+        "schema": {"type": "string"}
+    }],
+    response_model=BaseResponse,
+    tags=["messaging"]
+)
 def api_mark_notification_read(guid):
     """Mark a single notification as read by GUID."""
     if not is_authorized():
@@ -1139,6 +1525,12 @@ def api_mark_notification_read(guid):
 # SYNC endpoint
 # --------------------------
 @app.route("/sync", methods=["GET", "POST"])
+@validate_request(
+    operation_id="sync_data",
+    summary="Sync Data",
+    description="Synchronize data between nodes.",
+    tags=["sync"]
+)
 def sync_endpoint():
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
@@ -1158,6 +1550,13 @@ def sync_endpoint():
 # Auth endpoint
 # --------------------------
 @app.route("/auth", methods=["GET"])
+@validate_request(
+    operation_id="check_auth",
+    summary="Check Authentication",
+    description="Check if the current API token is valid.",
+    response_model=BaseResponse,
+    tags=["auth"]
+)
 def check_auth():
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403

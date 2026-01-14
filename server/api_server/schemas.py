@@ -16,6 +16,7 @@ from __future__ import annotations
 import re
 from typing import Optional, List, Literal, Any, Dict
 from pydantic import BaseModel, Field, field_validator, model_validator, ConfigDict, RootModel
+from pydantic.networks import IPvAnyAddress
 
 
 # =============================================================================
@@ -29,7 +30,8 @@ COLUMN_NAME_PATTERN = re.compile(r"^[a-zA-Z0-9_]+$")
 # Security whitelists & Literals for documentation
 ALLOWED_DEVICE_COLUMNS = Literal[
     "devName", "devOwner", "devType", "devVendor",
-    "devGroup", "devLocation", "devComments", "devFavorite"
+    "devGroup", "devLocation", "devComments", "devFavorite",
+    "devParentMAC"
 ]
 
 ALLOWED_NMAP_MODES = Literal[
@@ -59,10 +61,11 @@ def validate_mac(value: str) -> str:
 
 
 def validate_ip(value: str) -> str:
-    """Validate IP address format."""
-    if not re.match(IP_PATTERN, value):
-        raise ValueError(f"Invalid IP address format: {value}")
-    return value
+    """Validate IP address format (IPv4 or IPv6) using stdlib ipaddress.
+
+    Returns the canonical string form of the IP address.
+    """
+    return str(IPvAnyAddress(value))
 
 
 def validate_column_identifier(value: str) -> str:

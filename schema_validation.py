@@ -5,7 +5,7 @@ import sqlite3
 import random
 import argparse
 from datetime import datetime
-
+from const import fullDbPath
 from pydantic import ValidationError
 
 try:
@@ -26,13 +26,24 @@ try:
         DbQueryResponse,
         GetSettingResponse
     )
-    from const import fullDbPath
-except ImportError as e:
-    print(f"Error importing modules: {e}")
-    sys.exit(1)
+except ImportError:
+    # Fallback if running standalone
+    pass
 
 # Database Config
-DB_PATH = fullDbPath
+DB_PATH = os.getenv("NETALERTX_DB") or os.getenv("NETALERTX_DB_PATH")
+if not DB_PATH:
+    try:
+        DB_PATH = fullDbPath
+    except ImportError:
+        print("Error: NETALERTX_DB environment variable not set and const module unavailable")
+        sys.exit(1)
+if not DB_PATH:
+    try:
+        DB_PATH = fullDbPath
+    except ImportError:
+        print("Error: NETALERTX_DB environment variable not set and const module unavailable")
+        sys.exit(1)
 
 
 def _assert_db_exists(path: str) -> None:

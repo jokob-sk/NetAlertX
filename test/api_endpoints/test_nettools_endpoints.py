@@ -202,7 +202,7 @@ def test_internet_info_endpoint(client, api_token):
 
     if resp.status_code == 200:
         assert data.get("success") is True
-        assert isinstance(data.get("output"), dict)   
+        assert isinstance(data.get("output"), dict)
         assert len(data["output"]) > 0              # ensure output is not empty
     else:
         # Handle errors, e.g., curl failure
