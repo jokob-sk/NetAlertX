@@ -22,10 +22,14 @@ def get_device_condition_by_status(device_status):
         device_status (str): The status of the device. Possible values:
             - 'all'        : All active devices
             - 'my'         : Same as 'all' (active devices)
+            - 'all_devices' : All active devices
+            - 'my_devices'  : Same as 'all' (active devices)
+            - 'network_devices' : All network devices
             - 'connected'  : Devices that are active and present in the last scan
             - 'favorites'  : Devices marked as favorite
             - 'new'        : Devices marked as new
             - 'down'       : Devices not present in the last scan but with alerts
+            - 'offline'    : Devices that were not present in the last scan
             - 'archived'   : Devices that are archived
 
     Returns:

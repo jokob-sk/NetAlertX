@@ -653,20 +653,20 @@ def api_devices_totals(payload=None):
     request_model=DeviceListRequest,
     response_model=DeviceListResponse,
     tags=["devices"],
-    auth_callable=is_authorized
+    auth_callable=is_authorized,
+    query_params=[{
+        "name": "status",
+        "in": "query",
+        "required": False,
+        "description": "Filter devices by status",
+        "schema": {"type": "string", "enum": [
+            "connected", "down", "favorites", "new", "archived", "all", "my",
+            "offline", "my_devices", "network_devices", "all_devices"
+        ]}
+    }]
 )
-def api_devices_by_status(payload=None):
-    status = None
-    if payload:
-        status = payload.status
-    
-    if not status:
-        status = request.args.get("status")
-        # Try to parse JSON body manually if payload is absent (e.g. validation bypassed or not applicable)
-        if not status and request.is_json:
-             data = request.get_json(silent=True) or {}
-             status = data.get("status")
-
+def api_devices_by_status(payload: DeviceListRequest = None):
+    status = payload.status if payload else request.args.get("status")
     device_handler = DeviceInstance()
     return jsonify(device_handler.getByStatus(status))
 

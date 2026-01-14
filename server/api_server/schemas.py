@@ -272,6 +272,13 @@ class DeviceUpdateRequest(BaseModel):
     devComments: Optional[str] = Field(None, description="Comments")
     createNew: bool = Field(False, description="Create new device if not exists")
 
+    @field_validator("devName", "devOwner", "devType", "devVendor", "devGroup", "devLocation", "devComments")
+    @classmethod
+    def sanitize_text_fields(cls, v: Optional[str]) -> Optional[str]:
+        if v is None:
+            return v
+        return sanitize_string(v)
+
 
 class DeleteDevicesRequest(BaseModel):
     """Request to delete multiple devices."""

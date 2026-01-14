@@ -125,8 +125,8 @@ def create_session() -> str:
     try:
         raw_val = get_setting_value('MCP_QUEUE_MAXSIZE')
         queue_maxsize = int(str(raw_val).strip())
-        # Clamp negative values to default
-        if queue_maxsize < 0:
+        # Clamp non-positive values to default to avoid unbounded queues
+        if queue_maxsize <= 0:
             queue_maxsize = 1000
     except (ValueError, TypeError):
         mylog("none", ["[MCP] Invalid MCP_QUEUE_MAXSIZE, defaulting to 1000"])
@@ -191,16 +191,21 @@ def check_auth() -> bool:
         bool: True if the Authorization header matches the expected API token.
     """
     raw_token = get_setting_value('API_TOKEN')
-    
+
     # Fail closed if token is not set (empty or very short)
     # Note: we allow empty tokens during unit tests to avoid breaking the test suite
     if (not raw_token or len(str(raw_token)) < 2) and not os.getenv("PYTEST_CURRENT_TEST"):
         mylog("minimal", ["[MCP] CRITICAL: API_TOKEN is not configured or too short. Access denied."])
         return False
 
-    token = request.headers.get("Authorization", "").strip()
-    expected_token = f"Bearer {raw_token}"
-    return token == expected_token
+    # Check Authorization header first (primary method)
+    auth_header = request.headers.get("Authorization", "").strip()
+    header_token = auth_header.split()[-1] if auth_header.startswith("Bearer ") else ""
+
+    # Also check query string token (for SSE and other streaming endpoints)
+    query_token = request.args.get("token", "")
+
+    return (header_token == str(raw_token)) or (query_token == str(raw_token))
 
 
 # =============================================================================
@@ -685,12 +690,28 @@ def _execute_tool(route: Dict[str, Any], args: Dict[str, Any]) -> Dict[str, Any]
 # MCP RESOURCES
 # =============================================================================
 
+def get_log_dir() -> str:
+    """Get the log directory from environment or settings."""
+    log_dir = os.getenv("NETALERTX_LOG")
+    if not log_dir:
+        # Fallback to setting value if environment variable is not set
+        log_dir = get_setting_value("NETALERTX_LOG")
+
+    if not log_dir:
+        # If still not set, we return an empty string to indicate missing config
+        # rather than hardcoding /tmp/log
+        return ""
+    return log_dir
+
+
 def _list_resources() -> List[Dict[str, Any]]:
     """List available MCP resources (read-only data like logs)."""
     resources = []
+    log_dir = get_log_dir()
+    if not log_dir:
+        return resources
 
     # Log files
-    log_dir = os.getenv("NETALERTX_LOG", "/tmp/log")
     log_files = [
         ("stdout.log", "Backend stdout log"),
         ("stderr.log", "Backend stderr log"),
@@ -725,7 +746,9 @@ def _list_resources() -> List[Dict[str, Any]]:
 
 def _read_resource(uri: str) -> List[Dict[str, Any]]:
     """Read a resource by URI."""
-    log_dir = os.getenv("NETALERTX_LOG", "/tmp/log")
+    log_dir = get_log_dir()
+    if not log_dir:
+        return [{"uri": uri, "text": "Error: NETALERTX_LOG directory not configured"}]
 
     if uri.startswith("netalertx://logs/"):
         relative_path = uri.replace("netalertx://logs/", "")

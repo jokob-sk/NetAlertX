@@ -147,16 +147,14 @@ def main():
     if not ordered_tasks:
         print(f"No unresolved actionable tasks found in PR {pr_num}.")
     else:
-        for i, task in enumerate(ordered_tasks, 1):
-            print_task(task, i)
-
-        print("\n\n" + "=" * 80)
-        print("For each Coderabbit item:")
+        print("For each of the following Coderabbit items:")
         print(" 1. Create a plan of action")
         print(" 2. Execute your actions")
         print(" 3. Run unit tests to validate")
         print(" 4. After pass, mark complete")
-        print("=" * 80)
+        print("Use the provided fields.\n")
+        for i, task in enumerate(ordered_tasks, 1):
+            print_task(task, i)
 
 
 if __name__ == "__main__":

@@ -53,6 +53,26 @@ _disabled_tools: set = set()
 # VALIDATION DECORATOR (Merged from validation.py)
 # =============================================================================
 
+def _handle_validation_error(e: ValidationError, operation_id: str, validation_error_code: int):
+    """Internal helper to format Pydantic validation errors."""
+    mylog("verbose", [f"[Validation] Error for {operation_id}: {e}"])
+    
+    # Construct a legacy-compatible error message if possible
+    error_msg = "Validation Error"
+    if e.errors():
+        err = e.errors()[0]
+        if err['type'] == 'missing':
+            error_msg = f"Missing required '{err['loc'][0]}'"
+        else:
+            error_msg = f"Validation Error: {err['msg']}"
+
+    return jsonify({
+        "success": False,
+        "error": error_msg,
+        "details": json.loads(e.json())
+    }), validation_error_code
+
+
 def validate_request(
     operation_id: str,
     summary: str,
@@ -63,7 +83,8 @@ def validate_request(
     path_params: Optional[list[dict]] = None,
     query_params: Optional[list[dict]] = None,
     validation_error_code: int = 422,
-    auth_callable: Optional[Callable[[], bool]] = None
+    auth_callable: Optional[Callable[[], bool]] = None,
+    allow_multipart_payload: bool = False
 ):
     """
     Decorator to register a Flask route with the OpenAPI registry and validate incoming requests.
@@ -74,6 +95,7 @@ def validate_request(
     - Injects the validated Pydantic model as the first argument to the view function.
     - Supports auth_callable to check permissions before validation.
     - Returns 422 (default) if validation fails.
+    - allow_multipart_payload: If True, allows multipart/form-data and attempts validation from form fields.
     """
     
     def decorator(f: Callable) -> Callable:
@@ -104,9 +126,27 @@ def validate_request(
             # 2. Payload Validation
             if request_model:
                 if request.method in ["POST", "PUT", "PATCH"]:
-                    # Skip validation if multipart (files present)
+                    # Explicit multipart handling (Coderabbit fix)
                     if request.files:
-                        pass
+                        if allow_multipart_payload:
+                            # Attempt validation from form data if allowed
+                            try:
+                                data = request.form.to_dict()
+                                validated_instance = request_model(**data)
+                            except Exception as e:
+                                mylog("verbose", [f"[Validation] Multipart validation failed for {operation_id}: {e}"])
+                                # We continue without a validated instance but don't fail hard 
+                                # as the handler might want to process files manually
+                                pass
+                        else:
+                            # If multipart is not allowed but files are present, we fail fast
+                            # This prevents handlers from receiving unexpected None payloads
+                            mylog("verbose", [f"[Validation] Multipart bypass attempted for {operation_id} but not allowed."])
+                            return jsonify({
+                                "success": False, 
+                                "error": "Invalid Content-Type", 
+                                "message": "Multipart requests are not allowed for this endpoint"
+                            }), 415
                     else:
                         if not request.is_json and request.content_length:
                             return jsonify({"success": False, "error": "Invalid Content-Type", "message": "Content-Type must be application/json"}), 415
@@ -115,22 +155,7 @@ def validate_request(
                             data = request.get_json() or {}
                             validated_instance = request_model(**data)
                         except ValidationError as e:
-                            mylog("verbose", [f"[Validation] Error for {operation_id}: {e}"])
-                            
-                            # Construct a legacy-compatible error message if possible
-                            error_msg = "Validation Error"
-                            if e.errors():
-                                err = e.errors()[0]
-                                if err['type'] == 'missing':
-                                    error_msg = f"Missing required '{err['loc'][0]}'"
-                                else:
-                                    error_msg = f"Validation Error: {err['msg']}"
-
-                            return jsonify({
-                                "success": False,
-                                "error": error_msg,
-                                "details": json.loads(e.json())
-                            }), validation_error_code
+                            return _handle_validation_error(e, operation_id, validation_error_code)
                         except BadRequest as e:
                             mylog("verbose", [f"[Validation] Invalid JSON for {operation_id}: {e}"])
                             return jsonify({
@@ -145,6 +170,19 @@ def validate_request(
                                 "error": "Invalid Request",
                                 "message": "Unable to process request body"
                             }), 400
+                elif request.method == "GET":
+                    # Attempt to validate from query parameters for GET requests
+                    try:
+                        # request.args is a MultiDict; to_dict() gives first value of each key
+                        # which is usually what we want for Pydantic models.
+                        data = request.args.to_dict()
+                        if data:
+                            validated_instance = request_model(**data)
+                    except ValidationError as e:
+                        return _handle_validation_error(e, operation_id, validation_error_code)
+                    except Exception as e:
+                        mylog("verbose", [f"[Validation] Query param validation failed for {operation_id}: {e}"])
+                        pass
 
             if validated_instance:
                 if accepts_payload:
@@ -181,25 +219,6 @@ def introspect_graphql_schema(schema: graphene.Schema):
         description="Execute arbitrary GraphQL queries against the system schema.",
         tags=["graphql"]
     )
-
-    # For MCP and simple REST clients, we expose Query fields as individual endpoints
-    for field_name, field in query_type.fields.items():
-        path = f"/graphql/{field_name}"
-        operation_id = f"gql_query_{field_name}"
-        
-        # Extract description from Graphene field
-        description = field.description or f"GraphQL Query for {field_name}"
-        
-        # Register the tool
-        register_tool(
-            path=path,
-            method="GET",
-            operation_id=operation_id,
-            summary=f"Query {field_name}",
-            description=description,
-            tags=["graphql"]
-        )
-
 
 
 class DuplicateOperationIdError(Exception):
