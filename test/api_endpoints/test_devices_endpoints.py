@@ -177,9 +177,8 @@ def test_devices_by_status(client, api_token, test_mac):
 
     # 3. Request devices with an invalid/unknown status
     resp_invalid = client.get("/devices/by-status?status=invalid_status", headers=auth_headers(api_token))
-    assert resp_invalid.status_code == 200
-    # Should return empty list for unknown status
-    assert resp_invalid.json == []
+    # Strict validation now returns 422 for invalid status enum values
+    assert resp_invalid.status_code == 422
 
     # 4. Check favorite formatting if devFavorite = 1
     # Update dummy device to favorite
