@@ -11,7 +11,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import sys
-import pytest
 
 # Add test directory to path
 sys.path.insert(0, os.path.dirname(__file__))
@@ -19,7 +18,6 @@ sys.path.insert(0, os.path.dirname(__file__))
 from test_helpers import BASE_URL, API_TOKEN   # noqa: E402 [flake8 lint suppression]
 
 
-@pytest.mark.ui
 def test_settings_page_loads(driver):
     """Test: Settings page loads successfully"""
     driver.get(f"{BASE_URL}/settings.php")
@@ -30,7 +28,6 @@ def test_settings_page_loads(driver):
     assert "setting" in driver.page_source.lower(), "Page should contain settings content"
 
 
-@pytest.mark.ui
 def test_settings_groups_present(driver):
     """Test: Settings groups/sections are rendered"""
     driver.get(f"{BASE_URL}/settings.php")
@@ -39,7 +36,6 @@ def test_settings_groups_present(driver):
     assert len(groups) > 0, "Settings groups should be present"
 
 
-@pytest.mark.ui
 def test_settings_inputs_present(driver):
     """Test: Settings input fields are rendered"""
     driver.get(f"{BASE_URL}/settings.php")
@@ -48,7 +44,6 @@ def test_settings_inputs_present(driver):
     assert len(inputs) > 0, "Settings input fields should be present"
 
 
-@pytest.mark.ui
 def test_save_button_present(driver):
     """Test: Save button is visible"""
     driver.get(f"{BASE_URL}/settings.php")
@@ -57,7 +52,6 @@ def test_save_button_present(driver):
     assert len(save_btn) > 0, "Save button should be present"
 
 
-@pytest.mark.ui
 def test_save_settings_with_form_submission(driver):
     """Test: Settings can be saved via saveSettings() form submission to util.php
 
@@ -158,7 +152,6 @@ def test_save_settings_with_form_submission(driver):
     print("✅ Settings save completed successfully")
 
 
-@pytest.mark.ui
 def test_save_settings_no_loss_of_data(driver):
     """Test: Saving settings doesn't lose other settings
 

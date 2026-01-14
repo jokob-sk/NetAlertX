@@ -6,7 +6,7 @@ import os
 INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
 sys.path.extend([f"{INSTALL_PATH}/server"])
 
-from helper import if_byte_then_to_str, get_setting_value  # noqa: E402 [flake8 lint suppression]
+from helper import if_byte_then_to_str  # noqa: E402 [flake8 lint suppression]
 from logger import mylog  # noqa: E402 [flake8 lint suppression]
 
 
@@ -22,8 +22,8 @@ def get_device_condition_by_status(device_status):
         device_status (str): The status of the device. Possible values:
             - 'all'        : All active devices
             - 'my'         : Same as 'all' (active devices)
-            - 'all_devices' : All devices (including archived)
-            - 'my_devices'  : Devices filtered by hidden relationships and status settings
+            - 'all_devices' : All active devices
+            - 'my_devices'  : Same as 'all' (active devices)
             - 'network_devices' : All network devices
             - 'connected'  : Devices that are active and present in the last scan
             - 'favorites'  : Devices marked as favorite
@@ -36,20 +36,10 @@ def get_device_condition_by_status(device_status):
         str: SQL WHERE clause corresponding to the device status.
              Defaults to 'WHERE 1=0' for unrecognized statuses.
     """
-    if device_status == "network_devices":
-        network_dev_types = get_setting_value("NETWORK_DEVICE_TYPES")
-        if isinstance(network_dev_types, list) and network_dev_types:
-            types_str = ",".join([f"'{t}'" for t in network_dev_types])
-            return f"WHERE devIsArchived=0 AND devType IN ({types_str})"
-        return "WHERE devIsArchived=0"
-
-    if device_status == "all_devices":
-        return "WHERE 1=1"
-
     conditions = {
         "all": "WHERE devIsArchived=0",
         "my": "WHERE devIsArchived=0",
-        "all_devices": "WHERE 1=1",
+        "all_devices": "WHERE devIsArchived=0",
         "my_devices": "WHERE devIsArchived=0",
         "network_devices": "WHERE devIsArchived=0",
         "connected": "WHERE devIsArchived=0 AND devPresentLastScan=1",

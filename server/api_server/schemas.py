@@ -21,7 +21,6 @@ from pydantic import BaseModel, Field, field_validator, model_validator, ConfigD
 # Internal helper imports
 from helper import sanitize_string
 from plugin_helper import normalize_mac, is_mac
-from models.device_instance import ALLOWED_DEVICE_COLUMNS
 
 
 # =============================================================================
@@ -31,6 +30,13 @@ from models.device_instance import ALLOWED_DEVICE_COLUMNS
 MAC_PATTERN = r"^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$"
 IP_PATTERN = r"^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
 COLUMN_NAME_PATTERN = re.compile(r"^[a-zA-Z0-9_]+$")
+
+# Security whitelists & Literals for documentation
+ALLOWED_DEVICE_COLUMNS = Literal[
+    "devName", "devOwner", "devType", "devVendor",
+    "devGroup", "devLocation", "devComments", "devFavorite",
+    "devParentMAC"
+]
 
 ALLOWED_NMAP_MODES = Literal[
     "quick", "intense", "ping", "comprehensive", "fast", "normal", "detail", "skipdiscovery",
@@ -149,7 +155,7 @@ class DeviceListRequest(BaseModel):
         "offline", "my_devices", "network_devices", "all_devices"
     ]] = Field(
         None,
-        description="Filter devices by status (e.g. 'connected', 'down', 'favorites', 'new', 'archived', 'all', 'my', 'offline', 'my_devices', 'network_devices', 'all_devices')"
+        description="Filter devices by status (e.g. 'connected', 'down', 'offline')"
     )
 
 

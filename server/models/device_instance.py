@@ -4,7 +4,6 @@ import re
 import sqlite3
 import csv
 from io import StringIO
-from typing import Literal
 from front.plugins.plugin_helper import is_mac
 from logger import mylog
 from models.plugin_object_instance import PluginObjectInstance
@@ -12,13 +11,6 @@ from database import get_temp_db_connection
 from db.db_helper import get_table_json, get_device_condition_by_status, row_to_json, get_date_from_period
 from helper import is_random_mac, get_setting_value
 from utils.datetime_utils import timeNowDB, format_date
-
-# Security whitelists & Literals for documentation
-ALLOWED_DEVICE_COLUMNS = Literal[
-    "devName", "devOwner", "devType", "devVendor",
-    "devGroup", "devLocation", "devComments", "devFavorite",
-    "devParentMAC"
-]
 
 
 class DeviceInstance:

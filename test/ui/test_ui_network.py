@@ -8,12 +8,10 @@ import time
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-import pytest
 
 from test_helpers import BASE_URL
 
 
-@pytest.mark.ui
 def test_network_page_loads(driver):
     """Test: Network page loads successfully"""
     driver.get(f"{BASE_URL}/network.php")
@@ -24,7 +22,6 @@ def test_network_page_loads(driver):
     assert driver.title, "Network page should have a title"
 
 
-@pytest.mark.ui
 def test_network_tree_present(driver):
     """Test: Network tree container is rendered"""
     driver.get(f"{BASE_URL}/network.php")
@@ -33,7 +30,6 @@ def test_network_tree_present(driver):
     assert len(tree) > 0, "Network tree should be present"
 
 
-@pytest.mark.ui
 def test_network_tabs_present(driver):
     """Test: Network page loads successfully"""
     driver.get(f"{BASE_URL}/network.php")
@@ -43,7 +39,6 @@ def test_network_tabs_present(driver):
     assert len(driver.page_source) > 100, "Page should load content"
 
 
-@pytest.mark.ui
 def test_device_tables_present(driver):
     """Test: Device tables are rendered"""
     driver.get(f"{BASE_URL}/network.php")

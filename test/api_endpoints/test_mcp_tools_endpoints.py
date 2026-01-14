@@ -100,8 +100,8 @@ def test_get_open_ports_ip(mock_plugin_db_conn, mock_device_db_conn, client, api
     mock_execute_result.fetchone.return_value = {"devMac": "AA:BB:CC:DD:EE:FF"}
 
     mock_conn.execute.return_value = mock_execute_result
-    mock_device_db_conn.return_value = mock_conn
     mock_plugin_db_conn.return_value = mock_conn
+    mock_device_db_conn.return_value = mock_conn
 
     payload = {"target": "192.168.1.1"}
     response = client.post("/device/open_ports", json=payload, headers=auth_headers(api_token))

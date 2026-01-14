@@ -8,12 +8,10 @@ import time
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-import pytest
 
 from test_helpers import BASE_URL
 
 
-@pytest.mark.ui
 def test_multi_edit_page_loads(driver):
     """Test: Multi-edit page loads successfully"""
     driver.get(f"{BASE_URL}/multiEditCore.php")
@@ -26,7 +24,6 @@ def test_multi_edit_page_loads(driver):
     assert len(driver.page_source) > 100, "Page should load some content"
 
 
-@pytest.mark.ui
 def test_device_selector_present(driver):
     """Test: Device selector/table is rendered or page loads"""
     driver.get(f"{BASE_URL}/multiEditCore.php")
@@ -35,7 +32,6 @@ def test_device_selector_present(driver):
     assert "fatal" not in driver.page_source.lower(), "Page should not show fatal errors"
 
 
-@pytest.mark.ui
 def test_bulk_action_buttons_present(driver):
     """Test: Page loads for bulk actions"""
     driver.get(f"{BASE_URL}/multiEditCore.php")
@@ -44,7 +40,6 @@ def test_bulk_action_buttons_present(driver):
     assert len(driver.page_source) > 50, "Page should load content"
 
 
-@pytest.mark.ui
 def test_field_dropdowns_present(driver):
     """Test: Page loads successfully"""
     driver.get(f"{BASE_URL}/multiEditCore.php")
