@@ -176,6 +176,7 @@ def test_get_all_events(mock_get, client, api_token):
     mock_get.return_value = [{"eveMAC": "00:11:22:33:44:55"}]
     response = client.get('/events?mac=00:11:22:33:44:55', headers=auth_headers(api_token))
     assert response.status_code == 200
+    assert response.json["success"] is True
     mock_get.assert_called_with("00:11:22:33:44:55")
 
 
@@ -456,6 +457,7 @@ def test_db_read(mock_read, client, api_token):
     response = client.post('/dbquery/read', json=payload, headers=auth_headers(api_token))
     assert response.status_code == 200
 
+
 @patch('api_server.api_server_start.write_query')
 def test_db_write(mock_write, client, api_token):
     """Test POST /dbquery/write."""
@@ -463,6 +465,7 @@ def test_db_write(mock_write, client, api_token):
     payload = {"rawSql": "base64encoded", "confirm_dangerous_query": True}
     response = client.post('/dbquery/write', json=payload, headers=auth_headers(api_token))
     assert response.status_code == 200
+
 
 @patch('api_server.api_server_start.update_query')
 def test_db_update(mock_update, client, api_token):
@@ -478,6 +481,7 @@ def test_db_update(mock_update, client, api_token):
     response = client.post('/dbquery/update', json=payload, headers=auth_headers(api_token))
     assert response.status_code == 200
 
+
 @patch('api_server.api_server_start.delete_query')
 def test_db_delete(mock_delete, client, api_token):
     """Test POST /dbquery/delete."""
@@ -489,5 +493,3 @@ def test_db_delete(mock_delete, client, api_token):
     }
     response = client.post('/dbquery/delete', json=payload, headers=auth_headers(api_token))
     assert response.status_code == 200
-
-

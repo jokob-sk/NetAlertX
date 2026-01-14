@@ -117,8 +117,8 @@ def test_traceroute_device(client, api_token, test_mac):
 
     # 5. Assertions
     if not device_ip or device_ip.lower() == 'invalid':
-        # Expect 400 if IP is missing or invalid
-        assert resp.status_code == 400
+        # Expect 422 if IP is missing or invalid (Pydantic validation)
+        assert resp.status_code == 422
         data = resp.json
         assert data.get("success") is False
     else:
@@ -133,8 +133,8 @@ def test_traceroute_device(client, api_token, test_mac):
 
 @pytest.mark.parametrize("ip,expected_status", [
     ("8.8.8.8", 200),
-    ("256.256.256.256", 400),  # Invalid IP
-    ("", 400),                  # Missing IP
+    ("256.256.256.256", 422),  # Invalid IP -> 422
+    ("", 422),                  # Missing IP -> 422
 ])
 def test_nslookup_endpoint(client, api_token, ip, expected_status):
     payload = {"devLastIP": ip} if ip else {}
@@ -157,8 +157,8 @@ def test_nslookup_endpoint(client, api_token, ip, expected_status):
     pytest.param("127.0.0.1", "normal", 200, marks=pytest.mark.feature_complete),
     pytest.param("127.0.0.1", "detail", 200, marks=pytest.mark.feature_complete),
     ("127.0.0.1", "skipdiscovery", 200),
-    ("127.0.0.1", "invalidmode", 400),
-    ("999.999.999.999", "fast", 400),
+    ("127.0.0.1", "invalidmode", 422),
+    ("999.999.999.999", "fast", 422),
 ])
 def test_nmap_endpoint(client, api_token, ip, mode, expected_status):
     payload = {"scan": ip, "mode": mode}

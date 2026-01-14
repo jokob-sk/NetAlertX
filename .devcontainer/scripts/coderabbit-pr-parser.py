@@ -38,8 +38,11 @@ def get_pr_threads(pr_num):
     cmd = ["gh", "api", "graphql", "-F", f"owner={owner}", "-F", f"name={name}", "-F", f"number={int(pr_num)}", "-f", f"query={query}"]
 
     try:
-        result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+        result = subprocess.run(cmd, capture_output=True, text=True, check=True, timeout=60)
         return json.loads(result.stdout)
+    except subprocess.TimeoutExpired:
+        print(f"Error: Command timed out after 60 seconds: {' '.join(cmd)}")
+        sys.exit(1)
     except subprocess.CalledProcessError as e:
         print(f"Error fetching PR threads: {e.stderr}")
         sys.exit(1)
@@ -147,7 +150,7 @@ def main():
     if not ordered_tasks:
         print(f"No unresolved actionable tasks found in PR {pr_num}.")
     else:
-        print("For each of the following Coderabbit items:")
+        print("Your assignment is as follows, examine each item and perform the following:")
         print(" 1. Create a plan of action")
         print(" 2. Execute your actions")
         print(" 3. Run unit tests to validate")

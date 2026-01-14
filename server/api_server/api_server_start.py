@@ -816,12 +816,8 @@ def api_wakeonlan(payload=None):
     tags=["nettools"],
     auth_callable=is_authorized
 )
-def api_traceroute(payload=None):
-    data = request.get_json(silent=True) or {}
-    ip = data.get("devLastIP")
-    if not ip:
-        return jsonify({"success": False, "message": "ERROR: Missing parameters", "error": "Missing 'devLastIP'"}), 400
-
+def api_traceroute(payload: TracerouteRequest = None):
+    ip = payload.devLastIP if payload else request.get_json(silent=True).get("devLastIP")
     return traceroute(ip)
 
 
@@ -846,19 +842,14 @@ def api_speedtest(payload=None):
     request_model=NslookupRequest,
     response_model=NslookupResponse,
     tags=["nettools"],
-    validation_error_code=400,
     auth_callable=is_authorized
 )
-def api_nslookup(payload=None):
+def api_nslookup(payload: NslookupRequest = None):
     """
     API endpoint to handle nslookup requests.
     Expects JSON with 'devLastIP'.
     """
-    data = request.get_json(silent=True) or {}
-    if not data or "devLastIP" not in data:
-        return jsonify({"success": False, "message": "ERROR: Missing parameters", "error": "Missing 'devLastIP'"}), 400
-
-    ip = data["devLastIP"]
+    ip = payload.devLastIP if payload else request.get_json(silent=True).get("devLastIP")
     return nslookup(ip)
 
 
@@ -870,20 +861,21 @@ def api_nslookup(payload=None):
     request_model=NmapScanRequest,
     response_model=NmapScanResponse,
     tags=["nettools"],
-    validation_error_code=400,
     auth_callable=is_authorized
 )
-def api_nmap(payload=None):
+def api_nmap(payload: NmapScanRequest = None):
     """
     API endpoint to handle nmap scan requests.
     Expects JSON with 'scan' (IP address) and 'mode' (scan mode).
     """
-    data = request.get_json(silent=True) or {}
-    if not data or "scan" not in data or "mode" not in data:
-        return jsonify({"success": False, "message": "ERROR: Missing parameters", "error": "Missing 'scan' or 'mode'"}), 400
+    if payload:
+        ip = payload.scan
+        mode = payload.mode
+    else:
+        data = request.get_json(silent=True) or {}
+        ip = data.get("scan")
+        mode = data.get("mode")
 
-    ip = data["scan"]
-    mode = data["mode"]
     return nmap_scan(ip, mode)
 
 
@@ -1246,10 +1238,14 @@ def api_delete_all_events(payload=None):
     auth_callable=is_authorized
 )
 def api_get_events(payload=None):
-    mac = request.args.get("mac")
-    event_handler = EventInstance()
-    events = event_handler.getEvents(mac)
-    return jsonify({"count": len(events), "events": events})
+    try:
+        mac = request.args.get("mac")
+        event_handler = EventInstance()
+        events = event_handler.getEvents(mac)
+        return jsonify({"success": True, "count": len(events), "events": events})
+    except Exception as e:
+        mylog("error", [f"[api_get_events] Error: {e}"])
+        return jsonify({"success": False, "message": str(e)}), 500
 
 
 @app.route("/events/<int:days>", methods=["DELETE"])
@@ -1687,7 +1683,7 @@ def start_server(graphql_port, app_state):
         # Start Flask app in a separate thread
         thread = threading.Thread(
             target=lambda: app.run(
-                host="0.0.0.0", port=graphql_port, debug=True, use_reloader=False
+                host="0.0.0.0", port=graphql_port, debug=True, use_reloader=False, threaded=True
             )
         )
         thread.start()
