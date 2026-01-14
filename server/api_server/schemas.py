@@ -14,9 +14,13 @@ Philosophy: "Code First, Spec Second" — these models ARE the contract.
 from __future__ import annotations
 
 import re
+import ipaddress
 from typing import Optional, List, Literal, Any, Dict
 from pydantic import BaseModel, Field, field_validator, model_validator, ConfigDict, RootModel
-from pydantic.networks import IPvAnyAddress
+
+# Internal helper imports
+from helper import sanitize_string
+from plugin_helper import normalize_mac, is_mac
 
 
 # =============================================================================
@@ -52,12 +56,13 @@ ALLOWED_LOG_FILES = Literal[
 def validate_mac(value: str) -> str:
     """Validate and normalize MAC address format."""
     # Allow "Internet" as a special case for the gateway/WAN device
-    if value == "Internet":
-        return value
+    if value.lower() == "internet":
+        return "Internet"
 
-    if not re.match(MAC_PATTERN, value):
+    if not is_mac(value):
         raise ValueError(f"Invalid MAC address format: {value}")
-    return value.upper()
+
+    return normalize_mac(value)
 
 
 def validate_ip(value: str) -> str:
@@ -65,7 +70,10 @@ def validate_ip(value: str) -> str:
 
     Returns the canonical string form of the IP address.
     """
-    return str(IPvAnyAddress(value))
+    try:
+        return str(ipaddress.ip_address(value))
+    except ValueError as err:
+        raise ValueError(f"Invalid IP address: {value}") from err
 
 
 def validate_column_identifier(value: str) -> str:
@@ -142,15 +150,23 @@ class DeviceSearchResponse(BaseResponse):
 
 class DeviceListRequest(BaseModel):
     """Request for listing devices by status."""
-    status: Optional[Literal["connected", "down", "favorites", "new", "archived", "all", "my"]] = Field(
+    status: Optional[Literal[
+        "connected", "down", "favorites", "new", "archived", "all", "my",
+        "offline", "my_devices", "network_devices", "all_devices"
+    ]] = Field(
         None,
-        description="Filter devices by status (e.g. 'connected', 'down')"
+        description="Filter devices by status (e.g. 'connected', 'down', 'offline')"
     )
 
 
 class DeviceListResponse(RootModel):
     """Response with list of devices."""
     root: List[DeviceInfo] = Field(default_factory=list, description="List of devices")
+
+
+class DeviceListWrapperResponse(BaseResponse):
+    """Wrapped response with list of devices."""
+    devices: List[DeviceInfo] = Field(default_factory=list, description="List of devices")
 
 
 class GetDeviceRequest(BaseModel):
@@ -172,6 +188,11 @@ class GetDeviceResponse(BaseResponse):
     device: Optional[DeviceInfo] = Field(None, description="Device details if found")
 
 
+class GetDeviceWrapperResponse(BaseResponse):
+    """Wrapped response for getting a single device (e.g. latest)."""
+    device: Optional[DeviceInfo] = Field(None, description="Device details")
+
+
 class SetDeviceAliasRequest(BaseModel):
     """Request to set a device alias/name."""
     alias: str = Field(
@@ -180,6 +201,11 @@ class SetDeviceAliasRequest(BaseModel):
         max_length=128,
         description="New display name/alias for the device"
     )
+
+    @field_validator("alias")
+    @classmethod
+    def sanitize_alias(cls, v: str) -> str:
+        return sanitize_string(v)
 
 
 class DeviceTotalsResponse(RootModel):
@@ -372,10 +398,32 @@ class NslookupRequest(BaseModel):
         return validate_ip(v)
 
 
+class NslookupResponse(BaseResponse):
+    """Response for DNS lookup operation."""
+    output: List[str] = Field(default_factory=list, description="Nslookup output lines")
+
+
+class NmapScanResponse(BaseResponse):
+    """Response for NMAP scan operation."""
+    mode: Optional[str] = Field(None, description="NMAP scan mode")
+    ip: Optional[str] = Field(None, description="Target IP address")
+    output: List[str] = Field(default_factory=list, description="NMAP scan output lines")
+
+
 class NetworkTopologyResponse(BaseResponse):
     """Response with network topology data."""
     nodes: List[dict] = Field(default_factory=list, description="Network nodes")
     edges: List[dict] = Field(default_factory=list, description="Network connections")
+
+
+class InternetInfoResponse(BaseResponse):
+    """Response for internet information."""
+    output: Dict[str, Any] = Field(..., description="Details about the internet connection.")
+
+
+class NetworkInterfacesResponse(BaseResponse):
+    """Response with network interface information."""
+    interfaces: Dict[str, Any] = Field(..., description="Details about network interfaces.")
 
 
 # =============================================================================

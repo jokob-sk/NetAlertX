@@ -48,6 +48,7 @@ Backend loop phases (see `server/__main__.py` and `server/plugin.py`): `once`, `
 ## API/Endpoints quick map
 - Flask app: `server/api_server/api_server_start.py` exposes routes like `/device/<mac>`, `/devices`, `/devices/export/{csv,json}`, `/devices/import`, `/devices/totals`, `/devices/by-status`, plus `nettools`, `events`, `sessions`, `dbquery`, `metrics`, `sync`.
 - Authorization: all routes expect header `Authorization: Bearer <API_TOKEN>` via `get_setting_value('API_TOKEN')`.
+  - Exception: `/openapi.json` and `/docs` are intentionally public to enable documentation discovery; actual API endpoints remain protected.
 - All responses need to return `"success":<False:True>` and if `False` an "error" message needs to be returned, e.g. `{"success": False, "error": f"No stored open ports for Device"}`
 
 ## Conventions & helpers to reuse

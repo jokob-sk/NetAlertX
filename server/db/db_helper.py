@@ -35,10 +35,14 @@ def get_device_condition_by_status(device_status):
     conditions = {
         "all": "WHERE devIsArchived=0",
         "my": "WHERE devIsArchived=0",
+        "all_devices": "WHERE devIsArchived=0",
+        "my_devices": "WHERE devIsArchived=0",
+        "network_devices": "WHERE devIsArchived=0",
         "connected": "WHERE devIsArchived=0 AND devPresentLastScan=1",
         "favorites": "WHERE devIsArchived=0 AND devFavorite=1",
         "new": "WHERE devIsArchived=0 AND devIsNew=1",
         "down": "WHERE devIsArchived=0 AND devAlertDown != 0 AND devPresentLastScan=0",
+        "offline": "WHERE devIsArchived=0 AND devPresentLastScan=0",
         "archived": "WHERE devIsArchived=1",
     }
     return conditions.get(device_status, "WHERE 1=0")

@@ -32,6 +32,7 @@ from __future__ import annotations
 
 import threading
 import json
+import inspect
 from functools import wraps
 from typing import Optional, Type, Any, Dict, List, Literal, Callable
 from flask import request, jsonify
@@ -44,6 +45,7 @@ from logger import mylog
 # Thread-safe registry
 _registry: List[Dict[str, Any]] = []
 _registry_lock = threading.Lock()
+_rebuild_lock = threading.Lock()
 _operation_ids: set = set()
 _disabled_tools: set = set()
 
@@ -60,7 +62,8 @@ def validate_request(
     tags: Optional[list[str]] = None,
     path_params: Optional[list[dict]] = None,
     query_params: Optional[list[dict]] = None,
-    validation_error_code: int = 422
+    validation_error_code: int = 422,
+    auth_callable: Optional[Callable[[], bool]] = None
 ):
     """
     Decorator to register a Flask route with the OpenAPI registry and validate incoming requests.
@@ -69,10 +72,16 @@ def validate_request(
     - Auto-registers the endpoint with the OpenAPI spec generator.
     - Validates JSON body against `request_model` (for POST/PUT).
     - Injects the validated Pydantic model as the first argument to the view function.
+    - Supports auth_callable to check permissions before validation.
     - Returns 422 (default) if validation fails.
     """
     
     def decorator(f: Callable) -> Callable:
+        # Detect if f accepts 'payload' argument (unwrap if needed)
+        real_f = inspect.unwrap(f)
+        sig = inspect.signature(real_f)
+        accepts_payload = 'payload' in sig.parameters
+
         f._openapi_metadata = {
             "operation_id": operation_id,
             "summary": summary,
@@ -86,67 +95,69 @@ def validate_request(
 
         @wraps(f)
         def wrapper(*args, **kwargs):
+            # 1. Check Authorization first (Coderabbit fix)
+            if auth_callable and not auth_callable():
+                return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
+
             validated_instance = None
 
+            # 2. Payload Validation
             if request_model:
                 if request.method in ["POST", "PUT", "PATCH"]:
-                    if not request.is_json and request.content_length:
+                    # Skip validation if multipart (files present)
+                    if request.files:
                         pass
+                    else:
+                        if not request.is_json and request.content_length:
+                            return jsonify({"success": False, "error": "Invalid Content-Type", "message": "Content-Type must be application/json"}), 415
 
-                    try:
-                        data = request.get_json() or {}
-                        validated_instance = request_model(**data)
-                    except ValidationError as e:
-                        mylog("verbose", [f"[Validation] Error for {operation_id}: {e}"])
-                        
-                        # Construct a legacy-compatible error message if possible
-                        error_msg = "Validation Error"
-                        if e.errors():
-                            err = e.errors()[0]
-                            if err['type'] == 'missing':
-                                error_msg = f"Missing required '{err['loc'][0]}'"
-                            else:
-                                error_msg = f"Validation Error: {err['msg']}"
+                        try:
+                            data = request.get_json() or {}
+                            validated_instance = request_model(**data)
+                        except ValidationError as e:
+                            mylog("verbose", [f"[Validation] Error for {operation_id}: {e}"])
+                            
+                            # Construct a legacy-compatible error message if possible
+                            error_msg = "Validation Error"
+                            if e.errors():
+                                err = e.errors()[0]
+                                if err['type'] == 'missing':
+                                    error_msg = f"Missing required '{err['loc'][0]}'"
+                                else:
+                                    error_msg = f"Validation Error: {err['msg']}"
 
-                        return jsonify({
-                            "success": False,
-                            "error": error_msg,
-                            "details": json.loads(e.json())
-                        }), validation_error_code
-                    except BadRequest as e:
-                        mylog("verbose", [f"[Validation] Invalid JSON for {operation_id}: {e}"])
-                        return jsonify({
-                            "success": False,
-                            "error": "Invalid JSON",
-                            "message": "Request body must be valid JSON"
-                        }), 400
-                    except Exception as e:
-                        mylog("verbose", [f"[Validation] Malformed request for {operation_id}: {e}"])
-                        return jsonify({
-                            "success": False,
-                            "error": "Invalid Request",
-                            "message": "Unable to process request body"
-                        }), 400
+                            return jsonify({
+                                "success": False,
+                                "error": error_msg,
+                                "details": json.loads(e.json())
+                            }), validation_error_code
+                        except BadRequest as e:
+                            mylog("verbose", [f"[Validation] Invalid JSON for {operation_id}: {e}"])
+                            return jsonify({
+                                "success": False,
+                                "error": "Invalid JSON",
+                                "message": "Request body must be valid JSON"
+                            }), 400
+                        except Exception as e:
+                            mylog("verbose", [f"[Validation] Malformed request for {operation_id}: {e}"])
+                            return jsonify({
+                                "success": False,
+                                "error": "Invalid Request",
+                                "message": "Unable to process request body"
+                            }), 400
 
             if validated_instance:
-                kwargs['payload'] = validated_instance
+                if accepts_payload:
+                    kwargs['payload'] = validated_instance
+                else:
+                    # Fail fast if decorated function doesn't accept payload (Coderabbit fix)
+                    mylog("minimal", [f"[Validation] Endpoint {operation_id} does not accept 'payload' argument!"])
+                    raise TypeError(f"Function {f.__name__} (operationId: {operation_id}) does not accept 'payload' argument.")
 
-            try:
-                return f(*args, **kwargs)
-            except TypeError as e:
-                if "got an unexpected keyword argument 'payload'" in str(e):
-                    mylog("none", [f"[Validation] Endpoint {operation_id} does not accept 'payload' argument!"])
-                    if 'payload' in kwargs:
-                        del kwargs['payload']
-                    return f(*args, **kwargs)
-                raise e
+            return f(*args, **kwargs)
 
         return wrapper
     return decorator
-_registry: List[Dict[str, Any]] = []
-_registry_lock = threading.Lock()
-_operation_ids: set = set()
-_disabled_tools: set = set()
 
 
 def introspect_graphql_schema(schema: graphene.Schema):
@@ -609,10 +620,11 @@ def generate_openapi_spec(
 
     # If we are in "dynamic mode", we rebuild the registry from code
     if flask_app:
-        from .graphql_endpoint import devicesSchema
-        clear_registry()
-        introspect_graphql_schema(devicesSchema)
-        introspect_flask_app(flask_app)
+        with _rebuild_lock:
+            from .graphql_endpoint import devicesSchema
+            clear_registry()
+            introspect_graphql_schema(devicesSchema)
+            introspect_flask_app(flask_app)
 
     spec = {
         "openapi": "3.1.0",

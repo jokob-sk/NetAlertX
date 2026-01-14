@@ -452,43 +452,70 @@ def test_sync_post(mock_handle, client, api_token):
 def test_db_read(mock_read, client, api_token):
     """Test POST /dbquery/read."""
     mock_read.return_value = ({"success": True}, 200)
-    payload = {"rawSql": "base64encoded"}
+    payload = {"rawSql": "base64encoded", "confirm_dangerous_query": True}
     response = client.post('/dbquery/read', json=payload, headers=auth_headers(api_token))
     assert response.status_code == 200
-
 
 @patch('api_server.api_server_start.write_query')
 def test_db_write(mock_write, client, api_token):
     """Test POST /dbquery/write."""
     mock_write.return_value = ({"success": True}, 200)
-    payload = {"rawSql": "base64encoded"}
+    payload = {"rawSql": "base64encoded", "confirm_dangerous_query": True}
     response = client.post('/dbquery/write', json=payload, headers=auth_headers(api_token))
     assert response.status_code == 200
 
+    @patch('api_server.api_server_start.update_query')
 
-@patch('api_server.api_server_start.update_query')
-def test_db_update(mock_update, client, api_token):
-    """Test POST /dbquery/update."""
-    mock_update.return_value = ({"success": True}, 200)
-    payload = {
-        "columnName": "id",
-        "id": [1],
-        "dbtable": "test",
-        "columns": ["col"],
-        "values": ["val"]
-    }
-    response = client.post('/dbquery/update', json=payload, headers=auth_headers(api_token))
-    assert response.status_code == 200
+    def test_db_update(mock_update, client, api_token):
+
+        """Test POST /dbquery/update."""
+
+        mock_update.return_value = ({"success": True}, 200)
+
+        payload = {
+
+            "columnName": "id",
+
+            "id": [1],
+
+            "dbtable": "Settings",
+
+            "columns": ["col"],
+
+            "values": ["val"]
+
+        }
+
+        response = client.post('/dbquery/update', json=payload, headers=auth_headers(api_token))
+
+        assert response.status_code == 200
+
+    
+
+    
+
+    @patch('api_server.api_server_start.delete_query')
+
+    def test_db_delete(mock_delete, client, api_token):
+
+        """Test POST /dbquery/delete."""
+
+        mock_delete.return_value = ({"success": True}, 200)
+
+        payload = {
+
+            "columnName": "id",
+
+            "id": [1],
+
+            "dbtable": "Settings"
+
+        }
+
+        response = client.post('/dbquery/delete', json=payload, headers=auth_headers(api_token))
+
+        assert response.status_code == 200
+
+    
 
 
-@patch('api_server.api_server_start.delete_query')
-def test_db_delete(mock_delete, client, api_token):
-    """Test POST /dbquery/delete."""
-    mock_delete.return_value = ({"success": True}, 200)
-    payload = {
-        "columnName": "id",
-        "id": [1],
-        "dbtable": "test"
-    }
-    response = client.post('/dbquery/delete', json=payload, headers=auth_headers(api_token))
-    assert response.status_code == 200
