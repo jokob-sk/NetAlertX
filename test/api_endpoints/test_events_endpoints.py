@@ -118,7 +118,8 @@ def test_delete_all_events(client, api_token, test_mac):
     create_event(client, api_token, "FF:FF:FF:FF:FF:FF")
 
     resp = list_events(client, api_token)
-    assert len(resp.json) >= 3
+    # At least the two we created should be present
+    assert len(resp.json.get("events", [])) >= 2
 
     # delete all
     resp = client.delete("/events", headers=auth_headers(api_token))
@@ -131,12 +132,16 @@ def test_delete_all_events(client, api_token, test_mac):
 
 
 def test_delete_events_dynamic_days(client, api_token, test_mac):
+    # Determine initial count so test doesn't rely on preexisting events
+    before = list_events(client, api_token, test_mac)
+    initial_count = len(before.json.get("events", []))
+
     # create old + new events
     create_event(client, api_token, test_mac, days_old=40)  # should be deleted
     create_event(client, api_token, test_mac, days_old=5)   # should remain
 
     resp = list_events(client, api_token, test_mac)
-    assert len(resp.json) == 3
+    assert len(resp.json.get("events", [])) == initial_count + 2
 
     # delete events older than 30 days
     resp = client.delete("/events/30", headers=auth_headers(api_token))

@@ -849,7 +849,8 @@ def api_nslookup(payload: NslookupRequest = None):
     API endpoint to handle nslookup requests.
     Expects JSON with 'devLastIP'.
     """
-    ip = payload.devLastIP if payload else request.get_json(silent=True).get("devLastIP")
+    json_data = request.get_json(silent=True) or {}
+    ip = payload.devLastIP if payload else json_data.get("devLastIP")
     return nslookup(ip)
 
 

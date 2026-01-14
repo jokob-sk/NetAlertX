@@ -1,6 +1,12 @@
+import sys
+import os
 import pytest
 from unittest.mock import patch, MagicMock
 from datetime import datetime
+
+INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
+sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
+
 from api_server.api_server_start import app
 from helper import get_setting_value
 

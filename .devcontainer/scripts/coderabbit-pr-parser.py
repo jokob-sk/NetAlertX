@@ -12,6 +12,15 @@ DEFAULT_PR_NUM = "1405"
 
 def get_pr_threads(pr_num):
     """Fetches unresolved review threads using GitHub GraphQL API."""
+    # Validate PR number early to avoid passing invalid values to subprocess
+    try:
+        pr_int = int(pr_num)
+        if pr_int <= 0:
+            raise ValueError
+    except Exception:
+        print(f"Error: Invalid PR number: {pr_num}. Must be a positive integer.")
+        sys.exit(2)
+
     query = """
     query($owner: String!, $name: String!, $number: Int!) {
       repository(owner: $owner, name: $name) {
@@ -35,7 +44,7 @@ def get_pr_threads(pr_num):
     }
     """
     owner, name = REPO.split("/")
-    cmd = ["gh", "api", "graphql", "-F", f"owner={owner}", "-F", f"name={name}", "-F", f"number={int(pr_num)}", "-f", f"query={query}"]
+    cmd = ["gh", "api", "graphql", "-F", f"owner={owner}", "-F", f"name={name}", "-F", f"number={pr_int}", "-f", f"query={query}"]
 
     try:
         result = subprocess.run(cmd, capture_output=True, text=True, check=True, timeout=60)
