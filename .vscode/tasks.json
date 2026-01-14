@@ -6,6 +6,12 @@
       "type": "promptString",
       "description": "DANGER! Type YES to confirm pruning all unused Docker resources. This will destroy containers, images, volumes, and networks!",
       "default": ""
+    },
+    {
+        "id": "prNumber",
+        "type": "promptString",
+        "description": "Enter GitHub PR Number",
+        "default": "1405"
     }
   ],
   "tasks": [
@@ -256,6 +262,31 @@
         "id": "package",
         "color": "terminal.ansiBlue"
       }
+    },
+    {
+        "label": "Analyze PR Instructions",
+        "type": "shell",
+        "command": "python3",
+        "detail": "Pull all of Coderabbit's suggestions from a pull request. Requires `gh auth login` first.",
+        "options": {
+            "cwd": "/workspaces/NetAlertX/.devcontainer/scripts"
+        },
+        "args": [
+            "/workspaces/NetAlertX/.devcontainer/scripts/coderabbit-pr-parser.py",
+            "${input:prNumber}"
+        ],
+        "problemMatcher": [],
+        "presentation": {
+            "echo": true,
+            "reveal": "always",
+            "panel": "new",
+            "showReuseMessage": false,
+            "focus": true
+        },
+        "icon": {
+            "id": "comment-discussion",
+            "color": "terminal.ansiBlue"
+        }
     }
   ]
 }
