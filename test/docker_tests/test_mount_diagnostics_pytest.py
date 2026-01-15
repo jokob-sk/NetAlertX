@@ -57,10 +57,10 @@ CONTAINER_PATHS = {
 }
 
 TROUBLESHOOTING_URLS = [
-    "https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/file-permissions.md",
-    "https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/mount-configuration-issues.md",
-    "https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/incorrect-user.md",
-    "https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/missing-capabilities.md",
+    "https://docs.netalertx.com/docker-troubleshooting/file-permissions",
+    "https://docs.netalertx.com/docker-troubleshooting/mount-configuration-issues",
+    "https://docs.netalertx.com/docker-troubleshooting/incorrect-user",
+    "https://docs.netalertx.com/docker-troubleshooting/missing-capabilities",
 ]
 
 

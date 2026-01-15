@@ -27,7 +27,7 @@ if [ ! -d "${CONF_ACTIVE_DIR}" ]; then
         --mount type=bind,src=/path/on/host,dst=${CONF_ACTIVE_DIR}
     and ensure it is owned by the netalertx user (20211:20211) with 700 perms.
 
-    https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/nginx-configuration-mount.md
+    https://docs.netalertx.com/docker-troubleshooting/nginx-configuration-mount
 ══════════════════════════════════════════════════════════════════════════════
 EOF
     >&2 printf "%s" "${RESET}"
@@ -49,7 +49,7 @@ if ! ( : >"${TMP_FILE}" ) 2>/dev/null; then
         find ${CONF_ACTIVE_DIR} -type d -exec chmod 700 {} +
         find ${CONF_ACTIVE_DIR} -type f -exec chmod 600 {} +
 
-    https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/nginx-configuration-mount.md
+    https://docs.netalertx.com/docker-troubleshooting/nginx-configuration-mount
 ══════════════════════════════════════════════════════════════════════════════
 EOF
     >&2 printf "%s" "${RESET}"

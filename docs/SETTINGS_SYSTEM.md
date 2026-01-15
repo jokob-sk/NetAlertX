@@ -1,16 +1,16 @@
 ## ⚙ Setting system
 
-This is an explanation how settings are handled intended for anyone thinking about writing their own plugin or contributing to the project. 
+This is an explanation how settings are handled intended for anyone thinking about writing their own plugin or contributing to the project.
 
-If you are a user of the app, settings have a detailed description in the _Settings_ section of the app. Open an issue if you'd like to clarify any of the settings. 
+If you are a user of the app, settings have a detailed description in the _Settings_ section of the app. Open an issue if you'd like to clarify any of the settings.
 
 ### 🛢 Data storage
 
-The source of truth for user-defined values is the `app.conf` file. Editing the file makes the App overwrite values in the `Settings` database table and in the `table_settings.json` file. 
+The source of truth for user-defined values is the `app.conf` file. Editing the file makes the App overwrite values in the `Settings` database table and in the `table_settings.json` file.
 
 #### Settings database table
 
-The `Settings` database table contains settings for App run purposes. The table is recreated every time the App restarts. The settings are loaded from the source-of-truth, that is the `app.conf` file. A high-level overview on the database structure can be found in the [database documentation](./DATABASE.md). 
+The `Settings` database table contains settings for App run purposes. The table is recreated every time the App restarts. The settings are loaded from the source-of-truth, that is the `app.conf` file. A high-level overview on the database structure can be found in the [database documentation](./DATABASE.md).
 
 #### table_settings.json
 
@@ -22,23 +22,23 @@ The json file is also cached on the client-side local storage of the browser.
 
 #### app.conf
 
-> [!NOTE] 
+> [!NOTE]
 > This is the source of truth for settings. User-defined values in this files always override default values specified in the Plugin definition.
 
 The App generates two `app.conf` entries for every setting (Since version 23.8+). One entry is the setting value, the second is the `__metadata` associated with the setting. This `__metadata` entry contains the full setting definition in JSON format. Currently unused, but intended to be used in future to extend the Settings system.
 
 #### Plugin settings
 
-> [!NOTE] 
+> [!NOTE]
 > This is the preferred way adding settings going forward. I'll be likely migrating all app settings into plugin-based settings.
 
-Plugin settings are loaded dynamically from the `config.json` of individual plugins. If a setting isn't defined in the `app.conf` file, it is initialized via the `default_value` property of a setting from the `config.json` file. Check the [Plugins documentation](https://github.com/jokob-sk/NetAlertX/blob/main/docs/PLUGINS.md#-setting-object-structure), section `⚙ Setting object structure` for details on the structure of the setting.
+Plugin settings are loaded dynamically from the `config.json` of individual plugins. If a setting isn't defined in the `app.conf` file, it is initialized via the `default_value` property of a setting from the `config.json` file. Check the [Plugins documentation](https://docs.netalertx.com/PLUGINS#-setting-object-structure), section `⚙ Setting object structure` for details on the structure of the setting.
 
 ![Screen 1][screen1]
 
 ### Settings Process flow
 
-The process flow is mostly managed by the [initialise.py](/server/initialise.py) file. 
+The process flow is mostly managed by the [initialise.py](/server/initialise.py) file.
 
 The script is responsible for reading user-defined values from a configuration file (`app.conf`), initializing settings, and importing them into a database. It also handles plugins and their configurations.
 

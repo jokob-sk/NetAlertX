@@ -1,7 +1,7 @@
 # The NetAlertX Container Operator's Guide
 
 > [!WARNING]
-> ⚠️ **Important:** The docker-compose has recently changed. Carefully read the [Migration guide](https://jokob-sk.github.io/NetAlertX/MIGRATION/?h=migrat#12-migration-from-netalertx-v25524) for detailed instructions.
+> ⚠️ **Important:** The docker-compose has recently changed. Carefully read the [Migration guide](https://docs.netalertx.com/MIGRATION/?h=migrat#12-migration-from-netalertx-v25524) for detailed instructions.
 
 This guide assumes you are starting with the official `docker-compose.yml` file provided with the project. We strongly recommend you start with or migrate to this file as your baseline and modify it to suit your specific needs (e.g., changing file paths). While there are many ways to configure NetAlertX, the default file is designed to meet the mandatory security baseline with layer-2 networking capabilities while operating securely and without startup warnings.
 

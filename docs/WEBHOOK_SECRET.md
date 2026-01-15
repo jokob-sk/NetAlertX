@@ -1,7 +1,11 @@
 # Webhook Secrets
 
 > [!NOTE]
-> You need to enable the `WEBHOOK` plugin first in order to follow this guide. See the [Plugins guide](./PLUGINS.md) for details.  
+> This is community-contributed. Due to environment, setup, or networking differences, results may vary. Please open a PR to improve it instead of creating an issue, as the maintainer is not actively maintaining it.
+
+
+> [!NOTE]
+> You need to enable the `WEBHOOK` plugin first in order to follow this guide. See the [Plugins guide](./PLUGINS.md) for details.
 
 ## How does the signing work?
 
@@ -39,3 +43,5 @@ If your implementation is correct, the signature you generated should match the 
 If you want to learn more about webhook security, take a look at [GitHub's webhook documentation](https://docs.github.com/en/webhooks/about-webhooks).
 
 You can find examples for validating a webhook delivery [here](https://docs.github.com/en/webhooks/using-webhooks/validating-webhook-deliveries#examples).
+
+

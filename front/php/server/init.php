@@ -5,5 +5,4 @@ require dirname(__FILE__).'/../templates/globals.php';
 require dirname(__FILE__).'/db.php';
 require dirname(__FILE__).'/util.php';
 require dirname(__FILE__).'/../templates/language/lang.php';
-require dirname(__FILE__).'/utilNotification.php';
 ?>

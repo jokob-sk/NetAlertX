@@ -31,8 +31,6 @@
   if (!file_exists($confPath) && file_exists('../config/app.conf')) {
       $confPath = '../config/app.conf';
   }
-
-  checkPermissions([$dbPath, $confPath]);
 ?>
 
 <!-- ----------------------------------------------------------------------- -->

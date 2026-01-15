@@ -3,7 +3,10 @@ name: Deploy MkDocs
 on:
   push:
     branches:
-      - main  # Change if your default branch is different
+      - main
+
+permissions:
+  contents: write
 
 jobs:
   deploy:
@@ -19,7 +22,15 @@ jobs:
 
       - name: Install MkDocs
         run: |
-          pip install mkdocs mkdocs-material && pip install mkdocs-github-admonitions-plugin 
+          pip install mkdocs mkdocs-material
+          pip install mkdocs-github-admonitions-plugin
+
+      - name: Build MkDocs
+        run: mkdocs build
+
+      - name: Add CNAME
+        run: |
+          echo "docs.netalertx.com" > site/CNAME
 
       - name: Deploy MkDocs
         run: mkdocs gh-deploy --force

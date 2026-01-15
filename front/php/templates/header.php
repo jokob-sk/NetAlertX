@@ -44,6 +44,7 @@
   <script src="lib/datatables.net/js/dataTables.select.min.js"></script>
 
   <script src="js/common.js?v=<?php include 'php/templates/version.php'; ?>"></script>
+  <script src="js/sse_manager.js?v=<?php include 'php/templates/version.php'; ?>"></script>
   <script src="js/api.js?v=<?php include 'php/templates/version.php'; ?>"></script>
   <script src="js/modal.js?v=<?php include 'php/templates/version.php'; ?>"></script>
   <script src="js/tests.js?v=<?php include 'php/templates/version.php'; ?>"></script>
@@ -100,19 +101,23 @@
 <!-- Servertime to the right of the hostname -->
 <script>
 
-  // -------------------------------------------------------------
-  // Updates the backend application state/status in the header
-  function updateState(){
+  // ===================================================================
+  // DEPRECATED: updateState() - Replaced by SSE-based state manager
+  // Kept for backward compatibility, will be removed in future version
+  // ===================================================================
+  function updateState() {
+    // Delegate to SSE manager if available
+    if (typeof netAlertXStateManager !== 'undefined' && netAlertXStateManager.initialized) {
+      return; // SSE handles this now
+    }
+
+    // Fallback for backward compatibility
     $.get('php/server/query_json.php', { file: 'app_state.json', nocache: Date.now() }, function(appState) {
-
       document.getElementById('state').innerHTML = appState["currentState"].replaceAll('"', '');
-
-      setTimeout("updateState()", 1000);
-
     })
   }
 
-  // -------------------------------------------------------------
+  // ===================================================================
   // updates the date and time in the header
   function update_servertime() {
     // Get the current date and time in the specified time zone
@@ -481,7 +486,9 @@
   // Update server time in the header
   update_servertime()
 
-  // Update server state in the header
-  updateState()
+  // Initialize SSE-based state manager (replaces updateState polling)
+  if (typeof netAlertXStateManager !== 'undefined') {
+    netAlertXStateManager.init();
+  }
 
 </script>

@@ -441,11 +441,14 @@ function safeDecodeURIComponent(content) {
 // -----------------------------------------------------------------------------
 // Backend notification Polling
 // -----------------------------------------------------------------------------
-// Function to check for notifications
+/**
+ * Check for new notifications and display them
+ * Now powered by SSE (Server-Sent Events) instead of polling
+ * The unread count is updated in real-time by sse_manager.js
+ */
 function checkNotification() {
-  const apiBase = getApiBase();
   const apiToken = getSetting("API_TOKEN");
-  const notificationEndpoint = `${apiBase}/messaging/in-app/unread`;
+  const notificationEndpoint = `${getApiBase()}/messaging/in-app/unread`;
 
   $.ajax({
     url: notificationEndpoint,
@@ -458,7 +461,6 @@ function checkNotification() {
       {
         // Find the oldest unread notification with level "interrupt"
         const oldestInterruptNotification = response.find(notification => notification.read === 0 && notification.level === "interrupt");
-        const allUnreadNotification = response.filter(notification => notification.read === 0 && notification.level === "alert");
 
         if (oldestInterruptNotification) {
           // Show modal dialog with the oldest unread notification
@@ -471,11 +473,10 @@ function checkNotification() {
           if($("#modal-ok").is(":visible") == false)
           {
             showModalOK("Notification", decodedContent, function() {
-              const apiBase = getApiBase();
-              const apiToken = getSetting("API_TOKEN");
-              // Mark the notification as read
-              $.ajax({
-                url: `${apiBase}/messaging/in-app/read/${oldestInterruptNotification.guid}`,
+            const apiToken = getSetting("API_TOKEN");
+            // Mark the notification as read
+            $.ajax({
+              url: `${getApiBase()}/messaging/in-app/read/${oldestInterruptNotification.guid}`,
                 type: 'POST',
                 headers: { "Authorization": `Bearer ${apiToken}` },
                 success: function(response) {
@@ -494,8 +495,6 @@ function checkNotification() {
             });
           }
         }
-
-        handleUnreadNotifications(allUnreadNotification.length)
       }
     },
     error: function() {
@@ -579,8 +578,9 @@ function addOrUpdateNumberBrackets(input, count) {
 }
 
 
-// Start checking for notifications periodically
-setInterval(checkNotification, 3000);
+// Check for interrupt-level notifications (modal display) less frequently now that count is via SSE
+// This still polls for interrupt notifications to display them in modals
+setInterval(checkNotification, 10000);  // Every 10 seconds instead of 3 seconds (SSE handles count updates)
 
 // --------------------------------------------------
 // User notification handling methods

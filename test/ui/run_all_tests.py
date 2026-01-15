@@ -23,9 +23,9 @@ import test_ui_plugins  # noqa: E402 [flake8 lint suppression]
 
 def main():
     """Run all UI tests and provide summary"""
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("NetAlertX UI Test Suite")
-    print("="*70)
+    print("=" * 70)
 
     test_modules = [
         ("Dashboard", test_ui_dashboard),
@@ -49,9 +49,9 @@ def main():
             results[name] = False
 
     # Summary
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("Test Summary")
-    print("="*70 + "\n")
+    print("=" * 70 + "\n")
 
     for name, passed in results.items():
         status = "✓" if passed else "✗"

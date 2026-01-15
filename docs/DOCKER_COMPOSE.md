@@ -1,7 +1,7 @@
 # NetAlertX and Docker Compose
 
 > [!WARNING]
-> ⚠️ **Important:** The docker-compose has recently changed. Carefully read the [Migration guide](https://jokob-sk.github.io/NetAlertX/MIGRATION/?h=migrat#12-migration-from-netalertx-v25524) for detailed instructions.
+> ⚠️ **Important:** The docker-compose has recently changed. Carefully read the [Migration guide](https://docs.netalertx.com/MIGRATION/?h=migrat#12-migration-from-netalertx-v25524) for detailed instructions.
 
 Great care is taken to ensure NetAlertX meets the needs of everyone while being flexible enough for anyone. This document outlines how you can configure your docker-compose. There are many settings, so we recommend using the Baseline Docker Compose as-is, or modifying it for your system.Good care is taken to ensure NetAlertX meets the needs of everyone while being flexible enough for anyone. This document outlines how you can configure your docker-compose. There are many settings, so we recommend using the Baseline Docker Compose as-is, or modifying it for your system.
 
@@ -69,6 +69,8 @@ services:
       PORT: ${PORT:-20211}                                   # Application port
       GRAPHQL_PORT: ${GRAPHQL_PORT:-20212}                   # GraphQL API port (passed into APP_CONF_OVERRIDE at runtime)
   #    NETALERTX_DEBUG: ${NETALERTX_DEBUG:-0}                 # 0=kill all services and restart if any dies. 1 keeps running dead services.
+  #    PUID: 20211                             # Runtime PUID override, set to 0 to run as root
+  #    PGID: 20211                             # Runtime PGID override
 
     # Resource limits to prevent resource exhaustion
     mem_limit: 2048m            # Maximum memory usage
@@ -170,10 +172,6 @@ Make sure to replace `/local_data_dir` with your actual path. The format is `<pa
 Now, any files created by NetAlertX in `/data/config` will appear in your `/local_data_dir/config` folder.
 
 This same method works for mounting other things, like custom plugins or enterprise NGINX files, as shown in the commented-out examples in the baseline file.
-
-## Example Configuration Summaries
-
-Here are the essential modifications for common alternative setups.
 
 ### Example 2: External `.env` File for Paths
 

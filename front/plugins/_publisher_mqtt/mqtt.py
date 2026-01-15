@@ -590,11 +590,11 @@ def publish_notifications(db, mqtt_client):
 
         # Publish to a single MQTT topic safely
         topic = f"{topic_root}/notifications/all"
-        mylog('debug', [f"[{pluginName}] Publishing notification GUID {notification["GUID"]} to MQTT topic {topic}"])
+        mylog('debug', [f"[{pluginName}] Publishing notification GUID {notification['GUID']} to MQTT topic {topic}"])
         try:
             publish_mqtt(mqtt_client, topic, payload)
         except Exception as e:
-            mylog('minimal', [f"[{pluginName}] ⚠ ERROR publishing MQTT notification GUID {notification["GUID"]}: {e}"])
+            mylog('minimal', [f"[{pluginName}] ⚠ ERROR publishing MQTT notification GUID {notification['GUID']}: {e}"])
 
     return True
 

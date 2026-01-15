@@ -65,14 +65,14 @@ RESET='\033[0m'
 NAX='
  _   _      _    ___  _           _  __   __
 | \ | |    | |  / _ \| |         | | \ \ / /
-|  \| | ___| |_/ /_\ \ | ___ _ __| |_ \ V / 
-| .   |/ _ \ __|  _  | |/ _ \  __| __|/   \ 
-| |\  |  __/ |_| | | | |  __/ |  | |_/ /^\ \ 
+|  \| | ___| |_/ /_\ \ | ___ _ __| |_ \ V /
+| .   |/ _ \ __|  _  | |/ _ \  __| __|/   \
+| |\  |  __/ |_| | | | |  __/ |  | |_/ /^\ \
 \_| \_/\___|\__\_| |_/_|\___|_|   \__\/   \/
 '
 
 printf "%b%s%b" "${RED}" "${NAX}" "${RESET}"
-echo '   Network intruder and presence detector. 
+echo '   Network intruder and presence detector.
    https://netalertx.com
 
 '
@@ -99,7 +99,6 @@ for script in "${ENTRYPOINT_CHECKS}"/*; do
         >&2 cat <<EOF
 ══════════════════════════════════════════════════════════════════════════════
 ❌ NetAlertX startup aborted: critical failure in ${script_name}.
-https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/troubleshooting.md
 ══════════════════════════════════════════════════════════════════════════════
 EOF
         >&2 printf "%s" "${RESET}"
@@ -322,7 +321,7 @@ while [ -n "${SERVICES}" ]; do
             FAILED_STATUS=$status
             FAILED_NAME="${name}"
             remove_service "${pid}"
-            
+
             if [ "${NETALERTX_DEBUG:-0}" -eq 1 ]; then
                 echo "⚠️ Service ${name} exited with status ${status}. Debug mode active - continuing."
             else

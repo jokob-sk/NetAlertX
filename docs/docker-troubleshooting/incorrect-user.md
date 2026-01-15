@@ -27,5 +27,5 @@ Option B: Run with a custom UID/GID
 
 ## Additional Resources
 
-- Default compose and tmpfs guidance: [DOCKER_COMPOSE.md](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DOCKER_COMPOSE.md)
-- General Docker install and runtime notes: [DOCKER_INSTALLATION.md](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DOCKER_INSTALLATION.md)
+- Default compose and tmpfs guidance: [DOCKER_COMPOSE.md](https://docs.netalertx.com/DOCKER_COMPOSE)
+- General Docker install and runtime notes: [DOCKER_INSTALLATION.md](https://docs.netalertx.com/DOCKER_INSTALLATION)

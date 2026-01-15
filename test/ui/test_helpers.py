@@ -4,7 +4,6 @@ Shared test utilities and configuration
 """
 
 import os
-import pytest
 import requests
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -13,6 +12,7 @@ from selenium.webdriver.chrome.service import Service
 # Configuration
 BASE_URL = os.getenv("UI_BASE_URL", "http://localhost:20211")
 API_BASE_URL = os.getenv("API_BASE_URL", "http://localhost:20212")
+
 
 def get_api_token():
     """Get API token from config file"""
@@ -29,14 +29,17 @@ def get_api_token():
         print(f"⚠ Config file not found: {config_path}")
     return None
 
+
+# Load API_TOKEN at module initialization
+API_TOKEN = get_api_token()
+
+
 def get_driver(download_dir=None):
     """Create a Selenium WebDriver for Chrome/Chromium
 
     Args:
         download_dir: Optional directory for downloads. If None, uses /tmp/selenium_downloads
     """
-    import os
-    import subprocess
 
     # Check if chromedriver exists
     chromedriver_paths = ['/usr/bin/chromedriver', '/usr/local/bin/chromedriver']
@@ -97,12 +100,14 @@ def get_driver(download_dir=None):
         traceback.print_exc()
         return None
 
+
 def api_get(endpoint, api_token, timeout=5):
     """Make GET request to API - endpoint should be path only (e.g., '/devices')"""
     headers = {"Authorization": f"Bearer {api_token}"}
     # Handle both full URLs and path-only endpoints
     url = endpoint if endpoint.startswith('http') else f"{API_BASE_URL}{endpoint}"
     return requests.get(url, headers=headers, timeout=timeout)
+
 
 def api_post(endpoint, api_token, data=None, timeout=5):
     """Make POST request to API - endpoint should be path only (e.g., '/devices')"""
