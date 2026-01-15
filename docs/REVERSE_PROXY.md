@@ -572,6 +572,10 @@ The Traffic Flow will therefore be as follows:
 - GraphQL: Client accesses `https://authentik.MYDOMAIN.TLD:20212` -> reverse Proxy to internal Port 20219 (NetAlertX GraphQL - unencrypted)
 - Authentik Outpost: Client accesses `https://authentik.MYDOMAIN.TLD:9443` -> reverse Proxy to internal Port 6000 (Authentik Outpost Proxy - unencrypted)
 
+An Overview of the Flow is provided in the Picture below:
+
+![Reverse Proxy Traffic Flow with Authentik SSSO](./img/REVERSE_PROXY/reverse_proxy_flow.svg)
+
 ### Security Considerations
 #### Caddy should be run rootless
 > [!WARNING]  
