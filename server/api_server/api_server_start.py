@@ -1231,8 +1231,8 @@ def api_get_events(payload=None):
         event_handler = EventInstance()
         events = event_handler.getEvents(mac)
         return jsonify({"success": True, "count": len(events), "events": events})
-    except Exception as e:
-        mylog("error", [f"[api_get_events] Error: {e}"])
+    except (ValueError, RuntimeError) as e:
+        mylog("verbose", [f"[api_get_events] Error: {e}"])
         return jsonify({"success": False, "message": str(e)}), 500
 
 
