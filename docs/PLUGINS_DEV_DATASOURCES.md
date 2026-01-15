@@ -12,7 +12,6 @@ Data sources determine **where the plugin gets its data** and **what format it r
 | `app-db-query` | Database Query | Query the NetAlertX database | Result set | Show devices, open ports, recent events |
 | `sqlite-db-query` | External DB | Query external SQLite databases | Result set | PiHole database, external logs |
 | `template` | Template | Generate values from templates | Values | Initialize default settings |
-| `plugin_type` | Metadata | Declare plugin category | Metadata | Classify plugin (scanner, publisher, etc.) |
 
 ## Data Source: `script`
 
@@ -24,7 +23,7 @@ Execute any Linux command or Python script and capture its output.
 {
   "data_source": "script",
   "show_ui": true,
-  "mapped_to_table": "Plugins_Objects"
+  "mapped_to_table": "CurrentScan"
 }
 ```
 
@@ -63,7 +62,7 @@ Execute any Linux command or Python script and capture its output.
 - **Always use absolute paths** (e.g., `/app/front/plugins/...`)
 - **Use `plugin_helper.py`** for output formatting
 - **Add timeouts** via `RUN_TIMEOUT` setting (default: 60s)
-- **Log errors** to `/tmp/log/plugins/*.log`
+- **Log errors** to `/tmp/log/plugins/<PREFIX>.log`
 - **Handle missing dependencies gracefully**
 
 ### Output Format
@@ -86,7 +85,7 @@ Query the NetAlertX SQLite database and display results.
 {
   "data_source": "app-db-query",
   "show_ui": true,
-  "mapped_to_table": "Plugins_Objects"
+  "mapped_to_table": "CurrentScan"
 }
 ```
 
@@ -138,33 +137,7 @@ ORDER BY
   e.EventDateTime DESC
 ```
 
-### Common Columns
-
-**Devices Table:**
-- `devMac` - Device MAC address
-- `devName` - Device name
-- `devLastIP` - Last known IP
-- `devType` - Device type
-- `devStatus` - Online/offline status
-- `devVendor` - Hardware vendor
-
-**CurrentScan Table:**
-- `cur_MAC` - MAC address
-- `cur_IP` - IP address
-- `cur_ScanMethod` - How it was discovered
-
-**Nmap_Scan Table:**
-- `MAC` - Device MAC
-- `Port` - Port number
-- `Service` - Service name
-- `State` - open/closed/filtered
-- `Extra` - Additional notes
-
-**Events Table:**
-- `EventType` - Event type
-- `EventValue` - Event value
-- `EventDateTime` - When it occurred
-- `DeviceMac` - Associated device
+See the [Database documentation](./DATABASE.md) for a list of common columns.
 
 ---
 

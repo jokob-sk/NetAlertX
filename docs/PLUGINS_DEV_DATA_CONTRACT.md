@@ -57,11 +57,13 @@ Plugins communicate with NetAlertX by writing results to a **pipe-delimited log 
 Watched values are fields that the NetAlertX core monitors for **changes between scans**. When a watched value differs from the previous scan, it can trigger notifications.
 
 **How to use them:**
+
 - `Watched_Value1`: Always required; primary indicator of status/state
 - `Watched_Value2–4`: Optional; use for secondary/tertiary state information
 - Leave unused ones as `null`
 
 **Example:**
+
 - Device scanner: `Watched_Value1 = "online"` or `"offline"`
 - Port scanner: `Watched_Value1 = "80"` (port number), `Watched_Value2 = "open"` (state)
 - Service monitor: `Watched_Value1 = "200"` (HTTP status), `Watched_Value2 = "0.45"` (response time)
@@ -77,6 +79,7 @@ device_name|192.168.1.100|2023-01-02 15:56:30|online|null|null|null|Found on net
 ```
 
 This allows NetAlertX to:
+
 - Display the object on the device details page
 - Send notifications when the parent device is involved
 - Link events across plugins
@@ -163,6 +166,7 @@ plugin_objects.write_result_file()
 ```
 
 The library automatically:
+
 - Validates data types
 - Sanitizes string values
 - Normalizes MAC addresses

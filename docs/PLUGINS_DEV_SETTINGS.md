@@ -8,6 +8,7 @@ Learn how to let users configure your plugin via the NetAlertX UI Settings page.
 ## Overview
 
 Plugin settings allow users to configure:
+
 - **Execution schedule** (when the plugin runs)
 - **Runtime parameters** (API keys, URLs, thresholds)
 - **Behavior options** (which features to enable/disable)
@@ -59,17 +60,17 @@ Each setting is a JSON object with required and optional properties:
 | `default_value` | varies | Initial value shown in UI | `"https://example.com"` |
 | `localized` | array | Which properties have translations | `["name", "description"]` |
 | `name` | array | Display name in Settings UI (localized) | See [Localized Strings](#localized-strings) |
+| `description` | array | Help text in Settings UI (localized) | See [Localized Strings](#localized-strings) |
 
 ## Optional Properties
 
 | Property | Type | Description | Example |
 |----------|------|-------------|---------|
-| `description` | array | Help text in Settings UI (localized) | See [Localized Strings](#localized-strings) |
 | `options` | array | Valid values for select/checkbox controls | `["option1", "option2"]` |
 | `events` | string | Trigger action button: `"test"` or `"run"` | `"test"` for notifications |
 | `maxLength` | number | Character limit for input fields | `100` |
 | `readonly` | boolean | Make field read-only | `true` |
-| `override_value` | object | Template-based value override (advanced) | See [Templates](#templates) |
+| `override_value` | object | Template-based value override (WIP) | Work in Progress |
 
 ## Reserved Function Names
 
