@@ -15,8 +15,7 @@ import os
 # Add test directory to path
 sys.path.insert(0, os.path.dirname(__file__))
 
-from test_helpers import BASE_URL, API_BASE_URL, api_get   # noqa: E402 [flake8 lint suppression]
-
+from . import BASE_URL, API_BASE_URL, api_get   # noqa: E402 [flake8 lint suppression]
 
 def test_device_list_page_loads(driver):
     """Test: Device list page loads successfully"""
