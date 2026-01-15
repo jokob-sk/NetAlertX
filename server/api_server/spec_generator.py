@@ -253,9 +253,21 @@ def set_tool_disabled(operation_id: str, disabled: bool = True) -> bool:
 
 
 def is_tool_disabled(operation_id: str) -> bool:
-    """Check if a tool is disabled."""
+    """
+    Check if a tool is disabled.
+    Checks both the unique operation_id and the original_operation_id.
+    """
     with _registry_lock:
-        return operation_id in _disabled_tools
+        if operation_id in _disabled_tools:
+            return True
+        
+        # Also check if the original base ID is disabled
+        for entry in _registry:
+            if entry["operation_id"] == operation_id:
+                orig_id = entry.get("original_operation_id")
+                if orig_id and orig_id in _disabled_tools:
+                    return True
+        return False
 
 
 def get_disabled_tools() -> List[str]:
@@ -292,7 +304,8 @@ def register_tool(
     path_params: Optional[List[Dict[str, Any]]] = None,
     query_params: Optional[List[Dict[str, Any]]] = None,
     tags: Optional[List[str]] = None,
-    deprecated: bool = False
+    deprecated: bool = False,
+    original_operation_id: Optional[str] = None
 ) -> None:
     """
     Register an API endpoint for OpenAPI spec generation.
@@ -309,6 +322,7 @@ def register_tool(
         query_params: List of query parameter definitions
         tags: OpenAPI tags for grouping
         deprecated: Whether this endpoint is deprecated
+        original_operation_id: The base ID before suffixing (for disablement mapping)
 
     Raises:
         DuplicateOperationIdError: If operation_id already exists in registry
@@ -325,6 +339,7 @@ def register_tool(
             "path": path,
             "method": method.upper(),
             "operation_id": operation_id,
+            "original_operation_id": original_operation_id,
             "summary": summary,
             "description": description,
             "request_model": request_model,
@@ -604,6 +619,7 @@ def introspect_flask_app(app: Any):
                         tags.append("mcp")
                 
                 # Ensure unique operationId
+                original_op_id = op_id
                 unique_op_id = op_id
                 count = 1
                 while unique_op_id in _operation_ids:
@@ -614,6 +630,7 @@ def introspect_flask_app(app: Any):
                     path=path,
                     method=method,
                     operation_id=unique_op_id,
+                    original_operation_id=original_op_id if unique_op_id != original_op_id else None,
                     summary=metadata["summary"],
                     description=metadata["description"],
                     request_model=metadata.get("request_model"),
@@ -705,6 +722,10 @@ def generate_openapi_spec(
             # Inject disabled status if applicable
             if entry["operation_id"] in disabled_snapshot:
                 operation["x-mcp-disabled"] = True
+
+            # Inject original ID if suffixed (Coderabbit fix)
+            if entry.get("original_operation_id"):
+                operation["x-original-operationId"] = entry["original_operation_id"]
 
             # Add parameters (path + query)
             parameters = _build_parameters(entry)
