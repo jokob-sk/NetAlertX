@@ -180,8 +180,7 @@ def validate_request(
                         # request.args is a MultiDict; to_dict() gives first value of each key
                         # which is usually what we want for Pydantic models.
                         data = request.args.to_dict()
-                        if data:
-                            validated_instance = request_model(**data)
+                        validated_instance = request_model(**data)
                     except ValidationError as e:
                         return _handle_validation_error(e, operation_id, validation_error_code)
                     except Exception as e:
