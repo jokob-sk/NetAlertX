@@ -897,6 +897,10 @@ def mcp_sse():
     Returns:
         flask.Response: SSE stream for GET, JSON response for POST
     """
+    # Handle OPTIONS (CORS preflight)
+    if request.method == "OPTIONS":
+        return jsonify({"success": True}), 200
+
     if not check_auth():
         return jsonify({"success": False, "error": "Unauthorized"}), 401
 
@@ -969,6 +973,10 @@ def mcp_messages():
     Returns:
         flask.Response: JSON response indicating acceptance or error
     """
+    # Handle OPTIONS (CORS preflight)
+    if request.method == "OPTIONS":
+        return jsonify({"success": True}), 200
+
     if not check_auth():
         return jsonify({"success": False, "error": "Unauthorized"}), 401
 

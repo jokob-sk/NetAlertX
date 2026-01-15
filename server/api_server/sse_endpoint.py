@@ -8,7 +8,7 @@ import json
 import threading
 import time
 from collections import deque
-from flask import Response, request
+from flask import Response, request, jsonify
 from logger import mylog
 
 # Thread-safe event queue
@@ -129,9 +129,11 @@ def create_sse_endpoint(app, is_authorized=None) -> None:
         is_authorized: Optional function to check authorization (if None, allows all)
     """
 
-    @app.route("/sse/state", methods=["GET"])
+    @app.route("/sse/state", methods=["GET", "OPTIONS"])
     def api_sse_state():
-        """SSE endpoint for real-time state updates"""
+        if request.method == "OPTIONS":
+            return jsonify({"success": True}), 200
+
         if is_authorized and not is_authorized():
             return {"none": "Unauthorized"}, 401
 
@@ -148,9 +150,12 @@ def create_sse_endpoint(app, is_authorized=None) -> None:
             },
         )
 
-    @app.route("/sse/stats", methods=["GET"])
+    @app.route("/sse/stats", methods=["GET", "OPTIONS"])
     def api_sse_stats():
         """Get SSE endpoint statistics for debugging"""
+        if request.method == "OPTIONS":
+            return jsonify({"success": True}), 200
+
         if is_authorized and not is_authorized():
             return {"none": "Unauthorized"}, 401
 

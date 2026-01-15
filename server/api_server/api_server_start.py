@@ -143,14 +143,14 @@ def is_authorized():
 
 
 
-@app.route('/mcp/sse', methods=['GET', 'POST'])
+@app.route('/mcp/sse', methods=['GET', 'POST', 'OPTIONS'])
 def api_mcp_sse():
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
     return mcp_sse()
 
 
-@app.route('/mcp/messages', methods=['POST'])
+@app.route('/mcp/messages', methods=['POST', 'OPTIONS'])
 def api_mcp_messages():
     if not is_authorized():
         return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403

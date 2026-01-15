@@ -39,6 +39,7 @@ def get_device_condition_by_status(device_status):
         "favorites": "WHERE devIsArchived=0 AND devFavorite=1",
         "new": "WHERE devIsArchived=0 AND devIsNew=1",
         "down": "WHERE devIsArchived=0 AND devAlertDown != 0 AND devPresentLastScan=0",
+        "offline": "WHERE devIsArchived=0 AND devPresentLastScan=0",
         "archived": "WHERE devIsArchived=1",
     }
     return conditions.get(device_status, "WHERE 1=0")
@@ -198,7 +199,7 @@ def list_to_where(logical_operator, column_name, condition_operator, values_list
     values_list = [value.replace("{s-quote}", "'") for value in values_list]
 
     # Build the WHERE condition for the first value
-    condition = f"{column_name} {condition_operator} '{values_list[0]} ' "
+    condition = f"{column_name} {condition_operator} '{values_list[0]}'"
 
     # Add the rest of the values using the logical operator
     for value in values_list[1:]:

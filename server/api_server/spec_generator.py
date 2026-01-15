@@ -117,6 +117,10 @@ def validate_request(
 
         @wraps(f)
         def wrapper(*args, **kwargs):
+            # 0. Handle OPTIONS explicitly if it reaches here (CORS preflight)
+            if request.method == "OPTIONS":
+                return jsonify({"success": True}), 200
+
             # 1. Check Authorization first (Coderabbit fix)
             if auth_callable and not auth_callable():
                 return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
@@ -152,7 +156,7 @@ def validate_request(
                             return jsonify({"success": False, "error": "Invalid Content-Type", "message": "Content-Type must be application/json"}), 415
 
                         try:
-                            data = request.get_json() or {}
+                            data = request.get_json(silent=True) or {}
                             validated_instance = request_model(**data)
                         except ValidationError as e:
                             return _handle_validation_error(e, operation_id, validation_error_code)
