@@ -1,6 +1,8 @@
 {
     "API_CUSTOM_SQL_description": "You can specify a custom SQL query which will generate a JSON file and then expose it via the <a href=\"/php/server/query_json.php?file=table_custom_endpoint.json\" target=\"_blank\"><code>table_custom_endpoint.json</code> file endpoint</a>.",
     "API_CUSTOM_SQL_name": "Custom endpoint",
+    "FLASK_DEBUG_name": "Flask debug mode",
+    "FLASK_DEBUG_description": "Enables Flask debug mode. Do not enable in production — this shows detailed error pages and enables the auto-reloader to aid debugging.",
     "API_TOKEN_description": "API token for secure communication. Generate one or enter any value. It's sent in the request header and used in the <code>SYNC</code> plugin, GraphQL server and other API endpoints. You can use the API endpoints to create custom integrations as descibed in the <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/API.md\" target=\"_blank\">API documentation</a>.",
     "API_TOKEN_name": "API token",
     "API_display_name": "API",
