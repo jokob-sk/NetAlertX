@@ -1,8 +1,9 @@
-site_name: NetAlertX Docs
-site_url: https://jokob-sk.github.io/NetAlertX/
+site_name: NetAlertX Documentation
+site_url: https://docs.netalertx.com
 repo_url: https://github.com/jokob-sk/NetAlertX/
 edit_uri: blob/main/docs/
 docs_dir: docs
+use_directory_urls: true
 site_description: >-
   The main documentation resource for NetAlertX - a network scanner and presence detector
 # static_dir: docs/img
@@ -51,6 +52,7 @@ nav:
       - Advanced guides:
         - Remote Networks: REMOTE_NETWORKS.md
         - Notifications Guide: NOTIFICATIONS.md
+        - Custom PUID/GUID: PUID_PGID_SECURITY.md
         - Name Resolution: NAME_RESOLUTION.md
         - Authelia: AUTHELIA.md
         - Performance: PERFORMANCE.md
@@ -89,8 +91,15 @@ nav:
         - Environment Setup: DEV_ENV_SETUP.md
         - Builds: BUILDS.md
         - Devcontainer: DEV_DEVCONTAINER.md
-        - Custom Plugins: PLUGINS_DEV.md
-        - Plugin Config: PLUGINS_DEV_CONFIG.md
+        - Devcontainer Ports: DEV_PORTS_HOST_MODE.md
+        - Custom Plugins:
+          - Overview: PLUGINS_DEV.md
+          - Quick Start: PLUGINS_DEV_QUICK_START.md
+          - Data Contract: PLUGINS_DEV_DATA_CONTRACT.md
+          - Settings System: PLUGINS_DEV_SETTINGS.md
+          - Data Sources: PLUGINS_DEV_DATASOURCES.md
+          - UI Components: PLUGINS_DEV_UI_COMPONENTS.md
+          - Config Lifecycle: PLUGINS_DEV_CONFIG.md
         - Frontend Development: FRONTEND_DEVELOPMENT.md
         - Database: DATABASE.md
         - Settings: SETTINGS_SYSTEM.md
@@ -108,6 +117,8 @@ nav:
         - Net Tools: API_NETTOOLS.md
         - Online History: API_ONLINEHISTORY.md
         - Sync: API_SYNC.md
+        - Logs: API_LOGS.md
+        - SSE: API_SSE.md
         - GraphQL: API_GRAPHQL.md
         - DB query: API_DBQUERY.md
         - MCP: API_MCP.md

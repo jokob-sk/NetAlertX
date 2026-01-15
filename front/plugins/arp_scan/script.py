@@ -31,18 +31,6 @@ LOG_PATH = logPath + "/plugins"
 LOG_FILE = os.path.join(LOG_PATH, f"script.{pluginName}.log")
 RESULT_FILE = os.path.join(LOG_PATH, f"last_result.{pluginName}.log")
 
-# DEBUG START
-
-# mylog("debug", "User:", getpass.getuser())
-mylog("verbose", "UID:", getattr(os, "getuid", lambda: "n/a")())
-mylog("verbose", "Executable:", sys.executable)
-mylog("verbose", "Python:", sys.version.split()[0])
-mylog("verbose", "Virtualenv:", sys.prefix != sys.base_prefix)
-mylog("verbose", "VIRTUAL_ENV:", os.environ.get("VIRTUAL_ENV"))
-mylog("verbose", "CWD:", os.getcwd())
-
-# DEBUG END
-
 
 def main():
     parser = argparse.ArgumentParser(description="Import devices from settings")

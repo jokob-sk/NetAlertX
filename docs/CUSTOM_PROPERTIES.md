@@ -13,31 +13,6 @@ This functionality allows you to define **custom properties** for devices, which
 
 ---
 
-## Defining Custom Properties
-
-Custom properties are structured as a list of objects, where each property includes the following fields:
-
-| Field             | Description                                                                 |
-|--------------------|-----------------------------------------------------------------------------|
-| `CUSTPROP_icon`    | The icon (Base64-encoded HTML) displayed for the property.                 |
-| `CUSTPROP_type`    | The action type (e.g., `show_notes`, `link`, `delete_dev`).                |
-| `CUSTPROP_name`    | A short name or title for the property.                                    |
-| `CUSTPROP_args`    | Arguments for the action (e.g., URL or modal text).                        |
-| `CUSTPROP_notes`   | Additional notes or details displayed when applicable.                    |
-| `CUSTPROP_show`    | A boolean to control visibility (`true` to show on the listing page).      |
-
----
-
-## Available Action Types
-
-- **Show Notes**: Displays a modal with a title and additional notes.
-  - **Example**: Show firmware details or custom messages.
-- **Link**: Redirects to a specified URL in the current browser tab. (**Arguments** Needs to contain the full URL.)
-- **Link (New Tab)**: Opens a specified URL in a new browser tab. (**Arguments** Needs to contain the full URL.)
-- **Delete Device**: Deletes the device using its MAC address.
-- **Run Plugin**: Placeholder for executing custom plugins (not implemented yet).
-
----
 
 ## Usage on the Device Listing Page
 
@@ -76,10 +51,37 @@ Visible properties (`CUSTPROP_show: true`) are displayed as interactive icons in
 
 ---
 
+## Defining Custom Properties
+
+Custom properties are structured as a list of objects, where each property includes the following fields:
+
+| Field             | Description                                                                 |
+|--------------------|-----------------------------------------------------------------------------|
+| `CUSTPROP_icon`    | The icon (Base64-encoded HTML) displayed for the property.                 |
+| `CUSTPROP_type`    | The action type (e.g., `show_notes`, `link`, `delete_dev`).                |
+| `CUSTPROP_name`    | A short name or title for the property.                                    |
+| `CUSTPROP_args`    | Arguments for the action (e.g., URL or modal text).                        |
+| `CUSTPROP_notes`   | Additional notes or details displayed when applicable.                    |
+| `CUSTPROP_show`    | A boolean to control visibility (`true` to show on the listing page).      |
+
+---
+
+## Available Action Types
+
+- **Show Notes**: Displays a modal with a title and additional notes.
+  - **Example**: Show firmware details or custom messages.
+- **Link**: Redirects to a specified URL in the current browser tab. (**Arguments** Needs to contain the full URL.)
+- **Link (New Tab)**: Opens a specified URL in a new browser tab. (**Arguments** Needs to contain the full URL.)
+- **Delete Device**: Deletes the device using its MAC address.
+- **Run Plugin**: Placeholder for executing custom plugins (not implemented yet).
+
+
+---
+
 ## Notes
 
 - **Plugin Functionality**: The `run_plugin` action type is currently not implemented and will show an alert if used.
-- **Custom Icons (Experimental 🧪)**: Use Base64-encoded HTML to provide custom icons for each property. You can add your icons in Setttings via the `CUSTPROP_icon` settings 
+- **Custom Icons (Experimental 🧪)**: Use Base64-encoded HTML to provide custom icons for each property. You can add your icons in Setttings via the `CUSTPROP_icon` settings
 - **Visibility Control**: Only properties with `CUSTPROP_show: true` will appear on the listing page.
 
 This feature provides a flexible way to enhance device management and display with interactive elements tailored to your needs.

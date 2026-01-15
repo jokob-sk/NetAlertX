@@ -414,11 +414,11 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "The SMTP server host URL. For example <code>smtp-relay.sendinblue.com</code>. To use Gmail as an SMTP server <a target=\"_blank\" href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/SMTP.md\">follow this guide</a>"
+          "string": "The SMTP server host URL. For example <code>smtp-relay.sendinblue.com</code>. To use Gmail as an SMTP server <a target=\"_blank\" href=\"https://docs.netalertx.com/SMTP\">follow this guide</a>"
         },
         {
           "language_code": "es_es",
-          "string": "La URL del host del servidor SMTP. Por ejemplo, <code>smtp-relay.sendinblue.com</code>. Para utilizar Gmail como servidor SMTP <a target=\"_blank\" href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/SMTP.md\">siga esta guía</a >"
+          "string": "La URL del host del servidor SMTP. Por ejemplo, <code>smtp-relay.sendinblue.com</code>. Para utilizar Gmail como servidor SMTP <a target=\"_blank\" href=\"https://docs.netalertx.com/SMTP\">siga esta guía</a >"
         }
       ]
     },

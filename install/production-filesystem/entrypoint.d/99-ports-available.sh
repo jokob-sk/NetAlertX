@@ -22,7 +22,7 @@ if [ "${PORT_APP}" -eq "${PORT_GQL}" ]; then
     The Application port (\$PORT) and the GraphQL API port (\$GRAPHQL_PORT)
     are configured to use the same port. This will cause a conflict.
 
-    https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/port-conflicts.md
+    https://docs.netalertx.com/docker-troubleshooting/port-conflicts
 ══════════════════════════════════════════════════════════════════════════════
 EOF
 fi
@@ -53,7 +53,7 @@ if echo "$LISTENING_PORTS" | grep -q ":${PORT_APP}$"; then
 
     The main application (defined by \$PORT) may fail to start.
 
-    https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/port-conflicts.md
+    https://docs.netalertx.com/docker-troubleshooting/port-conflicts
 ══════════════════════════════════════════════════════════════════════════════
 EOF
 fi
@@ -67,7 +67,7 @@ if echo "$LISTENING_PORTS" | grep -q ":${PORT_GQL}$"; then
     The GraphQL API (defined by \$APP_CONF_OVERRIDE or \$GRAPHQL_PORT)
     may fail to start.
 
-    https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/port-conflicts.md
+    https://docs.netalertx.com/docker-troubleshooting/port-conflicts
 ══════════════════════════════════════════════════════════════════════════════
 EOF
 fi

@@ -69,6 +69,7 @@ from .schemas import (  # noqa: E402 [flake8 lint suppression]
     DeviceExportResponse,
     GetDeviceResponse, GetDeviceWrapperResponse,
     DeviceUpdateRequest,
+    DeviceInfo,
     BaseResponse, DeviceTotalsResponse,
     DeleteDevicesRequest, DeviceImportRequest,
     DeviceImportResponse, UpdateDeviceColumnRequest,
@@ -101,27 +102,10 @@ app = Flask(__name__)
 
 CORS(
     app,
-    resources={
-        r"/metrics": {"origins": "*"},
-        r"/device/*": {"origins": "*"},
-        r"/devices/*": {"origins": "*"},
-        r"/history/*": {"origins": "*"},
-        r"/nettools/*": {"origins": "*"},
-        r"/sessions/*": {"origins": "*"},
-        r"/settings/*": {"origins": "*"},
-        r"/dbquery/*": {"origins": "*"},
-        r"/graphql/*": {"origins": "*"},
-        r"/messaging/*": {"origins": "*"},
-        r"/events/*": {"origins": "*"},
-        r"/logs/*": {"origins": "*"},
-        r"/api/tools/*": {"origins": "*"},
-        r"/auth/*": {"origins": "*"},
-        r"/mcp/*": {"origins": "*"},
-        r"/openapi.json": {"origins": "*"},
-        r"/sse/*": {"origins": "*"}
-    },
+    resources={r"/*": {"origins": "*"}},
     supports_credentials=True,
-    allow_headers=["Authorization", "Content-Type"],
+    allow_headers=["Authorization", "Content-Type", "Accept", "Origin", "X-Requested-With"],
+    methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"]
 )
 
 # -------------------------------------------------------------------------------
@@ -133,15 +117,11 @@ API_BASE_URL = f"http://localhost:{BACKEND_PORT}"
 
 
 def is_authorized():
-    expected_token = get_setting_value('API_TOKEN')
+    # Allow OPTIONS requests (preflight) without auth
+    if request.method == "OPTIONS":
+        return True
 
-    # Fail closed if token is not set (empty or very short)
-    # Note: we allow empty tokens during unit tests to avoid breaking the test suite
-    if (not expected_token or len(str(expected_token)) < 2) and not os.getenv("PYTEST_CURRENT_TEST"):
-        msg = "[api] CRITICAL: API_TOKEN is not configured or too short. Access denied by default."
-        write_notification(msg, "alert")
-        mylog("minimal", [msg])
-        return False
+    expected_token = get_setting_value('API_TOKEN')
 
     # Check Authorization header first (primary method)
     auth_header = request.headers.get("Authorization", "")
@@ -283,7 +263,7 @@ def api_get_setting(setKey):
         "description": "Device MAC address (e.g., 00:11:22:33:44:55)",
         "schema": {"type": "string", "pattern": "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$"}
     }],
-    response_model=GetDeviceWrapperResponse,
+    response_model=DeviceInfo,
     tags=["devices"],
     validation_error_code=400,
     auth_callable=is_authorized
@@ -294,9 +274,9 @@ def api_get_device(mac, payload=None):
     device_data = device_handler.getDeviceData(mac, period)
 
     if device_data is None:
-        return jsonify({"success": False, "error": "Device not found"}), 404
+        return jsonify({"error": "Device not found"}), 404
 
-    return jsonify({"success": True, "device": device_data})
+    return jsonify(device_data)
 
 
 @app.route("/device/<mac>", methods=["POST"])
@@ -609,7 +589,8 @@ def api_export_devices(format=None, payload=None):
     request_model=DeviceImportRequest,
     response_model=DeviceImportResponse,
     tags=["devices"],
-    auth_callable=is_authorized
+    auth_callable=is_authorized,
+    allow_multipart_payload=True
 )
 def api_import_csv(payload=None):
     device_handler = DeviceInstance()
@@ -714,7 +695,7 @@ def api_devices_search(payload=None):
     operation_id="get_latest_device",
     summary="Get Latest Device",
     description="Get information about the most recently seen/discovered device.",
-    response_model=GetDeviceResponse,
+    response_model=DeviceListResponse,
     tags=["devices"],
     auth_callable=is_authorized
 )
@@ -726,7 +707,7 @@ def api_devices_latest(payload=None):
 
     if not latest:
         return jsonify({"success": False, "message": "No devices found"}), 404
-    return jsonify({"success": True, "device": latest})
+    return jsonify([latest])
 
 
 @app.route('/mcp/sse/devices/favorite', methods=['GET'])
@@ -913,7 +894,7 @@ def api_network_interfaces(payload=None):
     summary="Trigger Network Scan",
     description="Trigger a network scan to discover devices. Specify scan type matching an enabled plugin.",
     request_model=TriggerScanRequest,
-    response_model=TriggerScanResponse,
+    response_model=BaseResponse,
     tags=["nettools"],
     validation_error_code=400,
     auth_callable=is_authorized
@@ -927,28 +908,34 @@ def api_trigger_scan(payload=None):
     else:
         scan_type = request.args.get("type", "ARPSCAN")
 
-    result = trigger_scan(scan_type=scan_type)
-    status_code = 200 if result.get("success") else 400
-    # result contains scan_type
-    return jsonify(result), status_code
-
-
-def trigger_scan(scan_type):
-    """Trigger a network scan by adding it to the execution queue."""
-    if scan_type not in ["ARPSCAN", "NMAPDEV", "NMAP"]:
-        return {"success": False, "message": f"Invalid scan type: {scan_type}"}
+    # Validate scan type
+    loaded_plugins = get_setting_value('LOADED_PLUGINS')
+    if scan_type not in loaded_plugins:
+        return jsonify({"success": False, "error": f"Invalid scan type. Must be one of: {', '.join(loaded_plugins)}"}), 400
 
     queue = UserEventsQueueInstance()
-    res = queue.add_event("run|" + scan_type)
+    action = f"run|{scan_type}"
+    queue.add_event(action)
 
-    # Handle mocks in tests that don't return a tuple
-    if isinstance(res, tuple) and len(res) == 2:
-        success, message = res
-    else:
-        success = True
-        message = f"Action \"run|{scan_type}\" added to the execution queue."
+    return jsonify({"success": True, "message": f"Scan triggered for type: {scan_type}"}), 200
 
-    return {"success": success, "message": message, "scan_type": scan_type}
+
+# def trigger_scan(scan_type):
+#     """Trigger a network scan by adding it to the execution queue."""
+#     if scan_type not in ["ARPSCAN", "NMAPDEV", "NMAP"]:
+#         return {"success": False, "message": f"Invalid scan type: {scan_type}"}
+#
+#     queue = UserEventsQueueInstance()
+#     res = queue.add_event("run|" + scan_type)
+#
+#     # Handle mocks in tests that don't return a tuple
+#     if isinstance(res, tuple) and len(res) == 2:
+#         success, message = res
+#     else:
+#         success = True
+#         message = f"Action \"run|{scan_type}\" added to the execution queue."
+#
+#     return {"success": success, "message": message, "scan_type": scan_type}
 
 
 # --------------------------
@@ -1681,17 +1668,10 @@ def start_server(graphql_port, app_state):
     if app_state.graphQLServerStarted == 0:
         mylog("verbose", [f"[graphql endpoint] Starting on port: {graphql_port}"])
 
-        debug_setting = get_setting_value("FLASK_DEBUG")
-        debug_flag = False
-        if isinstance(debug_setting, str):
-            debug_flag = debug_setting.strip().lower() in ("1", "true", "yes", "on")
-        elif isinstance(debug_setting, (int, bool)):
-            debug_flag = bool(debug_setting)
-
         # Start Flask app in a separate thread
         thread = threading.Thread(
             target=lambda: app.run(
-                host="0.0.0.0", port=graphql_port, debug=debug_flag, use_reloader=False, threaded=True
+                host="0.0.0.0", port=graphql_port, debug=True, use_reloader=False
             )
         )
         thread.start()

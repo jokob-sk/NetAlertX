@@ -1,10 +1,10 @@
 # Overview
 
-- Feed your data and device changes into [Home Assistant](https://github.com/jokob-sk/NetAlertX/blob/main/docs/HOME_ASSISTANT.md) via the MQTT Mosquito broker (other brokers might work as well).
+- Feed your data and device changes into [Home Assistant](https://docs.netalertx.com/HOME_ASSISTANT) via the MQTT Mosquito broker (other brokers might work as well).
 
 # Usage
 
-- Go to settings and fill in relevant details. There are 2 types of "devices" generated and sent to the broker. A generic overview device that contains online/down/archived device stats and then the actual devices detected by the application. 
+- Go to settings and fill in relevant details. There are 2 types of "devices" generated and sent to the broker. A generic overview device that contains online/down/archived device stats and then the actual devices detected by the application.
 
 
 ## Forcing an update
@@ -23,29 +23,29 @@ Filters will be ignored, and this will delete all objects associated with the pl
 
 ![image](./Deleting_MQTT_Plugin_Objects.png)
 
-Please note the online/offline state of the device is always updated based on the scan result and if it changed from the previous value. 
+Please note the online/offline state of the device is always updated based on the scan result and if it changed from the previous value.
 
 
 # Sample Payloads
 
 
 >[!WARNING]
-> Please check your Home Assistant MQTT broker debug info for the most up-to-date data and format as the below might be outdated.  
+> Please check your Home Assistant MQTT broker debug info for the most up-to-date data and format as the below might be outdated.
 
 ## Overview device
 
-The below payloads apply to the device showing overall online/down/archived stats. You can toggle them on/off with the `SEND_STATS` setting. 
+The below payloads apply to the device showing overall online/down/archived stats. You can toggle them on/off with the `SEND_STATS` setting.
 
 ### MQTT discovery data:
 
 >[!NOTE]
-> You can replace the `netalertx` string of the below topic via the `DEVICE_ID` setting. 
+> You can replace the `netalertx` string of the below topic via the `DEVICE_ID` setting.
 
 Topic: `homeassistant/sensor/netalertx/online/config`
 
 
 >[!NOTE]
-> You can replace the `"name": "NetAlertX"` string of the below payload via the `DEVICE_NAME` setting. 
+> You can replace the `"name": "NetAlertX"` string of the below payload via the `DEVICE_NAME` setting.
 
 Payload:
 
@@ -70,7 +70,7 @@ Payload:
 ### MQTT config data sample:
 
 >[!NOTE]
-> You can replace the `netalertx` string of the below topic via the `DEVICE_ID` setting. 
+> You can replace the `netalertx` string of the below topic via the `DEVICE_ID` setting.
 
 Topic: `homeassistant/sensor/netalertx/all/config`
 
@@ -98,7 +98,7 @@ Payload:
 ### MQTT state data:
 
 >[!NOTE]
-> You can replace the `netalertx` string of the below topic via the `DEVICE_ID` setting. 
+> You can replace the `netalertx` string of the below topic via the `DEVICE_ID` setting.
 
 Topic: `system-sensors/sensor/netalertx/state`
 
@@ -118,7 +118,7 @@ Payload:
 
 ## Individual devices
 
-The below payloads apply to individual devices. Every device discovered by the application will generate the below messages. You can toggle them on/off with the `SEND_DEVICES` setting. 
+The below payloads apply to individual devices. Every device discovered by the application will generate the below messages. You can toggle them on/off with the `SEND_DEVICES` setting.
 
 ### MQTT discovery data:
 
@@ -217,4 +217,4 @@ The first run will take a while, subsequent should be much faster because new se
 3. If the hash is not found, a new device/device state is assumed and the device is sent to the broker
 
 
-The state is managed differently, the state of the sensor is not included in the hash. This might be improved upon in later releases. 
+The state is managed differently, the state of the sensor is not included in the hash. This might be improved upon in later releases.

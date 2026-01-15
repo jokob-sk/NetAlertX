@@ -308,5 +308,6 @@ RUN mkdir -p /workspaces && \
     sed -i -e 's#/app:#/workspaces:#' /etc/passwd && \
     find /opt/venv -type d -exec chmod o+rwx {} \;
 
+
 USER netalertx
 ENTRYPOINT ["/bin/sh","-c","sleep infinity"]

@@ -3,7 +3,7 @@
 
 ## Issue Description
 
-NetAlertX automatically detects the legacy `aufs` storage driver, which is commonly found on older Synology NAS devices (DSM 6.x/7.0.x) or Linux systems where the underlying filesystem lacks `d_type` support. This occurs on older ext4 and other filesystems which did not support capabilites at time of last formatting.  While ext4 currently support capabilities and filesystem overlays, older variants of ext4 did not and require a reformat to enable the support.  Old variants result in docker choosing `aufs` and newer may use `overlayfs`. 
+NetAlertX automatically detects the legacy `aufs` storage driver, which is commonly found on older Synology NAS devices (DSM 6.x/7.0.x) or Linux systems where the underlying filesystem lacks `d_type` support. This occurs on older ext4 and other filesystems which did not support capabilites at time of last formatting.  While ext4 currently support capabilities and filesystem overlays, older variants of ext4 did not and require a reformat to enable the support.  Old variants result in docker choosing `aufs` and newer may use `overlayfs`.
 
 **The Technical Limitation:**
 AUFS (Another Union File System) does not support or preserve extended file attributes (`xattrs`) during Docker image extraction. NetAlertX relies on these attributes to grant granular privileges (`CAP_NET_RAW` and `CAP_NET_ADMIN`) to network scanning binaries like `arp-scan`, `nmap`, and `nbtscan`.
@@ -27,7 +27,7 @@ The container is designed to inspect the runtime environment at startup (`/root-
 ### Warning Log
 When AUFS is detected without root privileges, the system emits the following warning during startup:
 > ⚠️  WARNING: Reduced functionality (AUFS + non-root user).
-> 
+>
 > AUFS strips Linux file capabilities, so tools like arp-scan, nmap, and nbtscan fail when NetAlertX runs as a non-root PUID.
 >
 > **Action:** Set PUID=0 on AUFS hosts for full functionality.
@@ -162,6 +162,6 @@ docker run --rm -e NETALERTX_PROC_MOUNTS_B64="bm9uZSAvIGF1ZnMgcncs..." netalertx
 
 * **Docker Storage Drivers:** [Use the OverlayFS storage driver](https://docs.docker.com/storage/storagedriver/overlayfs-driver/)
 * **Synology Docker Guide:** [Synology Docker Storage Drivers](https://www.google.com/search?q=https://kb.synology.com/en-global/DSM/tutorial/How_to_use_Docker_on_Synology_NAS)
-* **Configuration Guidance:** [DOCKER_COMPOSE.md](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DOCKER_COMPOSE.md)
+* **Configuration Guidance:** [DOCKER_COMPOSE.md](https://docs.netalertx.com/DOCKER_COMPOSE)
 
 

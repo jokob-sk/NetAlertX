@@ -63,7 +63,7 @@ $db->close();
                 <div class="db_info_table">
                     <div class="db_info_table_row">
                         <div class="db_info_table_cell" style="min-width: 140px"><?= lang('Maintenance_version');?>
-                          <a href="https://github.com/jokob-sk/NetAlertX/blob/main/docs/VERSIONS.md" target="_blank"> <span><i class="fa fa-circle-question"></i></a></span>
+                          <a href="https://docs.netalertx.com/VERSIONS" target="_blank"> <span><i class="fa fa-circle-question"></i></a></span>
                         </div>
                         <div class="db_info_table_cell">
                         <div class="version" id="version" data-build-time="<?php echo file_get_contents( "buildtimestamp.txt");?>">

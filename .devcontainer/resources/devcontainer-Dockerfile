@@ -53,7 +53,8 @@ RUN mkdir -p /workspaces && \
     mkdir -p /home/netalertx && \
     chown netalertx:netalertx /home/netalertx && \
     sed -i -e 's#/app:#/workspaces:#' /etc/passwd && \
-    chmod -R 777 /opt/venv
+    find /opt/venv -type d -exec chmod o+rwx {} \;
+
 
 USER netalertx
 ENTRYPOINT ["/bin/sh","-c","sleep infinity"]

@@ -14,7 +14,7 @@ body:
     label: What document or section does this relate to?
     description: |
       Please include a link to the file and section, if applicable. Be specific about what part of the documentation you are referencing.
-    placeholder: e.g. https://github.com/jokob-sk/NetAlertX/blob/main/docs/FRONTEND_DEVELOPMENT.md
+    placeholder: e.g. https://docs.netalertx.com/FRONTEND_DEVELOPMENT
   validations:
     required: true
 - type: textarea
@@ -49,7 +49,7 @@ body:
     required: false
 - type: checkboxes
   attributes:
-    label: Can I help implement this? 👩‍💻👨‍💻 
+    label: Can I help implement this? 👩‍💻👨‍💻
     description: The maintainer can provide guidance and review your changes.
     options:
       - label: "Yes, I’d like to help implement the improvement"

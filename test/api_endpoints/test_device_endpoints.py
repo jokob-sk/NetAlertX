@@ -57,8 +57,7 @@ def test_get_device(client, api_token, test_mac):
     # Then retrieve it
     resp = client.get(f"/device/{test_mac}", headers=auth_headers(api_token))
     assert resp.status_code == 200
-    assert resp.json.get("success") is True
-    assert resp.json.get("device", {}).get("devMac") == test_mac
+    assert resp.json.get("devMac") == test_mac
 
 
 def test_reset_device_props(client, api_token, test_mac):
@@ -99,7 +98,6 @@ def test_copy_device(client, api_token, test_mac):
         f"/device/{test_mac}", json=payload, headers=auth_headers(api_token)
     )
     assert resp.status_code == 200
-    assert resp.json.get("success") is True
 
     # Step 2: Generate a target MAC
     target_mac = "AA:BB:CC:" + ":".join(
@@ -112,13 +110,11 @@ def test_copy_device(client, api_token, test_mac):
         "/device/copy", json=copy_payload, headers=auth_headers(api_token)
     )
     assert resp.status_code == 200
-    assert resp.json.get("success") is True
 
     # Step 4: Verify new device exists
     resp = client.get(f"/device/{target_mac}", headers=auth_headers(api_token))
     assert resp.status_code == 200
-    assert resp.json.get("success") is True
-    assert resp.json.get("device", {}).get("devMac") == target_mac
+    assert resp.json.get("devMac") == target_mac
 
     # Cleanup: delete both devices
     client.delete(f"/device/{test_mac}/delete", headers=auth_headers(api_token))

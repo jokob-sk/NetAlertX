@@ -19,14 +19,13 @@ def get_device_condition_by_status(device_status):
     Return the SQL WHERE clause for filtering devices based on their status.
 
     Parameters:
-        device_status (str): The status of the device. Supported values:
+        device_status (str): The status of the device. Possible values:
             - 'all'        : All active devices
             - 'my'         : Same as 'all' (active devices)
             - 'connected'  : Devices that are active and present in the last scan
             - 'favorites'  : Devices marked as favorite
             - 'new'        : Devices marked as new
             - 'down'       : Devices not present in the last scan but with alerts
-            - 'offline'    : Devices not present in the last scan and not archived
             - 'archived'   : Devices that are archived
 
     Returns:
@@ -40,7 +39,6 @@ def get_device_condition_by_status(device_status):
         "favorites": "WHERE devIsArchived=0 AND devFavorite=1",
         "new": "WHERE devIsArchived=0 AND devIsNew=1",
         "down": "WHERE devIsArchived=0 AND devAlertDown != 0 AND devPresentLastScan=0",
-        "offline": "WHERE devIsArchived=0 AND devPresentLastScan=0",
         "archived": "WHERE devIsArchived=1",
     }
     return conditions.get(device_status, "WHERE 1=0")
@@ -165,7 +163,7 @@ def print_table_schema(db, table):
 
     mylog("debug", f"[Schema] Structure for table: {table}")
     header = (
-        f"{'cid':<4} {'name':<20} {'type':<10} {'notnull':<8} {'default':<10} {'pk':<2}"
+        f"{{'cid':<4}} {{'name':<20}} {{'type':<10}} {{'notnull':<8}} {{'default':<10}} {{'pk':<2}}"
     )
     mylog("debug", header)
     mylog("debug", "-" * len(header))
@@ -200,7 +198,7 @@ def list_to_where(logical_operator, column_name, condition_operator, values_list
     values_list = [value.replace("{s-quote}", "'") for value in values_list]
 
     # Build the WHERE condition for the first value
-    condition = f"{column_name} {condition_operator} '{values_list[0]}'"
+    condition = f"{column_name} {condition_operator} '{values_list[0]} ' "
 
     # Add the rest of the values using the logical operator
     for value in values_list[1:]:

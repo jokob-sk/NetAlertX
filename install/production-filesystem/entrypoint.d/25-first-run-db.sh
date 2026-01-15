@@ -25,7 +25,7 @@ if [ ! -d "${NETALERTX_DB}" ]; then
 A database directory is required for proper operation, however there appear to be
 insufficient permissions on this mount or it is otherwise inaccessible.
 
-More info: https://github.com/jokob-sk/NetAlertX/blob/main/docs/FILE_PERMISSIONS.md
+More info: https://docs.netalertx.com/FILE_PERMISSIONS
 ══════════════════════════════════════════════════════════════════════════════
 EOF
         >&2 printf "%s" "${RESET}"

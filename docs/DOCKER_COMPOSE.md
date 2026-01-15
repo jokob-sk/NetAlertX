@@ -1,7 +1,7 @@
 # NetAlertX and Docker Compose
 
 > [!WARNING]
-> ⚠️ **Important:** The docker-compose has recently changed. Carefully read the [Migration guide](https://jokob-sk.github.io/NetAlertX/MIGRATION/?h=migrat#12-migration-from-netalertx-v25524) for detailed instructions.
+> ⚠️ **Important:** The docker-compose has recently changed. Carefully read the [Migration guide](https://docs.netalertx.com/MIGRATION/?h=migrat#12-migration-from-netalertx-v25524) for detailed instructions.
 
 Great care is taken to ensure NetAlertX meets the needs of everyone while being flexible enough for anyone. This document outlines how you can configure your docker-compose. There are many settings, so we recommend using the Baseline Docker Compose as-is, or modifying it for your system.Good care is taken to ensure NetAlertX meets the needs of everyone while being flexible enough for anyone. This document outlines how you can configure your docker-compose. There are many settings, so we recommend using the Baseline Docker Compose as-is, or modifying it for your system.
 

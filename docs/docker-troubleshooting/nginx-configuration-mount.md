@@ -33,4 +33,4 @@ If you don't need a custom port, simply omit the PORT environment variable and t
 
 Docker Compose setup can be complex. We recommend starting with the default docker-compose.yml as a base and modifying it incrementally.
 
-For detailed Docker Compose configuration guidance, see: [DOCKER_COMPOSE.md](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DOCKER_COMPOSE.md)
+For detailed Docker Compose configuration guidance, see: [DOCKER_COMPOSE.md](https://docs.netalertx.com/DOCKER_COMPOSE)

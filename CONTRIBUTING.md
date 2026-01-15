@@ -12,7 +12,7 @@ Please use the [GitHub Issue Tracker](https://github.com/jokob-sk/NetAlertX/issu
 - Documentation feedback 📖
 
 Before opening a new issue:
-- 🛑 [Check Common Issues & Debug Tips](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DEBUG_TIPS.md#common-issues)
+- 🛑 [Check Common Issues & Debug Tips](https://docs.netalertx.com/DEBUG_TIPS#common-issues)
 - 🔍 [Search Closed Issues](https://github.com/jokob-sk/NetAlertX/issues?q=is%3Aissue+is%3Aclosed)
 
 ---
@@ -27,7 +27,7 @@ Please:
 - Follow existing **code style and structure**
 - Provide a clear title and description for your PR
 - If relevant, add or update tests and documentation
-- For plugins, refer to the [Plugin Dev Guide](https://github.com/jokob-sk/NetAlertX/blob/main/docs/PLUGINS_DEV.md)
+- For plugins, refer to the [Plugin Dev Guide](https://docs.netalertx.com/PLUGINS_DEV)
 
 ---
 
@@ -47,7 +47,7 @@ By participating, you agree to follow our [Code of Conduct](./CODE_OF_CONDUCT.md
 
 ## 📬 Contact
 
-If you have more in-depth questions or want to discuss contributing in other ways, feel free to reach out at:  
+If you have more in-depth questions or want to discuss contributing in other ways, feel free to reach out at:
 📧 [jokob@duck.com](mailto:jokob@duck.com?subject=NetAlertX%20Contribution)
 
 We appreciate every contribution, big or small! 💙

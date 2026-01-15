@@ -257,8 +257,8 @@ def print_warning_message(results: list[MountCheckResult]):
         "\n    We recommend starting with the default docker-compose.yml as the\n"
         "    configuration can be quite complex.\n\n"
         "    Review the documentation for a correct setup:\n"
-        "    https://github.com/jokob-sk/NetAlertX/blob/main/docs/DOCKER_COMPOSE.md\n"
-        "    https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/mount-configuration-issues.md\n"
+        "    https://docs.netalertx.com/DOCKER_COMPOSE\n"
+        "    https://docs.netalertx.com/docker-troubleshooting/mount-configuration-issues\n"
         "══════════════════════════════════════════════════════════════════════════════\n"
     )
 

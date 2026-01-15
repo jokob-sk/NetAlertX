@@ -471,7 +471,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
                       <div class="table_cell input-group setting_input ${overriddenByEnv ? "setting_overriden_by_env" : ""} input-group col-xs-12 col-sm-6">
                   `;
 
-          // OVERRIDE
+          // OVERRIDE (NOT YET IMPLEMENTED)
           // surface settings override functionality if the setting is a template that can be overridden with user defined values
           // if the setting is a json of the correct structure, handle like a template setting
 

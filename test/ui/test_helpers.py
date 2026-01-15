@@ -15,7 +15,11 @@ API_BASE_URL = os.getenv("API_BASE_URL", "http://localhost:20212")
 
 
 def get_api_token():
-    """Get API token from config file"""
+    """Get API token from config file or environment"""
+    # Check environment first
+    if os.getenv("API_TOKEN"):
+        return os.getenv("API_TOKEN")
+
     config_path = "/data/config/app.conf"
     try:
         with open(config_path, 'r') as f:

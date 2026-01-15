@@ -79,7 +79,7 @@ if [ "${STORAGE_DRIVER}" = "aufs" ]; then
     AUFS strips file capabilities (setcap) during image extraction which breaks
     layer-2 scanners (arp-scan, etc.) when running as non-root.
     Action: set PUID=0 (root) on AUFS hosts or migrate to a supported driver.
-    Details: https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/aufs-capabilities.md
+    Details: https://docs.netalertx.com/docker-troubleshooting/aufs-capabilities
 EOF
 fi
 
@@ -99,7 +99,7 @@ ${body}
 ══════════════════════════════════════════════════════════════════════════════
 EOF
     >&2 printf "%s" "${RESET}"
-    
+
 }
 
 _validate_id() {
@@ -107,10 +107,10 @@ _validate_id() {
     name="$2"
     if ! printf '%s' "${value}" | grep -qxE '[0-9]+'; then
         _error_msg "INVALID ${name} VALUE (non-numeric)" \
-    "    Startup halted because the provided ${name} environmental variable 
+    "    Startup halted because the provided ${name} environmental variable
     contains non-digit characters.
 
-    Action: set a numeric ${name} (for example: ${name}=1000) in your environment 
+    Action: set a numeric ${name} (for example: ${name}=1000) in your environment
     or docker-compose file. Default: 20211."
 	    exit 1
     fi
@@ -123,7 +123,7 @@ _cap_bits_warn_missing_setid() {
     cap_hex=$(awk '/CapEff/ {print $2}' /proc/self/status 2>/dev/null || echo "")
     [ -n "${cap_hex}" ] || return
     cap_dec=$((0x${cap_hex}))
-    
+
     has_setgid=0; has_setuid=0; has_net_caps=0
 
     # Bit masks (use numeric constants to avoid editor/HL issues and improve clarity)
@@ -160,7 +160,7 @@ if [ "$(id -u)" -ne 0 ]; then
 
     Because the container is not running as root, it cannot fix these
     permissions automatically.
-    
+
     Action:
     1. Update Host Volume permissions (e.g. 'chmod 755 ${path}' on host).
     2. Or, run container as root (user: 0) and let PUID/PGID logic handle it."

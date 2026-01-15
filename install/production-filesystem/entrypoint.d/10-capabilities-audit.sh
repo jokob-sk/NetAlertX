@@ -90,7 +90,7 @@ has_cap 7 || missing_admin="${missing_admin} SETUID"
 if [ -n "${missing_admin}" ]; then
     printf "%sSecurity context: Operational capabilities (%s) not granted.%s\n" "${GREY}" "${missing_admin# }" "${RESET}"
     if echo "${missing_admin}" | grep -q "CHOWN"; then
-        printf "%sSee https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/missing-capabilities.md%s\n" "${GREY}" "${RESET}"
+        printf "%sSee https://docs.netalertx.com/docker-troubleshooting/missing-capabilities%s\n" "${GREY}" "${RESET}"
     fi
 fi
 
@@ -107,7 +107,7 @@ if [ "${storage_driver}" = "aufs" ] && [ "${runtime_uid}" -ne 0 ]; then
     nbtscan fail when NetAlertX runs as a non-root PUID.
 
     Set PUID=0 on AUFS hosts for full functionality:
-    https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/aufs-capabilities.md
+    https://docs.netalertx.com/docker-troubleshooting/aufs-capabilities
 ══════════════════════════════════════════════════════════════════════════════
 EOF
     printf "%s" "${RESET}"

@@ -265,10 +265,8 @@ def test_get_latest_device(mock_db_conn, client, api_token):
 
     assert response.status_code == 200
     data = response.get_json()
-    assert data["success"] is True
-    device = data["device"]
-    assert device["devName"] == "Latest Device"
-    assert device["devMac"] == "AA:BB:CC:DD:EE:FF"
+    assert data[0]["devName"] == "Latest Device"
+    assert data[0]["devMac"] == "AA:BB:CC:DD:EE:FF"
 
 
 def test_openapi_spec(client, api_token):

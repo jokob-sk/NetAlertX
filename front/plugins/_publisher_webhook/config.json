@@ -260,11 +260,11 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Enable webhooks for notifications. Webhooks help you to connect to a lot of 3rd party tools, such as IFTTT, Zapier or <a href=\"https://n8n.io/\" target=\"_blank\">n8n</a> to name a few. Check out this simple <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/WEBHOOK_N8N.md\" target=\"_blank\">n8n guide here</a> to get started. If enabled, configure related settings below."
+          "string": "Enable webhooks for notifications. Webhooks help you to connect to a lot of 3rd party tools, such as IFTTT, Zapier or <a href=\"https://n8n.io/\" target=\"_blank\">n8n</a> to name a few. Check out this simple <a href=\"https://docs.netalertx.com/WEBHOOK_N8N\" target=\"_blank\">n8n guide here</a> to get started. If enabled, configure related settings below."
         },
         {
           "language_code": "es_es",
-          "string": "Habilite webhooks para notificaciones. Los webhooks lo ayudan a conectarse a muchas herramientas de terceros, como IFTTT, Zapier o <a href=\"https://n8n.io/\" target=\"_blank\">n8n</a>, por nombrar algunas. Consulte esta sencilla <a href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/WEBHOOK_N8N.md\" target=\"_blank\">guía de n8n aquí</a> para obtener comenzó. Si está habilitado, configure los ajustes relacionados a continuación."
+          "string": "Habilite webhooks para notificaciones. Los webhooks lo ayudan a conectarse a muchas herramientas de terceros, como IFTTT, Zapier o <a href=\"https://n8n.io/\" target=\"_blank\">n8n</a>, por nombrar algunas. Consulte esta sencilla <a href=\"https://docs.netalertx.com/WEBHOOK_N8N\" target=\"_blank\">guía de n8n aquí</a> para obtener comenzó. Si está habilitado, configure los ajustes relacionados a continuación."
         }
       ]
     },
@@ -500,7 +500,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "When set, use this secret to generate the SHA256-HMAC hex digest value of the request body, which will be passed as the <code>X-Webhook-Signature</code> header to the request. You can find more information <a target=\"_blank\" href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/WEBHOOK_SECRET.md\">here</a>."
+          "string": "When set, use this secret to generate the SHA256-HMAC hex digest value of the request body, which will be passed as the <code>X-Webhook-Signature</code> header to the request. You can find more information <a target=\"_blank\" href=\"https://docs.netalertx.com/WEBHOOK_SECRET\">here</a>."
         }
       ]
     }

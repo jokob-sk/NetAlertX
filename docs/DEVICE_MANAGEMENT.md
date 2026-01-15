@@ -13,7 +13,7 @@ The Main Info section is where most of the device identifiable information is st
 
   - **MAC**: MAC addres of the device. Not editable, unless creating a new dummy device.
   - **Last IP**: IP addres of the device. Not editable, unless creating a new dummy device.
-  - **Name**: Friendly device name. Autodetected via various 🆎 Name discovery [plugins](https://github.com/jokob-sk/NetAlertX/blob/main/docs/PLUGINS.md). The app attaches `(IP match)` if the name is discovered via an IP match and not MAC match which could mean the name could be incorrect as IPs might change.
+  - **Name**: Friendly device name. Autodetected via various 🆎 Name discovery [plugins](https://docs.netalertx.com/PLUGINS). The app attaches `(IP match)` if the name is discovered via an IP match and not MAC match which could mean the name could be incorrect as IPs might change.
   - **Icon**: Partially autodetected. Select an existing or [add a custom icon](./ICONS.md). You can also auto-apply the same icon on all devices of the same type.
   - **Owner**: Device owner (The list is self-populated with existing owners and you can add custom values).
   - **Type**: Select a device type from the dropdown list (`Smartphone`, `Tablet`,
