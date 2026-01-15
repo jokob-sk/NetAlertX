@@ -547,6 +547,7 @@ This Setup assumes:
 It's also possible to [let Caddy automatically request & keep TLS Certificates up-to-date](https://caddyserver.com/docs/automatic-https), although please keep in mind that:
 1. You risk enumerating your LAN. Every Domain/Subdomain for which Caddy requests a TLS Certificate for you will result in that Host to be listed on [List of Letsencrypt Certificates issued](https://crt.sh/).
 2. You need to either:
+
     i. Open Port 80 for external Access ([HTTP challenge](https://caddyserver.com/docs/automatic-https#http-challenge)) in order for Letsencrypt to verify the Ownership of the Domain/Subdomain
 
     ii. Open Port 443 for external Access ([TLS-ALPN challenge](https://caddyserver.com/docs/automatic-https#tls-alpn-challenge)) in order for Letsencrypt to verify the Ownership of the Domain/Subdomain
