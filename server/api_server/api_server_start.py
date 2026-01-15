@@ -661,7 +661,7 @@ def api_devices_totals(payload=None):
         "description": "Filter devices by status",
         "schema": {"type": "string", "enum": [
             "connected", "down", "favorites", "new", "archived", "all", "my",
-            "offline", "my_devices", "network_devices", "all_devices"
+            "offline"
         ]}
     }]
 )
@@ -1681,10 +1681,17 @@ def start_server(graphql_port, app_state):
     if app_state.graphQLServerStarted == 0:
         mylog("verbose", [f"[graphql endpoint] Starting on port: {graphql_port}"])
 
+        debug_setting = get_setting_value("FLASK_DEBUG")
+        debug_flag = False
+        if isinstance(debug_setting, str):
+            debug_flag = debug_setting.strip().lower() in ("1", "true", "yes", "on")
+        elif isinstance(debug_setting, (int, bool)):
+            debug_flag = bool(debug_setting)
+
         # Start Flask app in a separate thread
         thread = threading.Thread(
             target=lambda: app.run(
-                host="0.0.0.0", port=graphql_port, debug=True, use_reloader=False, threaded=True
+                host="0.0.0.0", port=graphql_port, debug=debug_flag, use_reloader=False, threaded=True
             )
         )
         thread.start()

@@ -16,7 +16,6 @@ from helper import (  # noqa: E402 [flake8 lint suppression]
     is_random_mac,
     get_number_of_children,
     format_ip_long,
-    get_setting_value,
 )
 
 # Define a base URL with the user's home directory
@@ -203,57 +202,7 @@ class Query(ObjectType):
                 status = options.status
                 mylog("trace", f"[graphql_schema] Applying status filter: {status}")
 
-                # Include devices matching criteria in UI_MY_DEVICES
-                allowed_statuses = get_setting_value("UI_MY_DEVICES")
-                hidden_relationships = get_setting_value("UI_hide_rel_types")
-                network_dev_types = get_setting_value("NETWORK_DEVICE_TYPES")
-
-                mylog("trace", f"[graphql_schema] allowed_statuses: {allowed_statuses}")
-                mylog("trace", f"[graphql_schema] hidden_relationships: {hidden_relationships}",)
-                mylog("trace", f"[graphql_schema] network_dev_types: {network_dev_types}")
-
-                # Filtering based on the "status"
-                if status == "my_devices":
-                    devices_data = [
-                        device
-                        for device in devices_data
-                        if (device.get("devParentRelType") not in hidden_relationships)
-                    ]
-
-                    filtered = []
-
-                    for device in devices_data:
-                        is_online = (
-                            device["devPresentLastScan"] == 1 and "online" in allowed_statuses
-                        )
-
-                        is_new = (
-                            device["devIsNew"] == 1 and "new" in allowed_statuses
-                        )
-
-                        is_down = (
-                            device["devPresentLastScan"] == 0 and device["devAlertDown"] and "down" in allowed_statuses
-                        )
-
-                        is_offline = (
-                            device["devPresentLastScan"] == 0 and "offline" in allowed_statuses
-                        )
-
-                        is_archived = (
-                            device["devIsArchived"] == 1 and "archived" in allowed_statuses
-                        )
-
-                        # Matches if not archived and status matches OR it is archived and allowed
-                        matches = (
-                            (is_online or is_new or is_down or is_offline) and device["devIsArchived"] == 0
-                        ) or is_archived
-
-                        if matches:
-                            filtered.append(device)
-
-                    devices_data = filtered
-
-                elif status == "connected":
+                if status == "connected":
                     devices_data = [
                         device
                         for device in devices_data
@@ -283,16 +232,8 @@ class Query(ObjectType):
                     devices_data = [
                         device
                         for device in devices_data
-                        if device["devPresentLastScan"] == 0
+                        if device["devPresentLastScan"] == 0 and device["devIsArchived"] == 0
                     ]
-                elif status == "network_devices":
-                    devices_data = [
-                        device
-                        for device in devices_data
-                        if device["devType"] in network_dev_types
-                    ]
-                elif status == "all_devices":
-                    devices_data = devices_data  # keep all
 
             # additional filters
             if options.filters:

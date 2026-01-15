@@ -152,10 +152,10 @@ class DeviceListRequest(BaseModel):
     """Request for listing devices by status."""
     status: Optional[Literal[
         "connected", "down", "favorites", "new", "archived", "all", "my",
-        "offline", "my_devices", "network_devices", "all_devices"
+        "offline"
     ]] = Field(
         None,
-        description="Filter devices by status (e.g. 'connected', 'down', 'offline')"
+        description="Filter devices by status (connected, down, favorites, new, archived, all, my, offline)"
     )
 
 
@@ -420,7 +420,7 @@ class NmapScanResponse(BaseResponse):
 class NetworkTopologyResponse(BaseResponse):
     """Response with network topology data."""
     nodes: List[dict] = Field(default_factory=list, description="Network nodes")
-    edges: List[dict] = Field(default_factory=list, description="Network connections")
+    links: List[dict] = Field(default_factory=list, description="Network connections")
 
 
 class InternetInfoResponse(BaseResponse):

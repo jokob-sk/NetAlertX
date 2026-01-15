@@ -88,7 +88,7 @@ def test_trigger_scan_invalid_type(mock_queue_class, client, api_token):
 
 @patch("models.plugin_object_instance.get_temp_db_connection")
 @patch("models.device_instance.get_temp_db_connection")
-def test_get_open_ports_ip(mock_plugin_db_conn, mock_device_db_conn, client, api_token):
+def test_get_open_ports_ip(mock_device_db_conn, mock_plugin_db_conn, client, api_token):
     """Test get_open_ports with an IP address."""
     # Mock database connections for both device lookup and plugin objects
     mock_conn = MagicMock()

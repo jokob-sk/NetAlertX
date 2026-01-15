@@ -19,17 +19,14 @@ def get_device_condition_by_status(device_status):
     Return the SQL WHERE clause for filtering devices based on their status.
 
     Parameters:
-        device_status (str): The status of the device. Possible values:
+        device_status (str): The status of the device. Supported values:
             - 'all'        : All active devices
             - 'my'         : Same as 'all' (active devices)
-            - 'all_devices' : All active devices
-            - 'my_devices'  : Same as 'all' (active devices)
-            - 'network_devices' : All network devices
             - 'connected'  : Devices that are active and present in the last scan
             - 'favorites'  : Devices marked as favorite
             - 'new'        : Devices marked as new
             - 'down'       : Devices not present in the last scan but with alerts
-            - 'offline'    : Devices that were not present in the last scan
+            - 'offline'    : Devices not present in the last scan and not archived
             - 'archived'   : Devices that are archived
 
     Returns:
@@ -39,9 +36,6 @@ def get_device_condition_by_status(device_status):
     conditions = {
         "all": "WHERE devIsArchived=0",
         "my": "WHERE devIsArchived=0",
-        "all_devices": "WHERE devIsArchived=0",
-        "my_devices": "WHERE devIsArchived=0",
-        "network_devices": "WHERE devIsArchived=0",
         "connected": "WHERE devIsArchived=0 AND devPresentLastScan=1",
         "favorites": "WHERE devIsArchived=0 AND devFavorite=1",
         "new": "WHERE devIsArchived=0 AND devIsNew=1",
