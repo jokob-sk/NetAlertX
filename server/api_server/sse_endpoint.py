@@ -135,7 +135,7 @@ def create_sse_endpoint(app, is_authorized=None) -> None:
             return jsonify({"success": True}), 200
 
         if is_authorized and not is_authorized():
-            return {"none": "Unauthorized"}, 401
+            return {"success": False, "error": "Unauthorized"}, 401
 
         client_id = request.args.get("client", f"client-{int(time.time() * 1000)}")
         mylog("debug", [f"[SSE] Client connected: {client_id}"])
