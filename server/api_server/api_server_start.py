@@ -1232,7 +1232,7 @@ def api_get_events(payload=None):
         return jsonify({"success": True, "count": len(events), "events": events})
     except (ValueError, RuntimeError) as e:
         mylog("verbose", [f"[api_get_events] Error: {e}"])
-        return jsonify({"success": False, "message": str(e)}), 500
+        return jsonify({"success": False, "message": str(e), "error": "Internal Server Error"}), 500
 
 
 @app.route("/events/<int:days>", methods=["DELETE"])

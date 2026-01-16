@@ -131,7 +131,7 @@ def validate_request(
 
             # 2. Payload Validation
             if request_model:
-                if request.method in ["POST", "PUT", "PATCH"]:
+                if request.method in ["POST", "PUT", "PATCH", "DELETE"]:
                     # Explicit multipart handling (Coderabbit fix)
                     if request.files:
                         if allow_multipart_payload:
@@ -139,7 +139,7 @@ def validate_request(
                             try:
                                 data = request.form.to_dict()
                                 validated_instance = request_model(**data)
-                            except Exception as e:
+                            except ValidationError as e:
                                 mylog("verbose", [f"[Validation] Multipart validation failed for {operation_id}: {e}"])
                                 # We continue without a validated instance but don't fail hard
                                 # as the handler might want to process files manually
@@ -169,7 +169,7 @@ def validate_request(
                                 "error": "Invalid JSON",
                                 "message": "Request body must be valid JSON"
                             }), 400
-                        except Exception as e:
+                        except ValidationError as e:
                             mylog("verbose", [f"[Validation] Malformed request for {operation_id}: {e}"])
                             return jsonify({
                                 "success": False,
@@ -749,8 +749,8 @@ def generate_openapi_spec(
             if parameters:
                 operation["parameters"] = parameters
 
-            # Add request body for POST/PUT/PATCH
-            if method in ("post", "put", "patch") and entry.get("request_model"):
+            # Add request body for POST/PUT/PATCH/DELETE
+            if method in ("post", "put", "patch", "delete") and entry.get("request_model"):
                 request_body = _build_request_body(
                     entry["request_model"],
                     definitions,
