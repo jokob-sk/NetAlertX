@@ -283,7 +283,7 @@ class Query(ObjectType):
                     devices_data = [
                         device
                         for device in devices_data
-                        if device["devPresentLastScan"] == 0 and device["devIsArchived"] == 0
+                        if device["devPresentLastScan"] == 0
                     ]
                 elif status == "network_devices":
                     devices_data = [
