@@ -164,8 +164,7 @@ def print_table_schema(db, table):
 
     mylog("debug", f"[Schema] Structure for table: {table}")
     header = "{:<4} {:<20} {:<10} {:<8} {:<10} {:<2}".format(
-        "cid", "name", "type", "notnull", "default", "pk"
-   )
+        "cid", "name", "type", "notnull", "default", "pk")
     mylog("debug", header)
     mylog("debug", "-" * len(header))
 

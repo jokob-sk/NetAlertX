@@ -17,6 +17,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 from . import BASE_URL, API_BASE_URL, api_get   # noqa: E402 [flake8 lint suppression]
 
+
 def test_device_list_page_loads(driver):
     """Test: Device list page loads successfully"""
     driver.get(f"{BASE_URL}/devices.php")

@@ -53,10 +53,11 @@ _disabled_tools: set = set()
 # VALIDATION DECORATOR (Merged from validation.py)
 # =============================================================================
 
+
 def _handle_validation_error(e: ValidationError, operation_id: str, validation_error_code: int):
     """Internal helper to format Pydantic validation errors."""
     mylog("verbose", [f"[Validation] Error for {operation_id}: {e}"])
-    
+
     # Construct a legacy-compatible error message if possible
     error_msg = "Validation Error"
     if e.errors():
@@ -97,7 +98,7 @@ def validate_request(
     - Returns 422 (default) if validation fails.
     - allow_multipart_payload: If True, allows multipart/form-data and attempts validation from form fields.
     """
-    
+
     def decorator(f: Callable) -> Callable:
         # Detect if f accepts 'payload' argument (unwrap if needed)
         real_f = inspect.unwrap(f)
@@ -112,7 +113,8 @@ def validate_request(
             "response_model": response_model,
             "tags": tags,
             "path_params": path_params,
-            "query_params": query_params
+            "query_params": query_params,
+            "allow_multipart_payload": allow_multipart_payload
         }
 
         @wraps(f)
@@ -139,7 +141,7 @@ def validate_request(
                                 validated_instance = request_model(**data)
                             except Exception as e:
                                 mylog("verbose", [f"[Validation] Multipart validation failed for {operation_id}: {e}"])
-                                # We continue without a validated instance but don't fail hard 
+                                # We continue without a validated instance but don't fail hard
                                 # as the handler might want to process files manually
                                 pass
                         else:
@@ -147,8 +149,8 @@ def validate_request(
                             # This prevents handlers from receiving unexpected None payloads
                             mylog("verbose", [f"[Validation] Multipart bypass attempted for {operation_id} but not allowed."])
                             return jsonify({
-                                "success": False, 
-                                "error": "Invalid Content-Type", 
+                                "success": False,
+                                "error": "Invalid Content-Type",
                                 "message": "Multipart requests are not allowed for this endpoint"
                             }), 415
                     else:
@@ -259,7 +261,7 @@ def is_tool_disabled(operation_id: str) -> bool:
     with _registry_lock:
         if operation_id in _disabled_tools:
             return True
-        
+
         # Also check if the original base ID is disabled
         for entry in _registry:
             if entry["operation_id"] == operation_id:
@@ -304,7 +306,8 @@ def register_tool(
     query_params: Optional[List[Dict[str, Any]]] = None,
     tags: Optional[List[str]] = None,
     deprecated: bool = False,
-    original_operation_id: Optional[str] = None
+    original_operation_id: Optional[str] = None,
+    allow_multipart_payload: bool = False
 ) -> None:
     """
     Register an API endpoint for OpenAPI spec generation.
@@ -322,6 +325,7 @@ def register_tool(
         tags: OpenAPI tags for grouping
         deprecated: Whether this endpoint is deprecated
         original_operation_id: The base ID before suffixing (for disablement mapping)
+        allow_multipart_payload: Whether to allow multipart/form-data payloads
 
     Raises:
         DuplicateOperationIdError: If operation_id already exists in registry
@@ -346,7 +350,8 @@ def register_tool(
             "path_params": path_params or [],
             "query_params": query_params or [],
             "tags": tags or ["default"],
-            "deprecated": deprecated
+            "deprecated": deprecated,
+            "allow_multipart_payload": allow_multipart_payload
         })
 
 
@@ -444,7 +449,11 @@ def _extract_definitions(schema: Dict[str, Any], definitions: Dict[str, Any]) ->
     return schema
 
 
-def _build_request_body(model: Optional[Type[BaseModel]], definitions: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+def _build_request_body(
+    model: Optional[Type[BaseModel]],
+    definitions: Dict[str, Any],
+    allow_multipart_payload: bool = False
+) -> Optional[Dict[str, Any]]:
     """Build OpenAPI requestBody from Pydantic model."""
     if model is None:
         return None
@@ -452,13 +461,20 @@ def _build_request_body(model: Optional[Type[BaseModel]], definitions: Dict[str,
     schema = pydantic_to_json_schema(model)
     schema = _extract_definitions(schema, definitions)
 
+    content = {
+        "application/json": {
+            "schema": schema
+        }
+    }
+
+    if allow_multipart_payload:
+        content["multipart/form-data"] = {
+            "schema": schema
+        }
+
     return {
         "required": True,
-        "content": {
-            "application/json": {
-                "schema": schema
-            }
-        }
+        "content": content
     }
 
 
@@ -582,32 +598,32 @@ def introspect_flask_app(app: Any):
         view_func = app.view_functions.get(rule.endpoint)
         if not view_func:
             continue
-            
+
         # Check for our decorator's metadata
         metadata = getattr(view_func, "_openapi_metadata", None)
         if not metadata:
             # Fallback for wrapped functions
             if hasattr(view_func, "__wrapped__"):
                 metadata = getattr(view_func.__wrapped__, "_openapi_metadata", None)
-                
+
         if metadata:
             op_id = metadata["operation_id"]
-            
+
             # Register the tool with real path and method from Flask
             for method in rule.methods:
                 if method in ("OPTIONS", "HEAD"):
                     continue
-                
+
                 # Create a unique key for this path/method/op combination if needed,
-                # but operationId must be unique globally. 
+                # but operationId must be unique globally.
                 # If the same function is mounted on multiple paths, we append a suffix
                 path = str(rule).replace("<", "{").replace(">", "}")
-                
+
                 # Check if this operation (path + method) is already registered
                 op_key = f"{method}:{path}"
                 if op_key in registered_ops:
                     continue
-                
+
                 # Determine tags
                 tags = metadata.get("tags") or ["rest"]
                 if path.startswith("/mcp/"):
@@ -616,7 +632,7 @@ def introspect_flask_app(app: Any):
                         tags.remove("rest")
                     if "mcp" not in tags:
                         tags.append("mcp")
-                
+
                 # Ensure unique operationId
                 original_op_id = op_id
                 unique_op_id = op_id
@@ -624,7 +640,7 @@ def introspect_flask_app(app: Any):
                 while unique_op_id in _operation_ids:
                     unique_op_id = f"{op_id}_{count}"
                     count += 1
-                    
+
                 register_tool(
                     path=path,
                     method=method,
@@ -636,9 +652,11 @@ def introspect_flask_app(app: Any):
                     response_model=metadata.get("response_model"),
                     path_params=metadata.get("path_params"),
                     query_params=metadata.get("query_params"),
-                    tags=tags
+                    tags=tags,
+                    allow_multipart_payload=metadata.get("allow_multipart_payload", False)
                 )
                 registered_ops.add(op_key)
+
 
 def generate_openapi_spec(
     title: str = "NetAlertX API",
@@ -648,7 +666,7 @@ def generate_openapi_spec(
     flask_app: Optional[Any] = None
 ) -> Dict[str, Any]:
     """Assemble a complete OpenAPI specification from the registered endpoints."""
-    
+
     # If no app provided and registry is empty, try to use the one from api_server_start
     if not flask_app and not _registry:
         try:
@@ -733,7 +751,11 @@ def generate_openapi_spec(
 
             # Add request body for POST/PUT/PATCH
             if method in ("post", "put", "patch") and entry.get("request_model"):
-                request_body = _build_request_body(entry["request_model"], definitions)
+                request_body = _build_request_body(
+                    entry["request_model"],
+                    definitions,
+                    allow_multipart_payload=entry.get("allow_multipart_payload", False)
+                )
                 if request_body:
                     operation["requestBody"] = request_body
 
