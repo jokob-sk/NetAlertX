@@ -1,6 +1,7 @@
 import threading
 import sys
 import os
+import re
 
 # flake8: noqa: E402
 
@@ -101,7 +102,7 @@ app = Flask(__name__)
 
 CORS(
     app,
-    resources={r"/*": {"origins": "*"}},
+    resources={r"/*": {"origins": re.compile(r"^.*$")}},
     supports_credentials=True,
     allow_headers=["Authorization", "Content-Type", "Accept", "Origin", "X-Requested-With"],
     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"]
