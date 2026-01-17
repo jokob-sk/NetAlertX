@@ -169,7 +169,7 @@ def validate_request(
                                 "error": "Invalid JSON",
                                 "message": "Request body must be valid JSON"
                             }), 400
-                        except ValidationError as e:
+                        except Exception as e:
                             mylog("verbose", [f"[Validation] Malformed request for {operation_id}: {e}"])
                             return jsonify({
                                 "success": False,

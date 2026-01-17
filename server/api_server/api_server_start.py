@@ -123,6 +123,10 @@ def is_authorized():
 
     expected_token = get_setting_value('API_TOKEN')
 
+    if not expected_token:
+        mylog("verbose", ["[api] API_TOKEN is not set. Access denied."])
+        return False
+
     # Check Authorization header first (primary method)
     auth_header = request.headers.get("Authorization", "")
     header_token = auth_header.split()[-1] if auth_header.startswith("Bearer ") else ""
@@ -706,7 +710,7 @@ def api_devices_latest(payload=None):
     latest = device_handler.getLatest()
 
     if not latest:
-        return jsonify({"success": False, "message": "No devices found"}), 404
+        return jsonify({"success": False, "message": "No devices found", "error": "No devices found"}), 404
     return jsonify([latest])
 
 
@@ -798,7 +802,11 @@ def api_wakeonlan(payload=None):
     auth_callable=is_authorized
 )
 def api_traceroute(payload: TracerouteRequest = None):
-    ip = payload.devLastIP if payload else request.get_json(silent=True).get("devLastIP")
+    if payload:
+        ip = payload.devLastIP
+    else:
+        data = request.get_json(silent=True) or {}
+        ip = data.get("devLastIP")
     return traceroute(ip)
 
 
@@ -1287,12 +1295,10 @@ def api_get_events_totals(payload=None):
     operation_id="get_recent_events",
     summary="Get Recent Events",
     description="Get recent events from the system.",
-    request_model=RecentEventsRequest
+    request_model=RecentEventsRequest,
+    auth_callable=is_authorized
 )
 def api_events_default_24h(payload=None):
-    if not is_authorized():
-        return jsonify({"success": False, "message": "ERROR: Not authorized", "error": "Forbidden"}), 403
-
     hours = 24
     if request.args:
         try:
