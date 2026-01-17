@@ -1,5 +1,8 @@
 # Running as Root User
 
+> [!TIP]
+> Looking for how to run the container as root? See the [File permissions documentation](../FILE_PERMISSIONS.md) for details.
+
 ## Issue Description
 
 NetAlertX has detected that the container is running with root privileges (UID 0). This configuration bypasses all built-in security hardening measures designed to protect your system.

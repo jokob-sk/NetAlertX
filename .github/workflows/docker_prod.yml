@@ -67,6 +67,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
+            ghcr.io/netalertx/netalertx
             ghcr.io/jokob-sk/netalertx
             jokobsk/netalertx
           tags: |
