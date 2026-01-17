@@ -78,11 +78,11 @@ jobs:
             type=semver,pattern={{major}}
             type=sha
 
-      - name: Log in to Github Container Registry (GHCR)
+      - name: Login GHCR (netalertx org)
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          username: jokob-sk
+          username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Login GHCR (jokob-sk legacy)
