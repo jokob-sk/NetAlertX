@@ -517,41 +517,33 @@ Mapping the updated file (on the local filesystem at `/appl/docker/netalertx/def
 > Submitted by [luckylinux](https://github.com/luckylinux) 🙏.
 
 ### Introduction
+
 This Setup assumes:
+
 1. Authentik Installation running on a separate Host at `https://authentik.MYDOMAIN.TLD`
 2. Container Management is done on Baremetal OR in a Virtual Machine (KVM/Xen/ESXi/..., no LXC Containers !):
-
     i. Docker and Docker Compose configured locally running as Root (needed for `network_mode: host`) OR
-
     ii. Podman (optionally `podman-compose`) configured locally running as Root (needed for `network_mode: host`)
 3. TLS Certificates are already pre-obtained and located at `/var/lib/containers/certificates/letsencrypt/MYDOMAIN.TLD`.
-
    I use the `certbot/dns-cloudflare` Podman Container on a separate Host to obtain the Certificates which I then distribute internally.
    This Container uses the Wildcard Top-Level Domain Certificate which is valid for `MYDOMAIN.TLD` and `*.MYDOMAIN.TLD`.
 4. Proxied Access
-
     i. NetAlertX Web Interface is accessible via Caddy Reverse Proxy at `https://netalertx.MYDOMAIN.TLD` (default HTTPS Port 443: `https://netalertx.MYDOMAIN.TLD:443`) with `REPORT_DASHBOARD_URL=https://netalertx.MYDOMAIN.TLD`
-
     ii. NetAlertX GraphQL Interface is accessible via Caddy Reverse Proxy at `https://netalertx.MYDOMAIN.TLD:20212` with `BACKEND_API_URL=https://netalertx.MYDOMAIN.TLD:20212`
-
     iii. Authentik Proxy Outpost is accessible via Caddy Reverse Proxy at `https://netalertx.MYDOMAIN.TLD:9443`
 5. Internal Ports
-
     i. NGINX Web Server is set to listen on internal Port 20211 set via `PORT=20211`
-
     ii. Python Web Server is set to listen on internal Port `GRAPHQL_PORT=20219`
-
     iii. Authentik Proxy Outpost is listening on internal Port `AUTHENTIK_LISTEN__HTTP=[::1]:6000` (unencrypted) and Port `AUTHENTIK_LISTEN__HTTPS=[::1]:6443` (encrypted)
+
 8. Some further Configuration for Caddy is performed in Terms of Logging, SSL Certificates, etc
 
 It's also possible to [let Caddy automatically request & keep TLS Certificates up-to-date](https://caddyserver.com/docs/automatic-https), although please keep in mind that:
+
 1. You risk enumerating your LAN. Every Domain/Subdomain for which Caddy requests a TLS Certificate for you will result in that Host to be listed on [List of Letsencrypt Certificates issued](https://crt.sh/).
 2. You need to either:
-
     i. Open Port 80 for external Access ([HTTP challenge](https://caddyserver.com/docs/automatic-https#http-challenge)) in order for Letsencrypt to verify the Ownership of the Domain/Subdomain
-
     ii. Open Port 443 for external Access ([TLS-ALPN challenge](https://caddyserver.com/docs/automatic-https#tls-alpn-challenge)) in order for Letsencrypt to verify the Ownership of the Domain/Subdomain
-
     iii. Give Caddy the Credentials to update the DNS Records at your DNS Provider ([DNS challenge](https://caddyserver.com/docs/automatic-https#dns-challenge))
 
 You can also decide to deploy your own Certificates & Certification Authority, either manually with OpenSSL, or by using something like [mkcert](https://github.com/FiloSottile/mkcert).
@@ -564,10 +556,9 @@ In Terms of IP Stack Used:
 
 ### Flow
 The Traffic Flow will therefore be as follows:
+
 - Web GUI:
-
    i. Client accesses `http://authentik.MYDOMAIN.TLD:80`: default (built-in Caddy) Redirect to `https://authentik.MYDOMAIN.TLD:443`
-
    ii. Client accesses `https://authentik.MYDOMAIN.TLD:443` -> reverse Proxy to internal Port 20211 (NetAlertX Web GUI / NGINX - unencrypted)
 - GraphQL: Client accesses `https://authentik.MYDOMAIN.TLD:20212` -> reverse Proxy to internal Port 20219 (NetAlertX GraphQL - unencrypted)
 - Authentik Outpost: Client accesses `https://authentik.MYDOMAIN.TLD:9443` -> reverse Proxy to internal Port 6000 (Authentik Outpost Proxy - unencrypted)
@@ -577,8 +568,10 @@ An Overview of the Flow is provided in the Picture below:
 ![Reverse Proxy Traffic Flow with Authentik SSSO](./img/REVERSE_PROXY/reverse_proxy_flow.svg)
 
 ### Security Considerations
+
 #### Caddy should be run rootless
-> [!WARNING]  
+
+> [!WARNING]
 > By default Caddy runs as `root` which is a Security Risk.
 > In order to solve this, it's recommended to create an unprivileged User `caddy` and Group `caddy` on the Host:
 > ```
@@ -650,13 +643,15 @@ caddy:x:980:
 ```
 
 #### Authentication of GraphQL Endpoint
-> [!WARNING]  
+
+> [!WARNING]
 > Currently the GraphQL Endpoint is NOT authenticated !
 
 ### Environment Files
 Depending on the Preference of the User (Environment Variables defined in Compose/Quadlet or in external `.env` File[s]), it might be prefereable to place at least some Environment Variables in external `.env` and `.env.<application>` Files.
 
 The following is proposed:
+
 - `.env`: common Settings (empty by Default)
 - `.env.caddy`: Caddy Settings
 - `.env.server`: NetAlertX Server/Application Settings
@@ -759,7 +754,7 @@ services:
       - NET_BIND_SERVICE                            # Required to bind to privileged ports with nbtscan
       - CHOWN                                       # Required for root-entrypoint to chown /data + /tmp before dropping privileges
       - SETUID                                      # Required for root-entrypoint to switch to non-root user
-      - SETGID                                      # Required for root-entrypoint to switch to non-root group                  
+      - SETGID                                      # Required for root-entrypoint to switch to non-root group
     volumes:
 
       # Override NGINX Configuration Template
@@ -933,8 +928,8 @@ Volume=/var/lib/containers/certificates/letsencrypt:/certificates:ro,z
 ```
 [Unit]
 Description=NetAlertX Server Container
-Requires=netalertx-caddy.service netalertx-outpost-proxy.service 
-After=netalertx-caddy.service netalertx-outpost-proxy.service 
+Requires=netalertx-caddy.service netalertx-outpost-proxy.service
+After=netalertx-caddy.service netalertx-outpost-proxy.service
 
 [Service]
 Restart=always
@@ -1033,7 +1028,7 @@ Memory=4g
 PidsLimit=512
 
 # Relative CPU weight for CPU contention scenarios
-PodmanArgs=--cpus=2							
+PodmanArgs=--cpus=2
 PodmanArgs=--cpu-shares=512
 
 # Soft memory limit
@@ -1091,15 +1086,18 @@ NoNewPrivileges=true
 ```
 
 ### Firewall Setup
+
 Depending on which GNU/Linux Distribution you are running, it might be required to open up some Firewall Ports in order to be able to access the Endpoints from outside the Host itself.
 
 This is for instance the Case for Fedora Linux, where I had to open:
+
 - Port 20212 for external GraphQL Access (both TCP & UDP are open, unsure if UDP is required)
 - Port 9443 for external Authentik Outpost Proxy Access (both TCP & UDP are open, unsure if UDP is required)
 
 ![Fedora Firewall Configuration](./img/REVERSE_PROXY/fedora-firewall.png)
 
 ### Authentik Setup
+
 In order to enable Single Sign On (SSO) with Authentik, you will need to create a Provider, an Application and an Outpost.
 
 ![Authentik Left Sidebar](./img/REVERSE_PROXY/authentik-sidebar.png)
@@ -1118,6 +1116,7 @@ Click `Finish`.
 ![Authentik Provider Setup (Part 2)](./img/REVERSE_PROXY/authentik-provider-setup-02.png)
 
 Now, using the Left Sidebar, navigate to `Applications` &#8594; `Applications`, click on `Create` (Blue Button at the Top of the Screen) and fill in the required Fields:
+
 - Name: choose a Name for the Application (e.g. `netalertx`)
 - Slug: choose a Slug for the Application (e.g. `netalertx`)
 - Group: optionally you can assign this Application to a Group of Applications of your Choosing (for grouping Purposes within Authentik User Interface)
@@ -1128,6 +1127,7 @@ Then click `Create`.
 ![Authentik Application Setup (Part 1)](./img/REVERSE_PROXY/authentik-application-setup-01.png)
 
 Now, using the Left Sidebar, navigate to `Applications` &#8594; `Outposts`, click on `Create` (Blue Button at the Top of the Screen) and fill in the required Fields:
+
 - Name: choose a Name for the Outpost (e.g. `netalertx`)
 - Type: `Proxy`
 - Integration: open the Dropdown and click on `---------`. Make sure it is NOT set to `Local Docker connection` !
@@ -1145,7 +1145,7 @@ Wait a few Seconds for the Outpost to be created. Once it appears in the List, c
 Take note of that Token. You will need it for the Authentik Outpost Proxy Container, which will read it as the `AUTHENTIK_TOKEN` Environment Variable.
 
 ### NGINX Configuration inside NetAlertX Container
-> [!NOTE]  
+> [!NOTE]
 > This is something that was implemented based on the previous Content of this Reverse Proxy Document.
 > Due to some Buffer Warnings/Errors in the Logs as well as some other Issues I was experiencing, I increased a lot the client_body_buffer_size and large_client_header_buffers Parameters, although these might not be required anymore.
 > Further Testing might be required.
@@ -1176,7 +1176,7 @@ http {
 	fastcgi_temp_path /tmp/nginx/fastcgi;
 	uwsgi_temp_path /tmp/nginx/uwsgi;
 	scgi_temp_path /tmp/nginx/scgi;
-	
+
 	# Includes mapping of file name extensions to MIME types of responses
 	# and defines the default type.
 	include /services/config/nginx/mime.types;
@@ -1302,7 +1302,7 @@ http {
 # (Optional) Only if SSL/TLS Certificates are managed by certbot or other external Tools and Custom Logging is required
 {$APPLICATION_HOSTNAME}:443 {
     tls /certificates/{$APPLICATION_CERTIFICATE_DOMAIN}/{$APPLICATION_CERTIFICATE_CERT_FILE:fullchain.pem} /certificates/{$APPLICATION_CERTIFICATE_DOMAIN}/{$APPLICATION_CERTIFICATE_KEY_FILE:privkey.pem}
-    
+
     log {
         output file /var/log/{$APPLICATION_HOSTNAME}/access_web.json {
           roll_size 100MiB
@@ -1310,7 +1310,7 @@ http {
                 roll_keep_for 720h
                 roll_uncompressed
         }
-    
+
         format json
     }
 
