@@ -67,7 +67,6 @@ jobs:
           images: |
             ghcr.io/netalertx/netalertx-dev
             ghcr.io/jokob-sk/netalertx-dev
-            netalertx/netalertx-dev
             jokobsk/netalertx-dev
           tags: |
             type=raw,value=latest
