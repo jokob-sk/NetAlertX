@@ -1655,12 +1655,6 @@ def sync_endpoint_post(payload=None):
 def check_auth(payload=None):
     if request.method == "GET":
         return jsonify({"success": True, "message": "Authentication check successful"}), 200
-    else:
-        msg = "[sync endpoint] Method Not Allowed"
-        write_notification(msg, "alert")
-        mylog("verbose", [msg])
-        return jsonify({"success": False, "message": "ERROR: No allowed", "error": "Method Not Allowed"}), 405
-
 
 # --------------------------
 # Background Server Start
