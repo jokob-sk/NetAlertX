@@ -1106,6 +1106,7 @@ First of all, using the Left Sidebar, navigate to `Applications` &#8594; `Provid
 ![Authentik Provider Setup (Part 1)](./img/REVERSE_PROXY/authentik-provider-setup-01.png)
 
 Fill in the required Fields:
+
 - Name: choose a Name for the Provider (e.g. `netalertx`)
 - Authorization Flow: choose the Authorization Flow. I typically use `default-provider-authorization-implicit-consent (Authorize Application)`. If you select the `default-provider-authorization-explicit-consent (Authorize Application)` you will need to authorize Authentik every Time you want to log in NetAlertX, which can make the Experience less User-friendly
 - Type: Click on `Forward Auth (single application)`
