@@ -159,7 +159,6 @@ RUN install -d -o ${NETALERTX_USER} -g ${NETALERTX_GROUP} -m 700 ${READ_WRITE_FO
 
 # Copy version information into the image
 COPY --chown=${NETALERTX_USER}:${NETALERTX_GROUP} .[V]ERSION ${NETALERTX_APP}/.VERSION
-COPY --chown=${NETALERTX_USER}:${NETALERTX_GROUP} .[V]ERSION ${NETALERTX_APP}/.VERSION_PREV
 
 # Copy the virtualenv from the builder stage (owned by readonly lock owner)
 COPY --from=builder --chown=${READONLY_UID}:${READONLY_GID} ${VIRTUAL_ENV} ${VIRTUAL_ENV}
@@ -170,7 +169,7 @@ COPY --from=builder --chown=${READONLY_UID}:${READONLY_GID} ${VIRTUAL_ENV} ${VIR
 # although it may be quicker to do it before the copy, it keeps the image
 # layers smaller to do it after.
 # hadolint ignore=DL3018
-RUN for vfile in .VERSION .VERSION_PREV; do \
+RUN for vfile in .VERSION; do \
         if [ ! -f "${NETALERTX_APP}/${vfile}" ]; then \
             echo "DEVELOPMENT 00000000" > "${NETALERTX_APP}/${vfile}"; \
         fi; \
