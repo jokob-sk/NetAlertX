@@ -278,7 +278,7 @@ def api_get_device(mac, payload=None):
     device_data = device_handler.getDeviceData(mac, period)
 
     if device_data is None:
-        return jsonify({"error": "Device not found"}), 404
+        return jsonify({"success": False, "message": "Device not found", "error": "Device not found"}), 404
 
     return jsonify(device_data)
 
@@ -731,7 +731,7 @@ def api_devices_favorite(payload=None):
     favorite = device_handler.getFavorite()
 
     if not favorite:
-        return jsonify({"success": False, "message": "No devices found"}), 404
+        return jsonify({"success": False, "message": "No devices found", "error": "No devices found"}), 404
     return jsonify([favorite])
 
 
