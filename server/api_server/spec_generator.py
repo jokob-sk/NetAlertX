@@ -185,7 +185,7 @@ def validate_request(
                         validated_instance = request_model(**data)
                     except ValidationError as e:
                         return _handle_validation_error(e, operation_id, validation_error_code)
-                    except Exception as e:
+                    except (TypeError, ValueError, KeyError) as e:
                         mylog("verbose", [f"[Validation] Query param validation failed for {operation_id}: {e}"])
                         return jsonify({
                             "success": False,
@@ -580,16 +580,6 @@ def _strip_validation(schema: Dict[str, Any]) -> Dict[str, Any]:
         }
 
     return clean_schema
-
-
-def _flatten_defs(spec: Dict[str, Any]) -> None:
-    """
-    Experimental: Flatten $defs if they are single-use or small.
-    This is complex in pure Python without deep traversal logic.
-    For now, we will rely on Pydantic's optimized output, but ensures
-    we strip unused defs if any remain.
-    """
-    pass
 
 
 def introspect_flask_app(app: Any):
