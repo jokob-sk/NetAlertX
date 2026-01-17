@@ -1,6 +1,7 @@
 import threading
 import sys
 import os
+import re
 
 from flask import Flask, request, jsonify, Response
 from models.device_instance import DeviceInstance  # noqa: E402
@@ -69,26 +70,10 @@ app = Flask(__name__)
 
 CORS(
     app,
-    resources={
-        r"/metrics": {"origins": "*"},
-        r"/device/*": {"origins": "*"},
-        r"/devices/*": {"origins": "*"},
-        r"/history/*": {"origins": "*"},
-        r"/nettools/*": {"origins": "*"},
-        r"/sessions/*": {"origins": "*"},
-        r"/settings/*": {"origins": "*"},
-        r"/dbquery/*": {"origins": "*"},
-        r"/graphql/*": {"origins": "*"},
-        r"/messaging/*": {"origins": "*"},
-        r"/events/*": {"origins": "*"},
-        r"/logs/*": {"origins": "*"},
-        r"/api/tools/*": {"origins": "*"},
-        r"/auth/*": {"origins": "*"},
-        r"/mcp/*": {"origins": "*"},
-        r"/sse/*": {"origins": "*"}
-    },
+    resources={r"/*": {"origins": re.compile(r"^.*$")}},
     supports_credentials=True,
-    allow_headers=["Authorization", "Content-Type"],
+    allow_headers=["Authorization", "Content-Type", "Accept", "Origin", "X-Requested-With"],
+    methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"]
 )
 
 # -------------------------------------------------------------------------------
