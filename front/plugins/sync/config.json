@@ -15,7 +15,11 @@
     }
   ],
   "show_ui": true,
-  "localized": ["display_name", "description", "icon"],
+  "localized": [
+    "display_name",
+    "description",
+    "icon"
+  ],
   "display_name": [
     {
       "language_code": "en_us",
@@ -38,14 +42,19 @@
   "settings": [
     {
       "function": "RUN",
-      "events": ["run"],
+      "events": [
+        "run"
+      ],
       "type": {
         "dataType": "string",
         "elements": [
-          { "elementType": "select", "elementOptions": [], "transformers": [] }
+          {
+            "elementType": "select",
+            "elementOptions": [],
+            "transformers": []
+          }
         ]
       },
-
       "default_value": "unused",
       "options": [
         "unused",
@@ -55,7 +64,10 @@
         "on_new_device",
         "on_notification"
       ],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -108,10 +120,12 @@
           }
         ]
       },
-
       "default_value": "*/5 * * * *",
       "options": [],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -141,16 +155,28 @@
           {
             "elementType": "input",
             "elementHasInputValue": 1,
-            "elementOptions": [{ "cssClasses": "col-xs-12" }],
+            "elementOptions": [
+              {
+                "cssClasses": "col-xs-12"
+              }
+            ],
             "transformers": []
           },
           {
             "elementType": "button",
             "elementOptions": [
-              { "getStringKey": "Gen_Generate" },
-              { "customParams": "SYNC_encryption_key" },
-              { "onClick": "generateApiToken(this, 30)" },
-              { "cssClasses": "col-xs-12" }
+              {
+                "getStringKey": "Gen_Generate"
+              },
+              {
+                "customParams": "SYNC_encryption_key"
+              },
+              {
+                "onClick": "generateApiToken(this, 30)"
+              },
+              {
+                "cssClasses": "col-xs-12"
+              }
             ],
             "transformers": []
           }
@@ -159,7 +185,10 @@
       "maxLength": 50,
       "default_value": "",
       "options": [],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -181,21 +210,41 @@
           {
             "elementType": "input",
             "elementOptions": [
-              { "placeholder": "Enter full url" },
-              { "suffix": "_in" },
-              { "cssClasses": "col-sm-10" },
-              { "prefillValue": "null" }
+              {
+                "placeholder": "Enter full url"
+              },
+              {
+                "suffix": "_in"
+              },
+              {
+                "cssClasses": "col-sm-10"
+              },
+              {
+                "prefillValue": "null"
+              }
             ],
             "transformers": []
           },
           {
             "elementType": "button",
             "elementOptions": [
-              { "sourceSuffixes": ["_in"] },
-              { "separator": "" },
-              { "cssClasses": "col-xs-12" },
-              { "onClick": "addList(this, false)" },
-              { "getStringKey": "Gen_Add" }
+              {
+                "sourceSuffixes": [
+                  "_in"
+                ]
+              },
+              {
+                "separator": ""
+              },
+              {
+                "cssClasses": "col-xs-12"
+              },
+              {
+                "onClick": "addList(this, false)"
+              },
+              {
+                "getStringKey": "Gen_Add"
+              }
             ],
             "transformers": []
           },
@@ -203,31 +252,57 @@
             "elementType": "select",
             "elementHasInputValue": 1,
             "elementOptions": [
-              { "multiple": "true" },
-              { "readonly": "true" },
-              { "editable": "true" }
+              {
+                "multiple": "true"
+              },
+              {
+                "readonly": "true"
+              },
+              {
+                "editable": "true"
+              }
             ],
             "transformers": []
           },
           {
             "elementType": "button",
             "elementOptions": [
-              { "sourceSuffixes": [] },
-              { "separator": "" },
-              { "cssClasses": "col-xs-6" },
-              { "onClick": "removeAllOptions(this)" },
-              { "getStringKey": "Gen_Remove_All" }
+              {
+                "sourceSuffixes": []
+              },
+              {
+                "separator": ""
+              },
+              {
+                "cssClasses": "col-xs-6"
+              },
+              {
+                "onClick": "removeAllOptions(this)"
+              },
+              {
+                "getStringKey": "Gen_Remove_All"
+              }
             ],
             "transformers": []
           },
           {
             "elementType": "button",
             "elementOptions": [
-              { "sourceSuffixes": [] },
-              { "separator": "" },
-              { "cssClasses": "col-xs-6" },
-              { "onClick": "removeFromList(this)" },
-              { "getStringKey": "Gen_Remove_Last" }
+              {
+                "sourceSuffixes": []
+              },
+              {
+                "separator": ""
+              },
+              {
+                "cssClasses": "col-xs-6"
+              },
+              {
+                "onClick": "removeFromList(this)"
+              },
+              {
+                "getStringKey": "Gen_Remove_Last"
+              }
             ],
             "transformers": []
           }
@@ -235,7 +310,10 @@
       },
       "default_value": [],
       "options": [],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -254,14 +332,20 @@
       "type": {
         "dataType": "string",
         "elements": [
-          { "elementType": "input", "elementOptions": [], "transformers": [] }
+          {
+            "elementType": "input",
+            "elementOptions": [],
+            "transformers": []
+          }
         ]
       },
-
       "maxLength": 50,
       "default_value": "",
       "options": [],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -280,13 +364,43 @@
       "type": {
         "dataType": "string",
         "elements": [
-          { "elementType": "input", "elementOptions": [], "transformers": [] }
+          {
+            "elementType": "input",
+            "elementHasInputValue": 1,
+            "elementOptions": [
+              {
+                "cssClasses": "col-xs-12"
+              }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              {
+                "getStringKey": "Gen_Generate"
+              },
+              {
+                "customParams": "SYNC_node_name"
+              },
+              {
+                "onClick": "generateNaxNodeName(this)"
+              },
+              {
+                "cssClasses": "col-xs-12"
+              }
+            ],
+            "transformers": []
+          }
         ]
       },
       "maxLength": 50,
       "default_value": "",
       "options": [],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -307,14 +421,21 @@
         "elements": [
           {
             "elementType": "input",
-            "elementOptions": [{ "type": "checkbox" }],
+            "elementOptions": [
+              {
+                "type": "checkbox"
+              }
+            ],
             "transformers": []
           }
         ]
       },
       "default_value": false,
       "options": [],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -335,14 +456,21 @@
         "elements": [
           {
             "elementType": "select",
-            "elementOptions": [{ "multiple": "true", "ordeable": "true" }],
+            "elementOptions": [
+              {
+                "multiple": "true",
+                "ordeable": "true"
+              }
+            ],
             "transformers": []
           }
         ]
       },
       "maxLength": 50,
       "default_value": [],
-      "options": ["{value}"],
+      "options": [
+        "{value}"
+      ],
       "options_params": [
         {
           "name": "value",
@@ -350,7 +478,10 @@
           "value": "LOADED_PLUGINS"
         }
       ],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -371,14 +502,21 @@
         "elements": [
           {
             "elementType": "input",
-            "elementOptions": [{ "readonly": "true" }],
+            "elementOptions": [
+              {
+                "readonly": "true"
+              }
+            ],
             "transformers": []
           }
         ]
       },
       "default_value": "python3 /app/front/plugins/sync/sync.py",
       "options": [],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -415,14 +553,21 @@
         "elements": [
           {
             "elementType": "input",
-            "elementOptions": [{ "type": "number" }],
+            "elementOptions": [
+              {
+                "type": "number"
+              }
+            ],
             "transformers": []
           }
         ]
       },
       "default_value": 30,
       "options": [],
-      "localized": ["name", "description"],
+      "localized": [
+        "name",
+        "description"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -461,7 +606,9 @@
       "type": "none",
       "default_value": "",
       "options": [],
-      "localized": ["name"],
+      "localized": [
+        "name"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -477,7 +624,9 @@
       "type": "device_name_mac",
       "default_value": "",
       "options": [],
-      "localized": ["name"],
+      "localized": [
+        "name"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -501,7 +650,9 @@
       "type": "device_ip",
       "default_value": "",
       "options": [],
-      "localized": ["name"],
+      "localized": [
+        "name"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -525,7 +676,9 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": ["name"],
+      "localized": [
+        "name"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -541,7 +694,9 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": ["name"],
+      "localized": [
+        "name"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -557,7 +712,9 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": ["name"],
+      "localized": [
+        "name"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -572,7 +729,9 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": ["name"],
+      "localized": [
+        "name"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -591,7 +750,9 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": ["name"],
+      "localized": [
+        "name"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -614,7 +775,9 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": ["name"],
+      "localized": [
+        "name"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -637,7 +800,9 @@
       "type": "label",
       "default_value": "",
       "options": [],
-      "localized": ["name"],
+      "localized": [
+        "name"
+      ],
       "name": [
         {
           "language_code": "en_us",
@@ -677,7 +842,9 @@
           "replacement": "<div style='text-align:center'><i class='fa-solid fa-question'></i></div>"
         }
       ],
-      "localized": ["name"],
+      "localized": [
+        "name"
+      ],
       "name": [
         {
           "language_code": "en_us",

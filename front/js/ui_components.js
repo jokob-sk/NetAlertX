@@ -39,6 +39,25 @@ function generateApiToken(elem, length) {
   }
 }
 
+// -------------------------------------------------------------------
+// Utility function to generate a random NAX node name in the format NAX-<GUID>
+function generateNaxNodeName(elem)
+{
+  // Retrieve and parse custom parameters from the element
+  let params = $(elem).attr("my-customparams")?.split(',').map(param => param.trim());
+  if (params && params.length >= 1) {
+    var targetElementID = params[0];  // Get the target element's ID
+  }
+
+  newNodeName = 'NAX-' + getGuid().split('-')[0];
+
+  let targetElement = $('#' + targetElementID);
+  // Set the generated token as the value of the target element
+  if (targetElement.length) {
+    targetElement.val(newNodeName);
+  }
+}
+
 // ----------------------------------------------
 // Generate a random N-byte hexadecimal key
 function getRandomBytes(elem, length) {

@@ -6,6 +6,7 @@ import datetime
 import json
 import shutil
 import re
+import uuid
 
 # Register NetAlertX libraries
 import conf
@@ -383,6 +384,15 @@ def importConfigs(pm, db, all_plugins):
         "[]",
         "General",
     )
+    conf.SYNC_node_name = ccd(
+        "SYNC_node_name",
+        "NAX-" + str(uuid.uuid4()).split("-")[0],
+        c_d,
+        "Sync node name",
+        '{"dataType": "string","elements": [{"elementType": "input","elementHasInputValue": 1,"elementOptions": [{ "cssClasses": "col-xs-12" }],"transformers": []},{"elementType": "button","elementOptions": [{ "getStringKey": "Gen_Generate" },{ "customParams": "SYNC_node_name" },{ "onClick": "generateNaxNodeName(this)" },{ "cssClasses": "col-xs-12" }],"transformers": []}]}',   # noqa: E501 - inline JSON
+        "[]",
+        "General",
+    )
 
     # UI
     conf.UI_LANG = ccd(
@@ -736,6 +746,7 @@ replacements = {
     r"\bREPORT_TO\b": "SMTP_REPORT_TO",
     r"\bSYNC_api_token\b": "API_TOKEN",
     r"\bAPI_TOKEN=\'\'": f"API_TOKEN='t_{generate_random_string(20)}'",
+    r"\bSYNC_node_name=\'\'": f"SYNC_node_name='NAX-{str(uuid.uuid4()).split("-")[0]}'",
     # Detect SMTP_PASS='anything' BUT not starting with base64:
     r"SMTP_PASS='(?!base64:)([^']*)'": r"SMTP_PASS='base64:\1'",
 }
