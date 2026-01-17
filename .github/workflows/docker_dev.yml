@@ -18,8 +18,11 @@ jobs:
       contents: read
       packages: write
     if: >
-      contains(github.event.head_commit.message, 'PUSHPROD') != 'True' &&
-      github.repository == 'jokob-sk/NetAlertX'
+      !contains(github.event.head_commit.message, 'PUSHPROD') &&
+      (
+        github.repository == 'jokob-sk/NetAlertX' ||
+        github.repository == 'netalertx/NetAlertX'
+      )
 
     steps:
       - name: Checkout
