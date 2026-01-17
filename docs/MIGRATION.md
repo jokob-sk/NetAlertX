@@ -345,3 +345,4 @@ services:
 
 5. If you use a custom `PUID` (e.g. `0`) and `GUID` (e.g. `100`) make sure you also update the `tmpfs` ownership, e.g. `/tmp:uid=0,gid=100...`
 6. Start the container and verify everything works as expected.
+7. If running a reverse proxy review the [Reverse proxy documentation](./REVERSE_PROXY.md) as a new `BACKEND_API_URL` setting was added.
