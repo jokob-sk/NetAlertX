@@ -60,6 +60,8 @@ To run as the root user, it usually looks like this (verify the IDs on your serv
 ...
 ```
 
+If you use a custom `PUID` (e.g. `0`) and `GUID` (e.g. `100`) make sure you also update the `tmpfs` ownership, e.g. `/tmp:uid=0,gid=100...`
+
 ### Solution
 
 1. **Run the container once as root** (`--user "0"`) to allow it to correct permissions automatically:
