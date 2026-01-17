@@ -169,7 +169,7 @@ def validate_request(
                                 "error": "Invalid JSON",
                                 "message": "Request body must be valid JSON"
                             }), 400
-                        except Exception as e:
+                        except (TypeError, KeyError, AttributeError) as e:
                             mylog("verbose", [f"[Validation] Malformed request for {operation_id}: {e}"])
                             return jsonify({
                                 "success": False,
@@ -187,7 +187,11 @@ def validate_request(
                         return _handle_validation_error(e, operation_id, validation_error_code)
                     except Exception as e:
                         mylog("verbose", [f"[Validation] Query param validation failed for {operation_id}: {e}"])
-                        pass
+                        return jsonify({
+                            "success": False,
+                            "error": "Invalid query parameters",
+                            "message": str(e)
+                        }), 400
 
             if validated_instance:
                 if accepts_payload:

@@ -1356,7 +1356,8 @@ def api_events_recent(hours, payload=None):
         return jsonify({"success": True, "hours": hours, "count": len(events), "events": events}), 200
 
     except Exception as ex:
-        return jsonify({"success": False, "error": str(ex)}), 500
+        mylog("verbose", [f"[api_events_recent] Unexpected error: {type(ex).__name__}: {ex}"])
+        return jsonify({"success": False, "error": "Internal server error", "message": str(ex)}), 500
 
 # --------------------------
 # Sessions
@@ -1677,7 +1678,7 @@ def start_server(graphql_port, app_state):
         # Start Flask app in a separate thread
         thread = threading.Thread(
             target=lambda: app.run(
-                host="0.0.0.0", port=graphql_port, debug=True, use_reloader=False
+                host="0.0.0.0", port=graphql_port, debug=False, use_reloader=False
             )
         )
         thread.start()
