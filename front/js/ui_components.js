@@ -308,7 +308,7 @@ function execute_settingEvent(element) {
   if (["test", "run"].includes(feEvent)) {
     // Calls a backend function to add a front-end event (specified by the attributes 'data-myevent' and 'data-myparam-plugin' on the passed  element) to an execution queue
     // value has to be in format event|param. e.g. run|ARPSCAN
-    action = `${getGuid()}|${feEvent}|${fePlugin}`
+    action = `${feEvent}|${fePlugin}`
 
     // Get data from the server
     const apiToken = getSetting("API_TOKEN");
