@@ -202,6 +202,7 @@ User-editable text box that persists changes to the database (typically `UserDat
 ### Styled/Transformed Types
 
 #### `label` with `threshold`
+
 Color-codes values based on ranges. Useful for status codes, latency, capacity percentages.
 
 ```json
@@ -237,6 +238,7 @@ Color-codes values based on ranges. Useful for status codes, latency, capacity p
 ```
 
 **How it works:**
+
 - Value `150` → Purple (≤199)
 - Value `250` → Green (≤299)
 - Value `350` → Orange (≤399)
@@ -298,8 +300,8 @@ Applies a regular expression to extract/transform values.
 }
 ```
 
-**Input:** `Host: 192.168.1.100 Port: 8080`
-**Output:** `192.168.1.100`
+- **Input:** `Host: 192.168.1.100 Port: 8080`
+- **Output:** `192.168.1.100`
 
 ---
 
@@ -334,8 +336,8 @@ Evaluates JavaScript code with access to the column value (use `${value}` or `{v
 }
 ```
 
-**Input:** `42`
-**Output:** **42** units
+- **Input:** `42`
+- **Output:** **42** units
 
 ---
 
@@ -360,6 +362,7 @@ You can chain multiple transformations with dot notation:
 ```
 
 **Flow:**
+
 1. Apply regex to extract `192.168.1.50` from input
 2. Create HTTP/HTTPS links for that host
 
@@ -390,6 +393,7 @@ Use SQL query results to populate dropdown options:
 ```
 
 The SQL query must return exactly **2 columns:**
+
 - **First column (id):** Option value
 - **Second column (name):** Display label
 

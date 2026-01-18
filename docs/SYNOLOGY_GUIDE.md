@@ -47,6 +47,9 @@ services:
       - NET_RAW
       - NET_ADMIN
       - NET_BIND_SERVICE
+      - CHOWN
+      - SETUID
+      - SETGID
     volumes:
       - /app_storage/netalertx:/data
       # to sync with system time

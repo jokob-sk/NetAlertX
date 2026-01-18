@@ -30,7 +30,7 @@ When AUFS is detected without root privileges, the system emits the following wa
 >
 > AUFS strips Linux file capabilities, so tools like arp-scan, nmap, and nbtscan fail when NetAlertX runs as a non-root PUID.
 >
-> **Action:** Set PUID=0 on AUFS hosts for full functionality.
+> **Action:** Set `PUID=0` on AUFS hosts for full functionality.
 
 
 ## Security Ramifications

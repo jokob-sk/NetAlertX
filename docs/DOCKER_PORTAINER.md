@@ -46,6 +46,9 @@ services:
       - NET_RAW
       - NET_ADMIN
       - NET_BIND_SERVICE
+      - CHOWN
+      - SETUID
+      - SETGID               
     volumes:
       - ${APP_FOLDER}/netalertx/config:/data/config
       - ${APP_FOLDER}/netalertx/db:/data/db

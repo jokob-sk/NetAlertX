@@ -1598,7 +1598,7 @@ function restartBackend() {
         "Authorization": "Bearer " + apiToken,
         "Content-Type": "application/json"
       },
-      data: JSON.stringify({ action: `${getGuid()}|cron_restart_backend` }),
+      data: JSON.stringify({ action: `cron_restart_backend` }),
       success: function(data, textStatus) {
           // showModalOk ('Result', data );
 
