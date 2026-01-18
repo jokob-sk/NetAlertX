@@ -4,6 +4,10 @@
 // ## Languages
 // ###################################
 
+if (function_exists('lang')) {
+    return;
+}
+
 $defaultLang = "en_us";
 $allLanguages = [ "ar_ar", "ca_ca", "cs_cz", "de_de", "en_us", "es_es", "fa_fa", "fr_fr", "it_it", "ja_jp", "nb_no", "pl_pl", "pt_br", "pt_pt", "ru_ru", "sv_sv", "tr_tr", "uk_ua", "zh_cn"];
 
