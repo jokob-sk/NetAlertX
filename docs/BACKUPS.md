@@ -2,7 +2,7 @@
 
 > [!NOTE]
 > To back up 99% of your configuration, back up at least the `/data/config` folder.
-> Database definitions can change between releases, so the safest method is to restore backups using the **same app version** they were taken from, then upgrade incrementally.
+> Database definitions can change between releases, so the safest method is to restore backups using the **same app version** they were taken from, then upgrade incrementally by following the [Migration documentation](./MIGRATION.md).
 
 ---
 

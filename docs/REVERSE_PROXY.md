@@ -4,10 +4,11 @@
 > This is community-contributed. Due to environment, setup, or networking differences, results may vary. Please open a PR to improve it instead of creating an issue, as the maintainer is not actively maintaining it.
 
 
-> [!TIP]
-> You will need to specify the `BACKEND_API_URL` setting if you are running reverse proxies. This is the URL that points to the backend server url (including your `GRAPHQL_PORT`)
+> [!IMPORTANT]
+> You will need to specify 2 entries in your reverse proxy, one for the front end, one for the backend URL. The custom backend URL, including the `GRAPHQL_PORT`, needs to be aslo specified in the `BACKEND_API_URL` setting.This is the URL that points to the backend API server.
 >
 > ![BACKEND_API_URL setting](./img/REVERSE_PROXY/BACKEND_API_URL.png)
+>
 > ![NPM set up](./img/REVERSE_PROXY/nginx_proxy_manager_npm.png)
 
 ## NGINX HTTP Configuration (Direct Path)
