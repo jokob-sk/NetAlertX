@@ -5,11 +5,6 @@ import random
 import string
 import pytest
 import os
-import sys
-
-# Define the installation path and extend the system path for plugin imports
-INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
-sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from api_server.api_server_start import app  # noqa: E402 [flake8 lint suppression]
 from messaging.in_app import NOTIFICATION_API_FILE    # noqa: E402 [flake8 lint suppression]

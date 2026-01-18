@@ -118,7 +118,8 @@ def test_delete_all_events(client, api_token, test_mac):
     create_event(client, api_token, "FF:FF:FF:FF:FF:FF")
 
     resp = list_events(client, api_token)
-    assert len(resp.json) >= 2
+    # At least the two we created should be present
+    assert len(resp.json.get("events", [])) >= 2
 
     # delete all
     resp = client.delete("/events", headers=auth_headers(api_token))
@@ -131,12 +132,40 @@ def test_delete_all_events(client, api_token, test_mac):
 
 
 def test_delete_events_dynamic_days(client, api_token, test_mac):
+    # Determine initial count so test doesn't rely on preexisting events
+    before = list_events(client, api_token, test_mac)
+    initial_events = before.json.get("events", [])
+    initial_count = len(initial_events)
+
+    # Count pre-existing events younger than 30 days for test_mac
+    # These will remain after delete operation
+    from datetime import datetime
+    thirty_days_ago = timeNowTZ() - timedelta(days=30)
+    initial_younger_count = 0
+    for ev in initial_events:
+        if ev.get("eve_MAC") == test_mac and ev.get("eve_DateTime"):
+            try:
+                # Parse event datetime (handle ISO format)
+                ev_time_str = ev["eve_DateTime"]
+                # Try parsing with timezone info
+                try:
+                    ev_time = datetime.fromisoformat(ev_time_str.replace("Z", "+00:00"))
+                except ValueError:
+                    # Fallback for formats without timezone
+                    ev_time = datetime.fromisoformat(ev_time_str)
+                if ev_time.tzinfo is None:
+                    ev_time = ev_time.replace(tzinfo=thirty_days_ago.tzinfo)
+                if ev_time > thirty_days_ago:
+                    initial_younger_count += 1
+            except (ValueError, TypeError):
+                pass  # Skip events with unparseable dates
+
     # create old + new events
     create_event(client, api_token, test_mac, days_old=40)  # should be deleted
     create_event(client, api_token, test_mac, days_old=5)   # should remain
 
     resp = list_events(client, api_token, test_mac)
-    assert len(resp.json) == 2
+    assert len(resp.json.get("events", [])) == initial_count + 2
 
     # delete events older than 30 days
     resp = client.delete("/events/30", headers=auth_headers(api_token))
@@ -144,8 +173,9 @@ def test_delete_events_dynamic_days(client, api_token, test_mac):
     assert resp.json.get("success") is True
     assert "Deleted events older than 30 days" in resp.json.get("message", "")
 
-    # confirm only recent remains
+    # confirm only recent events remain (pre-existing younger + newly created 5-day-old)
     resp = list_events(client, api_token, test_mac)
     events = resp.get_json().get("events", [])
     mac_events = [ev for ev in events if ev.get("eve_MAC") == test_mac]
-    assert len(mac_events) == 1
+    expected_remaining = initial_younger_count + 1  # 1 for the 5-day-old event we created
+    assert len(mac_events) == expected_remaining

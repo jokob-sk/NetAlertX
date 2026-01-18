@@ -4,28 +4,23 @@ Maintenance Page UI Tests
 Tests CSV export/import, delete operations, database tools
 """
 
-import time
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 
-from test_helpers import BASE_URL, api_get
+from .test_helpers import BASE_URL, api_get, wait_for_page_load  # noqa: E402
 
 
 def test_maintenance_page_loads(driver):
     """Test: Maintenance page loads successfully"""
     driver.get(f"{BASE_URL}/maintenance.php")
-    WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.TAG_NAME, "body"))
-    )
-    time.sleep(2)
+    wait_for_page_load(driver, timeout=10)
     assert "Maintenance" in driver.page_source, "Page should show Maintenance content"
 
 
 def test_export_buttons_present(driver):
     """Test: Export buttons are visible"""
     driver.get(f"{BASE_URL}/maintenance.php")
-    time.sleep(2)
+    wait_for_page_load(driver, timeout=10)
     export_btn = driver.find_elements(By.ID, "btnExportCSV")
     assert len(export_btn) > 0, "Export CSV button should be present"
 
@@ -36,7 +31,7 @@ def test_export_csv_button_works(driver):
     import glob
 
     driver.get(f"{BASE_URL}/maintenance.php")
-    time.sleep(2)
+    wait_for_page_load(driver, timeout=10)
 
     # Clear any existing downloads
     download_dir = getattr(driver, 'download_dir', '/tmp/selenium_downloads')
@@ -53,15 +48,13 @@ def test_export_csv_button_works(driver):
         driver.execute_script("arguments[0].click();", export_btn)
 
         # Wait for download to complete (up to 10 seconds)
-        downloaded = False
-        for i in range(20):  # Check every 0.5s for 10s
-            time.sleep(0.5)
-            csv_files = glob.glob(f"{download_dir}/*.csv")
-            if len(csv_files) > 0:
-                # Check file has content (download completed)
-                if os.path.getsize(csv_files[0]) > 0:
-                    downloaded = True
-                    break
+        try:
+            WebDriverWait(driver, 10).until(
+                lambda d: any(os.path.getsize(f) > 0 for f in glob.glob(f"{download_dir}/*.csv"))
+            )
+            downloaded = True
+        except Exception:
+            downloaded = False
 
         if downloaded:
             # Verify CSV file exists and has data
@@ -85,7 +78,7 @@ def test_export_csv_button_works(driver):
 def test_import_section_present(driver):
     """Test: Import section is rendered or page loads without errors"""
     driver.get(f"{BASE_URL}/maintenance.php")
-    time.sleep(2)
+    wait_for_page_load(driver, timeout=10)
     # Check page loaded and doesn't show fatal errors
     assert "fatal" not in driver.page_source.lower(), "Page should not show fatal errors"
     assert "maintenance" in driver.page_source.lower() or len(driver.page_source) > 100, "Page should load content"
@@ -94,7 +87,7 @@ def test_import_section_present(driver):
 def test_delete_buttons_present(driver):
     """Test: Delete operation buttons are visible (at least some)"""
     driver.get(f"{BASE_URL}/maintenance.php")
-    time.sleep(2)
+    wait_for_page_load(driver, timeout=10)
     buttons = [
         "btnDeleteEmptyMACs",
         "btnDeleteAllDevices",

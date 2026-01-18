@@ -46,46 +46,46 @@ class PageQueryOptionsInput(InputObjectType):
 
 # Device ObjectType
 class Device(ObjectType):
-    rowid = Int()
-    devMac = String()
-    devName = String()
-    devOwner = String()
-    devType = String()
-    devVendor = String()
-    devFavorite = Int()
-    devGroup = String()
-    devComments = String()
-    devFirstConnection = String()
-    devLastConnection = String()
-    devLastIP = String()
-    devStaticIP = Int()
-    devScan = Int()
-    devLogEvents = Int()
-    devAlertEvents = Int()
-    devAlertDown = Int()
-    devSkipRepeated = Int()
-    devLastNotification = String()
-    devPresentLastScan = Int()
-    devIsNew = Int()
-    devLocation = String()
-    devIsArchived = Int()
-    devParentMAC = String()
-    devParentPort = String()
-    devIcon = String()
-    devGUID = String()
-    devSite = String()
-    devSSID = String()
-    devSyncHubNode = String()
-    devSourcePlugin = String()
-    devCustomProps = String()
-    devStatus = String()
-    devIsRandomMac = Int()
-    devParentChildrenCount = Int()
-    devIpLong = Int()
-    devFilterStatus = String()
-    devFQDN = String()
-    devParentRelType = String()
-    devReqNicsOnline = Int()
+    rowid = Int(description="Database row ID")
+    devMac = String(description="Device MAC address (e.g., 00:11:22:33:44:55)")
+    devName = String(description="Device display name/alias")
+    devOwner = String(description="Device owner")
+    devType = String(description="Device type classification")
+    devVendor = String(description="Hardware vendor from OUI lookup")
+    devFavorite = Int(description="Favorite flag (0 or 1)")
+    devGroup = String(description="Device group")
+    devComments = String(description="User comments")
+    devFirstConnection = String(description="Timestamp of first discovery")
+    devLastConnection = String(description="Timestamp of last connection")
+    devLastIP = String(description="Last known IP address")
+    devStaticIP = Int(description="Static IP flag (0 or 1)")
+    devScan = Int(description="Scan flag (0 or 1)")
+    devLogEvents = Int(description="Log events flag (0 or 1)")
+    devAlertEvents = Int(description="Alert events flag (0 or 1)")
+    devAlertDown = Int(description="Alert on down flag (0 or 1)")
+    devSkipRepeated = Int(description="Skip repeated alerts flag (0 or 1)")
+    devLastNotification = String(description="Timestamp of last notification")
+    devPresentLastScan = Int(description="Present in last scan flag (0 or 1)")
+    devIsNew = Int(description="Is new device flag (0 or 1)")
+    devLocation = String(description="Device location")
+    devIsArchived = Int(description="Is archived flag (0 or 1)")
+    devParentMAC = String(description="Parent device MAC address")
+    devParentPort = String(description="Parent device port")
+    devIcon = String(description="Device icon name")
+    devGUID = String(description="Unique device GUID")
+    devSite = String(description="Site name")
+    devSSID = String(description="SSID connected to")
+    devSyncHubNode = String(description="Sync hub node name")
+    devSourcePlugin = String(description="Plugin that discovered the device")
+    devCustomProps = String(description="Custom properties in JSON format")
+    devStatus = String(description="Online/Offline status")
+    devIsRandomMac = Int(description="Calculated: Is MAC address randomized?")
+    devParentChildrenCount = Int(description="Calculated: Number of children attached to this parent")
+    devIpLong = Int(description="Calculated: IP address in long format")
+    devFilterStatus = String(description="Calculated: Status for UI filtering")
+    devFQDN = String(description="Fully Qualified Domain Name")
+    devParentRelType = String(description="Relationship type to parent")
+    devReqNicsOnline = Int(description="Required NICs online flag")
 
 
 class DeviceResult(ObjectType):
@@ -98,20 +98,20 @@ class DeviceResult(ObjectType):
 
 # Setting ObjectType
 class Setting(ObjectType):
-    setKey = String()
-    setName = String()
-    setDescription = String()
-    setType = String()
-    setOptions = String()
-    setGroup = String()
-    setValue = String()
-    setEvents = String()
-    setOverriddenByEnv = Boolean()
+    setKey = String(description="Unique configuration key")
+    setName = String(description="Human-readable setting name")
+    setDescription = String(description="Detailed description of the setting")
+    setType = String(description="Data type (string, bool, int, etc.)")
+    setOptions = String(description="JSON string of available options")
+    setGroup = String(description="UI group for categorization")
+    setValue = String(description="Current value")
+    setEvents = String(description="JSON string of events")
+    setOverriddenByEnv = Boolean(description="Whether the value is currently overridden by an environment variable")
 
 
 class SettingResult(ObjectType):
-    settings = List(Setting)
-    count = Int()
+    settings = List(Setting, description="List of setting objects")
+    count = Int(description="Total count of settings")
 
 # --- LANGSTRINGS ---
 
@@ -123,48 +123,48 @@ _langstrings_cache_mtime = {}  # tracks last modified times
 
 # LangString ObjectType
 class LangString(ObjectType):
-    langCode = String()
-    langStringKey = String()
-    langStringText = String()
+    langCode = String(description="Language code (e.g., en_us, de_de)")
+    langStringKey = String(description="Unique translation key")
+    langStringText = String(description="Translated text content")
 
 
 class LangStringResult(ObjectType):
-    langStrings = List(LangString)
-    count = Int()
+    langStrings = List(LangString, description="List of language string objects")
+    count = Int(description="Total count of strings")
 
 
 # --- APP EVENTS ---
 
 class AppEvent(ObjectType):
-    Index = Int()
-    GUID = String()
-    AppEventProcessed = Int()
-    DateTimeCreated = String()
+    Index = Int(description="Internal index")
+    GUID = String(description="Unique event GUID")
+    AppEventProcessed = Int(description="Processing status (0 or 1)")
+    DateTimeCreated = String(description="Event creation timestamp")
 
-    ObjectType = String()
-    ObjectGUID = String()
-    ObjectPlugin = String()
-    ObjectPrimaryID = String()
-    ObjectSecondaryID = String()
-    ObjectForeignKey = String()
-    ObjectIndex = Int()
+    ObjectType = String(description="Type of the related object (Device, Setting, etc.)")
+    ObjectGUID = String(description="GUID of the related object")
+    ObjectPlugin = String(description="Plugin associated with the object")
+    ObjectPrimaryID = String(description="Primary identifier of the object")
+    ObjectSecondaryID = String(description="Secondary identifier of the object")
+    ObjectForeignKey = String(description="Foreign key reference")
+    ObjectIndex = Int(description="Object index")
 
-    ObjectIsNew = Int()
-    ObjectIsArchived = Int()
-    ObjectStatusColumn = String()
-    ObjectStatus = String()
+    ObjectIsNew = Int(description="Is the object new? (0 or 1)")
+    ObjectIsArchived = Int(description="Is the object archived? (0 or 1)")
+    ObjectStatusColumn = String(description="Column used for status")
+    ObjectStatus = String(description="Object status value")
 
-    AppEventType = String()
+    AppEventType = String(description="Type of application event")
 
-    Helper1 = String()
-    Helper2 = String()
-    Helper3 = String()
-    Extra = String()
+    Helper1 = String(description="Generic helper field 1")
+    Helper2 = String(description="Generic helper field 2")
+    Helper3 = String(description="Generic helper field 3")
+    Extra = String(description="Additional JSON data")
 
 
 class AppEventResult(ObjectType):
-    appEvents = List(AppEvent)
-    count = Int()
+    appEvents = List(AppEvent, description="List of application events")
+    count = Int(description="Total count of events")
 
 
 # ----------------------------------------------------------------------------------------------

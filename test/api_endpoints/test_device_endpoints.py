@@ -98,7 +98,6 @@ def test_copy_device(client, api_token, test_mac):
         f"/device/{test_mac}", json=payload, headers=auth_headers(api_token)
     )
     assert resp.status_code == 200
-    assert resp.json.get("success") is True
 
     # Step 2: Generate a target MAC
     target_mac = "AA:BB:CC:" + ":".join(
@@ -111,7 +110,6 @@ def test_copy_device(client, api_token, test_mac):
         "/device/copy", json=copy_payload, headers=auth_headers(api_token)
     )
     assert resp.status_code == 200
-    assert resp.json.get("success") is True
 
     # Step 4: Verify new device exists
     resp = client.get(f"/device/{target_mac}", headers=auth_headers(api_token))

@@ -89,14 +89,22 @@ def is_typical_router_ip(ip_address):
 # -------------------------------------------------------------------
 # Check if a valid MAC address
 def is_mac(input):
-    input_str = str(input).lower()  # Convert to string and lowercase so non-string values won't raise errors
+    input_str = str(input).lower().strip()  # Convert to string and lowercase so non-string values won't raise errors
 
-    isMac = bool(re.match("[0-9a-f]{2}([-:]?)[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$", input_str))
+    # Full MAC (6 octets) e.g. AA:BB:CC:DD:EE:FF
+    full_mac_re = re.compile(r"^[0-9a-f]{2}([-:]?)[0-9a-f]{2}(\1[0-9a-f]{2}){4}$")
 
-    if not isMac:  # If it's not a MAC address, log the input
-        mylog('verbose', [f'[is_mac] not a MAC: {input_str}'])
+    # Wildcard prefix format: exactly 3 octets followed by a trailing '*' component
+    # Examples: AA:BB:CC:*
+    wildcard_re = re.compile(r"^[0-9a-f]{2}[-:]?[0-9a-f]{2}[-:]?[0-9a-f]{2}[-:]?\*$")
 
-    return isMac
+    if full_mac_re.match(input_str) or wildcard_re.match(input_str):
+        return True
+
+    # If it's not a MAC address or allowed wildcard pattern, log the input
+    mylog('verbose', [f'[is_mac] not a MAC: {input_str}'])
+
+    return False
 
 
 # -------------------------------------------------------------------
@@ -168,20 +176,36 @@ def decode_settings_base64(encoded_str, convert_types=True):
 
 # -------------------------------------------------------------------
 def normalize_mac(mac):
-    # Split the MAC address by colon (:) or hyphen (-) and convert each part to uppercase
-    parts = mac.upper().split(':')
+    """
+        Normalize a MAC address to the standard format with colon separators.
+        For example, "aa-bb-cc-dd-ee-ff" will be normalized to "AA:BB:CC:DD:EE:FF".
+        Wildcard MAC addresses like "AA:BB:CC:*" will be normalized to "AA:BB:CC:*".
 
-    # If the MAC address is split by hyphen instead of colon
-    if len(parts) == 1:
-        parts = mac.upper().split('-')
+    :param mac: The MAC address to normalize.
+    :return: The normalized MAC address.
+    """
+    s = str(mac).upper().strip()
 
-    # Normalize each part to have exactly two hexadecimal digits
-    normalized_parts = [part.zfill(2) for part in parts]
+    # Determine separator if present, prefer colon, then hyphen
+    if ':' in s:
+        parts = s.split(':')
+    elif '-' in s:
+        parts = s.split('-')
+    else:
+        # No explicit separator; attempt to split every two chars
+        parts = [s[i:i + 2] for i in range(0, len(s), 2)]
 
-    # Join the parts with colon (:)
-    normalized_mac = ':'.join(normalized_parts)
+    normalized_parts = []
+    for part in parts:
+        part = part.strip()
+        if part == '*':
+            normalized_parts.append('*')
+        else:
+            # Ensure two hex digits (zfill is fine for alphanumeric input)
+            normalized_parts.append(part.zfill(2))
 
-    return normalized_mac
+    # Use colon as canonical separator
+    return ':'.join(normalized_parts)
 
 
 # -------------------------------------------------------------------

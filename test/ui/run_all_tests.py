@@ -5,20 +5,15 @@ Runs all page-specific UI tests and provides summary
 """
 
 import sys
-import os
-
-# Add test directory to path
-sys.path.insert(0, os.path.dirname(__file__))
-
 # Import all test modules
-import test_ui_dashboard  # noqa: E402 [flake8 lint suppression]
-import test_ui_devices  # noqa: E402 [flake8 lint suppression]
-import test_ui_network  # noqa: E402 [flake8 lint suppression]
-import test_ui_maintenance  # noqa: E402 [flake8 lint suppression]
-import test_ui_multi_edit  # noqa: E402 [flake8 lint suppression]
-import test_ui_notifications  # noqa: E402 [flake8 lint suppression]
-import test_ui_settings  # noqa: E402 [flake8 lint suppression]
-import test_ui_plugins  # noqa: E402 [flake8 lint suppression]
+from .test_helpers import test_ui_dashboard
+from .test_helpers import test_ui_devices
+from .test_helpers import test_ui_network
+from .test_helpers import test_ui_maintenance
+from .test_helpers import test_ui_multi_edit
+from .test_helpers import test_ui_notifications
+from .test_helpers import test_ui_settings
+from .test_helpers import test_ui_plugins
 
 
 def main():

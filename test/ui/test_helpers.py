@@ -8,6 +8,9 @@ import requests
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 # Configuration
 BASE_URL = os.getenv("UI_BASE_URL", "http://localhost:20211")
@@ -15,7 +18,11 @@ API_BASE_URL = os.getenv("API_BASE_URL", "http://localhost:20212")
 
 
 def get_api_token():
-    """Get API token from config file"""
+    """Get API token from config file or environment"""
+    # Check environment first
+    if os.getenv("API_TOKEN"):
+        return os.getenv("API_TOKEN")
+
     config_path = "/data/config/app.conf"
     try:
         with open(config_path, 'r') as f:
@@ -115,3 +122,31 @@ def api_post(endpoint, api_token, data=None, timeout=5):
     # Handle both full URLs and path-only endpoints
     url = endpoint if endpoint.startswith('http') else f"{API_BASE_URL}{endpoint}"
     return requests.post(url, headers=headers, json=data, timeout=timeout)
+
+
+# --- Page load and element wait helpers (used by UI tests) ---
+def wait_for_page_load(driver, timeout=10):
+    """Wait until the browser reports the document readyState is 'complete'."""
+    WebDriverWait(driver, timeout).until(
+        lambda d: d.execute_script("return document.readyState") == "complete"
+    )
+
+
+def wait_for_element_by_css(driver, css_selector, timeout=10):
+    """Wait for presence of an element matching a CSS selector and return it."""
+    return WebDriverWait(driver, timeout).until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, css_selector))
+    )
+
+
+def wait_for_input_value(driver, element_id, timeout=10):
+    """Wait for the input with given id to have a non-empty value and return it."""
+    def _get_val(d):
+        try:
+            el = d.find_element(By.ID, element_id)
+            val = el.get_attribute("value")
+            return val if val else False
+        except Exception:
+            return False
+
+    return WebDriverWait(driver, timeout).until(_get_val)

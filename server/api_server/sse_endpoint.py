@@ -8,7 +8,7 @@ import json
 import threading
 import time
 from collections import deque
-from flask import Response, request
+from flask import Response, request, jsonify
 from logger import mylog
 
 # Thread-safe event queue
@@ -129,11 +129,17 @@ def create_sse_endpoint(app, is_authorized=None) -> None:
         is_authorized: Optional function to check authorization (if None, allows all)
     """
 
-    @app.route("/sse/state", methods=["GET"])
+    @app.route("/sse/state", methods=["GET", "OPTIONS"])
     def api_sse_state():
-        """SSE endpoint for real-time state updates"""
+        if request.method == "OPTIONS":
+            response = jsonify({"success": True})
+            response.headers["Access-Control-Allow-Origin"] = request.headers.get("Origin", "*")
+            response.headers["Access-Control-Allow-Methods"] = "GET, OPTIONS"
+            response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+            return response, 200
+
         if is_authorized and not is_authorized():
-            return {"none": "Unauthorized"}, 401
+            return jsonify({"success": False, "error": "Unauthorized"}), 401
 
         client_id = request.args.get("client", f"client-{int(time.time() * 1000)}")
         mylog("debug", [f"[SSE] Client connected: {client_id}"])
@@ -148,11 +154,14 @@ def create_sse_endpoint(app, is_authorized=None) -> None:
             },
         )
 
-    @app.route("/sse/stats", methods=["GET"])
+    @app.route("/sse/stats", methods=["GET", "OPTIONS"])
     def api_sse_stats():
         """Get SSE endpoint statistics for debugging"""
+        if request.method == "OPTIONS":
+            return jsonify({"success": True}), 200
+
         if is_authorized and not is_authorized():
-            return {"none": "Unauthorized"}, 401
+            return {"success": False, "error": "Unauthorized"}, 401
 
         return {
             "success": True,

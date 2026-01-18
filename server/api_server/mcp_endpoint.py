@@ -1,379 +1,1041 @@
 #!/usr/bin/env python
 """
-NetAlertX MCP (Model Context Protocol) Server Endpoint.
+NetAlertX MCP (Model Context Protocol) Server Endpoint
 
-This module implements an MCP server that exposes NetAlertX API endpoints as tools
-for AI assistants. It provides JSON-RPC over HTTP and Server-Sent Events (SSE)
-for tool discovery and execution.
+This module implements a standards-compliant MCP server that exposes NetAlertX API
+endpoints as tools for AI assistants. It uses the registry-based OpenAPI spec generator
+to ensure strict type safety and validation.
 
-The server maps OpenAPI specifications to MCP tools, allowing AIs to list available
-tools and call them with appropriate parameters. Tools include device management,
-network scanning, event querying, and more.
+Key Features:
+- JSON-RPC 2.0 over HTTP and Server-Sent Events (SSE)
+- Dynamic tool mapping from OpenAPI registry
+- Pydantic-based input validation
+- Standard MCP capabilities (tools, resources, prompts)
+- Session management with automatic cleanup
+
+Architecture:
+    ┌──────────────┐     ┌─────────────────┐     ┌─────────────────┐
+    │  AI Client   │────▶│   MCP Server    │────▶│  Internal API   │
+    │  (Claude)    │◀────│  (this module)  │◀────│  (Flask routes) │
+    └──────────────┘     └─────────────────┘     └─────────────────┘
+         SSE/JSON-RPC         Loopback HTTP
 """
 
+from __future__ import annotations
+
 import threading
-from flask import Blueprint, request, jsonify, Response, stream_with_context
-from helper import get_setting_value
-from helper import mylog
-# from .events_endpoint import get_events  # will import locally where needed
-import requests
 import json
 import uuid
 import queue
+import time
+import os
+from copy import deepcopy
+import secrets
+from typing import Optional, Dict, Any, List
+from urllib.parse import quote
+from flask import Blueprint, request, jsonify, Response, stream_with_context
+import requests
+from pydantic import ValidationError
 
-# Blueprints
+from helper import get_setting_value
+from logger import mylog
+
+# Import the spec generator (our source of truth)
+from .openapi.spec_generator import generate_openapi_spec
+from .openapi.registry import get_registry, is_tool_disabled
+
+# =============================================================================
+# CONSTANTS & CONFIGURATION
+# =============================================================================
+
+MCP_PROTOCOL_VERSION = "2024-11-05"
+MCP_SERVER_NAME = "NetAlertX"
+MCP_SERVER_VERSION = "2.0.0"
+
+# Session timeout in seconds (cleanup idle sessions)
+SESSION_TIMEOUT = 300  # 5 minutes
+
+# SSE keep-alive interval
+SSE_KEEPALIVE_INTERVAL = 20  # seconds
+
+# =============================================================================
+# BLUEPRINTS
+# =============================================================================
+
 mcp_bp = Blueprint('mcp', __name__)
 tools_bp = Blueprint('tools', __name__)
 
-# Global session management for MCP SSE connections
-mcp_sessions = {}
-mcp_sessions_lock = threading.Lock()
+# =============================================================================
+# SESSION MANAGEMENT
+# =============================================================================
+
+# Thread-safe session storage
+_mcp_sessions: Dict[str, Dict[str, Any]] = {}
+_sessions_lock = threading.Lock()
+
+# Background cleanup thread
+_cleanup_thread: Optional[threading.Thread] = None
+_cleanup_stop_event = threading.Event()
+_cleanup_thread_lock = threading.Lock()
 
 
-def check_auth():
+def _cleanup_sessions():
+    """Background thread to clean up expired sessions."""
+    while not _cleanup_stop_event.is_set():
+        try:
+            current_time = time.time()
+            expired_sessions = []
+
+            with _sessions_lock:
+                for session_id, session_data in _mcp_sessions.items():
+                    if current_time - session_data.get("last_activity", 0) > SESSION_TIMEOUT:
+                        expired_sessions.append(session_id)
+
+                for session_id in expired_sessions:
+                    mylog("verbose", [f"[MCP] Cleaning up expired session: {session_id}"])
+                    del _mcp_sessions[session_id]
+
+        except Exception as e:
+            mylog("none", [f"[MCP] Session cleanup error: {e}"])
+
+        # Sleep in small increments to allow graceful shutdown
+        for _ in range(60):  # Check every minute
+            if _cleanup_stop_event.is_set():
+                break
+            time.sleep(1)
+
+
+def _ensure_cleanup_thread():
+    """Ensure the cleanup thread is running."""
+    global _cleanup_thread
+    if _cleanup_thread is None or not _cleanup_thread.is_alive():
+        with _cleanup_thread_lock:
+            if _cleanup_thread is None or not _cleanup_thread.is_alive():
+                _cleanup_stop_event.clear()
+                _cleanup_thread = threading.Thread(target=_cleanup_sessions, daemon=True)
+                _cleanup_thread.start()
+
+
+def create_session() -> str:
+    """Create a new MCP session and return the session ID."""
+    _ensure_cleanup_thread()
+
+    session_id = uuid.uuid4().hex
+
+    # Use configurable maxsize for message queue to prevent memory exhaustion
+    # In production this could be loaded from settings
+    try:
+        raw_val = get_setting_value('MCP_QUEUE_MAXSIZE')
+        queue_maxsize = int(str(raw_val).strip())
+        # Treat non-positive values as default (1000) to avoid unbounded queue
+        if queue_maxsize <= 0:
+            queue_maxsize = 1000
+    except (ValueError, TypeError):
+        mylog("none", ["[MCP] Invalid MCP_QUEUE_MAXSIZE, defaulting to 1000"])
+        queue_maxsize = 1000
+
+    message_queue: queue.Queue = queue.Queue(maxsize=queue_maxsize)
+
+    with _sessions_lock:
+        _mcp_sessions[session_id] = {
+            "queue": message_queue,
+            "created_at": time.time(),
+            "last_activity": time.time(),
+            "initialized": False
+        }
+
+    mylog("verbose", [f"[MCP] Created session: {session_id}"])
+    return session_id
+
+
+def get_session(session_id: str) -> Optional[Dict[str, Any]]:
+    """Get a defensive copy of session data by ID, updating last activity."""
+    with _sessions_lock:
+        session = _mcp_sessions.get(session_id)
+        if not session:
+            return None
+
+        session["last_activity"] = time.time()
+        snapshot = deepcopy({k: v for k, v in session.items() if k != "queue"})
+        snapshot["queue"] = session["queue"]
+        return snapshot
+
+
+def mark_session_initialized(session_id: str) -> None:
+    """Mark a session as initialized while holding the session lock."""
+    with _sessions_lock:
+        session = _mcp_sessions.get(session_id)
+        if session:
+            session["initialized"] = True
+            session["last_activity"] = time.time()
+
+
+def delete_session(session_id: str) -> bool:
+    """Delete a session by ID."""
+    with _sessions_lock:
+        if session_id in _mcp_sessions:
+            del _mcp_sessions[session_id]
+            mylog("verbose", [f"[MCP] Deleted session: {session_id}"])
+            return True
+    return False
+
+
+# =============================================================================
+# AUTHORIZATION
+# =============================================================================
+
+def check_auth() -> bool:
     """
     Check if the request has valid authorization.
 
     Returns:
-        bool: True if the Authorization header matches the expected API token, False otherwise.
+        bool: True if the Authorization header matches the expected API token.
     """
-    token = request.headers.get("Authorization")
-    expected_token = f"Bearer {get_setting_value('API_TOKEN')}"
-    return token == expected_token
+    raw_token = get_setting_value('API_TOKEN')
+
+    # Fail closed if token is not set (empty or very short)
+    # Test mode bypass: MCP_TEST_MODE must be explicitly set and should NEVER
+    # be enabled in production environments. This flag allows tests to run
+    # without a configured API_TOKEN.
+    test_mode = os.getenv("MCP_TEST_MODE", "").lower() in ("1", "true", "yes")
+    if (not raw_token or len(str(raw_token)) < 2) and not test_mode:
+        mylog("minimal", ["[MCP] CRITICAL: API_TOKEN is not configured or too short. Access denied."])
+        return False
+
+    # Check Authorization header first (primary method)
+    # SECURITY: Always prefer Authorization header over query string tokens
+    auth_header = request.headers.get("Authorization", "").strip()
+    parts = auth_header.split()
+    header_token = parts[1] if auth_header.startswith("Bearer ") and len(parts) >= 2 else ""
+
+    # Also check query string token (for SSE and other streaming endpoints)
+    # SECURITY WARNING: query_token in URL can be exposed in:
+    #   - Server access logs
+    #   - Browser history and bookmarks
+    #   - HTTP Referer headers when navigating away
+    #   - Proxy logs and network monitoring tools
+    # Callers should rotate tokens if compromise is suspected.
+    # Prefer using the Authorization header whenever possible.
+    # NOTE: Never log or include query_token value in debug output.
+    query_token = request.args.get("token", "")
+
+    # Use constant-time comparison to prevent timing attacks
+    raw_token_str = str(raw_token)
+    header_match = header_token and secrets.compare_digest(header_token, raw_token_str)
+    query_match = query_token and secrets.compare_digest(query_token, raw_token_str)
+
+    return header_match or query_match
 
 
-# --------------------------
-# Specs
-# --------------------------
-def openapi_spec():
+# =============================================================================
+# OPENAPI SPEC GENERATION
+# =============================================================================
+
+# Cached OpenAPI spec
+_openapi_spec_cache: Optional[Dict[str, Any]] = None
+_spec_cache_lock = threading.Lock()
+
+
+def get_openapi_spec(force_refresh: bool = False, servers: Optional[List[Dict[str, str]]] = None, flask_app: Optional[Any] = None) -> Dict[str, Any]:
     """
-    Generate the OpenAPI specification for NetAlertX tools.
+    Get the OpenAPI specification, using cache when available.
 
-    This function returns a JSON representation of the available API endpoints
-    that are exposed as MCP tools, including paths, methods, and operation IDs.
+    Args:
+        force_refresh: If True, regenerate spec even if cached
+        servers: Optional custom servers list
+        flask_app: Optional Flask app for dynamic introspection
 
     Returns:
-        flask.Response: A JSON response containing the OpenAPI spec.
-    """
-    # Spec matching actual available routes for MCP tools
-    mylog("verbose", ["[MCP] OpenAPI spec requested"])
-    spec = {
-        "openapi": "3.0.0",
-        "info": {"title": "NetAlertX Tools", "version": "1.1.0"},
-        "servers": [{"url": "/"}],
-        "paths": {
-            "/devices/by-status": {
-                "post": {
-                    "operationId": "list_devices",
-                    "description": "List devices filtered by their online/offline status. "
-                                   "Accepts optional 'status' query parameter (online/offline)."
-                }
-            },
-            "/device/{mac}": {
-                "post": {
-                    "operationId": "get_device_info",
-                    "description": "Retrieve detailed information about a specific device by MAC address."
-                }
-            },
-            "/devices/search": {
-                "post": {
-                    "operationId": "search_devices",
-                    "description": "Search for devices based on various criteria like name, IP, etc. "
-                                   "Accepts JSON with 'query' field."
-                }
-            },
-            "/devices/latest": {
-                "get": {
-                    "operationId": "get_latest_device",
-                    "description": "Get information about the most recently seen device."
-                }
-            },
-            "/devices/favorite": {
-                "get": {
-                    "operationId": "get_favorite_devices",
-                    "description": "Get favorite devices."
-                }
-            },
-            "/nettools/trigger-scan": {
-                "post": {
-                    "operationId": "trigger_scan",
-                    "description": "Trigger a network scan to discover new devices. "
-                                   "Accepts optional 'type' parameter for scan type - needs to match an enabled plugin name (e.g., ARPSCAN, NMAPDEV, NMAP)."
-                }
-            },
-            "/device/open_ports": {
-                "post": {
-                    "operationId": "get_open_ports",
-                    "description": "Get a list of open ports for a specific device. "
-                                   "Accepts JSON with 'target' (IP or MAC address). Trigger NMAP scan if no previous ports found with the /nettools/trigger-scan endpoint."
-                }
-            },
-            "/devices/network/topology": {
-                "get": {
-                    "operationId": "get_network_topology",
-                    "description": "Retrieve the network topology information."
-                }
-            },
-            "/events/recent": {
-                "get": {
-                    "operationId": "get_recent_alerts",
-                    "description": "Get recent events/alerts from the system. Defaults to last 24 hours."
-                },
-                "post": {"operationId": "get_recent_alerts"}
-            },
-            "/events/last": {
-                "get": {
-                    "operationId": "get_last_events",
-                    "description": "Get the last 10 events logged in the system."
-                },
-                "post": {"operationId": "get_last_events"}
-            },
-            "/device/{mac}/set-alias": {
-                "post": {
-                    "operationId": "set_device_alias",
-                    "description": "Set or update the alias/name for a device. Accepts JSON with 'alias' field."
-                }
-            },
-            "/nettools/wakeonlan": {
-                "post": {
-                    "operationId": "wol_wake_device",
-                    "description": "Send a Wake-on-LAN packet to wake up a device. "
-                                   "Accepts JSON with 'devMac' or 'devLastIP'."
-                }
-            },
-            "/devices/export": {
-                "get": {
-                    "operationId": "export_devices",
-                    "description": "Export devices in CSV or JSON format. "
-                                   "Accepts optional 'format' query parameter (csv/json, defaults to csv)."
-                }
-            },
-            "/devices/import": {
-                "post": {
-                    "operationId": "import_devices",
-                    "description": "Import devices from CSV or JSON content. "
-                                   "Accepts JSON with 'content' field containing base64-encoded data, or multipart file upload."
-                }
-            },
-            "/devices/totals": {
-                "get": {
-                    "operationId": "get_device_totals",
-                    "description": "Get device statistics and counts."
-                }
-            },
-            "/nettools/traceroute": {
-                "post": {
-                    "operationId": "traceroute",
-                    "description": "Perform a traceroute to a target IP address. "
-                                   "Accepts JSON with 'devLastIP' field."
-                }
-            }
-        }
-    }
-    return jsonify(spec)
-
-
-# --------------------------
-# MCP SSE/JSON-RPC Endpoint
-# --------------------------
-
-
-# Sessions for SSE
-_openapi_spec_cache = None  # Cached OpenAPI spec to avoid repeated generation
-API_BASE_URL = f"http://localhost:{get_setting_value('GRAPHQL_PORT')}"  # Base URL for internal API calls
-
-
-def get_openapi_spec():
-    """
-    Retrieve the cached OpenAPI specification for MCP tools.
-
-    This function caches the OpenAPI spec to avoid repeated generation.
-    If the cache is empty, it calls openapi_spec() to generate it.
-
-    Returns:
-        dict or None: The OpenAPI spec as a dictionary, or None if generation fails.
+        OpenAPI specification dictionary
     """
     global _openapi_spec_cache
 
-    if _openapi_spec_cache:
+    with _spec_cache_lock:
+        # If custom servers are provided, we always regenerate or at least update the cached one
+        if servers:
+            spec = generate_openapi_spec(servers=servers, flask_app=flask_app)
+            # We don't necessarily want to cache a prefixed version as the "main" one
+            # if multiple prefixes are used, so we just return it.
+            return spec
+
+        if _openapi_spec_cache is None or force_refresh:
+            try:
+                _openapi_spec_cache = generate_openapi_spec(flask_app=flask_app)
+                mylog("verbose", ["[MCP] Generated OpenAPI spec from registry"])
+            except Exception as e:
+                mylog("none", [f"[MCP] Failed to generate OpenAPI spec: {e}"])
+                # Return minimal valid spec on error
+                return {
+                    "openapi": "3.1.0",
+                    "info": {"title": "NetAlertX", "version": "2.0.0"},
+                    "paths": {}
+                }
+
         return _openapi_spec_cache
-    try:
-        # Call the openapi_spec function directly instead of making HTTP request
-        # to avoid circular requests and authorization issues
-        response = openapi_spec()
-        _openapi_spec_cache = response.get_json()
-        return _openapi_spec_cache
-    except Exception as e:
-        mylog("none", [f"[MCP] Failed to fetch OpenAPI spec: {e}"])
-        return None
 
 
-def map_openapi_to_mcp_tools(spec):
+def openapi_spec():
     """
-    Convert an OpenAPI specification into MCP tool definitions.
-
-    Args:
-        spec (dict): The OpenAPI spec dictionary.
+    Flask route handler for OpenAPI spec endpoint.
 
     Returns:
-        list: A list of MCP tool dictionaries, each containing name, description, and inputSchema.
+        flask.Response: JSON response containing the OpenAPI spec.
+    """
+    from flask import current_app
+    mylog("verbose", ["[MCP] OpenAPI spec requested"])
+
+    # Detect base path from proxy headers
+    # Nginx in this project often sets X-Forwarded-Prefix to /app
+    prefix = request.headers.get('X-Forwarded-Prefix', '')
+
+    # If the request came through a path like /mcp/sse/openapi.json,
+    # and there's no prefix, we still use / as the root.
+    # But if there IS a prefix, we should definitely use it.
+    servers = None
+    if prefix:
+        servers = [{"url": prefix, "description": "Proxied server"}]
+
+    spec = get_openapi_spec(servers=servers, flask_app=current_app)
+    return jsonify(spec)
+
+
+# =============================================================================
+# MCP TOOL MAPPING
+# =============================================================================
+
+def map_openapi_to_mcp_tools(spec: Dict[str, Any]) -> List[Dict[str, Any]]:
+    """
+    Convert OpenAPI specification into MCP tool definitions.
+
+    This function transforms OpenAPI operations into MCP-compatible tool schemas,
+    ensuring proper inputSchema derivation from request bodies and parameters.
+
+    Args:
+        spec: OpenAPI specification dictionary
+
+    Returns:
+        List of MCP tool definitions with name, description, and inputSchema
     """
     tools = []
-    if not spec or 'paths' not in spec:
+
+    if not spec or "paths" not in spec:
         return tools
-    for path, methods in spec['paths'].items():
+
+    for path, methods in spec["paths"].items():
         for method, details in methods.items():
-            if 'operationId' in details:
-                tool = {'name': details['operationId'], 'description': details.get('description', ''), 'inputSchema': {'type': 'object', 'properties': {}, 'required': []}}
-                if 'requestBody' in details:
-                    content = details['requestBody'].get('content', {})
-                    if 'application/json' in content:
-                        schema = content['application/json'].get('schema', {})
-                        tool['inputSchema'] = schema.copy()
-                if 'parameters' in details:
-                    for param in details['parameters']:
-                        if param.get('in') == 'query':
-                            tool['inputSchema']['properties'][param['name']] = {'type': param.get('schema', {}).get('type', 'string'), 'description': param.get('description', '')}
-                            if param.get('required'):
-                                tool['inputSchema']['required'].append(param['name'])
-                tools.append(tool)
+            if "operationId" not in details:
+                continue
+
+            operation_id = details["operationId"]
+
+            # Build inputSchema from requestBody and parameters
+            input_schema = {
+                "type": "object",
+                "properties": {},
+                "required": []
+            }
+
+            # Extract properties from requestBody (POST/PUT/PATCH)
+            if "requestBody" in details:
+                content = details["requestBody"].get("content", {})
+                if "application/json" in content:
+                    body_schema = content["application/json"].get("schema", {})
+
+                    # Copy properties and required fields
+                    if "properties" in body_schema:
+                        input_schema["properties"].update(body_schema["properties"])
+                    if "required" in body_schema:
+                        input_schema["required"].extend(body_schema["required"])
+
+                    # Handle $defs references (Pydantic nested models)
+                    if "$defs" in body_schema:
+                        input_schema["$defs"] = body_schema["$defs"]
+
+            # Extract properties from parameters (path/query)
+            for param in details.get("parameters", []):
+                if "name" not in param:
+                    continue  # Skip malformed parameters
+                param_name = param["name"]
+                param_schema = param.get("schema", {"type": "string"})
+
+                input_schema["properties"][param_name] = {
+                    "type": param_schema.get("type", "string"),
+                    "description": param.get("description", "")
+                }
+
+                # Add enum if present
+                if "enum" in param_schema:
+                    input_schema["properties"][param_name]["enum"] = param_schema["enum"]
+
+                # Add default if present
+                if "default" in param_schema:
+                    input_schema["properties"][param_name]["default"] = param_schema["default"]
+
+                if param.get("required", False) and param_name not in input_schema["required"]:
+                    input_schema["required"].append(param_name)
+
+            if input_schema["required"]:
+                input_schema["required"] = list(dict.fromkeys(input_schema["required"]))
+            else:
+                input_schema.pop("required", None)
+
+            tool = {
+                "name": operation_id,
+                "description": details.get("description", details.get("summary", "")),
+                "inputSchema": input_schema
+            }
+
+            tools.append(tool)
+
     return tools
 
 
-def process_mcp_request(data):
+def find_route_for_tool(tool_name: str) -> Optional[Dict[str, Any]]:
+    """
+    Find the registered route for a given tool name (operationId).
+
+    Args:
+        tool_name: The operationId to look up
+
+    Returns:
+        Route dictionary with path, method, and models, or None if not found
+    """
+    registry = get_registry()
+
+    for entry in registry:
+        if entry["operation_id"] == tool_name:
+            return entry
+
+    return None
+
+
+# =============================================================================
+# MCP REQUEST PROCESSING
+# =============================================================================
+
+def process_mcp_request(data: Dict[str, Any], session_id: Optional[str] = None) -> Optional[Dict[str, Any]]:
     """
     Process an incoming MCP JSON-RPC request.
 
-    Handles various MCP methods like initialize, tools/list, tools/call, etc.
-    For tools/call, it maps the tool name to an API endpoint and makes the call.
+    Handles MCP protocol methods:
+    - initialize: Protocol handshake
+    - notifications/initialized: Initialization confirmation
+    - tools/list: List available tools
+    - tools/call: Execute a tool
+    - resources/list: List available resources
+    - prompts/list: List available prompts
+    - ping: Keep-alive check
 
     Args:
-        data (dict): The JSON-RPC request data containing method, id, params, etc.
+        data: JSON-RPC request data
+        session_id: Optional session identifier
 
     Returns:
-        dict or None: The JSON-RPC response, or None for notifications.
+        JSON-RPC response dictionary, or None for notifications
     """
-    method = data.get('method')
-    msg_id = data.get('id')
-    if method == 'initialize':
-        return {'jsonrpc': '2.0', 'id': msg_id, 'result': {'protocolVersion': '2024-11-05', 'capabilities': {'tools': {}}, 'serverInfo': {'name': 'NetAlertX', 'version': '1.0.0'}}}
-    if method == 'notifications/initialized':
+    method = data.get("method")
+    msg_id = data.get("id")
+    params = data.get("params", {})
+
+    mylog("debug", [f"[MCP] Processing request: method={method}, id={msg_id}"])
+
+    # -------------------------------------------------------------------------
+    # initialize - Protocol handshake
+    # -------------------------------------------------------------------------
+    if method == "initialize":
+        # Mark session as initialized
+        if session_id:
+            mark_session_initialized(session_id)
+
+        return {
+            "jsonrpc": "2.0",
+            "id": msg_id,
+            "result": {
+                "protocolVersion": MCP_PROTOCOL_VERSION,
+                "capabilities": {
+                    "tools": {"listChanged": False},
+                    "resources": {"subscribe": False, "listChanged": False},
+                    "prompts": {"listChanged": False}
+                },
+                "serverInfo": {
+                    "name": MCP_SERVER_NAME,
+                    "version": MCP_SERVER_VERSION
+                }
+            }
+        }
+
+    # -------------------------------------------------------------------------
+    # notifications/initialized - No response needed
+    # -------------------------------------------------------------------------
+    if method == "notifications/initialized":
         return None
-    if method == 'tools/list':
-        spec = get_openapi_spec()
+
+    # -------------------------------------------------------------------------
+    # tools/list - List available tools
+    # -------------------------------------------------------------------------
+    if method == "tools/list":
+        from flask import current_app
+        spec = get_openapi_spec(flask_app=current_app)
         tools = map_openapi_to_mcp_tools(spec)
-        return {'jsonrpc': '2.0', 'id': msg_id, 'result': {'tools': tools}}
-    if method == 'tools/call':
-        params = data.get('params', {})
-        tool_name = params.get('name')
-        tool_args = params.get('arguments', {})
-        spec = get_openapi_spec()
-        target_path = None
-        target_method = None
-        if spec and 'paths' in spec:
-            for path, methods in spec['paths'].items():
-                for m, details in methods.items():
-                    if details.get('operationId') == tool_name:
-                        target_path = path
-                        target_method = m.upper()
-                        break
-                if target_path:
-                    break
-        if not target_path:
-            return {'jsonrpc': '2.0', 'id': msg_id, 'error': {'code': -32601, 'message': f"Tool {tool_name} not found"}}
-        try:
-            headers = {'Content-Type': 'application/json'}
-            if 'Authorization' in request.headers:
-                headers['Authorization'] = request.headers['Authorization']
-            url = f"{API_BASE_URL}{target_path}"
-            if target_method == 'POST':
-                api_res = requests.post(url, json=tool_args, headers=headers, timeout=30)
-            else:
-                api_res = requests.get(url, params=tool_args, headers=headers, timeout=30)
-            content = []
-            try:
-                json_content = api_res.json()
-                content.append({'type': 'text', 'text': json.dumps(json_content, indent=2)})
-            except Exception as e:
-                mylog("none", [f"[MCP] Failed to parse API response as JSON: {e}"])
-                content.append({'type': 'text', 'text': api_res.text})
-            is_error = api_res.status_code >= 400
-            return {'jsonrpc': '2.0', 'id': msg_id, 'result': {'content': content, 'isError': is_error}}
-        except Exception as e:
-            mylog("none", [f"[MCP] Error calling tool {tool_name}: {e}"])
-            return {'jsonrpc': '2.0', 'id': msg_id, 'result': {'content': [{'type': 'text', 'text': f"Error calling tool: {str(e)}"}], 'isError': True}}
-    if method == 'ping':
-        return {'jsonrpc': '2.0', 'id': msg_id, 'result': {}}
+
+        return {
+            "jsonrpc": "2.0",
+            "id": msg_id,
+            "result": {
+                "tools": tools
+            }
+        }
+
+    # -------------------------------------------------------------------------
+    # tools/call - Execute a tool
+    # -------------------------------------------------------------------------
+    if method == "tools/call":
+        tool_name = params.get("name")
+        tool_args = params.get("arguments", {})
+
+        if not tool_name:
+            return _error_response(msg_id, -32602, "Missing tool name")
+
+        # Find the route for this tool
+        route = find_route_for_tool(tool_name)
+        if not route:
+            return _error_response(msg_id, -32601, f"Tool '{tool_name}' not found")
+
+        # Execute the tool via loopback HTTP call
+        result = _execute_tool(route, tool_args)
+        return {
+            "jsonrpc": "2.0",
+            "id": msg_id,
+            "result": result
+        }
+
+    # -------------------------------------------------------------------------
+    # resources/list - List available resources
+    # -------------------------------------------------------------------------
+    if method == "resources/list":
+        resources = _list_resources()
+        return {
+            "jsonrpc": "2.0",
+            "id": msg_id,
+            "result": {
+                "resources": resources
+            }
+        }
+
+    # -------------------------------------------------------------------------
+    # resources/read - Read a resource
+    # -------------------------------------------------------------------------
+    if method == "resources/read":
+        uri = params.get("uri")
+        if not uri:
+            return _error_response(msg_id, -32602, "Missing resource URI")
+
+        content = _read_resource(uri)
+        return {
+            "jsonrpc": "2.0",
+            "id": msg_id,
+            "result": {
+                "contents": content
+            }
+        }
+
+    # -------------------------------------------------------------------------
+    # prompts/list - List available prompts
+    # -------------------------------------------------------------------------
+    if method == "prompts/list":
+        prompts = _list_prompts()
+        return {
+            "jsonrpc": "2.0",
+            "id": msg_id,
+            "result": {
+                "prompts": prompts
+            }
+        }
+
+    # -------------------------------------------------------------------------
+    # prompts/get - Get a specific prompt
+    # -------------------------------------------------------------------------
+    if method == "prompts/get":
+        prompt_name = params.get("name")
+        prompt_args = params.get("arguments", {})
+
+        if not prompt_name:
+            return _error_response(msg_id, -32602, "Missing prompt name")
+
+        prompt_result = _get_prompt(prompt_name, prompt_args)
+        return {
+            "jsonrpc": "2.0",
+            "id": msg_id,
+            "result": prompt_result
+        }
+
+    # -------------------------------------------------------------------------
+    # ping - Keep-alive
+    # -------------------------------------------------------------------------
+    if method == "ping":
+        return {
+            "jsonrpc": "2.0",
+            "id": msg_id,
+            "result": {}
+        }
+
+    # -------------------------------------------------------------------------
+    # Unknown method
+    # -------------------------------------------------------------------------
     if msg_id:
-        return {'jsonrpc': '2.0', 'id': msg_id, 'error': {'code': -32601, 'message': 'Method not found'}}
+        return _error_response(msg_id, -32601, f"Method '{method}' not found")
+
+    return None
+
+
+def _error_response(msg_id: Any, code: int, message: str) -> Dict[str, Any]:
+    """Create a JSON-RPC error response."""
+    return {
+        "jsonrpc": "2.0",
+        "id": msg_id,
+        "error": {
+            "code": code,
+            "message": message
+        }
+    }
+
+
+def _execute_tool(route: Dict[str, Any], args: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Execute a tool by making a loopback HTTP call to the internal API.
+
+    Args:
+        route: Route definition from registry
+        args: Tool arguments
+
+    Returns:
+        MCP tool result with content and isError flag
+    """
+    path_template = route["path"]
+    path = path_template
+    method = route["method"]
+
+    # Substitute path parameters
+    for key, value in args.items():
+        placeholder = f"{{{key}}}"
+        if placeholder in path:
+            encoded_value = quote(str(value), safe="")
+            path = path.replace(placeholder, encoded_value)
+
+    # Check if tool is disabled
+    if is_tool_disabled(route['operation_id']):
+        return {
+            "content": [{"type": "text", "text": f"Error: Tool '{route['operation_id']}' is disabled"}],
+            "isError": True
+        }
+
+    # Build request
+    port = get_setting_value('GRAPHQL_PORT')
+    if not port:
+        return {
+            "content": [{"type": "text", "text": "Error: GRAPHQL_PORT not configured"}],
+            "isError": True
+        }
+    api_base_url = f"http://localhost:{port}"
+    url = f"{api_base_url}{path}"
+
+    headers = {"Content-Type": "application/json"}
+    if "Authorization" in request.headers:
+        headers["Authorization"] = request.headers["Authorization"]
+
+    filtered_body_args = {k: v for k, v in args.items() if f"{{{k}}}" not in route['path']}
+
+    try:
+        # Validate input if request model exists
+        request_model = route.get("request_model")
+        if request_model and method in ("POST", "PUT", "PATCH"):
+            try:
+                # Validate args against Pydantic model
+                request_model(**filtered_body_args)
+            except ValidationError as e:
+                return {
+                    "content": [{
+                        "type": "text",
+                        "text": json.dumps({
+                            "success": False,
+                            "error": "Validation error",
+                            "details": e.errors()
+                        }, indent=2)
+                    }],
+                    "isError": True
+                }
+
+        # Make the HTTP request
+        if method == "POST":
+            api_response = requests.post(url, json=filtered_body_args, headers=headers, timeout=60)
+        elif method == "PUT":
+            api_response = requests.put(url, json=filtered_body_args, headers=headers, timeout=60)
+        elif method == "PATCH":
+            api_response = requests.patch(url, json=filtered_body_args, headers=headers, timeout=60)
+        elif method == "DELETE":
+            # Forward query params and body for DELETE requests (consistent with other methods)
+            filtered_params = {k: v for k, v in args.items() if f"{{{k}}}" not in route['path']}
+            api_response = requests.delete(url, headers=headers, params=filtered_params, json=filtered_body_args, timeout=60)
+        else:  # GET
+            # For GET, we also filter out keys already substituted into the path
+            filtered_params = {k: v for k, v in args.items() if f"{{{k}}}" not in route['path']}
+            api_response = requests.get(url, params=filtered_params, headers=headers, timeout=60)
+
+        # Parse response
+        content = []
+        try:
+            json_content = api_response.json()
+            content.append({
+                "type": "text",
+                "text": json.dumps(json_content, indent=2)
+            })
+        except json.JSONDecodeError:
+            content.append({
+                "type": "text",
+                "text": api_response.text
+            })
+
+        is_error = api_response.status_code >= 400
+
+        return {
+            "content": content,
+            "isError": is_error
+        }
+
+    except requests.Timeout:
+        return {
+            "content": [{"type": "text", "text": "Request timed out"}],
+            "isError": True
+        }
+    except Exception as e:
+        mylog("none", [f"[MCP] Error executing tool {route['operation_id']}: {e}"])
+        return {
+            "content": [{"type": "text", "text": f"Error: {str(e)}"}],
+            "isError": True
+        }
+
+
+# =============================================================================
+# MCP RESOURCES
+# =============================================================================
+
+def get_log_dir() -> str:
+    """Get the log directory from environment or settings."""
+    log_dir = os.getenv("NETALERTX_LOG")
+    if not log_dir:
+        # Fallback to setting value if environment variable is not set
+        log_dir = get_setting_value("NETALERTX_LOG")
+
+    if not log_dir:
+        # If still not set, we return an empty string to indicate missing config
+        # rather than hardcoding /tmp/log
+        return ""
+    return log_dir
+
+
+def _list_resources() -> List[Dict[str, Any]]:
+    """List available MCP resources (read-only data like logs)."""
+    resources = []
+    log_dir = get_log_dir()
+    if not log_dir:
+        return resources
+
+    # Log files
+    log_files = [
+        ("stdout.log", "Backend stdout log"),
+        ("stderr.log", "Backend stderr log"),
+        ("app_front.log", "Frontend commands log"),
+        ("app.php_errors.log", "PHP errors log")
+    ]
+
+    for filename, description in log_files:
+        log_path = os.path.join(log_dir, filename)
+        if os.path.exists(log_path):
+            resources.append({
+                "uri": f"netalertx://logs/{filename}",
+                "name": filename,
+                "description": description,
+                "mimeType": "text/plain"
+            })
+
+    # Plugin logs
+    plugin_log_dir = os.path.join(log_dir, "plugins")
+    if os.path.exists(plugin_log_dir):
+        try:
+            for filename in os.listdir(plugin_log_dir):
+                if filename.endswith(".log"):
+                    resources.append({
+                        "uri": f"netalertx://logs/plugins/{filename}",
+                        "name": f"plugins/{filename}",
+                        "description": f"Plugin log: {filename}",
+                        "mimeType": "text/plain"
+                    })
+        except OSError as e:
+            # Handle permission errors or other filesystem issues gracefully
+            mylog("none", [f"[MCP] Error listing plugin_log_dir ({plugin_log_dir}): {e}"])
+
+    return resources
+
+
+def _read_resource(uri: str) -> List[Dict[str, Any]]:
+    """Read a resource by URI."""
+    log_dir = get_log_dir()
+    if not log_dir:
+        return [{"uri": uri, "text": "Error: NETALERTX_LOG directory not configured"}]
+
+    if uri.startswith("netalertx://logs/"):
+        relative_path = uri.replace("netalertx://logs/", "")
+        file_path = os.path.join(log_dir, relative_path)
+
+        # Security: ensure path is within log directory
+        real_log_dir = os.path.realpath(log_dir)
+        real_path = os.path.realpath(file_path)
+        # Use os.path.commonpath or append separator to prevent prefix attacks
+        if not (real_path.startswith(real_log_dir + os.sep) or real_path == real_log_dir):
+            return [{"uri": uri, "text": "Access denied: path outside log directory"}]
+
+        if os.path.exists(file_path):
+            try:
+                # Read last 500 lines to avoid overwhelming context
+                with open(real_path, "r", encoding="utf-8", errors="replace") as f:
+                    lines = f.readlines()
+                    content = "".join(lines[-500:])
+                    return [{"uri": uri, "mimeType": "text/plain", "text": content}]
+            except Exception as e:
+                return [{"uri": uri, "text": f"Error reading file: {e}"}]
+
+        return [{"uri": uri, "text": "File not found"}]
+
+    return [{"uri": uri, "text": "Unknown resource type"}]
+
+
+# =============================================================================
+# MCP PROMPTS
+# =============================================================================
+
+def _list_prompts() -> List[Dict[str, Any]]:
+    """List available MCP prompts (curated interactions)."""
+    return [
+        {
+            "name": "analyze_network_health",
+            "description": "Analyze overall network health including device status, recent alerts, and connectivity issues",
+            "arguments": []
+        },
+        {
+            "name": "investigate_device",
+            "description": "Investigate a specific device's status, history, and potential issues",
+            "arguments": [
+                {
+                    "name": "device_identifier",
+                    "description": "MAC address, IP, or device name to investigate",
+                    "required": True
+                }
+            ]
+        },
+        {
+            "name": "troubleshoot_connectivity",
+            "description": "Help troubleshoot connectivity issues for a device",
+            "arguments": [
+                {
+                    "name": "target_ip",
+                    "description": "IP address experiencing connectivity issues",
+                    "required": True
+                }
+            ]
+        }
+    ]
+
+
+def _get_prompt(name: str, args: Dict[str, Any]) -> Dict[str, Any]:
+    """Get a specific prompt with its content."""
+    if name == "analyze_network_health":
+        return {
+            "description": "Network health analysis",
+            "messages": [
+                {
+                    "role": "user",
+                    "content": {
+                        "type": "text",
+                        "text": (
+                            "Please analyze the network health by:\n"
+                            "1. Getting device totals to see overall status\n"
+                            "2. Checking recent events for any alerts\n"
+                            "3. Looking at network topology for connectivity\n"
+                            "Summarize findings and highlight any concerns."
+                        )
+                    }
+                }
+            ]
+        }
+
+    elif name == "investigate_device":
+        device_id = args.get("device_identifier", "")
+        return {
+            "description": f"Investigation of device: {device_id}",
+            "messages": [
+                {
+                    "role": "user",
+                    "content": {
+                        "type": "text",
+                        "text": (
+                            f"Please investigate the device '{device_id}' by:\n"
+                            f"1. Search for the device to get its details\n"
+                            f"2. Check any recent events for this device\n"
+                            f"3. Check open ports if available\n"
+                            "Provide a summary of the device's status and any notable findings."
+                        )
+                    }
+                }
+            ]
+        }
+
+    elif name == "troubleshoot_connectivity":
+        target_ip = args.get("target_ip", "")
+        return {
+            "description": f"Connectivity troubleshooting for: {target_ip}",
+            "messages": [
+                {
+                    "role": "user",
+                    "content": {
+                        "type": "text",
+                        "text": (
+                            f"Please help troubleshoot connectivity to '{target_ip}' by:\n"
+                            f"1. Run a traceroute to identify network hops\n"
+                            f"2. Search for the device by IP to get its info\n"
+                            f"3. Check recent events for connection issues\n"
+                            "Provide analysis of the network path and potential issues."
+                        )
+                    }
+                }
+            ]
+        }
+
+    return {
+        "description": "Unknown prompt",
+        "messages": []
+    }
+
+
+# =============================================================================
+# FLASK ROUTE HANDLERS
+# =============================================================================
+
+def mcp_sse():
+    """
+    Handle MCP Server-Sent Events (SSE) endpoint.
+
+    Supports both GET (establishing SSE stream) and POST (direct JSON-RPC).
+
+    GET: Creates a new session and streams responses via SSE.
+    POST: Processes JSON-RPC request directly and returns response.
+
+    Returns:
+        flask.Response: SSE stream for GET, JSON response for POST
+    """
+    # Handle OPTIONS (CORS preflight)
+    if request.method == "OPTIONS":
+        return jsonify({"success": True}), 200
+
+    if not check_auth():
+        return jsonify({"success": False, "error": "Unauthorized"}), 401
+
+    # Handle POST (direct JSON-RPC, stateless)
+    if request.method == "POST":
+        try:
+            data = request.get_json(silent=True)
+            if data and "method" in data and "jsonrpc" in data:
+                response = process_mcp_request(data)
+                if response:
+                    return jsonify(response)
+                return "", 202
+        except Exception as e:
+            mylog("none", [f"[MCP] SSE POST processing error: {e}"])
+            return jsonify(_error_response(None, -32603, str(e))), 500
+
+        return jsonify({"status": "ok", "message": "MCP SSE endpoint active"}), 200
+
+    # Handle GET (establish SSE stream)
+    session_id = create_session()
+    session = None
+    for _ in range(3):
+        session = get_session(session_id)
+        if session:
+            break
+        time.sleep(0.05)
+
+    if not session:
+        delete_session(session_id)
+        return jsonify({"success": False, "error": "Failed to initialize MCP session"}), 500
+
+    message_queue = session["queue"]
+
+    def stream():
+        """Generator for SSE stream."""
+        # Send endpoint event with session ID
+        yield f"event: endpoint\ndata: /mcp/messages?session_id={session_id}\n\n"
+
+        try:
+            while True:
+                try:
+                    # Wait for messages with timeout
+                    message = message_queue.get(timeout=SSE_KEEPALIVE_INTERVAL)
+                    yield f"event: message\ndata: {json.dumps(message)}\n\n"
+                except queue.Empty:
+                    # Send keep-alive comment
+                    yield ": keep-alive\n\n"
+
+        except GeneratorExit:
+            # Clean up session when client disconnects
+            delete_session(session_id)
+
+    return Response(
+        stream_with_context(stream()),
+        mimetype="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no"  # Disable nginx buffering
+        }
+    )
 
 
 def mcp_messages():
     """
     Handle MCP messages for a specific session via HTTP POST.
 
-    This endpoint processes JSON-RPC requests for an existing MCP session.
-    The session_id is passed as a query parameter.
+    Processes JSON-RPC requests and queues responses for SSE delivery.
 
     Returns:
-        flask.Response: JSON response indicating acceptance or error.
+        flask.Response: JSON response indicating acceptance or error
     """
-    session_id = request.args.get('session_id')
+    # Handle OPTIONS (CORS preflight)
+    if request.method == "OPTIONS":
+        return jsonify({"success": True}), 200
+
+    if not check_auth():
+        return jsonify({"success": False, "error": "Unauthorized"}), 401
+
+    session_id = request.args.get("session_id")
     if not session_id:
-        return jsonify({"error": "Missing session_id"}), 400
-    with mcp_sessions_lock:
-        if session_id not in mcp_sessions:
-            return jsonify({"error": "Session not found"}), 404
-        q = mcp_sessions[session_id]
-    data = request.json
+        return jsonify({"success": False, "error": "Missing session_id"}), 400
+
+    session = get_session(session_id)
+    if not session:
+        return jsonify({"success": False, "error": "Session not found or expired"}), 404
+
+    message_queue: queue.Queue = session["queue"]
+
+    data = request.get_json(silent=True)
     if not data:
-        return jsonify({"error": "Invalid JSON"}), 400
-    response = process_mcp_request(data)
+        return jsonify({"success": False, "error": "Invalid JSON"}), 400
+
+    response = process_mcp_request(data, session_id)
     if response:
-        q.put(response)
-    return jsonify({"status": "accepted"}), 202
-
-
-def mcp_sse():
-    """
-    Handle MCP Server-Sent Events (SSE) endpoint.
-
-    Supports both GET (for establishing SSE stream) and POST (for direct JSON-RPC).
-    For GET, creates a new session and streams responses.
-    For POST, processes the request directly and returns the response.
-
-    Returns:
-        flask.Response: SSE stream for GET, JSON response for POST.
-    """
-    if request.method == 'POST':
         try:
-            data = request.get_json(silent=True)
-            if data and 'method' in data and 'jsonrpc' in data:
-                response = process_mcp_request(data)
-                if response:
-                    return jsonify(response)
-                else:
-                    return '', 202
-        except Exception as e:
-            mylog("none", [f"[MCP] SSE POST processing error: {e}"])
-        return jsonify({'status': 'ok', 'message': 'MCP SSE endpoint active'}), 200
+            # Handle bounded queue full
+            message_queue.put(response, timeout=5)
+        except queue.Full:
+            mylog("none", [f"[MCP] Message queue full for session {session_id}. Dropping message."])
+            return jsonify({"success": False, "error": "Queue full"}), 503
 
-    session_id = uuid.uuid4().hex
-    q = queue.Queue()
-    with mcp_sessions_lock:
-        mcp_sessions[session_id] = q
-
-    def stream():
-        yield f"event: endpoint\ndata: /mcp/messages?session_id={session_id}\n\n"
-        try:
-            while True:
-                try:
-                    message = q.get(timeout=20)
-                    yield f"event: message\ndata: {json.dumps(message)}\n\n"
-                except queue.Empty:
-                    yield ": keep-alive\n\n"
-        except GeneratorExit:
-            with mcp_sessions_lock:
-                if session_id in mcp_sessions:
-                    del mcp_sessions[session_id]
-    return Response(stream_with_context(stream()), mimetype='text/event-stream')
+    return jsonify({"success": True, "status": "accepted"}), 202

@@ -210,7 +210,7 @@ def build_row(
 
 
 def generate_rows(args: argparse.Namespace, header: list[str]) -> list[dict[str, str]]:
-    now = dt.datetime.utcnow()
+    now = dt.datetime.now(dt.timezone.utc)
     macs: set[str] = set()
     ip_pool = prepare_ip_pool(args.network)
 
