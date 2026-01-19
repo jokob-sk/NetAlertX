@@ -115,8 +115,72 @@
         }
       ]
     },
+    {      "function": "SET_ALWAYS",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [{ "multiple": "true", "orderable": "true" }],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": ["devMac", "devLastIP", "devName", "devVendor"],
+      "options": [
+        "devMac",
+        "devLastIP",
+        "devName",
+        "devVendor"
+      ],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Set always columns"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "These columns are always overwritten by this plugin, unless the user locks or overwrites the value."
+        }
+      ]
+    },
     {
-      "function": "URL",
+      "function": "SET_EMPTY",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [{ "multiple": "true", "orderable": "true" }],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": [],
+      "options": [
+        "devName",
+        "devLastIP",
+        "devVendor",
+        "devFQDN"
+      ],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Set empty columns"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "These columns are only overwritten if they are empty or set to NEWDEV."
+        }
+      ]
+    },
+    {      "function": "URL",
       "type": {
         "dataType": "string",
         "elements": [

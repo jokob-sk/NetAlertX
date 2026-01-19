@@ -47,4 +47,25 @@ The **MAC** field and the **Last IP** field will then become editable.
 
 To speed up device population you can also copy data from an existing device. This can be done from the **Tools** tab on the Device details.
 
+## Field Locking (Preventing Plugin Overwrites)
+
+NetAlertX allows you to "lock" specific device fields to prevent plugins from automatically overwriting your custom values. This is useful when you've manually corrected information that might be discovered differently by discovery plugins.
+
+### Quick Start
+
+1. Open a device for editing
+2. Click the **lock button** (🔒) next to any tracked field
+3. The field is now protected—plugins cannot change it until you unlock it
+
+### Tracked Fields
+
+The following 10 fields support locking:
+- devMac, devName, devLastIP, devVendor, devFQDN, devSSID, devParentMAC, devParentPort, devParentRelType, devVlan
+
+### See Also
+
+- **For Users:** [Quick Reference - Device Field Lock/Unlock](QUICK_REFERENCE_FIELD_LOCK.md) - How to use field locking
+- **For Developers:** [API Device Field Lock Documentation](API_DEVICE_FIELD_LOCK.md) - Technical API reference
+- **For Plugin Developers:** [Plugin Field Configuration (SET_ALWAYS/SET_EMPTY)](PLUGINS_DEV_CONFIG.md) - Configure which fields plugins can update
+
 

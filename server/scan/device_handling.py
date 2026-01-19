@@ -68,25 +68,34 @@ def update_devices_data_from_scan(db):
                     WHERE NOT EXISTS (SELECT 1 FROM CurrentScan
                                       WHERE devMac = cur_MAC) """)
 
-    # Update IP
-    mylog("debug", "[Update Devices] - cur_IP -> devLastIP (always updated)")
-    sql.execute("""UPDATE Devices
-            SET devLastIP = (
-                SELECT cur_IP
-                FROM CurrentScan
-                WHERE devMac = cur_MAC
-                AND cur_IP IS NOT NULL
-                AND cur_IP NOT IN ('', 'null', '(unknown)', '(Unknown)')
-                ORDER BY cur_DateTime DESC
-                LIMIT 1
-            )
-            WHERE EXISTS (
-                SELECT 1
-                FROM CurrentScan
-                WHERE devMac = cur_MAC
-                AND cur_IP IS NOT NULL
-                AND cur_IP NOT IN ('', 'null', '(unknown)', '(Unknown)')
-            )""")
+    # Update IP (devLastIP always updated, primary IPv4/IPv6 set based on family)
+    mylog("debug", "[Update Devices] - cur_IP -> devLastIP / devPrimaryIPv4 / devPrimaryIPv6")
+    sql.execute("""
+        WITH LatestIP AS (
+            SELECT c.cur_MAC AS mac, c.cur_IP AS ip
+            FROM CurrentScan c
+            WHERE c.cur_IP IS NOT NULL
+              AND c.cur_IP NOT IN ('', 'null', '(unknown)', '(Unknown)')
+              AND c.cur_DateTime = (
+                  SELECT MAX(c2.cur_DateTime)
+                  FROM CurrentScan c2
+                  WHERE c2.cur_MAC = c.cur_MAC
+                    AND c2.cur_IP IS NOT NULL
+                    AND c2.cur_IP NOT IN ('', 'null', '(unknown)', '(Unknown)')
+              )
+        )
+        UPDATE Devices
+        SET devLastIP = (SELECT ip FROM LatestIP WHERE mac = devMac),
+            devPrimaryIPv4 = CASE
+                WHEN (SELECT ip FROM LatestIP WHERE mac = devMac) LIKE '%:%' THEN devPrimaryIPv4
+                ELSE (SELECT ip FROM LatestIP WHERE mac = devMac)
+            END,
+            devPrimaryIPv6 = CASE
+                WHEN (SELECT ip FROM LatestIP WHERE mac = devMac) LIKE '%:%' THEN (SELECT ip FROM LatestIP WHERE mac = devMac)
+                ELSE devPrimaryIPv6
+            END
+        WHERE EXISTS (SELECT 1 FROM LatestIP WHERE mac = devMac);
+    """)
 
     # Update only devices with empty, NULL or (u(U)nknown) vendors
     mylog("debug", "[Update Devices] - cur_Vendor -> (if empty) devVendor")
@@ -344,7 +353,14 @@ def print_scan_stats(db):
         (SELECT COUNT(*) FROM Devices WHERE devAlertDown != 0 AND devPresentLastScan = 1 AND NOT EXISTS (SELECT 1 FROM CurrentScan WHERE devMac = cur_MAC)) AS new_down_alerts,
         (SELECT COUNT(*) FROM Devices WHERE devPresentLastScan = 0) AS new_connections,
         (SELECT COUNT(*) FROM Devices WHERE devPresentLastScan = 1 AND NOT EXISTS (SELECT 1 FROM CurrentScan WHERE devMac = cur_MAC)) AS disconnections,
-        (SELECT COUNT(*) FROM Devices, CurrentScan WHERE devMac = cur_MAC AND devLastIP <> cur_IP) AS ip_changes,
+                (SELECT COUNT(*) FROM Devices, CurrentScan
+                        WHERE devMac = cur_MAC
+                            AND cur_IP IS NOT NULL
+                            AND cur_IP NOT IN ('', 'null', '(unknown)', '(Unknown)')
+                            AND cur_IP <> COALESCE(devPrimaryIPv4, '')
+                            AND cur_IP <> COALESCE(devPrimaryIPv6, '')
+                            AND cur_IP <> COALESCE(devLastIP, '')
+                ) AS ip_changes,
         cur_ScanMethod,
         COUNT(*) AS scan_method_count
     FROM CurrentScan
@@ -525,6 +541,12 @@ def create_new_devices(db):
             else (get_setting_value("SYNC_node_name"))
         )
 
+        # Derive primary IP family values
+        cur_IP = str(cur_IP).strip() if cur_IP else ""
+        cur_IP_normalized = check_IP_format(cur_IP) if ":" not in cur_IP else cur_IP
+        primary_ipv4 = cur_IP_normalized if cur_IP_normalized and ":" not in cur_IP_normalized else ""
+        primary_ipv6 = cur_IP_normalized if cur_IP_normalized and ":" in cur_IP_normalized else ""
+
         # Preparing the individual insert statement
         sqlQuery = f"""INSERT OR IGNORE INTO Devices
                         (
@@ -532,6 +554,8 @@ def create_new_devices(db):
                             devName,
                             devVendor,
                             devLastIP,
+                            devPrimaryIPv4,
+                            devPrimaryIPv6,
                             devFirstConnection,
                             devLastConnection,
                             devSyncHubNode,
@@ -549,7 +573,9 @@ def create_new_devices(db):
                             '{sanitize_SQL_input(cur_MAC)}',
                             '{sanitize_SQL_input(cur_Name)}',
                             '{sanitize_SQL_input(cur_Vendor)}',
-                            '{sanitize_SQL_input(cur_IP)}',
+                            '{sanitize_SQL_input(cur_IP_normalized)}',
+                            '{sanitize_SQL_input(primary_ipv4)}',
+                            '{sanitize_SQL_input(primary_ipv6)}',
                             ?,
                             ?,
                             '{sanitize_SQL_input(cur_SyncHubNodeName)}',

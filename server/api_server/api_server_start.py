@@ -72,6 +72,7 @@ from .openapi.schemas import (  # noqa: E402 [flake8 lint suppression]
     BaseResponse, DeviceTotalsResponse,
     DeleteDevicesRequest, DeviceImportRequest,
     DeviceImportResponse, UpdateDeviceColumnRequest,
+    LockDeviceFieldRequest,
     CopyDeviceRequest, TriggerScanRequest,
     OpenPortsRequest,
     OpenPortsResponse, WakeOnLanRequest,
@@ -442,6 +443,62 @@ def api_device_update_column(mac, payload=None):
         return jsonify(result), 404
 
     return jsonify(result)
+
+
+@app.route("/device/<mac>/field/lock", methods=["POST"])
+@validate_request(
+    operation_id="lock_device_field",
+    summary="Lock/Unlock Device Field",
+    description="Lock a field to prevent plugin overwrites or unlock it to allow overwrites.",
+    path_params=[{
+        "name": "mac",
+        "description": "Device MAC address",
+        "schema": {"type": "string"}
+    }],
+    request_model=LockDeviceFieldRequest,
+    response_model=BaseResponse,
+    tags=["devices"],
+    auth_callable=is_authorized
+)
+def api_device_field_lock(mac, payload=None):
+    """Lock or unlock a device field by setting its source to LOCKED or USER."""
+    data = request.get_json() or {}
+    field_name = data.get("fieldName")
+    should_lock = data.get("lock", False)
+
+    if not field_name:
+        return jsonify({"success": False, "error": "fieldName is required"}), 400
+
+    # Validate that the field can be locked
+    source_field = field_name + "Source"
+    allowed_tracked_fields = {
+        "devMac", "devName", "devLastIP", "devVendor", "devFQDN", 
+        "devSSID", "devParentMAC", "devParentPort", "devParentRelType", "devVlan"
+    }
+    if field_name not in allowed_tracked_fields:
+        return jsonify({"success": False, "error": f"Field '{field_name}' cannot be locked"}), 400
+
+    device_handler = DeviceInstance()
+    
+    try:
+        # When locking: set source to LOCKED
+        # When unlocking: check current value and let plugins take over
+        new_source = "LOCKED" if should_lock else "NEWDEV"
+        result = device_handler.updateDeviceColumn(mac, source_field, new_source)
+        
+        if result.get("success"):
+            action = "locked" if should_lock else "unlocked"
+            return jsonify({
+                "success": True, 
+                "message": f"Field {field_name} {action}",
+                "fieldName": field_name,
+                "locked": should_lock
+            })
+        else:
+            return jsonify(result), 400
+    except Exception as e:
+        mylog("error", f"Error locking field {field_name} for {mac}: {str(e)}")
+        return jsonify({"success": False, "error": str(e)}), 500
 
 
 @app.route('/mcp/sse/device/<mac>/set-alias', methods=['POST'])

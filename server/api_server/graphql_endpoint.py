@@ -58,6 +58,10 @@ class Device(ObjectType):
     devFirstConnection = String(description="Timestamp of first discovery")
     devLastConnection = String(description="Timestamp of last connection")
     devLastIP = String(description="Last known IP address")
+    devPrimaryIPv4 = String(description="Primary IPv4 address")
+    devPrimaryIPv6 = String(description="Primary IPv6 address")
+    devVlan = String(description="VLAN identifier")
+    devForceStatus = String(description="Force device status (online/offline/dont_force)")
     devStaticIP = Int(description="Static IP flag (0 or 1)")
     devScan = Int(description="Scan flag (0 or 1)")
     devLogEvents = Int(description="Log events flag (0 or 1)")
@@ -86,6 +90,16 @@ class Device(ObjectType):
     devFQDN = String(description="Fully Qualified Domain Name")
     devParentRelType = String(description="Relationship type to parent")
     devReqNicsOnline = Int(description="Required NICs online flag")
+    devMacSource = String(description="Source tracking for devMac (USER, LOCKED, NEWDEV, or plugin prefix)")
+    devNameSource = String(description="Source tracking for devName")
+    devFqdnSource = String(description="Source tracking for devFQDN")
+    devLastIpSource = String(description="Source tracking for devLastIP")
+    devVendorSource = String(description="Source tracking for devVendor")
+    devSsidSource = String(description="Source tracking for devSSID")
+    devParentMacSource = String(description="Source tracking for devParentMAC")
+    devParentPortSource = String(description="Source tracking for devParentPort")
+    devParentRelTypeSource = String(description="Source tracking for devParentRelType")
+    devVlanSource = String(description="Source tracking for devVlan")
 
 
 class DeviceResult(ObjectType):

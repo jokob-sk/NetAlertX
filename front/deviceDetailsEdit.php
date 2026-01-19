@@ -36,6 +36,9 @@ require_once $_SERVER["DOCUMENT_ROOT"] . "/php/templates/security.php"; ?>
 
 <script defer>
 
+// Global variable to store device data for access by toggleFieldLock and other functions
+let deviceData = {};
+
 // -------------------------------------------------------------------
 // Get plugin and settings data from API endpoints
 function getDeviceData() {
@@ -57,7 +60,9 @@ function getDeviceData() {
       "Authorization": `Bearer ${apiToken}`
     },
     dataType: "json",
-    success: function(deviceData) {
+    success: function(data) {
+      // Assign to global variable for access by toggleFieldLock and other functions
+      deviceData = data;
 
       // some race condition, need to implement delay
       setTimeout(() => {
@@ -104,7 +109,21 @@ function getDeviceData() {
             // columns to hide
             hiddenFields = ["NEWDEV_devScan", "NEWDEV_devPresentLastScan"]
             // columns to disable/readonly - conditional depending if a new dummy device is created
-            disabledFields = mac == "new" ? ["NEWDEV_devLastNotification", "NEWDEV_devFirstConnection", "NEWDEV_devLastConnection"] : ["NEWDEV_devLastNotification", "NEWDEV_devFirstConnection", "NEWDEV_devLastConnection", "NEWDEV_devMac", "NEWDEV_devLastIP", "NEWDEV_devSyncHubNode", "NEWDEV_devFQDN"];
+            disabledFields = mac == "new" ? ["NEWDEV_devLastNotification", "NEWDEV_devFirstConnection", "NEWDEV_devLastConnection"] : ["NEWDEV_devLastNotification", "NEWDEV_devFirstConnection", "NEWDEV_devLastConnection", "NEWDEV_devMac", "NEWDEV_devLastIP", "NEWDEV_devPrimaryIPv6", "NEWDEV_devPrimaryIPv4", "NEWDEV_devSyncHubNode", "NEWDEV_devFQDN"];
+
+            // Fields that are tracked by authoritative handler and can be locked/unlocked
+            const trackedFields = {
+              "devMac": true,
+              "devName": true,
+              "devLastIP": true,
+              "devVendor": true,
+              "devFQDN": true,
+              "devSSID": true,
+              "devParentMAC": true,
+              "devParentPort": true,
+              "devParentRelType": true,
+              "devVlan": true
+            };
 
             // Grouping of fields into categories with associated documentation links
             const fieldGroups = {
@@ -146,7 +165,7 @@ function getDeviceData() {
               },
               // Group for session information
               DevDetail_SessionInfo_Title: {
-                data: ["devStatus", "devLastConnection", "devFirstConnection", "devFQDN"],
+                data: ["devPrimaryIPv4", "devPrimaryIPv6", "devStatus", "devLastConnection", "devFirstConnection", "devFQDN"],
                 docs: "https://docs.netalertx.com/SESSION_INFO",
                 iconClass: "fa fa-calendar",
                 inputGroupClasses: "field-group session-group col-lg-4 col-sm-6 col-xs-12",
@@ -249,6 +268,35 @@ function getDeviceData() {
                         onclick="generate_NEWDEV_devLastIP()"
                         title="${getString("Gen_Generate")}">
                         <i class="fa-solid fa-dice" ></i>
+                      </span>`;
+                  }
+
+                  // Add lock/unlock button for tracked fields (not for new devices)
+                  const fieldName = setting.setKey.replace('NEWDEV_', '');
+                  if (trackedFields[fieldName] && mac != "new") {
+                    const sourceField = fieldName + "Source";
+                    const currentSource = deviceData[sourceField] || "";
+                    const isLocked = currentSource === "LOCKED";
+                    const lockIcon = isLocked ? "fa-lock" : "fa-lock-open";
+                    const lockTitle = isLocked ? getString("FieldLock_Unlock_Tooltip") : getString("FieldLock_Lock_Tooltip");
+                    inlineControl += `<span class="input-group-addon pointer field-lock-btn"
+                        onclick="toggleFieldLock('${mac}', '${fieldName}')"
+                        title="${lockTitle}"
+                        data-field="${fieldName}"
+                        data-locked="${isLocked ? 1 : 0}">
+                        <i class="fa-solid ${lockIcon}"></i>
+                      </span>`;
+                  }
+
+                  // Add source indicator for tracked fields
+                  const fieldName2 = setting.setKey.replace('NEWDEV_', '');
+                  if (trackedFields[fieldName2] && mac != "new") {
+                    const sourceField = fieldName2 + "Source";
+                    const currentSource = deviceData[sourceField] || "NEWDEV";
+                    const sourceTitle = getString("FieldLock_Source_Label") + currentSource;
+                    const sourceColor = currentSource === "USER" ? "text-warning" : (currentSource === "LOCKED" ? "text-danger" : "text-muted");
+                    inlineControl += `<span class="input-group-addon ${sourceColor}" title="${sourceTitle}">
+                        <i class="fa-solid fa-tag"></i> ${currentSource}
                       </span>`;
                   }
 
@@ -412,9 +460,9 @@ function setDeviceData(direction = '', refreshCallback = '') {
     success: function(resp) {
 
       if (resp && resp.success) {
-        showMessage("Device saved successfully");
+        showMessage(getString("Device_Saved_Success"));
       } else {
-        showMessage("Device update returned an unexpected response");
+        showMessage(getString("Device_Saved_Unexpected"));
       }
 
       // Remove navigation prompt
@@ -433,9 +481,9 @@ function setDeviceData(direction = '', refreshCallback = '') {
     },
     error: function(xhr) {
       if (xhr.status === 403) {
-        showMessage("Unauthorized - invalid API token");
+        showMessage(getString("Device_Save_Unauthorized"));
       } else {
-        showMessage("Failed to save device (" + xhr.status + ")");
+        showMessage(getString("Device_Save_Failed") + " (" + xhr.status + ")");
       }
       hideSpinner();
     }
@@ -500,5 +548,75 @@ if (!$('#panDetails:visible').length) {
   getDeviceData();
 }
 
+// -------------------------------------------------------------------
+// Lock/Unlock field to prevent plugin overwrites
+function toggleFieldLock(mac, fieldName) {
+  if (!mac || !fieldName) {
+    console.error("Invalid parameters for toggleFieldLock");
+    return;
+  }
+
+  const apiToken = getSetting("API_TOKEN");
+  const apiBaseUrl = getApiBase();
+
+  // Get current source value
+  const sourceField = fieldName + "Source";
+  const currentSource = deviceData[sourceField] || "NEWDEV";
+  const shouldLock = currentSource !== "LOCKED";
+
+  const payload = {
+    fieldName: fieldName,
+    lock: shouldLock ? 1 : 0
+  };
+
+  const url = `${apiBaseUrl}/device/${mac}/field/lock`;
+
+  // Show visual feedback
+  const lockBtn = $(`.field-lock-btn[data-field="${fieldName}"]`);
+  lockBtn.css("opacity", 0.6);
+
+  $.ajax({
+    url: url,
+    type: "POST",
+    headers: {
+      "Authorization": `Bearer ${apiToken}`
+    },
+    contentType: "application/json",
+    data: JSON.stringify(payload),
+    success: function(response) {
+      if (response.success) {
+        // Update the button state
+        const newLocked = shouldLock ? 1 : 0;
+        lockBtn.attr("data-locked", newLocked);
+
+        const lockIcon = shouldLock ? "fa-lock" : "fa-lock-open";
+        const lockTitle = shouldLock ? getString("FieldLock_Unlock_Tooltip") : getString("FieldLock_Lock_Tooltip");
+        lockBtn.find("i").attr("class", `fa-solid ${lockIcon}`);
+        lockBtn.attr("title", lockTitle);
+
+        // Update source indicator if locked
+        if (shouldLock) {
+          const sourceIndicator = lockBtn.next();
+          if (sourceIndicator.hasClass("input-group-addon")) {
+            sourceIndicator.text("LOCKED");
+            sourceIndicator.attr("class", "input-group-addon text-danger");
+            sourceIndicator.attr("title", getString("FieldLock_Source_Label") + "LOCKED");
+          }
+        }
+
+        showMessage(shouldLock ? getString("FieldLock_Locked") : getString("FieldLock_Unlocked"), 3000, "modal_green");
+      } else {
+        showMessage(response.error || getString("FieldLock_Error"), 5000, "modal_red");
+      }
+    },
+    error: function(jqXHR, textStatus, errorThrown) {
+      console.error("Lock/Unlock error:", jqXHR, textStatus, errorThrown);
+      showMessage(getString("FieldLock_Error"), 5000, "modal_red");
+    },
+    complete: function() {
+      lockBtn.css("opacity", 1.0);
+    }
+  });
+}
 
 </script>

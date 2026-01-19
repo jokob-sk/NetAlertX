@@ -9,6 +9,7 @@ from logger import mylog
 from models.plugin_object_instance import PluginObjectInstance
 from database import get_temp_db_connection
 from db.db_helper import get_table_json, get_device_condition_by_status, row_to_json, get_date_from_period
+from db.authoritative_handler import enforce_source_on_user_update, lock_field, unlock_field, FIELD_SOURCE_MAP
 from helper import is_random_mac, get_setting_value
 from utils.datetime_utils import timeNowDB, format_date
 
@@ -593,6 +594,19 @@ class DeviceInstance:
             cur = conn.cursor()
             cur.execute(sql, values)
             conn.commit()
+
+            # Enforce source tracking on user updates
+            # User-updated fields should have their *Source set to "USER"
+            user_updated_fields = {k: v for k, v in data.items() if k in FIELD_SOURCE_MAP}
+            if user_updated_fields and not data.get("createNew", False):
+                try:
+                    enforce_source_on_user_update(normalized_mac, user_updated_fields, conn)
+                except Exception as e:
+                    mylog("none", [f"[DeviceInstance] Failed to enforce source tracking: {e}"])
+                    conn.rollback()
+                    conn.close()
+                    return {"success": False, "error": f"Source tracking failed: {e}"}
+
             conn.close()
 
             mylog("debug", f"[DeviceInstance] setDeviceData SQL: {sql.strip()}")
@@ -663,6 +677,32 @@ class DeviceInstance:
 
         conn.close()
         return result
+
+    def lockDeviceField(self, mac, field_name):
+        """Lock a device field so it won't be overwritten by plugins."""
+        if field_name not in FIELD_SOURCE_MAP:
+            return {"success": False, "error": f"Field {field_name} does not support locking"}
+
+        try:
+            conn = get_temp_db_connection()
+            lock_field(mac, field_name, conn)
+            conn.close()
+            return {"success": True, "message": f"Field {field_name} locked"}
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+
+    def unlockDeviceField(self, mac, field_name):
+        """Unlock a device field so plugins can overwrite it again."""
+        if field_name not in FIELD_SOURCE_MAP:
+            return {"success": False, "error": f"Field {field_name} does not support unlocking"}
+
+        try:
+            conn = get_temp_db_connection()
+            unlock_field(mac, field_name, conn)
+            conn.close()
+            return {"success": True, "message": f"Field {field_name} unlocked"}
+        except Exception as e:
+            return {"success": False, "error": str(e)}
 
     def copyDevice(self, mac_from, mac_to):
         """Copy a device entry from one MAC to another."""

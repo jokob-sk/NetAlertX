@@ -40,6 +40,8 @@
     }
   ],
   "params": [],
+    }
+  ],
   "settings": [
     {
       "function": "RUN",
@@ -495,6 +497,72 @@
         {
           "language_code": "en_us",
           "string": "UniFi site configurations. Use a unique name for each site. You can find necessary details to configure this in your controller under <i>Settings -> Control Plane -> Integrations</i>."
+        }
+      ]
+    },
+    {
+      "function": "SET_ALWAYS",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [{ "multiple": "true", "orderable": "true" }],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": ["devMac", "devLastIP", "devName", "devParentMAC"],
+      "options": [
+        "devMac",
+        "devLastIP",
+        "devName",
+        "devParentMAC"
+      ],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Set always columns"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "These columns are always overwritten by this plugin, unless the user locks or overwrites the value."
+        }
+      ]
+    },
+    {
+      "function": "SET_EMPTY",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [{ "multiple": "true", "orderable": "true" }],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": [],
+      "options": [
+        "devMac",
+        "devLastIP",
+        "devName",
+        "devParentMAC"
+      ],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Set empty columns"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "These columns are only overwritten if they are empty or set to NEWDEV."
         }
       ]
     }

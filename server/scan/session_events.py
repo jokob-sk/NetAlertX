@@ -182,7 +182,11 @@ def insert_events(db):
                         'Previous IP: '|| devLastIP, devAlertEvents
                     FROM Devices, CurrentScan
                     WHERE devMac = cur_MAC
-                      AND devLastIP <> cur_IP """)
+                      AND cur_IP IS NOT NULL
+                      AND cur_IP NOT IN ('', 'null', '(unknown)', '(Unknown)')
+                      AND cur_IP <> COALESCE(devPrimaryIPv4, '')
+                      AND cur_IP <> COALESCE(devPrimaryIPv6, '')
+                      AND cur_IP <> COALESCE(devLastIP, '') """)
     mylog("debug", "[Events] - Events end")
 
 

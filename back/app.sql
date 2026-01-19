@@ -24,6 +24,10 @@ CREATE TABLE Devices (
               devFirstConnection DATETIME NOT NULL,
               devLastConnection DATETIME NOT NULL,
               devLastIP STRING (50) NOT NULL COLLATE NOCASE,
+              devPrimaryIPv4 TEXT,
+              devPrimaryIPv6 TEXT,
+              devVlan TEXT,
+              devForceStatus TEXT,
               devStaticIP BOOLEAN DEFAULT (0) NOT NULL CHECK (devStaticIP IN (0, 1)),
               devScan INTEGER DEFAULT (1) NOT NULL,
               devLogEvents BOOLEAN NOT NULL DEFAULT (1) CHECK (devLogEvents IN (0, 1)),
@@ -42,8 +46,18 @@ CREATE TABLE Devices (
               devSite TEXT,
               devSSID TEXT,
               devSyncHubNode TEXT,
-              devSourcePlugin TEXT
-          , "devCustomProps" TEXT);
+              devSourcePlugin TEXT,
+              devMacSource TEXT,
+              devNameSource TEXT,
+              devFqdnSource TEXT,
+              devLastIpSource TEXT,
+              devVendorSource TEXT,
+              devSsidSource TEXT,
+              devParentMacSource TEXT,
+              devParentPortSource TEXT,
+              devParentRelTypeSource TEXT,
+              devVlanSource TEXT,
+              "devCustomProps" TEXT);
 CREATE TABLE IF NOT EXISTS "Settings" (
             "setKey"	        TEXT,
             "setName"	        TEXT,
@@ -61,7 +75,7 @@ CREATE TABLE IF NOT EXISTS "Parameters" (
           );
 CREATE TABLE Plugins_Objects(
                                     "Index"	          INTEGER,
-                                    Plugin TEXT NOT NULL,                                    
+                                    Plugin TEXT NOT NULL,
                                     Object_PrimaryID TEXT NOT NULL,
                                     Object_SecondaryID TEXT NOT NULL,
                                     DateTimeCreated TEXT NOT NULL,
@@ -134,7 +148,7 @@ CREATE TABLE Plugins_Language_Strings(
                                 Extra TEXT NOT NULL,
                                 PRIMARY KEY("Index" AUTOINCREMENT)
                         );
-CREATE TABLE CurrentScan (                                
+CREATE TABLE CurrentScan (
                                 cur_MAC STRING(50) NOT NULL COLLATE NOCASE,
                                 cur_IP STRING(50) NOT NULL COLLATE NOCASE,
                                 cur_Vendor STRING(250),
@@ -145,6 +159,7 @@ CREATE TABLE CurrentScan (
                                 cur_SyncHubNodeName STRING(50),
                                 cur_NetworkSite STRING(250),
                                 cur_SSID STRING(250),
+                                cur_devVlan STRING(250),
                                 cur_NetworkNodeMAC STRING(250),
                                 cur_PORT STRING(250),
                                 cur_Type STRING(250),
@@ -161,11 +176,11 @@ CREATE TABLE IF NOT EXISTS "AppEvents" (
                 "ObjectPrimaryID" TEXT,
                 "ObjectSecondaryID" TEXT,
                 "ObjectForeignKey" TEXT,
-                "ObjectIndex" TEXT,            
-                "ObjectIsNew" BOOLEAN, 
-                "ObjectIsArchived" BOOLEAN, 
+                "ObjectIndex" TEXT,
+                "ObjectIsNew" BOOLEAN,
+                "ObjectIsArchived" BOOLEAN,
                 "ObjectStatusColumn" TEXT,
-                "ObjectStatus" TEXT,            
+                "ObjectStatus" TEXT,
                 "AppEventType" TEXT,
                 "Helper1" TEXT,
                 "Helper2" TEXT,
@@ -203,21 +218,21 @@ CREATE INDEX IDX_dev_Favorite ON Devices (devFavorite);
 CREATE INDEX IDX_dev_LastIP ON Devices (devLastIP);
 CREATE INDEX IDX_dev_NewDevice ON Devices (devIsNew);
 CREATE INDEX IDX_dev_Archived ON Devices (devIsArchived);
-CREATE VIEW Events_Devices AS 
-                            SELECT * 
-                            FROM Events 
+CREATE VIEW Events_Devices AS
+                            SELECT *
+                            FROM Events
                             LEFT JOIN Devices ON eve_MAC = devMac
 /* Events_Devices(eve_MAC,eve_IP,eve_DateTime,eve_EventType,eve_AdditionalInfo,eve_PendingAlertEmail,eve_PairEventRowid,devMac,devName,devOwner,devType,devVendor,devFavorite,devGroup,devComments,devFirstConnection,devLastConnection,devLastIP,devStaticIP,devScan,devLogEvents,devAlertEvents,devAlertDown,devSkipRepeated,devLastNotification,devPresentLastScan,devIsNew,devLocation,devIsArchived,devParentMAC,devParentPort,devIcon,devGUID,devSite,devSSID,devSyncHubNode,devSourcePlugin,devCustomProps) */;
 CREATE VIEW LatestEventsPerMAC AS
                                 WITH RankedEvents AS (
-                                    SELECT 
+                                    SELECT
                                         e.*,
                                         ROW_NUMBER() OVER (PARTITION BY e.eve_MAC ORDER BY e.eve_DateTime DESC) AS row_num
                                     FROM Events AS e
                                 )
-                                SELECT 
-                                    e.*, 
-                                    d.*, 
+                                SELECT
+                                    e.*,
+                                    d.*,
                                     c.*
                                 FROM RankedEvents AS e
                                 LEFT JOIN Devices AS d ON e.eve_MAC = d.devMac
@@ -256,11 +271,11 @@ CREATE VIEW Convert_Events_to_Sessions AS  SELECT EVE1.eve_MAC,
 CREATE TRIGGER "trg_insert_devices"
             AFTER INSERT ON "Devices"
             WHEN NOT EXISTS (
-                SELECT 1 FROM AppEvents 
-                WHERE AppEventProcessed = 0 
+                SELECT 1 FROM AppEvents
+                WHERE AppEventProcessed = 0
                 AND ObjectType = 'Devices'
                 AND ObjectGUID = NEW.devGUID
-                AND ObjectStatus = CASE WHEN NEW.devPresentLastScan = 1 THEN 'online' ELSE 'offline' END 
+                AND ObjectStatus = CASE WHEN NEW.devPresentLastScan = 1 THEN 'online' ELSE 'offline' END
                 AND AppEventType = 'insert'
             )
             BEGIN
@@ -281,18 +296,18 @@ CREATE TRIGGER "trg_insert_devices"
                     "AppEventType"
                 )
                 VALUES (
-                    
+
                 lower(
-                    hex(randomblob(4)) || '-' || hex(randomblob(2)) || '-' || '4' || 
-                    substr(hex( randomblob(2)), 2) || '-' || 
+                    hex(randomblob(4)) || '-' || hex(randomblob(2)) || '-' || '4' ||
+                    substr(hex( randomblob(2)), 2) || '-' ||
                     substr('AB89', 1 + (abs(random()) % 4) , 1)  ||
-                    substr(hex(randomblob(2)), 2) || '-' || 
+                    substr(hex(randomblob(2)), 2) || '-' ||
                     hex(randomblob(6))
                 )
-            , 
-                    DATETIME('now'), 
-                    FALSE, 
-                    'Devices', 
+            ,
+                    DATETIME('now'),
+                    FALSE,
+                    'Devices',
                     NEW.devGUID,  -- ObjectGUID
                     NEW.devMac,  -- ObjectPrimaryID
                     NEW.devLastIP,  -- ObjectSecondaryID
@@ -308,11 +323,11 @@ CREATE TRIGGER "trg_insert_devices"
 CREATE TRIGGER "trg_update_devices"
             AFTER UPDATE ON "Devices"
             WHEN NOT EXISTS (
-                SELECT 1 FROM AppEvents 
-                WHERE AppEventProcessed = 0 
+                SELECT 1 FROM AppEvents
+                WHERE AppEventProcessed = 0
                 AND ObjectType = 'Devices'
                 AND ObjectGUID = NEW.devGUID
-                AND ObjectStatus = CASE WHEN NEW.devPresentLastScan = 1 THEN 'online' ELSE 'offline' END 
+                AND ObjectStatus = CASE WHEN NEW.devPresentLastScan = 1 THEN 'online' ELSE 'offline' END
                 AND AppEventType = 'update'
             )
             BEGIN
@@ -333,18 +348,18 @@ CREATE TRIGGER "trg_update_devices"
                     "AppEventType"
                 )
                 VALUES (
-                    
+
                 lower(
-                    hex(randomblob(4)) || '-' || hex(randomblob(2)) || '-' || '4' || 
-                    substr(hex( randomblob(2)), 2) || '-' || 
+                    hex(randomblob(4)) || '-' || hex(randomblob(2)) || '-' || '4' ||
+                    substr(hex( randomblob(2)), 2) || '-' ||
                     substr('AB89', 1 + (abs(random()) % 4) , 1)  ||
-                    substr(hex(randomblob(2)), 2) || '-' || 
+                    substr(hex(randomblob(2)), 2) || '-' ||
                     hex(randomblob(6))
                 )
-            , 
-                    DATETIME('now'), 
-                    FALSE, 
-                    'Devices', 
+            ,
+                    DATETIME('now'),
+                    FALSE,
+                    'Devices',
                     NEW.devGUID,  -- ObjectGUID
                     NEW.devMac,  -- ObjectPrimaryID
                     NEW.devLastIP,  -- ObjectSecondaryID
@@ -360,11 +375,11 @@ CREATE TRIGGER "trg_update_devices"
 CREATE TRIGGER "trg_delete_devices"
             AFTER DELETE ON "Devices"
             WHEN NOT EXISTS (
-                SELECT 1 FROM AppEvents 
-                WHERE AppEventProcessed = 0 
+                SELECT 1 FROM AppEvents
+                WHERE AppEventProcessed = 0
                 AND ObjectType = 'Devices'
                 AND ObjectGUID = OLD.devGUID
-                AND ObjectStatus = CASE WHEN OLD.devPresentLastScan = 1 THEN 'online' ELSE 'offline' END 
+                AND ObjectStatus = CASE WHEN OLD.devPresentLastScan = 1 THEN 'online' ELSE 'offline' END
                 AND AppEventType = 'delete'
             )
             BEGIN
@@ -385,18 +400,18 @@ CREATE TRIGGER "trg_delete_devices"
                     "AppEventType"
                 )
                 VALUES (
-                    
+
                 lower(
-                    hex(randomblob(4)) || '-' || hex(randomblob(2)) || '-' || '4' || 
-                    substr(hex( randomblob(2)), 2) || '-' || 
+                    hex(randomblob(4)) || '-' || hex(randomblob(2)) || '-' || '4' ||
+                    substr(hex( randomblob(2)), 2) || '-' ||
                     substr('AB89', 1 + (abs(random()) % 4) , 1)  ||
-                    substr(hex(randomblob(2)), 2) || '-' || 
+                    substr(hex(randomblob(2)), 2) || '-' ||
                     hex(randomblob(6))
                 )
-            , 
-                    DATETIME('now'), 
-                    FALSE, 
-                    'Devices', 
+            ,
+                    DATETIME('now'),
+                    FALSE,
+                    'Devices',
                     OLD.devGUID,  -- ObjectGUID
                     OLD.devMac,  -- ObjectPrimaryID
                     OLD.devLastIP,  -- ObjectSecondaryID

@@ -2439,3 +2439,35 @@ table.dataTable tbody > tr.selected
 {
     margin-top: 10px;
 }
+/* -----------------------------------------------------------------------------
+   Field Lock/Unlock Buttons & Source Indicators
+----------------------------------------------------------------------------- */
+.field-lock-btn {
+    cursor: pointer;
+    transition: opacity 0.2s ease, background-color 0.2s ease;
+    padding: 8px 10px;
+}
+
+.field-lock-btn:hover {
+    opacity: 0.8 !important;
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.field-lock-btn:active {
+    opacity: 0.6 !important;
+}
+
+.input-group-addon.text-warning {
+    color: #f39c12;
+    background-color: rgba(243, 156, 18, 0.1);
+}
+
+.input-group-addon.text-danger {
+    color: #dd4b39;
+    background-color: rgba(221, 75, 57, 0.1);
+}
+
+.input-group-addon.text-muted {
+    color: #8c8c8c;
+    background-color: rgba(140, 140, 140, 0.05);
+}

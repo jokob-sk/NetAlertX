@@ -67,6 +67,10 @@ sql_devices_all = """
                         IFNULL(devFirstConnection, '') AS devFirstConnection,
                         IFNULL(devLastConnection, '') AS devLastConnection,
                         IFNULL(devLastIP, '') AS devLastIP,
+                        IFNULL(devPrimaryIPv4, '') AS devPrimaryIPv4,
+                        IFNULL(devPrimaryIPv6, '') AS devPrimaryIPv6,
+                        IFNULL(devVlan, '') AS devVlan,
+                        IFNULL(devForceStatus, '') AS devForceStatus,
                         IFNULL(devStaticIP, '') AS devStaticIP,
                         IFNULL(devScan, '') AS devScan,
                         IFNULL(devLogEvents, '') AS devLogEvents,
@@ -90,6 +94,16 @@ sql_devices_all = """
                         IFNULL(devFQDN, '') AS devFQDN,
                         IFNULL(devParentRelType, '') AS devParentRelType,
                         IFNULL(devReqNicsOnline, '') AS devReqNicsOnline,
+                        IFNULL(devMacSource, '') AS devMacSource,
+                        IFNULL(devNameSource, '') AS devNameSource,
+                        IFNULL(devFqdnSource, '') AS devFqdnSource,
+                        IFNULL(devLastIpSource, '') AS devLastIpSource,
+                        IFNULL(devVendorSource, '') AS devVendorSource,
+                        IFNULL(devSsidSource, '') AS devSsidSource,
+                        IFNULL(devParentMacSource, '') AS devParentMacSource,
+                        IFNULL(devParentPortSource, '') AS devParentPortSource,
+                        IFNULL(devParentRelTypeSource, '') AS devParentRelTypeSource,
+                        IFNULL(devVlanSource, '') AS devVlanSource,
                         CASE
                             WHEN devIsNew = 1 THEN 'New'
                             WHEN devPresentLastScan = 1 THEN 'On-line'

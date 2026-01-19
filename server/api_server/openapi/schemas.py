@@ -135,12 +135,26 @@ class DeviceInfo(BaseModel):
     devMac: str = Field(..., description="Device MAC address")
     devName: Optional[str] = Field(None, description="Device display name/alias")
     devLastIP: Optional[str] = Field(None, description="Last known IP address")
+    devPrimaryIPv4: Optional[str] = Field(None, description="Primary IPv4 address")
+    devPrimaryIPv6: Optional[str] = Field(None, description="Primary IPv6 address")
+    devVlan: Optional[str] = Field(None, description="VLAN identifier")
+    devForceStatus: Optional[str] = Field(None, description="Force device status (online/offline/dont_force)")
     devVendor: Optional[str] = Field(None, description="Hardware vendor from OUI lookup")
     devOwner: Optional[str] = Field(None, description="Device owner")
     devType: Optional[str] = Field(None, description="Device type classification")
     devFavorite: Optional[int] = Field(0, description="Favorite flag (0 or 1)")
     devPresentLastScan: Optional[int] = Field(None, description="Present in last scan (0 or 1)")
     devStatus: Optional[str] = Field(None, description="Online/Offline status")
+    devMacSource: Optional[str] = Field(None, description="Source of devMac (USER, LOCKED, or plugin prefix)")
+    devNameSource: Optional[str] = Field(None, description="Source of devName")
+    devFqdnSource: Optional[str] = Field(None, description="Source of devFQDN")
+    devLastIpSource: Optional[str] = Field(None, description="Source of devLastIP")
+    devVendorSource: Optional[str] = Field(None, description="Source of devVendor")
+    devSsidSource: Optional[str] = Field(None, description="Source of devSSID")
+    devParentMacSource: Optional[str] = Field(None, description="Source of devParentMAC")
+    devParentPortSource: Optional[str] = Field(None, description="Source of devParentPort")
+    devParentRelTypeSource: Optional[str] = Field(None, description="Source of devParentRelType")
+    devVlanSource: Optional[str] = Field(None, description="Source of devVlan")
 
 
 class DeviceSearchResponse(BaseResponse):
@@ -257,6 +271,12 @@ class UpdateDeviceColumnRequest(BaseModel):
     """Request to update a specific device database column."""
     columnName: ALLOWED_DEVICE_COLUMNS = Field(..., description="Database column name")
     columnValue: Any = Field(..., description="New value for the column")
+
+
+class LockDeviceFieldRequest(BaseModel):
+    """Request to lock/unlock a device field."""
+    fieldName: str = Field(..., description="Field name to lock/unlock (devMac, devName, devLastIP, etc.)")
+    lock: bool = Field(True, description="True to lock the field, False to unlock")
 
 
 class DeviceUpdateRequest(BaseModel):
