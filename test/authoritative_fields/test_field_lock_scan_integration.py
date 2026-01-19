@@ -688,15 +688,15 @@ def test_scan_multiple_devices_mixed_sources(scan_db, mock_device_handlers):
 
     # Check results
     results = {
-            "AA:BB:CC:DD:EE:11": {"name": "Device1", "vendor": "Apple Inc."},  # Name already set, won't update
-            "AA:BB:CC:DD:EE:12": {"name": "My Device", "vendor": "Samsung"},  # Name protected (USER)
-            "AA:BB:CC:DD:EE:13": {"name": "Locked Device", "vendor": "Sony"},  # Name locked
-            "AA:BB:CC:DD:EE:14": {"name": "Device4", "vendor": "LG"},  # Name already from plugin, won't update
-        }
+        "AA:BB:CC:DD:EE:11": {"name": "Device1", "vendor": "Apple Inc."},  # Name already set, won't update
+        "AA:BB:CC:DD:EE:12": {"name": "My Device", "vendor": "Samsung"},  # Name protected (USER)
+        "AA:BB:CC:DD:EE:13": {"name": "Locked Device", "vendor": "Sony"},  # Name locked
+        "AA:BB:CC:DD:EE:14": {"name": "Device4", "vendor": "LG"},  # Name already from plugin, won't update
+    }
 
-        for mac, expected in results.items():
-            row = cur.execute(
-                "SELECT devName, devVendor FROM Devices WHERE devMac = ?",
-                (mac,),
-            ).fetchone()
-            assert row["devName"] == expected["name"], f"Device {mac} name mismatch: got {row['devName']}, expected {expected['name']}"
+    for mac, expected in results.items():
+        row = cur.execute(
+            "SELECT devName, devVendor FROM Devices WHERE devMac = ?",
+            (mac,),
+        ).fetchone()
+        assert row["devName"] == expected["name"], f"Device {mac} name mismatch: got {row['devName']}, expected {expected['name']}"
