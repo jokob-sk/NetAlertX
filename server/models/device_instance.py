@@ -4,7 +4,7 @@ import re
 import sqlite3
 import csv
 from io import StringIO
-from front.plugins.plugin_helper import is_mac
+from front.plugins.plugin_helper import is_mac, normalize_mac
 from logger import mylog
 from models.plugin_object_instance import PluginObjectInstance
 from database import get_temp_db_connection
@@ -500,6 +500,10 @@ class DeviceInstance:
 
     def setDeviceData(self, mac, data):
         """Update or create a device."""
+        normalized_mac = normalize_mac(mac)
+        normalized_parent_mac = normalize_mac(data.get("devParentMAC") or "")
+
+        conn = None
         try:
             if data.get("createNew", False):
                 sql = """
@@ -516,35 +520,35 @@ class DeviceInstance:
                 """
 
                 values = (
-                    mac,
-                    data.get("devName", ""),
-                    data.get("devOwner", ""),
-                    data.get("devType", ""),
-                    data.get("devVendor", ""),
-                    data.get("devIcon", ""),
-                    data.get("devFavorite", 0),
-                    data.get("devGroup", ""),
-                    data.get("devLocation", ""),
-                    data.get("devComments", ""),
-                    data.get("devParentMAC", ""),
-                    data.get("devParentPort", ""),
-                    data.get("devSSID", ""),
-                    data.get("devSite", ""),
-                    data.get("devStaticIP", 0),
-                    data.get("devScan", 0),
-                    data.get("devAlertEvents", 0),
-                    data.get("devAlertDown", 0),
-                    data.get("devParentRelType", "default"),
-                    data.get("devReqNicsOnline", 0),
-                    data.get("devSkipRepeated", 0),
-                    data.get("devIsNew", 0),
-                    data.get("devIsArchived", 0),
-                    data.get("devLastConnection", timeNowDB()),
-                    data.get("devFirstConnection", timeNowDB()),
-                    data.get("devLastIP", ""),
-                    data.get("devGUID", ""),
-                    data.get("devCustomProps", ""),
-                    data.get("devSourcePlugin", "DUMMY"),
+                    normalized_mac,
+                    data.get("devName") or "",
+                    data.get("devOwner") or "",
+                    data.get("devType") or "",
+                    data.get("devVendor") or "",
+                    data.get("devIcon") or "",
+                    data.get("devFavorite") or 0,
+                    data.get("devGroup") or "",
+                    data.get("devLocation") or "",
+                    data.get("devComments") or "",
+                    normalized_parent_mac,
+                    data.get("devParentPort") or "",
+                    data.get("devSSID") or "",
+                    data.get("devSite") or "",
+                    data.get("devStaticIP") or 0,
+                    data.get("devScan") or 0,
+                    data.get("devAlertEvents") or 0,
+                    data.get("devAlertDown") or 0,
+                    data.get("devParentRelType") or "default",
+                    data.get("devReqNicsOnline") or 0,
+                    data.get("devSkipRepeated") or 0,
+                    data.get("devIsNew") or 0,
+                    data.get("devIsArchived") or 0,
+                    data.get("devLastConnection") or timeNowDB(),
+                    data.get("devFirstConnection") or timeNowDB(),
+                    data.get("devLastIP") or "",
+                    data.get("devGUID") or "",
+                    data.get("devCustomProps") or "",
+                    data.get("devSourcePlugin") or "DUMMY",
                 )
 
             else:
@@ -559,30 +563,30 @@ class DeviceInstance:
                 WHERE devMac=?
                 """
                 values = (
-                    data.get("devName", ""),
-                    data.get("devOwner", ""),
-                    data.get("devType", ""),
-                    data.get("devVendor", ""),
-                    data.get("devIcon", ""),
-                    data.get("devFavorite", 0),
-                    data.get("devGroup", ""),
-                    data.get("devLocation", ""),
-                    data.get("devComments", ""),
-                    data.get("devParentMAC", ""),
-                    data.get("devParentPort", ""),
-                    data.get("devSSID", ""),
-                    data.get("devSite", ""),
-                    data.get("devStaticIP", 0),
-                    data.get("devScan", 0),
-                    data.get("devAlertEvents", 0),
-                    data.get("devAlertDown", 0),
-                    data.get("devParentRelType", "default"),
-                    data.get("devReqNicsOnline", 0),
-                    data.get("devSkipRepeated", 0),
-                    data.get("devIsNew", 0),
-                    data.get("devIsArchived", 0),
-                    data.get("devCustomProps", ""),
-                    mac,
+                    data.get("devName") or "",
+                    data.get("devOwner") or "",
+                    data.get("devType") or "",
+                    data.get("devVendor") or "",
+                    data.get("devIcon") or "",
+                    data.get("devFavorite") or 0,
+                    data.get("devGroup") or "",
+                    data.get("devLocation") or "",
+                    data.get("devComments") or "",
+                    normalized_parent_mac,
+                    data.get("devParentPort") or "",
+                    data.get("devSSID") or "",
+                    data.get("devSite") or "",
+                    data.get("devStaticIP") or 0,
+                    data.get("devScan") or 0,
+                    data.get("devAlertEvents") or 0,
+                    data.get("devAlertDown") or 0,
+                    data.get("devParentRelType") or "default",
+                    data.get("devReqNicsOnline") or 0,
+                    data.get("devSkipRepeated") or 0,
+                    data.get("devIsNew") or 0,
+                    data.get("devIsArchived") or 0,
+                    data.get("devCustomProps") or "",
+                    normalized_mac,
                 )
 
             conn = get_temp_db_connection()

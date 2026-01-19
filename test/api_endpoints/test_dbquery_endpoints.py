@@ -49,7 +49,11 @@ def test_dbquery_create_device(client, api_token, test_mac):
         INSERT INTO Devices (devMac, devName, devVendor, devOwner, devFirstConnection, devLastConnection, devLastIP)
         VALUES ('{test_mac}', 'UnitTestDevice', 'TestVendor', 'UnitTest', '{now}', '{now}', '192.168.100.22' )
     """
-    resp = client.post("/dbquery/write", json={"rawSql": b64(sql)}, headers=auth_headers(api_token))
+    resp = client.post(
+        "/dbquery/write",
+        json={"rawSql": b64(sql), "confirm_dangerous_query": True},
+        headers=auth_headers(api_token)
+    )
     print(resp.json)
     print(resp)
     assert resp.status_code == 200
@@ -59,7 +63,11 @@ def test_dbquery_create_device(client, api_token, test_mac):
 
 def test_dbquery_read_device(client, api_token, test_mac):
     sql = f"SELECT * FROM Devices WHERE devMac = '{test_mac}'"
-    resp = client.post("/dbquery/read", json={"rawSql": b64(sql)}, headers=auth_headers(api_token))
+    resp = client.post(
+        "/dbquery/read",
+        json={"rawSql": b64(sql), "confirm_dangerous_query": True},
+        headers=auth_headers(api_token)
+    )
     assert resp.status_code == 200
     assert resp.json.get("success") is True
     results = resp.json.get("results")
@@ -72,27 +80,43 @@ def test_dbquery_update_device(client, api_token, test_mac):
         SET devName = 'UnitTestDeviceRenamed'
         WHERE devMac = '{test_mac}'
     """
-    resp = client.post("/dbquery/write", json={"rawSql": b64(sql)}, headers=auth_headers(api_token))
+    resp = client.post(
+        "/dbquery/write",
+        json={"rawSql": b64(sql), "confirm_dangerous_query": True},
+        headers=auth_headers(api_token)
+    )
     assert resp.status_code == 200
     assert resp.json.get("success") is True
     assert resp.json.get("affected_rows") == 1
 
     # Verify update
     sql_check = f"SELECT devName FROM Devices WHERE devMac = '{test_mac}'"
-    resp2 = client.post("/dbquery/read", json={"rawSql": b64(sql_check)}, headers=auth_headers(api_token))
+    resp2 = client.post(
+        "/dbquery/read",
+        json={"rawSql": b64(sql_check), "confirm_dangerous_query": True},
+        headers=auth_headers(api_token)
+    )
     assert resp2.status_code == 200
     assert resp2.json.get("results")[0]["devName"] == "UnitTestDeviceRenamed"
 
 
 def test_dbquery_delete_device(client, api_token, test_mac):
     sql = f"DELETE FROM Devices WHERE devMac = '{test_mac}'"
-    resp = client.post("/dbquery/write", json={"rawSql": b64(sql)}, headers=auth_headers(api_token))
+    resp = client.post(
+        "/dbquery/write",
+        json={"rawSql": b64(sql), "confirm_dangerous_query": True},
+        headers=auth_headers(api_token)
+    )
     assert resp.status_code == 200
     assert resp.json.get("success") is True
     assert resp.json.get("affected_rows") == 1
 
     # Verify deletion
     sql_check = f"SELECT * FROM Devices WHERE devMac = '{test_mac}'"
-    resp2 = client.post("/dbquery/read", json={"rawSql": b64(sql_check)}, headers=auth_headers(api_token))
+    resp2 = client.post(
+        "/dbquery/read",
+        json={"rawSql": b64(sql_check), "confirm_dangerous_query": True},
+        headers=auth_headers(api_token)
+    )
     assert resp2.status_code == 200
     assert resp2.json.get("results") == []
