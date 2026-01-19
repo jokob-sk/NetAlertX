@@ -31,76 +31,49 @@ function getExternalIp() {
 // Network
 // ----------------------------------------------------------
 
-//Network stats
-// Server IP
 
+// External IP
 $externalIp = getExternalIp();
 
-// Check Server name
-if (!empty(gethostname())) { $network_NAME = gethostname(); } else { $network_NAME = lang('Systeminfo_Network_Server_Name_String'); }
-// Check HTTPS
-if (isset($_SERVER['HTTPS'])) { $network_HTTPS = 'Yes (HTTPS)'; } else { $network_HTTPS = lang('Systeminfo_Network_Secure_Connection_String'); }
-// Check Query String
-if (empty($_SERVER['QUERY_STRING'])) { $network_QueryString = lang('Systeminfo_Network_Server_Query_String'); } else { $network_QueryString = $_SERVER['QUERY_STRING']; }
-// Check HTTP referer
-if (empty($_SERVER['HTTP_REFERER'])) { $network_referer = lang('Systeminfo_Network_HTTP_Referer_String'); } else { $network_referer = $_SERVER['HTTP_REFERER']; }
-//Network Hardware stat
-$network_result = shell_exec("cat /proc/net/dev | tail -n +3 | awk '{print $1}'");
-$net_interfaces = explode("\n", trim($network_result));
-$network_result = shell_exec("cat /proc/net/dev | tail -n +3 | awk '{print $2}'");
-$net_interfaces_rx = explode("\n", trim($network_result));
-$network_result = shell_exec("cat /proc/net/dev | tail -n +3 | awk '{print $10}'");
-$net_interfaces_tx = explode("\n", trim($network_result));
+// Server Name
+$network_NAME = gethostname() ?: lang('Systeminfo_Network_Server_Name_String');
 
+// HTTPS Check
+$network_HTTPS = isset($_SERVER['HTTPS']) ? 'Yes (HTTPS)' : lang('Systeminfo_Network_Secure_Connection_String');
 
-// Network Hardware ----------------------------------------------------------
-echo '<div class="box box-solid">
-        <div class="box-header">
-          <h3 class="box-title sysinfo_headline"><i class="fa fa-sitemap fa-rotate-270"></i> ' . lang('Systeminfo_Network_Hardware') . '</h3>
-        </div>
-        <div class="box-body">
-          <table id="networkTable" class="table table-bordered table-hover">
-            <thead>
-              <tr>
+// Query String
+$network_QueryString = !empty($_SERVER['QUERY_STRING'])
+    ? $_SERVER['QUERY_STRING']
+    : lang('Systeminfo_Network_Server_Query_String');
+
+// Referer
+$network_referer = !empty($_SERVER['HTTP_REFERER'])
+    ? $_SERVER['HTTP_REFERER']
+    : lang('Systeminfo_Network_HTTP_Referer_String');
+
+echo '
+    <div class="box box-solid">
+  <div class="box-header">
+    <h3 class="box-title sysinfo_headline">
+      <i class="fa fa-sitemap fa-rotate-270"></i>' . lang('Systeminfo_Network_Hardware') .'
+    </h3>
+  </div>
+  <div class="box-body">
+    <table id="networkTable" class="table table-bordered table-hover">
+      <thead>
+        <tr>
                 <th>' . lang('Systeminfo_Network_Hardware_Interface_Name') . '</th>
                 <th>' . lang('Systeminfo_Network_Hardware_Interface_Mask') . '</th>
                 <th>' . lang('Systeminfo_Network_Hardware_Interface_RX') . '</th>
                 <th>' . lang('Systeminfo_Network_Hardware_Interface_TX') . '</th>
-              </tr>
-            </thead>
-            <tbody>';
-
-for ($x = 0; $x < sizeof($net_interfaces); $x++) {
-    $interface_name = str_replace(':', '', $net_interfaces[$x]);
-    $interface_ip_temp = exec('ip addr show ' . $interface_name . ' | grep "inet "');
-    $interface_ip_arr = explode(' ', trim($interface_ip_temp));
-
-    if (!isset($interface_ip_arr[1])) {
-        $interface_ip_arr[1] = '--';
-    }
-
-    if ($net_interfaces_rx[$x] == 0) {
-        $temp_rx = 0;
-    } else {
-        $temp_rx = number_format(round(($net_interfaces_rx[$x] / 1024 / 1024), 2), 2, ',', '.');
-    }
-    if ($net_interfaces_tx[$x] == 0) {
-        $temp_tx = 0;
-    } else {
-        $temp_tx = number_format(round(($net_interfaces_tx[$x] / 1024 / 1024), 2), 2, ',', '.');
-    }
-    echo '<tr>';
-    echo '<td>' . $interface_name . '</td>';
-    echo '<td>' . $interface_ip_arr[1] . '</td>';
-    echo '<td>' . $temp_rx . ' MB</td>';
-    echo '<td>' . $temp_tx . ' MB</td>';
-    echo '</tr>';
-}
-
-echo '        </tbody>
-          </table>
-        </div>
-      </div>';
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td colspan="4">Loading...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>';
 
 // Available IPs ----------------------------------------------------------
 echo '<div class="box box-solid">
@@ -131,7 +104,7 @@ echo '<div class="box box-solid">
 			<div class="row">
 			  <div class="col-sm-3 sysinfo_network_a">' . lang('Systeminfo_Network_IP_Server') . '</div>
 			  <div class="col-sm-9 sysinfo_network_b">' . $_SERVER['SERVER_ADDR'] . '</div>
-			</div>	
+			</div>
 			<div class="row">
 			  <div class="col-sm-3 sysinfo_network_a">' . lang('Systeminfo_Network_Server_Name') . '</div>
 			  <div class="col-sm-9 sysinfo_network_b">' . $network_NAME . '</div>
@@ -139,11 +112,11 @@ echo '<div class="box box-solid">
 			<div class="row">
 			  <div class="col-sm-3 sysinfo_network_a">' . lang('Systeminfo_Network_Connection_Port') . '</div>
 			  <div class="col-sm-9 sysinfo_network_b">' . $_SERVER['REMOTE_PORT'] . '</div>
-			</div>			
+			</div>
 			<div class="row">
 			  <div class="col-sm-3 sysinfo_network_a">' . lang('Systeminfo_Network_Secure_Connection') . '</div>
 			  <div class="col-sm-9 sysinfo_network_b">' . $network_HTTPS . '</div>
-			</div>	
+			</div>
 			<div class="row">
 			  <div class="col-sm-3 sysinfo_network_a">' . lang('Systeminfo_Network_Server_Version') . '</div>
 			  <div class="col-sm-9 sysinfo_network_b">' . $_SERVER['SERVER_SOFTWARE'] . '</div>
@@ -151,7 +124,7 @@ echo '<div class="box box-solid">
 			<div class="row">
 			  <div class="col-sm-3 sysinfo_gerneral_a">' . lang('Systeminfo_Network_Request_URI') . '</div>
 			  <div class="col-sm-9 sysinfo_gerneral_b">' . $_SERVER['REQUEST_URI'] . '</div>
-			</div>		
+			</div>
 			<div class="row">
 			  <div class="col-sm-3 sysinfo_network_a">' . lang('Systeminfo_Network_Server_Query') . '</div>
 			  <div class="col-sm-9 sysinfo_network_b">' . $network_QueryString . '</div>
@@ -159,11 +132,11 @@ echo '<div class="box box-solid">
 			<div class="row">
 			  <div class="col-sm-3 sysinfo_network_a">' . lang('Systeminfo_Network_HTTP_Host') . '</div>
 			  <div class="col-sm-9 sysinfo_network_b">' . $_SERVER['HTTP_HOST'] . '</div>
-			</div>	
+			</div>
 			<div class="row">
 			  <div class="col-sm-3 sysinfo_network_a">' . lang('Systeminfo_Network_HTTP_Referer') . '</div>
 			  <div class="col-sm-9 sysinfo_network_b">' . $network_referer . '</div>
-			</div>	
+			</div>
 			<div class="row">
 			  <div class="col-sm-3 sysinfo_network_a">' . lang('Systeminfo_Network_MIME') . '</div>
 			  <div class="col-sm-9 sysinfo_network_b">' . $_SERVER['HTTP_ACCEPT'] . '</div>
@@ -171,11 +144,11 @@ echo '<div class="box box-solid">
 			<div class="row">
 			  <div class="col-sm-3 sysinfo_network_a">' . lang('Systeminfo_Network_Accept_Language') . '</div>
 			  <div class="col-sm-9 sysinfo_network_b">' . $_SERVER['HTTP_ACCEPT_LANGUAGE'] . '</div>
-			</div>				
+			</div>
 			<div class="row">
 			  <div class="col-sm-3 sysinfo_network_a">' . lang('Systeminfo_Network_Accept_Encoding') . '</div>
 			  <div class="col-sm-9 sysinfo_network_b">' . $_SERVER['HTTP_ACCEPT_ENCODING'] . '</div>
-			</div>			
+			</div>
 			<div class="row">
 			  <div class="col-sm-3 sysinfo_network_a">' . lang('Systeminfo_Network_Request_Method') . '</div>
 			  <div class="col-sm-9 sysinfo_network_b">' . $_SERVER['REQUEST_METHOD'] . '</div>
@@ -183,7 +156,7 @@ echo '<div class="box box-solid">
 			<div class="row">
 			  <div class="col-sm-3 sysinfo_network_a">' . lang('Systeminfo_Network_Request_Time') . '</div>
 			  <div class="col-sm-9 sysinfo_network_b">' . $_SERVER['REQUEST_TIME'] . '</div>
-			</div>						
+			</div>
 		</div>
       </div>';
 
@@ -241,14 +214,14 @@ function fetchUsedIps(callback) {
       `,
       variables: {
         options: {
-          status: "all_devices"  
-        }  
+          status: "all_devices"
+        }
       }
     }),
     success: function(response) {
 
       console.log(response);
-      
+
       const usedIps = (response?.data?.devices?.devices || [])
         .map(d => d.devLastIP)
         .filter(ip => ip && ip.includes('.'));
@@ -270,12 +243,12 @@ function renderAvailableIpsTable(allIps, usedIps) {
     destroy: true,
     data: availableIps,
     columns: [
-      { 
-        title: getString("Gen_Subnet"), 
-        data: "subnet" 
+      {
+        title: getString("Gen_Subnet"),
+        data: "subnet"
       },
-      { 
-        title: getString("Systeminfo_AvailableIps"), 
+      {
+        title: getString("Systeminfo_AvailableIps"),
         data: "ip",
         render: function (data, type, row, meta) {
           return `
@@ -292,6 +265,86 @@ function renderAvailableIpsTable(allIps, usedIps) {
 
 }
 
+
+// Helper: Convert CIDR to subnet mask
+function cidrToMask(cidr) {
+    return ((0xFFFFFFFF << (32 - cidr)) >>> 0)
+        .toString(16)
+        .match(/.{1,2}/g)
+        .map(h => parseInt(h, 16))
+        .join('.');
+}
+
+function formatDataSize(bytes) {
+    if (!bytes) bytes = 0;  // ensure it's a number
+
+    const mb = bytes / 1024 / 1024; // convert bytes to MB
+
+    // Format number with 2 decimals and thousands separators
+    return mb.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " MB";
+}
+
+
+
+function loadInterfaces() {
+    // Build base URL dynamically
+    const apiBase = getApiBase();
+    const apiToken = getSetting("API_TOKEN");
+
+    $.ajax({
+        url: `${apiBase}/nettools/interfaces`,
+        type: "GET",
+        headers: {
+            "Authorization": "Bearer " + apiToken,
+            "Content-Type": "application/json"
+        },
+        success: function(data) {
+            const tbody = $("#networkTable tbody");
+            tbody.empty();
+
+            console.log(data);
+
+
+            if (!data.success || !data.interfaces || Object.keys(data.interfaces).length === 0) {
+                tbody.append('<tr><td colspan="4">No interfaces found</td></tr>');
+                return;
+            }
+
+            $.each(data.interfaces, function(iface_name, iface) {
+
+                const rx_mb = formatDataSize(iface.rx_bytes);
+                const tx_mb = formatDataSize(iface.tx_bytes);
+
+                // const rx_mb = (iface.rx_bytes ?? 0) / 1024 / 1024;
+                // const tx_mb = (iface.tx_bytes ?? 0) / 1024 / 1024;
+
+                let cidr_display = "";
+                if (iface.ipv4 && iface.ipv4.length > 0) {
+                    const ip_info = iface.ipv4[0];
+                    const ip = ip_info.ip || "--";
+                    const mask = cidrToMask(ip_info.cidr || 24);
+                    cidr_display = mask + " / " + iface.ipv4;
+                }
+
+                tbody.append(`
+                    <tr>
+                        <td>${iface_name}</td>
+                        <td>${cidr_display}</td>
+                        <td>${rx_mb}</td>
+                        <td>${tx_mb}</td>
+                    </tr>
+                `);
+            });
+        },
+        error: function(xhr) {
+            const tbody = $("#networkTable tbody");
+            tbody.empty();
+            tbody.append('<tr><td colspan="4">Failed to fetch interfaces</td></tr>');
+            console.error("Error fetching interfaces:", xhr.responseText);
+        }
+    });
+}
+
 // INIT
 $(document).ready(function() {
 
@@ -301,6 +354,8 @@ $(document).ready(function() {
     renderAvailableIpsTable(allIps, usedIps);
   });
 
+  loadInterfaces();
+
   setTimeout(() => {
     // Available IPs datatable
     $('#networkTable').DataTable({
@@ -309,7 +364,7 @@ $(document).ready(function() {
       initComplete: function(settings, json) {
           hideSpinner(); // Called after the DataTable is fully initialized
       }
-    });    
+    });
   }, 200);
 });
 

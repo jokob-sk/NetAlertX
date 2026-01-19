@@ -6,6 +6,12 @@
       "type": "promptString",
       "description": "DANGER! Type YES to confirm pruning all unused Docker resources. This will destroy containers, images, volumes, and networks!",
       "default": ""
+    },
+    {
+        "id": "prNumber",
+        "type": "promptString",
+        "description": "Enter GitHub PR Number",
+        "default": "1405"
     }
   ],
   "tasks": [
@@ -21,7 +27,6 @@
         "showReuseMessage": false,
         "group": "POSIX Tasks"
       },
-      
       "problemMatcher": [],
       "group": {
         "kind": "build",
@@ -60,6 +65,31 @@
       }
     },
     {
+      "label": "[Dev Container] Load Sample Devices",
+      "type": "shell",
+      "command": "./isDevContainer.sh || exit 1; ./load-devices.sh",
+      "detail": "Generates a synthetic device inventory and imports it into the devcontainer database via /devices/import.",
+      "options": {
+        "cwd": "/workspaces/NetAlertX/.devcontainer/scripts",
+        "env": {
+          "CSV_PATH": "/tmp/netalertx-devices.csv"
+        }
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "panel": "shared",
+        "showReuseMessage": false,
+        "clear": false,
+        "group": "Devcontainer"
+      },
+      "problemMatcher": [],
+      "icon": {
+        "id": "cloud-upload",
+        "color": "terminal.ansiYellow"
+      }
+    },
+    {
       "label": "[Dev Container] Re-Run Startup Script",
       "type": "shell",
       "command": "./isDevContainer.sh || exit 1;/workspaces/NetAlertX/.devcontainer/scripts/setup.sh",
@@ -73,7 +103,6 @@
         "panel": "shared",
         "showReuseMessage": false
       },
-
       "problemMatcher": [],
       "icon": {
         "id": "beaker",
@@ -233,6 +262,31 @@
         "id": "package",
         "color": "terminal.ansiBlue"
       }
+    },
+    {
+        "label": "Analyze PR Instructions",
+        "type": "shell",
+        "command": "python3",
+        "detail": "Pull all of Coderabbit's suggestions from a pull request. Requires `gh auth login` first.",
+        "options": {
+            "cwd": "/workspaces/NetAlertX/.devcontainer/scripts"
+        },
+        "args": [
+            "/workspaces/NetAlertX/.devcontainer/scripts/coderabbit-pr-parser.py",
+            "${input:prNumber}"
+        ],
+        "problemMatcher": [],
+        "presentation": {
+            "echo": true,
+            "reveal": "always",
+            "panel": "new",
+            "showReuseMessage": false,
+            "focus": true
+        },
+        "icon": {
+            "id": "comment-discussion",
+            "color": "terminal.ansiBlue"
+        }
     }
   ]
 }

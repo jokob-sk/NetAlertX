@@ -11,6 +11,7 @@ services:
     cap_drop:
       - ALL
     cap_add:
+      - CHOWN
       - NET_ADMIN
       - NET_RAW
       - NET_BIND_SERVICE
@@ -26,9 +27,9 @@ services:
         target: /etc/localtime
         read_only: true
 
-    # tmpfs mount aligns with simplified runtime layout
+    # tmpfs mount aligns with simplified runtime layout to simulate production read-only container with adversarial root filesystem
     tmpfs:
-      - "/tmp:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      - "/tmp:uid=0,gid=0,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
 
     environment:
       LISTEN_ADDR: ${LISTEN_ADDR:-0.0.0.0}

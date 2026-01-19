@@ -1,7 +1,7 @@
 <!--
 #---------------------------------------------------------------------------------#
 #  NetAlertX                                                                       #
-#  Open Source Network Guard / WIFI & LAN intrusion detector                      #  
+#  Open Source Network Guard / WIFI & LAN intrusion detector                      #
 #                                                                                 #
 #  deviceDetails.php - Front module. Device management page                       #
 #---------------------------------------------------------------------------------#
@@ -34,8 +34,8 @@
       <div id="devicePageInfoPlc" class="card-body bg-light">
           <div class="small-box panel  rounded">
               <div class="inner text-center">
-                  
-              </div>                    
+
+              </div>
           </div>
       </div>
 
@@ -50,7 +50,7 @@
         </select>
       </span>
     </section>
-    
+
 <!-- Main content ---------------------------------------------------------- -->
     <section class="content">
 
@@ -62,51 +62,51 @@
         <!-- <div class="box-transparent"> -->
           <div id="navDevice" class="nav-tabs-custom">
             <ul class="nav nav-tabs" style="font-size:16px;">
-              <li> 
-                <a id="tabDetails"  href="#panDetails"  data-toggle="tab"> 
-                  <i class="fa fa-info-circle"></i> 
-                    <span class="dev-detail-tab-name"> 
-                      <?= lang('DevDetail_Tab_Details');?>  
+              <li>
+                <a id="tabDetails"  href="#panDetails"  data-toggle="tab">
+                  <i class="fa fa-info-circle"></i>
+                    <span class="dev-detail-tab-name">
+                      <?= lang('DevDetail_Tab_Details');?>
                     </span>
                 </a>
                 </li>
-                <li> 
-                <a id="tabTools"    href="#panTools"    data-toggle="tab"> 
-                  <i class="fa fa-screwdriver-wrench"></i> 
+                <li>
+                <a id="tabTools"    href="#panTools"    data-toggle="tab">
+                  <i class="fa fa-screwdriver-wrench"></i>
                     <span class="dev-detail-tab-name">
-                      <?= lang('DevDetail_Tab_Tools');?>    
+                      <?= lang('DevDetail_Tab_Tools');?>
                     </span>
                 </a>
                 </li>
-              <li> 
-                <a id="tabSessions" href="#panSessions" data-toggle="tab"> 
-                  <i class="fa fa-list-ol"></i> 
+              <li>
+                <a id="tabSessions" href="#panSessions" data-toggle="tab">
+                  <i class="fa fa-list-ol"></i>
                     <span class="dev-detail-tab-name">
-                      <?= lang('DevDetail_Tab_Sessions');?> 
+                      <?= lang('DevDetail_Tab_Sessions');?>
                     </span>
                 </a>
                 </li>
-              <li> 
-                <a id="tabPresence" href="#panPresence" data-toggle="tab"> 
-                  <i class="fa fa-calendar"></i> 
-                    <span class="dev-detail-tab-name"> 
-                      <?= lang('DevDetail_Tab_Presence');?> 
+              <li>
+                <a id="tabPresence" href="#panPresence" data-toggle="tab">
+                  <i class="fa fa-calendar"></i>
+                    <span class="dev-detail-tab-name">
+                      <?= lang('DevDetail_Tab_Presence');?>
                     </span>
                 </a>
                 </li>
-              <li> 
-                <a id="tabEvents"   href="#panEvents"   data-toggle="tab"> 
-                  <i class="fa fa-bolt"></i>  
+              <li>
+                <a id="tabEvents"   href="#panEvents"   data-toggle="tab">
+                  <i class="fa fa-bolt"></i>
                     <span class="dev-detail-tab-name">
-                      <?= lang('DevDetail_Tab_Events');?>   
+                      <?= lang('DevDetail_Tab_Events');?>
                     </span>
                 </a>
-                </li>              
-              <li> 
-                <a id="tabPlugins"  href="#panPlugins"  data-toggle="tab"> 
-                  <i class="fa fa-plug"></i> 
+                </li>
+              <li>
+                <a id="tabPlugins"  href="#panPlugins"  data-toggle="tab">
+                  <i class="fa fa-plug"></i>
                     <span class="dev-detail-tab-name">
-                      <?= lang('DevDetail_Tab_Plugins');?>  
+                      <?= lang('DevDetail_Tab_Plugins');?>
                     </span>
                 </a>
                 </li>
@@ -122,34 +122,34 @@
                   id="btnNext"     onclick="recordSwitch('next')"> <i class="fa fa-chevron-right"></i> </button>
               </div>
             </ul>
-            
+
             <div class="tab-content spinnerTarget" style="min-height: 430px;">
 
 <!-- tab page 1 ------------------------------------------------------------ -->
 
               <div class="tab-pane fade" id="panDetails">
-                <?php  
+                <?php
                   require 'deviceDetailsEdit.php';
                 ?>
-              </div>                                                                         
+              </div>
 
 <!-- tab page 2 ------------------------------------------------------------ -->
               <div class="tab-pane fade table-responsive" id="panSessions">
-              <?php  
+              <?php
                   require 'deviceDetailsSessions.php';
                 ?>
               </div>
-        
+
 <!-- tab page "Tools" ------------------------------------------------------------ -->
 
               <div class="tab-pane fade" id="panTools">
-                <?php  
+                <?php
                   require 'deviceDetailsTools.php';
-                ?>        	      
+                ?>
               </div>
 
 <!-- tab page 3 ------------------------------------------------------------ -->
-              <div class="tab-pane fade table-responsive" id="panPresence">                
+              <div class="tab-pane fade table-responsive" id="panPresence">
                 <?php
                   // Include the other page
                   include 'deviceDetailsPresence.php';
@@ -161,7 +161,7 @@
               <?php
                   // Include the other page
                   include 'deviceDetailsEvents.php';
-                ?>                
+                ?>
               </div>
 
 <!-- tab page 7 ------------------------------------------------------------ -->
@@ -194,7 +194,7 @@
   require 'php/templates/footer.php';
 ?>
 
-  
+
   <!-- ----------------------------------------------------------------------- -->
 
 <!-- Dark-Mode Patch -->
@@ -215,10 +215,10 @@ switch ($UI_THEME) {
 
   // ------------------------------------------------------------
 
-  mac                     = getMac()  // can also be rowID!! not only mac 
-  var devicesList         = [];   // this will contain a list the database row IDs of the devices ordered by the position displayed in the UI  
+  mac                     = getMac()  // can also be rowID!! not only mac
+  var devicesList         = [];   // this will contain a list the database row IDs of the devices ordered by the position displayed in the UI
 
-  var pos                 = -1;  
+  var pos                 = -1;
   var parPeriod           = 'Front_Details_Period';
 
   var tab                 = 'tabDetails'
@@ -250,16 +250,16 @@ function main () {
   period = '1 day';
   sessionsRows = 50;
   eventsRows = 50;
-  // $('#chkHideConnectionEvents')[0].checked = eval(eventsHide == 'true');  
+  // $('#chkHideConnectionEvents')[0].checked = eval(eventsHide == 'true');
 
   // Initialize components with parameters
-   	
+
 
   // Init tabs once DOM ready
   $( document ).ready(function() {
     initializeTabs();
   });
-         
+
 }
 
 
@@ -272,7 +272,7 @@ function periodChanged () {
 
 
 // -----------------------------------------------------------------------------
-// Left (prev) < > (next) Right toggles at the top right of device details to 
+// Left (prev) < > (next) Right toggles at the top right of device details to
 // cycle between devices
 function recordSwitch(direction) {
 
@@ -281,7 +281,7 @@ function recordSwitch(direction) {
     showModalDefaultStrParam ('Unsaved changes', 'Do you want to discard your changes?',
       '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Okay');?>', performSwitch, direction);
   } else
-  {    
+  {
     performSwitch(direction)
   }
 }
@@ -354,7 +354,7 @@ function performSwitch(direction)
   // Update the global position in the devices list variable 'pos'
   if (direction === "next") {
     console.log("direction:" + direction);
-    
+
     if (pos < devicesList.length) {
       pos++;
     }
@@ -377,13 +377,13 @@ function performSwitch(direction)
 
 // -----------------------------------------------------------------------------
 // Activate save & restore on any value change
-$(document).on('input', 'input:text', function() {  
+$(document).on('input', 'input:text', function() {
   settingsChanged();
 });
 
 // -----------------------------------------------------------------------------
 
-function initializeTabs () {  
+function initializeTabs () {
 
   key ="activeDevicesTab"
 
@@ -392,7 +392,7 @@ function initializeTabs () {
   {
     selectedTab = getCache(key);
   }
-  
+
   $('.nav-tabs a[id='+ selectedTab +']').tab('show');
 
   // When changed save new current tab
@@ -410,15 +410,28 @@ function initializeTabs () {
 //------------------------------------------------------------------------------
 //  Render the small boxes on top
 async function renderSmallBoxes() {
-    
+
     try {
         // Show loading dialog
         showSpinner();
 
         // Get data from the server
-        const response = await fetch(`php/server/devices.php?action=getServerDeviceData&mac=${getMac()}&period=${period}`);
+        const apiToken = getSetting("API_TOKEN");
+
+        const apiBaseUrl = getApiBase();
+        const url = `${apiBaseUrl}/device/${getMac()}?period=${encodeURIComponent(period)}`;
+
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${apiToken}`,
+            "Content-Type": "application/json"
+          }
+        });
+
         if (!response.ok) {
-            throw new Error(`Error fetching device data: ${response.statusText}`);
+          const text = await response.text();
+          throw new Error(`Error fetching device data: ${response.status} ${text}`);
         }
 
         const deviceData = await response.json();
@@ -549,6 +562,7 @@ function updateDevicePageName(mac) {
 
 window.onload = function async()
 {
+  mac = getMac()
   // initializeTabs();
   updateChevrons(mac);
   updateDevicePageName(mac);

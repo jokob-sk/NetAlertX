@@ -13,15 +13,19 @@ services:
     cap_drop:
       - ALL
     cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
       - NET_ADMIN
       - NET_RAW
       - NET_BIND_SERVICE
     environment:
       LISTEN_ADDR: 0.0.0.0
-      PORT: 9999  # Use non-default port to test all paths
-      APP_CONF_OVERRIDE: 20212
+      PORT: ${PORT:-9999}  # Use non-default port to test all paths
+      APP_CONF_OVERRIDE: ${GRAPHQL_PORT:-26212}
       ALWAYS_FRESH_INSTALL: true
       NETALERTX_DEBUG: 0
+      NETALERTX_CHECK_ONLY: ${NETALERTX_CHECK_ONLY:-1}
       SYSTEM_SERVICES_ACTIVE_CONFIG: /tmp/nginx/active-config
 
     volumes:
@@ -34,7 +38,11 @@ services:
         target: /tmp/nginx/active-config
         read_only: true
     tmpfs:
-      - "/tmp:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      # Ensure /tmp is a writable tmpfs for the app user; mode 1777 to support su-exec drop.
+      - /tmp:uid=20211,gid=20211,mode=1777,noexec,nosuid,nodev,size=64m
+      - /tmp/log:uid=20211,gid=20211,mode=1777,noexec,nosuid,nodev,size=64m
+      - /tmp/api:uid=20211,gid=20211,mode=1777,noexec,nosuid,nodev,size=64m
+      - /tmp/run:uid=20211,gid=20211,mode=1777,noexec,nosuid,nodev,size=64m
 volumes:
   test_netalertx_data:
   test_system_services_active_config:

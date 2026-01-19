@@ -1,5 +1,8 @@
 # Running as Root User
 
+> [!TIP]
+> Looking for how to run the container as root? See the [File permissions documentation](../FILE_PERMISSIONS.md) for details.
+
 ## Issue Description
 
 NetAlertX has detected that the container is running with root privileges (UID 0). This configuration bypasses all built-in security hardening measures designed to protect your system.
@@ -26,4 +29,4 @@ After making these changes, restart the container. The application will automati
 
 Docker Compose setup can be complex. We recommend starting with the default docker-compose.yml as a base and modifying it incrementally.
 
-For detailed Docker Compose configuration guidance, see: [DOCKER_COMPOSE.md](https://github.com/jokob-sk/NetAlertX/blob/main/docs/DOCKER_COMPOSE.md)
+For detailed Docker Compose configuration guidance, see: [DOCKER_COMPOSE.md](https://docs.netalertx.com/DOCKER_COMPOSE)

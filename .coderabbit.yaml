@@ -1,0 +1,9 @@
+reviews:
+  profile: "chill"
+  estimate_code_review_effort: false
+  auto_review:
+    enabled: true
+  high_level_summary: true
+issue_enrichment:
+  auto_enrich:
+    enabled: false

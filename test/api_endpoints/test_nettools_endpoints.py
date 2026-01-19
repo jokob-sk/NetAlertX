@@ -1,10 +1,5 @@
-import sys
 import random
-import os
 import pytest
-
-INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
-sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from helper import get_setting_value   # noqa: E402 [flake8 lint suppression]
 from api_server.api_server_start import app   # noqa: E402 [flake8 lint suppression]
@@ -106,7 +101,9 @@ def test_traceroute_device(client, api_token, test_mac):
     assert len(devices) > 0
 
     # 3. Pick the first device
-    device_ip = devices[0].get("devLastIP", "192.168.1.1")  # fallback if dummy has no IP
+    device_ip = devices[0].get("devLastIP")
+    if not device_ip:
+        device_ip = "192.168.1.1"
 
     # 4. Call the traceroute endpoint
     resp = client.post(
@@ -116,24 +113,20 @@ def test_traceroute_device(client, api_token, test_mac):
     )
 
     # 5. Assertions
-    if not device_ip or device_ip.lower() == 'invalid':
-        # Expect 400 if IP is missing or invalid
-        assert resp.status_code == 400
-        data = resp.json
-        assert data.get("success") is False
-    else:
-        # Expect 200 and valid traceroute output
-        assert resp.status_code == 200
-        data = resp.json
-        assert data.get("success") is True
-        assert "output" in data
-        assert isinstance(data["output"], str)
+
+    # Expect 200 and valid traceroute output
+    assert resp.status_code == 200
+    data = resp.json
+    assert data.get("success") is True
+    assert "output" in data
+    assert isinstance(data["output"], list)
+    assert all(isinstance(line, str) for line in data["output"])
 
 
 @pytest.mark.parametrize("ip,expected_status", [
     ("8.8.8.8", 200),
-    ("256.256.256.256", 400),  # Invalid IP
-    ("", 400),                  # Missing IP
+    ("256.256.256.256", 422),  # Invalid IP -> 422
+    ("", 422),                  # Missing IP -> 422
 ])
 def test_nslookup_endpoint(client, api_token, ip, expected_status):
     payload = {"devLastIP": ip} if ip else {}
@@ -151,13 +144,14 @@ def test_nslookup_endpoint(client, api_token, ip, expected_status):
         assert "error" in data
 
 
+@pytest.mark.feature_complete
 @pytest.mark.parametrize("ip,mode,expected_status", [
     ("127.0.0.1", "fast", 200),
-    pytest.param("127.0.0.1", "normal", 200, marks=pytest.mark.feature_complete),
-    pytest.param("127.0.0.1", "detail", 200, marks=pytest.mark.feature_complete),
+    ("127.0.0.1", "normal", 200),
+    ("127.0.0.1", "detail", 200),
     ("127.0.0.1", "skipdiscovery", 200),
-    ("127.0.0.1", "invalidmode", 400),
-    ("999.999.999.999", "fast", 400),
+    ("127.0.0.1", "invalidmode", 422),
+    ("999.999.999.999", "fast", 422),
 ])
 def test_nmap_endpoint(client, api_token, ip, mode, expected_status):
     payload = {"scan": ip, "mode": mode}
@@ -201,10 +195,39 @@ def test_internet_info_endpoint(client, api_token):
 
     if resp.status_code == 200:
         assert data.get("success") is True
-        assert isinstance(data.get("output"), str)
-        assert len(data["output"]) > 0  # ensure output is not empty
+        assert isinstance(data.get("output"), dict)
+        assert len(data["output"]) > 0              # ensure output is not empty
     else:
         # Handle errors, e.g., curl failure
+        assert data.get("success") is False
+        assert "error" in data
+        assert "details" in data
+
+
+def test_interfaces_endpoint(client, api_token):
+    # Call the /nettools/interfaces endpoint
+    resp = client.get("/nettools/interfaces", headers=auth_headers(api_token))
+    data = resp.json
+
+    # Assertions
+    if resp.status_code == 200:
+        assert data.get("success") is True
+        assert "interfaces" in data
+        interfaces = data["interfaces"]
+        assert isinstance(interfaces, dict)
+        for if_name, iface in interfaces.items():
+            assert "name" in iface
+            assert "short" in iface
+            assert "type" in iface
+            assert "state" in iface
+            assert "mtu" in iface
+            assert "mac" in iface
+            assert "ipv4" in iface and isinstance(iface["ipv4"], list)
+            assert "ipv6" in iface and isinstance(iface["ipv6"], list)
+            assert "rx_bytes" in iface
+            assert "tx_bytes" in iface
+    else:
+        # Handle failure
         assert data.get("success") is False
         assert "error" in data
         assert "details" in data

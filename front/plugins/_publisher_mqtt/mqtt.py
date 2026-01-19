@@ -26,7 +26,8 @@ from logger import mylog, Logger  # noqa: E402 [flake8 lint suppression]
 from helper import get_setting_value, bytes_to_string, \
     sanitize_string, normalize_string  # noqa: E402 [flake8 lint suppression]
 from database import DB, get_device_stats  # noqa: E402 [flake8 lint suppression]
-
+from utils.datetime_utils import timeNowDB  # noqa: E402 [flake8 lint suppression]
+from models.notification_instance import NotificationInstance  # noqa: E402 [flake8 lint suppression]
 
 # Make sure the TIMEZONE for logging is correct
 conf.tz = timezone(get_setting_value('TIMEZONE'))
@@ -80,17 +81,14 @@ def check_config():
 
     Returns:
         bool: True if all required MQTT settings
-              ('MQTT_BROKER', 'MQTT_PORT', 'MQTT_USER', 'MQTT_PASSWORD')
+              ('MQTT_BROKER', 'MQTT_PORT')
               are non-empty;
               False otherwise. Logs a verbose error message
               if any setting is missing.
     """
-    if get_setting_value('MQTT_BROKER') == '' \
-        or get_setting_value('MQTT_PORT') == '' \
-            or get_setting_value('MQTT_USER') == '' \
-            or get_setting_value('MQTT_PASSWORD') == '':
+    if get_setting_value('MQTT_BROKER') == '' or get_setting_value('MQTT_PORT') == '':
         mylog('verbose', [f'[Check Config] ⚠ ERROR: MQTT service not set up \
-            correctly. Check your {confFileName} MQTT_* variables.'])
+            correctly. Check your {confFileName} MQTT_BROKER and MQTT_PORT variables.'])
         return False
     else:
         return True
@@ -346,7 +344,9 @@ def mqtt_create_client():
 
     mytransport = 'tcp'  # or 'websockets'
 
-    def on_disconnect(mqtt_client, userdata, rc):
+    def on_disconnect(mqtt_client, userdata, rc, properties=None, *args):
+
+        mylog('verbose', [f"[{pluginName}] MQTT disconnected: reasonCode={rc}"])
 
         global mqtt_connected_to_broker
 
@@ -459,6 +459,10 @@ def mqtt_start(db):
             }
         )
 
+    #  Notifications
+    if get_setting_value('MQTT_SEND_NOTIFICATIONS'):
+        publish_notifications(db, mqtt_client)
+
     # Generate device-specific MQTT messages if enabled
     if get_setting_value('MQTT_SEND_DEVICES'):
 
@@ -506,7 +510,7 @@ def mqtt_start(db):
                 "group": device["devGroup"],
                 "location": device["devLocation"],
                 "network_parent_mac": device["devParentMAC"],
-                "network_parent_name": next((dev["devName"] for dev in devices if dev["devMAC"] == device["devParentMAC"]), "")
+                "network_parent_name": next((dev["devName"] for dev in devices if dev["devMac"] == device["devParentMAC"]), "")
             }
 
             # bulk update device sensors in home assistant
@@ -534,6 +538,65 @@ def mqtt_start(db):
 
             # publish device_tracker attributes
             publish_mqtt(mqtt_client, sensorConfig.json_attr_topic, devJson)
+
+
+# ---------------------------------------------------------------------
+# Publish webhook-style notifications via MQTT
+# ---------------------------------------------------------------------
+def publish_notifications(db, mqtt_client):
+    """
+    Gather pending notifications and publish a single JSON payload via MQTT
+    that mirrors the webhook structure.
+    Only runs if MQTT_SEND_NOTIFICATIONS is enabled.
+    """
+
+    # Ensure MQTT client is connected
+    if not mqtt_connected_to_broker:
+        mylog('minimal', [f"[{pluginName}] ⚠ ERROR: Not connected to broker, aborting notification publish."])
+        return False
+
+    notifications = NotificationInstance(db).getNew() or []
+    if not notifications:
+        mylog('debug', [f"[{pluginName}] No new notifications to publish via MQTT."])
+        return False
+
+    for notification in notifications:
+        # Use pre-built JSON payload if available in the 'JSON' column
+        payload_str = notification["JSON"]
+        if payload_str:
+            try:
+                payload = json.loads(payload_str)  # Deserialize JSON string
+            except Exception as e:
+                mylog('minimal', [f"[{pluginName}] ⚠ ERROR decoding JSON for notification GUID {notification['GUID']}: {e}"])
+                continue  # skip this notification
+        else:
+            # fallback generic payload (like webhook does)
+            payload = {
+                "username": "NetAlertX",
+                "text": "There are new notifications",
+                "attachments": [{
+                    "title": "NetAlertX Notifications",
+                    "title_link": get_setting_value('REPORT_DASHBOARD_URL'),
+                    "text": notification["Text"] or notification["HTML"] or ""
+                }]
+            }
+
+        # Optional: attach meta info
+        payload["_meta"] = {
+            "published_at": timeNowDB(),
+            "source": "NetAlertX",
+            "notification_GUID": notification["GUID"]
+        }
+
+        # Publish to a single MQTT topic safely
+        topic = f"{topic_root}/notifications/all"
+        mylog('debug', [f"[{pluginName}] Publishing notification GUID {notification['GUID']} to MQTT topic {topic}"])
+        try:
+            publish_mqtt(mqtt_client, topic, payload)
+        except Exception as e:
+            mylog('minimal', [f"[{pluginName}] ⚠ ERROR publishing MQTT notification GUID {notification['GUID']}: {e}"])
+
+    return True
 
 
 # =============================================================================

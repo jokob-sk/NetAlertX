@@ -38,10 +38,10 @@ def test_graphql_debug_get(client):
 
 
 def test_graphql_post_unauthorized(client):
-    """POST /graphql without token should return 401"""
+    """POST /graphql without token should return 403"""
     query = {"query": "{ devices { devName devMac } }"}
     resp = client.post("/graphql", json=query)
-    assert resp.status_code == 401
+    assert resp.status_code == 403
     assert "Unauthorized access attempt" in resp.json.get("message", "")
     assert "Forbidden" in resp.json.get("error", "")
 

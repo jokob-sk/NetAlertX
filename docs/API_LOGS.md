@@ -18,7 +18,6 @@ Only specific, pre-approved log files can be purged for security and stability r
 
 ```
 app.log
-app_front.log
 IP_changes.log
 stdout.log
 stderr.log

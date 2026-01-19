@@ -1,0 +1,48 @@
+services:
+  netalertx:
+    # Missing NET_ADMIN capability configuration for testing
+    network_mode: ${NETALERTX_NETWORK_MODE:-host}
+    build:
+      context: ../../../
+      dockerfile: Dockerfile
+    image: netalertx-test
+    container_name: netalertx-test-missing-net-admin
+    read_only: true
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - NET_RAW
+      - NET_BIND_SERVICE
+      # Missing NET_ADMIN
+
+    volumes:
+      - type: volume
+        source: netalertx_data
+        target: /data
+        read_only: false
+
+      - type: bind
+        source: /etc/localtime
+        target: /etc/localtime
+        read_only: true
+
+    environment:
+      LISTEN_ADDR: ${LISTEN_ADDR:-0.0.0.0}
+      PORT: ${PORT:-20211}
+      GRAPHQL_PORT: ${GRAPHQL_PORT:-20212}
+      ALWAYS_FRESH_INSTALL: ${ALWAYS_FRESH_INSTALL:-false}
+      NETALERTX_DEBUG: ${NETALERTX_DEBUG:-0}
+
+    mem_limit: 2048m
+    mem_reservation: 1024m
+    cpu_shares: 512
+    pids_limit: 512
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  netalertx_data:

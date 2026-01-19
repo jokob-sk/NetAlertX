@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 ################################################################################
 # NetAlertX Container Entrypoint
@@ -46,27 +46,37 @@ if [ "$#" -gt 0 ]; then
     esac
 fi
 
+# If invoked directly (bypassing root-entrypoint), re-enter through it once for priming
+# and privilege drop. Guard with ENTRYPOINT_PRIMED to avoid loops when root-entrypoint
+# hands control back to this script.
+if [ "${ENTRYPOINT_PRIMED:-0}" != "1" ] && [ "$(id -u)" -eq 0 ] && [ -x "/root-entrypoint.sh" ]; then
+    >&2 cat <<'EOF'
+ℹ️  NetAlertX startup: Running privilege check and path priming as ROOT.
+    (On modern systems, privileges will be dropped to PUID after setup)
+EOF
+    export ENTRYPOINT_PRIMED=1
+    exec /root-entrypoint.sh "$@"
+fi
+
 # Banner display
 RED='\033[1;31m'
 GREY='\033[90m'
 RESET='\033[0m'
-printf "%s" "${RED}"
-echo '
+NAX='
  _   _      _    ___  _           _  __   __
 | \ | |    | |  / _ \| |         | | \ \ / /
-|  \| | ___| |_/ /_\ \ | ___ _ __| |_ \ V / 
-| .   |/ _ \ __|  _  | |/ _ \  __| __|/   \ 
-| |\  |  __/ |_| | | | |  __/ |  | |_/ /^\ \ 
+|  \| | ___| |_/ /_\ \ | ___ _ __| |_ \ V /
+| .   |/ _ \ __|  _  | |/ _ \  __| __|/   \
+| |\  |  __/ |_| | | | |  __/ |  | |_/ /^\ \
 \_| \_/\___|\__\_| |_/_|\___|_|   \__\/   \/
 '
 
-printf "%s" "${RESET}"
-echo '   Network intruder and presence detector. 
+printf "%b%s%b" "${RED}" "${NAX}" "${RESET}"
+echo '   Network intruder and presence detector.
    https://netalertx.com
 
 '
 set -u
-
 FAILED_STATUS=""
 echo "Startup pre-checks"
 for script in "${ENTRYPOINT_CHECKS}"/*; do
@@ -89,17 +99,13 @@ for script in "${ENTRYPOINT_CHECKS}"/*; do
         >&2 cat <<EOF
 ══════════════════════════════════════════════════════════════════════════════
 ❌ NetAlertX startup aborted: critical failure in ${script_name}.
-https://github.com/jokob-sk/NetAlertX/blob/main/docs/docker-troubleshooting/troubleshooting.md
 ══════════════════════════════════════════════════════════════════════════════
 EOF
         >&2 printf "%s" "${RESET}"
 
+        FAILED_STATUS="1"
         if [ "${NETALERTX_DEBUG:-0}" -eq 1 ]; then
-		
-            FAILED_STATUS="1"
             echo "NETALERTX_DEBUG=1, continuing despite critical failure in ${script_name}."
-        else
-            exit 1
         fi
     elif [ ${NETALERTX_DOCKER_ERROR_CHECK} -ne 0 ]; then
         # fail but continue checks so user can see all issues
@@ -123,7 +129,7 @@ fi
 # Set APP_CONF_OVERRIDE based on GRAPHQL_PORT if not already set
 if [ -n "${GRAPHQL_PORT:-}" ] && [ -z "${APP_CONF_OVERRIDE:-}" ]; then
     export APP_CONF_OVERRIDE='{"GRAPHQL_PORT":"'"${GRAPHQL_PORT}"'"}'
-    echo "Setting APP_CONF_OVERRIDE to $APP_CONF_OVERRIDE"
+    >&2 echo "APP_CONF_OVERRIDE detected (set from GRAPHQL_PORT)"
 fi
 
 
@@ -266,9 +272,6 @@ trap on_signal INT TERM
 
 
 
-################################################################################
-# Service Startup Section
-################################################################################
 # Start services based on environment configuration
 
 # Only start crond scheduler on Alpine (non-Debian) environments
@@ -282,15 +285,6 @@ fi
 add_service "${SYSTEM_SERVICES}/start-php-fpm.sh" "php-fpm83"
 add_service "${SYSTEM_SERVICES}/start-nginx.sh" "nginx"
 add_service "${SYSTEM_SERVICES}/start-backend.sh" "python3"
-
-################################################################################
-# Development Mode Debug Switch
-################################################################################
-# If NETALERTX_DEBUG=1, skip automatic service restart on failure
-# Useful for devcontainer debugging where individual services need to be debugged
-if [ "${NETALERTX_DEBUG:-0}" -eq 1 ]; then
-	echo "NETALERTX_DEBUG is set to 1, will not shut down other services if one fails."
-fi
 
 ################################################################################
 # Service Monitoring Loop (Production Mode)
@@ -327,7 +321,7 @@ while [ -n "${SERVICES}" ]; do
             FAILED_STATUS=$status
             FAILED_NAME="${name}"
             remove_service "${pid}"
-            
+
             if [ "${NETALERTX_DEBUG:-0}" -eq 1 ]; then
                 echo "⚠️ Service ${name} exited with status ${status}. Debug mode active - continuing."
             else

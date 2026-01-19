@@ -1,7 +1,7 @@
 # NetAlertX and Docker Compose
 
 > [!WARNING]
-> ⚠️ **Important:** The docker-compose has recently changed. Carefully read the [Migration guide](https://jokob-sk.github.io/NetAlertX/MIGRATION/?h=migrat#12-migration-from-netalertx-v25524) for detailed instructions.
+> ⚠️ **Important:** The docker-compose has recently changed. Carefully read the [Migration guide](https://docs.netalertx.com/MIGRATION/?h=migrat#12-migration-from-netalertx-v25524) for detailed instructions.
 
 Great care is taken to ensure NetAlertX meets the needs of everyone while being flexible enough for anyone. This document outlines how you can configure your docker-compose. There are many settings, so we recommend using the Baseline Docker Compose as-is, or modifying it for your system.Good care is taken to ensure NetAlertX meets the needs of everyone while being flexible enough for anyone. This document outlines how you can configure your docker-compose. There are many settings, so we recommend using the Baseline Docker Compose as-is, or modifying it for your system.
 
@@ -17,7 +17,7 @@ services:
   netalertx:
   #use an environmental variable to set host networking mode if needed
     container_name: netalertx                       # The name when you docker contiainer ls
-    image: ghcr.io/jokob-sk/netalertx-dev:latest
+    image: ghcr.io/jokob-sk/netalertx:latest
     network_mode: ${NETALERTX_NETWORK_MODE:-host}   # Use host networking for ARP scanning and other services
 
     read_only: true                                 # Make the container filesystem read-only
@@ -51,24 +51,26 @@ services:
       # - path/on/host/to/dhcp.file:/resources/dhcp.file
 
     # tmpfs mount consolidates writable state for a read-only container and improves performance
-    # uid=20211 and gid=20211 is the netalertx user inside the container
-    # mode=1700 grants rwx------ permissions to the netalertx user only
+    # uid/gid default to the service user (NETALERTX_UID/GID, default 20211)
+    # mode=1700 grants rwx------ permissions to the runtime user only
     tmpfs:
       # Comment out to retain logs between container restarts - this has a server performance impact.
-      - "/tmp:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      - "/tmp:uid=${NETALERTX_UID:-20211},gid=${NETALERTX_GID:-20211},mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
 
       # Retain logs - comment out tmpfs /tmp if you want to retain logs between container restarts
       # Please note if you remove the /tmp mount, you must create and maintain sub-folder mounts.
       # - /path/on/host/log:/tmp/log
-      # - "/tmp/api:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
-      # - "/tmp/nginx:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
-      # - "/tmp/run:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      # - "/tmp/api:uid=${NETALERTX_UID:-20211},gid=${NETALERTX_GID:-20211},mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      # - "/tmp/nginx:uid=${NETALERTX_UID:-20211},gid=${NETALERTX_GID:-20211},mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      # - "/tmp/run:uid=${NETALERTX_UID:-20211},gid=${NETALERTX_GID:-20211},mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
 
     environment:
       LISTEN_ADDR: ${LISTEN_ADDR:-0.0.0.0}                   # Listen for connections on all interfaces
       PORT: ${PORT:-20211}                                   # Application port
       GRAPHQL_PORT: ${GRAPHQL_PORT:-20212}                   # GraphQL API port (passed into APP_CONF_OVERRIDE at runtime)
   #    NETALERTX_DEBUG: ${NETALERTX_DEBUG:-0}                 # 0=kill all services and restart if any dies. 1 keeps running dead services.
+  #    PUID: 20211                             # Runtime PUID override, set to 0 to run as root
+  #    PGID: 20211                             # Runtime PGID override
 
     # Resource limits to prevent resource exhaustion
     mem_limit: 2048m            # Maximum memory usage
@@ -93,6 +95,9 @@ Run or re-run it:
 ```sh
 docker compose up --force-recreate
 ```
+
+> [!TIP]
+> Runtime UID/GID: The image ships with a service user `netalertx` (UID/GID 20211) and a readonly lock owner also at 20211 for 004/005 immutability. If you override the runtime user (compose `user:` or `NETALERTX_UID/GID` vars), ensure your `/data` volume and tmpfs mounts use matching `uid/gid` so startup checks and writable paths succeed.
 
 ### Customize with Environmental Variables
 
@@ -167,10 +172,6 @@ Make sure to replace `/local_data_dir` with your actual path. The format is `<pa
 Now, any files created by NetAlertX in `/data/config` will appear in your `/local_data_dir/config` folder.
 
 This same method works for mounting other things, like custom plugins or enterprise NGINX files, as shown in the commented-out examples in the baseline file.
-
-## Example Configuration Summaries
-
-Here are the essential modifications for common alternative setups.
 
 ### Example 2: External `.env` File for Paths
 

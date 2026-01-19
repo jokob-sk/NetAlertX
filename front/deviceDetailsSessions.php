@@ -5,7 +5,7 @@
 ?>
 
 <!-- ----------------------------------------------------------------------- -->
- 
+
 
 <!-- Datatable Session -->
 <table id="tableSessions" class="table table-bordered table-hover table-striped ">
@@ -53,20 +53,20 @@ function initializeSessionsDatatable (sessionsRows) {
         {targets: [1,2],
           "createdCell": function (td, cellData, rowData, row, col) {
             // console.log(cellData);
-            
+
             if (!cellData.includes("missing event") && !cellData.includes("..."))
-            {               
+            {
               if (cellData.includes("+")) { // Check if timezone offset is present
                 cellData = cellData.split('+')[0]; // Remove timezone offset
-              } 
+              }
               // console.log(cellData);
               result = localizeTimestamp(cellData);
             } else
             {
               result = translateHTMLcodes(cellData)
             }
-            
-            $(td).html (result);              
+
+            $(td).html (result);
         } }
     ],
 
@@ -94,21 +94,53 @@ function initializeSessionsDatatable (sessionsRows) {
 // INIT with polling for panel element visibility
 // -----------------------------------------------
 
-// ----------------------------------------------------------- 
+// -----------------------------------------------------------
 // Init datatable
-function loadSessionsData(period){
+function loadSessionsData() {
   const table = $('#tableSessions').DataTable();
+  let period = $("#period").val()
 
   showSpinner();
 
-  // table.clear().draw(); // Clear existing data before reloading
+  // Build API base
+  const apiToken = getSetting("API_TOKEN");
 
-  table.ajax
-    .url('php/server/events.php?action=getDeviceSessions&mac=' + getMac() + '&period=' + period)
-    .load(function () {
+  const apiBaseUrl = getApiBase();
+  const url = `${apiBaseUrl}/sessions/${getMac()}?period=${encodeURIComponent(period)}`;
+
+  // Call API with Authorization header
+  $.ajax({
+    url: url,
+    method: "GET",
+    headers: {
+      "Authorization": `Bearer ${apiToken}`
+    },
+    success: function (data) {
+      table.clear();
+
+      if (data.success && data.sessions.length) {
+        data.sessions.forEach(session => {
+          table.row.add([
+            session.ses_DateTimeOrder,
+            session.ses_Connection,
+            session.ses_Disconnection,
+            session.ses_Duration,
+            session.ses_IP,
+            session.ses_Info
+          ]);
+        });
+      }
+
+      table.draw();
       hideSpinner();
-    });
+    },
+    error: function (xhr, status, err) {
+      console.error("Failed to load sessions:", err, xhr.responseText);
+      hideSpinner();
+    }
+  });
 }
+
 
 var sessionsPageInitialized = false;
 
@@ -128,10 +160,9 @@ function initDeviceSessionsPage()
   showSpinner();
 
   var sessionsRows        = 10;
-  var period              = '1 month';
 
   initializeSessionsDatatable(sessionsRows);
-  loadSessionsData(period);
+  loadSessionsData();
 }
 
 // -----------------------------------------------------------------------------
@@ -144,6 +175,6 @@ function deviceSessionsPageUpdater() {
 }
 
 // start updater
-deviceSessionsPageUpdater();  
+deviceSessionsPageUpdater();
 
 </script>

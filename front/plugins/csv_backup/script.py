@@ -4,7 +4,6 @@ import os
 import argparse
 import sys
 import csv
-import sqlite3
 from datetime import datetime
 
 # Register NetAlertX directories
@@ -13,9 +12,10 @@ sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from logger import mylog, Logger  # noqa: E402 [flake8 lint suppression]
 from helper import get_setting_value   # noqa: E402 [flake8 lint suppression]
-from const import logPath, fullDbPath  # noqa: E402 [flake8 lint suppression]
+from const import logPath  # noqa: E402 [flake8 lint suppression]
 import conf  # noqa: E402 [flake8 lint suppression]
 from pytz import timezone  # noqa: E402 [flake8 lint suppression]
+from database import get_temp_db_connection  # noqa: E402 [flake8 lint suppression]
 
 # Make sure the TIMEZONE for logging is correct
 conf.tz = timezone(get_setting_value('TIMEZONE'))
@@ -48,7 +48,7 @@ def main():
     mylog('verbose', ['[CSVBCKP] In script'])
 
     # Connect to the App database
-    conn = sqlite3.connect(fullDbPath)
+    conn = get_temp_db_connection()
     cursor = conn.cursor()
 
     # Execute your SQL query

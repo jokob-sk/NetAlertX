@@ -35,6 +35,7 @@ docker run -d --name netalertx-test-container \
   --cap-add SYS_ADMIN \
   --cap-add NET_ADMIN \
   --cap-add NET_RAW \
+  --cap-add NET_BIND_SERVICE \
   --security-opt apparmor=unconfined \
   --add-host=host.docker.internal:host-gateway \
   -v /var/run/docker.sock:/var/run/docker.sock \
@@ -43,7 +44,7 @@ docker run -d --name netalertx-test-container \
 
 # --- 5. Install Python test dependencies ---
 echo "--- Installing Python test dependencies into venv ---"
-docker exec netalertx-test-container /opt/venv/bin/pip3 install --ignore-installed pytest docker debugpy
+docker exec netalertx-test-container pip3 install --break-system-packages pytest docker debugpy selenium
 
 # --- 6. Execute Setup Script ---
 echo "--- Executing setup script inside the container ---"
@@ -76,7 +77,7 @@ docker exec netalertx-test-container /bin/bash -c " \
 # --- 9. Execute Tests ---
 echo "--- Executing tests inside the container ---"
 docker exec netalertx-test-container /bin/bash -c " \
-    cd /workspaces/NetAlertX && /opt/venv/bin/pytest -m 'not (docker or compose or feature_complete)' --cache-clear -o cache_dir=/tmp/.pytest_cache; \
+    cd /workspaces/NetAlertX && pytest -m 'not (docker or compose or feature_complete)' --cache-clear -o cache_dir=/tmp/.pytest_cache; \
 "
 
 # --- 10. Final Teardown ---

@@ -39,6 +39,25 @@ function generateApiToken(elem, length) {
   }
 }
 
+// -------------------------------------------------------------------
+// Utility function to generate a random NAX node name in the format NAX-<GUID>
+function generateNaxNodeName(elem)
+{
+  // Retrieve and parse custom parameters from the element
+  let params = $(elem).attr("my-customparams")?.split(',').map(param => param.trim());
+  if (params && params.length >= 1) {
+    var targetElementID = params[0];  // Get the target element's ID
+  }
+
+  newNodeName = 'NAX-' + getGuid().split('-')[0];
+
+  let targetElement = $('#' + targetElementID);
+  // Set the generated token as the value of the target element
+  if (targetElement.length) {
+    targetElement.val(newNodeName);
+  }
+}
+
 // ----------------------------------------------
 // Generate a random N-byte hexadecimal key
 function getRandomBytes(elem, length) {
@@ -144,7 +163,7 @@ function validateRegex(elem) {
       } else {
           iconSpan.html("<i class='fa fa-xmark'></i>");
           showModalOk('WARNING', getString("Gen_Invalid_Value"));
-          inputElem.attr("data-is-valid", "0"); 
+          inputElem.attr("data-is-valid", "0");
       }
   }
 
@@ -289,12 +308,21 @@ function execute_settingEvent(element) {
   if (["test", "run"].includes(feEvent)) {
     // Calls a backend function to add a front-end event (specified by the attributes 'data-myevent' and 'data-myparam-plugin' on the passed  element) to an execution queue
     // value has to be in format event|param. e.g. run|ARPSCAN
-    action = `${getGuid()}|${feEvent}|${fePlugin}`
+    action = `${feEvent}|${fePlugin}`
+
+    // Get data from the server
+    const apiToken = getSetting("API_TOKEN");
+    const apiBaseUrl = getApiBase();
+    const url = `${apiBaseUrl}/logs/add-to-execution-queue`;
 
     $.ajax({
       method: "POST",
-      url: "php/server/util.php",
-      data: { function: "addToExecutionQueue", action: action  },
+      url: url,
+      headers: {
+        "Authorization": "Bearer " + apiToken,
+        "Content-Type": "application/json"
+      },
+      data: JSON.stringify({ action: action }),
       success: function(data, textStatus) {
           // showModalOk ('Result', data );
 
@@ -378,14 +406,27 @@ function overwriteIconType()
     )
   `;
 
-  const apiUrl = `php/server/dbHelper.php?action=write&rawSql=${btoa(encodeURIComponent(rawSql))}`;
+  const apiBase = getApiBase();
+  const apiToken = getSetting("API_TOKEN");
+  const url = `${apiBase}/dbquery/write`;
 
-  $.get(apiUrl, function(response) {
-    if (response === 'OK') {
-      showMessage (response);
-      updateApi("devices")
-    } else {
-      showMessage (response, 3000, "modal_red");
+  $.ajax({
+    url,
+    method: "POST",
+    headers: { "Authorization": `Bearer ${apiToken}` },
+    data: JSON.stringify({ rawSql: btoa(unescape(encodeURIComponent(rawSql))) }),
+    contentType: "application/json",
+    success: function(response) {
+      if (response.success) {
+        showMessage("OK");
+        updateApi("devices");
+      } else {
+        showMessage(response.error || "Unknown error", 3000, "modal_red");
+      }
+    },
+    error: function(xhr, status, error) {
+      console.error("Error updating icons:", status, error);
+      showMessage("Error: " + (xhr.responseJSON?.error || error), 3000, "modal_red");
     }
   });
 }
@@ -449,11 +490,32 @@ function addOptionFromModalInput() {
 }
 
 
+/**
+ * Check if a given MAC address is a "fake" MAC used internally.
+ *
+ * A MAC is considered fake if it starts with:
+ *   - "FA:CE" (new synthetic devices)
+ *   - "00:1A" (legacy placeholder devices)
+ *
+ * The check is case-insensitive.
+ *
+ * @param {string} macAddress - The MAC address to check.
+ * @returns {boolean} True if the MAC is fake, false otherwise.
+ */
+function isFakeMac(macAddress) {
+  // Normalize to lowercase for consistent comparison
+  macAddress = macAddress.toLowerCase();
+
+  // Check if MAC starts with FA:CE or 00:1a
+  return macAddress.startsWith("fa:ce") || macAddress.startsWith("00:1a");
+}
+
+
 // --------------------------------------------------------
-// Generate a random MAC address starting 00:1A
+// Generate a random MAC address starting FA:CE
 function generate_NEWDEV_devMac() {
   const randomHexPair = () => Math.floor(Math.random() * 256).toString(16).padStart(2, '0').toUpperCase();
-  $('#NEWDEV_devMac').val(`00:1A:${randomHexPair()}:${randomHexPair()}:${randomHexPair()}:${randomHexPair()}`.toLowerCase());
+  $('#NEWDEV_devMac').val(`FA:CE:${randomHexPair()}:${randomHexPair()}:${randomHexPair()}:${randomHexPair()}`.toLowerCase());
 }
 
 

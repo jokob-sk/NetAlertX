@@ -6,7 +6,7 @@
 
 <!-- INTERNET INFO -->
 <?php if ($_REQUEST["mac"] == "Internet") { ?>
-    
+
     <h4 class=""><i class="fa-solid fa-globe"></i>
         <?= lang("DevDetail_Tab_Tools_Internet_Info_Title") ?>
     </h4>
@@ -25,7 +25,7 @@
 
 <!-- COPY FROM DEVICE -->
 <?php if ($_REQUEST["mac"] != "Internet") { ?>
-    
+
     <h4 class=""><i class="fa-solid fa-copy"></i>
         <?= lang("DevDetail_Copy_Device_Title") ?>
     </h4>
@@ -34,8 +34,8 @@
     </h5>
     <br>
     <div style="width:100%; text-align: center;">
-        <select class="form-control" 
-                title="<?= lang('DevDetail_Copy_Device_Tooltip');?>" 
+        <select class="form-control"
+                title="<?= lang('DevDetail_Copy_Device_Tooltip');?>"
                 id="txtCopyFromDevice" >
                 <option value="lemp_loading" id="lemp_loading">Loading</option>
         </select>
@@ -48,7 +48,7 @@
 
 <!-- WAKE ON LAN - WOL -->
 <?php if ($_REQUEST["mac"] != "Internet") { ?>
-    
+
     <h4 class=""><i class="fa-solid fa-bell"></i>
         <?= lang("DevDetail_Tools_WOL_noti") ?>
     </h4>
@@ -75,12 +75,12 @@
     </h5>
     <br>
     <div style="width:100%; text-align: center;">
-        <button type="button" 
-                class="btn btn-default pa-btn pa-btn-delete"  
-                style="margin-left:0px;" 
-                id="btnDeleteEvents"   
-                onclick="askDeleteDeviceEvents()">   
-                  <?= lang('DevDetail_button_DeleteEvents');?> 
+        <button type="button"
+                class="btn btn-default pa-btn pa-btn-delete"
+                style="margin-left:0px;"
+                id="btnDeleteEvents"
+                onclick="askDeleteDeviceEvents()">
+                  <?= lang('DevDetail_button_DeleteEvents');?>
         </button>
         <br>
         <div id="wol_output" style="margin-top: 10px;"></div>
@@ -88,19 +88,19 @@
 
 <!-- Reset Custom Proprties -->
 <h4 class=""><i class="fa-solid fa-list"></i>
-        <?= lang("DevDetail_CustomProperties_Title") ?> 
+        <?= lang("DevDetail_CustomProperties_Title") ?>
     </h4>
     <h5 class="">
         <?= lang("DevDetail_CustomProps_reset_info") ?>
     </h5>
     <br>
     <div style="width:100%; text-align: center;">
-        <button type="button" 
-                class="btn btn-default pa-btn pa-btn-delete"  
-                style="margin-left:0px;" 
-                id="btnDeleteEvents"   
-                onclick="askResetDeviceProps()">   
-                    <?= lang("Gen_Reset") ?> 
+        <button type="button"
+                class="btn btn-default pa-btn pa-btn-delete"
+                style="margin-left:0px;"
+                id="btnDeleteEvents"
+                onclick="askResetDeviceProps()">
+                    <?= lang("Gen_Reset") ?>
         </button>
         <br>
         <div id="wol_output" style="margin-top: 10px;"></div>
@@ -159,11 +159,11 @@
         <div id="nslookupoutput" style="margin-top: 10px;"></div>
     </div>
 
-<?php } ?>                                             
+<?php } ?>
 
 <!-- NMAP SCANS -->
 <h4 class=""><i class="fa-solid fa-ethernet"></i>
-    <?= lang("DevDetail_Nmap_Scans") ?>    
+    <?= lang("DevDetail_Nmap_Scans") ?>
 </h4>
 <div style="width:100%; text-align: center;">
     <div>
@@ -210,66 +210,188 @@
 <div id="scanoutput" style="margin-top: 30px;"></div>
 
 <script>
-    // ----------------------------------------------------------------
+
+        const apiToken = getSetting("API_TOKEN");
+        const apiBaseUrl = getApiBase();
+
+        // ----------------------------------------------------------------
         function manualnmapscan(targetip, mode) {
-            $( "#scanoutput" ).empty();
-                $.ajax({
-                    method: "POST",
-                    url: "./php/server/nmap_scan.php",
-                    data: { scan: targetip, mode: mode },
-                    beforeSend: function() { $('#scanoutput').addClass("ajax_scripts_loading"); },
-                    complete: function() { $('#scanoutput').removeClass("ajax_scripts_loading"); },
-                    success: function(data, textStatus) {
-                    // console.log(data);
-                        $("#scanoutput").html(data);    
+            $("#scanoutput").empty();
+
+            $.ajax({
+                method: "POST",
+                url: `${apiBaseUrl}/nettools/nmap`,
+                contentType: "application/json",
+                dataType: "json",
+                data: JSON.stringify({
+                    scan: targetip,
+                    mode: mode
+                }),
+                headers: {
+                    "Authorization": "Bearer " + apiToken
+                },
+                beforeSend: function() {
+                    $('#scanoutput').addClass("ajax_scripts_loading");
+                },
+                complete: function() {
+                    $('#scanoutput').removeClass("ajax_scripts_loading");
+                },
+                success: function(resp) {
+                    if (!resp.success) {
+                        $("#scanoutput").text(resp.error || resp.message || "nmap scan failed");
+                        return;
                     }
-                })
+
+                    // Format output lines into HTML
+                    const html = resp.output.map(line => `<div>${line}</div>`).join("");
+                    $("#scanoutput").html(`<pre>` + html + `</pre>`);
+                },
+                error: function() {
+                    $("#scanoutput").text("Request to nmap scan endpoint failed");
+                }
+            });
         }
 
 
         // ----------------------------------------------------------------
         function speedtestcli() {
             $( "#speedtestoutput" ).empty();
-                $.ajax({
-                    method: "POST",
-                    url: "./php/server/speedtestcli.php",
-                    beforeSend: function() { $('#speedtestoutput').addClass("ajax_scripts_loading"); },
-                    complete: function() { $('#speedtestoutput').removeClass("ajax_scripts_loading"); },
-                    success: function(data, textStatus) {
-                        $("#speedtestoutput").html(data);    
+
+            $.ajax({
+                method: "GET",
+                url: `${apiBaseUrl}/nettools/speedtest`,
+                headers: {
+                    "Authorization": "Bearer " + apiToken,
+                    "Content-Type": "application/json"
+                },
+                dataType: "json",
+
+                beforeSend: function () {
+                    $('#speedtestoutput').addClass("ajax_scripts_loading");
+                },
+                complete: function () {
+                    $('#speedtestoutput').removeClass("ajax_scripts_loading");
+                },
+
+                success: function (resp) {
+                    if (!resp || resp.success !== true) {
+                        $("#speedtestoutput").text(
+                            resp?.error || "Speedtest failed"
+                        );
+                        return;
                     }
-                })
+
+                    // Render output lines safely
+                    const html = resp.output
+                        .map(line => `<div>${$('<div>').text(line).html()}</div>`)
+                        .join("");
+
+                    $("#speedtestoutput").html(`<pre>` + html + `</pre>`);
+                },
+
+                error: function (xhr) {
+                    $("#speedtestoutput").text(
+                        xhr.responseJSON?.error || "Speedtest request failed"
+                    );
+                }
+            });
+
         }
 
 
         // ----------------------------------------------------------------
         function traceroute() {
-                
-            $( "#tracerouteoutput" ).empty();
-                $.ajax({
-                    method: "GET",
-                    url: "./php/server/traceroute.php?action=get&ip=" + getDevDataByMac(getMac(), 'devLastIP') + "",
-                    beforeSend: function() { $('#tracerouteoutput').addClass("ajax_scripts_loading"); },
-                    complete: function() { $('#tracerouteoutput').removeClass("ajax_scripts_loading"); },
-                    success: function(data, textStatus) {
-                        $("#tracerouteoutput").html(data);
+
+            $("#tracerouteoutput").empty();
+
+
+
+            const ip = getDevDataByMac(getMac(), "devLastIP");
+
+            $.ajax({
+                method: "POST",
+                url: `${apiBaseUrl}/nettools/traceroute`,
+                headers: {
+                    "Authorization": "Bearer " + apiToken,
+                    "Content-Type": "application/json"
+                },
+                dataType: "json",
+                data: JSON.stringify({
+                    devLastIP: ip
+                }),
+
+                beforeSend: function () {
+                    $('#tracerouteoutput').addClass("ajax_scripts_loading");
+                },
+                complete: function () {
+                    $('#tracerouteoutput').removeClass("ajax_scripts_loading");
+                },
+
+                success: function (resp) {
+                    if (!resp || resp.success !== true) {
+                        $("#tracerouteoutput").text(
+                            resp?.error || resp?.message || "Traceroute failed"
+                        );
+                        return;
                     }
-                })
+
+                    const html = resp.output
+                        .map(line => `<div>${$('<div>').text(line).html()}</div>`)
+                        .join("");
+
+                    $("#tracerouteoutput").html(`<pre>` + html + `</pre>`);
+                },
+
+                error: function (xhr) {
+                    $("#tracerouteoutput").text(
+                        xhr.responseJSON?.error || "Traceroute request failed"
+                    );
+                }
+            });
+
         }
 
         // ----------------------------------------------------------------
         function nslookup() {
-                
-            $( "#nslookupoutput" ).empty();
-                $.ajax({
-                    method: "GET",
-                    url: "./php/server/nslookup.php?action=get&ip=" + getDevDataByMac(getMac(), 'devLastIP') + "",
-                    beforeSend: function() { $('#nslookupoutput').addClass("ajax_scripts_loading"); },
-                    complete: function() { $('#nslookupoutput').removeClass("ajax_scripts_loading"); },
-                    success: function(data, textStatus) {
-                        $("#nslookupoutput").html(data);
+
+            $("#nslookupoutput").empty();
+
+            $.ajax({
+                method: "POST",
+                url: `${apiBaseUrl}/nettools/nslookup`,
+                headers: {
+                    "Authorization": "Bearer " + apiToken,
+                    "Content-Type": "application/json"
+                },
+                contentType: "application/json",
+                dataType: "json",
+                data: JSON.stringify({
+                    devLastIP: getDevDataByMac(getMac(), 'devLastIP')
+                }),
+                beforeSend: function () {
+                    $('#nslookupoutput').addClass("ajax_scripts_loading");
+                },
+                complete: function () {
+                    $('#nslookupoutput').removeClass("ajax_scripts_loading");
+                },
+                success: function (resp) {
+                    if (!resp.success) {
+                        $("#nslookupoutput").text(resp.error || "nslookup failed");
+                        return;
                     }
-                })
+
+                    // Render output lines safely
+                    const html = resp.output
+                        .map(line => `<div>${$('<div>').text(line).html()}</div>`)
+                        .join("");
+
+                    $("#nslookupoutput").html(`<pre>` + html + `</pre>`);
+                },
+                error: function () {
+                    $("#nslookupoutput").text("Request failed");
+                }
+            });
+
         }
 
         // ----------------------------------------------------------------
@@ -306,40 +428,97 @@
                     .text(device.devName);
                 $select.append(option);
             });
-            
-            
+
+
         }
 
         // ----------------------------------------------------------------
         function wakeonlan() {
 
-            macAddress = getMac();
 
-            // Execute
-            $.get('php/server/devices.php?action=wakeonlan&'
-                + '&mac='         + macAddress
-                + '&ip='          + getDevDataByMac(macAddress, "devLastIP")
-                , function(msg) {
-                showMessage (msg);
+
+            const macAddress = getMac();
+            const ipAddress  = getDevDataByMac(macAddress, "devLastIP");
+
+            $.ajax({
+                method: "POST",
+                url: `${apiBaseUrl}/nettools/wakeonlan`,
+                headers: {
+                    "Authorization": "Bearer " + apiToken,
+                    "Content-Type": "application/json"
+                },
+                contentType: "application/json",
+                dataType: "json",
+                data: JSON.stringify({
+                    devMac: macAddress,
+                    devLastIP: ipAddress
+                }),
+                beforeSend: function () {
+                    $('#woloutput').addClass("ajax_scripts_loading");
+                },
+                complete: function () {
+                    $('#woloutput').removeClass("ajax_scripts_loading");
+                },
+                success: function (resp) {
+                    if (!resp.success) {
+                        showMessage(resp.error || resp.message || "Wake-on-LAN failed");
+                        return;
+                    }
+
+                    // Prefer human message, fallback to command output
+                    showMessage(resp.message || resp.output || "WOL packet sent");
+                },
+                error: function () {
+                    showMessage("Wake-on-LAN request failed");
+                }
             });
         }
 
         // ------------------------------------------------------------
         function copyFromDevice() {
 
-            macAddress = getMac();
 
-            // Execute
-            $.get('php/server/devices.php?action=copyFromDevice&'
-                + '&macTo='         + macAddress
-                + '&macFrom='          + $('#txtCopyFromDevice').val()
-                , function(msg) {
-                    showMessage (msg);
 
-                    setTimeout(function() {
+            const macTo = getMac();
+            const macFrom = $('#txtCopyFromDevice').val();
+
+            $.ajax({
+                method: "POST",
+                url: `${apiBaseUrl}/device/copy`,
+                headers: {
+                    "Authorization": "Bearer " + apiToken,
+                    "Content-Type": "application/json"
+                },
+                contentType: "application/json",
+                dataType: "json",
+                data: JSON.stringify({
+                    macFrom: macFrom,
+                    macTo: macTo
+                }),
+                beforeSend: function () {
+                    $('#copyDeviceOutput').addClass("ajax_scripts_loading");
+                },
+                complete: function () {
+                    $('#copyDeviceOutput').removeClass("ajax_scripts_loading");
+                },
+                success: function (resp) {
+                    if (!resp.success) {
+                        showMessage(resp.error || resp.message || "Failed to copy device");
+                        return;
+                    }
+
+                    showMessage(resp.message || "Device copied successfully");
+
+                    // Reload page after short delay
+                    setTimeout(function () {
                         window.location.reload();
                     }, 2000);
+                },
+                error: function () {
+                    showMessage("Device copy request failed");
+                }
             });
+
 
         }
 
@@ -348,7 +527,7 @@
         {
             // Read cache (skip cookie expiry check)
             devicesList = getCache('devicesListAll_JSON', true);
-            
+
             if (devicesList != '') {
                 devicesList = JSON.parse (devicesList);
             } else {
@@ -387,7 +566,7 @@
                 return;
             }
 
-            // Ask delete device Events 
+            // Ask delete device Events
             showModalWarning ('<?= lang('DevDetail_button_DeleteEvents');?>', '<?= lang('DevDetail_button_DeleteEvents_Warning');?>',
             '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Delete');?>', 'deleteDeviceEvents');
         }
@@ -398,9 +577,34 @@
                 return;
             }
 
+            const apiToken = getSetting("API_TOKEN");   // optional token if needed
+
+
+
             // Delete device events
-            $.get('php/server/devices.php?action=deleteDeviceEvents&mac='+ mac, function(msg) {
-            showMessage (msg);
+            $.ajax({
+                method: "DELETE",
+                url: `${apiBaseUrl}/device/${encodeURIComponent(mac)}/events/delete`,
+                headers: {
+                    "Authorization": "Bearer " + apiToken
+                },
+                dataType: "json",
+                beforeSend: function () {
+                    $('#deviceEventsOutput').addClass("ajax_scripts_loading");
+                },
+                complete: function () {
+                    $('#deviceEventsOutput').removeClass("ajax_scripts_loading");
+                },
+                success: function (resp) {
+                    if (!resp.success) {
+                        showMessage(resp.error || resp.message || "Failed to delete device events");
+                        return;
+                    }
+                    showMessage("Device events deleted successfully");
+                },
+                error: function () {
+                    showMessage("Request to delete device events failed");
+                }
             });
         }
 
@@ -411,39 +615,86 @@
                 return;
             }
 
-            // Ask Resert Custom properties 
+            // Ask Resert Custom properties
             showModalWarning ('<?= lang('Gen_Reset');?>', '<?= lang('DevDetail_CustomProps_reset_info');?>',
             '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Delete');?>', 'resetDeviceProps');
         }
 
         function resetDeviceProps () {
+
+            const mac = getMac();  // or the device MAC you want to reset
+
             // Check MAC
             if (mac == '') {
                 return;
             }
 
-            // Execute
-            $.get('php/server/devices.php?action=resetDeviceProps&mac='+ mac, function(msg) {
-            showMessage (msg);
+            $.ajax({
+                method: "POST",
+                url: `${apiBaseUrl}/device/${encodeURIComponent(mac)}/reset-props`,
+                dataType: "json",
+                headers: {
+                    "Authorization": "Bearer " + apiToken
+                },
+                beforeSend: function() {
+                    $('#devicePropsOutput').addClass("ajax_scripts_loading");
+                },
+                complete: function() {
+                    $('#devicePropsOutput').removeClass("ajax_scripts_loading");
+                },
+                success: function(resp) {
+                    if (!resp.success) {
+                        showMessage(resp.error || resp.message || "Failed to reset device properties");
+                        return;
+                    }
+                    showMessage("Device custom properties reset successfully");
+                },
+                error: function() {
+                    showMessage("Request to reset device properties failed");
+                }
             });
         }
 
         // ----------------------------------------------------------------
         function internetinfo() {
-                $( "#internetinfooutput" ).empty();
-                $.ajax({
-                    method: "POST",
-                    url: "./php/server/internetinfo.php",
-                    beforeSend: function() { $('#internetinfooutput').addClass("ajax_scripts_loading"); },
-                    complete: function() { $('#internetinfooutput').removeClass("ajax_scripts_loading"); },
-                    success: function(data, textStatus) {
-                        $("#internetinfooutput").html(data);    
+            $("#internetinfooutput").empty();
+
+            $.ajax({
+                method: "GET",
+                url: `${apiBaseUrl}/nettools/internetinfo`,
+                headers: {
+                    "Authorization": "Bearer " + apiToken,
+                    "Content-Type": "application/json"
+                },
+                dataType: "json",
+                beforeSend: function () {
+                    $('#internetinfooutput').addClass("ajax_scripts_loading");
+                },
+                complete: function () {
+                    $('#internetinfooutput').removeClass("ajax_scripts_loading");
+                },
+                success: function (resp) {
+                    if (!resp.success) {
+                        $("#internetinfooutput").text(
+                            resp.error || resp.message || "Failed to fetch internet info"
+                        );
+                        return;
                     }
-                })
+
+                    const html = Object.entries(resp.output)
+                        .map(([k, v]) => `<div><strong>${k}</strong>: ${v}</div>`)
+                        .join("");
+
+                    $("#internetinfooutput").html(`<pre>` + html + `</pre>`);
+                },
+                error: function () {
+                    $("#internetinfooutput").text("Internet info request failed");
+                }
+            });
         }
 
         // init first time
-        // ----------------------------------------------------------- 
+        // -----------------------------------------------------------
         var toolsPageInitialized = false;
 
         function initDeviceToolsPage()
@@ -474,6 +725,6 @@
         }
 
         // start updater
-        deviceToolsPageUpdater();  
+        deviceToolsPageUpdater();
 
 </script>

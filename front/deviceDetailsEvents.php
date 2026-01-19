@@ -4,11 +4,11 @@
   require_once  $_SERVER['DOCUMENT_ROOT'] . '/php/templates/security.php';
 ?>
 <!-- ----------------------------------------------------------------------- -->
- 
+
 
 <!-- Hide Connections -->
 <div class="col-sm-12 col-xs-12">
-    <label class="col-sm-3 col-xs-10">      
+    <label class="col-sm-3 col-xs-10">
       <?= lang('DevDetail_Events_CheckBox');?>
     </label>
     <input class="checkbox blue col-sm-1 col-xs-2" id="chkHideConnectionEvents" type="checkbox" onChange="loadEventsData()">
@@ -30,54 +30,68 @@
 
 <script>
 
-
-
-
-
-// -----------------------------------------------------------------------------
 function loadEventsData() {
   const hideConnections = $('#chkHideConnectionEvents')[0].checked;
   const hideConnectionsStr = hideConnections ? 'true' : 'false';
 
-  mac = getMac()
+  let period = $("#period").val();
+  let { start, end } = getPeriodStartEnd(period);
 
   const rawSql = `
-    SELECT eve_DateTime, eve_DateTime, eve_EventType, eve_IP, eve_AdditionalInfo
-    FROM Events 
-    WHERE eve_MAC = "${mac}" 
+    SELECT eve_DateTime, eve_EventType, eve_IP, eve_AdditionalInfo
+    FROM Events
+    WHERE eve_MAC = "${mac}"
+      AND eve_DateTime BETWEEN "${start}" AND "${end}"
       AND (
         (eve_EventType NOT IN ("Connected", "Disconnected", "VOIDED - Connected", "VOIDED - Disconnected"))
         OR "${hideConnectionsStr}" = "false"
       )
   `;
 
-  const apiUrl = `php/server/dbHelper.php?action=read&rawSql=${btoa(encodeURIComponent(rawSql))}`;
+  const apiToken = getSetting("API_TOKEN");
 
-  // Manually load the data first
-  $.get(apiUrl, function (data) {
-    const parsed = JSON.parse(data);
-    
-    const rows = parsed.map(row => {
-      const rawDate = row.eve_DateTime;
-      const formattedDate = rawDate ? localizeTimestamp(rawDate) : '-';
-      return [
-        formattedDate,
-        row.eve_DateTime,
-        row.eve_EventType,
-        row.eve_IP,
-        row.eve_AdditionalInfo
-      ];
-    });
+  const apiBaseUrl = getApiBase();
+  const url = `${apiBaseUrl}/dbquery/read`;
 
-    // Fill the table manually
-    const table = $('#tableEvents').DataTable();
-    table.clear();
-    table.rows.add(rows); // assuming each row is an array
-    table.draw();
+  $.ajax({
+    url: url,
+    method: "POST",
+    contentType: "application/json",
+    headers: {
+      "Authorization": `Bearer ${apiToken}`
+    },
+    data: JSON.stringify({
+      rawSql: btoa(rawSql)
+    }),
+    success: function (data) {
+      // assuming read_query returns rows directly
+      const rows = data["results"].map(row => {
+        const rawDate = row.eve_DateTime;
+        const formattedDate = rawDate ? localizeTimestamp(rawDate) : '-';
 
-    hideSpinner();
+        return [
+          formattedDate,
+          row.eve_DateTime,
+          row.eve_EventType,
+          row.eve_IP,
+          row.eve_AdditionalInfo
+        ];
+      });
+
+      const table = $('#tableEvents').DataTable();
+      table.clear();
+      table.rows.add(rows);
+      table.draw();
+
+      hideSpinner();
+    },
+    error: function (xhr) {
+      console.error("Failed to load events", xhr.responseText);
+      hideSpinner();
+    }
   });
 }
+
 
 function initializeEventsDatatable (eventsRows) {
 
@@ -98,7 +112,7 @@ function initializeEventsDatatable (eventsRows) {
 
       'columnDefs'  : [
           {   orderData: [1], targets:  [0]   },
-          {   visible:   false, targets: [1]  }, 
+          {   visible:   false, targets: [1]  },
           {
               targets: [0],
               'createdCell': function (td, cellData, rowData, row, col) {
@@ -127,7 +141,7 @@ function initializeEventsDatatable (eventsRows) {
 // INIT with polling for panel element visibility
 // -----------------------------------------------
 
-var eventsPageInitialized = false; 
+var eventsPageInitialized = false;
 
 function initDeviceEventsPage()
 {

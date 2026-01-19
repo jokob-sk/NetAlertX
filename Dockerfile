@@ -26,13 +26,25 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 # Install build dependencies
 COPY requirements.txt /tmp/requirements.txt
-RUN apk add --no-cache bash shadow python3 python3-dev gcc musl-dev libffi-dev openssl-dev git \
+# hadolint ignore=DL3018
+RUN apk add --no-cache \
+        bash \
+        shadow \
+        python3 \
+        python3-dev \
+        gcc \
+        musl-dev \
+        libffi-dev \
+        openssl-dev \
+        git \
+        rust \
+        cargo \
     && python -m venv /opt/venv
 
-# Create virtual environment owned by root, but readable by everyone else. This makes it easy to copy
-# into hardened stage without worrying about permissions and keeps image size small. Keeping the commands
-# together makes for a slightly smaller image size.
-RUN pip install --no-cache-dir -r /tmp/requirements.txt && \
+# Upgrade pip/wheel/setuptools and install Python packages
+# hadolint ignore=DL3013, DL3042
+RUN python -m pip install --upgrade pip setuptools wheel && \
+    pip install --prefer-binary --no-cache-dir -r /tmp/requirements.txt && \
     chmod -R u-rwx,g-rwx /opt
 
 # second stage is the main runtime stage with just the minimum required to run the application
@@ -40,6 +52,12 @@ RUN pip install --no-cache-dir -r /tmp/requirements.txt && \
 FROM alpine:3.22 AS runner
 
 ARG INSTALL_DIR=/app
+# Runtime service account (override at build; container user can still be overridden at run time)
+ARG NETALERTX_UID=20211
+ARG NETALERTX_GID=20211
+# Read-only lock owner (separate from service account to avoid UID/GID collisions)
+ARG READONLY_UID=20212
+ARG READONLY_GID=20212
 
 # NetAlertX app directories
 ENV NETALERTX_APP=${INSTALL_DIR}
@@ -113,14 +131,14 @@ ENV NETALERTX_USER=netalertx NETALERTX_GROUP=netalertx
 ENV LANG=C.UTF-8
 
 
-RUN apk add --no-cache bash mtr libbsd zip lsblk tzdata curl arp-scan iproute2 iproute2-ss nmap \
+RUN apk add --no-cache bash mtr libbsd zip lsblk tzdata curl arp-scan iproute2 iproute2-ss nmap fping \
     nmap-scripts traceroute nbtscan net-tools net-snmp-tools bind-tools awake ca-certificates \
     sqlite php83 php83-fpm php83-cgi php83-curl php83-sqlite3 php83-session python3 envsubst \
-    nginx supercronic shadow && \
+    nginx supercronic shadow su-exec && \
     rm -Rf /var/cache/apk/*  && \
     rm -Rf /etc/nginx && \
-    addgroup -g 20211 ${NETALERTX_GROUP} && \
-    adduser -u 20211 -D -h ${NETALERTX_APP} -G ${NETALERTX_GROUP} ${NETALERTX_USER} && \
+    addgroup -g ${NETALERTX_GID} ${NETALERTX_GROUP} && \
+    adduser -u ${NETALERTX_UID} -D -h ${NETALERTX_APP} -G ${NETALERTX_GROUP} ${NETALERTX_USER} && \
     apk del shadow
 
 
@@ -138,24 +156,23 @@ RUN install -d -o ${NETALERTX_USER} -g ${NETALERTX_GROUP} -m 700 ${READ_WRITE_FO
 
 # Copy version information into the image
 COPY --chown=${NETALERTX_USER}:${NETALERTX_GROUP} .[V]ERSION ${NETALERTX_APP}/.VERSION
-COPY --chown=${NETALERTX_USER}:${NETALERTX_GROUP} .[V]ERSION ${NETALERTX_APP}/.VERSION_PREV
 
-# Copy the virtualenv from the builder stage
-COPY --from=builder --chown=20212:20212 ${VIRTUAL_ENV} ${VIRTUAL_ENV}
+# Copy the virtualenv from the builder stage (owned by readonly lock owner)
+COPY --from=builder --chown=${READONLY_UID}:${READONLY_GID} ${VIRTUAL_ENV} ${VIRTUAL_ENV}
 
 
 # Initialize each service with the dockerfiles/init-*.sh scripts, once.
 # This is done after the copy of the venv to ensure the venv is in place
 # although it may be quicker to do it before the copy, it keeps the image
 # layers smaller to do it after.
-RUN for vfile in .VERSION .VERSION_PREV; do \
+# hadolint ignore=DL3018
+RUN for vfile in .VERSION; do \
         if [ ! -f "${NETALERTX_APP}/${vfile}" ]; then \
             echo "DEVELOPMENT 00000000" > "${NETALERTX_APP}/${vfile}"; \
         fi; \
-        chown 20212:20212 "${NETALERTX_APP}/${vfile}"; \
+        chown ${READONLY_UID}:${READONLY_GID} "${NETALERTX_APP}/${vfile}"; \
     done && \
     apk add --no-cache libcap && \
-    setcap cap_net_raw+ep /bin/busybox && \
     setcap cap_net_raw,cap_net_admin+eip /usr/bin/nmap && \
     setcap cap_net_raw,cap_net_admin+eip /usr/bin/arp-scan && \
     setcap cap_net_raw,cap_net_admin,cap_net_bind_service+eip /usr/bin/nbtscan && \
@@ -170,12 +187,18 @@ RUN for vfile in .VERSION .VERSION_PREV; do \
     date +%s > "${NETALERTX_FRONT}/buildtimestamp.txt"
 
 
-ENTRYPOINT ["/bin/sh","/entrypoint.sh"]
+ENTRYPOINT ["/bin/bash","/entrypoint.sh"]
 
 # Final hardened stage to improve security by setting least possible permissions and removing sudo access.
 # When complete, if the image is compromised, there's not much that can be done with it.
 # This stage is separate from Runner stage so that devcontainer can use the Runner stage.
 FROM runner AS hardened
+
+# Re-declare UID/GID args for this stage
+ARG NETALERTX_UID=20211
+ARG NETALERTX_GID=20211
+ARG READONLY_UID=20212
+ARG READONLY_GID=20212
 
 ENV UMASK=0077
 
@@ -184,8 +207,8 @@ ENV UMASK=0077
 # AI may claim this is stupid, but it's actually least possible permissions as
 # read-only user cannot login, cannot sudo, has no write permission, and cannot even
 # read the files it owns. The read-only user is ownership-as-a-lock hardening pattern.
-RUN addgroup -g 20212 "${READ_ONLY_GROUP}" && \
-    adduser -u 20212 -G "${READ_ONLY_GROUP}" -D -h /app "${READ_ONLY_USER}"
+RUN addgroup -g ${READONLY_GID} "${READ_ONLY_GROUP}" && \
+    adduser -u ${READONLY_UID} -G "${READ_ONLY_GROUP}" -D -h /app "${READ_ONLY_USER}"
 
 
 # reduce permissions to minimum necessary for all NetAlertX files and folders
@@ -196,24 +219,27 @@ RUN addgroup -g 20212 "${READ_ONLY_GROUP}" && \
 RUN chown -R ${READ_ONLY_USER}:${READ_ONLY_GROUP} ${READ_ONLY_FOLDERS} && \
     chmod -R 004 ${READ_ONLY_FOLDERS} && \
     find ${READ_ONLY_FOLDERS} -type d -exec chmod 005 {} + && \
-    install -d -o ${NETALERTX_USER} -g ${NETALERTX_GROUP} -m 700 ${READ_WRITE_FOLDERS} && \
-    chown -R ${NETALERTX_USER}:${NETALERTX_GROUP} ${READ_WRITE_FOLDERS} && \
-    chmod -R 600 ${READ_WRITE_FOLDERS} && \
-    find ${READ_WRITE_FOLDERS} -type d -exec chmod 700 {} + && \
-    chown ${READ_ONLY_USER}:${READ_ONLY_GROUP} /entrypoint.sh /opt /opt/venv && \
-    chmod 005 /entrypoint.sh ${SYSTEM_SERVICES}/*.sh ${SYSTEM_SERVICES_SCRIPTS}/* ${ENTRYPOINT_CHECKS}/* /app /opt /opt/venv && \
-    for dir in ${READ_WRITE_FOLDERS}; do \
-        install -d -o ${NETALERTX_USER} -g ${NETALERTX_GROUP} -m 700 "$dir"; \
-    done && \
+    install -d -o ${NETALERTX_USER} -g ${NETALERTX_GROUP} -m 0777 ${READ_WRITE_FOLDERS} && \
+    chown ${READ_ONLY_USER}:${READ_ONLY_GROUP} /entrypoint.sh /root-entrypoint.sh /opt /opt/venv && \
+    chmod 005 /entrypoint.sh /root-entrypoint.sh ${SYSTEM_SERVICES}/*.sh ${SYSTEM_SERVICES_SCRIPTS}/* ${ENTRYPOINT_CHECKS}/* /app /opt /opt/venv && \
+    # Do not bake first-run artifacts into the image. If present, Docker volume copy-up
+    # will persist restrictive ownership/modes into fresh named volumes, breaking
+    # arbitrary non-root UID/GID runs.
+    rm -f \
+      "${NETALERTX_CONFIG}/app.conf" \
+      "${NETALERTX_DB_FILE}" \
+      "${NETALERTX_DB_FILE}-shm" \
+      "${NETALERTX_DB_FILE}-wal" || true && \
     apk del apk-tools && \
     rm -Rf /var /etc/sudoers.d/* /etc/shadow /etc/gshadow /etc/sudoers \
     /lib/apk /lib/firmware /lib/modules-load.d /lib/sysctl.d /mnt /home/ /root \
     /srv /media && \
-    sed -i "/^\(${READ_ONLY_USER}\|${NETALERTX_USER}\):/!d" /etc/passwd && \
-    sed -i "/^\(${READ_ONLY_GROUP}\|${NETALERTX_GROUP}\):/!d" /etc/group && \
+    # Preserve root and system identities so hardened entrypoint never needs to patch /etc/passwd or /etc/group at runtime.
     printf '#!/bin/sh\n"$@"\n' > /usr/bin/sudo && chmod +x /usr/bin/sudo
+USER "0"
 
-USER netalertx
+# Call root-entrypoint.sh which drops priviliges to run entrypoint.sh.
+ENTRYPOINT ["/root-entrypoint.sh"]
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
     CMD /services/healthcheck.sh

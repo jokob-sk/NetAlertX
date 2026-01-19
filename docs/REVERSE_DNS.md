@@ -53,7 +53,6 @@ You can configure a custom **/etc/resolv.conf** file in **docker-compose.yml** a
 #### docker-compose.yml:
 
 ```yaml
-version: "3"
 services:
   netalertx:
     container_name: netalertx

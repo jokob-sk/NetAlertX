@@ -4,7 +4,6 @@ import os
 import sys
 import requests
 import json
-import sqlite3
 import base64
 
 
@@ -15,13 +14,14 @@ sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 from plugin_helper import Plugin_Objects  # noqa: E402 [flake8 lint suppression]
 from utils.plugin_utils import get_plugins_configs, decode_and_rename_files  # noqa: E402 [flake8 lint suppression]
 from logger import mylog, Logger  # noqa: E402 [flake8 lint suppression]
-from const import fullDbPath, logPath  # noqa: E402 [flake8 lint suppression]
+from const import logPath  # noqa: E402 [flake8 lint suppression]
 from helper import get_setting_value  # noqa: E402 [flake8 lint suppression]
 from utils.datetime_utils import timeNowDB  # noqa: E402 [flake8 lint suppression]
 from utils.crypto_utils import encrypt_data  # noqa: E402 [flake8 lint suppression]
 from messaging.in_app import write_notification  # noqa: E402 [flake8 lint suppression]
 import conf  # noqa: E402 [flake8 lint suppression]
 from pytz import timezone  # noqa: E402 [flake8 lint suppression]
+from database import get_temp_db_connection  # noqa: E402 [flake8 lint suppression]
 
 # Make sure the TIMEZONE for logging is correct
 conf.tz = timezone(get_setting_value('TIMEZONE'))
@@ -160,8 +160,8 @@ def main():
         mylog('verbose', [f'[{pluginName}] Mode 3: RECEIVE (HUB) - This is a HUB as received data found'])
 
         # Connect to the App database
-        conn    = sqlite3.connect(fullDbPath)
-        cursor  = conn.cursor()
+        conn = get_temp_db_connection()
+        cursor = conn.cursor()
 
         # Collect all unique devMac values from the JSON files
         unique_mac_addresses = set()

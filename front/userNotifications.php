@@ -8,7 +8,7 @@ require 'php/templates/header.php';
 <script src="lib/iCheck/icheck.min.js"></script>
 
 <!-- ----------------------------------------------------------------------- -->
- 
+
 <script>
   showSpinner();
 </script>
@@ -34,19 +34,19 @@ require 'php/templates/header.php';
           <tbody>
             <!-- Data will be inserted here by DataTables -->
           </tbody>
-        </table> 
+        </table>
 
         <div class="notification-buttons">
           <button id="clearNotificationsBtn" class="btn btn-danger"><?= lang("Gen_DeleteAll");?></button>
           <button id="notificationsMarkAllRead" class="btn btn-default"><?= lang("Notifications_Mark_All_Read");?></button>
         </div>
       </div>
-      
+
     </div>
-    
+
   </section>
 
-  
+
 </div>
 
 
@@ -77,7 +77,7 @@ require 'php/templates/header.php';
       "pageLength": parseInt(getSetting("UI_DEFAULT_PAGE_SIZE")),
       'lengthMenu'   : getLengthMenu(parseInt(getSetting("UI_DEFAULT_PAGE_SIZE"))),
       "columns": [
-        { "data": "timestamp" , 
+        { "data": "timestamp" ,
           "render": function(data, type, row) {
 
             var result = data.toString(); // Convert to string
@@ -89,25 +89,25 @@ require 'php/templates/header.php';
 
             return result;
           }
-        },        
+        },
         {
           "data": "level",
           "render": function(data, type, row) {
-             
+
 
             switch (data) {
               case "info":
-                color = 'green'                
+                color = 'green'
                 break;
-            
+
               case "alert":
-                color = 'yellow'                
+                color = 'yellow'
                 break;
 
               case "interrupt":
-                color = 'red'                
+                color = 'red'
                 break;
-            
+
               default:
                 color = 'red'
                 break;
@@ -122,13 +122,13 @@ require 'php/templates/header.php';
                   var guid = data.split(":")[1].trim();
                   return `<a href="report.php?guid=${guid}">Go to Report</a>`;
                 } else {
-                  // clear quotes (") if wrapped in them 
+                  // clear quotes (") if wrapped in them
                   return (data.startsWith('"') && data.endsWith('"')) ? data.slice(1, -1) : data;
                 }
           }
          },
-        
-        { "data": "guid", 
+
+        { "data": "guid",
           "render": function(data, type, row) {
             return `<button class="copy-btn btn btn-info btn-flat" data-text="${data}" title="copy" onclick="copyToClipboard(this)">
                     <i class="fa-solid fa-copy"></i>
@@ -137,7 +137,7 @@ require 'php/templates/header.php';
         },
         { "data": "read",
          "render": function(data, type, row) {
-            if (data == 0) {                            
+            if (data == 0) {
               return `<button class="mark-read-btn btn btn-info btn-flat" onclick="markNotificationAsRead('${row.guid}', this)">
                         Mark as Read
                       </button>`;
@@ -145,7 +145,7 @@ require 'php/templates/header.php';
               return `<i class="fa-solid fa-check"></i>`;
             }
           }
-          
+
         },
         {
             targets: -1, // Target the last column
@@ -162,7 +162,7 @@ require 'php/templates/header.php';
         { "width": "5%", "targets": [1,3] }, // Set width of the first four columns to 10%
         { "width": "50%", "targets": [2] }, // Set width of the first four columns to 10%
         { "width": "5%", "targets": [4,5] }, // Set width of the "Content" column to 60%
-        
+
       ],
       "order": [[0, "desc"]]
     ,
@@ -175,16 +175,15 @@ require 'php/templates/header.php';
     });
 
 
-    const phpEndpoint = 'php/server/utilNotification.php';
+    const apiBase = getApiBase();
+    const apiToken = getSetting("API_TOKEN");
 
     // Function to clear all notifications
     $('#clearNotificationsBtn').click(function() {
       $.ajax({
-        url: phpEndpoint,
-        type: 'GET',
-        data: {
-          action: 'notifications_clear'
-        },
+        url: `${apiBase}/messaging/in-app/delete`,
+        type: 'DELETE',
+        headers: { "Authorization": `Bearer ${apiToken}` },
         success: function(response) {
           // Clear the table and reload data
           window.location.reload()
@@ -196,28 +195,26 @@ require 'php/templates/header.php';
       });
     });
 
-    // Function to clear all notifications
+    // Function to mark all notifications as read
     $('#notificationsMarkAllRead').click(function() {
       $.ajax({
-        url: phpEndpoint,
-        type: 'GET',
-        data: {
-          action: 'notifications_mark_all_read'
-        },
+        url: `${apiBase}/messaging/in-app/read/all`,
+        type: 'POST',
+        headers: { "Authorization": `Bearer ${apiToken}` },
         success: function(response) {
           // Clear the table and reload data
           window.location.reload()
         },
         error: function(xhr, status, error) {
-          console.log("An error occurred while clearing notifications: " + error);
+          console.log("An error occurred while marking notifications as read: " + error);
           // You can display an error message here if needed
         }
       });
     });
 
-   
+
   });
-  
+
 </script>
 
 <?php

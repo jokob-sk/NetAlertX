@@ -8,7 +8,7 @@ from const import vendorsPath, vendorsPathNewest, sql_generateGuid
 from models.device_instance import DeviceInstance
 from scan.name_resolution import NameResolver
 from scan.device_heuristics import guess_icon, guess_type
-from db.db_helper import sanitize_SQL_input, list_to_where
+from db.db_helper import sanitize_SQL_input, list_to_where, safe_int
 
 # Make sure log level is initialized correctly
 Logger(get_setting_value("LOG_LEVEL"))
@@ -464,22 +464,22 @@ def create_new_devices(db):
                         devReqNicsOnline
                         """
 
-    newDevDefaults = f"""{get_setting_value("NEWDEV_devAlertEvents")},
-                        {get_setting_value("NEWDEV_devAlertDown")},
-                        {get_setting_value("NEWDEV_devPresentLastScan")},
-                        {get_setting_value("NEWDEV_devIsArchived")},
-                        {get_setting_value("NEWDEV_devIsNew")},
-                        {get_setting_value("NEWDEV_devSkipRepeated")},
-                        {get_setting_value("NEWDEV_devScan")},
+    newDevDefaults = f"""{safe_int("NEWDEV_devAlertEvents")},
+                        {safe_int("NEWDEV_devAlertDown")},
+                        {safe_int("NEWDEV_devPresentLastScan")},
+                        {safe_int("NEWDEV_devIsArchived")},
+                        {safe_int("NEWDEV_devIsNew")},
+                        {safe_int("NEWDEV_devSkipRepeated")},
+                        {safe_int("NEWDEV_devScan")},
                         '{sanitize_SQL_input(get_setting_value("NEWDEV_devOwner"))}',
-                        {get_setting_value("NEWDEV_devFavorite")},
+                        {safe_int("NEWDEV_devFavorite")},
                         '{sanitize_SQL_input(get_setting_value("NEWDEV_devGroup"))}',
                         '{sanitize_SQL_input(get_setting_value("NEWDEV_devComments"))}',
-                        {get_setting_value("NEWDEV_devLogEvents")},
+                        {safe_int("NEWDEV_devLogEvents")},
                         '{sanitize_SQL_input(get_setting_value("NEWDEV_devLocation"))}',
                         '{sanitize_SQL_input(get_setting_value("NEWDEV_devCustomProps"))}',
                         '{sanitize_SQL_input(get_setting_value("NEWDEV_devParentRelType"))}',
-                        {sanitize_SQL_input(get_setting_value("NEWDEV_devReqNicsOnline"))}
+                        {safe_int("NEWDEV_devReqNicsOnline")}
                         """
 
     # Fetch data from CurrentScan skipping ignored devices by IP and MAC
@@ -650,7 +650,7 @@ def update_devices_names(pm):
 
     sql = pm.db.sql
     resolver = NameResolver(pm.db)
-    device_handler = DeviceInstance(pm.db)
+    device_handler = DeviceInstance()
 
     nameNotFound = "(name not found)"
 

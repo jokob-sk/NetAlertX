@@ -664,7 +664,9 @@ body
     border-right: 5px solid #606060;
 }
 
-
+.fc-ltr .fc-time-grid .fc-event-container {
+  margin: 0 2.5% 0 0px !important;
+}
 
 /* -----------------------------------------------------------------------------
    Notification float banner
@@ -1825,10 +1827,21 @@ input[readonly] {
 #networkTree
 {
     margin-left: 16px;
-    /* border: solid;
-    border-color:#606060;     */
     position: relative;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
 }
+
+#networkTree .node-inner {
+    font-size: clamp(12px, 1rem, 18px);
+}
+
+#networkTree .netNodeText strong,
+#networkTree .spanNetworkTree {
+    font-size: inherit;
+}
+
 #networkTree .netIcon
 {
     width: 25px;

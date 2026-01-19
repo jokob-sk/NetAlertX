@@ -1,31 +1,3 @@
-// --------------------------------------------------
-// Check if database is locked
-function lockDatabase(delay=20) {
-    $.ajax({
-        url: 'php/server/dbHelper.php', // Replace with the actual path to your PHP file
-        type: 'GET',
-        data: { action: 'lockDatabase', delay: delay },
-        success: function(response) { 
-            console.log('Executed');      
-        },
-        error: function() {
-            console.log('Error ocurred');            
-        }
-    });
-
-    let times = delay; 
-    let countdownInterval = setInterval(() => {
-        times--;
-        console.log(`Remaining time: ${times} seconds`);
-        
-        if (times <= 0) {
-            clearInterval(countdownInterval);
-            console.log('Countdown finished');
-        }
-    }, 1000);
-}
-
-
 const requiredFiles = [
     'app_state.json',
     'plugins.json',
@@ -52,7 +24,7 @@ const requiredFiles = [
   function updateFileStatusUI(file, status) {
     const item = $(`#file-${file.replace(/[^a-z0-9]/gi, '-')}`);
     const icon = item.find('span.icon-wrap');
-  
+
     if (status === 'ok') {
       icon.html('<i class="fa-solid fa-check "></i>');
     } else if (status === 'fail') {
@@ -61,7 +33,7 @@ const requiredFiles = [
       icon.html('<i class="fa-solid fa-spinner fa-spin text-secondary"></i>');
     }
   }
-  
+
 
   function checkAppInitializedJson() {
     requiredFiles.forEach(file => {
@@ -77,17 +49,17 @@ const requiredFiles = [
           updateFileStatusUI(file, 'fail');
         });
     });
-  
+
     const allOk = requiredFiles.every(file => fileStatus[file] === 'ok');
-  
+
     if (allOk) {
       checkInternalStatusAfterFiles();
     } else {
-      setTimeout(checkAppInitializedJson, 1000);
+      setTimeout(checkAppInitializedJson, 5000);
     }
   }
-  
-  
+
+
   function checkInternalStatusAfterFiles() {
     const promises = [
       waitForAppInitialized().then(() => {
@@ -97,7 +69,7 @@ const requiredFiles = [
         fileStatus['isAppInitialized'] = 'fail';
         updateFileStatusUI('isAppInitialized', 'fail');
       }),
-  
+
       waitForGraphQLServer().then(() => {
         fileStatus['isGraphQLServerRunning'] = 'ok';
         updateFileStatusUI('isGraphQLServerRunning', 'ok');
@@ -106,14 +78,14 @@ const requiredFiles = [
         updateFileStatusUI('isGraphQLServerRunning', 'fail');
       })
     ];
-  
+
     Promise.allSettled(promises).then(() => {
       const allPassed = internalChecks.every(key => fileStatus[key] === 'ok');
       if (allPassed) {
         $('#check-status').show();
         $('#check-status-plc').hide();
       } else {
-        setTimeout(checkInternalStatusAfterFiles, 1000);
+        setTimeout(checkInternalStatusAfterFiles, 5000);
       }
     });
   }
@@ -132,8 +104,8 @@ function checkAppInitializedJsonInit() {
   const allItems = [...requiredFiles, ...internalChecks];
 
   allItems.forEach(file => {
-    
-  
+
+
     $('#file-check-list').append(`
       <div class="panel panel-secondary col-xs-6 col-sm-4 col-md-3 col-lg-2 col-xxl-1 padding-5px">
         <div class="file-checking border rounded p-2 d-flex flex-column justify-content-between h-100" id="file-${file.replace(/[^a-z0-9]/gi, '-')}">
@@ -151,7 +123,7 @@ function checkAppInitializedJsonInit() {
   checkAppInitializedJson();
 }
 
-  
+
 
 
 

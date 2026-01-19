@@ -3,6 +3,7 @@
 import os
 import base64
 import sys
+from urllib.parse import unquote
 from flask import jsonify
 
 # Register NetAlertX directories
@@ -15,7 +16,8 @@ from database import get_temp_db_connection  # noqa: E402 [flake8 lint suppressi
 def read_query(raw_sql_b64):
     """Execute a read-only query (SELECT)."""
     try:
-        raw_sql = base64.b64decode(raw_sql_b64).decode("utf-8")
+        # Decode: base64 -> URL decode (matches JS: btoa(unescape(encodeURIComponent())))
+        raw_sql = unquote(base64.b64decode(raw_sql_b64).decode("utf-8"))
 
         conn = get_temp_db_connection()
         cur = conn.cursor()
@@ -35,7 +37,8 @@ def read_query(raw_sql_b64):
 def write_query(raw_sql_b64):
     """Execute a write query (INSERT/UPDATE/DELETE)."""
     try:
-        raw_sql = base64.b64decode(raw_sql_b64).decode("utf-8")
+        # Decode: base64 -> URL decode (matches JS: btoa(unescape(encodeURIComponent())))
+        raw_sql = unquote(base64.b64decode(raw_sql_b64).decode("utf-8"))
 
         conn = get_temp_db_connection()
         cur = conn.cursor()

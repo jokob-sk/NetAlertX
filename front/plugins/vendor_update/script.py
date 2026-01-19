@@ -3,7 +3,6 @@
 import os
 import sys
 import subprocess
-import sqlite3
 
 # Register NetAlertX directories
 INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
@@ -12,10 +11,11 @@ sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 from plugin_helper import Plugin_Objects, handleEmpty  # noqa: E402 [flake8 lint suppression]
 from logger import mylog, Logger  # noqa: E402 [flake8 lint suppression]
 from helper import get_setting_value   # noqa: E402 [flake8 lint suppression]
-from const import logPath, applicationPath, fullDbPath  # noqa: E402 [flake8 lint suppression]
+from const import logPath, applicationPath  # noqa: E402 [flake8 lint suppression]
 from scan.device_handling import query_MAC_vendor  # noqa: E402 [flake8 lint suppression]
 import conf  # noqa: E402 [flake8 lint suppression]
 from pytz import timezone  # noqa: E402 [flake8 lint suppression]
+from database import get_temp_db_connection  # noqa: E402 [flake8 lint suppression]
 
 # Make sure the TIMEZONE for logging is correct
 conf.tz = timezone(get_setting_value('TIMEZONE'))
@@ -40,7 +40,7 @@ def main():
     # Resolve missing vendors
     plugin_objects = Plugin_Objects(RESULT_FILE)
 
-    plugin_objects = update_vendors(fullDbPath, plugin_objects)
+    plugin_objects = update_vendors(plugin_objects)
 
     plugin_objects.write_result_file()
 
@@ -70,11 +70,11 @@ def update_vendor_database():
 
 # ------------------------------------------------------------------------------
 # resolve missing vendors
-def update_vendors(dbPath, plugin_objects):
+def update_vendors(plugin_objects):
 
     # Connect to the App SQLite database
-    conn = sqlite3.connect(dbPath)
-    sql  = conn.cursor()
+    conn = get_temp_db_connection()
+    cursor = conn.cursor()
 
     # Initialize variables
     ignored = 0
@@ -83,7 +83,7 @@ def update_vendors(dbPath, plugin_objects):
     mylog('verbose', ['    Searching devices vendor'])
 
     # Get devices without a vendor
-    sql.execute("""SELECT
+    cursor.execute("""SELECT
                             devMac,
                             devLastIP,
                             devName,
@@ -94,7 +94,7 @@ def update_vendors(dbPath, plugin_objects):
                                     OR devVendor   = ''
                                     OR devVendor   IS NULL
                         """)
-    devices = sql.fetchall()
+    devices = cursor.fetchall()
     conn.commit()
 
     # Close the database connection

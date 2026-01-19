@@ -240,18 +240,18 @@
       "default_value": "",
       "options": [],
       "localized": ["name"],
-      "name": [
+            "name": [
         {
           "language_code": "en_us",
-          "string": "N/A"
+          "string": "Full JSON"
         },
         {
           "language_code": "es_es",
-          "string": "N/A"
+          "string": "JSON completo"
         },
         {
           "language_code": "de_de",
-          "string": "N/A"
+          "string": "Vollständiges JSON"
         }
       ]
     },
@@ -591,11 +591,15 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is Download speed (not recommended)</li><li><code>Watched_Value2</code> is Upload speed (not recommended)</li><li><code>Watched_Value3</code> unused </li><li><code>Watched_Value4</code> unused </li></ul>"
+          "string": "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>Watched_Value1</code> is Download speed (not recommended)</li><li><code>Watched_Value2</code> is Upload speed (not recommended)</li><li><code>Watched_Value3</code> is JSON payload for webhooks (schema varies by engine)</li><li><code>Watched_Value4</code> unused </li></ul>"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Envíe una notificación si los valores seleccionados cambian. Use <code>CTRL + Clic</code> para seleccionar/deseleccionar. <ul> <li><code>Watched_Value1</code> es la velocidad de descarga (no recomendado)</li><li><code>Watched_Value2</code> es la velocidad de carga (no recomendado)</li><li><code>Watched_Value3</code> es la carga útil JSON para webhooks (el esquema varía según el motor)</li><li><code>Watched_Value4</code> no se usa </li></ul>"
         },
         {
           "language_code": "de_de",
-          "string": "Sende eine Benachrichtigung, wenn ein ausgwählter Wert sich ändert. <code>STRG + klicken</code> zum aus-/abwählen. <ul> <li><code>Watched_Value1</code> ist die Download-Geschwindigkeit (nicht empfohlen)</li><li><code>Watched_Value2</code> ist die Upload-Geschwindigkeit (nicht empfohlen)</li><li><code>Watched_Value3</code> ist nicht in Verwendung </li><li><code>Watched_Value4</code> ist nicht in Verwendung </li></ul>"
+          "string": "Sende eine Benachrichtigung, wenn ein ausgwählter Wert sich ändert. <code>STRG + klicken</code> zum aus-/abwählen. <ul> <li><code>Watched_Value1</code> ist die Download-Geschwindigkeit (nicht empfohlen)</li><li><code>Watched_Value2</code> ist die Upload-Geschwindigkeit (nicht empfohlen)</li><li><code>Watched_Value3</code> ist JSON-Payload für Webhooks (Schema variiert je nach Engine)</li><li><code>Watched_Value4</code> ist nicht in Verwendung </li></ul>"
         }
       ]
     },

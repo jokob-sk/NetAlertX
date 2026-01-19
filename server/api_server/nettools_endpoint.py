@@ -1,15 +1,18 @@
 import subprocess
 import re
+import json
 import sys
 import ipaddress
 import shutil
 import os
 from flask import jsonify
+from const import NATIVE_SPEEDTEST_PATH
 
 # Resolve speedtest-cli path once at module load and validate it.
 # We do this once to avoid repeated PATH lookups and to fail fast when
 # the binary isn't available or executable.
 SPEEDTEST_CLI_PATH = None
+
 
 
 def _get_speedtest_cli_path():
@@ -94,7 +97,7 @@ def traceroute(ip):
             check=True,  # Raise CalledProcessError on non-zero exit
         )
         # Return success response with traceroute output
-        return jsonify({"success": True, "output": result.stdout.strip()})
+        return jsonify({"success": True, "output": result.stdout.strip().splitlines()})
 
     # --------------------------
     # Step 3: Handle command errors
@@ -112,9 +115,52 @@ def traceroute(ip):
 
 def speedtest():
     """
-    API endpoint to run a speedtest using speedtest-cli.
+    API endpoint to run a speedtest using native binary or speedtest-cli.
     Returns JSON with the test output or error.
     """
+    # Prefer native speedtest binary
+    if os.path.exists(NATIVE_SPEEDTEST_PATH):
+        try:
+            result = subprocess.run(
+                [NATIVE_SPEEDTEST_PATH, "--format=json", "--accept-license", "--accept-gdpr"],
+                capture_output=True,
+                text=True,
+                timeout=60
+            )
+            if result.returncode == 0:
+                try:
+                    data = json.loads(result.stdout)
+                    download = round(data['download']['bandwidth'] * 8 / 10**6, 2)
+                    upload = round(data['upload']['bandwidth'] * 8 / 10**6, 2)
+                    ping = data['ping']['latency']
+                    isp = data['isp']
+                    server = f"{data['server']['name']} - {data['server']['location']} ({data['server']['id']})"
+                    
+                    output_lines = [
+                        f"Server: {server}",
+                        f"ISP: {isp}",
+                        f"Latency: {ping} ms",
+                        f"Download: {download} Mbps",
+                        f"Upload: {upload} Mbps"
+                    ]
+                    
+                    if 'packetLoss' in data:
+                        output_lines.append(f"Packet Loss: {data['packetLoss']}%")
+                    
+                    return jsonify({"success": True, "output": output_lines})
+                
+                except (json.JSONDecodeError, KeyError, TypeError) as parse_error:
+                    print(f"Failed to parse native speedtest output: {parse_error}", file=sys.stderr)
+                    # Fall through to CLI fallback
+            else:
+                print(f"Native speedtest exited with code {result.returncode}: {result.stderr}", file=sys.stderr)
+
+        except subprocess.TimeoutExpired:
+            print("Native speedtest timed out after 60s, falling back to CLI", file=sys.stderr)
+        except Exception as e:
+            # Fall back to speedtest-cli if native fails
+            print(f"Native speedtest failed: {e}, falling back to CLI", file=sys.stderr)
+
     # If the CLI wasn't found at module load, return a 503 so the caller
     # knows the service is unavailable rather than failing unpredictably.
     if SPEEDTEST_CLI_PATH is None:
@@ -132,11 +178,20 @@ def speedtest():
             capture_output=True,
             text=True,
             check=True,
+            timeout=60,
         )
 
         # Return each line as a list
         output_lines = result.stdout.strip().split("\n")
         return jsonify({"success": True, "output": output_lines})
+
+    except subprocess.TimeoutExpired:
+        return jsonify(
+            {
+                "success": False,
+                "error": "Speedtest timed out after 60 seconds",
+            }
+        ), 504
 
     except subprocess.CalledProcessError as e:
         return jsonify(
@@ -247,33 +302,115 @@ def internet_info():
     Returns JSON with the info or error.
     """
     try:
-        # Perform the request via curl
         result = subprocess.run(
-            ["curl", "-s", "https://ipinfo.io"],
+            ["curl", "-s", "https://ipinfo.io/json"],
             capture_output=True,
             text=True,
             check=True,
         )
 
-        output = result.stdout.strip()
-        if not output:
+        if not result.stdout:
             raise ValueError("Empty response from ipinfo.io")
 
-        # Clean up the JSON-like string by removing { } , and "
-        cleaned_output = (
-            output.replace("{", "")
-            .replace("}", "")
-            .replace(",", "")
-            .replace('"', "")
-        )
+        data = json.loads(result.stdout)
 
-        return jsonify({"success": True, "output": cleaned_output})
+        return jsonify({
+            "success": True,
+            "output": data
+        })
 
-    except (subprocess.CalledProcessError, ValueError) as e:
+    except (subprocess.CalledProcessError, ValueError, json.JSONDecodeError) as e:
         return jsonify(
             {
                 "success": False,
                 "error": "Failed to fetch internet info",
+                "details": str(e),
+            }
+        ), 500
+
+
+def network_interfaces():
+    """
+    API endpoint to fetch network interface info using `nmap --iflist`.
+    Returns JSON with interface info and RX/TX bytes.
+    """
+    try:
+        # Run Nmap
+        nmap_output = subprocess.run(
+            ["nmap", "--iflist"],
+            capture_output=True,
+            text=True,
+            check=True,
+        ).stdout.strip()
+
+        # Read /proc/net/dev for RX/TX
+        rx_tx = {}
+        with open("/proc/net/dev") as f:
+            for line in f.readlines()[2:]:
+                if ":" not in line:
+                    continue
+                iface, data = line.split(":")
+                iface = iface.strip()
+                cols = data.split()
+                rx_bytes = int(cols[0])
+                tx_bytes = int(cols[8])
+                rx_tx[iface] = {"rx": rx_bytes, "tx": tx_bytes}
+
+        interfaces = {}
+
+        for line in nmap_output.splitlines():
+            line = line.strip()
+            if not line:
+                continue
+
+            # Skip header line
+            if line.startswith("DEV") or line.startswith("----"):
+                continue
+
+            # Regex to parse: DEV (SHORT) IP/MASK TYPE UP MTU MAC
+            match = re.match(
+                r"^(\S+)\s+\(([^)]*)\)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s*(\S*)",
+                line
+            )
+            if not match:
+                continue
+
+            dev, short, ipmask, type_, state, mtu_str, mac = match.groups()
+
+            # Only parse MTU if it's a number
+            try:
+                mtu = int(mtu_str)
+            except ValueError:
+                mtu = None
+
+            if dev not in interfaces:
+                interfaces[dev] = {
+                    "name": dev,
+                    "short": short,
+                    "type": type_,
+                    "state": state.lower(),
+                    "mtu": mtu,
+                    "mac": mac if mac else None,
+                    "ipv4": [],
+                    "ipv6": [],
+                    "rx_bytes": rx_tx.get(dev, {}).get("rx", 0),
+                    "tx_bytes": rx_tx.get(dev, {}).get("tx", 0),
+                }
+
+            # Parse IP/MASK
+            if ipmask != "(none)/0":
+                if ":" in ipmask:
+                    interfaces[dev]["ipv6"].append(ipmask)
+                else:
+                    interfaces[dev]["ipv4"].append(ipmask)
+
+        return jsonify({"success": True, "interfaces": interfaces}), 200
+
+    except (subprocess.CalledProcessError, ValueError, FileNotFoundError) as e:
+        return jsonify(
+            {
+                "success": False,
+                "error": "Failed to fetch network interface info",
                 "details": str(e),
             }
         ), 500

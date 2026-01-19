@@ -47,6 +47,9 @@ sudo mount -t tmpfs -o size=50m,mode=0777 tmpfs /tmp/nginx 2>/dev/null || true
 
 sudo chmod 777 /tmp/log /tmp/api /tmp/run /tmp/nginx
 
+# Create critical subdirectories immediately after tmpfs mount
+sudo install -d -m 777 /tmp/run/tmp
+sudo install -d -m 777 /tmp/log/plugins
 
 
 sudo rm -rf /entrypoint.d
@@ -85,9 +88,7 @@ sudo chmod 777 "${LOG_DB_IS_LOCKED}"
 
 sudo pkill -f python3 2>/dev/null || true
 
-sudo chmod 777 "${PY_SITE_PACKAGES}" "${NETALERTX_DATA}" "${NETALERTX_DATA}"/* 2>/dev/null || true
-
-sudo chmod 005 "${PY_SITE_PACKAGES}" 2>/dev/null || true
+sudo chmod -R 777 "${PY_SITE_PACKAGES}" "${NETALERTX_DATA}" 2>/dev/null || true
 
 sudo chown -R "${NETALERTX_USER}:${NETALERTX_GROUP}" "${NETALERTX_APP}"
 date +%s | sudo tee "${NETALERTX_FRONT}/buildtimestamp.txt" >/dev/null

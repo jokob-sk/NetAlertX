@@ -4,10 +4,12 @@
     "python.testing.pytestEnabled": true,
     "python.testing.unittestEnabled": false,
     "python.testing.pytestArgs": [
-        "test"
+      "test"
     ],
-    // Ensure VS Code uses the devcontainer virtualenv
+    // NetAlertX devcontainer uses /opt/venv; this ensures pip/pytest are available for discovery.
     "python.defaultInterpreterPath": "/opt/venv/bin/python",
+    "python.testing.cwd": "${workspaceFolder}",
+    "python.testing.autoTestDiscoverOnSaveEnabled": true,
     // Let the Python extension invoke pytest via the interpreter; avoid hardcoded paths
     // Removed python.testing.pytestPath and legacy pytest.command overrides
     
@@ -16,8 +18,7 @@
       "zsh": {
         "path": "/bin/zsh"
       }
-    }
-    ,
+    },
     // Fallback for older VS Code versions or schema validators that don't accept custom profiles
     "terminal.integrated.shell.linux": "/usr/bin/zsh"
   ,
@@ -29,5 +30,6 @@
   "python.formatting.provider": "black",
   "python.formatting.blackArgs": [
     "--line-length=180"
-  ]
+  ],
+
 }

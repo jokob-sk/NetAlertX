@@ -369,13 +369,15 @@ function getLangCode() {
     return lang_code;
 }
 
-
+  const tz = getSetting("TIMEZONE") || 'Europe/Berlin';
+  const LOCALE = getSetting('UI_LOCALE') || 'en-GB';
 
 // -----------------------------------------------------------------------------
-// String utilities
+// DateTime utilities
 // -----------------------------------------------------------------------------
 function localizeTimestamp(input) {
-  let tz = getSetting("TIMEZONE") || 'Europe/Berlin';
+
+
   input = String(input || '').trim();
 
   // 1. Unix timestamps (10 or 13 digits)
@@ -389,12 +391,18 @@ function localizeTimestamp(input) {
     }).format(new Date(ms));
   }
 
-  // 2. European DD/MM/YYYY
-  let match = input.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:[ ,]+(\d{1,2}:\d{2}(?::\d{2})?))?(.*)$/);
+ // 2. European DD/MM/YYYY
+  let match = input.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:[ ,]+(\d{1,2}:\d{2}(?::\d{2})?))?$/);
   if (match) {
     let [, d, m, y, t = "00:00:00", tzPart = ""] = match;
-    const iso = `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}T${t.length===5?t+":00":t}${tzPart}`;
-    return formatSafe(iso, tz);
+    const dNum = parseInt(d, 10);
+    const mNum = parseInt(m, 10);
+
+    if (dNum <= 12 && mNum > 12) {
+    } else {
+      const iso = `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}T${t.length===5 ? t + ":00" : t}${tzPart}`;
+      return formatSafe(iso, tz);
+    }
   }
 
   // 3. US MM/DD/YYYY
@@ -444,7 +452,7 @@ function localizeTimestamp(input) {
       console.error(`ERROR: Couldn't parse date: '${str}' with TIMEZONE ${tz}`);
       return 'Failed conversion - Check browser console';
     }
-    return new Intl.DateTimeFormat('default', {
+    return new Intl.DateTimeFormat(LOCALE, {
       timeZone: tz,
       year: 'numeric', month: '2-digit', day: '2-digit',
       hour: '2-digit', minute: '2-digit', second: '2-digit',
@@ -453,6 +461,54 @@ function localizeTimestamp(input) {
   }
 }
 
+
+/**
+ * Returns start and end date for a given period.
+ * @param {string} period - "1 day", "7 days", "1 month", "1 year", "100 years"
+ * @returns {{start: string, end: string}} - Dates in "YYYY-MM-DD HH:MM:SS" format
+ */
+function getPeriodStartEnd(period) {
+  const now = new Date();
+  let start = new Date(now); // default start = now
+  let end = new Date(now);   // default end = now
+
+  switch (period) {
+    case "1 day":
+      start.setDate(now.getDate() - 1);
+      break;
+    case "7 days":
+      start.setDate(now.getDate() - 7);
+      break;
+    case "1 month":
+      start.setMonth(now.getMonth() - 1);
+      break;
+    case "1 year":
+      start.setFullYear(now.getFullYear() - 1);
+      break;
+    case "100 years":
+      start = new Date(0); // very old date for "all"
+      break;
+    default:
+      console.warn("Unknown period, using 1 month as default");
+      start.setMonth(now.getMonth() - 1);
+  }
+
+  // Helper function to format date as "YYYY-MM-DD HH:MM:SS"
+  const formatDate = (date) => {
+    const pad = (n) => String(n).padStart(2, "0");
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ` +
+           `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+  };
+
+  return {
+    start: formatDate(start),
+    end: formatDate(end)
+  };
+}
+
+// -----------------------------------------------------------------------------
+// String utilities
+// -----------------------------------------------------------------------------
 
 
 // ----------------------------------------------------
@@ -630,26 +686,43 @@ function numberArrayFromString(data)
 }
 
 // -----------------------------------------------------------------------------
-function saveData(functionName, id, value) {
+// Update network parent/child relationship (network tree)
+function updateNetworkLeaf(leafMac, parentMac) {
+  const apiBase = getApiBase();
+  const apiToken = getSetting("API_TOKEN");
+  const url = `${apiBase}/device/${leafMac}/update-column`;
+
   $.ajax({
-    method: "GET",
-    url: "php/server/devices.php",
-    data: { action: functionName, id: id, value:value  },
-    success: function(data) {
-
-        if(sanitize(data) == 'OK')
-        {
-          showMessage("Saved")
-          // Remove navigation prompt "Are you sure you want to leave..."
-          window.onbeforeunload = null;
-        } else
-        {
-          showMessage("ERROR")
-        }
-
+    method: "POST",
+    url: url,
+    headers: { "Authorization": `Bearer ${apiToken}` },
+    data: JSON.stringify({ columnName: "devParentMAC", columnValue: parentMac }),
+    contentType: "application/json",
+    success: function(response) {
+      if(response.success) {
+        showMessage("Saved");
+        // Remove navigation prompt "Are you sure you want to leave..."
+        window.onbeforeunload = null;
+      } else {
+        showMessage("ERROR: " + (response.error || "Unknown error"));
       }
+    },
+    error: function(xhr, status, error) {
+      console.error("Error updating network leaf:", status, error);
+      showMessage("ERROR: " + (xhr.responseJSON?.error || error));
+    }
   });
+}
 
+// -----------------------------------------------------------------------------
+// Legacy function wrapper for backward compatibility
+function saveData(functionName, id, value) {
+  if (functionName === 'updateNetworkLeaf') {
+    updateNetworkLeaf(id, value);
+  } else {
+    console.warn("saveData called with unknown functionName:", functionName);
+    showMessage("ERROR: Unknown function");
+  }
 }
 
 
@@ -912,7 +985,13 @@ function getMac(){
     get: (searchParams, prop) => searchParams.get(prop),
   });
 
-  return params.mac
+  mac = params.mac;
+
+  if (mac == "") {
+    console.error("Couldn't retrieve mac");
+  }
+
+  return mac;
 }
 
 // -----------------------------------------------------------------------------
@@ -992,7 +1071,8 @@ function isRandomMAC(mac)
       return input;
     }
     // Empty array
-    if (input === '[]' || input === '') {
+    // if (input === '[]' || input === '') {
+    if (input === '[]') {
       return [];
     }
     // handle integer
@@ -1155,7 +1235,12 @@ let spinnerTimeout = null;
 let animationTime = 300
 
 function showSpinner(stringKey = 'Loading') {
-  const text = isEmpty(stringKey) ? "Loading" : getString(stringKey || "Loading");
+  let text = isEmpty(stringKey) ? "Loading..." : getString(stringKey || "Loading");
+
+  if (text == ""){
+    text = "Loading"
+  }
+
   const spinner = $("#loadingSpinner");
   const target = $(".spinnerTarget").first(); // Only use the first one if multiple exist
 
@@ -1254,11 +1339,19 @@ function updateApi(apiEndpoints)
   // value has to be in format event|param. e.g. run|ARPSCAN
   action = `${getGuid()}|update_api|${apiEndpoints}`
 
+  // Get data from the server
+  const apiToken = getSetting("API_TOKEN");
+  const apiBaseUrl = getApiBase();
+  const url = `${apiBaseUrl}/logs/add-to-execution-queue`;
 
   $.ajax({
     method: "POST",
-    url: "php/server/util.php",
-    data: { function: "addToExecutionQueue", action: action  },
+    url: url,
+    headers: {
+      "Authorization": "Bearer " + apiToken,
+      "Content-Type": "application/json"
+    },
+    data: JSON.stringify({ action: action }),
     success: function(data, textStatus) {
         console.log(data)
     }
@@ -1493,11 +1586,19 @@ function restartBackend() {
 
   modalEventStatusId = 'modal-message-front-event'
 
+  const apiToken = getSetting("API_TOKEN");
+  const apiBaseUrl = getApiBase();
+  const url = `${apiBaseUrl}/logs/add-to-execution-queue`;
+
   // Execute
   $.ajax({
       method: "POST",
-      url: "php/server/util.php",
-      data: { function: "addToExecutionQueue", action: `${getGuid()}|cron_restart_backend`  },
+      url: url,
+      headers: {
+        "Authorization": "Bearer " + apiToken,
+        "Content-Type": "application/json"
+      },
+      data: JSON.stringify({ action: `cron_restart_backend` }),
       success: function(data, textStatus) {
           // showModalOk ('Result', data );
 
@@ -1535,9 +1636,18 @@ function clearCache() {
   }, 500);
 }
 
-// -----------------------------------------------------------------------------
-// Function to check if cache needs to be refreshed because of setting changes
+// ===================================================================
+// DEPRECATED: checkSettingChanges() - Replaced by SSE-based manager
+// Settings changes are now handled via SSE events
+// Kept for backward compatibility, will be removed in future version
+// ===================================================================
 function checkSettingChanges() {
+  // SSE manager handles settings_changed events now
+  if (typeof netAlertXStateManager !== 'undefined' && netAlertXStateManager.initialized) {
+    return; // SSE handles this now
+  }
+
+  // Fallback for backward compatibility
   $.get('php/server/query_json.php', { file: 'app_state.json', nocache: Date.now() }, function(appState) {
     const importedMilliseconds = parseInt(appState["settingsImported"] * 1000);
     const lastReloaded = parseInt(sessionStorage.getItem(sessionStorageKey + '_time'));
@@ -1551,7 +1661,7 @@ function checkSettingChanges() {
   });
 }
 
-// -----------------------------------------------------------------------------
+// ===================================================================
 // Display spinner and reload page if not yet initialized
 async function handleFirstLoad(callback) {
   if (!isAppInitialized()) {
@@ -1560,7 +1670,7 @@ async function handleFirstLoad(callback) {
   }
 }
 
-// -----------------------------------------------------------------------------
+// ===================================================================
 // Execute callback once the app is initialized and GraphQL server is running
 async function callAfterAppInitialized(callback) {
   if (!isAppInitialized() || !(await isGraphQLServerRunning())) {
@@ -1572,7 +1682,7 @@ async function callAfterAppInitialized(callback) {
   }
 }
 
-// -----------------------------------------------------------------------------
+// ===================================================================
 // Polling function to repeatedly check if the server is running
 async function waitForGraphQLServer() {
   const pollInterval = 2000; // 2 seconds between each check

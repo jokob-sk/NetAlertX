@@ -39,6 +39,7 @@ def get_device_condition_by_status(device_status):
         "favorites": "WHERE devIsArchived=0 AND devFavorite=1",
         "new": "WHERE devIsArchived=0 AND devIsNew=1",
         "down": "WHERE devIsArchived=0 AND devAlertDown != 0 AND devPresentLastScan=0",
+        "offline": "WHERE devIsArchived=0 AND devPresentLastScan=0",
         "archived": "WHERE devIsArchived=1",
     }
     return conditions.get(device_status, "WHERE 1=0")
@@ -72,6 +73,28 @@ def row_to_json(names, row):
         rowEntry[name] = if_byte_then_to_str(row[name])
 
     return rowEntry
+
+
+# -------------------------------------------------------------------------------
+def safe_int(setting_name):
+    """
+    Helper to ensure integer values are valid (not empty strings or None).
+
+    Parameters:
+        setting_name (str): The name of the setting to retrieve.
+
+    Returns:
+        int: The setting value as an integer if valid, otherwise 0.
+    """
+    # Import here to avoid circular dependency
+    from helper import get_setting_value
+    try:
+        val = get_setting_value(setting_name)
+        if val in ['', None, 'None', 'null']:
+            return 0
+        return int(val)
+    except (ValueError, TypeError, Exception):
+        return 0
 
 
 # -------------------------------------------------------------------------------
@@ -140,9 +163,8 @@ def print_table_schema(db, table):
         return
 
     mylog("debug", f"[Schema] Structure for table: {table}")
-    header = (
-        f"{'cid':<4} {'name':<20} {'type':<10} {'notnull':<8} {'default':<10} {'pk':<2}"
-    )
+    header = "{:<4} {:<20} {:<10} {:<8} {:<10} {:<2}".format(
+        "cid", "name", "type", "notnull", "default", "pk")
     mylog("debug", header)
     mylog("debug", "-" * len(header))
 

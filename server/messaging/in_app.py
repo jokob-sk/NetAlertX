@@ -14,6 +14,7 @@ sys.path.extend([f"{INSTALL_PATH}/server"])
 from const import apiPath  # noqa: E402 [flake8 lint suppression]
 from logger import mylog  # noqa: E402 [flake8 lint suppression]
 from utils.datetime_utils import timeNowDB  # noqa: E402 [flake8 lint suppression]
+from api_server.sse_broadcast import broadcast_unread_notifications_count  # noqa: E402 [flake8 lint suppression]
 
 
 NOTIFICATION_API_FILE = apiPath + 'user_notifications.json'
@@ -71,6 +72,13 @@ def write_notification(content, level="alert", timestamp=None):
     # Write updated data back to file
     with open(NOTIFICATION_API_FILE, "w") as file:
         json.dump(notifications, file, indent=4)
+
+    # Broadcast unread count update
+    try:
+        unread_count = sum(1 for n in notifications if n.get("read", 0) == 0)
+        broadcast_unread_notifications_count(unread_count)
+    except Exception as e:
+        mylog("none", [f"[Notification] Failed to broadcast unread count: {e}"])
 
 
 # Trim notifications
@@ -156,6 +164,13 @@ def mark_all_notifications_read():
         return {"success": False, "error": str(e)}
 
     mylog("debug", "[Notification] All notifications marked as read.")
+
+    # Broadcast unread count update
+    try:
+        broadcast_unread_notifications_count(0)
+    except Exception as e:
+        mylog("none", [f"[Notification] Failed to broadcast unread count: {e}"])
+
     return {"success": True}
 
 
@@ -169,6 +184,13 @@ def delete_notifications():
     with open(NOTIFICATION_API_FILE, "w") as f:
         json.dump([], f, indent=4)
         mylog("debug", "[Notification] All notifications deleted.")
+
+    # Broadcast unread count update
+    try:
+        broadcast_unread_notifications_count(0)
+    except Exception as e:
+        mylog("none", [f"[Notification] Failed to broadcast unread count: {e}"])
+
     return jsonify({"success": True})
 
 
@@ -219,6 +241,13 @@ def mark_notification_as_read(guid=None, max_attempts=3):
                     with open(NOTIFICATION_API_FILE, "w") as f:
                         json.dump(notifications, f, indent=4)
 
+                    # Broadcast unread count update
+                    try:
+                        unread_count = sum(1 for n in notifications if n.get("read", 0) == 0)
+                        broadcast_unread_notifications_count(unread_count)
+                    except Exception as e:
+                        mylog("none", [f"[Notification] Failed to broadcast unread count: {e}"])
+
                     return {"success": True}
         except Exception as e:
             mylog("none", f"[Notification] Attempt {attempts + 1} failed: {e}")
@@ -257,6 +286,13 @@ def delete_notification(guid):
         # Write the updated notifications back
         with open(NOTIFICATION_API_FILE, "w") as f:
             json.dump(filtered_notifications, f, indent=4)
+
+        # Broadcast unread count update
+        try:
+            unread_count = sum(1 for n in filtered_notifications if n.get("read", 0) == 0)
+            broadcast_unread_notifications_count(unread_count)
+        except Exception as e:
+            mylog("none", [f"[Notification] Failed to broadcast unread count: {e}"])
 
         return {"success": True}
 

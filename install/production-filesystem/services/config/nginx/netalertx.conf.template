@@ -1,3 +1,6 @@
+# Set user if running as root (substituted by start-nginx.sh)
+${NGINX_USER_DIRECTIVE}
+
 # Set number of worker processes automatically based on number of CPU cores.
 worker_processes auto;
 

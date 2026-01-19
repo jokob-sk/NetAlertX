@@ -1,8 +1,9 @@
-site_name: NetAlertX Docs
-site_url: https://jokob-sk.github.io/NetAlertX/
+site_name: NetAlertX Documentation
+site_url: https://docs.netalertx.com
 repo_url: https://github.com/jokob-sk/NetAlertX/
 edit_uri: blob/main/docs/
 docs_dir: docs
+use_directory_urls: true
 site_description: >-
   The main documentation resource for NetAlertX - a network scanner and presence detector
 # static_dir: docs/img
@@ -18,6 +19,18 @@ nav:
         - Docker File Permissions: FILE_PERMISSIONS.md
         - Docker Updates: UPDATES.md
         - Docker Maintenance: DOCKER_MAINTENANCE.md
+      - Docker Startup Troubleshooting:
+        - Aufs capabilities: docker-troubleshooting/aufs-capabilities.md
+        - Excessive capabilities: docker-troubleshooting/excessive-capabilities.md
+        - File permissions: docker-troubleshooting/file-permissions.md
+        - Incorrect user: docker-troubleshooting/incorrect-user.md
+        - Missing capabilities: docker-troubleshooting/missing-capabilities.md
+        - Mount issues: docker-troubleshooting/mount-configuration-issues.md
+        - Network mode: docker-troubleshooting/network-mode.md
+        - Nginx mount: docker-troubleshooting/nginx-configuration-mount.md
+        - Port conflicts: docker-troubleshooting/port-conflicts.md
+        - Read only: docker-troubleshooting/read-only-filesystem.md
+        - Running as root: docker-troubleshooting/running-as-root.md
       - Other:
         - Synology Guide: SYNOLOGY_GUIDE.md
         - Portainer Stacks: DOCKER_PORTAINER.md
@@ -39,6 +52,7 @@ nav:
       - Advanced guides:
         - Remote Networks: REMOTE_NETWORKS.md
         - Notifications Guide: NOTIFICATIONS.md
+        - Custom PUID/GUID: PUID_PGID_SECURITY.md
         - Name Resolution: NAME_RESOLUTION.md
         - Authelia: AUTHELIA.md
         - Performance: PERFORMANCE.md
@@ -77,8 +91,15 @@ nav:
         - Environment Setup: DEV_ENV_SETUP.md
         - Builds: BUILDS.md
         - Devcontainer: DEV_DEVCONTAINER.md
-        - Custom Plugins: PLUGINS_DEV.md
-        - Plugin Config: PLUGINS_DEV_CONFIG.md
+        - Devcontainer Ports: DEV_PORTS_HOST_MODE.md
+        - Custom Plugins:
+          - Overview: PLUGINS_DEV.md
+          - Quick Start: PLUGINS_DEV_QUICK_START.md
+          - Data Contract: PLUGINS_DEV_DATA_CONTRACT.md
+          - Settings System: PLUGINS_DEV_SETTINGS.md
+          - Data Sources: PLUGINS_DEV_DATASOURCES.md
+          - UI Components: PLUGINS_DEV_UI_COMPONENTS.md
+          - Config Lifecycle: PLUGINS_DEV_CONFIG.md
         - Frontend Development: FRONTEND_DEVELOPMENT.md
         - Database: DATABASE.md
         - Settings: SETTINGS_SYSTEM.md
@@ -96,8 +117,11 @@ nav:
         - Net Tools: API_NETTOOLS.md
         - Online History: API_ONLINEHISTORY.md
         - Sync: API_SYNC.md
+        - Logs: API_LOGS.md
+        - SSE: API_SSE.md
         - GraphQL: API_GRAPHQL.md
         - DB query: API_DBQUERY.md
+        - MCP: API_MCP.md
         - Tests: API_TESTS.md
         - SUPERSEDED OLD API Overview: API_OLD.md
       - Integrations:
@@ -168,6 +192,23 @@ theme:
         name: Switch to dark mode
 markdown_extensions:
   - admonition
+  - pymdownx.superfences
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed
+  - pymdownx.details
+  - pymdownx.snippets
+  - pymdownx.blocks.tab
+  - pymdownx.blocks.admonition
+  - pymdownx.blocks.details
+  - pymdownx.mark
+  - pymdownx.tasklist
+  - pymdownx.emoji
+  - pymdownx.magiclink
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
 plugins:
   - gh-admonitions
   - search

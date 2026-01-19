@@ -312,7 +312,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Enable sending notifications via <a target=\"_blank\" href=\"https://www.home-assistant.io/integrations/mqtt/\">MQTT</a> to your Home Assistance instance. Usually, <code>on_notification</code> is recommended. See the <a target=\"_blank\" href=\"https://github.com/jokob-sk/NetAlertX/blob/main/docs/HOME_ASSISTANT.md\">NetAlertX Home Assistant guide</a> for details."
+          "string": "Enable sending notifications via <a target=\"_blank\" href=\"https://www.home-assistant.io/integrations/mqtt/\">MQTT</a> to your Home Assistance instance. Usually, <code>on_notification</code> is recommended. See the <a target=\"_blank\" href=\"https://docs.netalertx.com/HOME_ASSISTANT\">NetAlertX Home Assistant guide</a> for details."
         },
         {
           "language_code": "es_es",
@@ -728,6 +728,34 @@
         {
           "language_code": "en_us",
           "string": "Check to send individual devices to the broker with details, such as <code>is_new</code>, <code>is_present</code>, or <code>mac_address</code> of the devices."
+        }
+      ]
+    },
+    {
+      "function": "SEND_NOTIFICATIONS",
+      "type": {
+        "dataType": "boolean",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "checkbox" }],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": true,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Send notifications"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Check to send notifications to the broker with json containing events, new_devices, down_devices and more."
         }
       ]
     },

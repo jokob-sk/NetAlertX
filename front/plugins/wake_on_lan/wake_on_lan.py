@@ -13,7 +13,6 @@ from plugin_helper import Plugin_Objects  # noqa: E402 [flake8 lint suppression]
 from logger import mylog, Logger  # noqa: E402 [flake8 lint suppression]
 from const import logPath  # noqa: E402 [flake8 lint suppression]
 from helper import get_setting_value   # noqa: E402 [flake8 lint suppression]
-from database import DB  # noqa: E402 [flake8 lint suppression]
 from models.device_instance import DeviceInstance  # noqa: E402 [flake8 lint suppression]
 import conf  # noqa: E402 [flake8 lint suppression]
 
@@ -44,12 +43,8 @@ def main():
 
     mylog('verbose', [f'[{pluginName}] broadcast_ips value {broadcast_ips}'])
 
-    # Create a database connection
-    db = DB()  # instance of class DB
-    db.open()
-
     # Create a DeviceInstance instance
-    device_handler = DeviceInstance(db)
+    device_handler = DeviceInstance()
 
     # Retrieve devices
     if 'offline' in devices_to_wake:

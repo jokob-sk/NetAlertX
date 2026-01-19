@@ -1,7 +1,7 @@
 <!--
 #---------------------------------------------------------------------------------#
 #  NetAlertX                                                                       #
-#  Open Source Network Guard / WIFI & LAN intrusion detector                      #  
+#  Open Source Network Guard / WIFI & LAN intrusion detector                      #
 #                                                                                 #
 #  presence.php - Front module. Device Presence calendar page                     #
 #---------------------------------------------------------------------------------#
@@ -44,7 +44,7 @@
         <div class="col-lg-2 col-sm-4 col-xs-6">
           <a href="#" onclick="javascript: getDevicesPresence('connected');">
             <div class="small-box bg-green">
-              <div class="inner"> <h3 id="devicesConnected"> -- </h3> 
+              <div class="inner"> <h3 id="devicesConnected"> -- </h3>
                   <p class="infobox_label"><?= lang('Presence_Shortcut_Connected');?></p>
               </div>
               <div class="icon"> <i class="fa fa-plug text-green-40"></i> </div>
@@ -113,16 +113,16 @@
                 <div class="chart">
                   <script src="lib/chart.js/Chart.js"></script>
                   <!-- presence chart -->
-                  <?php  
+                  <?php
                       require 'php/components/graph_online_history.php';
-                  ?>                  
+                  ?>
                 </div>
               </div>
               <!-- /.box-body -->
             </div>
           </div>
       </div>
-  
+
       <!-- /.row -->
 
 <!-- Calendar -------------------------------------------------------------- -->
@@ -147,7 +147,7 @@
             </div>
 
             <!-- box-body -->
-            <div class="box-body table-responsive">              
+            <div class="box-body table-responsive">
 
               <!-- Calendar -->
               <div id="calendar"></div>
@@ -236,7 +236,7 @@ function initializeCalendar () {
     height            : 'auto',
     firstDay          : 1,
     allDaySlot        : false,
-    timeFormat        : 'H:mm', 
+    timeFormat        : 'H:mm',
 
     resourceLabelText : '<?= lang('Presence_CallHead_Devices');?>',
     resourceAreaWidth : '160px',
@@ -291,24 +291,24 @@ function initializeCalendar () {
         slotDuration      : '00:30:00'
       }
     },
-     
+
     // Needed due hack partial day events 23:59:59
     dayRender: function (date, cell) {
       if ($('#calendar').fullCalendar('getView').name == 'timelineYear') {
-        cell.removeClass('fc-sat'); 
-        cell.removeClass('fc-sun'); 
+        cell.removeClass('fc-sat');
+        cell.removeClass('fc-sun');
         return;
-      }; 
+      };
 
       if (date.day() == 0) {
         cell.addClass('fc-sun'); };
-                        
+
       if (date.day() == 6) {
         cell.addClass('fc-sat'); };
 
       if (date.format('YYYY-MM-DD') == moment().format('YYYY-MM-DD')) {
           cell.addClass ('fc-today'); };
-          
+
       if ($('#calendar').fullCalendar('getView').name == 'timelineDay') {
         cell.removeClass('fc-sat');
         cell.removeClass('fc-sun');
@@ -318,7 +318,7 @@ function initializeCalendar () {
         }
       };
     },
-    
+
     resourceRender: function (resourceObj, labelTds, bodyTds) {
       labelTds.find('span.fc-cell-text').html (
       '<b><a href="deviceDetails.php?mac='+ resourceObj.id+ '" class="">'+ resourceObj.title +'</a></b>');
@@ -326,7 +326,7 @@ function initializeCalendar () {
       // Resize heihgt
       // $(".fc-content table tbody tr .fc-widget-content div").addClass('fc-resized-row');
     },
- 
+
     eventRender: function (event, element, view) {
       // $(element).tooltip({container: 'body', placement: 'bottom', title: event.tooltip});
       tltp = event.tooltip.replace('\n',' | ')
@@ -352,25 +352,60 @@ function initializeCalendar () {
 
 
 // -----------------------------------------------------------------------------
+/**
+ * Fetch device totals from the API and update dashboard counters.
+ *
+ * This function:
+ *  - Stops the automatic refresh timer
+ *  - Calls the `/devices/totals` API endpoint using Bearer token authentication
+ *  - Updates the device summary boxes (all, connected, favorites, new, down, archived)
+ *  - Restarts the refresh timer after completion
+ *
+ * Expected API response format:
+ *   [
+ *     devices,     // Total devices
+ *     connected,   // Currently connected devices
+ *     favorites,   // Favorite devices
+ *     new,         // Newly discovered devices
+ *     down,        // Devices marked as down
+ *     archived     // Archived / hidden devices
+ *   ]
+ */
 function getDevicesTotals () {
   // stop timer
   stopTimerRefreshData();
 
-  // get totals and put in boxes
-  $.get('php/server/devices.php?action=getDevicesTotals', function(data) {
-    var totalsDevices = JSON.parse(data);
+  const apiToken   = getSetting("API_TOKEN");
+  const apiBaseUrl = getApiBase();
+  const totalsUrl  = `${apiBaseUrl}/devices/totals`;
 
-    $('#devicesAll').html        (totalsDevices[0].toLocaleString());
-    $('#devicesConnected').html  (totalsDevices[1].toLocaleString());
-    $('#devicesFavorites').html  (totalsDevices[2].toLocaleString());
-    $('#devicesNew').html        (totalsDevices[3].toLocaleString());
-    $('#devicesDown').html       (totalsDevices[4].toLocaleString());
-    $('#devicesHidden').html     (totalsDevices[5].toLocaleString());
+  $.ajax({
+    url: totalsUrl,
+    method: "GET",
+    headers: {
+      "Authorization": `Bearer ${apiToken}`
+    },
+    success: function (totalsDevices) {
 
-    // Timer for refresh data
-    newTimerRefreshData (getDevicesTotals);
-  } );
+      $('#devicesAll').html        (totalsDevices[0].toLocaleString());
+      $('#devicesConnected').html  (totalsDevices[1].toLocaleString());
+      $('#devicesFavorites').html  (totalsDevices[2].toLocaleString());
+      $('#devicesNew').html        (totalsDevices[3].toLocaleString());
+      $('#devicesDown').html       (totalsDevices[4].toLocaleString());
+      $('#devicesHidden').html     (totalsDevices[5].toLocaleString());
+
+      // Timer for refresh data
+      newTimerRefreshData(getDevicesTotals);
+    },
+    error: function (xhr) {
+      console.error("Failed to load device totals:", xhr.responseText);
+
+      // Ensure refresh loop continues even on failure
+      newTimerRefreshData(getDevicesTotals);
+    }
+  });
 }
+
 
 
 // -----------------------------------------------------------------------------
@@ -387,7 +422,7 @@ function getDevicesPresence (status) {
     case 'down':       tableTitle = '<?= lang('Presence_Shortcut_DownAlerts');?>';    color = 'red';     break;
     case 'archived':   tableTitle = '<?= lang('Presence_Shortcut_Archived');?>';      color = 'gray';    break;
     default:           tableTitle = '<?= lang('Presence_Shortcut_Devices');?>';       color = 'gray';    break;
-  } 
+  }
 
   period = "7 days"
 
@@ -421,12 +456,57 @@ function getDevicesPresence (status) {
   $('#tableDevicesBox')[0].className = 'box box-'+ color;
   $('#tableDevicesTitle').html (tableTitle);
 
-  // Define new datasource URL and reload
-  $('#calendar').fullCalendar ('option', 'resources', 'php/server/devices.php?action=getDevicesListCalendar&status='+ deviceStatus);
-  $('#calendar').fullCalendar ('refetchResources');
+  const apiToken = getSetting("API_TOKEN");
+
+  const apiBaseUrl = getApiBase();
+
+  // -----------------------------
+  // Load Devices as Resources
+  // -----------------------------
+  const devicesUrl = `${apiBaseUrl}/devices/by-status?status=${deviceStatus}`;
+
+  $.ajax({
+    url: devicesUrl,
+    method: "GET",
+    headers: {
+      "Authorization": `Bearer ${apiToken}`
+    },
+    success: function(devices) {
+      // FullCalendar expects resources array
+      const resources = devices.map(dev => ({
+        id: dev.devMac,
+        title: dev.devName
+      }));
+
+      $('#calendar').fullCalendar('option', 'resources', resources);
+      $('#calendar').fullCalendar('refetchResources');
+    }
+  });
+
+  // -----------------------------
+  // Load Events
+  // -----------------------------
+  const eventsUrl = `${apiBaseUrl}/sessions/calendar?start=${startDate}&end=${endDate}`;
 
   $('#calendar').fullCalendar('removeEventSources');
-  $('#calendar').fullCalendar('addEventSource', { url: `php/server/events.php?period=${period}&start=${startDate}&end=${endDate}&action=getEventsCalendar` });
+  $('#calendar').fullCalendar('addEventSource', {
+    url: eventsUrl,
+    method: "GET",
+    headers: {
+      "Authorization": `Bearer ${apiToken}`
+    },
+    success: function(response) {
+      // Flask returns { "sessions": [...] } → FullCalendar needs array
+      const events = response.sessions || [];
+      $('#calendar').fullCalendar('removeEvents');
+      $('#calendar').fullCalendar('renderEvents', events, true);
+    },
+    error: function(err) {
+      console.error('Failed to load events:', err);
+    }
+  });
 };
+
+
 
 </script>

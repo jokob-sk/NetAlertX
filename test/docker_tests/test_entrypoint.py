@@ -19,6 +19,7 @@ def _run_entrypoint(env: dict[str, str] | None = None, check_only: bool = True) 
         "docker", "run", "--rm", "--name", name,
         "--network", "host", "--userns", "host",
         "--tmpfs", "/tmp:mode=777",
+        "--cap-add", "CHOWN",
         "--cap-add", "NET_RAW", "--cap-add", "NET_ADMIN", "--cap-add", "NET_BIND_SERVICE",
     ]
     if env:
@@ -28,7 +29,7 @@ def _run_entrypoint(env: dict[str, str] | None = None, check_only: bool = True) 
         cmd.extend(["-e", "NETALERTX_CHECK_ONLY=1"])
     cmd.extend([
         "--entrypoint", "/bin/sh", IMAGE, "-c",
-        "sh /entrypoint.sh"
+        "sh /root-entrypoint.sh"
     ])
     return subprocess.run(cmd, capture_output=True, text=True, timeout=30)
 
@@ -49,11 +50,11 @@ def test_skip_tests_env_var():
 @pytest.mark.feature_complete
 def test_app_conf_override_from_graphql_port():
     # If GRAPHQL_PORT is set and APP_CONF_OVERRIDE is not set, the entrypoint should set
-    # APP_CONF_OVERRIDE to a JSON string containing the GRAPHQL_PORT value and print a message
-    # about it.
+    # APP_CONF_OVERRIDE to a JSON string containing the GRAPHQL_PORT value.
     # The script should exit successfully.
     result = _run_entrypoint(env={"GRAPHQL_PORT": "20212", "SKIP_TESTS": "1"}, check_only=True)
-    assert 'Setting APP_CONF_OVERRIDE to {"GRAPHQL_PORT":"20212"}' in result.stdout
+    assert 'Setting APP_CONF_OVERRIDE to' not in result.stdout
+    assert 'APP_CONF_OVERRIDE detected' in result.stderr
     assert result.returncode == 0
 
 

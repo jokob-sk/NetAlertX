@@ -362,6 +362,42 @@ def setting_value_to_python_type(set_type, set_value):
 
 
 # -------------------------------------------------------------------------------
+# Environment helper
+def get_env_setting_value(key, default=None):
+    """Return a typed value from environment variable if present.
+
+    - Parses booleans (1/0, true/false, yes/no, on/off).
+    - Tries to parse ints and JSON literals where sensible.
+    - Returns `default` when env var is not set.
+    """
+    val = os.environ.get(key)
+    if val is None:
+        return default
+
+    v = val.strip()
+    # Booleans
+    low = v.lower()
+    if low in ("1", "true", "yes", "on"):
+        return True
+    if low in ("0", "false", "no", "off"):
+        return False
+
+    # Integer
+    try:
+        if re.fullmatch(r"-?\d+", v):
+            return int(v)
+    except Exception:
+        pass
+
+    # JSON-like (list/object/true/false/null/number)
+    try:
+        return json.loads(v)
+    except Exception:
+        # Fallback to raw string
+        return v
+
+
+# -------------------------------------------------------------------------------
 def updateSubnets(scan_subnets):
     """
     Normalize scan subnet input into a list of subnets.
@@ -388,17 +424,43 @@ def updateSubnets(scan_subnets):
 # -------------------------------------------------------------------------------
 # Reverse transformed values if needed
 def reverseTransformers(val, transformers):
-    # Function to apply transformers to a single value
+    """
+    Reverse applied transformers on a value or list of values.
+
+    This function iterates through a list of transformers and reverses
+    them where possible. Currently supports:
+
+    - "base64": Decodes a Base64-encoded string prefixed with 'base64:'.
+    - "sha256": Logs a warning since SHA256 is irreversible.
+
+    Args:
+        val (str or list): The value or list of values to reverse-transform.
+        transformers (list): List of transformers applied in order.
+
+    Returns:
+        str or list: The value(s) after reversing applicable transformers.
+
+    Notes:
+        - If 'val' is a list, each element is processed individually.
+        - Invalid Base64 strings are returned unchanged.
+        - Transformers are applied in the order given in the list.
+    """
     def reverse_transformers(value, transformers):
         for transformer in transformers:
             if transformer == "base64":
                 if isinstance(value, str):
                     value = base64.b64decode(value).decode("utf-8")
+            elif transformer == "prefix|base64":
+                if isinstance(value, str) and value.startswith("base64:"):
+                    encoded_part = value[7:]
+                    value = base64.b64decode(encoded_part).decode("utf-8")
+                else:
+                    mylog("none", ["[reverseTransformers] invalid base64 value format. Try re-saving Settings."])
             elif transformer == "sha256":
                 mylog("none", ["[reverseTransformers] sha256 is irreversible"])
+            # Add more transformer handling here if needed
         return value
 
-    # Check if the value is a list
     if isinstance(val, list):
         return [reverse_transformers(item, transformers) for item in val]
     else:

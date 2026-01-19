@@ -35,26 +35,34 @@ def main():
     MAINT_LOG_LENGTH = int(get_setting_value('MAINT_LOG_LENGTH'))
     MAINT_NOTI_LENGTH = int(get_setting_value('MAINT_NOTI_LENGTH'))
 
+    logFiles = ["app.log", "nginx-error.log", "stdout.log"]
+
     # Check if set
     if MAINT_LOG_LENGTH != 0:
 
-        mylog('verbose', [f'[{pluginName}] Cleaning file'])
+        for fileEntry in logFiles:
 
-        logFile = logPath + "/app.log"
+            mylog('verbose', [f'[{pluginName}] Cleaning file'])
 
-        # Using a deque to efficiently keep the last N lines
-        lines_to_keep = deque(maxlen=MAINT_LOG_LENGTH)
+            logFile = logPath + "/" + fileEntry
 
-        with open(logFile, 'r') as file:
-            # Read lines from the file and store the last N lines
-            for line in file:
-                lines_to_keep.append(line)
+            mylog('verbose', [f'[{pluginName}] {fileEntry} size BEFORE: {os.path.getsize(logFile)}'])
 
-        with open(logFile, 'w') as file:
-            # Write the last N lines back to the file
-            file.writelines(lines_to_keep)
+            # Using a deque to efficiently keep the last N lines
+            lines_to_keep = deque(maxlen=MAINT_LOG_LENGTH)
 
-        mylog('verbose', [f'[{pluginName}] Cleanup finished'])
+            with open(logFile, 'r') as file:
+                # Read lines from the file and store the last N lines
+                for line in file:
+                    lines_to_keep.append(line)
+
+            with open(logFile, 'w') as file:
+                # Write the last N lines back to the file
+                file.writelines(lines_to_keep)
+
+            mylog('verbose', [f'[{pluginName}] {fileEntry} size AFTER: {os.path.getsize(logFile)}'])
+
+            mylog('verbose', [f'[{pluginName}] Cleanup of {fileEntry} finished'])
 
     # Check if set
     if MAINT_NOTI_LENGTH != 0:

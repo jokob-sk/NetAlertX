@@ -1,6 +1,6 @@
 # Net Tools API Endpoints
 
-The Net Tools API provides **network diagnostic utilities**, including Wake-on-LAN, traceroute, speed testing, DNS resolution, nmap scanning, and internet connection information.
+The Net Tools API provides **network diagnostic utilities**, including Wake-on-LAN, traceroute, speed testing, DNS resolution, nmap scanning, internet connection information, and network interface info.
 
 All endpoints require **authorization** via Bearer token.
 
@@ -190,6 +190,51 @@ All endpoints require **authorization** via Bearer token.
 
 ---
 
+### 7. Network Interfaces
+
+* **GET** `/nettools/interfaces`
+  Fetches the list of network interfaces on the system, including IPv4/IPv6 addresses, MAC, MTU, state (up/down), and RX/TX byte counters.
+
+**Response** (success):
+
+```json
+{
+  "success": true,
+  "interfaces": {
+    "eth0": {
+      "name": "eth0",
+      "short": "eth0",
+      "type": "ethernet",
+      "state": "up",
+      "mtu": 1500,
+      "mac": "00:11:32:EF:A5:6B",
+      "ipv4": ["192.168.1.82/24"],
+      "ipv6": ["fe80::211:32ff:feef:a56c/64"],
+      "rx_bytes": 18488221,
+      "tx_bytes": 1443944
+    },
+    "lo": {
+      "name": "lo",
+      "short": "lo",
+      "type": "loopback",
+      "state": "up",
+      "mtu": 65536,
+      "mac": null,
+      "ipv4": ["127.0.0.1/8"],
+      "ipv6": ["::1/128"],
+      "rx_bytes": 123456,
+      "tx_bytes": 123456
+    }
+  }
+}
+```
+
+**Error Responses**:
+
+* Command failure or parsing error → HTTP 500
+
+---
+
 ## Example `curl` Requests
 
 **Wake-on-LAN**:
@@ -241,3 +286,21 @@ curl -X POST "http://<server_ip>:<GRAPHQL_PORT>/nettools/nmap" \
 curl "http://<server_ip>:<GRAPHQL_PORT>/nettools/internetinfo" \
   -H "Authorization: Bearer <API_TOKEN>"
 ```
+
+**Network Interfaces**:
+
+```sh
+curl "http://<server_ip>:<GRAPHQL_PORT>/nettools/interfaces" \
+  -H "Authorization: Bearer <API_TOKEN>"
+```
+
+---
+
+## MCP Tools
+
+Network tools are available as **MCP Tools** for AI assistant integration:
+
+* `wol_wake_device`, `trigger_scan`, `get_open_ports`
+
+📖 See [MCP Server Bridge API](API_MCP.md) for AI integration details.
+

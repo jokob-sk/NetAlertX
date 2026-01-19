@@ -101,7 +101,7 @@ def execute_arpscan(userSubnets):
     devices_list = []
 
     # scan each interface
-
+    mylog("verbose", [f"[{pluginName}] userSubnets: ", userSubnets])
     for interface in userSubnets:
 
         arpscan_output = execute_arpscan_on_interface(interface)
@@ -153,11 +153,7 @@ def execute_arpscan_on_interface(interface):
     except Exception:
         scan_duration = 0  # default: single run
 
-    # Get timeout from plugin settings (default 30 seconds if not set)
-    try:
-        timeout_seconds = int(get_setting_value("ARPSCAN_RUN_TIMEOUT"))
-    except Exception:
-        timeout_seconds = 30
+    timeout_seconds = int(get_setting_value("ARPSCAN_RUN_TIMEOUT"))
 
     results = []
     start_time = time.time()
@@ -165,10 +161,15 @@ def execute_arpscan_on_interface(interface):
     while True:
         try:
             result = subprocess.check_output(
-                arpscan_args, universal_newlines=True, timeout=timeout_seconds
+                arpscan_args,
+                universal_newlines=True,
+                timeout=timeout_seconds,
+                stderr=subprocess.STDOUT
             )
             results.append(result)
-        except subprocess.CalledProcessError:
+
+        except subprocess.CalledProcessError as e:
+            mylog("none", [f"[{pluginName}] Scan failed on {interface}:", e.output])
             result = ""
         except subprocess.TimeoutExpired:
             mylog("warning", [f"[{pluginName}] arp-scan timed out after {timeout_seconds}s"],)

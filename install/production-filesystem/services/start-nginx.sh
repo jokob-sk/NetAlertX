@@ -35,9 +35,16 @@ done
 
 TEMP_CONFIG_FILE=$(mktemp "${TMP_DIR}/netalertx.conf.XXXXXX")
 
+#In the event PUID is 0 we need to run nginx as root
+#This is useful on legacy systems where we cannot provision root access to a binary
+export NGINX_USER_DIRECTIVE=""
+if [ "$(id -u)" -eq 0 ]; then
+    NGINX_USER_DIRECTIVE="user root;"
+fi
+
 # Shell check doesn't recognize envsubst variables
 # shellcheck disable=SC2016
-if envsubst '${LISTEN_ADDR} ${PORT}' < "${SYSTEM_NGINX_CONFIG_TEMPLATE}" > "${TEMP_CONFIG_FILE}" 2>/dev/null; then
+if envsubst '${LISTEN_ADDR} ${PORT} ${NGINX_USER_DIRECTIVE}' < "${SYSTEM_NGINX_CONFIG_TEMPLATE}" > "${TEMP_CONFIG_FILE}" 2>/dev/null; then
 	mv "${TEMP_CONFIG_FILE}" "${SYSTEM_SERVICES_ACTIVE_CONFIG_FILE}"
 else
 	echo "Note: Unable to write to ${SYSTEM_SERVICES_ACTIVE_CONFIG_FILE}. Using default configuration."
@@ -54,11 +61,11 @@ chmod -R 777 "/tmp/nginx" 2>/dev/null || true
 
 # Execute nginx with overrides
 # echo the full nginx command then run it
-echo "Starting /usr/sbin/nginx -p \"${RUN_DIR}/\" -c \"${SYSTEM_SERVICES_ACTIVE_CONFIG_FILE}\" -g \"error_log /dev/stderr; error_log ${NETALERTX_LOG}/nginx-error.log; daemon off;\" &"
+echo "Starting /usr/sbin/nginx -p \"${RUN_DIR}/\" -c \"${SYSTEM_SERVICES_ACTIVE_CONFIG_FILE}\" -g \"error_log stderr; error_log ${NETALERTX_LOG}/nginx-error.log; daemon off;\" &"
 /usr/sbin/nginx \
 	-p "${RUN_DIR}/" \
 	-c "${SYSTEM_SERVICES_ACTIVE_CONFIG_FILE}" \
-	-g "error_log /dev/stderr; error_log ${NETALERTX_LOG}/nginx-error.log; daemon off;" &
+	-g "error_log stderr; error_log ${NETALERTX_LOG}/nginx-error.log; daemon off;" &
 nginx_pid=$!
 
 wait "${nginx_pid}"

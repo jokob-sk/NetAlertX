@@ -1,6 +1,10 @@
 '''
 Tests for 99-ports-available.sh entrypoint script.
 This script checks for port conflicts and availability.
+
+This is a Shell-based pre-flight check that runs before the main application.
+It ensures that the configured ports are valid and available, preventing
+hard-to-debug binding errors later in the startup process.
 '''
 
 import os
@@ -42,7 +46,7 @@ def dummy_container(tmp_path):
     # Start the dummy container
     import subprocess
     result = subprocess.run(
-        ["docker-compose", "-f", str(compose_file), "up", "-d"],
+        ["docker", "compose", "-f", str(compose_file), "up", "-d"],
         capture_output=True, text=True
     )
     if result.returncode != 0:
@@ -54,7 +58,7 @@ def dummy_container(tmp_path):
     yield "dummy"
 
     # Cleanup
-    subprocess.run(["docker-compose", "-f", str(compose_file), "down"], capture_output=True)
+    subprocess.run(["docker", "compose", "-f", str(compose_file), "down"], capture_output=True)
 
 
 def _setup_mount_tree(tmp_path: pathlib.Path, label: str) -> dict[str, pathlib.Path]:

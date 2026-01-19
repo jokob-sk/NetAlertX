@@ -1,70 +1,91 @@
 from logger import mylog
+from database import get_temp_db_connection
 
 
 # -------------------------------------------------------------------------------
-# Plugin object handling (WIP)
+# Plugin object handling (THREAD-SAFE REWRITE)
 # -------------------------------------------------------------------------------
 class PluginObjectInstance:
-    def __init__(self, db):
-        self.db = db
 
-    # Get all plugin objects
+    # -------------- Internal DB helper wrappers --------------------------------
+    def _fetchall(self, query, params=()):
+        conn = get_temp_db_connection()
+        rows = conn.execute(query, params).fetchall()
+        conn.close()
+        return [dict(r) for r in rows]
+
+    def _fetchone(self, query, params=()):
+        conn = get_temp_db_connection()
+        row = conn.execute(query, params).fetchone()
+        conn.close()
+        return dict(row) if row else None
+
+    def _execute(self, query, params=()):
+        conn = get_temp_db_connection()
+        conn.execute(query, params)
+        conn.commit()
+        conn.close()
+
+    # ---------------------------------------------------------------------------
+    # Public API — identical behaviour, now thread-safe + self-contained
+    # ---------------------------------------------------------------------------
+
     def getAll(self):
-        self.db.sql.execute("""
-            SELECT * FROM Plugins_Objects
-        """)
-        return self.db.sql.fetchall()
+        return self._fetchall("SELECT * FROM Plugins_Objects")
 
-    # Get plugin object by ObjectGUID
     def getByGUID(self, ObjectGUID):
-        self.db.sql.execute(
+        return self._fetchone(
             "SELECT * FROM Plugins_Objects WHERE ObjectGUID = ?", (ObjectGUID,)
         )
-        result = self.db.sql.fetchone()
-        return dict(result) if result else None
 
-    # Check if a plugin object exists by ObjectGUID
     def exists(self, ObjectGUID):
-        self.db.sql.execute(
-            "SELECT COUNT(*) AS count FROM Plugins_Objects WHERE ObjectGUID = ?",
-            (ObjectGUID,),
-        )
-        result = self.db.sql.fetchone()
-        return result["count"] > 0
+        row = self._fetchone("""
+            SELECT COUNT(*) AS count FROM Plugins_Objects WHERE ObjectGUID = ?
+        """, (ObjectGUID,))
+        return row["count"] > 0 if row else False
 
-    # Get objects by plugin name
     def getByPlugin(self, plugin):
-        self.db.sql.execute("SELECT * FROM Plugins_Objects WHERE Plugin = ?", (plugin,))
-        return self.db.sql.fetchall()
+        return self._fetchall(
+            "SELECT * FROM Plugins_Objects WHERE Plugin = ?", (plugin,)
+        )
 
-    # Get objects by status
+    def getByField(self, plugPrefix, matchedColumn, matchedKey, returnFields=None):
+        rows = self._fetchall(
+            f"SELECT * FROM Plugins_Objects WHERE Plugin = ? AND {matchedColumn} = ?",
+            (plugPrefix, matchedKey.lower())
+        )
+
+        if not returnFields:
+            return rows
+
+        return [{f: row.get(f) for f in returnFields} for row in rows]
+
+    def getByPrimary(self, plugin, primary_id):
+        return self._fetchall("""
+            SELECT * FROM Plugins_Objects
+            WHERE Plugin = ? AND Object_PrimaryID = ?
+        """, (plugin, primary_id))
+
     def getByStatus(self, status):
-        self.db.sql.execute("SELECT * FROM Plugins_Objects WHERE Status = ?", (status,))
-        return self.db.sql.fetchall()
+        return self._fetchall("""
+            SELECT * FROM Plugins_Objects WHERE Status = ?
+        """, (status,))
 
-    # Update a specific field for a plugin object
     def updateField(self, ObjectGUID, field, value):
         if not self.exists(ObjectGUID):
-            m = f"[PluginObject] In 'updateField': GUID {ObjectGUID} not found."
-            mylog("none", m)
-            raise ValueError(m)
+            msg = f"[PluginObject] updateField: GUID {ObjectGUID} not found."
+            mylog("none", msg)
+            raise ValueError(msg)
 
-        self.db.sql.execute(
-            f"""
-            UPDATE Plugins_Objects SET {field} = ? WHERE ObjectGUID = ?
-        """,
-            (value, ObjectGUID),
+        self._execute(
+            f"UPDATE Plugins_Objects SET {field}=? WHERE ObjectGUID=?",
+            (value, ObjectGUID)
         )
-        self.db.commitDB()
 
-    # Delete a plugin object by ObjectGUID
     def delete(self, ObjectGUID):
         if not self.exists(ObjectGUID):
-            m = f"[PluginObject] In 'delete': GUID {ObjectGUID} not found."
-            mylog("none", m)
-            raise ValueError(m)
+            msg = f"[PluginObject] delete: GUID {ObjectGUID} not found."
+            mylog("none", msg)
+            raise ValueError(msg)
 
-        self.db.sql.execute(
-            "DELETE FROM Plugins_Objects WHERE ObjectGUID = ?", (ObjectGUID,)
-        )
-        self.db.commitDB()
+        self._execute("DELETE FROM Plugins_Objects WHERE ObjectGUID=?", (ObjectGUID,))

@@ -47,11 +47,11 @@ run_test() {
 		echo "Testing: $basename"
 		echo "Directory: $dirname" 
 		echo ""
-		echo "Running docker-compose up..."
-		timeout 10s docker-compose -f "$file" up 2>&1 
+		echo "Running docker compose up..."
+		timeout 10s docker compose -f "$file" up 2>&1 
 	 } >> "$LOG_FILE"
     # Clean up
-    docker-compose -f "$file" down -v 2>/dev/null || true
+	docker compose -f "$file" down -v 2>/dev/null || true
     docker volume prune -f 2>/dev/null || true
 }
 

@@ -11,6 +11,7 @@ import conf
 from const import logPath
 from utils.datetime_utils import timeNowTZ
 
+DEFAULT_LEVEL = "none"
 
 # -------------------------------------------------------------------------------
 # Map custom debug levels to Python logging levels
@@ -48,6 +49,11 @@ class MyLogHandler(logging.Handler):
 class Logger:
     def __init__(self, LOG_LEVEL):
         global currentLevel
+
+        # Normalize invalid levels to "none"
+        if LOG_LEVEL not in dict(debugLevels):
+            LOG_LEVEL = DEFAULT_LEVEL
+
         currentLevel = LOG_LEVEL
         conf.LOG_LEVEL = currentLevel
 
@@ -59,10 +65,11 @@ class Logger:
         self.setup_logging()
 
     def _to_num(self, level_str):
-        for lvl in debugLevels:
-            if level_str == lvl[0]:
-                return lvl[1]
-        return None
+        for name, num in debugLevels:
+            if level_str == name:
+                return num
+        # Non-existing levels → "none"
+        return 0
 
     def setup_logging(self):
         root_logger = logging.getLogger()
@@ -84,8 +91,7 @@ class Logger:
             file_print(*args)
 
     def isAbove(self, requestedDebugLevel):
-        reqLvl = self._to_num(requestedDebugLevel)
-        return reqLvl is not None and self.setLvl is not None and self.setLvl >= reqLvl
+        return self.setLvl >= self._to_num(requestedDebugLevel)
 
 
 # -------------------------------------------------------------------------------

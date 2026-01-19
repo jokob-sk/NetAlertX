@@ -16,6 +16,9 @@ When upgrading from older versions of NetAlertX (or PiAlert by jokob-sk), follow
 - You are running NetAlertX (by jokob-sk) (`v25.6.7` to `v25.10.1`)
   → [Read the 1.3 Migration from NetAlertX `v25.10.1`](#13-migration-from-netalertx-v25101)
 
+- You are running NetAlertX (by jokob-sk) (`v25.11.29`)
+  → [Read the 1.4 Migration from NetAlertX `v25.11.29`](#14-migration-from-netalertx-v251129)
+
 
 ### 1.0 Manual Migration
 
@@ -239,29 +242,7 @@ services:
 
 4. Start the container and verify everything works as expected.
 5. Stop the container.
-6. Perform a one-off migration to the latest `netalertx` image and `20211` user:
-
-> [!NOTE]
-> The example below assumes your `/config` and `/db` folders are stored in `local_data_dir`.
-> Replace this path with your actual configuration directory. `netalertx` is the container name, which might differ from your setup.
-
-```sh
-docker run -it --rm --name netalertx --user "0" \
-  -v /local_data_dir/config:/data/config \
-  -v /local_data_dir/db:/data/db \
-  --tmpfs /tmp:uid=20211,gid=20211,mode=1700 \
-  ghcr.io/jokob-sk/netalertx:latest
-```
-
-...or alternatively execute:
-
-```bash
-sudo chown -R 20211:20211 /local_data_dir
-sudo chmod -R a+rwx /local_data_dir
-```
-
-7. Stop the container
-8. Update the `docker-compose.yml` as per example below.
+6. Update the `docker-compose.yml` as per example below.
 
 ```yaml
 services:
@@ -288,5 +269,80 @@ services:
       - "/tmp:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
     # 🆕 New "tmpfs" section END  🔼
 ```
+7. Perform a one-off migration to the latest `netalertx` image and `20211` user.
 
-9. Start the container and verify everything works as expected.
+> [!NOTE]
+> The examples below assumes your `/config` and `/db` folders are stored in `local_data_dir`.
+> Replace this path with your actual configuration directory. `netalertx` is the container name, which might differ from your setup.
+
+**Automated approach**:
+
+Run the container with the `--user "0"` parameter. Please note, some systems will require the manual approach below.
+
+```sh
+docker run -it --rm --name netalertx --user "0" \
+  -v /local_data_dir/config:/app/config \
+  -v /local_data_dir/db:/app/db \
+  -v /local_data_dir:/data \
+  --tmpfs /tmp:uid=20211,gid=20211,mode=1700 \
+  ghcr.io/jokob-sk/netalertx:latest
+```
+
+Stop the container and run it as you would normally.
+
+**Manual approach**:
+
+Use the manual approach if the Automated approach fails. Execute the below commands:
+
+```bash
+sudo chown -R 20211:20211 /local_data_dir
+sudo chmod -R a+rwx /local_data_dir
+```
+
+8. Start the container and verify everything works as expected.
+9. Check the [Permissions -> Writable-paths](https://docs.netalertx.com/FILE_PERMISSIONS/#writable-paths) what directories to mount if you'd like to access the API or log files.
+
+
+### 1.4 Migration from NetAlertX `v25.11.29`
+
+As per user feedback, we’ve re-introduced the ability to control which user the application runs as via the `PUID` and `PGID` environment variables. This required additional changes to the container to safely handle permission adjustments at runtime.
+
+#### STEPS:
+
+1. Stop the container
+2. [Back up your setup](./BACKUPS.md)
+3. Stop the container
+4. Update the `docker-compose.yml` as per example below.
+
+```yaml
+services:
+  netalertx:
+    container_name: netalertx
+    image: "ghcr.io/jokob-sk/netalertx"
+    network_mode: "host"
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_RAW
+      - NET_ADMIN
+      - NET_BIND_SERVICE
+      - CHOWN                # 🆕 New line
+      - SETUID               # 🆕 New line
+      - SETGID               # 🆕 New line
+    restart: unless-stopped
+    volumes:
+      - /local_data_dir:/data
+      # Ensuring the timezone is the same as on the server - make sure also the TIMEZONE setting is configured
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - PORT=20211
+      # - PUID=0    # New optional variable to run as root
+      # - GUID=100  # New optional variable to run as root
+    tmpfs:
+      # All writable runtime state resides under /tmp; comment out to persist logs between restarts
+      - "/tmp:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+```
+
+5. If you use a custom `PUID` (e.g. `0`) and `GUID` (e.g. `100`) make sure you also update the `tmpfs` ownership, e.g. `/tmp:uid=0,gid=100...`
+6. Start the container and verify everything works as expected.
+7. If running a reverse proxy review the [Reverse proxy documentation](./REVERSE_PROXY.md) as a new `BACKEND_API_URL` setting was added.

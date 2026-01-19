@@ -1,5 +1,5 @@
-<span class="helpIcon"> 
-    <a target="_blank" href="https://github.com/jokob-sk/NetAlertX/blob/main/docs/WORKFLOWS_DEBUGGING.md">
+<span class="helpIcon">
+    <a target="_blank" href="https://docs.netalertx.com/WORKFLOWS_DEBUGGING">
       <i class="fa fa-circle-question"></i>
     </a>
   </span>
@@ -21,114 +21,170 @@
 // show loading dialog
 showSpinner()
 
-$(document).ready(function() {
+$(document).ready(function () {
 
-  // Load JSON data from the provided URL
-  $.getJSON('php/server/query_json.php?file=table_appevents.json', function(data) {
-    // Process the JSON data and generate UI dynamically    
-    processData(data)
+  const apiToken = getSetting("API_TOKEN");
+  const apiBase = getApiBase();
+  const graphqlUrl = `${apiBase}/graphql`;
 
-    // hide loading dialog
-    hideSpinner()
-  });
-});
-
-function processData(data) {
-  // Create an object to store unique ObjectType values as app event identifiers
-  var appEventIdentifiers = {};
-
-  // Array to accumulate data for DataTable
-  var allData = [];
-
-  // Iterate through the data and generate tabs and content dynamically
-  $.each(data.data, function(index, item) {
-    
-    // Accumulate data for DataTable
-    allData.push(item);
-    
-  });
-
-  console.log(allData);
-  
-
-  // Initialize DataTable for all app events
-  
   $('#appevents-table').DataTable({
-    data: allData,
+    processing: true,
+    serverSide: true,
     paging: true,
-    lengthChange: true,
-    lengthMenu: [[10, 25, 50, 100, 500, -1], [10, 25, 50, 100, 500, 'All']],
     searching: true,
     ordering: true,
-    info: true,
-    autoWidth: false,
-    pageLength: 25, // Set the default paging to 25
+    pageLength: 25,
+    lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
+
+    ajax: function (dtRequest, callback) {
+
+      const page = Math.floor(dtRequest.start / dtRequest.length) + 1;
+      const limit = dtRequest.length;
+
+      // ---- SEARCH ----
+      const searchValue = dtRequest.search?.value || null;
+
+      // ---- SORTING ----
+      let sort = [];
+      if (dtRequest.order && dtRequest.order.length > 0) {
+        const order = dtRequest.order[0];
+        const columnName = dtRequest.columns[order.column].data;
+
+        sort.push({
+          field: columnName,
+          order: order.dir
+        });
+      }
+
+      const query = `
+        query AppEvents($options: PageQueryOptionsInput) {
+          appEvents(options: $options) {
+            count
+            appEvents {
+              DateTimeCreated
+              AppEventProcessed
+              AppEventType
+              ObjectType
+              ObjectPrimaryID
+              ObjectSecondaryID
+              ObjectStatus
+              ObjectPlugin
+              ObjectGUID
+              GUID
+            }
+          }
+        }
+      `;
+
+      const variables = {
+        options: {
+          page: page,
+          limit: limit,
+          search: searchValue,
+          sort: sort
+        }
+      };
+
+      $.ajax({
+        method: "POST",
+        url: graphqlUrl,
+        headers: {
+          "Authorization": "Bearer " + apiToken,
+          "Content-Type": "application/json"
+        },
+        data: JSON.stringify({
+          query: query,
+          variables: variables
+        }),
+        success: function (response) {
+          if (response.errors) {
+            console.error(response.errors);
+            callback({
+              data: [],
+              recordsTotal: 0,
+              recordsFiltered: 0
+            });
+            return;
+          }
+
+          const result = response.data.appEvents;
+
+          callback({
+            data: result.appEvents,
+            recordsTotal: result.count,
+            recordsFiltered: result.count
+          });
+
+          hideSpinner();
+        },
+        error: function () {
+          callback({
+            data: [],
+            recordsTotal: 0,
+            recordsFiltered: 0
+          });
+        }
+      });
+    },
+
     columns: [
       { data: 'DateTimeCreated', title: getString('AppEvents_DateTimeCreated') },
       { data: 'AppEventProcessed', title: getString('AppEvents_AppEventProcessed') },
-      { data: 'AppEventType', title: getString('AppEvents_Type') }, 
+      { data: 'AppEventType', title: getString('AppEvents_Type') },
       { data: 'ObjectType', title: getString('AppEvents_ObjectType') },
       { data: 'ObjectPrimaryID', title: getString('AppEvents_ObjectPrimaryID') },
       { data: 'ObjectSecondaryID', title: getString('AppEvents_ObjectSecondaryID') },
-      { data: 'ObjectStatus', title: getString('AppEvents_ObjectStatus') },            
-      { data: 'ObjectPlugin', title: getString('AppEvents_Plugin') },  
-      { data: 'ObjectGUID', title: "Object GUID" },  
-      { data: 'GUID', title: "Event GUID" },  
-      // Add other columns as needed
+      { data: 'ObjectStatus', title: getString('AppEvents_ObjectStatus') },
+      { data: 'ObjectPlugin', title: getString('AppEvents_Plugin') },
+      { data: 'ObjectGUID', title: 'Object GUID' },
+      { data: 'GUID', title: 'Event GUID' }
     ],
-    // Add column-specific configurations if needed
-    columnDefs: [
-      { className: 'text-center', targets: [4] },
-      { width: '80px', targets: [7] },
-      // ... Add other columnDefs as needed
-      // Full MAC    
-      {targets: [4, 5],
-      'createdCell': function (td, cellData, rowData, row, col) {
-        if (!emptyArr.includes(cellData)){
-          $(td).html (createDeviceLink(cellData));
-        } else {
-          $(td).html ('');
-        }
-      } },
-      // Processed 
-      {targets: [1],
-        'createdCell': function (td, cellData, rowData, row, col) {
-          // console.log(cellData);
-          $(td).html (cellData);          
-        } 
-      },
-      // Datetime
-      {targets: [0],
-        'createdCell': function (td, cellData, rowData, row, col) {
-          let timezone = $("#NAX_TZ").html(); // e.g., 'Europe/Berlin'
-          let utcDate = new Date(cellData + ' UTC'); // Adding ' UTC' makes it interpreted as UTC time
 
-          // Format the date in the desired timezone
+    columnDefs: [
+      { className: 'text-center', targets: [1, 4] },
+      { width: '90px', targets: [7] },
+
+      // Device links
+      {
+        targets: [4, 5],
+        createdCell: function (td, cellData) {
+          if (!emptyArr.includes(cellData)) {
+            $(td).html(createDeviceLink(cellData));
+          } else {
+            $(td).html('');
+          }
+        }
+      },
+
+      // Date formatting
+      {
+        targets: [0],
+        createdCell: function (td, cellData) {
+          let timezone = $("#NAX_TZ").html();
+          let utcDate = new Date(cellData + ' UTC');
+
           let options = {
-              year: 'numeric',
-              month: 'short',
-              day: '2-digit',
-              hour: '2-digit',
-              minute: '2-digit',
-              second: '2-digit',
-              hour12: false, // Use 24-hour format
-              timeZone: timezone // Use the specified timezone
+            year: 'numeric',
+            month: 'short',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false,
+            timeZone: timezone
           };
 
-          let localDate = new Intl.DateTimeFormat('en-GB', options).format(utcDate);
-
-          // Update the table cell
-          $(td).html(localDate);    
-        } 
-      },
+          $(td).html(
+            new Intl.DateTimeFormat('en-GB', options).format(utcDate)
+          );
+        }
+      }
     ]
   });
 
 
-  // Activate the first tab
-  $('#tabs-location li:first-child').addClass('active');
-  $('#tabs-content-location .tab-pane:first-child').addClass('active');
-}
+});
+
 
 </script>
 

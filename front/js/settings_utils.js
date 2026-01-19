@@ -698,9 +698,15 @@ function applyTransformers(val, transformers) {
         }
         break;
       case "base64":
-        // Implement base64  logic
+        // Implement base64 logic
         if (!isBase64(val)) {
           val = btoa(val);
+        }
+        break;
+      case "prefix|base64":
+        // Implement base64 logic w/ prefix
+        if (val.startsWith("base64:") == false) {
+          val = "base64:" + btoa(val);
         }
         break;
       case "name|base64":
@@ -734,6 +740,19 @@ function reverseTransformers(val, transformers) {
         // Implement base64 decoding logic
         if (isBase64(val)) {
           val = atob(val);
+        }
+        break;
+      case "prefix|base64":
+        // Implement base64 decoding logic
+        if (val.startsWith("base64:")) {
+          let encodedPart = val.slice(7); // remove "base64:"
+          if (isBase64(encodedPart)) {
+              val = atob(encodedPart);
+          } else {
+              console.log("Prefix exists but not valid Base64");
+          }
+        } else {
+            console.error("Not Base64-prefixed");
         }
         break;
       case "name|base64":
@@ -1116,16 +1135,19 @@ function collectSetting(prefix, setCodeName, setType, settingsArray) {
 function generateFormHtml(settingsData, set, overrideValue, overrideOptions, originalSetKey) {
   let inputHtml = '';
 
-  isEmpty(overrideValue) ? inVal = set['setValue'] : inVal = overrideValue;
+
+  // if override value is considered empty initialize from setting defaults
+  overrideValue == null || overrideValue == undefined ? inVal = set['setValue'] : inVal = overrideValue
   const setKey = set['setKey'];
   const setType = set['setType'];
 
-  // if (setKey == '') {
+  // if (setKey == 'NEWDEV_devParentMAC') {
 
-  // console.log(setType);
-  // console.log(setKey);
-  // console.log(overrideValue);
-  // console.log(inVal);
+  //   console.log("==== DEBUG OUTPUT BELOW 1 ====");
+  //   console.log(setType);
+  //   console.log(setKey);
+  //   console.log(overrideValue);
+  //   console.log(inVal);
 
   // }
 
@@ -1167,15 +1189,16 @@ function generateFormHtml(settingsData, set, overrideValue, overrideOptions, ori
     // Override value
     let val = valRes;
 
-    // if (setKey == '') {
+    // if (setKey == 'NEWDEV_devParentMAC') {
 
+    //   console.log("==== DEBUG OUTPUT BELOW 2 ====");
     //   console.log(setType);
     //   console.log(setKey);
     //   console.log(overrideValue);
     //   console.log(inVal);
     //   console.log(val);
 
-    //   }
+    // }
 
     // Generate HTML based on elementType
     switch (elementType) {
@@ -1321,7 +1344,7 @@ function generateFormHtml(settingsData, set, overrideValue, overrideOptions, ori
 
             let j = 0;
             columnSettings.forEach(set => {
-                // Extract the value for the current column based on the new structure
+                // Extract the value for the current column
                 let columnOverrideValue = rowData[j] && Object.values(rowData[j])[0];
 
                 if(columnOverrideValue == undefined)
