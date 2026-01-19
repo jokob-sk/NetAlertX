@@ -113,6 +113,7 @@ if not _cors_origins:
         "http://localhost:20212",
         "http://127.0.0.1:20211",
         "http://127.0.0.1:20212",
+        "*"                          #  Allow all origins as last resort
     ]
 
 CORS(
@@ -322,7 +323,7 @@ def api_set_device(mac, payload=None):
         data = data.model_dump(exclude_unset=True)
     elif hasattr(data, "dict"):
         data = data.dict(exclude_unset=True)
-        
+
     result = device_handler.setDeviceData(mac, data)
     return jsonify(result)
 
@@ -983,16 +984,16 @@ def serve_openapi_spec():
 @app.route('/docs')
 def api_docs():
     """Serve Swagger UI for API documentation."""
-    # We don't require auth for the UI shell, but the openapi.json fetch 
+    # We don't require auth for the UI shell, but the openapi.json fetch
     # will still need the token if accessed directly, or we can allow public access to docs.
     # For now, let's allow public access to the UI shell.
     # The user can enter the Bearer token in the "Authorize" button if needed,
     # or we can auto-inject it if they are already logged in (advanced).
-    
+
     # We need to serve the static HTML file we created.
     import os
     from flask import send_from_directory
-    
+
     # Assuming swagger.html is in the openapi directory
     api_server_dir = os.path.dirname(os.path.realpath(__file__))
     openapi_dir = os.path.join(api_server_dir, 'openapi')
