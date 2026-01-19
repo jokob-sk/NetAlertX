@@ -9,10 +9,8 @@ from server.api_server import mcp_endpoint
 @pytest.fixture(autouse=True)
 def reset_registry():
     registry.clear_registry()
-    registry._disabled_tools.clear()
     yield
     registry.clear_registry()
-    registry._disabled_tools.clear()
 
 
 def test_disable_tool_management():

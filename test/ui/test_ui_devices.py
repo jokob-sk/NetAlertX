@@ -82,13 +82,21 @@ def test_add_device_with_generated_mac_ip(driver, api_token):
     wait_for_page_load(driver, timeout=10)
 
     # --- Click "Add Device" ---
-    add_buttons = driver.find_elements(By.CSS_SELECTOR, "button#btnAddDevice, button[onclick*='addDevice'], a[href*='deviceDetails.php?mac='], .btn-add-device")
-    if not add_buttons:
+    # Wait for the "New Device" link specifically to ensure it's loaded
+    add_selector = "a[href*='deviceDetails.php?mac=new'], button#btnAddDevice, .btn-add-device"
+    try:
+        add_button = wait_for_element_by_css(driver, add_selector, timeout=10)
+    except Exception:
+        # Fallback to broader search if specific selector fails
         add_buttons = driver.find_elements(By.XPATH, "//button[contains(text(),'Add') or contains(text(),'New')] | //a[contains(text(),'Add') or contains(text(),'New')]")
-    if not add_buttons:
-        assert True, "Add device button not found, skipping test"
-        return
-    add_buttons[0].click()
+        if add_buttons:
+            add_button = add_buttons[0]
+        else:
+            assert True, "Add device button not found, skipping test"
+            return
+
+    # Use JavaScript click to bypass any transparent overlays from the chart
+    driver.execute_script("arguments[0].click();", add_button)
 
     # Wait for the device form to appear (use the NEWDEV_devMac field as indicator)
     wait_for_element_by_css(driver, "#NEWDEV_devMac", timeout=10)

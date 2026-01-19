@@ -334,15 +334,6 @@ def importConfigs(pm, db, all_plugins):
         "[]",
         "General",
     )
-    conf.FLASK_DEBUG = ccd(
-        "FLASK_DEBUG",
-        False,
-        c_d,
-        "Flask debug mode - SECURITY WARNING: Enabling enables interactive debugger with RCE risk. Configure via environment only, not exposed in UI.",
-        '{"dataType": "boolean","elements": []}',
-        "[]",
-        "system",
-    )
     conf.VERSION = ccd(
         "VERSION",
         "",

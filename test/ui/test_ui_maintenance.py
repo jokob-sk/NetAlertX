@@ -6,6 +6,7 @@ Tests CSV export/import, delete operations, database tools
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 from .test_helpers import BASE_URL, api_get, wait_for_page_load  # noqa: E402
 
@@ -30,7 +31,10 @@ def test_export_csv_button_works(driver):
     import os
     import glob
 
-    driver.get(f"{BASE_URL}/maintenance.php")
+    # Use 127.0.0.1 instead of localhost to avoid IPv6 resolution issues in the browser
+    # which can lead to "Failed to fetch" if the server is only listening on IPv4.
+    target_url = f"{BASE_URL}/maintenance.php".replace("localhost", "127.0.0.1")
+    driver.get(target_url)
     wait_for_page_load(driver, timeout=10)
 
     # Clear any existing downloads
@@ -38,13 +42,22 @@ def test_export_csv_button_works(driver):
     for f in glob.glob(f"{download_dir}/*.csv"):
         os.remove(f)
 
+    # Ensure the Backup/Restore tab is active so the button is in a clickable state
+    try:
+        tab = WebDriverWait(driver, 5).until(
+            EC.element_to_be_clickable((By.ID, "tab_BackupRestore_id"))
+        )
+        tab.click()
+    except Exception:
+        pass
+
     # Find the export button
-    export_btns = driver.find_elements(By.ID, "btnExportCSV")
+    try:
+        export_btn = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, "btnExportCSV"))
+        )
 
-    if len(export_btns) > 0:
-        export_btn = export_btns[0]
-
-        # Click it (JavaScript click works even if CSS hides it)
+        # Click it (JavaScript click works even if CSS hides it or if it's overlapped)
         driver.execute_script("arguments[0].click();", export_btn)
 
         # Wait for download to complete (up to 10 seconds)
@@ -70,9 +83,15 @@ def test_export_csv_button_works(driver):
             # Download via blob/JavaScript - can't verify file in headless mode
             # Just verify button click didn't cause errors
             assert "error" not in driver.page_source.lower(), "Button click should not cause errors"
-    else:
-        # Button doesn't exist on this page
-        assert True, "Export button not found on this page"
+    except Exception as e:
+        # Check for alerts that might be blocking page_source access
+        try:
+            alert = driver.switch_to.alert
+            alert_text = alert.text
+            alert.accept()
+            assert False, f"Alert present: {alert_text}"
+        except Exception:
+            raise e
 
 
 def test_import_section_present(driver):

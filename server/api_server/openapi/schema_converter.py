@@ -4,7 +4,7 @@ from typing import Dict, Any, Optional, Type, List
 from pydantic import BaseModel
 
 
-def pydantic_to_json_schema(model: Type[BaseModel]) -> Dict[str, Any]:
+def pydantic_to_json_schema(model: Type[BaseModel], mode: str = "validation") -> Dict[str, Any]:
     """
     Convert a Pydantic model to JSON Schema (OpenAPI 3.1 compatible).
 
@@ -13,12 +13,13 @@ def pydantic_to_json_schema(model: Type[BaseModel]) -> Dict[str, Any]:
 
     Args:
         model: Pydantic BaseModel class
+        mode: Schema mode - "validation" (for inputs) or "serialization" (for outputs)
 
     Returns:
         JSON Schema dictionary
     """
     # Pydantic v2 uses model_json_schema()
-    schema = model.model_json_schema(mode="serialization")
+    schema = model.model_json_schema(mode=mode)
 
     # Remove $defs if empty (cleaner output)
     if "$defs" in schema and not schema["$defs"]:
@@ -169,7 +170,7 @@ def build_responses(
     # Success response (200)
     if response_model:
         # Strip validation from response schema to save tokens
-        schema = strip_validation(pydantic_to_json_schema(response_model))
+        schema = strip_validation(pydantic_to_json_schema(response_model, mode="serialization"))
         schema = extract_definitions(schema, definitions)
         responses["200"] = {
             "description": "Successful response",

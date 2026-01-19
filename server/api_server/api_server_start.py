@@ -13,7 +13,7 @@ INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from logger import mylog  # noqa: E402 [flake8 lint suppression]
-from helper import get_setting_value  # noqa: E402 [flake8 lint suppression]
+from helper import get_setting_value, get_env_setting_value  # noqa: E402 [flake8 lint suppression]
 from db.db_helper import get_date_from_period  # noqa: E402 [flake8 lint suppression]
 from app_state import updateState  # noqa: E402 [flake8 lint suppression]
 
@@ -1693,10 +1693,26 @@ def start_server(graphql_port, app_state):
     if app_state.graphQLServerStarted == 0:
         mylog("verbose", [f"[graphql endpoint] Starting on port: {graphql_port}"])
 
+        # First check environment variable override (direct env like FLASK_DEBUG)
+        env_val = get_env_setting_value("FLASK_DEBUG", None)
+        if env_val is not None:
+            flask_debug = bool(env_val)
+            mylog("verbose", [f"[graphql endpoint] Flask debug mode: {flask_debug} (FLASK_DEBUG env override)"])
+        else:
+            # Fall back to configured setting `FLASK_DEBUG` (from app.conf / overrides)
+            flask_debug = get_setting_value("FLASK_DEBUG")
+            # Normalize value to boolean in case it's stored as a string
+            if isinstance(flask_debug, str):
+                flask_debug = flask_debug.strip().lower() in ("1", "true", "yes", "on")
+            else:
+                flask_debug = bool(flask_debug)
+
+            mylog("verbose", [f"[graphql endpoint] Flask debug mode: {flask_debug} (FLASK_DEBUG setting)"])
+
         # Start Flask app in a separate thread
         thread = threading.Thread(
             target=lambda: app.run(
-                host="0.0.0.0", port=graphql_port, debug=False, use_reloader=False
+                host="0.0.0.0", port=graphql_port, threaded=True,debug=flask_debug, use_reloader=False
             )
         )
         thread.start()

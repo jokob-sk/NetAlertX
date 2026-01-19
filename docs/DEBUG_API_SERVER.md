@@ -38,6 +38,19 @@ All application settings can also be initialized via the `APP_CONF_OVERRIDE` doc
 
 There are several ways to check if the GraphQL server is running.
 
+## Flask debug mode (environment)
+
+You can control whether the Flask development debugger is enabled by setting the environment variable `FLASK_DEBUG` (default: `False`). Enabling debug mode will turn on the interactive debugger which may expose a remote code execution (RCE) vector if the server is reachable; **only enable this for local development** and never in production. Valid truthy values are: `1`, `true`, `yes`, `on` (case-insensitive).
+
+In the running container you can set this variable via Docker Compose or your environment, for example:
+
+```yaml
+environment:
+  - FLASK_DEBUG=1
+```
+
+When enabled, the GraphQL server startup logs will indicate the debug setting.
+
 ### Init Check
 
 You can navigate to System Info -> Init Check to see if `isGraphQLServerRunning` is ticked:

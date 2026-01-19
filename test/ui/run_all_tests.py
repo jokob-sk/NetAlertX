@@ -5,15 +5,8 @@ Runs all page-specific UI tests and provides summary
 """
 
 import sys
-# Import all test modules
-from .test_helpers import test_ui_dashboard
-from .test_helpers import test_ui_devices
-from .test_helpers import test_ui_network
-from .test_helpers import test_ui_maintenance
-from .test_helpers import test_ui_multi_edit
-from .test_helpers import test_ui_notifications
-from .test_helpers import test_ui_settings
-from .test_helpers import test_ui_plugins
+import os
+import pytest
 
 
 def main():
@@ -22,22 +15,28 @@ def main():
     print("NetAlertX UI Test Suite")
     print("=" * 70)
 
+    # Get directory of this script
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+
     test_modules = [
-        ("Dashboard", test_ui_dashboard),
-        ("Devices", test_ui_devices),
-        ("Network", test_ui_network),
-        ("Maintenance", test_ui_maintenance),
-        ("Multi-Edit", test_ui_multi_edit),
-        ("Notifications", test_ui_notifications),
-        ("Settings", test_ui_settings),
-        ("Plugins", test_ui_plugins),
+        ("Dashboard", "test_ui_dashboard.py"),
+        ("Devices", "test_ui_devices.py"),
+        ("Network", "test_ui_network.py"),
+        ("Maintenance", "test_ui_maintenance.py"),
+        ("Multi-Edit", "test_ui_multi_edit.py"),
+        ("Notifications", "test_ui_notifications.py"),
+        ("Settings", "test_ui_settings.py"),
+        ("Plugins", "test_ui_plugins.py"),
     ]
 
     results = {}
 
-    for name, module in test_modules:
+    for name, filename in test_modules:
         try:
-            result = module.run_tests()
+            print(f"\nRunning {name} tests...")
+            file_path = os.path.join(base_dir, filename)
+            # Run pytest
+            result = pytest.main([file_path, "-v"])
             results[name] = result == 0
         except Exception as e:
             print(f"\n✗ {name} tests failed with exception: {e}")

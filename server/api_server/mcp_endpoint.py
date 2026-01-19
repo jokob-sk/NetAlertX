@@ -642,6 +642,11 @@ def _execute_tool(route: Dict[str, Any], args: Dict[str, Any]) -> Dict[str, Any]
     headers = {"Content-Type": "application/json"}
     if "Authorization" in request.headers:
         headers["Authorization"] = request.headers["Authorization"]
+    else:
+        # Propagate query token or fallback to configured API token for internal loopback
+        token = request.args.get("token") or get_setting_value('API_TOKEN')
+        if token:
+            headers["Authorization"] = f"Bearer {token}"
 
     filtered_body_args = {k: v for k, v in args.items() if f"{{{k}}}" not in route['path']}
 

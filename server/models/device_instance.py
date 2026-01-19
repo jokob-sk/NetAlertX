@@ -4,7 +4,7 @@ import re
 import sqlite3
 import csv
 from io import StringIO
-from front.plugins.plugin_helper import is_mac
+from front.plugins.plugin_helper import is_mac, normalize_mac
 from logger import mylog
 from models.plugin_object_instance import PluginObjectInstance
 from database import get_temp_db_connection
@@ -500,6 +500,9 @@ class DeviceInstance:
 
     def setDeviceData(self, mac, data):
         """Update or create a device."""
+        normalized_mac = normalize_mac(mac)
+        normalized_parent_mac = normalize_mac(data.get("devParentMAC") or "")
+
         conn = None
         try:
             if data.get("createNew", False):
@@ -517,7 +520,7 @@ class DeviceInstance:
                 """
 
                 values = (
-                    mac,
+                    normalized_mac,
                     data.get("devName") or "",
                     data.get("devOwner") or "",
                     data.get("devType") or "",
@@ -527,7 +530,7 @@ class DeviceInstance:
                     data.get("devGroup") or "",
                     data.get("devLocation") or "",
                     data.get("devComments") or "",
-                    data.get("devParentMAC") or "",
+                    normalized_parent_mac,
                     data.get("devParentPort") or "",
                     data.get("devSSID") or "",
                     data.get("devSite") or "",
@@ -569,7 +572,7 @@ class DeviceInstance:
                     data.get("devGroup") or "",
                     data.get("devLocation") or "",
                     data.get("devComments") or "",
-                    data.get("devParentMAC") or "",
+                    normalized_parent_mac,
                     data.get("devParentPort") or "",
                     data.get("devSSID") or "",
                     data.get("devSite") or "",
@@ -583,7 +586,7 @@ class DeviceInstance:
                     data.get("devIsNew") or 0,
                     data.get("devIsArchived") or 0,
                     data.get("devCustomProps") or "",
-                    mac,
+                    normalized_mac,
                 )
 
             conn = get_temp_db_connection()

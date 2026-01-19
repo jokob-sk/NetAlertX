@@ -362,6 +362,42 @@ def setting_value_to_python_type(set_type, set_value):
 
 
 # -------------------------------------------------------------------------------
+# Environment helper
+def get_env_setting_value(key, default=None):
+    """Return a typed value from environment variable if present.
+
+    - Parses booleans (1/0, true/false, yes/no, on/off).
+    - Tries to parse ints and JSON literals where sensible.
+    - Returns `default` when env var is not set.
+    """
+    val = os.environ.get(key)
+    if val is None:
+        return default
+
+    v = val.strip()
+    # Booleans
+    low = v.lower()
+    if low in ("1", "true", "yes", "on"):
+        return True
+    if low in ("0", "false", "no", "off"):
+        return False
+
+    # Integer
+    try:
+        if re.fullmatch(r"-?\d+", v):
+            return int(v)
+    except Exception:
+        pass
+
+    # JSON-like (list/object/true/false/null/number)
+    try:
+        return json.loads(v)
+    except Exception:
+        # Fallback to raw string
+        return v
+
+
+# -------------------------------------------------------------------------------
 def updateSubnets(scan_subnets):
     """
     Normalize scan subnet input into a list of subnets.
