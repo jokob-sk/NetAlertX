@@ -47,7 +47,10 @@ docker exec <CONTAINER_ID> bash -c "cd /workspaces/NetAlertX && pytest test/api_
 ```
 
 ### Authentication in Tests
-The test environment uses `API_TOKEN` defined in `app.conf`. Tests usually retrieve this via `helper.get_setting_value('API_TOKEN')`. Ensure `app.conf` is populated (the `setup.sh` script does this).
+The test environment uses `API_TOKEN`. The most reliable way to retrieve the current token from a running container is:
+```bash
+docker exec <CONTAINER_ID> python3 -c "from helper import get_setting_value; print(get_setting_value('API_TOKEN'))"
+```
 
 *Troubleshooting:* If tests fail with 403 Forbidden or empty tokens:
 1. Verify server is running and use the aforementioned setup.sh if required.

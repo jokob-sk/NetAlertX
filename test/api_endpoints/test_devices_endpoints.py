@@ -1,18 +1,13 @@
-import sys
 # import pathlib
 # import sqlite3
 import base64
 import random
 # import string
 # import uuid
-import os
 import pytest
 
-INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
-sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
-
-from helper import get_setting_value  # noqa: E402 [flake8 lint suppression]
-from api_server.api_server_start import app  # noqa: E402 [flake8 lint suppression]
+from helper import get_setting_value
+from api_server.api_server_start import app
 
 
 @pytest.fixture(scope="session")
@@ -182,9 +177,8 @@ def test_devices_by_status(client, api_token, test_mac):
 
     # 3. Request devices with an invalid/unknown status
     resp_invalid = client.get("/devices/by-status?status=invalid_status", headers=auth_headers(api_token))
-    assert resp_invalid.status_code == 200
-    # Should return empty list for unknown status
-    assert resp_invalid.json == []
+    # Strict validation now returns 422 for invalid status enum values
+    assert resp_invalid.status_code == 422
 
     # 4. Check favorite formatting if devFavorite = 1
     # Update dummy device to favorite

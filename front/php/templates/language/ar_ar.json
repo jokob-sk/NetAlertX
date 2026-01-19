@@ -15,50 +15,50 @@
     "AppEvents_Helper1": "المساعد 1",
     "AppEvents_Helper2": "المساعد 2",
     "AppEvents_Helper3": "المساعد 3",
-    "AppEvents_ObjectForeignKey": "Foreign Key",
+    "AppEvents_ObjectForeignKey": "مفتاح خارجي",
     "AppEvents_ObjectIndex": "فهرس",
     "AppEvents_ObjectIsArchived": "تم أرشفته (في وقت السجل)",
     "AppEvents_ObjectIsNew": "جديد (في وقت السجل)",
-    "AppEvents_ObjectPlugin": "Linked Plugin",
+    "AppEvents_ObjectPlugin": "إضافة مرتبطة",
     "AppEvents_ObjectPrimaryID": "المعرف الأساسي",
     "AppEvents_ObjectSecondaryID": "معرف ثانوي",
     "AppEvents_ObjectStatus": "الحالة المسجلة",
     "AppEvents_ObjectStatusColumn": "عمود الحالة",
-    "AppEvents_ObjectType": "Object Type",
-    "AppEvents_Plugin": "المكونات الإضافية",
+    "AppEvents_ObjectType": "نوع الكائن",
+    "AppEvents_Plugin": "إضافة",
     "AppEvents_Type": "النوع",
-    "BACKEND_API_URL_description": "",
-    "BACKEND_API_URL_name": "",
+    "BACKEND_API_URL_description": "يُستخدم هذا الخيار لإنشاء عناوين URL لواجهة برمجة التطبيقات الخلفية. حدد ما إذا كنت تستخدم خادم وكيل عكسي للربط بمنفذ <code>GRAPHQL_PORT</code>. أدخل عنوان URL الكامل بدءًا من <code>http://</code> بما في ذلك رقم المنفذ (بدون حرف s في النهاية).",
+    "BACKEND_API_URL_name": "عنوان URL لواجهة برمجة التطبيقات الخلفية",
     "BackDevDetail_Actions_Ask_Run": "هل تريد تنفيذ هذا الإجراء؟",
     "BackDevDetail_Actions_Not_Registered": "لم يتم تسجيل الإجراء: ",
     "BackDevDetail_Actions_Title_Run": "تنفيذ الإجراء",
     "BackDevDetail_Copy_Ask": "هل تريد نسخ هذا الجهاز؟",
     "BackDevDetail_Copy_Title": "نسخ الجهاز",
-    "BackDevDetail_Tools_WOL_error": "خطأ في إيقاظ الجهاز عبر الشبكة",
+    "BackDevDetail_Tools_WOL_error": "لم يتم تنفيذ الأمر.",
     "BackDevDetail_Tools_WOL_okay": "تم إرسال حزمة إيقاظ الجهاز عبر الشبكة",
     "BackDevices_Arpscan_disabled": "تم تعطيل فحص ARP",
     "BackDevices_Arpscan_enabled": "تم تفعيل فحص ARP",
-    "BackDevices_Backup_CopError": "خطأ في نسخ ملف النسخ الاحتياطي",
-    "BackDevices_Backup_Failed": "فشل إنشاء النسخة الاحتياطية",
-    "BackDevices_Backup_okay": "تم إنشاء النسخة الاحتياطية بنجاح",
+    "BackDevices_Backup_CopError": "تعذر حفظ قاعدة البيانات الأصلية.",
+    "BackDevices_Backup_Failed": "تم تنفيذ النسخ الاحتياطي جزئياً بنجاح. تعذر إنشاء الأرشيف أو أنه فارغ.",
+    "BackDevices_Backup_okay": "تم تنفيذ النسخ الاحتياطي بنجاح باستخدام الأرشيف الجديد",
     "BackDevices_DBTools_DelDevError_a": "خطأ في حذف الجهاز",
     "BackDevices_DBTools_DelDevError_b": "خطأ في حذف الأجهزة",
     "BackDevices_DBTools_DelDev_a": "تم حذف الجهاز بنجاح",
     "BackDevices_DBTools_DelDev_b": "تم حذف الأجهزة بنجاح",
     "BackDevices_DBTools_DelEvents": "تم حذف الأحداث بنجاح",
     "BackDevices_DBTools_DelEventsError": "خطأ في حذف الأحداث",
-    "BackDevices_DBTools_ImportCSV": "تم استيراد ملف CSV بنجاح",
-    "BackDevices_DBTools_ImportCSVError": "خطأ في استيراد ملف CSV",
-    "BackDevices_DBTools_ImportCSVMissing": "ملف CSV مفقود",
+    "BackDevices_DBTools_ImportCSV": "تم استيراد الأجهزة من ملف CSV بنجاح.",
+    "BackDevices_DBTools_ImportCSVError": "تعذر استيراد ملف CSV. تأكد من صحة التنسيق.",
+    "BackDevices_DBTools_ImportCSVMissing": "لم يتم العثور على ملف CSV في المسار <b>/config/devices.csv.</b>",
     "BackDevices_DBTools_Purge": "تم تنظيف قاعدة البيانات بنجاح",
-    "BackDevices_DBTools_UpdDev": "تم تحديث الجهاز بنجاح",
+    "BackDevices_DBTools_UpdDev": "تم تحديث الجهاز بنجاح. قد يستغرق تحميل قائمة الأجهزة الرئيسية بعض الوقت إذا كان الفحص جارياً.",
     "BackDevices_DBTools_UpdDevError": "خطأ في تحديث الجهاز",
     "BackDevices_DBTools_Upgrade": "تم ترقية قاعدة البيانات بنجاح",
     "BackDevices_DBTools_UpgradeError": "خطأ في ترقية قاعدة البيانات",
     "BackDevices_Device_UpdDevError": "خطأ في تحديث الجهاز",
     "BackDevices_Restore_CopError": "خطأ في نسخ ملف الاستعادة",
     "BackDevices_Restore_Failed": "فشلت عملية الاستعادة",
-    "BackDevices_Restore_okay": "تمت الاستعادة بنجاح",
+    "BackDevices_Restore_okay": "تم تنفيذ عملية الاستعادة بنجاح.",
     "BackDevices_darkmode_disabled": "تم تعطيل الوضع الداكن",
     "BackDevices_darkmode_enabled": "تم تفعيل الوضع الداكن",
     "CLEAR_NEW_FLAG_description": "مسح علامة 'جديد' من الأجهزة المكتشفة حديثاً",
@@ -68,14 +68,14 @@
     "DAYS_TO_KEEP_EVENTS_name": "مدة الاحتفاظ بالأحداث",
     "DISCOVER_PLUGINS_description": "اكتشاف المكونات الإضافية المتاحة",
     "DISCOVER_PLUGINS_name": "اكتشاف المكونات الإضافية",
-    "DevDetail_Children_Title": "",
+    "DevDetail_Children_Title": "علاقات الأطفال",
     "DevDetail_Copy_Device_Title": "نسخ التفاصيل من الجهاز",
     "DevDetail_Copy_Device_Tooltip": "انسخ تفاصيل الجهاز من القائمة المنسدلة. سيتم استبدال كل ما في هذه الصفحة.",
     "DevDetail_CustomProperties_Title": "الخصائص المخصصة",
-    "DevDetail_CustomProps_reset_info": "إعادة تعيين الخصائص المخصصة",
+    "DevDetail_CustomProps_reset_info": "سيؤدي هذا إلى إزالة خصائصك المخصصة على هذا الجهاز وإعادة ضبطها إلى القيمة الافتراضية.",
     "DevDetail_DisplayFields_Title": "حقول العرض",
-    "DevDetail_EveandAl_AlertAllEvents": "تنبيه لجميع الأحداث",
-    "DevDetail_EveandAl_AlertDown": "تنبيه عند عدم الاتصال",
+    "DevDetail_EveandAl_AlertAllEvents": "تنبيهات الأحداث",
+    "DevDetail_EveandAl_AlertDown": "تنبيه لأسفل",
     "DevDetail_EveandAl_Archived": "مؤرشف",
     "DevDetail_EveandAl_NewDevice": "جهاز جديد",
     "DevDetail_EveandAl_NewDevice_Tooltip": "تم اكتشاف هذا الجهاز حديثاً",
@@ -105,7 +105,7 @@
     "DevDetail_MainInfo_Type": "النوع",
     "DevDetail_MainInfo_Vendor": "المصنع",
     "DevDetail_MainInfo_mac": "عنوان MAC",
-    "DevDetail_NavToChildNode": "",
+    "DevDetail_NavToChildNode": "عقدة الأطفال المفتوحة",
     "DevDetail_Network_Node_hover": "انقر للذهاب إلى عقدة الشبكة",
     "DevDetail_Network_Port_hover": "منفذ الشبكة",
     "DevDetail_Nmap_Scans": "عمليات فحص Nmap",
@@ -149,9 +149,9 @@
     "DevDetail_Tab_EventsTableEvent": "الحدث",
     "DevDetail_Tab_EventsTableIP": "عنوان IP",
     "DevDetail_Tab_EventsTableInfo": "المعلومات",
-    "DevDetail_Tab_Nmap": "فحص Nmap",
-    "DevDetail_Tab_NmapEmpty": "لا توجد نتائج فحص",
-    "DevDetail_Tab_NmapTableExtra": "معلومات إضافية",
+    "DevDetail_Tab_Nmap": "<i class=\"fa fa-ethernet\"></i> Nmap",
+    "DevDetail_Tab_NmapEmpty": "لم يتم الكشف عن أي منافذ باستخدام Nmap على هذا الجهاز.",
+    "DevDetail_Tab_NmapTableExtra": "إضافي",
     "DevDetail_Tab_NmapTableHeader": "نتائج فحص المنافذ",
     "DevDetail_Tab_NmapTableIndex": "الفهرس",
     "DevDetail_Tab_NmapTablePort": "المنفذ",
@@ -163,7 +163,7 @@
     "DevDetail_Tab_Presence": "التواجد",
     "DevDetail_Tab_Sessions": "الجلسات",
     "DevDetail_Tab_Tools": "الأدوات",
-    "DevDetail_Tab_Tools_Internet_Info_Description": "معلومات عن اتصال الإنترنت",
+    "DevDetail_Tab_Tools_Internet_Info_Description": "تعرض أداة معلومات الإنترنت معلومات حول اتصال الإنترنت، مثل عنوان IP والمدينة والبلد ورمز المنطقة والمنطقة الزمنية.",
     "DevDetail_Tab_Tools_Internet_Info_Error": "خطأ في جلب معلومات الإنترنت",
     "DevDetail_Tab_Tools_Internet_Info_Start": "بدء فحص معلومات الإنترنت",
     "DevDetail_Tab_Tools_Internet_Info_Title": "معلومات الإنترنت",
@@ -174,7 +174,7 @@
     "DevDetail_Tab_Tools_Speedtest_Description": "اختبار سرعة الإنترنت",
     "DevDetail_Tab_Tools_Speedtest_Start": "بدء اختبار السرعة",
     "DevDetail_Tab_Tools_Speedtest_Title": "اختبار سرعة الإنترنت",
-    "DevDetail_Tab_Tools_Traceroute_Description": "تتبع مسار الحزم",
+    "DevDetail_Tab_Tools_Traceroute_Description": "Traceroute هو أمر تشخيصي للشبكة يُستخدم لتتبع مسار حزم البيانات من مضيف إلى آخر.<br><br>يستخدم هذا الأمر بروتوكول رسائل التحكم في الإنترنت (ICMP) لإرسال الحزم.",
     "DevDetail_Tab_Tools_Traceroute_Error": "خطأ في تتبع المسار",
     "DevDetail_Tab_Tools_Traceroute_Start": "بدء تتبع المسار",
     "DevDetail_Tab_Tools_Traceroute_Title": "تتبع المسار",
@@ -190,10 +190,10 @@
     "DevDetail_button_Delete": "حذف",
     "DevDetail_button_DeleteEvents": "حذف الأحداث",
     "DevDetail_button_DeleteEvents_Warning": "تحذير: سيتم حذف جميع الأحداث",
-    "DevDetail_button_Delete_ask": "هل أنت متأكد من الحذف؟",
+    "DevDetail_button_Delete_ask": "هل أنت متأكد من رغبتك في حذف هذا الجهاز؟ يمكنك أيضاً أرشفته بدلاً من ذلك.",
     "DevDetail_button_OverwriteIcons": "استبدال الأيقونات",
     "DevDetail_button_OverwriteIcons_Tooltip": "استبدال الأيقونات الحالية",
-    "DevDetail_button_OverwriteIcons_Warning": "تحذير: سيتم استبدال جميع الأيقونات الحالية",
+    "DevDetail_button_OverwriteIcons_Warning": "هل أنت متأكد من رغبتك في استبدال جميع أيقونات جميع الأجهزة بنفس نوع الجهاز الحالي؟",
     "DevDetail_button_Reset": "إعادة تعيين",
     "DevDetail_button_Save": "حفظ",
     "DeviceEdit_ValidMacIp": "الرجاء إدخال عنوان MAC أو IP صالح",
@@ -201,11 +201,11 @@
     "Device_MultiEdit_Backup": "نسخة احتياطية",
     "Device_MultiEdit_Fields": "الحقول",
     "Device_MultiEdit_MassActions": "إجراءات جماعية",
-    "Device_MultiEdit_No_Devices": "",
+    "Device_MultiEdit_No_Devices": "لم يتم تحديد أي أجهزة.",
     "Device_MultiEdit_Tooltip": "تعديل الأجهزة المحددة",
     "Device_Searchbox": "بحث",
     "Device_Shortcut_AllDevices": "جميع الأجهزة",
-    "Device_Shortcut_AllNodes": "",
+    "Device_Shortcut_AllNodes": "جميع العقد",
     "Device_Shortcut_Archived": "مؤرشف",
     "Device_Shortcut_Connected": "متصل",
     "Device_Shortcut_Devices": "الأجهزة",
@@ -232,11 +232,11 @@
     "Device_TableHead_Name": "الاسم",
     "Device_TableHead_NetworkSite": "موقع الشبكة",
     "Device_TableHead_Owner": "المالك",
-    "Device_TableHead_ParentRelType": "",
+    "Device_TableHead_ParentRelType": "نوع العلاقة",
     "Device_TableHead_Parent_MAC": "عنوان MAC الأصل",
     "Device_TableHead_Port": "المنفذ",
     "Device_TableHead_PresentLastScan": "موجود في آخر فحص",
-    "Device_TableHead_ReqNicsOnline": "",
+    "Device_TableHead_ReqNicsOnline": "يتطلب الحصول على بطاقات الهوية الوطنية عبر الإنترنت",
     "Device_TableHead_RowID": "معرف الصف",
     "Device_TableHead_Rowid": "معرف الصف",
     "Device_TableHead_SSID": "معرف الشبكة اللاسلكية",
@@ -292,7 +292,7 @@
     "Events_Tablelenght": "طول الجدول",
     "Events_Tablelenght_all": "الكل",
     "Events_Title": "الأحداث",
-    "FakeMAC_hover": "",
+    "FakeMAC_hover": "تم الكشف التلقائي - يشير إلى ما إذا كان الجهاز يستخدم عنوان MAC مزيفًا (يبدأ بـ FA:CE أو 00:1A)، والذي يتم إنشاؤه عادةً بواسطة مكون إضافي لا يمكنه اكتشاف عنوان MAC الحقيقي أو عند إنشاء جهاز وهمي.",
     "GRAPHQL_PORT_description": "منفذ خادم GraphQL",
     "GRAPHQL_PORT_name": "منفذ GraphQL",
     "Gen_Action": "إجراء",
@@ -305,7 +305,7 @@
     "Gen_Cancel": "إلغاء",
     "Gen_Change": "تغيير",
     "Gen_Copy": "نسخ",
-    "Gen_CopyToClipboard": "",
+    "Gen_CopyToClipboard": "انسخ إلى الحافظة",
     "Gen_DataUpdatedUITakesTime": "تم تحديث البيانات. قد يستغرق تحديث واجهة المستخدم بعض الوقت",
     "Gen_Delete": "حذف",
     "Gen_DeleteAll": "حذف الكل",
@@ -313,10 +313,10 @@
     "Gen_Error": "خطأ",
     "Gen_Filter": "تصفية",
     "Gen_Generate": "إنشاء",
-    "Gen_InvalidMac": "",
-    "Gen_Invalid_Value": "",
+    "Gen_InvalidMac": "عنوان MAC غير صالح.",
+    "Gen_Invalid_Value": "تم إدخال قيمة غير صالحة",
     "Gen_LockedDB": "قاعدة البيانات مقفلة",
-    "Gen_NetworkMask": "",
+    "Gen_NetworkMask": "قناع الشبكة",
     "Gen_Offline": "غير متصل",
     "Gen_Okay": "موافق",
     "Gen_Online": "متصل",
@@ -334,7 +334,7 @@
     "Gen_SelectIcon": "اختيار أيقونة",
     "Gen_SelectToPreview": "اختر للمعاينة",
     "Gen_Selected_Devices": "الأجهزة المحددة",
-    "Gen_Subnet": "",
+    "Gen_Subnet": "الشبكة الفرعية",
     "Gen_Switch": "تبديل",
     "Gen_Upd": "تحديث",
     "Gen_Upd_Fail": "فشل التحديث",
@@ -360,34 +360,34 @@
     "Login_Default_PWD": "كلمة المرور الافتراضية",
     "Login_Info": "معلومات تسجيل الدخول",
     "Login_Psw-box": "صندوق كلمة المرور",
-    "Login_Psw_alert": "تنبيه كلمة المرور",
+    "Login_Psw_alert": "تنبيه بشأن كلمة المرور!",
     "Login_Psw_folder": "مجلد كلمة المرور",
     "Login_Psw_new": "كلمة مرور جديدة",
     "Login_Psw_run": "تشغيل كلمة المرور",
     "Login_Remember": "تذكرني",
     "Login_Remember_small": "تذكرني (نص صغير)",
     "Login_Submit": "تسجيل الدخول",
-    "Login_Toggle_Alert_headline": "عنوان تنبيه التبديل",
+    "Login_Toggle_Alert_headline": "تنبيه بشأن كلمة المرور!",
     "Login_Toggle_Info": "معلومات التبديل",
     "Login_Toggle_Info_headline": "عنوان معلومات التبديل",
     "Maint_PurgeLog": "تنظيف السجلات",
     "Maint_RestartServer": "إعادة تشغيل الخادم",
     "Maint_Restart_Server_noti_text": "جاري إعادة تشغيل الخادم...",
     "Maintenance_InitCheck": "فحص التهيئة",
-    "Maintenance_InitCheck_Checking": "جاري فحص التهيئة...",
+    "Maintenance_InitCheck_Checking": "جارٍ التحقق…",
     "Maintenance_InitCheck_QuickSetupGuide": "دليل الإعداد السريع",
-    "Maintenance_InitCheck_Success": "تم الفحص بنجاح",
+    "Maintenance_InitCheck_Success": "تم تهيئة التطبيق بنجاح!",
     "Maintenance_ReCheck": "إعادة الفحص",
     "Maintenance_Running_Version": "الإصدار الحالي",
     "Maintenance_Status": "الحالة",
     "Maintenance_Title": "الصيانة",
     "Maintenance_Tool_DownloadConfig": "تحميل الإعدادات",
-    "Maintenance_Tool_DownloadConfig_text": "تحميل ملف الإعدادات",
+    "Maintenance_Tool_DownloadConfig_text": "قم بتنزيل نسخة احتياطية كاملة من إعداداتك المخزنة في ملف <code>app.conf</code>.",
     "Maintenance_Tool_DownloadWorkflows": "تحميل تدفقات العمل",
-    "Maintenance_Tool_DownloadWorkflows_text": "تحميل ملفات تدفقات العمل",
+    "Maintenance_Tool_DownloadWorkflows_text": "قم بتنزيل نسخة احتياطية كاملة من سير العمل الخاص بك المخزنة في ملف <code>workflows.json</code>.",
     "Maintenance_Tool_ExportCSV": "تصدير CSV",
     "Maintenance_Tool_ExportCSV_noti": "تصدير CSV",
-    "Maintenance_Tool_ExportCSV_noti_text": "جاري تصدير البيانات إلى ملف CSV...",
+    "Maintenance_Tool_ExportCSV_noti_text": "هل أنت متأكد من رغبتك في إنشاء ملف CSV؟",
     "Maintenance_Tool_ExportCSV_text": "تصدير البيانات إلى ملف CSV",
     "Maintenance_Tool_ImportCSV": "استيراد CSV",
     "Maintenance_Tool_ImportCSV_noti": "استيراد CSV",
@@ -399,7 +399,7 @@
     "Maintenance_Tool_ImportPastedCSV_text": "استيراد البيانات من CSV ملصق",
     "Maintenance_Tool_ImportPastedConfig": "استيراد إعدادات ملصقة",
     "Maintenance_Tool_ImportPastedConfig_noti_text": "جاري استيراد الإعدادات الملصقة...",
-    "Maintenance_Tool_ImportPastedConfig_text": "استيراد الإعدادات من نص ملصق",
+    "Maintenance_Tool_ImportPastedConfig_text": "يستورد هذا الأمر ملف <code>app.conf</code> الذي يحتوي على جميع إعدادات التطبيق. قد ترغب في تنزيل ملف <code>app.conf</code> الحالي أولاً باستخدام <b>Settings Export</b>.",
     "Maintenance_Tool_arpscansw": "تبديل فحص ARP",
     "Maintenance_Tool_arpscansw_noti": "تبديل فحص ARP",
     "Maintenance_Tool_arpscansw_noti_text": "تم تغيير حالة فحص ARP",
@@ -419,7 +419,7 @@
     "Maintenance_Tool_del_ActHistory_text": "تم إعادة ضبط مخطط نشاط الشبكة. هذا لا يؤثر على الأحداث.",
     "Maintenance_Tool_del_alldev": "حذف جميع الأجهزة",
     "Maintenance_Tool_del_alldev_noti": "حذف جميع الأجهزة",
-    "Maintenance_Tool_del_alldev_noti_text": "جاري حذف جميع الأجهزة...",
+    "Maintenance_Tool_del_alldev_noti_text": "هل أنت متأكد من رغبتك في حذف جميع الأجهزة؟",
     "Maintenance_Tool_del_alldev_text": "حذف جميع الأجهزة من قاعدة البيانات",
     "Maintenance_Tool_del_allevents": "حذف جميع الأحداث",
     "Maintenance_Tool_del_allevents30": "حذف أحداث 30 يوم",
@@ -437,14 +437,14 @@
     "Maintenance_Tool_del_selecteddev_text": "حذف الأجهزة المحددة من قاعدة البيانات",
     "Maintenance_Tool_del_unknowndev": "حذف الأجهزة غير المعروفة",
     "Maintenance_Tool_del_unknowndev_noti": "حذف الأجهزة غير المعروفة",
-    "Maintenance_Tool_del_unknowndev_noti_text": "جاري حذف الأجهزة غير المعروفة...",
+    "Maintenance_Tool_del_unknowndev_noti_text": "هل أنت متأكد من رغبتك في حذف جميع الأجهزة (غير المعروفة) و(الاسم غير موجود)؟",
     "Maintenance_Tool_del_unknowndev_text": "حذف الأجهزة غير المعروفة من قاعدة البيانات",
     "Maintenance_Tool_displayed_columns_text": "الأعمدة المعروضة",
     "Maintenance_Tool_drag_me": "اسحبني",
     "Maintenance_Tool_order_columns_text": "ترتيب الأعمدة",
     "Maintenance_Tool_purgebackup": "تنظيف النسخ الاحتياطية",
     "Maintenance_Tool_purgebackup_noti": "تنظيف النسخ الاحتياطية",
-    "Maintenance_Tool_purgebackup_noti_text": "جاري تنظيف النسخ الاحتياطية...",
+    "Maintenance_Tool_purgebackup_noti_text": "هل أنت متأكد من رغبتك في حذف جميع النسخ الاحتياطية باستثناء آخر 3 نسخ؟",
     "Maintenance_Tool_purgebackup_text": "حذف النسخ الاحتياطية القديمة",
     "Maintenance_Tool_restore": "استعادة",
     "Maintenance_Tool_restore_noti": "استعادة",
@@ -500,10 +500,10 @@
     "Navigation_Workflows": "تدفقات العمل",
     "Network_Assign": "تعيين",
     "Network_Cant_Assign": "لا يمكن التعيين",
-    "Network_Cant_Assign_No_Node_Selected": "",
+    "Network_Cant_Assign_No_Node_Selected": "لا يمكن التعيين، لم يتم تحديد عقدة أصلية.",
     "Network_Configuration_Error": "خطأ في التكوين",
     "Network_Connected": "متصل",
-    "Network_Devices": "",
+    "Network_Devices": "أجهزة الشبكة",
     "Network_ManageAdd": "إضافة إدارة",
     "Network_ManageAdd_Name": "اسم الإدارة",
     "Network_ManageAdd_Name_text": "نص اسم الإدارة",
@@ -538,8 +538,8 @@
     "Network_Root": "الجذر",
     "Network_Root_Not_Configured": "الجذر غير مكون",
     "Network_Root_Unconfigurable": "الجذر غير قابل للتكوين",
-    "Network_ShowArchived": "",
-    "Network_ShowOffline": "",
+    "Network_ShowArchived": "عرض الأرشيف",
+    "Network_ShowOffline": "عرض غير متصل",
     "Network_Table_Hostname": "اسم المضيف",
     "Network_Table_IP": "عنوان IP",
     "Network_Table_State": "الحالة",
@@ -598,23 +598,23 @@
     "SYSTEM_TITLE": "عنوان النظام",
     "Setting_Override": "تجاوز الإعدادات",
     "Setting_Override_Description": "وصف تجاوز الإعدادات",
-    "Settings_Metadata_Toggle": "تبديل البيانات الوصفية",
-    "Settings_Show_Description": "عرض الوصف",
-    "Settings_device_Scanners_desync": "عدم تزامن ماسحات الأجهزة",
-    "Settings_device_Scanners_desync_popup": "نافذة عدم تزامن ماسحات الأجهزة",
+    "Settings_Metadata_Toggle": "إظهار/إخفاء البيانات الوصفية للإعداد المحدد.",
+    "Settings_Show_Description": "عرض وصف الإعدادات.",
+    "Settings_device_Scanners_desync": "⚠ جداول فحص الأجهزة غير متزامنة.",
+    "Settings_device_Scanners_desync_popup": "جداول تشغيل ماسحات الأجهزة (*_RUN_SCHD) غير متطابقة. سيؤدي ذلك إلى عدم اتساق إشعارات اتصال/انقطاع اتصال الجهاز. يُرجى استخدام نفس الجدول ما لم يكن ذلك مقصودًا.",
     "Speedtest_Results": "نتائج اختبار السرعة",
-    "Systeminfo_AvailableIps": "",
+    "Systeminfo_AvailableIps": "عناوين IP المتاحة",
     "Systeminfo_CPU": "المعالج",
-    "Systeminfo_CPU_Cores": "أنوية المعالج",
-    "Systeminfo_CPU_Name": "اسم المعالج",
-    "Systeminfo_CPU_Speed": "سرعة المعالج",
-    "Systeminfo_CPU_Temp": "درجة حرارة المعالج",
-    "Systeminfo_CPU_Vendor": "مصنع المعالج",
-    "Systeminfo_Client_Resolution": "دقة شاشة العميل",
-    "Systeminfo_Client_User_Agent": "معرف متصفح العميل",
-    "Systeminfo_General": "معلومات عامة",
-    "Systeminfo_General_Date": "التاريخ",
-    "Systeminfo_General_Date2": "التاريخ 2",
+    "Systeminfo_CPU_Cores": "أنوية المعالج:",
+    "Systeminfo_CPU_Name": "اسم وحدة المعالجة المركزية:",
+    "Systeminfo_CPU_Speed": "سرعة المعالج:",
+    "Systeminfo_CPU_Temp": "درجة حرارة المعالج:",
+    "Systeminfo_CPU_Vendor": "مُصنِّع وحدة المعالجة المركزية:",
+    "Systeminfo_Client_Resolution": "دقة المتصفح:",
+    "Systeminfo_Client_User_Agent": "وكيل المستخدم:",
+    "Systeminfo_General": "عام",
+    "Systeminfo_General_Date": "تاريخ:",
+    "Systeminfo_General_Date2": "التاريخ 2:",
     "Systeminfo_General_Full_Date": "التاريخ الكامل",
     "Systeminfo_General_TimeZone": "المنطقة الزمنية",
     "Systeminfo_Memory": "الذاكرة",
@@ -718,7 +718,7 @@
     "WF_Import_Copy": "نسخ الاستيراد",
     "WF_Name": "الاسم",
     "WF_Remove": "إزالة",
-    "WF_Remove_Copy": "نسخ الإزالة",
+    "WF_Remove_Copy": "هل تريد إزالة سير العمل هذا؟",
     "WF_Save": "حفظ",
     "WF_Trigger": "المشغل",
     "WF_Trigger_event_type": "نوع حدث المشغل",
@@ -729,7 +729,7 @@
     "devices_old": "الأجهزة القديمة",
     "general_event_description": "وصف الحدث العام",
     "general_event_title": "عنوان الحدث العام",
-    "go_to_device_event_tooltip": "",
+    "go_to_device_event_tooltip": "انتقل إلى الجهاز",
     "go_to_node_event_tooltip": "تلميح الانتقال إلى العقدة",
     "new_version_available": "يتوفر إصدار جديد",
     "report_guid": "معرف التقرير",
@@ -737,7 +737,7 @@
     "report_select_format": "اختر تنسيق التقرير",
     "report_time": "وقت التقرير",
     "run_event_tooltip": "تلميح تشغيل الحدث",
-    "select_icon_event_tooltip": "",
+    "select_icon_event_tooltip": "حدد الأيقونة",
     "settings_core_icon": "أيقونة الإعدادات الأساسية",
     "settings_core_label": "تسمية الإعدادات الأساسية",
     "settings_device_scanners": "ماسحات الأجهزة",
@@ -749,20 +749,20 @@
     "settings_expand_all": "توسيع الكل",
     "settings_imported": "تم الاستيراد",
     "settings_imported_label": "تسمية الاستيراد",
-    "settings_missing": "إعدادات مفقودة",
-    "settings_missing_block": "كتلة إعدادات مفقودة",
-    "settings_old": "إعدادات قديمة",
-    "settings_other_scanners": "ماسحات أخرى",
-    "settings_other_scanners_icon": "أيقونة الماسحات الأخرى",
-    "settings_other_scanners_label": "تسمية الماسحات الأخرى",
-    "settings_publishers": "الناشرون",
+    "settings_missing": "لم يتم تحميل جميع الإعدادات! هناك ضغط كبير على قاعدة البيانات أو على عملية بدء تشغيل التطبيق. انقر على زر إعادة التحميل 🔄 في الأعلى.",
+    "settings_missing_block": "خطأ: لم يتم تحميل الإعدادات بشكل صحيح. انقر على زر إعادة التحميل 🔄 في الأعلى، أو تحقق من سجل المتصفح للاطلاع على التفاصيل (F12).",
+    "settings_old": "جارٍ استيراد الإعدادات وإعادة التهيئة…",
+    "settings_other_scanners": "إضافات الماسح الضوئي الأخرى غير الخاصة بالأجهزة والتي يتم تفعيلها حاليًا.",
+    "settings_other_scanners_icon": "fa-صلب fa-إعادة تدوير",
+    "settings_other_scanners_label": "الماسحات الضوئية الأخرى",
+    "settings_publishers": "تم تفعيل بوابات الإشعارات - الناشرين، الذين سيرسلون إشعارًا بناءً على إعداداتك.",
     "settings_publishers_icon": "أيقونة الناشرين",
-    "settings_publishers_info": "معلومات الناشرين",
-    "settings_publishers_label": "تسمية الناشرين",
-    "settings_readonly": "للقراءة فقط",
-    "settings_saved": "تم الحفظ",
-    "settings_system_icon": "أيقونة النظام",
-    "settings_system_label": "تسمية النظام",
-    "settings_update_item_warning": "تحذير تحديث العنصر",
-    "test_event_tooltip": "تلميح اختبار الحدث"
+    "settings_publishers_info": "قم بتحميل المزيد من الناشرين باستخدام إعداد <a href=\"/settings.php#LOADED_PLUGINS\">LOADED_PLUGINS</a>",
+    "settings_publishers_label": "الناشرون",
+    "settings_readonly": "لا يمكن قراءة أو كتابة <code>app.conf</code>. حاول إعادة تشغيل الحاوية واقرأ <a href=\"https://docs.netalertx.com/FILE_PERMISSIONS\" target=\"_blank\">وثائق أذونات الملفات</a>",
+    "settings_saved": "تم حفظ الإعدادات. جارٍ إعادة التحميل... <br/><i class=\"ion ion-ios-loop-strong fa-spin fa-2x fa-fw\"></i> <br/>",
+    "settings_system_icon": "فا-سوليد فا-جير",
+    "settings_system_label": "نظام",
+    "settings_update_item_warning": "قم بتحديث القيمة أدناه. احرص على اتباع التنسيق السابق. <b>لم يتم إجراء التحقق.</b>",
+    "test_event_tooltip": "احفظ التغييرات أولاً قبل اختبار الإعدادات."
 }

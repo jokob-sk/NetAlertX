@@ -9,12 +9,8 @@ import os
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-import sys
 
-# Add test directory to path
-sys.path.insert(0, os.path.dirname(__file__))
-
-from test_helpers import BASE_URL   # noqa: E402 [flake8 lint suppression]
+from .test_helpers import BASE_URL, wait_for_page_load
 
 
 def test_settings_page_loads(driver):
@@ -23,14 +19,14 @@ def test_settings_page_loads(driver):
     WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.TAG_NAME, "body"))
     )
-    time.sleep(2)
+    wait_for_page_load(driver, timeout=10)
     assert "setting" in driver.page_source.lower(), "Page should contain settings content"
 
 
 def test_settings_groups_present(driver):
     """Test: Settings groups/sections are rendered"""
     driver.get(f"{BASE_URL}/settings.php")
-    time.sleep(2)
+    wait_for_page_load(driver, timeout=10)
     groups = driver.find_elements(By.CSS_SELECTOR, ".settings-group, .panel, .card, fieldset")
     assert len(groups) > 0, "Settings groups should be present"
 
@@ -38,7 +34,7 @@ def test_settings_groups_present(driver):
 def test_settings_inputs_present(driver):
     """Test: Settings input fields are rendered"""
     driver.get(f"{BASE_URL}/settings.php")
-    time.sleep(2)
+    wait_for_page_load(driver, timeout=10)
     inputs = driver.find_elements(By.CSS_SELECTOR, "input, select, textarea")
     assert len(inputs) > 0, "Settings input fields should be present"
 
@@ -46,7 +42,7 @@ def test_settings_inputs_present(driver):
 def test_save_button_present(driver):
     """Test: Save button is visible"""
     driver.get(f"{BASE_URL}/settings.php")
-    time.sleep(2)
+    wait_for_page_load(driver, timeout=10)
     save_btn = driver.find_elements(By.CSS_SELECTOR, "button[type='submit'], button#save, .btn-save")
     assert len(save_btn) > 0, "Save button should be present"
 
@@ -63,7 +59,7 @@ def test_save_settings_with_form_submission(driver):
     6. Verifies the config file was updated
     """
     driver.get(f"{BASE_URL}/settings.php")
-    time.sleep(3)
+    wait_for_page_load(driver, timeout=10)
 
     # Wait for the save button to be present and clickable
     save_btn = WebDriverWait(driver, 10).until(
@@ -161,7 +157,7 @@ def test_save_settings_no_loss_of_data(driver):
     4. Check API endpoint that the setting is updated correctly
     """
     driver.get(f"{BASE_URL}/settings.php")
-    time.sleep(3)
+    wait_for_page_load(driver, timeout=10)
 
     # Find the PLUGINS_KEEP_HIST input field
     plugins_keep_hist_input = None
@@ -181,12 +177,12 @@ def test_save_settings_no_loss_of_data(driver):
     new_value = "333"
     plugins_keep_hist_input.clear()
     plugins_keep_hist_input.send_keys(new_value)
-    time.sleep(1)
+    wait_for_page_load(driver, timeout=10)
 
     # Click save
     save_btn = driver.find_element(By.CSS_SELECTOR, "button#save")
     driver.execute_script("arguments[0].click();", save_btn)
-    time.sleep(3)
+    wait_for_page_load(driver, timeout=10)
 
     # Check for errors after save
     error_elements = driver.find_elements(By.CSS_SELECTOR, ".alert-danger, .error-message, .callout-danger")
