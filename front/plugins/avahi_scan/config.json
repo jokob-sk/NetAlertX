@@ -83,66 +83,8 @@
         }
       ]
     },
-    {      "function": "SET_ALWAYS",
-      "type": {
-        "dataType": "array",
-        "elements": [
-          {
-            "elementType": "select",
-            "elementOptions": [{ "multiple": "true", "ordeable": "true"}],
-            "transformers": []
-          }
-        ]
-      },
-      "default_value": ["devName"],
-      "options": [
-        "devName"
-      ],
-      "localized": ["name", "description"],
-      "name": [
-        {
-          "language_code": "en_us",
-          "string": "Set always columns"
-        }
-      ],
-      "description": [
-        {
-          "language_code": "en_us",
-          "string": "These columns are always overwritten by this plugin, unless the user locks or overwrites the value."
-        }
-      ]
-    },
     {
-      "function": "SET_EMPTY",
-      "type": {
-        "dataType": "array",
-        "elements": [
-          {
-            "elementType": "select",
-            "elementOptions": [{ "multiple": "true", "ordeable": "true"}],
-            "transformers": []
-          }
-        ]
-      },
-      "default_value": [],
-      "options": [
-        "devName"
-      ],
-      "localized": ["name", "description"],
-      "name": [
-        {
-          "language_code": "en_us",
-          "string": "Set empty columns"
-        }
-      ],
-      "description": [
-        {
-          "language_code": "en_us",
-          "string": "These columns are only overwritten if they are empty or set to NEWDEV."
-        }
-      ]
-    },
-    {      "function": "CMD",
+      "function": "CMD",
       "type": {
         "dataType": "string",
         "elements": [

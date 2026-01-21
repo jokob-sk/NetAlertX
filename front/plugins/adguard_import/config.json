@@ -335,7 +335,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "These columns are always overwritten by this plugin, unless the user locks or overwrites the value."
+          "string": "These columns are treated as authoritative and will overwrite existing values, including those set by other plugins, unless the current value was explicitly set by the user (<code>Source = USER</code> or <code>Source = LOCKED</code>)."
         }
       ]
     },
@@ -369,7 +369,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "These columns are only overwritten if they are empty or set to NEWDEV."
+          "string": "These columns are only overwritten if they are empty (<code>NULL</code> / empty string) or if their Source is set to <code>NEWDEV</code>"
         }
       ]
     }
