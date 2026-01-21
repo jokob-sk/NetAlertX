@@ -243,6 +243,9 @@ def update_devices_data_from_scan(db):
     # Update devPresentLastScan based on NICs presence
     update_devPresentLastScan_based_on_nics(db)
 
+    # Force device status if configured
+    update_devPresentLastScan_based_on_force_status(db)
+
     # Guess ICONS
     recordsToUpdate = []
 
@@ -863,6 +866,72 @@ def update_devPresentLastScan_based_on_nics(db):
 
     db.commitDB()
     return len(updates)
+
+
+# -------------------------------------------------------------------------------
+# Force devPresentLastScan based on devForceStatus
+def update_devPresentLastScan_based_on_force_status(db):
+    """
+    Forces devPresentLastScan in the Devices table based on devForceStatus.
+
+    devForceStatus values:
+      - "online"  -> devPresentLastScan = 1
+      - "offline" -> devPresentLastScan = 0
+      - "dont_force" or empty -> no change
+
+    Args:
+        db: A database object with `.execute()` and `.fetchone()` methods.
+
+    Returns:
+        int: Number of devices updated.
+    """
+
+    sql = db.sql
+
+    online_count_row = sql.execute(
+        """
+        SELECT COUNT(*) AS cnt
+        FROM Devices
+        WHERE LOWER(COALESCE(devForceStatus, '')) = 'online'
+          AND devPresentLastScan != 1
+        """
+    ).fetchone()
+    online_updates = online_count_row["cnt"] if online_count_row else 0
+
+    offline_count_row = sql.execute(
+        """
+        SELECT COUNT(*) AS cnt
+        FROM Devices
+        WHERE LOWER(COALESCE(devForceStatus, '')) = 'offline'
+          AND devPresentLastScan != 0
+        """
+    ).fetchone()
+    offline_updates = offline_count_row["cnt"] if offline_count_row else 0
+
+    if online_updates > 0:
+        sql.execute(
+            """
+            UPDATE Devices
+            SET devPresentLastScan = 1
+            WHERE LOWER(COALESCE(devForceStatus, '')) = 'online'
+            """
+        )
+
+    if offline_updates > 0:
+        sql.execute(
+            """
+            UPDATE Devices
+            SET devPresentLastScan = 0
+            WHERE LOWER(COALESCE(devForceStatus, '')) = 'offline'
+            """
+        )
+
+    total_updates = online_updates + offline_updates
+    if total_updates > 0:
+        mylog("debug", f"[Update Devices] Forced devPresentLastScan for {total_updates} devices")
+
+    db.commitDB()
+    return total_updates
 
 
 # -------------------------------------------------------------------------------

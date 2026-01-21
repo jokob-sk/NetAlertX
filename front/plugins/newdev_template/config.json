@@ -1947,9 +1947,9 @@
       },
       "default_value": "dont_force",
       "options": [
+        "dont_force" ,
         "online",
-        "offline",
-        "dont_force"
+        "offline"
       ],
       "localized": [
         "name",

@@ -156,7 +156,7 @@ function getDeviceData() {
               },
               // Group for other fields like static IP, archived status, etc.
               DevDetail_DisplayFields_Title: {
-                data: ["devStaticIP", "devIsNew", "devFavorite", "devIsArchived"],
+                data: ["devStaticIP", "devIsNew", "devFavorite", "devIsArchived", "devForceStatus"],
                 docs: "https://docs.netalertx.com/DEVICE_DISPLAY_SETTINGS",
                 iconClass: "fa fa-list-check",
                 inputGroupClasses: "field-group display-group col-lg-4 col-sm-6 col-xs-12",
@@ -295,8 +295,8 @@ function getDeviceData() {
                     const currentSource = deviceData[sourceField] || "NEWDEV";
                     const sourceTitle = getString("FieldLock_Source_Label") + currentSource;
                     const sourceColor = currentSource === "USER" ? "text-warning" : (currentSource === "LOCKED" ? "text-danger" : "text-muted");
-                    inlineControl += `<span class="input-group-addon ${sourceColor}" title="${sourceTitle}">
-                        <i class="fa-solid fa-tag"></i> ${currentSource}
+                    inlineControl += `<span class="input-group-addon pointer ${sourceColor}" title="${sourceTitle}">
+                       ${currentSource}
                       </span>`;
                   }
 
@@ -594,14 +594,17 @@ function toggleFieldLock(mac, fieldName) {
         lockBtn.find("i").attr("class", `fa-solid ${lockIcon}`);
         lockBtn.attr("title", lockTitle);
 
-        // Update source indicator if locked
-        if (shouldLock) {
-          const sourceIndicator = lockBtn.next();
-          if (sourceIndicator.hasClass("input-group-addon")) {
-            sourceIndicator.text("LOCKED");
-            sourceIndicator.attr("class", "input-group-addon text-danger");
-            sourceIndicator.attr("title", getString("FieldLock_Source_Label") + "LOCKED");
-          }
+        // Update local source state
+        deviceData[sourceField] = shouldLock ? "LOCKED" : "";
+
+        // Update source indicator
+        const sourceIndicator = lockBtn.next();
+        if (sourceIndicator.hasClass("input-group-addon")) {
+          const sourceValue = shouldLock ? "LOCKED" : "NEWDEV";
+          const sourceClass = shouldLock ? "input-group-addon text-danger" : "input-group-addon text-muted";
+          sourceIndicator.text(sourceValue);
+          sourceIndicator.attr("class", sourceClass);
+          sourceIndicator.attr("title", getString("FieldLock_Source_Label") + sourceValue);
         }
 
         showMessage(shouldLock ? getString("FieldLock_Locked") : getString("FieldLock_Unlocked"), 3000, "modal_green");

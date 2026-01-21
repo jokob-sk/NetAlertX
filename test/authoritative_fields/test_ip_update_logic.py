@@ -23,6 +23,7 @@ def in_memory_db():
             devMac TEXT PRIMARY KEY,
             devLastConnection TEXT,
             devPresentLastScan INTEGER,
+            devForceStatus TEXT,
             devLastIP TEXT,
             devPrimaryIPv4 TEXT,
             devPrimaryIPv6 TEXT,
@@ -69,6 +70,7 @@ def mock_device_handling():
     with patch.multiple(
         device_handling,
         update_devPresentLastScan_based_on_nics=Mock(return_value=0),
+        update_devPresentLastScan_based_on_force_status=Mock(return_value=0),
         query_MAC_vendor=Mock(return_value=-1),
         guess_icon=Mock(return_value="icon"),
         guess_type=Mock(return_value="type"),
