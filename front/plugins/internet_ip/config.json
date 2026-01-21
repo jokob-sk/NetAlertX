@@ -410,6 +410,68 @@
           "string": "Benachrichtige nur bei diesen Status. <code>new</code> bedeutet ein neues eindeutiges (einzigartige Kombination aus PrimaryId und SecondaryId) Objekt wurde erkennt. <code>watched-changed</code> bedeutet eine ausgewählte <code>Watched_ValueN</code>-Spalte hat sich geändert."
         }
       ]
+    },
+    {
+      "function": "SET_ALWAYS",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [{ "multiple": "true", "ordeable": "true" }],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": ["devMac", "devLastIP"],
+      "options": [
+        "devMac",
+        "devLastIP"
+      ],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Set always columns"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "These columns are always overwritten by this plugin, unless the user locks or overwrites the value."
+        }
+      ]
+    },
+    {
+      "function": "SET_EMPTY",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [{ "multiple": "true", "ordeable": "true" }],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": [],
+      "options": [
+        "devMac",
+        "devLastIP"
+      ],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Set empty columns"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "These columns are only overwritten if they are empty or set to NEWDEV."
+        }
+      ]
     }
   ],
   "database_column_definitions": [

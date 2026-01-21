@@ -73,6 +73,103 @@ def ip_test_db():
 
 
 @pytest.fixture
+def new_device_db():
+    """Create an in-memory SQLite database for create_new_devices tests."""
+    conn = sqlite3.connect(":memory:")
+    conn.row_factory = sqlite3.Row
+    cur = conn.cursor()
+
+    cur.execute(
+        """
+        CREATE TABLE Devices (
+            devMac TEXT PRIMARY KEY,
+            devName TEXT,
+            devVendor TEXT,
+            devLastIP TEXT,
+            devPrimaryIPv4 TEXT,
+            devPrimaryIPv6 TEXT,
+            devFirstConnection TEXT,
+            devLastConnection TEXT,
+            devSyncHubNode TEXT,
+            devGUID TEXT,
+            devParentMAC TEXT,
+            devParentPort TEXT,
+            devSite TEXT,
+            devSSID TEXT,
+            devType TEXT,
+            devSourcePlugin TEXT,
+            devAlertEvents INTEGER,
+            devAlertDown INTEGER,
+            devPresentLastScan INTEGER,
+            devIsArchived INTEGER,
+            devIsNew INTEGER,
+            devSkipRepeated INTEGER,
+            devScan INTEGER,
+            devOwner TEXT,
+            devFavorite INTEGER,
+            devGroup TEXT,
+            devComments TEXT,
+            devLogEvents INTEGER,
+            devLocation TEXT,
+            devCustomProps TEXT,
+            devParentRelType TEXT,
+            devReqNicsOnline INTEGER
+        )
+        """
+    )
+
+    cur.execute(
+        """
+        CREATE TABLE CurrentScan (
+            cur_MAC TEXT,
+            cur_Name TEXT,
+            cur_Vendor TEXT,
+            cur_ScanMethod TEXT,
+            cur_IP TEXT,
+            cur_SyncHubNodeName TEXT,
+            cur_NetworkNodeMAC TEXT,
+            cur_PORT TEXT,
+            cur_NetworkSite TEXT,
+            cur_SSID TEXT,
+            cur_Type TEXT
+        )
+        """
+    )
+
+    cur.execute(
+        """
+        CREATE TABLE Events (
+            eve_MAC TEXT,
+            eve_IP TEXT,
+            eve_DateTime TEXT,
+            eve_EventType TEXT,
+            eve_AdditionalInfo TEXT,
+            eve_PendingAlertEmail INTEGER
+        )
+        """
+    )
+
+    cur.execute(
+        """
+        CREATE TABLE Sessions (
+            ses_MAC TEXT,
+            ses_IP TEXT,
+            ses_EventTypeConnection TEXT,
+            ses_DateTimeConnection TEXT,
+            ses_EventTypeDisconnection TEXT,
+            ses_DateTimeDisconnection TEXT,
+            ses_StillConnected INTEGER,
+            ses_AdditionalInfo TEXT
+        )
+        """
+    )
+
+    conn.commit()
+    yield conn
+    conn.close()
+
+
+@pytest.fixture
 def mock_ip_handlers():
     """Mock device_handling helper functions."""
     with patch.multiple(
@@ -309,6 +406,55 @@ def test_invalid_ip_values_rejected(ip_test_db, mock_ip_handlers):
         assert (
             row["devPrimaryIPv4"] == "192.168.1.50"
         ), f"Invalid IP '{invalid_ip}' should not overwrite valid IPv4"
+
+
+def test_invalid_ipv6_rejected_on_create_new_devices(new_device_db):
+    """Invalid IPv6 values should not be persisted when creating new devices."""
+    cur = new_device_db.cursor()
+
+    cur.execute(
+        """
+        INSERT INTO CurrentScan (
+            cur_MAC, cur_Name, cur_Vendor, cur_ScanMethod, cur_IP,
+            cur_SyncHubNodeName, cur_NetworkNodeMAC, cur_PORT,
+            cur_NetworkSite, cur_SSID, cur_Type
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """,
+        (
+            "AA:BB:CC:DD:EE:10",
+            "",
+            "Vendor",
+            "ARPSCAN",
+            "fe80::zz",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+        ),
+    )
+    new_device_db.commit()
+
+    db = Mock()
+    db.sql_connection = new_device_db
+    db.sql = cur
+    db.commitDB = Mock(side_effect=new_device_db.commit)
+
+    with patch("helper.get_setting_value", return_value=""), patch.object(
+        device_handling, "get_setting_value", return_value=""
+    ):
+        device_handling.create_new_devices(db)
+
+    row = cur.execute(
+        "SELECT devLastIP, devPrimaryIPv4, devPrimaryIPv6 FROM Devices WHERE devMac = ?",
+        ("AA:BB:CC:DD:EE:10",),
+    ).fetchone()
+
+    assert row is not None, "Device should be created"
+    assert row["devLastIP"] == "", "Invalid IPv6 should not set devLastIP"
+    assert row["devPrimaryIPv4"] == "", "Invalid IPv6 should not set devPrimaryIPv4"
+    assert row["devPrimaryIPv6"] == "", "Invalid IPv6 should not set devPrimaryIPv6"
 
 
 def test_ipv4_ipv6_mixed_in_multiple_scans(ip_test_db, mock_ip_handlers):

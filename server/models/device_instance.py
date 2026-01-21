@@ -593,7 +593,6 @@ class DeviceInstance:
             conn = get_temp_db_connection()
             cur = conn.cursor()
             cur.execute(sql, values)
-            conn.commit()
 
             if data.get("createNew", False):
                 # Initialize source-tracking fields on device creation.
@@ -617,7 +616,6 @@ class DeviceInstance:
                     source_values.append(normalized_mac)
                     source_sql = f"UPDATE Devices SET {set_clause} WHERE devMac = ?"
                     cur.execute(source_sql, source_values)
-                    conn.commit()
 
             # Enforce source tracking on user updates
             # User-updated fields should have their *Source set to "USER"
@@ -631,6 +629,8 @@ class DeviceInstance:
                     conn.close()
                     return {"success": False, "error": f"Source tracking failed: {e}"}
 
+            # Commit all changes atomically after all operations succeed
+            conn.commit()
             conn.close()
 
             mylog("debug", f"[DeviceInstance] setDeviceData SQL: {sql.strip()}")

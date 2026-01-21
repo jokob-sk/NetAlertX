@@ -545,12 +545,13 @@ def create_new_devices(db):
         # Derive primary IP family values
         cur_IP = str(cur_IP).strip() if cur_IP else ""
         cur_IP_normalized = check_IP_format(cur_IP) if ":" not in cur_IP else cur_IP
-        
-        # Validate IPv6 addresses using format_ip_long for consistency
-        if ":" in cur_IP_normalized:
+
+        # Validate IPv6 addresses using format_ip_long for consistency (do not store integer result)
+        if cur_IP_normalized and ":" in cur_IP_normalized:
             validated_ipv6 = format_ip_long(cur_IP_normalized)
-            cur_IP_normalized = validated_ipv6 if validated_ipv6 else ""
-        
+            if validated_ipv6 is None or validated_ipv6 < 0:
+                cur_IP_normalized = ""
+
         primary_ipv4 = cur_IP_normalized if cur_IP_normalized and ":" not in cur_IP_normalized else ""
         primary_ipv6 = cur_IP_normalized if cur_IP_normalized and ":" in cur_IP_normalized else ""
 

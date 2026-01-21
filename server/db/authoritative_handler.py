@@ -152,12 +152,20 @@ def enforce_source_on_user_update(devMac, updates_dict, conn):
     cur = conn.cursor()
 
     # Check if field has a corresponding source and should be updated
+    cur = conn.cursor()
+    try:
+        cur.execute("PRAGMA table_info(Devices)")
+        device_columns = {row["name"] for row in cur.fetchall()}
+    except Exception:
+        device_columns = set()
+
     updates_to_apply = {}
     for field_name, new_value in updates_dict.items():
         if field_name in FIELD_SOURCE_MAP:
             source_field = FIELD_SOURCE_MAP[field_name]
             # User is updating this field, so mark it as USER
-            updates_to_apply[source_field] = "USER"
+            if not device_columns or source_field in device_columns:
+                updates_to_apply[source_field] = "USER"
 
     if not updates_to_apply:
         return
@@ -198,6 +206,15 @@ def lock_field(devMac, field_name, conn):
 
     source_field = FIELD_SOURCE_MAP[field_name]
     cur = conn.cursor()
+    try:
+        cur.execute("PRAGMA table_info(Devices)")
+        device_columns = {row["name"] for row in cur.fetchall()}
+    except Exception:
+        device_columns = set()
+
+    if device_columns and source_field not in device_columns:
+        mylog("debug", [f"[lock_field] Source column {source_field} missing for {field_name}"])
+        return
 
     sql = f"UPDATE Devices SET {source_field}='LOCKED' WHERE devMac = ?"
 
@@ -227,6 +244,15 @@ def unlock_field(devMac, field_name, conn):
 
     source_field = FIELD_SOURCE_MAP[field_name]
     cur = conn.cursor()
+    try:
+        cur.execute("PRAGMA table_info(Devices)")
+        device_columns = {row["name"] for row in cur.fetchall()}
+    except Exception:
+        device_columns = set()
+
+    if device_columns and source_field not in device_columns:
+        mylog("debug", [f"[unlock_field] Source column {source_field} missing for {field_name}"])
+        return
 
     # Unlock by resetting to empty (allows overwrite)
     sql = f"UPDATE Devices SET {source_field}='' WHERE devMac = ?"

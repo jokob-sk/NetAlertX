@@ -115,6 +115,30 @@ class TestDeviceFieldLock:
         assert resp.status_code == 400
         assert "cannot be locked" in resp.json.get("error", "")
 
+    def test_lock_field_normalizes_mac(self, client, test_mac, auth_headers):
+        """Lock endpoint should normalize MACs before applying locks."""
+        # Create device with normalized MAC
+        self.test_create_test_device(client, test_mac, auth_headers)
+
+        mac_variant = "aa-bb-cc-dd-ee-ff"
+        payload = {
+            "fieldName": "devName",
+            "lock": True
+        }
+        resp = client.post(
+            f"/device/{mac_variant}/field/lock",
+            json=payload,
+            headers=auth_headers
+        )
+        assert resp.status_code == 200, f"Failed to lock via normalized MAC: {resp.json}"
+        assert resp.json.get("locked") is True
+
+        # Verify source is LOCKED on normalized MAC
+        resp = client.get(f"/device/{test_mac}", headers=auth_headers)
+        assert resp.status_code == 200
+        device_data = resp.json
+        assert device_data.get("devNameSource") == "LOCKED"
+
     def test_lock_all_tracked_fields(self, client, test_mac, auth_headers):
         """Lock each tracked field individually."""
         # First create device

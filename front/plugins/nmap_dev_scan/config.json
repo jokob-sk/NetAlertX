@@ -451,6 +451,68 @@
           "string": "When scanning remote networks, NMAP can only retrieve the IP address, not the MAC address. Enabling the FAKE_MAC setting generates a fake MAC address from the IP address to track devices, but it may cause inconsistencies if IPs change or devices are re-discovered with a different MAC. Static IPs are recommended. Device type and icon might not be detected correctly and some plugins might fail if they depend on a valid MAC address. When unchecked, devices with empty MAC addresses are skipped."
         }
       ]
+    },
+    {
+      "function": "SET_ALWAYS",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [{ "multiple": "true", "ordeable": "true" }],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": ["devMac", "devLastIP"],
+      "options": [
+        "devMac",
+        "devLastIP"
+      ],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Set always columns"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "These columns are always overwritten by this plugin, unless the user locks or overwrites the value."
+        }
+      ]
+    },
+    {
+      "function": "SET_EMPTY",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [{ "multiple": "true", "ordeable": "true" }],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": [],
+      "options": [
+        "devMac",
+        "devLastIP"
+      ],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Set empty columns"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "These columns are only overwritten if they are empty or set to NEWDEV."
+        }
+      ]
     }
   ],
   "database_column_definitions": [

@@ -184,7 +184,12 @@ def normalize_mac(mac):
     :param mac: The MAC address to normalize.
     :return: The normalized MAC address.
     """
-    s = str(mac).upper().strip()
+    s = str(mac).strip()
+
+    if s.lower() == "internet":
+        return "Internet"
+
+    s = s.upper()
 
     # Determine separator if present, prefer colon, then hyphen
     if ':' in s:
