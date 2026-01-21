@@ -728,7 +728,9 @@
       "default_value": [],
       "options": [
         "devMac",
-        "devLastIP"
+        "devLastIP",
+        "devName",
+        "devSourcePlugin"
       ],
       "localized": ["name", "description"],
       "name": [

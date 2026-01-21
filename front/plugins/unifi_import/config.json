@@ -972,7 +972,9 @@
         "devVendor",
         "devSSID",
         "devParentMAC",
-        "devParentPort"
+        "devParentPort",
+        "devType",
+        "devSourcePlugin"
       ],
       "localized": ["name", "description"],
       "name": [

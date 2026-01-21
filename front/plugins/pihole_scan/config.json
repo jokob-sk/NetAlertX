@@ -230,7 +230,11 @@
       },
       "default_value": [],
       "options": [
-        "devLastIP"
+        "devMac",
+        "devLastIP",
+        "devName",
+        "devVendor",
+        "devSourcePlugin"
       ],
       "localized": ["name", "description"],
       "name": [

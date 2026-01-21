@@ -548,7 +548,9 @@
         "devMac",
         "devLastIP",
         "devName",
-        "devParentMAC"
+        "devParentMAC",
+        "devType",
+        "devSourcePlugin"
       ],
       "localized": ["name", "description"],
       "name": [

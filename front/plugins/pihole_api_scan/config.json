@@ -164,7 +164,8 @@
         "devName",
         "devLastIP",
         "devVendor",
-        "devFQDN"
+        "devMac",
+        "devSourcePlugin"
       ],
       "localized": ["name", "description"],
       "name": [

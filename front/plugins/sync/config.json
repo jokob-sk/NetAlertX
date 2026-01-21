@@ -643,7 +643,11 @@
       "default_value": [],
       "options": [
         "devMac",
-        "devLastIP"
+        "devLastIP",
+        "devName",
+        "devVendor",
+        "devSyncHubNode",
+        "devSourcePlugin"
       ],
       "localized": ["name", "description"],
       "name": [

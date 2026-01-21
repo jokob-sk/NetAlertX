@@ -274,7 +274,9 @@
       "options": [
         "devMac",
         "devVendor",
-        "devName"
+        "devName",
+        "devLastIP",
+        "devSourcePlugin"
       ],
       "localized": ["name", "description"],
       "name": [

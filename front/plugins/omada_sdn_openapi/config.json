@@ -487,7 +487,13 @@
       "default_value": [],
       "options": [
         "devMac",
-        "devLastIP"
+        "devLastIP",
+        "devName",
+        "devParentMAC",
+        "devSSID",
+        "devType",
+        "devSourcePlugin",
+        "devSite"
       ],
       "localized": ["name", "description"],
       "name": [
