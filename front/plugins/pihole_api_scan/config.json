@@ -180,7 +180,8 @@
         }
       ]
     },
-    {      "function": "URL",
+    {
+      "function": "URL",
       "type": {
         "dataType": "string",
         "elements": [
@@ -194,7 +195,7 @@
       "name": [
         {
           "language_code": "en_us",
-          "string": "Setting name"
+          "string": "PiHole URL"
         }
       ],
       "description": [
