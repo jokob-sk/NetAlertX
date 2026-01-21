@@ -138,7 +138,7 @@ def get_source_for_field_update(field_name, plugin_prefix, is_user_override=Fals
 def enforce_source_on_user_update(devMac, updates_dict, conn):
     """
     When a user updates device fields, enforce source tracking.
-    
+
     For each field with a corresponding *Source field:
     - If the field value is being changed, set the *Source to "USER".
     - If user explicitly locks a field, set the *Source to "LOCKED".
