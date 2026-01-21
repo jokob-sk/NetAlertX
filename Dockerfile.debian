@@ -1,57 +1,47 @@
-# Warning - use of this unhardened image is not recommended for production use.
-# This image is provided for backward compatibility, development and testing purposes only.
-# For production use, please use the hardened image built with Alpine. This image attempts to
-# treat a container as an operating system, which is an anti-pattern and a common source of
-# security issues.
-#
-# The default Dockerfile/docker-compose image contains the following security improvements
-# over the Debian image:
-# - read-only filesystem
-# - no sudo access
-# - least possible permissions on all files and folders
-# - Root user has all permissions revoked and is unused
-# - Secure umask applied so files are owner-only by default
-# - non-privileged user runs the application
-# - no shell access for non-privileged users
-# - no unnecessary packages or services
-# - reduced capabilities
-# - tmpfs for writable folders
-# - healthcheck
-# - no package managers
-# - no compilers or build tools
-# - no systemd, uses lightweight init system
-# - no persistent storage except for config and db volumes
-# - minimal image size due to segmented build stages
-# - minimal base image (Alpine Linux)
-# - minimal python environment (venv, no pip)
-# - minimal stripped web server
-# - minimal stripped php environment
-# - minimal services (nginx, php-fpm, crond, no unnecessary services or service managers)
-# - minimal users and groups (netalertx and readonly only, no others)
-# - minimal permissions (read-only for most files and folders, write-only for necessary folders)
-# - minimal capabilities (NET_ADMIN and NET_RAW only, no others)
-# - minimal environment variables (only necessary ones, no others)
-# - minimal entrypoint (only necessary commands, no others)
-# - Uses the same base image as the development environmnment (Alpine Linux)
-# - Uses the same services as the development environment (nginx, php-fpm, crond)
-# - Uses the same environment variables as the development environment (only necessary ones, no others)
-# - Uses the same file and folder structure as the development environment (only necessary ones, no others)
-# NetAlertX is designed to be run as an unattended network security monitoring appliance, which means it
-# should be able to operate without human intervention. Overall, the hardened image is designed to be as
-# secure as possible while still being functional and is recommended because you cannot attack a surface
-# that isn't there.
+# Stage 1: Builder
+# Install build dependencies and create virtual environment
+FROM debian:bookworm-slim AS builder
 
+ENV PYTHONUNBUFFERED=1
+ENV VIRTUAL_ENV=/opt/venv
+ENV PATH="${VIRTUAL_ENV}/bin:${PATH}"
 
-FROM debian:bookworm-slim
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3 \
+    python3-dev \
+    python3-pip \
+    python3-venv \
+    gcc \
+    git \
+    libffi-dev \
+    libssl-dev \
+    rustc \
+    cargo \
+    && rm -rf /var/lib/apt/lists/*
 
-#TZ=Europe/London
+RUN python3 -m venv ${VIRTUAL_ENV}
+ENV PATH="${VIRTUAL_ENV}/bin:${PATH}"
 
-# NetAlertX app directories
-ENV INSTALL_DIR=/app
+COPY requirements.txt /tmp/requirements.txt
+RUN pip install --upgrade pip setuptools wheel && \
+    pip install --no-cache-dir -r /tmp/requirements.txt
+
+# Stage 2: Runner
+# Main runtime stage with minimum requirements
+FROM debian:bookworm-slim AS runner
+
+ARG INSTALL_DIR=/app
+ARG NETALERTX_UID=20211
+ARG NETALERTX_GID=20211
+ARG READONLY_UID=20212
+ARG READONLY_GID=20212
+
 ENV NETALERTX_APP=${INSTALL_DIR}
 ENV NETALERTX_DATA=/data
 ENV NETALERTX_CONFIG=${NETALERTX_DATA}/config
+ENV NETALERTX_BACK=${NETALERTX_APP}/back
 ENV NETALERTX_FRONT=${NETALERTX_APP}/front
+ENV NETALERTX_PLUGINS=${NETALERTX_FRONT}/plugins
 ENV NETALERTX_SERVER=${NETALERTX_APP}/server
 ENV NETALERTX_API=/tmp/api
 ENV NETALERTX_DB=${NETALERTX_DATA}/db
@@ -59,8 +49,8 @@ ENV NETALERTX_DB_FILE=${NETALERTX_DB}/app.db
 ENV NETALERTX_BACK=${NETALERTX_APP}/back
 ENV NETALERTX_LOG=/tmp/log
 ENV NETALERTX_PLUGINS_LOG=${NETALERTX_LOG}/plugins
+ENV NETALERTX_CONFIG_FILE=${NETALERTX_CONFIG}/app.conf
 
-# NetAlertX log files
 ENV LOG_IP_CHANGES=${NETALERTX_LOG}/IP_changes.log
 ENV LOG_APP=${NETALERTX_LOG}/app.log
 ENV LOG_APP_FRONT=${NETALERTX_LOG}/app_front.log
@@ -75,102 +65,176 @@ ENV LOG_STDOUT=${NETALERTX_LOG}/stdout.log
 ENV LOG_CRON=${NETALERTX_LOG}/cron.log
 ENV LOG_NGINX_ERROR=${NETALERTX_LOG}/nginx-error.log
 
-# System Services configuration files
+ENV ENTRYPOINT_CHECKS=/entrypoint.d
 ENV SYSTEM_SERVICES=/services
+ENV SYSTEM_SERVICES_SCRIPTS=${SYSTEM_SERVICES}/scripts
 ENV SYSTEM_SERVICES_CONFIG=${SYSTEM_SERVICES}/config
-ENV SYSTEM_NGINIX_CONFIG=${SYSTEM_SERVICES_CONFIG}/nginx
-ENV SYSTEM_NGINX_CONFIG_FILE=${SYSTEM_NGINIX_CONFIG}/nginx.conf
+ENV SYSTEM_NGINX_CONFIG=${SYSTEM_SERVICES_CONFIG}/nginx
+ENV SYSTEM_NGINX_CONFIG_TEMPLATE=${SYSTEM_NGINX_CONFIG}/netalertx.conf.template
+ENV SYSTEM_SERVICES_CONFIG_CRON=${SYSTEM_SERVICES_CONFIG}/cron
 ENV SYSTEM_SERVICES_ACTIVE_CONFIG=/tmp/nginx/active-config
-ENV NETALERTX_CONFIG_FILE=${NETALERTX_CONFIG}/app.conf
+ENV SYSTEM_SERVICES_ACTIVE_CONFIG_FILE=${SYSTEM_SERVICES_ACTIVE_CONFIG}/nginx.conf
 ENV SYSTEM_SERVICES_PHP_FOLDER=${SYSTEM_SERVICES_CONFIG}/php
 ENV SYSTEM_SERVICES_PHP_FPM_D=${SYSTEM_SERVICES_PHP_FOLDER}/php-fpm.d
-ENV SYSTEM_SERVICES_CROND=${SYSTEM_SERVICES_CONFIG}/crond
 ENV SYSTEM_SERVICES_RUN=/tmp/run
 ENV SYSTEM_SERVICES_RUN_TMP=${SYSTEM_SERVICES_RUN}/tmp
 ENV SYSTEM_SERVICES_RUN_LOG=${SYSTEM_SERVICES_RUN}/logs
 ENV PHP_FPM_CONFIG_FILE=${SYSTEM_SERVICES_PHP_FOLDER}/php-fpm.conf
 
-#Python environment
-ENV PYTHONPATH=${NETALERTX_SERVER}
+ENV READ_ONLY_FOLDERS="${NETALERTX_BACK} ${NETALERTX_FRONT} ${NETALERTX_SERVER} ${SYSTEM_SERVICES} \
+    ${SYSTEM_SERVICES_CONFIG} ${ENTRYPOINT_CHECKS}"
+ENV READ_WRITE_FOLDERS="${NETALERTX_DATA} ${NETALERTX_CONFIG} ${NETALERTX_DB} ${NETALERTX_API} \
+    ${NETALERTX_LOG} ${NETALERTX_PLUGINS_LOG} ${SYSTEM_SERVICES_RUN} \
+    ${SYSTEM_SERVICES_RUN_TMP} ${SYSTEM_SERVICES_RUN_LOG} \
+    ${SYSTEM_SERVICES_ACTIVE_CONFIG}"
+
 ENV PYTHONUNBUFFERED=1
 ENV VIRTUAL_ENV=/opt/venv
 ENV VIRTUAL_ENV_BIN=/opt/venv/bin
-ENV PATH="${VIRTUAL_ENV}/bin:${PATH}:/services"
-ENV VENDORSPATH=/app/back/ieee-oui.txt
-ENV VENDORSPATH_NEWEST=${SYSTEM_SERVICES_RUN_TMP}/ieee-oui.txt
+ENV PYTHONPATH=${NETALERTX_APP}:${NETALERTX_SERVER}:${NETALERTX_PLUGINS}:${VIRTUAL_ENV}/lib/python3.11/site-packages
+ENV PATH="${SYSTEM_SERVICES}:${VIRTUAL_ENV_BIN}:$PATH"
 
-
-# App Environment
 ENV LISTEN_ADDR=0.0.0.0
 ENV PORT=20211
 ENV NETALERTX_DEBUG=0
-
-#Container environment
+ENV VENDORSPATH=/app/back/ieee-oui.txt
+ENV VENDORSPATH_NEWEST=${SYSTEM_SERVICES_RUN_TMP}/ieee-oui.txt
 ENV ENVIRONMENT=debian
-ENV USER=netalertx
-ENV USER_ID=1000
-ENV USER_GID=1000
+ENV READ_ONLY_USER=readonly READ_ONLY_GROUP=readonly
+ENV NETALERTX_USER=netalertx NETALERTX_GROUP=netalertx
+ENV LANG=C.UTF-8
 
-# Todo, figure out why using a workdir instead of full paths don't work
-# Todo, do we still need all these packages? I can already see sudo which isn't needed
-
-
-# create pi user and group
-# add root and www-data to pi group so they can r/w files and db
-RUN groupadd --gid "${USER_GID}" "${USER}" && \
-    useradd \
-    --uid ${USER_ID} \
-    --gid ${USER_GID} \
-    --create-home \
-    --shell /bin/bash \
-    ${USER} && \
-    usermod -a -G ${USER_GID} root && \
-    usermod -a -G ${USER_GID} www-data
-
-COPY --chmod=775 --chown=${USER_ID}:${USER_GID} install/production-filesystem/ /
-COPY --chmod=775 --chown=${USER_ID}:${USER_GID} . ${INSTALL_DIR}/
-
-
-# ❗ IMPORTANT - if you modify this file modify the /install/install_dependecies.debian.sh file as well ❗
-# hadolint ignore=DL3008,DL3027
+# Install dependencies
+# Using sury.org for PHP 8.3 to match Alpine version
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    tini snmp ca-certificates curl libwww-perl arp-scan sudo gettext-base \
-    nginx-light php php-cgi php-fpm php-sqlite3 php-curl sqlite3 dnsutils net-tools   \
-    python3 python3-dev iproute2 nmap fping python3-pip zip git systemctl usbutils traceroute nbtscan openrc \
-    busybox nginx nginx-core mtr python3-venv && \
-    rm -rf /var/lib/apt/lists/*
-
-# While php8.3 is in debian bookworm repos, php-fpm is not included so we need to add sury.org repo
-# (Ondřej Surý maintains php packages for debian. This is temp until debian includes php-fpm in their
-# repos. Likely it will be in Debian Trixie.).  This keeps the image up-to-date with the alpine version.
-# hadolint ignore=DL3008
-RUN apt-get install -y --no-install-recommends \
-    apt-transport-https \
+    tini \
+    snmp \
     ca-certificates \
+    curl \
+    libwww-perl \
+    arp-scan \
+    sudo \
+    gettext-base \
+    nginx-light \
+    sqlite3 \
+    dnsutils \
+    net-tools \
+    python3 \
+    iproute2 \
+    nmap \
+    fping \
+    zip \
+    git \
+    usbutils \
+    traceroute \
+    nbtscan \
     lsb-release \
-    wget && \
-    wget -q -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg && \
-    echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list && \
-    apt-get update && \
-    apt-get install -y --no-install-recommends php8.3-fpm php8.3-cli php8.3-sqlite3 php8.3-common php8.3-curl php8.3-cgi && \
-    ln -s /usr/sbin/php-fpm8.3 /usr/sbin/php-fpm83 && \
-    rm -rf /var/lib/apt/lists/* # make it compatible with alpine version
+    wget \
+    apt-transport-https \
+    gnupg2 \
+    mtr \
+    procps \
+    gosu \
+    && wget -qO /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg \
+    && echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+    php8.3-fpm \
+    php8.3-cli \
+    php8.3-sqlite3 \
+    php8.3-common \
+    php8.3-curl \
+    && ln -s /usr/sbin/php-fpm8.3 /usr/sbin/php-fpm \
+    && ln -s /usr/sbin/php-fpm8.3 /usr/sbin/php-fpm83 \
+    && ln -s /usr/sbin/gosu /usr/sbin/su-exec \
+    && rm -rf /var/lib/apt/lists/*
 
-# Setup virtual python environment and use pip3 to install packages
-RUN python3 -m venv ${VIRTUAL_ENV} && \
-    /bin/bash -c "source ${VIRTUAL_ENV_BIN}/activate && update-alternatives --install /usr/bin/python python /usr/bin/python3 10 && pip3 install -r ${INSTALL_DIR}/requirements.txt"
+# Fix permissions for /tmp BEFORE copying anything that might overwrite it with bad perms
+RUN chmod 1777 /tmp
 
-# Configure php-fpm
-RUN chmod -R 755 /services && \
-    chown -R ${USER}:${USER_GID} /services  && \
-    sed -i 's/^;listen.mode = .*/listen.mode = 0666/' ${SYSTEM_SERVICES_PHP_FPM_D}/www.conf && \
-    printf "user = %s\ngroup = %s\n" "${USER}" "${USER_GID}" >> /services/config/php/php-fpm.d/www.conf
+# User setup
+RUN groupadd -g ${NETALERTX_GID} ${NETALERTX_GROUP} && \
+    useradd -u ${NETALERTX_UID} -g ${NETALERTX_GID} -d ${NETALERTX_APP} -s /bin/bash ${NETALERTX_USER}
 
+# Copy filesystem (excluding tmp if possible, or we just fix it after)
+COPY --chown=${NETALERTX_USER}:${NETALERTX_GROUP} install/production-filesystem/ /
+# Re-apply sticky bit to /tmp in case COPY overwrote it
+RUN chmod 1777 /tmp
 
+COPY --chown=${NETALERTX_USER}:${NETALERTX_GROUP} --chmod=755 back ${NETALERTX_BACK}
+COPY --chown=${NETALERTX_USER}:${NETALERTX_GROUP} --chmod=755 front ${NETALERTX_FRONT}
+COPY --chown=${NETALERTX_USER}:${NETALERTX_GROUP} --chmod=755 server ${NETALERTX_SERVER}
 
-# Create a buildtimestamp.txt to later check if a new version was released
-RUN date +%s > ${INSTALL_DIR}/front/buildtimestamp.txt
-USER netalertx:netalertx
-ENTRYPOINT ["/bin/bash","/entrypoint.sh"]
+# Create required folders
+RUN install -d -o ${NETALERTX_USER} -g ${NETALERTX_GROUP} -m 700 ${READ_WRITE_FOLDERS} && \
+    chmod 750 /entrypoint.sh /root-entrypoint.sh
 
+# Copy Version
+COPY --chown=${NETALERTX_USER}:${NETALERTX_GROUP} .[V]ERSION ${NETALERTX_APP}/.VERSION
+COPY --chown=${NETALERTX_USER}:${NETALERTX_GROUP} .[V]ERSION ${NETALERTX_APP}/.VERSION_PREV
 
+# Copy venv from builder
+COPY --from=builder --chown=${READONLY_UID}:${READONLY_GID} ${VIRTUAL_ENV} ${VIRTUAL_ENV}
+
+# Init process
+RUN for vfile in .VERSION .VERSION_PREV; do \
+    if [ ! -f "${NETALERTX_APP}/${vfile}" ]; then \
+    echo "DEVELOPMENT 00000000" > "${NETALERTX_APP}/${vfile}"; \
+    fi; \
+    chown ${READONLY_UID}:${READONLY_GID} "${NETALERTX_APP}/${vfile}"; \
+    done && \
+    # Set capabilities for raw socket access
+    setcap cap_net_raw,cap_net_admin+eip /usr/bin/nmap && \
+    setcap cap_net_raw,cap_net_admin+eip /usr/sbin/arp-scan && \
+    setcap cap_net_raw,cap_net_admin,cap_net_bind_service+eip /usr/bin/nbtscan && \
+    setcap cap_net_raw,cap_net_admin+eip /usr/bin/traceroute.db && \
+    # Note: python path needs to be dynamic or verificed
+    # setcap cap_net_raw,cap_net_admin+eip $(readlink -f ${VIRTUAL_ENV_BIN}/python) && \
+    /bin/bash /build/init-nginx.sh && \
+    /bin/bash /build/init-php-fpm.sh && \
+    # /bin/bash /build/init-cron.sh && \ 
+    # Debian cron init might differ, skipping for now or need to check init-cron.sh content
+    # Checking init-backend.sh
+    /bin/bash /build/init-backend.sh && \
+    rm -rf /build && \
+    date +%s > "${NETALERTX_FRONT}/buildtimestamp.txt"
+
+ENTRYPOINT ["/bin/bash", "/entrypoint.sh"]
+
+# Stage 3: Hardened
+FROM runner AS hardened
+
+ARG NETALERTX_UID=20211
+ARG NETALERTX_GID=20211
+ARG READONLY_UID=20212
+ARG READONLY_GID=20212
+ENV READ_ONLY_USER=readonly READ_ONLY_GROUP=readonly
+
+# Create readonly user
+RUN groupadd -g ${READONLY_GID} ${READ_ONLY_GROUP} && \
+    useradd -u ${READONLY_UID} -g ${READONLY_GID} -d /app -s /usr/sbin/nologin ${READ_ONLY_USER}
+
+# Hardening: Remove package managers and set permissions
+RUN chown -R ${READ_ONLY_USER}:${READ_ONLY_GROUP} ${READ_ONLY_FOLDERS} && \
+    chmod -R 004 ${READ_ONLY_FOLDERS} && \
+    find ${READ_ONLY_FOLDERS} -type d -exec chmod 005 {} + && \
+    install -d -o ${NETALERTX_USER} -g ${NETALERTX_GROUP} -m 0777 ${READ_WRITE_FOLDERS} && \
+    chown ${READ_ONLY_USER}:${READ_ONLY_GROUP} /entrypoint.sh /root-entrypoint.sh /app /opt /opt/venv && \
+    # Permissions
+    chmod 005 /entrypoint.sh /root-entrypoint.sh ${SYSTEM_SERVICES}/*.sh ${SYSTEM_SERVICES_SCRIPTS}/* ${ENTRYPOINT_CHECKS}/* /app /opt /opt/venv && \
+    # Cleanups
+    rm -f \
+    "${NETALERTX_CONFIG}/app.conf" \
+    "${NETALERTX_DB_FILE}" \
+    "${NETALERTX_DB_FILE}-shm" \
+    "${NETALERTX_DB_FILE}-wal" || true && \
+    # Remove apt and sensitive files
+    rm -rf /var/lib/apt /var/lib/dpkg /var/cache/apt /usr/bin/apt* /usr/bin/dpkg* \
+    /etc/shadow /etc/gshadow /etc/sudoers /root /home/root && \
+    # Dummy sudo
+    printf '#!/bin/sh\n"$@"\n' > /usr/bin/sudo && chmod +x /usr/bin/sudo
+
+USER 0
+ENTRYPOINT ["/root-entrypoint.sh"]
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD /services/healthcheck.sh
