@@ -595,6 +595,30 @@ class DeviceInstance:
             cur.execute(sql, values)
             conn.commit()
 
+            if data.get("createNew", False):
+                # Initialize source-tracking fields on device creation.
+                # We always mark devMacSource as NEWDEV, and mark other tracked fields
+                # as NEWDEV only if the create payload provides a non-empty value.
+                initial_sources = {FIELD_SOURCE_MAP["devMac"]: "NEWDEV"}
+                for field_name, source_field in FIELD_SOURCE_MAP.items():
+                    if field_name == "devMac":
+                        continue
+                    field_value = data.get(field_name)
+                    if field_value is None:
+                        continue
+                    if isinstance(field_value, str) and not field_value.strip():
+                        continue
+                    initial_sources[source_field] = "NEWDEV"
+
+                if initial_sources:
+                    # Apply source updates in a single statement for the newly inserted row.
+                    set_clause = ", ".join([f"{col}=?" for col in initial_sources.keys()])
+                    source_values = list(initial_sources.values())
+                    source_values.append(normalized_mac)
+                    source_sql = f"UPDATE Devices SET {set_clause} WHERE devMac = ?"
+                    cur.execute(source_sql, source_values)
+                    conn.commit()
+
             # Enforce source tracking on user updates
             # User-updated fields should have their *Source set to "USER"
             user_updated_fields = {k: v for k, v in data.items() if k in FIELD_SOURCE_MAP}
@@ -683,26 +707,30 @@ class DeviceInstance:
         if field_name not in FIELD_SOURCE_MAP:
             return {"success": False, "error": f"Field {field_name} does not support locking"}
 
+        mac_normalized = normalize_mac(mac)
+        conn = get_temp_db_connection()
         try:
-            conn = get_temp_db_connection()
-            lock_field(mac, field_name, conn)
-            conn.close()
+            lock_field(mac_normalized, field_name, conn)
             return {"success": True, "message": f"Field {field_name} locked"}
         except Exception as e:
             return {"success": False, "error": str(e)}
+        finally:
+            conn.close()
 
     def unlockDeviceField(self, mac, field_name):
         """Unlock a device field so plugins can overwrite it again."""
         if field_name not in FIELD_SOURCE_MAP:
             return {"success": False, "error": f"Field {field_name} does not support unlocking"}
 
+        mac_normalized = normalize_mac(mac)
+        conn = get_temp_db_connection()
         try:
-            conn = get_temp_db_connection()
-            unlock_field(mac, field_name, conn)
-            conn.close()
+            unlock_field(mac_normalized, field_name, conn)
             return {"success": True, "message": f"Field {field_name} unlocked"}
         except Exception as e:
             return {"success": False, "error": str(e)}
+        finally:
+            conn.close()
 
     def copyDevice(self, mac_from, mac_to):
         """Copy a device entry from one MAC to another."""

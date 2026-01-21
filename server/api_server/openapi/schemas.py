@@ -275,7 +275,7 @@ class UpdateDeviceColumnRequest(BaseModel):
 
 class LockDeviceFieldRequest(BaseModel):
     """Request to lock/unlock a device field."""
-    fieldName: str = Field(..., description="Field name to lock/unlock (devMac, devName, devLastIP, etc.)")
+    fieldName: Optional[str] = Field(None, description="Field name to lock/unlock (devMac, devName, devLastIP, etc.)")
     lock: bool = Field(True, description="True to lock the field, False to unlock")
 
 

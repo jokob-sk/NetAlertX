@@ -472,24 +472,24 @@ def api_device_field_lock(mac, payload=None):
     # Validate that the field can be locked
     source_field = field_name + "Source"
     allowed_tracked_fields = {
-        "devMac", "devName", "devLastIP", "devVendor", "devFQDN", 
+        "devMac", "devName", "devLastIP", "devVendor", "devFQDN",
         "devSSID", "devParentMAC", "devParentPort", "devParentRelType", "devVlan"
     }
     if field_name not in allowed_tracked_fields:
         return jsonify({"success": False, "error": f"Field '{field_name}' cannot be locked"}), 400
 
     device_handler = DeviceInstance()
-    
+
     try:
         # When locking: set source to LOCKED
         # When unlocking: check current value and let plugins take over
         new_source = "LOCKED" if should_lock else "NEWDEV"
         result = device_handler.updateDeviceColumn(mac, source_field, new_source)
-        
+
         if result.get("success"):
             action = "locked" if should_lock else "unlocked"
             return jsonify({
-                "success": True, 
+                "success": True,
                 "message": f"Field {field_name} {action}",
                 "fieldName": field_name,
                 "locked": should_lock
@@ -497,7 +497,7 @@ def api_device_field_lock(mac, payload=None):
         else:
             return jsonify(result), 400
     except Exception as e:
-        mylog("error", f"Error locking field {field_name} for {mac}: {str(e)}")
+        mylog("none", f"Error locking field {field_name} for {mac}: {str(e)}")
         return jsonify({"success": False, "error": str(e)}), 500
 
 

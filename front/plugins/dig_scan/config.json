@@ -83,7 +83,8 @@
         }
       ]
     },
-    {      "function": "SET_ALWAYS",
+    {
+      "function": "SET_ALWAYS",
       "type": {
         "dataType": "array",
         "elements": [

@@ -383,7 +383,69 @@
             "string": "Retrieve only devices that are reachable."
           }
         ]
-      }
+      },
+      {
+      "function": "SET_ALWAYS",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [{ "multiple": "true", "orderable": "true" }],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": ["devMac", "devLastIP"],
+      "options": [
+        "devMac",
+        "devLastIP"
+      ],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Set always columns"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "These columns are always overwritten by this plugin, unless the user locks or overwrites the value."
+        }
+      ]
+    },
+    {
+      "function": "SET_EMPTY",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [{ "multiple": "true", "orderable": "true" }],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": [],
+      "options": [
+        "devMac",
+        "devLastIP"
+      ],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Set empty columns"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "These columns are only overwritten if they are empty or set to NEWDEV."
+        }
+      ]
+    }
     ],
     "database_column_definitions": [
     {
@@ -566,68 +628,6 @@
         {
           "language_code": "ru_ru",
           "string": "Статус"
-        }
-      ]
-    },
-    {
-      "function": "SET_ALWAYS",
-      "type": {
-        "dataType": "array",
-        "elements": [
-          {
-            "elementType": "select",
-            "elementOptions": [{ "multiple": "true", "orderable": "true" }],
-            "transformers": []
-          }
-        ]
-      },
-      "default_value": ["devMac", "devLastIP"],
-      "options": [
-        "devMac",
-        "devLastIP"
-      ],
-      "localized": ["name", "description"],
-      "name": [
-        {
-          "language_code": "en_us",
-          "string": "Set always columns"
-        }
-      ],
-      "description": [
-        {
-          "language_code": "en_us",
-          "string": "These columns are always overwritten by this plugin, unless the user locks or overwrites the value."
-        }
-      ]
-    },
-    {
-      "function": "SET_EMPTY",
-      "type": {
-        "dataType": "array",
-        "elements": [
-          {
-            "elementType": "select",
-            "elementOptions": [{ "multiple": "true", "orderable": "true" }],
-            "transformers": []
-          }
-        ]
-      },
-      "default_value": [],
-      "options": [
-        "devMac",
-        "devLastIP"
-      ],
-      "localized": ["name", "description"],
-      "name": [
-        {
-          "language_code": "en_us",
-          "string": "Set empty columns"
-        }
-      ],
-      "description": [
-        {
-          "language_code": "en_us",
-          "string": "These columns are only overwritten if they are empty or set to NEWDEV."
         }
       ]
     }

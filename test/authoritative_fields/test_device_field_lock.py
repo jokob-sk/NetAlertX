@@ -46,16 +46,16 @@ def cleanup_test_device(test_mac):
     # Clean before test
     try:
         device_handler.deleteDeviceByMAC(test_mac)
-    except Exception:
-        pass
-    
+    except Exception as e:
+        pytest.fail(f"Pre-test cleanup failed for {test_mac}: {e}")
+
     yield
-    
+
     # Clean after test
     try:
         device_handler.deleteDeviceByMAC(test_mac)
-    except Exception:
-        pass
+    except Exception as e:
+        pytest.fail(f"Post-test cleanup failed for {test_mac}: {e}")
 
 
 class TestDeviceFieldLock:
@@ -119,12 +119,12 @@ class TestDeviceFieldLock:
         """Lock each tracked field individually."""
         # First create device
         self.test_create_test_device(client, test_mac, auth_headers)
-        
+
         tracked_fields = [
             "devMac", "devName", "devLastIP", "devVendor", "devFQDN",
             "devSSID", "devParentMAC", "devParentPort", "devParentRelType", "devVlan"
         ]
-        
+
         for field_name in tracked_fields:
             payload = {"fieldName": field_name, "lock": True}
             resp = client.post(
@@ -142,7 +142,7 @@ class TestDeviceFieldLock:
         """Lock a field then unlock it."""
         # Create device
         self.test_create_test_device(client, test_mac, auth_headers)
-        
+
         # Lock field
         lock_payload = {"fieldName": "devName", "lock": True}
         resp = client.post(
@@ -152,13 +152,13 @@ class TestDeviceFieldLock:
         )
         assert resp.status_code == 200
         assert resp.json.get("locked") is True
-        
+
         # Verify source is LOCKED
         resp = client.get(f"/device/{test_mac}", headers=auth_headers)
         assert resp.status_code == 200
         device_data = resp.json
         assert device_data.get("devNameSource") == "LOCKED"
-        
+
         # Unlock field
         unlock_payload = {"fieldName": "devName", "lock": False}
         resp = client.post(
@@ -168,7 +168,7 @@ class TestDeviceFieldLock:
         )
         assert resp.status_code == 200
         assert resp.json.get("locked") is False
-        
+
         # Verify source changed
         resp = client.get(f"/device/{test_mac}", headers=auth_headers)
         assert resp.status_code == 200
@@ -179,7 +179,7 @@ class TestDeviceFieldLock:
         """Locked field should not be updated through API."""
         # Create device with initial name
         self.test_create_test_device(client, test_mac, auth_headers)
-        
+
         # Lock the field
         lock_payload = {"fieldName": "devName", "lock": True}
         resp = client.post(
@@ -188,7 +188,7 @@ class TestDeviceFieldLock:
             headers=auth_headers
         )
         assert resp.status_code == 200
-        
+
         # Try to update the locked field
         update_payload = {"devName": "New Name"}
         resp = client.post(
@@ -196,7 +196,7 @@ class TestDeviceFieldLock:
             json=update_payload,
             headers=auth_headers
         )
-        
+
         # Update should succeed at API level but authoritative handler should prevent it
         # The field update logic checks source in the database layer
         # For now verify the API accepts the request
@@ -206,7 +206,7 @@ class TestDeviceFieldLock:
         """Lock some fields while leaving others unlocked."""
         # Create device
         self.test_create_test_device(client, test_mac, auth_headers)
-        
+
         # Lock only devName and devVendor
         for field in ["devName", "devVendor"]:
             payload = {"fieldName": field, "lock": True}
@@ -216,16 +216,16 @@ class TestDeviceFieldLock:
                 headers=auth_headers
             )
             assert resp.status_code == 200
-        
+
         # Verify device state
         resp = client.get(f"/device/{test_mac}", headers=auth_headers)
         assert resp.status_code == 200
         device_data = resp.json
-        
+
         # Locked fields should have LOCKED source
         assert device_data.get("devNameSource") == "LOCKED"
         assert device_data.get("devVendorSource") == "LOCKED"
-        
+
         # Other fields should not be locked
         assert device_data.get("devLastIPSource") != "LOCKED"
         assert device_data.get("devFQDNSource") != "LOCKED"
@@ -234,9 +234,9 @@ class TestDeviceFieldLock:
         """Locking the same field multiple times should work."""
         # Create device
         self.test_create_test_device(client, test_mac, auth_headers)
-        
+
         payload = {"fieldName": "devName", "lock": True}
-        
+
         # Lock once
         resp1 = client.post(
             f"/device/{test_mac}/field/lock",
@@ -244,7 +244,7 @@ class TestDeviceFieldLock:
             headers=auth_headers
         )
         assert resp1.status_code == 200
-        
+
         # Lock again
         resp2 = client.post(
             f"/device/{test_mac}/field/lock",
@@ -269,10 +269,38 @@ class TestDeviceFieldLock:
 class TestFieldLockIntegration:
     """Integration tests for field locking with plugin overwrites."""
 
+    def test_lock_unlock_normalizes_mac(self, test_mac):
+        """Lock/unlock should normalize MAC addresses before DB updates."""
+        device_handler = DeviceInstance()
+
+        create_result = device_handler.setDeviceData(
+            test_mac,
+            {
+                "devName": "Original Name",
+                "devLastIP": "192.168.1.100",
+                "createNew": True,
+            },
+        )
+        assert create_result.get("success") is True
+
+        mac_variant = "aa-bb-cc-dd-ee-ff"
+
+        lock_result = device_handler.lockDeviceField(mac_variant, "devName")
+        assert lock_result.get("success") is True
+
+        device_data = device_handler.getDeviceData(test_mac)
+        assert device_data.get("devNameSource") == "LOCKED"
+
+        unlock_result = device_handler.unlockDeviceField(mac_variant, "devName")
+        assert unlock_result.get("success") is True
+
+        device_data = device_handler.getDeviceData(test_mac)
+        assert device_data.get("devNameSource") != "LOCKED"
+
     def test_locked_field_blocks_plugin_overwrite(self, test_mac, auth_headers):
         """Verify locked fields prevent plugin source overwrites."""
         device_handler = DeviceInstance()
-        
+
         # Create device
         create_result = device_handler.setDeviceData(test_mac, {
             "devName": "Original Name",
@@ -280,10 +308,10 @@ class TestFieldLockIntegration:
             "createNew": True
         })
         assert create_result.get("success") is True
-        
+
         # Lock the field
         device_handler.updateDeviceColumn(test_mac, "devNameSource", "LOCKED")
-        
+
         # Try to overwrite with plugin source (this would be done by authoritative handler)
         # For now, verify the source is stored correctly
         device_data = device_handler.getDeviceData(test_mac)
@@ -292,7 +320,7 @@ class TestFieldLockIntegration:
     def test_field_source_tracking(self, test_mac, auth_headers):
         """Verify field source is tracked correctly."""
         device_handler = DeviceInstance()
-        
+
         # Create device
         create_result = device_handler.setDeviceData(test_mac, {
             "devName": "Test Device",
@@ -300,17 +328,17 @@ class TestFieldLockIntegration:
             "createNew": True
         })
         assert create_result.get("success") is True
-        
+
         # Verify initial source
         device_data = device_handler.getDeviceData(test_mac)
         assert device_data.get("devNameSource") == "NEWDEV"
-        
+
         # Update field (should set source to USER)
         update_result = device_handler.setDeviceData(test_mac, {
             "devName": "Updated Name"
         })
         assert update_result.get("success") is True
-        
+
         # Verify source changed to USER
         device_data = device_handler.getDeviceData(test_mac)
         assert device_data.get("devNameSource") == "USER"
