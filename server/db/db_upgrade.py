@@ -9,7 +9,7 @@ from logger import mylog  # noqa: E402 [flake8 lint suppression]
 from messaging.in_app import write_notification  # noqa: E402 [flake8 lint suppression]
 
 
-# Define the expected Devices table columns (hardcoded base schema) [v25.5.24]
+# Define the expected Devices table columns (hardcoded base schema) [v26.1/2.XX]
 EXPECTED_DEVICES_COLUMNS = [
     "devMac",
     "devName",

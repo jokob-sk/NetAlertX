@@ -275,7 +275,7 @@ function getDeviceData() {
                   const fieldName = setting.setKey.replace('NEWDEV_', '');
                   if (trackedFields[fieldName] && mac != "new") {
                     const sourceField = fieldName + "Source";
-                    const currentSource = deviceData[sourceField] || "";
+                    const currentSource = deviceData[sourceField] || "UNKNOWN";
                     const isLocked = currentSource === "LOCKED";
                     const lockIcon = isLocked ? "fa-lock" : "fa-lock-open";
                     const lockTitle = isLocked ? getString("FieldLock_Unlock_Tooltip") : getString("FieldLock_Lock_Tooltip");
@@ -292,7 +292,7 @@ function getDeviceData() {
                   const fieldName2 = setting.setKey.replace('NEWDEV_', '');
                   if (trackedFields[fieldName2] && mac != "new") {
                     const sourceField = fieldName2 + "Source";
-                    const currentSource = deviceData[sourceField] || "NEWDEV";
+                    const currentSource = deviceData[sourceField] || "UNKNOWN";
                     const sourceTitle = getString("FieldLock_Source_Label") + currentSource;
                     const sourceColor = currentSource === "USER" ? "text-warning" : (currentSource === "LOCKED" ? "text-danger" : "text-muted");
                     inlineControl += `<span class="input-group-addon pointer ${sourceColor}" title="${sourceTitle}">
@@ -561,7 +561,7 @@ function toggleFieldLock(mac, fieldName) {
 
   // Get current source value
   const sourceField = fieldName + "Source";
-  const currentSource = deviceData[sourceField] || "NEWDEV";
+  const currentSource = deviceData[sourceField] || "UNKNOWN";
   const shouldLock = currentSource !== "LOCKED";
 
   const payload = {
@@ -600,7 +600,7 @@ function toggleFieldLock(mac, fieldName) {
         // Update source indicator
         const sourceIndicator = lockBtn.next();
         if (sourceIndicator.hasClass("input-group-addon")) {
-          const sourceValue = shouldLock ? "LOCKED" : "NEWDEV";
+          const sourceValue = shouldLock ? "LOCKED" : "UNKNOWN";
           const sourceClass = shouldLock ? "input-group-addon text-danger" : "input-group-addon text-muted";
           sourceIndicator.text(sourceValue);
           sourceIndicator.attr("class", sourceClass);
