@@ -273,10 +273,12 @@ function getDeviceData() {
 
                   // Add lock/unlock button for tracked fields (not for new devices)
                   const fieldName = setting.setKey.replace('NEWDEV_', '');
-                  if (trackedFields[fieldName] && mac != "new") {
-                    const sourceField = fieldName + "Source";
-                    const currentSource = deviceData[sourceField] || "UNKNOWN";
-                    const isLocked = currentSource === "LOCKED";
+                  const sourceField = fieldName + "Source";
+                  const currentSource = (deviceData[sourceField] ?? "").toString().trim();
+                  const normalizedSource = currentSource.toLowerCase();
+                  const hasSourceValue = currentSource !== "" && normalizedSource !== "null";
+                  const isLocked = currentSource === "LOCKED";
+                  if (trackedFields[fieldName] && fieldName !== "devFQDN" && mac != "new") {
                     const lockIcon = isLocked ? "fa-lock" : "fa-lock-open";
                     const lockTitle = isLocked ? getString("FieldLock_Unlock_Tooltip") : getString("FieldLock_Lock_Tooltip");
                     inlineControl += `<span class="input-group-addon pointer field-lock-btn"
@@ -286,13 +288,15 @@ function getDeviceData() {
                         data-locked="${isLocked ? 1 : 0}">
                         <i class="fa-solid ${lockIcon}"></i>
                       </span>`;
+                    if (isLocked) {
+                      if (!disabledFields.includes(setting.setKey)) {
+                        disabledFields.push(setting.setKey);
+                      }
+                    }
                   }
 
                   // Add source indicator for tracked fields
-                  const fieldName2 = setting.setKey.replace('NEWDEV_', '');
-                  if (trackedFields[fieldName2] && mac != "new") {
-                    const sourceField = fieldName2 + "Source";
-                    const currentSource = deviceData[sourceField] || "UNKNOWN";
+                  if (trackedFields[fieldName] && mac != "new" && hasSourceValue) {
                     const sourceTitle = getString("FieldLock_Source_Label") + currentSource;
                     const sourceColor = currentSource === "USER" ? "text-warning" : (currentSource === "LOCKED" ? "text-danger" : "text-muted");
                     inlineControl += `<span class="input-group-addon pointer ${sourceColor}" title="${sourceTitle}">
@@ -561,7 +565,7 @@ function toggleFieldLock(mac, fieldName) {
 
   // Get current source value
   const sourceField = fieldName + "Source";
-  const currentSource = deviceData[sourceField] || "UNKNOWN";
+  const currentSource = (deviceData[sourceField] ?? "").toString().trim();
   const shouldLock = currentSource !== "LOCKED";
 
   const payload = {
@@ -597,14 +601,22 @@ function toggleFieldLock(mac, fieldName) {
         // Update local source state
         deviceData[sourceField] = shouldLock ? "LOCKED" : "";
 
+        const fieldKey = `NEWDEV_${fieldName}`;
+        const fieldInput = $(`#${fieldKey}`);
+        fieldInput.prop("readonly", shouldLock);
+
         // Update source indicator
         const sourceIndicator = lockBtn.next();
         if (sourceIndicator.hasClass("input-group-addon")) {
-          const sourceValue = shouldLock ? "LOCKED" : "UNKNOWN";
-          const sourceClass = shouldLock ? "input-group-addon text-danger" : "input-group-addon pointer text-muted";
-          sourceIndicator.text(sourceValue);
-          sourceIndicator.attr("class", sourceClass);
-          sourceIndicator.attr("title", getString("FieldLock_Source_Label") + sourceValue);
+          if (shouldLock) {
+            const sourceValue = "LOCKED";
+            const sourceClass = "input-group-addon pointer text-danger";
+            sourceIndicator.text(sourceValue);
+            sourceIndicator.attr("class", sourceClass);
+            sourceIndicator.attr("title", getString("FieldLock_Source_Label") + sourceValue);
+          } else {
+            sourceIndicator.remove();
+          }
         }
 
         showMessage(shouldLock ? getString("FieldLock_Locked") : getString("FieldLock_Unlocked"), 3000, "modal_green");
