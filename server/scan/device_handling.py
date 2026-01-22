@@ -9,6 +9,11 @@ from models.device_instance import DeviceInstance
 from scan.name_resolution import NameResolver
 from scan.device_heuristics import guess_icon, guess_type
 from db.db_helper import sanitize_SQL_input, list_to_where, safe_int
+from db.authoritative_handler import (
+    get_overwrite_sql_clause,
+    get_plugin_authoritative_settings,
+    get_source_for_field_update_with_value,
+)
 from helper import format_ip_long
 
 # Make sure log level is initialized correctly
@@ -56,6 +61,15 @@ def update_devices_data_from_scan(db):
     sql = db.sql  # TO-DO
     startTime = timeNowDB()
 
+    device_columns = set()
+    try:
+        device_columns = {row["name"] for row in sql.execute("PRAGMA table_info(Devices)").fetchall()}
+    except Exception:
+        device_columns = set()
+
+    def has_column(column_name):
+        return column_name in device_columns if device_columns else False
+
     # Update Last Connection
     mylog("debug", "[Update Devices] 1 Last Connection")
     sql.execute(f"""UPDATE Devices SET devLastConnection = '{startTime}',
@@ -69,87 +83,464 @@ def update_devices_data_from_scan(db):
                     WHERE NOT EXISTS (SELECT 1 FROM CurrentScan
                                       WHERE devMac = cur_MAC) """)
 
-    # Update IP (devLastIP always updated, primary IPv4/IPv6 set based on family)
-    mylog("debug", "[Update Devices] - cur_IP -> devLastIP / devPrimaryIPv4 / devPrimaryIPv6")
-    sql.execute("""
-        WITH LatestIP AS (
-            SELECT c.cur_MAC AS mac, c.cur_IP AS ip
-            FROM CurrentScan c
-            WHERE c.cur_IP IS NOT NULL
-              AND c.cur_IP NOT IN ('', 'null', '(unknown)', '(Unknown)')
-              AND c.cur_DateTime = (
-                  SELECT MAX(c2.cur_DateTime)
-                  FROM CurrentScan c2
-                  WHERE c2.cur_MAC = c.cur_MAC
-                    AND c2.cur_IP IS NOT NULL
-                    AND c2.cur_IP NOT IN ('', 'null', '(unknown)', '(Unknown)')
-              )
-        )
-        UPDATE Devices
-        SET devLastIP = (SELECT ip FROM LatestIP WHERE mac = devMac),
-            devPrimaryIPv4 = CASE
-                WHEN (SELECT ip FROM LatestIP WHERE mac = devMac) LIKE '%:%' THEN devPrimaryIPv4
-                ELSE (SELECT ip FROM LatestIP WHERE mac = devMac)
-            END,
-            devPrimaryIPv6 = CASE
-                WHEN (SELECT ip FROM LatestIP WHERE mac = devMac) LIKE '%:%' THEN (SELECT ip FROM LatestIP WHERE mac = devMac)
-                ELSE devPrimaryIPv6
-            END
-        WHERE EXISTS (SELECT 1 FROM LatestIP WHERE mac = devMac);
-    """)
+    plugin_rows = sql.execute(
+        "SELECT DISTINCT cur_ScanMethod FROM CurrentScan"
+    ).fetchall()
+    plugin_prefixes = [row[0] for row in plugin_rows if row[0]]
+    if not plugin_prefixes:
+        plugin_prefixes = [None]
+    plugin_settings_cache = {}
 
-    # Update only devices with empty, NULL or (u(U)nknown) vendors
-    mylog("debug", "[Update Devices] - cur_Vendor -> (if empty) devVendor")
-    sql.execute("""UPDATE Devices
+    def get_plugin_settings_cached(plugin_prefix):
+        if plugin_prefix not in plugin_settings_cache:
+            plugin_settings_cache[plugin_prefix] = get_plugin_authoritative_settings(
+                plugin_prefix
+            )
+        return plugin_settings_cache[plugin_prefix]
+
+    for plugin_prefix in plugin_prefixes:
+        filter_by_scan_method = plugin_prefix is not None and plugin_prefix != ""
+        source_prefix = plugin_prefix if filter_by_scan_method else "NEWDEV"
+        plugin_settings = get_plugin_settings_cached(source_prefix)
+
+        has_last_ip_source = has_column("devLastIpSource")
+        has_vendor_source = has_column("devVendorSource")
+        has_parent_port_source = has_column("devParentPortSource")
+        has_parent_mac_source = has_column("devParentMacSource")
+        has_ssid_source = has_column("devSsidSource")
+        has_name_source = has_column("devNameSource")
+
+        dev_last_ip_clause = (
+            get_overwrite_sql_clause("devLastIP", "devLastIpSource", plugin_settings)
+            if has_last_ip_source
+            else "1=1"
+        )
+        dev_vendor_clause = (
+            get_overwrite_sql_clause("devVendor", "devVendorSource", plugin_settings)
+            if has_vendor_source
+            else "1=1"
+        )
+        dev_parent_port_clause = (
+            get_overwrite_sql_clause("devParentPort", "devParentPortSource", plugin_settings)
+            if has_parent_port_source
+            else "1=1"
+        )
+        dev_parent_mac_clause = (
+            get_overwrite_sql_clause("devParentMAC", "devParentMacSource", plugin_settings)
+            if has_parent_mac_source
+            else "1=1"
+        )
+        dev_ssid_clause = (
+            get_overwrite_sql_clause("devSSID", "devSsidSource", plugin_settings)
+            if has_ssid_source
+            else "1=1"
+        )
+        dev_name_clause = (
+            get_overwrite_sql_clause("devName", "devNameSource", plugin_settings)
+            if has_name_source
+            else "1=1"
+        )
+
+        name_is_set_always = "devName" in plugin_settings.get("set_always", [])
+        vendor_is_set_always = "devVendor" in plugin_settings.get("set_always", [])
+        parent_port_is_set_always = "devParentPort" in plugin_settings.get("set_always", [])
+        parent_mac_is_set_always = "devParentMAC" in plugin_settings.get("set_always", [])
+        ssid_is_set_always = "devSSID" in plugin_settings.get("set_always", [])
+
+        name_empty_condition = "1=1" if name_is_set_always else (
+            "(devName IN ('(unknown)', '(name not found)', '') OR devName IS NULL)"
+        )
+        vendor_empty_condition = "1=1" if vendor_is_set_always else (
+            "(devVendor IS NULL OR devVendor IN ('', 'null', '(unknown)', '(Unknown)'))"
+        )
+        parent_port_empty_condition = "1=1" if parent_port_is_set_always else (
+            "(devParentPort IS NULL OR devParentPort IN ('', 'null', '(unknown)', '(Unknown)'))"
+        )
+        parent_mac_empty_condition = "1=1" if parent_mac_is_set_always else (
+            "(devParentMAC IS NULL OR devParentMAC IN ('', 'null', '(unknown)', '(Unknown)'))"
+        )
+        ssid_empty_condition = "1=1" if ssid_is_set_always else (
+            "(devSSID IS NULL OR devSSID IN ('', 'null'))"
+        )
+
+        # Update IP (devLastIP always updated, primary IPv4/IPv6 set based on family)
+        mylog(
+            "debug",
+            f"[Update Devices] - ({source_prefix}) cur_IP -> devLastIP / devPrimaryIPv4 / devPrimaryIPv6",
+        )
+        last_ip_source_fragment = ", devLastIpSource = ?" if has_last_ip_source else ""
+        last_ip_params = (source_prefix,) if has_last_ip_source else ()
+
+        if filter_by_scan_method:
+            sql.execute(
+                f"""
+                WITH LatestIP AS (
+                    SELECT c.cur_MAC AS mac, c.cur_IP AS ip
+                    FROM CurrentScan c
+                    WHERE c.cur_IP IS NOT NULL
+                      AND c.cur_IP NOT IN ('', 'null', '(unknown)', '(Unknown)')
+                      AND c.cur_ScanMethod = ?
+                      AND c.cur_DateTime = (
+                          SELECT MAX(c2.cur_DateTime)
+                          FROM CurrentScan c2
+                          WHERE c2.cur_MAC = c.cur_MAC
+                            AND c2.cur_IP IS NOT NULL
+                            AND c2.cur_IP NOT IN ('', 'null', '(unknown)', '(Unknown)')
+                            AND c2.cur_ScanMethod = ?
+                      )
+                )
+                UPDATE Devices
+                SET devLastIP = (SELECT ip FROM LatestIP WHERE mac = devMac),
+                    devPrimaryIPv4 = CASE
+                        WHEN (SELECT ip FROM LatestIP WHERE mac = devMac) LIKE '%:%' THEN devPrimaryIPv4
+                        ELSE (SELECT ip FROM LatestIP WHERE mac = devMac)
+                    END,
+                    devPrimaryIPv6 = CASE
+                        WHEN (SELECT ip FROM LatestIP WHERE mac = devMac) LIKE '%:%' THEN (SELECT ip FROM LatestIP WHERE mac = devMac)
+                        ELSE devPrimaryIPv6
+                    END
+                    {last_ip_source_fragment}
+                WHERE EXISTS (SELECT 1 FROM LatestIP WHERE mac = devMac)
+                  AND {dev_last_ip_clause};
+            """,
+                (plugin_prefix, plugin_prefix, *last_ip_params),
+            )
+        else:
+            sql.execute(
+                f"""
+                WITH LatestIP AS (
+                    SELECT c.cur_MAC AS mac, c.cur_IP AS ip
+                    FROM CurrentScan c
+                    WHERE c.cur_IP IS NOT NULL
+                      AND c.cur_IP NOT IN ('', 'null', '(unknown)', '(Unknown)')
+                      AND c.cur_DateTime = (
+                          SELECT MAX(c2.cur_DateTime)
+                          FROM CurrentScan c2
+                          WHERE c2.cur_MAC = c.cur_MAC
+                            AND c2.cur_IP IS NOT NULL
+                            AND c2.cur_IP NOT IN ('', 'null', '(unknown)', '(Unknown)')
+                      )
+                )
+                UPDATE Devices
+                SET devLastIP = (SELECT ip FROM LatestIP WHERE mac = devMac),
+                    devPrimaryIPv4 = CASE
+                        WHEN (SELECT ip FROM LatestIP WHERE mac = devMac) LIKE '%:%' THEN devPrimaryIPv4
+                        ELSE (SELECT ip FROM LatestIP WHERE mac = devMac)
+                    END,
+                    devPrimaryIPv6 = CASE
+                        WHEN (SELECT ip FROM LatestIP WHERE mac = devMac) LIKE '%:%' THEN (SELECT ip FROM LatestIP WHERE mac = devMac)
+                        ELSE devPrimaryIPv6
+                    END
+                    {last_ip_source_fragment}
+                WHERE EXISTS (SELECT 1 FROM LatestIP WHERE mac = devMac)
+                  AND {dev_last_ip_clause};
+            """,
+                last_ip_params,
+            )
+
+        # Update vendor
+        mylog("debug", f"[Update Devices] - ({source_prefix}) cur_Vendor -> devVendor")
+        vendor_source_fragment = ", devVendorSource = ?" if has_vendor_source else ""
+        vendor_params = (source_prefix,) if has_vendor_source else ()
+
+        if filter_by_scan_method:
+            sql.execute(
+                f"""
+                UPDATE Devices
                     SET devVendor = (
                         SELECT cur_Vendor
                         FROM CurrentScan
                         WHERE Devices.devMac = CurrentScan.cur_MAC
+                          AND CurrentScan.cur_ScanMethod = ?
+                          AND CurrentScan.cur_Vendor IS NOT NULL
+                          AND CurrentScan.cur_Vendor NOT IN ('', 'null', '(unknown)', '(Unknown)')
+                        ORDER BY CurrentScan.cur_DateTime DESC
+                        LIMIT 1
                     )
-                    WHERE
-                        (devVendor IS NULL OR devVendor IN ("", "null", "(unknown)", "(Unknown)"))
-                        AND EXISTS (
-                            SELECT 1
-                            FROM CurrentScan
-                            WHERE Devices.devMac = CurrentScan.cur_MAC
-                        )""")
+                        {vendor_source_fragment}
+                    WHERE {vendor_empty_condition}
+                      AND EXISTS (
+                          SELECT 1
+                          FROM CurrentScan
+                          WHERE Devices.devMac = CurrentScan.cur_MAC
+                            AND CurrentScan.cur_ScanMethod = ?
+                            AND CurrentScan.cur_Vendor IS NOT NULL
+                            AND CurrentScan.cur_Vendor NOT IN ('', 'null', '(unknown)', '(Unknown)')
+                      )
+                      AND {dev_vendor_clause}
+                """,
+                (plugin_prefix, plugin_prefix, *vendor_params),
+            )
+        else:
+            sql.execute(
+                f"""
+                UPDATE Devices
+                    SET devVendor = (
+                        SELECT cur_Vendor
+                        FROM CurrentScan
+                        WHERE Devices.devMac = CurrentScan.cur_MAC
+                          AND CurrentScan.cur_Vendor IS NOT NULL
+                          AND CurrentScan.cur_Vendor NOT IN ('', 'null', '(unknown)', '(Unknown)')
+                        ORDER BY CurrentScan.cur_DateTime DESC
+                        LIMIT 1
+                    )
+                        {vendor_source_fragment}
+                    WHERE {vendor_empty_condition}
+                      AND EXISTS (
+                          SELECT 1
+                          FROM CurrentScan
+                          WHERE Devices.devMac = CurrentScan.cur_MAC
+                            AND CurrentScan.cur_Vendor IS NOT NULL
+                            AND CurrentScan.cur_Vendor NOT IN ('', 'null', '(unknown)', '(Unknown)')
+                      )
+                      AND {dev_vendor_clause}
+                """,
+                vendor_params,
+            )
 
-    # Update only devices with empty or NULL devParentPort
-    mylog("debug", "[Update Devices] - (if not empty) cur_Port -> devParentPort")
-    sql.execute("""UPDATE Devices
+        # Update parent port
+        mylog("debug", f"[Update Devices] - ({source_prefix}) cur_Port -> devParentPort")
+        parent_port_source_fragment = ", devParentPortSource = ?" if has_parent_port_source else ""
+        parent_port_params = (source_prefix,) if has_parent_port_source else ()
+
+        if filter_by_scan_method:
+            sql.execute(
+                f"""
+                UPDATE Devices
                     SET devParentPort = (
-                    SELECT cur_Port
-                    FROM CurrentScan
-                    WHERE Devices.devMac = CurrentScan.cur_MAC
-                )
-                WHERE
-                    (devParentPort IS NULL OR devParentPort IN ("", "null", "(unknown)", "(Unknown)"))
-                    AND
-                EXISTS (
-                    SELECT 1
-                    FROM CurrentScan
-                    WHERE Devices.devMac = CurrentScan.cur_MAC
-                      AND CurrentScan.cur_Port IS NOT NULL AND CurrentScan.cur_Port NOT IN ("", "null")
-                )""")
+                        SELECT cur_Port
+                        FROM CurrentScan
+                        WHERE Devices.devMac = CurrentScan.cur_MAC
+                          AND CurrentScan.cur_ScanMethod = ?
+                          AND CurrentScan.cur_Port IS NOT NULL
+                          AND CurrentScan.cur_Port NOT IN ('', 'null')
+                        ORDER BY CurrentScan.cur_DateTime DESC
+                        LIMIT 1
+                    )
+                        {parent_port_source_fragment}
+                    WHERE {parent_port_empty_condition}
+                      AND EXISTS (
+                          SELECT 1
+                          FROM CurrentScan
+                          WHERE Devices.devMac = CurrentScan.cur_MAC
+                            AND CurrentScan.cur_ScanMethod = ?
+                            AND CurrentScan.cur_Port IS NOT NULL
+                            AND CurrentScan.cur_Port NOT IN ('', 'null')
+                      )
+                      AND {dev_parent_port_clause}
+                """,
+                (plugin_prefix, plugin_prefix, *parent_port_params),
+            )
+        else:
+            sql.execute(
+                f"""
+                UPDATE Devices
+                    SET devParentPort = (
+                        SELECT cur_Port
+                        FROM CurrentScan
+                        WHERE Devices.devMac = CurrentScan.cur_MAC
+                          AND CurrentScan.cur_Port IS NOT NULL
+                          AND CurrentScan.cur_Port NOT IN ('', 'null')
+                        ORDER BY CurrentScan.cur_DateTime DESC
+                        LIMIT 1
+                    )
+                        {parent_port_source_fragment}
+                    WHERE {parent_port_empty_condition}
+                      AND EXISTS (
+                          SELECT 1
+                          FROM CurrentScan
+                          WHERE Devices.devMac = CurrentScan.cur_MAC
+                            AND CurrentScan.cur_Port IS NOT NULL
+                            AND CurrentScan.cur_Port NOT IN ('', 'null')
+                      )
+                      AND {dev_parent_port_clause}
+                """,
+                parent_port_params,
+            )
 
-    # Update only devices with empty or NULL devParentMAC
-    mylog("debug", "[Update Devices] - (if not empty) cur_NetworkNodeMAC -> devParentMAC")
-    sql.execute("""UPDATE Devices
+        # Update parent MAC
+        mylog("debug", f"[Update Devices] - ({source_prefix}) cur_NetworkNodeMAC -> devParentMAC")
+        parent_mac_source_fragment = ", devParentMacSource = ?" if has_parent_mac_source else ""
+        parent_mac_params = (source_prefix,) if has_parent_mac_source else ()
+
+        if filter_by_scan_method:
+            sql.execute(
+                f"""
+                UPDATE Devices
                     SET devParentMAC = (
                         SELECT cur_NetworkNodeMAC
                         FROM CurrentScan
                         WHERE Devices.devMac = CurrentScan.cur_MAC
+                          AND CurrentScan.cur_ScanMethod = ?
+                          AND CurrentScan.cur_NetworkNodeMAC IS NOT NULL
+                          AND CurrentScan.cur_NetworkNodeMAC NOT IN ('', 'null')
+                        ORDER BY CurrentScan.cur_DateTime DESC
+                        LIMIT 1
                     )
-                    WHERE
-                        (devParentMAC IS NULL OR devParentMAC IN ("", "null", "(unknown)", "(Unknown)"))
-                        AND
-                        EXISTS (
-                            SELECT 1
-                            FROM CurrentScan
-                            WHERE Devices.devMac = CurrentScan.cur_MAC
-                                AND CurrentScan.cur_NetworkNodeMAC IS NOT NULL AND CurrentScan.cur_NetworkNodeMAC NOT IN ("", "null")
-                        )
-                """)
+                        {parent_mac_source_fragment}
+                    WHERE {parent_mac_empty_condition}
+                      AND EXISTS (
+                          SELECT 1
+                          FROM CurrentScan
+                          WHERE Devices.devMac = CurrentScan.cur_MAC
+                            AND CurrentScan.cur_ScanMethod = ?
+                            AND CurrentScan.cur_NetworkNodeMAC IS NOT NULL
+                            AND CurrentScan.cur_NetworkNodeMAC NOT IN ('', 'null')
+                      )
+                      AND {dev_parent_mac_clause}
+                """,
+                (plugin_prefix, plugin_prefix, *parent_mac_params),
+            )
+        else:
+            sql.execute(
+                f"""
+                UPDATE Devices
+                    SET devParentMAC = (
+                        SELECT cur_NetworkNodeMAC
+                        FROM CurrentScan
+                        WHERE Devices.devMac = CurrentScan.cur_MAC
+                          AND CurrentScan.cur_NetworkNodeMAC IS NOT NULL
+                          AND CurrentScan.cur_NetworkNodeMAC NOT IN ('', 'null')
+                        ORDER BY CurrentScan.cur_DateTime DESC
+                        LIMIT 1
+                    )
+                        {parent_mac_source_fragment}
+                    WHERE {parent_mac_empty_condition}
+                      AND EXISTS (
+                          SELECT 1
+                          FROM CurrentScan
+                          WHERE Devices.devMac = CurrentScan.cur_MAC
+                            AND CurrentScan.cur_NetworkNodeMAC IS NOT NULL
+                            AND CurrentScan.cur_NetworkNodeMAC NOT IN ('', 'null')
+                      )
+                      AND {dev_parent_mac_clause}
+                """,
+                parent_mac_params,
+            )
+
+        # Update SSID
+        mylog("debug", f"[Update Devices] - ({source_prefix}) cur_SSID -> devSSID")
+        ssid_source_fragment = ", devSsidSource = ?" if has_ssid_source else ""
+        ssid_params = (source_prefix,) if has_ssid_source else ()
+
+        if filter_by_scan_method:
+            sql.execute(
+                f"""
+                UPDATE Devices
+                    SET devSSID = (
+                        SELECT cur_SSID
+                        FROM CurrentScan
+                        WHERE Devices.devMac = CurrentScan.cur_MAC
+                          AND CurrentScan.cur_ScanMethod = ?
+                          AND CurrentScan.cur_SSID IS NOT NULL
+                          AND CurrentScan.cur_SSID NOT IN ('', 'null')
+                        ORDER BY CurrentScan.cur_DateTime DESC
+                        LIMIT 1
+                    )
+                        {ssid_source_fragment}
+                    WHERE {ssid_empty_condition}
+                      AND EXISTS (
+                          SELECT 1
+                          FROM CurrentScan
+                          WHERE Devices.devMac = CurrentScan.cur_MAC
+                            AND CurrentScan.cur_ScanMethod = ?
+                            AND CurrentScan.cur_SSID IS NOT NULL
+                            AND CurrentScan.cur_SSID NOT IN ('', 'null')
+                      )
+                      AND {dev_ssid_clause}
+                """,
+                (plugin_prefix, plugin_prefix, *ssid_params),
+            )
+        else:
+            sql.execute(
+                f"""
+                UPDATE Devices
+                    SET devSSID = (
+                        SELECT cur_SSID
+                        FROM CurrentScan
+                        WHERE Devices.devMac = CurrentScan.cur_MAC
+                          AND CurrentScan.cur_SSID IS NOT NULL
+                          AND CurrentScan.cur_SSID NOT IN ('', 'null')
+                        ORDER BY CurrentScan.cur_DateTime DESC
+                        LIMIT 1
+                    )
+                        {ssid_source_fragment}
+                    WHERE {ssid_empty_condition}
+                      AND EXISTS (
+                          SELECT 1
+                          FROM CurrentScan
+                          WHERE Devices.devMac = CurrentScan.cur_MAC
+                            AND CurrentScan.cur_SSID IS NOT NULL
+                            AND CurrentScan.cur_SSID NOT IN ('', 'null')
+                      )
+                      AND {dev_ssid_clause}
+                """,
+                ssid_params,
+            )
+
+        # Update Name
+        mylog("debug", f"[Update Devices] - ({source_prefix}) cur_Name -> devName")
+        name_source_fragment = ", devNameSource = ?" if has_name_source else ""
+        name_params = (source_prefix,) if has_name_source else ()
+
+        if filter_by_scan_method:
+            sql.execute(
+                f"""
+                UPDATE Devices
+                    SET devName = (
+                        SELECT cur_Name
+                        FROM CurrentScan
+                        WHERE cur_MAC = devMac
+                          AND cur_ScanMethod = ?
+                          AND cur_Name IS NOT NULL
+                          AND cur_Name <> 'null'
+                          AND cur_Name <> ''
+                        ORDER BY cur_DateTime DESC
+                        LIMIT 1
+                    )
+                        {name_source_fragment}
+                    WHERE {name_empty_condition}
+                      AND EXISTS (
+                          SELECT 1
+                          FROM CurrentScan
+                          WHERE cur_MAC = devMac
+                            AND cur_ScanMethod = ?
+                            AND cur_Name IS NOT NULL
+                            AND cur_Name <> 'null'
+                            AND cur_Name <> ''
+                      )
+                      AND {dev_name_clause}
+                """,
+                (plugin_prefix, plugin_prefix, *name_params),
+            )
+        else:
+            sql.execute(
+                f"""
+                UPDATE Devices
+                    SET devName = (
+                        SELECT cur_Name
+                        FROM CurrentScan
+                        WHERE cur_MAC = devMac
+                          AND cur_Name IS NOT NULL
+                          AND cur_Name <> 'null'
+                          AND cur_Name <> ''
+                        ORDER BY cur_DateTime DESC
+                        LIMIT 1
+                    )
+                        {name_source_fragment}
+                    WHERE {name_empty_condition}
+                      AND EXISTS (
+                          SELECT 1
+                          FROM CurrentScan
+                          WHERE cur_MAC = devMac
+                            AND cur_Name IS NOT NULL
+                            AND cur_Name <> 'null'
+                            AND cur_Name <> ''
+                      )
+                      AND {dev_name_clause}
+                """,
+                name_params,
+            )
 
     # Update only devices with empty or NULL devSite
     mylog("debug", "[Update Devices] - (if not empty) cur_NetworkSite -> (if empty) devSite",)
@@ -168,23 +559,6 @@ def update_devices_data_from_scan(db):
                                 AND CurrentScan.cur_NetworkSite IS NOT NULL AND CurrentScan.cur_NetworkSite NOT IN ("", "null")
                 )""")
 
-    # Update only devices with empty or NULL devSSID
-    mylog("debug", "[Update Devices] - (if not empty) cur_SSID -> (if empty) devSSID")
-    sql.execute("""UPDATE Devices
-                    SET devSSID = (
-                        SELECT cur_SSID
-                        FROM CurrentScan
-                        WHERE Devices.devMac = CurrentScan.cur_MAC
-                    )
-                    WHERE
-                        (devSSID IS NULL OR devSSID IN ("", "null"))
-                        AND EXISTS (
-                            SELECT 1
-                            FROM CurrentScan
-                            WHERE Devices.devMac = CurrentScan.cur_MAC
-                                AND CurrentScan.cur_SSID IS NOT NULL AND CurrentScan.cur_SSID NOT IN ("", "null")
-                        )""")
-
     # Update only devices with empty or NULL devType
     mylog("debug", "[Update Devices] - (if not empty) cur_Type -> (if empty) devType")
     sql.execute("""UPDATE Devices
@@ -202,43 +576,48 @@ def update_devices_data_from_scan(db):
                                 AND CurrentScan.cur_Type IS NOT NULL AND CurrentScan.cur_Type NOT IN ("", "null")
                         )""")
 
-    # Update (unknown) or (name not found) Names if available
-    mylog("debug", "[Update Devices] - (if not empty) cur_Name -> (if empty) devName")
-    sql.execute("""    UPDATE Devices
-                        SET devName = COALESCE((
-                            SELECT cur_Name
-                            FROM CurrentScan
-                            WHERE cur_MAC = devMac
-                            AND cur_Name IS NOT NULL
-                            AND cur_Name <> 'null'
-                            AND cur_Name <> ''
-                        ), devName)
-                        WHERE (devName IN ('(unknown)', '(name not found)', '')
-                            OR devName IS NULL)
-                        AND EXISTS (
-                            SELECT 1
-                            FROM CurrentScan
-                            WHERE cur_MAC = devMac
-                            AND cur_Name IS NOT NULL
-                            AND cur_Name <> 'null'
-                            AND cur_Name <> ''
-                        ) """)
-
     # Update VENDORS
     recordsToUpdate = []
-    query = """SELECT * FROM Devices
-               WHERE devVendor IS NULL OR devVendor IN ("", "null", "(unknown)", "(Unknown)")
-            """
+    vendor_settings = get_plugin_authoritative_settings("VNDRPDT")
+    vendor_clause = (
+        get_overwrite_sql_clause("devVendor", "devVendorSource", vendor_settings)
+        if has_column("devVendorSource")
+        else "1=1"
+    )
+    vendor_is_set_always = "devVendor" in vendor_settings.get("set_always", [])
+
+    if vendor_is_set_always:
+        query = f"""SELECT * FROM Devices
+                   WHERE {vendor_clause}
+                """
+    else:
+        query = f"""SELECT * FROM Devices
+                   WHERE (devVendor IS NULL OR devVendor IN ("", "null", "(unknown)", "(Unknown)"))
+                     AND {vendor_clause}
+                """
 
     for device in sql.execute(query):
         vendor = query_MAC_vendor(device["devMac"])
         if vendor != -1 and vendor != -2:
-            recordsToUpdate.append([vendor, device["devMac"]])
+            recordsToUpdate.append([vendor, "VNDRPDT", device["devMac"]])
 
     if len(recordsToUpdate) > 0:
-        sql.executemany(
-            "UPDATE Devices SET devVendor = ? WHERE devMac = ? ", recordsToUpdate
-        )
+        if has_column("devVendorSource"):
+            sql.executemany(
+                f"""UPDATE Devices
+                    SET devVendor = ?,
+                        devVendorSource = ?
+                    WHERE devMac = ?
+                      AND {vendor_clause}""",
+                recordsToUpdate,
+            )
+        else:
+            sql.executemany(
+                """UPDATE Devices
+                    SET devVendor = ?
+                    WHERE devMac = ?""",
+                [(row[0], row[2]) for row in recordsToUpdate],
+            )
 
     # Update devPresentLastScan based on NICs presence
     update_devPresentLastScan_based_on_nics(db)
@@ -524,12 +903,20 @@ def create_new_devices(db):
             cur_Type,
         ) = row
 
+        # Preserve raw values to determine source attribution
+        raw_name = str(cur_Name).strip() if cur_Name else ""
+        raw_vendor = str(cur_Vendor).strip() if cur_Vendor else ""
+        raw_ip = str(cur_IP).strip() if cur_IP else ""
+        raw_ssid = str(cur_SSID).strip() if cur_SSID else ""
+        raw_parent_mac = cur_NetworkNodeMAC.strip() if cur_NetworkNodeMAC else ""
+        raw_parent_port = str(cur_PORT).strip() if cur_PORT else ""
+
         # Handle NoneType
-        cur_Name = str(cur_Name).strip() if cur_Name else "(unknown)"
+        cur_Name = raw_name if raw_name else "(unknown)"
         cur_Type = (
             str(cur_Type).strip() if cur_Type else get_setting_value("NEWDEV_devType")
         )
-        cur_NetworkNodeMAC = cur_NetworkNodeMAC.strip() if cur_NetworkNodeMAC else ""
+        cur_NetworkNodeMAC = raw_parent_mac
         cur_NetworkNodeMAC = (
             cur_NetworkNodeMAC
             if cur_NetworkNodeMAC and cur_MAC != "Internet"
@@ -546,7 +933,7 @@ def create_new_devices(db):
         )
 
         # Derive primary IP family values
-        cur_IP = str(cur_IP).strip() if cur_IP else ""
+        cur_IP = raw_ip
         cur_IP_normalized = check_IP_format(cur_IP) if ":" not in cur_IP else cur_IP
 
         # Validate IPv6 addresses using format_ip_long for consistency (do not store integer result)
@@ -557,6 +944,33 @@ def create_new_devices(db):
 
         primary_ipv4 = cur_IP_normalized if cur_IP_normalized and ":" not in cur_IP_normalized else ""
         primary_ipv6 = cur_IP_normalized if cur_IP_normalized and ":" in cur_IP_normalized else ""
+
+        plugin_prefix = str(cur_ScanMethod).strip() if cur_ScanMethod else "NEWDEV"
+
+        dev_mac_source = get_source_for_field_update_with_value(
+            "devMac", plugin_prefix, cur_MAC, is_user_override=False
+        )
+        dev_name_source = get_source_for_field_update_with_value(
+            "devName", plugin_prefix, raw_name, is_user_override=False
+        )
+        dev_vendor_source = get_source_for_field_update_with_value(
+            "devVendor", plugin_prefix, raw_vendor, is_user_override=False
+        )
+        dev_last_ip_source = get_source_for_field_update_with_value(
+            "devLastIP", plugin_prefix, cur_IP_normalized, is_user_override=False
+        )
+        dev_ssid_source = get_source_for_field_update_with_value(
+            "devSSID", plugin_prefix, raw_ssid, is_user_override=False
+        )
+        dev_parent_mac_source = get_source_for_field_update_with_value(
+            "devParentMAC", plugin_prefix, raw_parent_mac, is_user_override=False
+        )
+        dev_parent_port_source = get_source_for_field_update_with_value(
+            "devParentPort", plugin_prefix, raw_parent_port, is_user_override=False
+        )
+        dev_parent_rel_type_source = "NEWDEV"
+        dev_fqdn_source = "NEWDEV"
+        dev_vlan_source = "NEWDEV"
 
         # Preparing the individual insert statement
         sqlQuery = f"""INSERT OR IGNORE INTO Devices
@@ -577,6 +991,16 @@ def create_new_devices(db):
                             devSSID,
                             devType,
                             devSourcePlugin,
+                            devMacSource,
+                            devNameSource,
+                            devFqdnSource,
+                            devLastIpSource,
+                            devVendorSource,
+                            devSsidSource,
+                            devParentMacSource,
+                            devParentPortSource,
+                            devParentRelTypeSource,
+                            devVlanSource,
                             {newDevColumns}
                         )
                         VALUES
@@ -597,6 +1021,16 @@ def create_new_devices(db):
                             '{sanitize_SQL_input(cur_SSID)}',
                             '{sanitize_SQL_input(cur_Type)}',
                             '{sanitize_SQL_input(cur_ScanMethod)}',
+                            '{sanitize_SQL_input(dev_mac_source)}',
+                            '{sanitize_SQL_input(dev_name_source)}',
+                            '{sanitize_SQL_input(dev_fqdn_source)}',
+                            '{sanitize_SQL_input(dev_last_ip_source)}',
+                            '{sanitize_SQL_input(dev_vendor_source)}',
+                            '{sanitize_SQL_input(dev_ssid_source)}',
+                            '{sanitize_SQL_input(dev_parent_mac_source)}',
+                            '{sanitize_SQL_input(dev_parent_port_source)}',
+                            '{sanitize_SQL_input(dev_parent_rel_type_source)}',
+                            '{sanitize_SQL_input(dev_vlan_source)}',
                             {newDevDefaults}
                         )"""
 
@@ -709,7 +1143,8 @@ def update_devices_names(pm):
                                                If False, resolves only FQDN.
 
         Returns:
-            recordsToUpdate (list): List of [newName, newFQDN, devMac] or [newFQDN, devMac] for DB update.
+            recordsToUpdate (list): List of
+                [newName, nameSource, newFQDN, fqdnSource, devMac] or [newFQDN, fqdnSource, devMac].
             recordsNotFound (list): List of [nameNotFound, devMac] for DB update.
             foundStats (dict): Number of successes per strategy.
             notFound (int): Number of devices not resolved.
@@ -738,9 +1173,9 @@ def update_devices_names(pm):
                     foundStats[label] += 1
 
                     if resolve_both_name_and_fqdn:
-                        recordsToUpdate.append([newName, newFQDN, device["devMac"]])
+                        recordsToUpdate.append([newName, label, newFQDN, label, device["devMac"]])
                     else:
-                        recordsToUpdate.append([newFQDN, device["devMac"]])
+                        recordsToUpdate.append([newFQDN, label, device["devMac"]])
                     break
 
             # If no name was resolved, queue device for "(name not found)" update
@@ -768,12 +1203,50 @@ def update_devices_names(pm):
 
         # Apply updates to database
         sql.executemany(
-            "UPDATE Devices SET devName = ? WHERE devMac = ?", recordsNotFound
+            """UPDATE Devices
+                SET devName = CASE
+                    WHEN COALESCE(devNameSource, '') IN ('USER', 'LOCKED') THEN devName
+                    ELSE ?
+                END
+                WHERE devMac = ?
+                  AND COALESCE(devNameSource, '') IN ('', 'NEWDEV')""",
+            recordsNotFound,
         )
-        sql.executemany(
-            "UPDATE Devices SET devName = ?, devFQDN = ? WHERE devMac = ?",
-            recordsToUpdate,
-        )
+
+        records_by_plugin = {}
+        for entry in recordsToUpdate:
+            records_by_plugin.setdefault(entry[1], []).append(entry)
+
+        for plugin_label, plugin_records in records_by_plugin.items():
+            plugin_settings = get_plugin_authoritative_settings(plugin_label)
+            name_clause = get_overwrite_sql_clause(
+                "devName", "devNameSource", plugin_settings
+            )
+            fqdn_clause = get_overwrite_sql_clause(
+                "devFQDN", "devFqdnSource", plugin_settings
+            )
+
+            sql.executemany(
+                f"""UPDATE Devices
+                    SET devName = CASE
+                        WHEN {name_clause} THEN ?
+                        ELSE devName
+                    END,
+                        devNameSource = CASE
+                        WHEN {name_clause} THEN ?
+                        ELSE devNameSource
+                    END,
+                        devFQDN = CASE
+                        WHEN {fqdn_clause} THEN ?
+                        ELSE devFQDN
+                    END,
+                        devFqdnSource = CASE
+                        WHEN {fqdn_clause} THEN ?
+                        ELSE devFqdnSource
+                    END
+                    WHERE devMac = ?""",
+                plugin_records,
+            )
 
     # --- Step 2: Optionally refresh FQDN for all devices ---
     if get_setting_value("REFRESH_FQDN"):
@@ -791,10 +1264,30 @@ def update_devices_names(pm):
             mylog("verbose", f"[Update FQDN] Names Found (DIGSCAN/AVAHISCAN/NSLOOKUP/NBTSCAN): {len(recordsToUpdate)}({res_string})",)
             mylog("verbose", f"[Update FQDN] Names Not Found         : {notFound}")
 
-            # Apply FQDN-only updates
-            sql.executemany(
-                "UPDATE Devices SET devFQDN = ? WHERE devMac = ?", recordsToUpdate
-            )
+            records_by_plugin = {}
+            for entry in recordsToUpdate:
+                records_by_plugin.setdefault(entry[1], []).append(entry)
+
+            for plugin_label, plugin_records in records_by_plugin.items():
+                plugin_settings = get_plugin_authoritative_settings(plugin_label)
+                fqdn_clause = get_overwrite_sql_clause(
+                    "devFQDN", "devFqdnSource", plugin_settings
+                )
+
+                # Apply FQDN-only updates
+                sql.executemany(
+                    f"""UPDATE Devices
+                        SET devFQDN = CASE
+                            WHEN {fqdn_clause} THEN ?
+                            ELSE devFQDN
+                        END,
+                            devFqdnSource = CASE
+                            WHEN {fqdn_clause} THEN ?
+                            ELSE devFqdnSource
+                        END
+                        WHERE devMac = ?""",
+                    plugin_records,
+                )
 
     # Commit all database changes
     pm.db.commitDB()

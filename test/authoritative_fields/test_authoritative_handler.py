@@ -2,11 +2,9 @@
 Unit tests for authoritative field update handler.
 """
 
-import pytest
-
 from server.db.authoritative_handler import (
     can_overwrite_field,
-    get_source_for_field_update,
+    get_source_for_field_update_with_value,
     FIELD_SOURCE_MAP,
 )
 
@@ -75,17 +73,52 @@ class TestCanOverwriteField:
         )
 
 
-class TestGetSourceForFieldUpdate:
-    """Test source value determination for field updates."""
+class TestGetSourceForFieldUpdateWithValue:
+    """Test source value determination with value-based normalization."""
 
     def test_user_override_sets_user_source(self):
-        """User override should set USER source."""
-        assert get_source_for_field_update("devName", "UNIFIAPI", is_user_override=True) == "USER"
+        assert (
+            get_source_for_field_update_with_value(
+                "devName", "UNIFIAPI", "Device", is_user_override=True
+            )
+            == "USER"
+        )
 
     def test_plugin_update_sets_plugin_prefix(self):
-        """Plugin update should set plugin prefix as source."""
-        assert get_source_for_field_update("devName", "UNIFIAPI", is_user_override=False) == "UNIFIAPI"
-        assert get_source_for_field_update("devLastIP", "ARPSCAN", is_user_override=False) == "ARPSCAN"
+        assert (
+            get_source_for_field_update_with_value(
+                "devName", "UNIFIAPI", "Device", is_user_override=False
+            )
+            == "UNIFIAPI"
+        )
+        assert (
+            get_source_for_field_update_with_value(
+                "devLastIP", "ARPSCAN", "192.168.1.1", is_user_override=False
+            )
+            == "ARPSCAN"
+        )
+
+    def test_empty_or_unknown_values_return_newdev(self):
+        assert (
+            get_source_for_field_update_with_value(
+                "devName", "ARPSCAN", "", is_user_override=False
+            )
+            == "NEWDEV"
+        )
+        assert (
+            get_source_for_field_update_with_value(
+                "devName", "ARPSCAN", "(unknown)", is_user_override=False
+            )
+            == "NEWDEV"
+        )
+
+    def test_non_empty_value_sets_plugin_prefix(self):
+        assert (
+            get_source_for_field_update_with_value(
+                "devVendor", "ARPSCAN", "Acme", is_user_override=False
+            )
+            == "ARPSCAN"
+        )
 
 
 class TestFieldSourceMapping:

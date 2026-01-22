@@ -601,7 +601,7 @@ function toggleFieldLock(mac, fieldName) {
         const sourceIndicator = lockBtn.next();
         if (sourceIndicator.hasClass("input-group-addon")) {
           const sourceValue = shouldLock ? "LOCKED" : "UNKNOWN";
-          const sourceClass = shouldLock ? "input-group-addon text-danger" : "input-group-addon text-muted";
+          const sourceClass = shouldLock ? "input-group-addon text-danger" : "input-group-addon pointer text-muted";
           sourceIndicator.text(sourceValue);
           sourceIndicator.attr("class", sourceClass);
           sourceIndicator.attr("title", getString("FieldLock_Source_Label") + sourceValue);

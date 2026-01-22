@@ -118,21 +118,64 @@ def can_overwrite_field(field_name, current_source, plugin_prefix, plugin_settin
     return not current_source or current_source == "NEWDEV"
 
 
-def get_source_for_field_update(field_name, plugin_prefix, is_user_override=False):
+def get_overwrite_sql_clause(field_name, source_column, plugin_settings):
     """
-    Determine what source value should be set when a field is updated.
+    Build a SQL condition for authoritative overwrite checks.
+
+    Returns a SQL snippet that permits overwrite for the given field
+    based on SET_ALWAYS/SET_EMPTY and USER/LOCKED protection.
+
+    Args:
+        field_name: The field being updated (e.g., "devName").
+        source_column: The *Source column name (e.g., "devNameSource").
+        plugin_settings: dict with "set_always" and "set_empty" lists.
+
+    Returns:
+        str: SQL condition snippet (no leading WHERE).
+    """
+    set_always = plugin_settings.get("set_always", [])
+    set_empty = plugin_settings.get("set_empty", [])
+
+    if field_name in set_always:
+        return f"COALESCE({source_column}, '') NOT IN ('USER', 'LOCKED')"
+
+    if field_name in set_empty or field_name not in set_always:
+        return f"COALESCE({source_column}, '') IN ('', 'NEWDEV')"
+
+    return f"COALESCE({source_column}, '') IN ('', 'NEWDEV')"
+
+
+def get_source_for_field_update_with_value(
+    field_name, plugin_prefix, field_value, is_user_override=False
+):
+    """
+    Determine the source value for a field update based on the new value.
+
+    If the new value is empty or an "unknown" placeholder, return NEWDEV.
+    Otherwise, fall back to standard source selection rules.
 
     Args:
         field_name: The field being updated.
         plugin_prefix: The unique prefix of the plugin writing (e.g., "UNIFIAPI").
-                       Ignored if is_user_override is True.
-        is_user_override: If True, return "USER"; if False, return plugin_prefix.
+        field_value: The new value being written.
+        is_user_override: If True, return "USER".
 
     Returns:
         str: The source value to set for the *Source field.
     """
     if is_user_override:
         return "USER"
+
+    if field_value is None:
+        return "NEWDEV"
+
+    if isinstance(field_value, str):
+        stripped = field_value.strip()
+        if stripped in ("", "null"):
+            return "NEWDEV"
+        if stripped.lower() in ("(unknown)", "(name not found)"):
+            return "NEWDEV"
+
     return plugin_prefix
 
 
