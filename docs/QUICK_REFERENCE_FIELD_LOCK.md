@@ -6,7 +6,7 @@ The device field lock/unlock system allows you to protect specific device fields
 
 **Use case:** You've manually corrected a device name or port number and want to keep it that way, even when plugins discover different values.
 
-## Tracked Fields (10 Total)
+## Tracked Fields
 
 These are the ONLY fields that can be locked:
 
@@ -97,7 +97,7 @@ Each locked field has a "source" indicator that shows you why the value is prote
 
 ## Quick Tips
 
-- **Lock names and IPs you manually corrected** to keep them stable
+- **Lock names you manually corrected** to keep them stable
 - **Leave discovery fields (vendor, FQDN) unlocked** for automatic updates
 - **Use locks sparingly**—they prevent automatic data enrichment
 - **Check the source indicator** (colored badge) to understand field origin
@@ -133,7 +133,7 @@ Each locked field has a "source" indicator that shows you why the value is prote
 - Double-check the lock icon shows
 - Reload the page—the change might be a display issue
 - Check if you accidentally unlocked it
-- pen an issue if it persists
+- Open an issue if it persists
 
 ## For More Information
 

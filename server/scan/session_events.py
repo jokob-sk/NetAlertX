@@ -56,12 +56,12 @@ def process_scan(db):
     mylog("verbose", "[Process Scan] Updating Devices Info")
     update_devices_data_from_scan(db)
 
-    # Last Connection Time stamp from CurrentSan
-    mylog("verbose", "[Process Scan] Updating devLastConnection from CurrentSan")
+    # Last Connection Time stamp from CurrentScan
+    mylog("verbose", "[Process Scan] Updating devLastConnection from CurrentScan")
     update_devLastConnection_from_CurrentScan(db)
 
-    # Presence from CurrentSan
-    mylog("verbose", "[Process Scan] Updating Devices Info")
+    # Presence from CurrentScan
+    mylog("verbose", "[Process Scan] Updating Presence from CurrentScan")
     update_presence_from_CurrentScan(db)
 
     # Update devPresentLastScan based on NICs presence

@@ -138,12 +138,6 @@ The Device Edit form displays lock/unlock buttons for all tracked fields:
 2. **Unlock Button** (🔓): Click to allow plugin overwrites again
 3. **Source Indicator**: Shows current field source (USER, LOCKED, NEWDEV, or plugin name)
 
-### Source Indicator Colors
-
-- Red (USER): Field was manually edited by a user
-- Orange (LOCKED): Field is locked and protected from overwrites
-- Gray (NEWDEV/Plugin): Field value came from automatic discovery
-
 ## UI Workflow
 
 ### Locking a Field via UI
