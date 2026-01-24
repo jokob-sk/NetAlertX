@@ -31,7 +31,7 @@ def ip_test_db():
             devPresentLastScan INTEGER,
             devForceStatus TEXT,
             devLastIP TEXT,
-            devLastIpSource TEXT DEFAULT 'NEWDEV',
+            devLastIPSource TEXT DEFAULT 'NEWDEV',
             devPrimaryIPv4 TEXT,
             devPrimaryIPv4Source TEXT DEFAULT 'NEWDEV',
             devPrimaryIPv6 TEXT,

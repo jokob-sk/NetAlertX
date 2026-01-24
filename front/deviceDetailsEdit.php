@@ -280,6 +280,7 @@ function getDeviceData() {
                   const fieldName = setting.setKey.replace('NEWDEV_', '');
                   if (trackedFields[fieldName] && fieldName !== "devFQDN"  &&  mac != "new") {
                     const sourceField = fieldName + "Source";
+
                     const currentSource = deviceData[sourceField] || "N/A";
                     const isLocked = currentSource === "LOCKED";
                     const lockIcon = isLocked ? "fa-lock" : "fa-lock-open";
@@ -302,12 +303,16 @@ function getDeviceData() {
                   const fieldName2 = setting.setKey.replace('NEWDEV_', '');
                   if (trackedFields[fieldName2] && mac != "new") {
                     const sourceField = fieldName2 + "Source";
-                    const currentSource = deviceData[sourceField] || "N/A";
-                    const sourceTitle = getString("FieldLock_Source_Label") + currentSource;
-                    const sourceColor = currentSource === "USER" ? "text-warning" : (currentSource === "LOCKED" ? "text-danger" : "text-muted");
-                    inlineControl += `<span class="input-group-addon pointer ${sourceColor}" title="${sourceTitle}">
-                       ${currentSource}
-                      </span>`;
+                    //  only show if data available
+                    if (deviceData[sourceField] != "")
+                    {
+                      const currentSource = deviceData[sourceField] || "N/A";
+                      const sourceTitle = getString("FieldLock_Source_Label") + currentSource;
+                      const sourceColor = currentSource === "USER" ? "text-warning" : (currentSource === "LOCKED" ? "text-danger" : "text-muted");
+                      inlineControl += `<span class="input-group-addon pointer ${sourceColor}" title="${sourceTitle}">
+                        ${currentSource}
+                        </span>`;
+                    }
                   }
 
                   // handle devChildrenDynamic or NEWDEV_devChildrenNicsDynamic - selected values and options are the same

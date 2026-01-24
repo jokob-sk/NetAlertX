@@ -414,7 +414,7 @@ class TestFieldLockIntegration:
         device_data = device_handler.getDeviceData(test_mac)
         assert device_data.get("devNameSource") == "NEWDEV"
         assert device_data.get("devVendorSource") == "NEWDEV"
-        assert device_data.get("devSsidSource") == "NEWDEV"
+        assert device_data.get("devSSIDSource") == "NEWDEV"
 
         # Simulate a UI "save" that resubmits the same values.
         update_result = device_handler.setDeviceData(
@@ -430,7 +430,7 @@ class TestFieldLockIntegration:
         device_data = device_handler.getDeviceData(test_mac)
         assert device_data.get("devNameSource") == "NEWDEV"
         assert device_data.get("devVendorSource") == "NEWDEV"
-        assert device_data.get("devSsidSource") == "NEWDEV"
+        assert device_data.get("devSSIDSource") == "NEWDEV"
 
     def test_only_changed_fields_marked_user(self, test_mac):
         """When saving, only fields whose values changed should become USER."""
@@ -461,7 +461,7 @@ class TestFieldLockIntegration:
         device_data = device_handler.getDeviceData(test_mac)
         assert device_data.get("devNameSource") == "USER"
         assert device_data.get("devVendorSource") == "NEWDEV"
-        assert device_data.get("devSsidSource") == "NEWDEV"
+        assert device_data.get("devSSIDSource") == "NEWDEV"
 
 
 if __name__ == "__main__":

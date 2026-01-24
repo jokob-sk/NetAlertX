@@ -115,7 +115,7 @@ FIELD_SPECS = {
     # ==========================================================
     "devLastIP": {
         "scan_col": "cur_IP",
-        "source_col": "devLastIpSource",
+        "source_col": "devLastIPSource",
         "empty_values": ["", "null", "(unknown)", "(Unknown)"],
         "priority": ["ARPSCAN", "NEWDEV", "N/A"],
         "default_value": "0.0.0.0",
@@ -177,7 +177,7 @@ FIELD_SPECS = {
     # ==========================================================
     "devParentMAC": {
         "scan_col": "cur_NetworkNodeMAC",
-        "source_col": "devParentMacSource",
+        "source_col": "devParentMACSource",
         "empty_values": ["", "null"],
         "priority": ["SNMPDSC", "UNIFIAPI", "UNFIMP", "NEWDEV", "N/A"],
     },
@@ -801,11 +801,11 @@ def create_new_devices(db):
                             devSourcePlugin,
                             devMacSource,
                             devNameSource,
-                            devFqdnSource,
-                            devLastIpSource,
+                            devFQDNSource,
+                            devLastIPSource,
                             devVendorSource,
-                            devSsidSource,
-                            devParentMacSource,
+                            devSSIDSource,
+                            devParentMACSource,
                             devParentPortSource,
                             devParentRelTypeSource,
                             devVlanSource,
@@ -1031,7 +1031,7 @@ def update_devices_names(pm):
                 "devName", "devNameSource", plugin_settings
             )
             fqdn_clause = get_overwrite_sql_clause(
-                "devFQDN", "devFqdnSource", plugin_settings
+                "devFQDN", "devFQDNSource", plugin_settings
             )
 
             sql.executemany(
@@ -1048,9 +1048,9 @@ def update_devices_names(pm):
                         WHEN {fqdn_clause} THEN ?
                         ELSE devFQDN
                     END,
-                        devFqdnSource = CASE
+                        devFQDNSource = CASE
                         WHEN {fqdn_clause} THEN ?
-                        ELSE devFqdnSource
+                        ELSE devFQDNSource
                     END
                     WHERE devMac = ?""",
                 plugin_records,
@@ -1079,7 +1079,7 @@ def update_devices_names(pm):
             for plugin_label, plugin_records in records_by_plugin.items():
                 plugin_settings = get_plugin_authoritative_settings(plugin_label)
                 fqdn_clause = get_overwrite_sql_clause(
-                    "devFQDN", "devFqdnSource", plugin_settings
+                    "devFQDN", "devFQDNSource", plugin_settings
                 )
 
                 # Apply FQDN-only updates
@@ -1089,9 +1089,9 @@ def update_devices_names(pm):
                             WHEN {fqdn_clause} THEN ?
                             ELSE devFQDN
                         END,
-                            devFqdnSource = CASE
+                            devFQDNSource = CASE
                             WHEN {fqdn_clause} THEN ?
-                            ELSE devFqdnSource
+                            ELSE devFQDNSource
                         END
                         WHERE devMac = ?""",
                     plugin_records,

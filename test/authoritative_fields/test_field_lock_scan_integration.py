@@ -39,19 +39,19 @@ def scan_db():
             devNameSource TEXT DEFAULT 'NEWDEV',
             devVendor TEXT,
             devVendorSource TEXT DEFAULT 'NEWDEV',
-            devLastIpSource TEXT DEFAULT 'NEWDEV',
+            devLastIPSource TEXT DEFAULT 'NEWDEV',
             devType TEXT,
             devIcon TEXT,
             devParentPort TEXT,
             devParentPortSource TEXT DEFAULT 'NEWDEV',
             devParentMAC TEXT,
-            devParentMacSource TEXT DEFAULT 'NEWDEV',
+            devParentMACSource TEXT DEFAULT 'NEWDEV',
             devSite TEXT,
             devSiteSource TEXT DEFAULT 'NEWDEV',
             devSSID TEXT,
-            devSsidSource TEXT DEFAULT 'NEWDEV',
+            devSSIDSource TEXT DEFAULT 'NEWDEV',
             devFQDN TEXT,
-            devFqdnSource TEXT DEFAULT 'NEWDEV',
+            devFQDNSource TEXT DEFAULT 'NEWDEV',
             devParentRelType TEXT,
             devParentRelTypeSource TEXT DEFAULT 'NEWDEV',
             devVlan TEXT,
@@ -165,11 +165,11 @@ def scan_db_for_new_devices():
             devSourcePlugin TEXT,
             devMacSource TEXT,
             devNameSource TEXT,
-            devFqdnSource TEXT,
-            devLastIpSource TEXT,
+            devFQDNSource TEXT,
+            devLastIPSource TEXT,
             devVendorSource TEXT,
-            devSsidSource TEXT,
-            devParentMacSource TEXT,
+            devSSIDSource TEXT,
+            devParentMACSource TEXT,
             devParentPortSource TEXT,
             devParentRelTypeSource TEXT,
             devVlanSource TEXT,
@@ -304,12 +304,12 @@ def test_create_new_devices_sets_sources(scan_db_for_new_devices):
             devMacSource,
             devNameSource,
             devVendorSource,
-            devLastIpSource,
-            devSsidSource,
-            devParentMacSource,
+            devLastIPSource,
+            devSSIDSource,
+            devParentMACSource,
             devParentPortSource,
             devParentRelTypeSource,
-            devFqdnSource,
+            devFQDNSource,
             devVlanSource
         FROM Devices WHERE devMac = ?
         """,
@@ -319,12 +319,12 @@ def test_create_new_devices_sets_sources(scan_db_for_new_devices):
     assert row["devMacSource"] == "ARPSCAN"
     assert row["devNameSource"] == "ARPSCAN"
     assert row["devVendorSource"] == "ARPSCAN"
-    assert row["devLastIpSource"] == "ARPSCAN"
-    assert row["devSsidSource"] == "ARPSCAN"
-    assert row["devParentMacSource"] == "ARPSCAN"
+    assert row["devLastIPSource"] == "ARPSCAN"
+    assert row["devSSIDSource"] == "ARPSCAN"
+    assert row["devParentMACSource"] == "ARPSCAN"
     assert row["devParentPortSource"] == "ARPSCAN"
     assert row["devParentRelTypeSource"] == "NEWDEV"
-    assert row["devFqdnSource"] == "NEWDEV"
+    assert row["devFQDNSource"] == "NEWDEV"
     assert row["devVlanSource"] == "NEWDEV"
 
 
@@ -337,7 +337,7 @@ def test_scan_updates_newdev_device_name(scan_db, mock_device_handlers):
         """
         INSERT INTO Devices (
             devMac, devLastConnection, devPresentLastScan, devLastIP,
-            devName, devNameSource, devVendor, devVendorSource, devLastIpSource,
+            devName, devNameSource, devVendor, devVendorSource, devLastIPSource,
             devType, devIcon, devParentPort, devParentMAC, devSite, devSSID
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
@@ -412,7 +412,7 @@ def test_scan_does_not_update_user_field_name(scan_db, mock_device_handlers):
         """
         INSERT INTO Devices (
             devMac, devLastConnection, devPresentLastScan, devLastIP,
-            devName, devNameSource, devVendor, devVendorSource, devLastIpSource,
+            devName, devNameSource, devVendor, devVendorSource, devLastIPSource,
             devType, devIcon, devParentPort, devParentMAC, devSite, devSSID
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
@@ -487,7 +487,7 @@ def test_scan_does_not_update_locked_field(scan_db, mock_device_handlers):
         """
         INSERT INTO Devices (
             devMac, devLastConnection, devPresentLastScan, devLastIP,
-            devName, devNameSource, devVendor, devVendorSource, devLastIpSource,
+            devName, devNameSource, devVendor, devVendorSource, devLastIPSource,
             devType, devIcon, devParentPort, devParentMAC, devSite, devSSID
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
@@ -562,7 +562,7 @@ def test_scan_updates_empty_vendor_field(scan_db, mock_device_handlers):
         """
         INSERT INTO Devices (
             devMac, devLastConnection, devPresentLastScan, devLastIP,
-            devName, devNameSource, devVendor, devVendorSource, devLastIpSource,
+            devName, devNameSource, devVendor, devVendorSource, devLastIPSource,
             devType, devIcon, devParentPort, devParentMAC, devSite, devSSID
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
@@ -637,7 +637,7 @@ def test_scan_updates_ip_addresses(scan_db, mock_device_handlers):
         """
         INSERT INTO Devices (
             devMac, devLastConnection, devPresentLastScan, devLastIP,
-            devName, devNameSource, devVendor, devVendorSource, devLastIpSource,
+            devName, devNameSource, devVendor, devVendorSource, devLastIPSource,
             devType, devIcon, devParentPort, devParentMAC, devSite, devSSID,
             devPrimaryIPv4, devPrimaryIPv6
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -717,7 +717,7 @@ def test_scan_updates_ipv6_without_changing_ipv4(scan_db, mock_device_handlers):
         """
         INSERT INTO Devices (
             devMac, devLastConnection, devPresentLastScan, devLastIP,
-            devName, devNameSource, devVendor, devVendorSource, devLastIpSource,
+            devName, devNameSource, devVendor, devVendorSource, devLastIPSource,
             devType, devIcon, devParentPort, devParentMAC, devSite, devSSID,
             devPrimaryIPv4, devPrimaryIPv6
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -796,7 +796,7 @@ def test_scan_updates_presence_status(scan_db, mock_device_handlers):
         """
         INSERT INTO Devices (
             devMac, devLastConnection, devPresentLastScan, devLastIP,
-            devName, devNameSource, devVendor, devVendorSource, devLastIpSource,
+            devName, devNameSource, devVendor, devVendorSource, devLastIPSource,
             devType, devIcon, devParentPort, devParentMAC, devSite, devSSID
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
@@ -855,7 +855,7 @@ def test_scan_multiple_devices_mixed_sources(scan_db, mock_device_handlers):
             """
             INSERT INTO Devices (
                 devMac, devLastConnection, devPresentLastScan, devLastIP,
-                devName, devNameSource, devVendor, devVendorSource, devLastIpSource,
+                devName, devNameSource, devVendor, devVendorSource, devLastIPSource,
                 devType, devIcon, devParentPort, devParentMAC, devSite, devSSID
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
