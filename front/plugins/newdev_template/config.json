@@ -1828,6 +1828,145 @@
           "string": "Children nodes with the <code>nic</code> Relationship Type. Navigate to the child device directly to edit the relationship and details. Database column name: <code>N/A</code> (evaluated dynamically)."
         }
       ]
+    },
+    {
+      "function": "devPrimaryIPv4",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "readonly": "true"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 50,
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Primary IPv4"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The primary IPv4 address of the device. Uneditable - Automatically maintained from scan results. Database column name: <code>devPrimaryIPv4</code>."
+        }
+      ]
+    },
+    {
+      "function": "devPrimaryIPv6",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "readonly": "true"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 50,
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Primary IPv6"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The primary IPv6 address of the device. Uneditable - Automatically maintained from scan results. Database column name: <code>devPrimaryIPv6</code>."
+        }
+      ]
+    },
+    {
+      "function": "devVlan",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 50,
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "VLAN"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The VLAN identifier or name the device belongs to. Database column name: <code>devVlan</code>."
+        }
+      ]
+    },
+    {
+      "function": "devForceStatus",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": "dont_force",
+      "options": [
+        "dont_force" ,
+        "online",
+        "offline"
+      ],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Force Status"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Force the device online/offline status: <code>online</code> always online, <code>offline</code> always offline, <code>dont_force</code> auto-detect. Database column name: <code>devForceStatus</code>."
+        }
+      ]
     }
   ],
   "required": [],

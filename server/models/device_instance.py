@@ -9,6 +9,13 @@ from logger import mylog
 from models.plugin_object_instance import PluginObjectInstance
 from database import get_temp_db_connection
 from db.db_helper import get_table_json, get_device_condition_by_status, row_to_json, get_date_from_period
+from db.authoritative_handler import (
+    enforce_source_on_user_update,
+    get_locked_field_overrides,
+    lock_field,
+    unlock_field,
+    FIELD_SOURCE_MAP,
+)
 from helper import is_random_mac, get_setting_value
 from utils.datetime_utils import timeNowDB, format_date
 
@@ -411,7 +418,7 @@ class DeviceInstance:
                 "devGUID": "",
                 "devSite": "",
                 "devSSID": "",
-                "devSyncHubNode": "",
+                "devSyncHubNode": str(get_setting_value("SYNC_node_name")),
                 "devSourcePlugin": "",
                 "devCustomProps": "",
                 "devStatus": "Unknown",
@@ -421,6 +428,7 @@ class DeviceInstance:
                 "devDownAlerts": 0,
                 "devPresenceHours": 0,
                 "devFQDN": "",
+                "devForceStatus" : "dont_force"
             }
             return device_data
 
@@ -503,6 +511,68 @@ class DeviceInstance:
         normalized_mac = normalize_mac(mac)
         normalized_parent_mac = normalize_mac(data.get("devParentMAC") or "")
 
+        fields_updated_by_set_device_data = {
+            "devName",
+            "devOwner",
+            "devType",
+            "devVendor",
+            "devIcon",
+            "devFavorite",
+            "devGroup",
+            "devLocation",
+            "devComments",
+            "devParentMAC",
+            "devParentPort",
+            "devSSID",
+            "devSite",
+            "devStaticIP",
+            "devScan",
+            "devAlertEvents",
+            "devAlertDown",
+            "devParentRelType",
+            "devReqNicsOnline",
+            "devSkipRepeated",
+            "devIsNew",
+            "devIsArchived",
+            "devCustomProps",
+            "devForceStatus"
+        }
+
+        # Only mark USER for tracked fields that this method actually updates.
+        tracked_update_fields = set(FIELD_SOURCE_MAP.keys()) & fields_updated_by_set_device_data
+        tracked_update_fields.discard("devMac")
+
+        locked_fields = set()
+        pre_update_tracked_values = {}
+        if not data.get("createNew", False):
+            conn_preview = get_temp_db_connection()
+            try:
+                locked_fields, overrides = get_locked_field_overrides(
+                    normalized_mac,
+                    data,
+                    conn_preview,
+                )
+                if overrides:
+                    data.update(overrides)
+
+                # Capture pre-update values for tracked fields so we can mark USER only
+                # when the user actually changes the value.
+                tracked_fields_in_payload = [
+                    k for k in data.keys() if k in tracked_update_fields
+                ]
+                if tracked_fields_in_payload:
+                    select_clause = ", ".join(tracked_fields_in_payload)
+                    cur_preview = conn_preview.cursor()
+                    cur_preview.execute(
+                        f"SELECT {select_clause} FROM Devices WHERE devMac=?",
+                        (normalized_mac,),
+                    )
+                    row = cur_preview.fetchone()
+                    if row:
+                        pre_update_tracked_values = row_to_json(list(row.keys()), row)
+            finally:
+                conn_preview.close()
+
         conn = None
         try:
             if data.get("createNew", False):
@@ -515,8 +585,8 @@ class DeviceInstance:
                     devParentRelType, devReqNicsOnline, devSkipRepeated,
                     devIsNew, devIsArchived, devLastConnection,
                     devFirstConnection, devLastIP, devGUID, devCustomProps,
-                    devSourcePlugin
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    devSourcePlugin, devForceStatus
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """
 
                 values = (
@@ -549,6 +619,7 @@ class DeviceInstance:
                     data.get("devGUID") or "",
                     data.get("devCustomProps") or "",
                     data.get("devSourcePlugin") or "DUMMY",
+                    data.get("devForceStatus") or "dont_force",
                 )
 
             else:
@@ -559,7 +630,7 @@ class DeviceInstance:
                     devParentMAC=?, devParentPort=?, devSSID=?, devSite=?,
                     devStaticIP=?, devScan=?, devAlertEvents=?, devAlertDown=?,
                     devParentRelType=?, devReqNicsOnline=?, devSkipRepeated=?,
-                    devIsNew=?, devIsArchived=?, devCustomProps=?
+                    devIsNew=?, devIsArchived=?, devCustomProps=?, devForceStatus=?
                 WHERE devMac=?
                 """
                 values = (
@@ -586,12 +657,73 @@ class DeviceInstance:
                     data.get("devIsNew") or 0,
                     data.get("devIsArchived") or 0,
                     data.get("devCustomProps") or "",
+                    data.get("devForceStatus") or "dont_force",
                     normalized_mac,
                 )
 
             conn = get_temp_db_connection()
             cur = conn.cursor()
             cur.execute(sql, values)
+
+            if data.get("createNew", False):
+                # Initialize source-tracking fields on device creation.
+                # We always mark devMacSource as NEWDEV, and mark other tracked fields
+                # as NEWDEV only if the create payload provides a non-empty value.
+                initial_sources = {FIELD_SOURCE_MAP["devMac"]: "NEWDEV"}
+                for field_name, source_field in FIELD_SOURCE_MAP.items():
+                    if field_name == "devMac":
+                        continue
+                    field_value = data.get(field_name)
+                    if field_value is None:
+                        continue
+                    if isinstance(field_value, str) and not field_value.strip():
+                        continue
+                    initial_sources[source_field] = "NEWDEV"
+
+                if initial_sources:
+                    # Apply source updates in a single statement for the newly inserted row.
+                    set_clause = ", ".join([f"{col}=?" for col in initial_sources.keys()])
+                    source_values = list(initial_sources.values())
+                    source_values.append(normalized_mac)
+                    source_sql = f"UPDATE Devices SET {set_clause} WHERE devMac = ?"
+                    cur.execute(source_sql, source_values)
+
+            # Enforce source tracking on user updates
+            # User-updated fields should have their *Source set to "USER"
+            def _normalize_tracked_value(value):
+                if value is None:
+                    return ""
+                if isinstance(value, str):
+                    return value.strip()
+                return str(value)
+
+            user_updated_fields = {}
+            if not data.get("createNew", False):
+                for field_name in tracked_update_fields:
+                    if field_name in locked_fields:
+                        continue
+                    if field_name not in data:
+                        continue
+
+                    if field_name == "devParentMAC":
+                        new_value = normalized_parent_mac
+                    else:
+                        new_value = data.get(field_name)
+
+                    old_value = pre_update_tracked_values.get(field_name)
+                    if _normalize_tracked_value(old_value) != _normalize_tracked_value(new_value):
+                        user_updated_fields[field_name] = new_value
+
+            if user_updated_fields and not data.get("createNew", False):
+                try:
+                    enforce_source_on_user_update(normalized_mac, user_updated_fields, conn)
+                except Exception as e:
+                    mylog("none", [f"[DeviceInstance] Failed to enforce source tracking: {e}"])
+                    conn.rollback()
+                    conn.close()
+                    return {"success": False, "error": f"Source tracking failed: {e}"}
+
+            # Commit all changes atomically after all operations succeed
             conn.commit()
             conn.close()
 
@@ -663,6 +795,36 @@ class DeviceInstance:
 
         conn.close()
         return result
+
+    def lockDeviceField(self, mac, field_name):
+        """Lock a device field so it won't be overwritten by plugins."""
+        if field_name not in FIELD_SOURCE_MAP:
+            return {"success": False, "error": f"Field {field_name} does not support locking"}
+
+        mac_normalized = normalize_mac(mac)
+        conn = get_temp_db_connection()
+        try:
+            lock_field(mac_normalized, field_name, conn)
+            return {"success": True, "message": f"Field {field_name} locked"}
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+        finally:
+            conn.close()
+
+    def unlockDeviceField(self, mac, field_name):
+        """Unlock a device field so plugins can overwrite it again."""
+        if field_name not in FIELD_SOURCE_MAP:
+            return {"success": False, "error": f"Field {field_name} does not support unlocking"}
+
+        mac_normalized = normalize_mac(mac)
+        conn = get_temp_db_connection()
+        try:
+            unlock_field(mac_normalized, field_name, conn)
+            return {"success": True, "message": f"Field {field_name} unlocked"}
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+        finally:
+            conn.close()
 
     def copyDevice(self, mac_from, mac_to):
         """Copy a device entry from one MAC to another."""

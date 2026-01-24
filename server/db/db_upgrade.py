@@ -9,6 +9,59 @@ from logger import mylog  # noqa: E402 [flake8 lint suppression]
 from messaging.in_app import write_notification  # noqa: E402 [flake8 lint suppression]
 
 
+# Define the expected Devices table columns (hardcoded base schema) [v26.1/2.XX]
+EXPECTED_DEVICES_COLUMNS = [
+    "devMac",
+    "devName",
+    "devOwner",
+    "devType",
+    "devVendor",
+    "devFavorite",
+    "devGroup",
+    "devComments",
+    "devFirstConnection",
+    "devLastConnection",
+    "devLastIP",
+    "devFQDN",
+    "devPrimaryIPv4",
+    "devPrimaryIPv6",
+    "devVlan",
+    "devForceStatus",
+    "devStaticIP",
+    "devScan",
+    "devLogEvents",
+    "devAlertEvents",
+    "devAlertDown",
+    "devSkipRepeated",
+    "devLastNotification",
+    "devPresentLastScan",
+    "devIsNew",
+    "devLocation",
+    "devIsArchived",
+    "devParentMAC",
+    "devParentPort",
+    "devParentRelType",
+    "devReqNicsOnline",
+    "devIcon",
+    "devGUID",
+    "devSite",
+    "devSSID",
+    "devSyncHubNode",
+    "devSourcePlugin",
+    "devMacSource",
+    "devNameSource",
+    "devFQDNSource",
+    "devLastIPSource",
+    "devVendorSource",
+    "devSSIDSource",
+    "devParentMACSource",
+    "devParentPortSource",
+    "devParentRelTypeSource",
+    "devVlanSource",
+    "devCustomProps",
+]
+
+
 def ensure_column(sql, table: str, column_name: str, column_type: str) -> bool:
     """
     Ensures a column exists in the specified table. If missing, attempts to add it.
@@ -30,62 +83,17 @@ def ensure_column(sql, table: str, column_name: str, column_type: str) -> bool:
         if column_name in actual_columns:
             return True  # Already exists
 
-        # Define the expected columns (hardcoded base schema) [v25.5.24] - available in the default app.db
-        expected_columns = [
-            "devMac",
-            "devName",
-            "devOwner",
-            "devType",
-            "devVendor",
-            "devFavorite",
-            "devGroup",
-            "devComments",
-            "devFirstConnection",
-            "devLastConnection",
-            "devLastIP",
-            "devStaticIP",
-            "devScan",
-            "devLogEvents",
-            "devAlertEvents",
-            "devAlertDown",
-            "devSkipRepeated",
-            "devLastNotification",
-            "devPresentLastScan",
-            "devIsNew",
-            "devLocation",
-            "devIsArchived",
-            "devParentMAC",
-            "devParentPort",
-            "devIcon",
-            "devGUID",
-            "devSite",
-            "devSSID",
-            "devSyncHubNode",
-            "devSourcePlugin",
-            "devCustomProps",
-        ]
-
-        # Check for mismatches in base schema
-        missing = set(expected_columns) - set(actual_columns)
-        extra = set(actual_columns) - set(expected_columns)
-
-        if missing:
+        # Validate that this column is in the expected schema
+        expected = EXPECTED_DEVICES_COLUMNS if table == "Devices" else []
+        if not expected or column_name not in expected:
             msg = (
-                f"[db_upgrade] ⚠ ERROR: Unexpected DB structure "
-                f"(missing: {', '.join(missing) if missing else 'none'}, "
-                f"extra: {', '.join(extra) if extra else 'none'}) - "
-                "aborting schema change to prevent corruption. "
+                f"[db_upgrade] ⚠ ERROR: Column '{column_name}' is not in expected schema - "
+                f"aborting to prevent corruption. "
                 "Check https://docs.netalertx.com/UPDATES"
             )
             mylog("none", [msg])
             write_notification(msg)
             return False
-
-        if extra:
-            msg = (
-                f"[db_upgrade] Extra DB columns detected in {table}: {', '.join(extra)}"
-            )
-            mylog("none", [msg])
 
         # Add missing column
         mylog("verbose", [f"[db_upgrade] Adding '{column_name}' ({column_type}) to {table} table"],)
@@ -161,6 +169,27 @@ def ensure_views(sql) -> bool:
                                 WHERE (eve_EventType = 'Device Down' OR
                                         eve_EventType = 'Disconnected') AND
                                       EVE1.eve_PairEventRowID IS NULL;
+                          """)
+
+    sql.execute(""" DROP VIEW IF EXISTS LatestDeviceScan;""")
+    sql.execute(""" CREATE VIEW LatestDeviceScan AS
+                        WITH RankedScans AS (
+                            SELECT
+                                c.*,
+                                ROW_NUMBER() OVER (
+                                    PARTITION BY c.cur_MAC, c.cur_ScanMethod
+                                    ORDER BY c.cur_DateTime DESC
+                                ) AS rn
+                            FROM CurrentScan c
+                        )
+                        SELECT
+                            d.*,           -- all Device fields
+                            r.*            -- all CurrentScan fields (cur_*)
+                        FROM Devices d
+                        LEFT JOIN RankedScans r
+                            ON d.devMac = r.cur_MAC
+                        WHERE r.rn = 1;
+
                           """)
 
     return True
@@ -263,6 +292,7 @@ def ensure_CurrentScan(sql) -> bool:
                                 cur_SyncHubNodeName STRING(50),
                                 cur_NetworkSite STRING(250),
                                 cur_SSID STRING(250),
+                                cur_devVlan STRING(250),
                                 cur_NetworkNodeMAC STRING(250),
                                 cur_PORT STRING(250),
                                 cur_Type STRING(250)

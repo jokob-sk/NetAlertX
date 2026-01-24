@@ -27,6 +27,9 @@ services:
       - NET_ADMIN                                   # Required for ARP scanning
       - NET_RAW                                     # Required for raw socket operations
       - NET_BIND_SERVICE                            # Required to bind to privileged ports (nbtscan)
+      - CHOWN                                       # Required for root-entrypoint to chown /data + /tmp before dropping privileges
+      - SETUID                                      # Required for root-entrypoint to switch to non-root user
+      - SETGID                                      # Required for root-entrypoint to switch to non-root group
 
     volumes:
       - type: volume                                # Persistent Docker-managed named volume for config + database

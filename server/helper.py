@@ -189,7 +189,7 @@ def get_setting(key):
     SETTINGS_LASTCACHEDATE = fileModifiedTime
 
     if key not in SETTINGS_CACHE:
-        mylog("none", [f"[Settings] ⚠ ERROR - setting_missing - {key} not in {settingsFile}"],)
+        mylog("verbose", [f"[Settings] INFO - setting_missing - {key} not in {settingsFile}"],)
         return None
 
     return SETTINGS_CACHE[key]

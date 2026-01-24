@@ -156,14 +156,21 @@ def parse_datetime(dt_str):
 
 def format_date(date_str: str) -> str:
     try:
+        if isinstance(date_str, str):
+            # collapse all whitespace into single spaces
+            date_str = re.sub(r"\s+", " ", date_str.strip())
+
         dt = parse_datetime(date_str)
+        if not dt:
+            return f"invalid:{repr(date_str)}"
+
         if dt.tzinfo is None:
-            # Set timezone if missing — change to timezone.utc if you prefer UTC
-            now = datetime.datetime.now(conf.tz)
-            dt = dt.replace(tzinfo=now.astimezone().tzinfo)
+            dt = dt.replace(tzinfo=conf.tz)
+
         return dt.astimezone().isoformat()
-    except (ValueError, AttributeError, TypeError):
-        return "invalid"
+
+    except Exception:
+        return f"invalid:{repr(date_str)}"
 
 
 def format_date_diff(date1, date2, tz_name):

@@ -46,7 +46,7 @@ function renderList(
         data: JSON.stringify({ rawSql: base64Sql }),
         contentType: "application/json",
         success: function(data) {
-          console.log("SQL query response:", data);
+          // console.log("SQL query response:", data);
 
           // Parse the returned SQL data
           let sqlOption = [];
@@ -62,7 +62,7 @@ function renderList(
           // Concatenate options from SQL query with the supplied options
           options = options.concat(sqlOption);
 
-          console.log("Combined options:", options);
+          // console.log("Combined options:", options);
 
           // Process the combined options
           setTimeout(() => {

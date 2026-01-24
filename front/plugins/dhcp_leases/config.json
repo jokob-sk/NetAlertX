@@ -683,6 +683,70 @@
       ]
     },
     {
+      "function": "SET_ALWAYS",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [{ "multiple": "true", "ordeable": "true"}],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": ["devMac", "devLastIP"],
+      "options": [
+        "devMac",
+        "devLastIP"
+      ],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Set always columns"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "These columns are treated as authoritative and will overwrite existing values, including those set by other plugins, unless the current value was explicitly set by the user (<code>Source = USER</code> or <code>Source = LOCKED</code>)."
+        }
+      ]
+    },
+    {
+      "function": "SET_EMPTY",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [{ "multiple": "true", "ordeable": "true" }],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": [],
+      "options": [
+        "devMac",
+        "devLastIP",
+        "devName",
+        "devSourcePlugin"
+      ],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Set empty columns"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "These columns are only overwritten if they are empty (<code>NULL</code> / empty string) or if their Source is set to <code>NEWDEV</code>"
+        }
+      ]
+    },
+    {
       "function": "WATCH",
       "type": {
         "dataType": "array",
