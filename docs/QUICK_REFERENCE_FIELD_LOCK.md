@@ -10,16 +10,14 @@ The device field lock/unlock system allows you to protect specific device fields
 
 These are the ONLY fields that can be locked:
 
-1. devMac - Device MAC address
-2. devName - Device hostname/alias
-3. devLastIP - Last known IP address
-4. devVendor - Device manufacturer
-5. devFQDN - Fully qualified domain name
-6. devSSID - WiFi network name
-7. devParentMAC - Parent/gateway MAC
-8. devParentPort - Parent device port
-9. devParentRelType - Relationship type (e.g., "gateway")
-10. devVlan - VLAN identifier
+- devName - Device hostname/alias
+- devVendor - Device manufacturer
+- devFQDN - Fully qualified domain name
+- devSSID - WiFi network name
+- devParentMAC - Parent/gateway MAC
+- devParentPort - Parent device port
+- devParentRelType - Relationship type (e.g., "gateway")
+- devVlan - VLAN identifier
 
 ## Source Values Explained
 
@@ -27,10 +25,10 @@ Each locked field has a "source" indicator that shows you why the value is prote
 
 | Indicator | Meaning | Can It Change? |
 |-----------|---------|---|
-| 🔒 **LOCKED** (red badge) | You locked this field | No, until you unlock it |
-| ✏️ **USER** (orange badge) | You edited this field | No, plugins can't overwrite |
-| 📡 **NEWDEV** (gray badge) | Default/unset value | Yes, plugins can update |
-| 📡 **Plugin name** (gray badge) | Last updated by a plugin (e.g., UNIFIAPI) | Yes, plugins can update |
+| 🔒 **LOCKED** | You locked this field | No, until you unlock it |
+| ✏️ **USER** | You edited this field | No, plugins can't overwrite |
+| 📡 **NEWDEV** | Default/unset value | Yes, plugins can update |
+| 📡 **Plugin name** | Last updated by a plugin (e.g., UNIFIAPI) | Yes, plugins can update if field in SET_ALWAYS |
 
 ## How to Use
 
@@ -39,15 +37,15 @@ Each locked field has a "source" indicator that shows you why the value is prote
 1. Navigate to **Device Details** for the device
 2. Find the field you want to protect (e.g., device name)
 3. Click the **lock button** (🔒) next to the field
-4. The button changes to **unlock** (🔓) and turns red
+4. The button changes to **unlock** (🔓)
 5. That field is now protected
 
 ### Unlock a Field (Allow Plugin Updates)
 
 1. Go to **Device Details**
-2. Find the locked field (shows 🔓 in red)
+2. Find the locked field (shows 🔓)
 3. Click the **unlock button** (🔓)
-4. The button changes back to **lock** (🔒) and turns gray
+4. The button changes back to **lock** (🔒)
 5. Plugins can now update that field again
 
 ## Common Scenarios
@@ -77,9 +75,9 @@ Each locked field has a "source" indicator that shows you why the value is prote
 
 - ✅ Your custom value is kept
 - ✅ Future plugin scans won't overwrite it
-- ✅ You can still manually edit it anytime
+- ✅ You can still manually edit it anytime after unlocking
 - ✅ Lock persists across plugin runs
-- ✅ Other users can see it's locked (red indicator)
+- ✅ Other users can see it's locked
 
 ## What Happens When You Unlock a Field
 
@@ -92,7 +90,7 @@ Each locked field has a "source" indicator that shows you why the value is prote
 
 | Message | What It Means | What to Do |
 |---------|--------------|-----------|
-| "Field cannot be locked" | You tried to lock a field that doesn't support locking | Only lock the 10 fields listed above |
+| "Field cannot be locked" | You tried to lock a field that doesn't support locking | Only lock the fields listed above |
 | "Device not found" | The device MAC address doesn't exist | Verify the device hasn't been deleted |
 | Lock button doesn't work | Network or permission issue | Refresh the page and try again |
 | Unexpected field changed | Field might have been unlocked | Check if field shows unlock icon (🔓) |
@@ -121,7 +119,7 @@ Each locked field has a "source" indicator that shows you why the value is prote
 ## Troubleshooting
 
 **Lock button not appearing:**
-- Confirm the field is one of the 10 tracked fields (see list above)
+- Confirm the field is one of the tracked fields (see list above)
 - Confirm the device is already saved (new devices don't show lock buttons)
 - Refresh the page
 
@@ -132,10 +130,10 @@ Each locked field has a "source" indicator that shows you why the value is prote
 - Try again in a few seconds
 
 **Field still changes after locking:**
-- Double-check the lock icon shows (red indicator)
+- Double-check the lock icon shows
 - Reload the page—the change might be a display issue
 - Check if you accidentally unlocked it
-- Contact support if it persists
+- pen an issue if it persists
 
 ## For More Information
 

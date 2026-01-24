@@ -355,6 +355,7 @@ class TestFieldLockIntegration:
         proposed_value = "Plugin Name"
         can_overwrite = can_overwrite_field(
             "devName",
+            device_data.get("devName"),
             device_data.get("devNameSource"),
             plugin_prefix,
             plugin_settings,

@@ -15,61 +15,61 @@ class TestCanOverwriteField:
     def test_user_source_prevents_overwrite(self):
         """USER source should prevent any overwrite."""
         assert not can_overwrite_field(
-            "devName", "USER", "UNIFIAPI", {"set_always": [], "set_empty": []}, "NewName"
+            "devName", "OldName", "USER", "UNIFIAPI", {"set_always": [], "set_empty": []}, "NewName"
         )
 
     def test_locked_source_prevents_overwrite(self):
         """LOCKED source should prevent any overwrite."""
         assert not can_overwrite_field(
-            "devName", "LOCKED", "ARPSCAN", {"set_always": [], "set_empty": []}, "NewName"
+            "devName", "OldName", "LOCKED", "ARPSCAN", {"set_always": [], "set_empty": []}, "NewName"
         )
 
     def test_empty_value_prevents_overwrite(self):
         """Empty/None values should prevent overwrite."""
         assert not can_overwrite_field(
-            "devName", "", "UNIFIAPI", {"set_always": ["devName"], "set_empty": []}, ""
+            "devName", "OldName", "", "UNIFIAPI", {"set_always": ["devName"], "set_empty": []}, ""
         )
         assert not can_overwrite_field(
-            "devName", "", "UNIFIAPI", {"set_always": ["devName"], "set_empty": []}, None
+            "devName", "OldName", "", "UNIFIAPI", {"set_always": ["devName"], "set_empty": []}, None
         )
 
     def test_set_always_allows_overwrite(self):
         """SET_ALWAYS should allow overwrite regardless of current source."""
         assert can_overwrite_field(
-            "devName", "ARPSCAN", "UNIFIAPI", {"set_always": ["devName"], "set_empty": []}, "NewName"
+            "devName", "OldName", "ARPSCAN", "UNIFIAPI", {"set_always": ["devName"], "set_empty": []}, "NewName"
         )
         assert can_overwrite_field(
-            "devName", "NEWDEV", "UNIFIAPI", {"set_always": ["devName"], "set_empty": []}, "NewName"
+            "devName", "", "NEWDEV", "UNIFIAPI", {"set_always": ["devName"], "set_empty": []}, "NewName"
         )
 
     def test_set_empty_allows_overwrite_only_when_empty(self):
         """SET_EMPTY should allow overwrite only if field is empty or NEWDEV."""
         assert can_overwrite_field(
-            "devName", "", "UNIFIAPI", {"set_always": [], "set_empty": ["devName"]}, "NewName"
+            "devName", "", "", "UNIFIAPI", {"set_always": [], "set_empty": ["devName"]}, "NewName"
         )
         assert can_overwrite_field(
-            "devName", "NEWDEV", "UNIFIAPI", {"set_always": [], "set_empty": ["devName"]}, "NewName"
+            "devName", "", "NEWDEV", "UNIFIAPI", {"set_always": [], "set_empty": ["devName"]}, "NewName"
         )
         assert not can_overwrite_field(
-            "devName", "ARPSCAN", "UNIFIAPI", {"set_always": [], "set_empty": ["devName"]}, "NewName"
+            "devName", "OldName", "ARPSCAN", "UNIFIAPI", {"set_always": [], "set_empty": ["devName"]}, "NewName"
         )
 
     def test_default_behavior_overwrites_empty_fields(self):
         """Without SET_ALWAYS/SET_EMPTY, should overwrite only empty fields."""
         assert can_overwrite_field(
-            "devName", "", "UNIFIAPI", {"set_always": [], "set_empty": []}, "NewName"
+            "devName", "", "", "UNIFIAPI", {"set_always": [], "set_empty": []}, "NewName"
         )
         assert can_overwrite_field(
-            "devName", "NEWDEV", "UNIFIAPI", {"set_always": [], "set_empty": []}, "NewName"
+            "devName", "", "NEWDEV", "UNIFIAPI", {"set_always": [], "set_empty": []}, "NewName"
         )
         assert not can_overwrite_field(
-            "devName", "ARPSCAN", "UNIFIAPI", {"set_always": [], "set_empty": []}, "NewName"
+            "devName", "OldName", "ARPSCAN", "UNIFIAPI", {"set_always": [], "set_empty": []}, "NewName"
         )
 
     def test_whitespace_value_treated_as_empty(self):
         """Whitespace-only values should be treated as empty."""
         assert not can_overwrite_field(
-            "devName", "", "UNIFIAPI", {"set_always": ["devName"], "set_empty": []}, "   "
+            "devName", "OldName", "", "UNIFIAPI", {"set_always": ["devName"], "set_empty": []}, "   "
         )
 
 

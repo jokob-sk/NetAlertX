@@ -7,10 +7,10 @@ The Device Field Lock/Unlock feature allows users to lock specific device fields
 ## Concepts
 
 ### Tracked Fields
+
 Only certain device fields support locking. These are the fields that can be modified by both plugins and users:
-- `devMac` - Device MAC address
-- `devName` - Device name/hostname  
-- `devLastIP` - Last known IP address
+
+- `devName` - Device name/hostname
 - `devVendor` - Device vendor/manufacturer
 - `devFQDN` - Fully qualified domain name
 - `devSSID` - Network SSID
@@ -20,14 +20,18 @@ Only certain device fields support locking. These are the fields that can be mod
 - `devVlan` - VLAN identifier
 
 ### Field Source Tracking
+
 Every tracked field has an associated `*Source` field that indicates where the current value originated:
+
 - `NEWDEV` - Created via the UI as a new device
 - `USER` - Manually edited by a user
 - `LOCKED` - Field is locked; prevents any plugin overwrites
 - Plugin name (e.g., `UNIFIAPI`, `PIHOLE`) - Last updated by this plugin
 
 ### Locking Mechanism
+
 When a field is **locked**, its source is set to `LOCKED`. This prevents plugin overwrites based on the authorization logic:
+
 1. Plugin wants to update field
 2. Authoritative handler checks field's `*Source` value
 3. If `*Source` == `LOCKED`, plugin update is rejected
@@ -38,6 +42,7 @@ When a field is **unlocked**, its source is set to `NEWDEV`, allowing plugins to
 ## Endpoints
 
 ### Lock or Unlock a Field
+
 ```
 POST /device/{mac}/field/lock
 Authorization: Bearer {API_TOKEN}
@@ -134,6 +139,7 @@ The Device Edit form displays lock/unlock buttons for all tracked fields:
 3. **Source Indicator**: Shows current field source (USER, LOCKED, NEWDEV, or plugin name)
 
 ### Source Indicator Colors
+
 - Red (USER): Field was manually edited by a user
 - Orange (LOCKED): Field is locked and protected from overwrites
 - Gray (NEWDEV/Plugin): Field value came from automatic discovery
@@ -141,6 +147,7 @@ The Device Edit form displays lock/unlock buttons for all tracked fields:
 ## UI Workflow
 
 ### Locking a Field via UI
+
 1. Navigate to Device Details
 2. Find the field you want to protect
 3. Click the lock button (🔒) next to the field
@@ -148,6 +155,7 @@ The Device Edit form displays lock/unlock buttons for all tracked fields:
 5. Field is now protected from plugin overwrites
 
 ### Unlocking a Field via UI
+
 1. Find the locked field (button shows 🔓)
 2. Click the unlock button
 3. Button changes back to lock (🔒) and source resets to NEWDEV
@@ -167,59 +175,16 @@ The lock/unlock feature is implemented in:
 - **Data Model**: `/server/models/device_instance.py` - Authorization checks in `setDeviceData()`
 - **Database**: Devices table with `*Source` columns tracking field origins
 
-### Frontend Logic
-The lock/unlock UI is implemented in:
-- **Device Edit Form**: `/front/deviceDetailsEdit.php`
-  - Form rendering with lock/unlock buttons
-  - JavaScript function `toggleFieldLock()` for API calls
-  - Source indicator display
-- **Styling**: `/front/css/app.css` - Lock button and source indicator styles
-
 ### Authorization Handler
+
 The authoritative field update logic prevents plugin overwrites:
+
 1. Plugin provides new value for field via plugin config `SET_ALWAYS`/`SET_EMPTY`
 2. Authoritative handler (in DeviceInstance) checks `{field}Source` value
 3. If source is `LOCKED` or `USER`, plugin update is rejected
 4. If source is `NEWDEV` or plugin name, plugin update is accepted
 
-## Best Practices
-
-### When to Lock Fields
-- Device names that you've customized
-- Static IP addresses or important identifiers
-- Device vendor information you've corrected
-- Fields prone to incorrect plugin updates
-
-### When to Keep Unlocked
-- Fields that plugins actively maintain (MAC, IP address)
-- Fields you want auto-updated by discovery plugins
-- Fields that may change frequently in your network
-
-### Bulk Operations
-The field lock/unlock feature is currently per-device. For bulk locking:
-1. Use Multi-Edit to update device fields
-2. Then use individual lock operations via API script
-3. Or contact support for bulk lock endpoint
-
-## Troubleshooting
-
-### Lock Button Not Visible
-- Device must be saved/created first (not "new" device)
-- Field must be one of the 10 tracked fields
-- Check browser console for JavaScript errors
-
-### Lock Operation Failed
-- Verify API token is valid
-- Check device MAC address is correct
-- Ensure device exists in database
-
-### Field Still Updating After Lock
-- Verify lock was successful (check API response)
-- Reload device details page
-- Check plugin logs to see if plugin is providing the field
-- Look for authorization errors in NetAlertX logs
-
 ## See Also
-- [API Device Endpoints Documentation](API_DEVICE.md)
-- [Authoritative Field Updates System](../docs/PLUGINS_DEV.md#authoritative-fields)
-- [Plugin Configuration Reference](../docs/PLUGINS_DEV_CONFIG.md)
+- [API Device Endpoints Documentation](./API_DEVICE.md)
+- [Authoritative Field Updates System](./PLUGINS_DEV.md#authoritative-fields)
+- [Plugin Configuration Reference](./PLUGINS_DEV_CONFIG.md)

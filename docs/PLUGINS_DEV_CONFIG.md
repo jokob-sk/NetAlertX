@@ -187,20 +187,20 @@ For tracked fields (devMac, devName, devLastIP, devVendor, devFQDN, devSSID, dev
 
 Controls whether a plugin field is enabled:
 
-- `"1"` - Plugin can always overwrite this field when authorized (subject to source-based permissions)
-- `"0"` - Plugin doesn't use this field
+- `["devName", "devLastIP"]` - Plugin can always overwrite this field when authorized (subject to source-based permissions)
 
-**Authorization logic:** Even with `SET_ALWAYS: "1"`, the plugin respects source-based permissions:
+**Authorization logic:** Even with a field listed in `SET_ALWAYS`, the plugin respects source-based permissions:
+
 - Cannot overwrite `USER` source (user manually edited)
 - Cannot overwrite `LOCKED` source (user locked field)
 - Can overwrite `NEWDEV` or plugin-owned sources (if plugin has SET_ALWAYS enabled)
+- Will update plugin-owned sources if value the same
 
 **Example in config.json:**
+
 ```json
 {
-  "setKey": "NEWDEV_devName",
-  "displayName": "Device Name",
-  "SET_ALWAYS": "1"
+  "SET_ALWAYS": ["devName", "devLastIP"]
 }
 ```
 
@@ -210,49 +210,17 @@ Controls whether a plugin field is enabled:
 
 Restricts when a plugin can update a field:
 
-- `"1"` - Overwrite only if current value is empty OR source is NEWDEV (conservative mode)
-- `"0"` - No extra restriction; respect authorization logic (default)
+- `"SET_EMPTY": ["devName", "devLastIP"]` - Overwrite these fields only if current value is empty OR source is `NEWDEV`
 
-**Use case:** Some plugins discover optional enrichment data (like vendor/hostname) that shouldn't override user-set or existing values. Use `SET_EMPTY: "1"` to be less aggressive.
+**Use case:** Some plugins discover optional enrichment data (like vendor/hostname) that shouldn't override user-set or existing values. Use `SET_EMPTY` to be less aggressive.
 
-**Example in config.json:**
-```json
-{
-  "setKey": "NEWDEV_devVendor",
-  "displayName": "Device Vendor",
-  "SET_ALWAYS": "1",
-  "SET_EMPTY": "1"
-}
-```
 
 ### Authorization Decision Flow
 
 1. **Source check:** Is field LOCKED or USER? → REJECT (protected)
-2. **SET_ALWAYS check:** Is SET_ALWAYS enabled for this plugin+field? → YES: ALLOW (can overwrite empty values, NEWDEV, plugin sources, etc.) | NO: Continue to step 3
-3. **SET_EMPTY check:** Is SET_EMPTY enabled AND field non-empty+non-NEWDEV? → REJECT
+2. **Field in SET_ALWAYS check:** Is SET_ALWAYS enabled for this plugin+field? → YES: ALLOW (can overwrite empty values, NEWDEV, plugin sources, etc.) | NO: Continue to step 3
+3. **Field in SET_EMPTY check:** Is SET_EMPTY enabled AND field non-empty+non-NEWDEV? → REJECT
 4. **Default behavior:** Allow overwrite if field empty or NEWDEV source
-
-### Plugin Field Mappings Reference
-
-This table shows all device discovery and enrichment plugins and their tracked field configuration:
-
-| Plugin | Tracked Fields | Behavior |
-|--------|---|---|
-| ARPSCAN | devMac, devLastIP | SET_ALWAYS for both |
-| IPNEIGH | devMac, devLastIP | SET_ALWAYS for both |
-| DHCPLSS | devMac, devLastIP | SET_ALWAYS for both |
-| ASUSWRT | devMac, devLastIP | SET_ALWAYS for both |
-| LUCIRPC | devMac, devLastIP | SET_ALWAYS for both |
-| PIHOLE | devMac, devLastIP, devName, devVendor | SET_ALWAYS for MAC/IP |
-| PIHOLEAPI | devMac, devLastIP, devName, devVendor | SET_ALWAYS for MAC/IP, SET_EMPTY for name/vendor |
-| NBTSCAN | devName | SET_ALWAYS |
-| DIGSCAN | devName, devFQDN | SET_ALWAYS |
-| NSLOOKUP | devName, devFQDN | SET_ALWAYS |
-| AVAHISCAN | devName | SET_ALWAYS |
-| VNDRPDT | devMac, devVendor | SET_ALWAYS for both |
-| SNMPDSC | devMac, devLastIP | SET_ALWAYS for both |
-| UNIFIMP | devMac, devLastIP, devName, devVendor, devSSID, devParentMAC, devParentPort | SET_ALWAYS for MAC/IP |
-| UNIFIAPI | devMac, devLastIP, devName, devParentMAC | SET_ALWAYS for MAC/IP |
 
 **Note:** Check each plugin's `config.json` manifest for its specific SET_ALWAYS/SET_EMPTY configuration.
 
