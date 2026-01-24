@@ -418,7 +418,7 @@ class DeviceInstance:
                 "devGUID": "",
                 "devSite": "",
                 "devSSID": "",
-                "devSyncHubNode": "",
+                "devSyncHubNode": str(get_setting_value("SYNC_node_name")),
                 "devSourcePlugin": "",
                 "devCustomProps": "",
                 "devStatus": "Unknown",
@@ -428,6 +428,7 @@ class DeviceInstance:
                 "devDownAlerts": 0,
                 "devPresenceHours": 0,
                 "devFQDN": "",
+                "devForceStatus" : "dont_force"
             }
             return device_data
 
@@ -534,6 +535,7 @@ class DeviceInstance:
             "devIsNew",
             "devIsArchived",
             "devCustomProps",
+            "devForceStatus"
         }
 
         # Only mark USER for tracked fields that this method actually updates.
@@ -583,8 +585,8 @@ class DeviceInstance:
                     devParentRelType, devReqNicsOnline, devSkipRepeated,
                     devIsNew, devIsArchived, devLastConnection,
                     devFirstConnection, devLastIP, devGUID, devCustomProps,
-                    devSourcePlugin
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    devSourcePlugin, devForceStatus
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """
 
                 values = (
@@ -617,6 +619,7 @@ class DeviceInstance:
                     data.get("devGUID") or "",
                     data.get("devCustomProps") or "",
                     data.get("devSourcePlugin") or "DUMMY",
+                    data.get("devForceStatus") or "dont_force",
                 )
 
             else:
@@ -627,7 +630,7 @@ class DeviceInstance:
                     devParentMAC=?, devParentPort=?, devSSID=?, devSite=?,
                     devStaticIP=?, devScan=?, devAlertEvents=?, devAlertDown=?,
                     devParentRelType=?, devReqNicsOnline=?, devSkipRepeated=?,
-                    devIsNew=?, devIsArchived=?, devCustomProps=?
+                    devIsNew=?, devIsArchived=?, devCustomProps=?, devForceStatus=?
                 WHERE devMac=?
                 """
                 values = (
@@ -654,6 +657,7 @@ class DeviceInstance:
                     data.get("devIsNew") or 0,
                     data.get("devIsArchived") or 0,
                     data.get("devCustomProps") or "",
+                    data.get("devForceStatus") or "dont_force",
                     normalized_mac,
                 )
 

@@ -4,6 +4,13 @@ from scan.device_handling import (
     save_scanned_devices,
     exclude_ignored_devices,
     update_devices_data_from_scan,
+    update_vendors_from_mac,
+    update_icons_and_types,
+    update_devPresentLastScan_based_on_force_status,
+    update_devPresentLastScan_based_on_nics,
+    update_ipv4_ipv6,
+    update_devLastConnection_from_CurrentScan,
+    update_presence_from_CurrentScan
 )
 from helper import get_setting_value
 from db.db_helper import print_table_schema
@@ -49,6 +56,34 @@ def process_scan(db):
     mylog("verbose", "[Process Scan] Updating Devices Info")
     update_devices_data_from_scan(db)
 
+    # Last Connection Time stamp from CurrentSan
+    mylog("verbose", "[Process Scan] Updating devLastConnection from CurrentSan")
+    update_devLastConnection_from_CurrentScan(db)
+
+    # Presence from CurrentSan
+    mylog("verbose", "[Process Scan] Updating Devices Info")
+    update_presence_from_CurrentScan(db)
+
+    # Update devPresentLastScan based on NICs presence
+    mylog("verbose", "[Process Scan] Updating NICs presence")
+    update_devPresentLastScan_based_on_nics(db)
+
+    # Force device status
+    mylog("verbose", "[Process Scan] Updating forced presence")
+    update_devPresentLastScan_based_on_force_status(db)
+
+    # Update Vendors
+    mylog("verbose", "[Process Scan] Updating Vendors")
+    update_vendors_from_mac(db)
+
+    # Update IPs
+    mylog("verbose", "[Process Scan] Updating v4 and v6 IPs")
+    update_ipv4_ipv6(db)
+
+    # Update Icons and Type based on heuristics
+    mylog("verbose", "[Process Scan] Guessing Icons")
+    update_icons_and_types(db)
+
     # Pair session events (Connection / Disconnection)
     mylog("verbose", "[Process Scan] Pairing session events (connection / disconnection) ")
     pair_sessions_events(db)
@@ -67,7 +102,7 @@ def process_scan(db):
 
     # Clear current scan as processed
     # 🐛 CurrentScan DEBUG: comment out below when debugging to keep the CurrentScan table after restarts/scan finishes
-    db.sql.execute("DELETE FROM CurrentScan")
+    # db.sql.execute("DELETE FROM CurrentScan")
 
     # Commit changes
     db.commitDB()

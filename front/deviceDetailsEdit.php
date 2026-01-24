@@ -271,11 +271,16 @@ function getDeviceData() {
                       </span>`;
                   }
 
+                  // timestamps
+                  if (setting.setKey == "NEWDEV_devFirstConnection" || setting.setKey == "NEWDEV_devLastConnection") {
+                    fieldData = localizeTimestamp(fieldData)
+                  }
+
                   // Add lock/unlock button for tracked fields (not for new devices)
                   const fieldName = setting.setKey.replace('NEWDEV_', '');
                   if (trackedFields[fieldName] && mac != "new") {
                     const sourceField = fieldName + "Source";
-                    const currentSource = deviceData[sourceField] || "UNKNOWN";
+                    const currentSource = deviceData[sourceField] || "N/A";
                     const isLocked = currentSource === "LOCKED";
                     const lockIcon = isLocked ? "fa-lock" : "fa-lock-open";
                     const lockTitle = isLocked ? getString("FieldLock_Unlock_Tooltip") : getString("FieldLock_Lock_Tooltip");
@@ -292,7 +297,7 @@ function getDeviceData() {
                   const fieldName2 = setting.setKey.replace('NEWDEV_', '');
                   if (trackedFields[fieldName2] && mac != "new") {
                     const sourceField = fieldName2 + "Source";
-                    const currentSource = deviceData[sourceField] || "UNKNOWN";
+                    const currentSource = deviceData[sourceField] || "N/A";
                     const sourceTitle = getString("FieldLock_Source_Label") + currentSource;
                     const sourceColor = currentSource === "USER" ? "text-warning" : (currentSource === "LOCKED" ? "text-danger" : "text-muted");
                     inlineControl += `<span class="input-group-addon pointer ${sourceColor}" title="${sourceTitle}">
@@ -406,7 +411,7 @@ function setDeviceData(direction = '', refreshCallback = '') {
 
   mac = $('#NEWDEV_devMac').val();
 
-  // Build payload for new endpoint
+  // Build payload
   const payload = {
     devName: $('#NEWDEV_devName').val().replace(/'/g, "’"),
     devOwner: $('#NEWDEV_devOwner').val().replace(/'/g, "’"),
@@ -432,6 +437,7 @@ function setDeviceData(direction = '', refreshCallback = '') {
     devAlertEvents: ($('#NEWDEV_devAlertEvents')[0].checked * 1),
     devAlertDown: ($('#NEWDEV_devAlertDown')[0].checked * 1),
     devSkipRepeated: $('#NEWDEV_devSkipRepeated').val().split(' ')[0],
+    devForceStatus: $('#NEWDEV_devForceStatus').val().replace(/'/g, ""),
 
     devReqNicsOnline: ($('#NEWDEV_devReqNicsOnline')[0].checked * 1),
     devIsNew: ($('#NEWDEV_devIsNew')[0].checked * 1),
@@ -561,7 +567,7 @@ function toggleFieldLock(mac, fieldName) {
 
   // Get current source value
   const sourceField = fieldName + "Source";
-  const currentSource = deviceData[sourceField] || "UNKNOWN";
+  const currentSource = deviceData[sourceField] || "N/A";
   const shouldLock = currentSource !== "LOCKED";
 
   const payload = {
@@ -600,7 +606,7 @@ function toggleFieldLock(mac, fieldName) {
         // Update source indicator
         const sourceIndicator = lockBtn.next();
         if (sourceIndicator.hasClass("input-group-addon")) {
-          const sourceValue = shouldLock ? "LOCKED" : "UNKNOWN";
+          const sourceValue = shouldLock ? "LOCKED" : "N/A";
           const sourceClass = shouldLock ? "input-group-addon text-danger" : "input-group-addon pointer text-muted";
           sourceIndicator.text(sourceValue);
           sourceIndicator.attr("class", sourceClass);

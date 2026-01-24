@@ -171,6 +171,27 @@ def ensure_views(sql) -> bool:
                                       EVE1.eve_PairEventRowID IS NULL;
                           """)
 
+    sql.execute(""" DROP VIEW IF EXISTS LatestDeviceScan;""")
+    sql.execute(""" CREATE VIEW LatestDeviceScan AS
+                        WITH RankedScans AS (
+                            SELECT
+                                c.*,
+                                ROW_NUMBER() OVER (
+                                    PARTITION BY c.cur_MAC, c.cur_ScanMethod
+                                    ORDER BY c.cur_DateTime DESC
+                                ) AS rn
+                            FROM CurrentScan c
+                        )
+                        SELECT
+                            d.*,           -- all Device fields
+                            r.*            -- all CurrentScan fields (cur_*)
+                        FROM Devices d
+                        LEFT JOIN RankedScans r
+                            ON d.devMac = r.cur_MAC
+                        WHERE r.rn = 1;
+
+                          """)
+
     return True
 
 

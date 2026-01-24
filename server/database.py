@@ -163,16 +163,16 @@ class DB:
                 raise RuntimeError("ensure_column(devMacSource) failed")
             if not ensure_column(self.sql, "Devices", "devNameSource", "TEXT"):
                 raise RuntimeError("ensure_column(devNameSource) failed")
-            if not ensure_column(self.sql, "Devices", "devFqdnSource", "TEXT"):
-                raise RuntimeError("ensure_column(devFqdnSource) failed")
-            if not ensure_column(self.sql, "Devices", "devLastIpSource", "TEXT"):
-                raise RuntimeError("ensure_column(devLastIpSource) failed")
+            if not ensure_column(self.sql, "Devices", "devFQDNSource", "TEXT"):
+                raise RuntimeError("ensure_column(devFQDNSource) failed")
+            if not ensure_column(self.sql, "Devices", "devLastIPSource", "TEXT"):
+                raise RuntimeError("ensure_column(devLastIPSource) failed")
             if not ensure_column(self.sql, "Devices", "devVendorSource", "TEXT"):
                 raise RuntimeError("ensure_column(devVendorSource) failed")
-            if not ensure_column(self.sql, "Devices", "devSsidSource", "TEXT"):
-                raise RuntimeError("ensure_column(devSsidSource) failed")
-            if not ensure_column(self.sql, "Devices", "devParentMacSource", "TEXT"):
-                raise RuntimeError("ensure_column(devParentMacSource) failed")
+            if not ensure_column(self.sql, "Devices", "devSSIDSource", "TEXT"):
+                raise RuntimeError("ensure_column(devSSIDSource) failed")
+            if not ensure_column(self.sql, "Devices", "devParentMACSource", "TEXT"):
+                raise RuntimeError("ensure_column(devParentMACSource) failed")
             if not ensure_column(self.sql, "Devices", "devParentPortSource", "TEXT"):
                 raise RuntimeError("ensure_column(devParentPortSource) failed")
             if not ensure_column(self.sql, "Devices", "devParentRelTypeSource", "TEXT"):

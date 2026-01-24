@@ -73,49 +73,54 @@ def get_plugin_authoritative_settings(plugin_prefix):
         return {"set_always": [], "set_empty": []}
 
 
-def can_overwrite_field(field_name, current_source, plugin_prefix, plugin_settings, field_value):
+def can_overwrite_field(field_name, current_value, current_source, plugin_prefix, plugin_settings, field_value):
     """
     Determine if a plugin can overwrite a field.
 
     Rules:
-    - If current_source is USER or LOCKED, cannot overwrite.
-    - If field_value is empty/None, cannot overwrite.
-    - If field is in SET_ALWAYS, can overwrite.
-    - If field is in SET_EMPTY AND current value is empty, can overwrite.
-    - If neither SET_ALWAYS nor SET_EMPTY apply, can overwrite empty fields only.
+    - USER/LOCKED cannot overwrite.
+    - SET_ALWAYS can overwrite everything if new value not empty.
+    - SET_EMPTY can overwrite if current value empty.
+    - Otherwise, overwrite only empty fields.
 
     Args:
         field_name: The field being updated (e.g., "devName").
-        current_source: The current source value (e.g., "USER", "LOCKED", "ARPSCAN", "NEWDEV", "").
-        plugin_prefix: The unique prefix of the overwriting plugin.
-        plugin_settings: dict with "set_always" and "set_empty" lists.
-        field_value: The new value the plugin wants to write.
+        current_value: Current value in Devices.
+        current_source: Current source in Devices (USER, LOCKED, etc.).
+        plugin_prefix: Plugin prefix.
+        plugin_settings: Dict with set_always and set_empty lists.
+        field_value: The new value from scan.
 
     Returns:
-        bool: True if the overwrite is allowed, False otherwise.
+        bool: True if overwrite allowed.
     """
 
-    # Rule 1: USER and LOCKED are protected
+    # Rule 1: USER/LOCKED protected
     if current_source in ("USER", "LOCKED"):
         return False
 
-    # Rule 2: Plugin must provide a non-empty value
+    # Rule 2: Must provide a non-empty value or same as current
+    empty_values = ("0.0.0.0", "", "null", "(unknown)", "(name not found)", None)
     if not field_value or (isinstance(field_value, str) and not field_value.strip()):
+        if current_value == field_value:
+            return True  # Allow overwrite if value same
         return False
 
-    # Rule 3: SET_ALWAYS takes precedence
+    # Rule 3: SET_ALWAYS
     set_always = plugin_settings.get("set_always", [])
     if field_name in set_always:
         return True
 
-    # Rule 4: SET_EMPTY allows overwriting only if field is empty
+    # Rule 4: SET_EMPTY
     set_empty = plugin_settings.get("set_empty", [])
+    empty_values = ("0.0.0.0", "", "null", "(unknown)", "(name not found)", None)
     if field_name in set_empty:
-        # Check if field is "empty" (no current source or NEWDEV)
-        return not current_source or current_source == "NEWDEV"
+        if current_value in empty_values:
+            return True
+        return False
 
-    # Rule 5: Default behavior - overwrite if field is empty/NEWDEV
-    return not current_source or current_source == "NEWDEV"
+    # Rule 5: Default - overwrite if current value empty
+    return current_value in empty_values
 
 
 def get_overwrite_sql_clause(field_name, source_column, plugin_settings):
@@ -135,6 +140,8 @@ def get_overwrite_sql_clause(field_name, source_column, plugin_settings):
     """
     set_always = plugin_settings.get("set_always", [])
     set_empty = plugin_settings.get("set_empty", [])
+
+    mylog("debug", [f"[get_overwrite_sql_clause] DEBUG: field_name:{field_name}, source_column:{source_column}, set_always:{set_always}, set_empty:{set_empty}"])
 
     if field_name in set_always:
         return f"COALESCE({source_column}, '') NOT IN ('USER', 'LOCKED')"
