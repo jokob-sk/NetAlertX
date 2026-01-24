@@ -1216,12 +1216,14 @@ height: 50px;
     width: 20%;
 }
 
-input[readonly] {
-    /* Apply styles to the readonly input */
-    background-color: #646566 !important;
-    color: #e6e6e6;
+input[readonly],
+textarea[readonly],
+.form-control[readonly] {
+    background-color: #f4f6f8;
+    border-color: #d2d6de;
+    color: #6b7280;
     cursor: not-allowed;
-  }
+}
 
   .interactable-option:hover::before {
     opacity: 1;
@@ -1491,12 +1493,12 @@ input[readonly] {
 }
 .select2-container--default .select2-selection--multiple
 {
-    background-color:#606060 !important;
+    background-color:#ffffff !important;
 }
 
 .select2-container .select2-dropdown
 {
-    background-color:#606060 !important;
+    background-color:#ffffff !important;
 }
 
 .select2-container--default .select2-selection--multiple,

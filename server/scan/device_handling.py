@@ -705,9 +705,17 @@ def create_new_devices(db):
         raw_name = str(cur_Name).strip() if cur_Name else ""
         raw_vendor = str(cur_Vendor).strip() if cur_Vendor else ""
         raw_ip = str(cur_IP).strip() if cur_IP else ""
+        if raw_ip.lower() in ("null", "(unknown)"):
+            raw_ip = ""
         raw_ssid = str(cur_SSID).strip() if cur_SSID else ""
-        raw_parent_mac = cur_NetworkNodeMAC.strip() if cur_NetworkNodeMAC else ""
+        if raw_ssid.lower() in ("null", "(unknown)"):
+            raw_ssid = ""
+        raw_parent_mac = str(cur_NetworkNodeMAC).strip() if cur_NetworkNodeMAC else ""
+        if raw_parent_mac.lower() in ("null", "(unknown)"):
+            raw_parent_mac = ""
         raw_parent_port = str(cur_PORT).strip() if cur_PORT else ""
+        if raw_parent_port.lower() in ("null", "(unknown)"):
+            raw_parent_port = ""
 
         # Handle NoneType
         cur_Name = raw_name if raw_name else "(unknown)"
@@ -732,6 +740,8 @@ def create_new_devices(db):
 
         # Derive primary IP family values
         cur_IP = raw_ip
+        cur_SSID = raw_ssid
+        cur_PORT = raw_parent_port
         cur_IP_normalized = check_IP_format(cur_IP) if ":" not in cur_IP else cur_IP
 
         # Validate IPv6 addresses using format_ip_long for consistency (do not store integer result)

@@ -278,7 +278,7 @@ function getDeviceData() {
 
                   // Add lock/unlock button for tracked fields (not for new devices)
                   const fieldName = setting.setKey.replace('NEWDEV_', '');
-                  if (trackedFields[fieldName] && mac != "new") {
+                  if (trackedFields[fieldName] && fieldName !== "devFQDN"  &&  mac != "new") {
                     const sourceField = fieldName + "Source";
                     const currentSource = deviceData[sourceField] || "N/A";
                     const isLocked = currentSource === "LOCKED";
@@ -291,6 +291,11 @@ function getDeviceData() {
                         data-locked="${isLocked ? 1 : 0}">
                         <i class="fa-solid ${lockIcon}"></i>
                       </span>`;
+                    if (isLocked) {
+                      if (!disabledFields.includes(setting.setKey)) {
+                        disabledFields.push(setting.setKey);
+                      }
+                    }
                   }
 
                   // Add source indicator for tracked fields
@@ -603,14 +608,22 @@ function toggleFieldLock(mac, fieldName) {
         // Update local source state
         deviceData[sourceField] = shouldLock ? "LOCKED" : "";
 
+        const fieldKey = `NEWDEV_${fieldName}`;
+        const fieldInput = $(`#${fieldKey}`);
+        fieldInput.prop("readonly", shouldLock);
+
         // Update source indicator
         const sourceIndicator = lockBtn.next();
         if (sourceIndicator.hasClass("input-group-addon")) {
-          const sourceValue = shouldLock ? "LOCKED" : "N/A";
-          const sourceClass = shouldLock ? "input-group-addon text-danger" : "input-group-addon pointer text-muted";
-          sourceIndicator.text(sourceValue);
-          sourceIndicator.attr("class", sourceClass);
-          sourceIndicator.attr("title", getString("FieldLock_Source_Label") + sourceValue);
+          if (shouldLock) {
+            const sourceValue = "LOCKED";
+            const sourceClass = "input-group-addon pointer text-danger";
+            sourceIndicator.text(sourceValue);
+            sourceIndicator.attr("class", sourceClass);
+            sourceIndicator.attr("title", getString("FieldLock_Source_Label") + sourceValue);
+          } else {
+            sourceIndicator.remove();
+          }
         }
 
         showMessage(shouldLock ? getString("FieldLock_Locked") : getString("FieldLock_Unlocked"), 3000, "modal_green");
