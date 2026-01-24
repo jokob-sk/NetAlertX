@@ -16,8 +16,12 @@ function askDeleteDevice() {
 
 // -----------------------------------------------------------------------------
 function askDelDevDTInline(mac) {
-  // Check MAC
-  mac = getMac()
+
+  // only try getting mac from URL if not supplied - used in inline buttons on in the my devices listing pages
+  if(isEmpty(mac))
+  {
+    mac = getMac()
+  }
 
   showModalWarning(
     getString("DevDetail_button_Delete"),
@@ -54,12 +58,16 @@ function deleteDevice() {
 
 // -----------------------------------------------------------------------------
 function deleteDeviceByMac(mac) {
-  // Check MAC
-  mac = getMac()
+  // only try getting mac from URL if not supplied - used in inline buttons on in teh my devices listing pages
+  if(isEmpty(mac))
+  {
+    mac = getMac()
+  }
 
   const apiBase = getApiBase();
   const apiToken = getSetting("API_TOKEN");
   const url = `${apiBase}/device/${mac}/delete`;
+
 
   $.ajax({
     url,

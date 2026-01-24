@@ -193,14 +193,18 @@ sql_online_history = "SELECT  * FROM Online_History"
 sql_plugins_events = "SELECT  * FROM Plugins_Events"
 sql_plugins_history = "SELECT  * FROM Plugins_History ORDER BY DateTimeChanged DESC"
 sql_new_devices = """SELECT * FROM (
-                        SELECT eve_IP as devLastIP, eve_MAC as devMac
+                        SELECT eve_IP as devLastIP,
+                               eve_MAC as devMac,
+                               MAX(eve_DateTime) as lastEvent
                         FROM Events_Devices
                         WHERE eve_PendingAlertEmail = 1
                         AND eve_EventType = 'New Device'
-                        ORDER BY eve_DateTime ) t1
-                        LEFT JOIN
-                        ( SELECT devName, devMac as devMac_t2 FROM Devices) t2
-                        ON t1.devMac = t2.devMac_t2"""
+                        GROUP BY eve_MAC
+                        ORDER BY lastEvent
+                     ) t1
+                     LEFT JOIN
+                     ( SELECT devName, devMac as devMac_t2 FROM Devices ) t2
+                     ON t1.devMac = t2.devMac_t2"""
 
 
 sql_generateGuid = """

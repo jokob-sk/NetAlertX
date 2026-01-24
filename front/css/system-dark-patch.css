@@ -22,7 +22,7 @@
     --color-gray: #8c8c8c;
     --color-white: #fff;
   }
-    
+
   :root {
     --datatable-bgcolor: rgba(64, 76, 88, 0.8);
   }
@@ -427,7 +427,7 @@
     background: transparent;
     color: var(--color-white);
   }
-  
+
   /* Used in debug log page */
   .log-red {
     color: #ff4038;
@@ -519,9 +519,9 @@
   input[readonly],
   textarea[readonly],
   .form-control[readonly] {
-    background-color: #2f353b !important;
+    background-color: #545659 !important;
     border-color: #3d444b;
-    color: #c7cdd3;
+    color: #979a9d;
     cursor: not-allowed;
     opacity: 1;
   }
@@ -693,7 +693,7 @@
   .db_tools_table_cell_b:nth-child(1) {background: #272c30}
   .db_tools_table_cell_b:nth-child(2) {background: #272c30}
 
-  .db_info_table { 
+  .db_info_table {
      display: table;
      border-spacing: 0em;
      font-weight: 400;
@@ -757,7 +757,7 @@
   .small-box:hover .icon {
     font-size: 3em;
   }
-  .small-box .icon { 
+  .small-box .icon {
     top: 0.01em;
     font-size: 3.25em;
   }
@@ -808,7 +808,7 @@
 
 .thresholdFormControl
 {
-  color:#000;   
+  color:#000;
 }
 
 .btn:hover

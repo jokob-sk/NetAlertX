@@ -518,7 +518,7 @@ textarea[readonly],
 .form-control[readonly] {
   background-color: #545659 !important;
   border-color: #3d444b;
-  color: #888a8c;
+  color: #979a9d;
   cursor: not-allowed;
   opacity: 1;
 }

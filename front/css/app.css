@@ -101,8 +101,8 @@ a[target="_blank"] {
 ----------------------------------------------------------------------------- */
 .logs
 {
-  color:white;
-  background-color: black;
+  color:white !important;
+  background-color: black !important;
   font-family: 'Courier New', monospace;
   font-size: .85em;
 
