@@ -278,7 +278,7 @@ function getDeviceData() {
 
                   // Add lock/unlock icon button for tracked fields (not for new devices)
                   const fieldName = setting.setKey.replace('NEWDEV_', '');
-                  if (trackedFields[fieldName] && fieldName !== "devFQDN"  && fieldName !== "devMac"   &&  mac != "new") {
+                  if (trackedFields[fieldName] &&  !["devFQDN", "devMac", "devLastIP"].includes(fieldName) &&  mac != "new") {
                     const sourceField = fieldName + "Source";
 
                     const currentSource = deviceData[sourceField] || "N/A";

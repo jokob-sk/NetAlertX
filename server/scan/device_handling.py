@@ -608,7 +608,7 @@ def create_new_devices(db):
         eve_EventType, eve_AdditionalInfo,
         eve_PendingAlertEmail
     )
-    SELECT cur_MAC, cur_IP, '{startTime}', 'New Device', cur_Vendor, 1
+    SELECT DISTINCT cur_MAC, cur_IP, '{startTime}', 'New Device', cur_Vendor, 1
     FROM CurrentScan
     WHERE NOT EXISTS (
         SELECT 1 FROM Devices

@@ -812,3 +812,12 @@ table.dataTable tbody  tr.selected, table.dataTable tbody  tr  .selected
 {
   color: var(--color-gray);
 }
+
+.logs, .log-area textarea
+{
+  color:white !important;
+  background-color: black !important;
+  font-family: 'Courier New', monospace;
+  font-size: .85em;
+  cursor: pointer;
+}

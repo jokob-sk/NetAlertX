@@ -99,13 +99,13 @@ a[target="_blank"] {
 /* -----------------------------------------------------------------------------
    Text Classes
 ----------------------------------------------------------------------------- */
-.logs
+.logs, .log-area textarea
 {
   color:white !important;
   background-color: black !important;
   font-family: 'Courier New', monospace;
   font-size: .85em;
-
+  cursor: pointer;
 }
 .logs-row textarea
 {
