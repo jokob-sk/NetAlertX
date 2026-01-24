@@ -177,6 +177,55 @@ After persistence:
 
 ---
 
+## Field Update Authorization (SET_ALWAYS / SET_EMPTY)
+
+For tracked fields (devMac, devName, devLastIP, devVendor, devFQDN, devSSID, devParentMAC, devParentPort, devParentRelType, devVlan), plugins can configure how they interact with the authoritative field update system.
+
+### SET_ALWAYS
+
+**Mandatory when field is tracked.**
+
+Controls whether a plugin field is enabled:
+
+- `["devName", "devLastIP"]` - Plugin can always overwrite this field when authorized (subject to source-based permissions)
+
+**Authorization logic:** Even with a field listed in `SET_ALWAYS`, the plugin respects source-based permissions:
+
+- Cannot overwrite `USER` source (user manually edited)
+- Cannot overwrite `LOCKED` source (user locked field)
+- Can overwrite `NEWDEV` or plugin-owned sources (if plugin has SET_ALWAYS enabled)
+- Will update plugin-owned sources if value the same
+
+**Example in config.json:**
+
+```json
+{
+  "SET_ALWAYS": ["devName", "devLastIP"]
+}
+```
+
+### SET_EMPTY
+
+**Optional field override.**
+
+Restricts when a plugin can update a field:
+
+- `"SET_EMPTY": ["devName", "devLastIP"]` - Overwrite these fields only if current value is empty OR source is `NEWDEV`
+
+**Use case:** Some plugins discover optional enrichment data (like vendor/hostname) that shouldn't override user-set or existing values. Use `SET_EMPTY` to be less aggressive.
+
+
+### Authorization Decision Flow
+
+1. **Source check:** Is field LOCKED or USER? → REJECT (protected)
+2. **Field in SET_ALWAYS check:** Is SET_ALWAYS enabled for this plugin+field? → YES: ALLOW (can overwrite empty values, NEWDEV, plugin sources, etc.) | NO: Continue to step 3
+3. **Field in SET_EMPTY check:** Is SET_EMPTY enabled AND field non-empty+non-NEWDEV? → REJECT
+4. **Default behavior:** Allow overwrite if field empty or NEWDEV source
+
+**Note:** Check each plugin's `config.json` manifest for its specific SET_ALWAYS/SET_EMPTY configuration.
+
+---
+
 ## Summary
 
 The lifecycle of a plugin configuration is:

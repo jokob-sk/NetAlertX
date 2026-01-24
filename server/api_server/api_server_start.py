@@ -44,7 +44,7 @@ from models.user_events_queue_instance import UserEventsQueueInstance  # noqa: E
 
 from models.event_instance import EventInstance  # noqa: E402 [flake8 lint suppression]
 # Import tool logic from the MCP/tools module to reuse behavior (no blueprints)
-from plugin_helper import is_mac  # noqa: E402 [flake8 lint suppression]
+from plugin_helper import is_mac, normalize_mac  # noqa: E402 [flake8 lint suppression]
 # is_mac is provided in mcp_endpoint and used by those handlers
 # mcp_endpoint contains helper functions; routes moved into this module to keep a single place for routes
 from messaging.in_app import (  # noqa: E402 [flake8 lint suppression]
@@ -72,6 +72,7 @@ from .openapi.schemas import (  # noqa: E402 [flake8 lint suppression]
     BaseResponse, DeviceTotalsResponse,
     DeleteDevicesRequest, DeviceImportRequest,
     DeviceImportResponse, UpdateDeviceColumnRequest,
+    LockDeviceFieldRequest,
     CopyDeviceRequest, TriggerScanRequest,
     OpenPortsRequest,
     OpenPortsResponse, WakeOnLanRequest,
@@ -442,6 +443,57 @@ def api_device_update_column(mac, payload=None):
         return jsonify(result), 404
 
     return jsonify(result)
+
+
+@app.route("/device/<mac>/field/lock", methods=["POST"])
+@validate_request(
+    operation_id="lock_device_field",
+    summary="Lock/Unlock Device Field",
+    description="Lock a field to prevent plugin overwrites or unlock it to allow overwrites.",
+    path_params=[{
+        "name": "mac",
+        "description": "Device MAC address",
+        "schema": {"type": "string"}
+    }],
+    request_model=LockDeviceFieldRequest,
+    response_model=BaseResponse,
+    tags=["devices"],
+    auth_callable=is_authorized
+)
+def api_device_field_lock(mac, payload=None):
+    """Lock or unlock a device field by setting its source to LOCKED or USER."""
+    data = request.get_json() or {}
+    field_name = data.get("fieldName")
+    should_lock = data.get("lock", False)
+
+    if not field_name:
+        return jsonify({"success": False, "error": "fieldName is required"}), 400
+
+    device_handler = DeviceInstance()
+    normalized_mac = normalize_mac(mac)
+
+    try:
+        if should_lock:
+            result = device_handler.lockDeviceField(normalized_mac, field_name)
+            action = "locked"
+        else:
+            result = device_handler.unlockDeviceField(normalized_mac, field_name)
+            action = "unlocked"
+
+        response = dict(result)
+        response["fieldName"] = field_name
+        response["locked"] = should_lock
+
+        if response.get("success"):
+            response.setdefault("message", f"Field {field_name} {action}")
+            return jsonify(response)
+
+        if "does not support" in response.get("error", ""):
+            response["error"] = f"Field '{field_name}' cannot be {action}"
+        return jsonify(response), 400
+    except Exception as e:
+        mylog("none", f"Error locking field {field_name} for {mac}: {str(e)}")
+        return jsonify({"success": False, "error": str(e)}), 500
 
 
 @app.route('/mcp/sse/device/<mac>/set-alias', methods=['POST'])

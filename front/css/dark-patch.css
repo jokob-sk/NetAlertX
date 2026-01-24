@@ -509,11 +509,20 @@ div.dataTables_wrapper div.dataTables_length select {
   border: 1px solid #3d444b;
 }
 .form-control[disabled],
-.form-control[readonly],
 fieldset[disabled] .form-control {
   background-color: #353c42;
   opacity: 1;
 }
+input[readonly],
+textarea[readonly],
+.form-control[readonly] {
+  background-color: #545659 !important;
+  border-color: #3d444b;
+  color: #979a9d;
+  cursor: not-allowed;
+  opacity: 1;
+}
+
 .navbar-custom-menu > .navbar-nav > li > .dropdown-menu {
   background-color: #4c5761;
   color: #bec5cb;
@@ -682,7 +691,7 @@ table.dataTable tbody  tr.selected, table.dataTable tbody  tr  .selected
 .db_tools_table_cell_b:nth-child(1) {background: #272c30}
 .db_tools_table_cell_b:nth-child(2) {background: #272c30}
 
-.db_info_table { 
+.db_info_table {
    display: table;
    border-spacing: 0em;
    font-weight: 400;
@@ -746,7 +755,7 @@ table.dataTable tbody  tr.selected, table.dataTable tbody  tr  .selected
 .small-box:hover .icon {
   font-size: 3em;
 }
-.small-box .icon { 
+.small-box .icon {
   top: 0.01em;
   font-size: 3.25em;
 }
@@ -774,6 +783,11 @@ table.dataTable tbody  tr.selected, table.dataTable tbody  tr  .selected
   border-color: #3d444b !important;
 }
 
+.select2-container--default .select2-selection--multiple {
+  background-color: #353c42 !important;
+  color: #bec5cb;
+}
+
 .select2-container--default .select2-selection--single .select2-selection__rendered  .custom-chip
 {
   color: #bec5cb;
@@ -791,10 +805,19 @@ table.dataTable tbody  tr.selected, table.dataTable tbody  tr  .selected
 
 .thresholdFormControl
 {
-  color:#000;   
+  color:#000;
 }
 
 .btn:hover
 {
   color: var(--color-gray);
+}
+
+.logs, .log-area textarea
+{
+  color:white !important;
+  background-color: black !important;
+  font-family: 'Courier New', monospace;
+  font-size: .85em;
+  cursor: pointer;
 }

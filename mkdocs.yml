@@ -73,6 +73,7 @@ nav:
         - Custom Properties: CUSTOM_PROPERTIES.md
         - Device Display Settings: DEVICE_DISPLAY_SETTINGS.md
         - Session Info: SESSION_INFO.md
+        - Field Lock/Unlock: QUICK_REFERENCE_FIELD_LOCK.md
       - Icons and Topology:
         - Icons: ICONS.md
         - Network Topology: NETWORK_TREE.md
@@ -109,6 +110,7 @@ nav:
         - Overview: API.md
         - Devices Collection: API_DEVICES.md
         - Device: API_DEVICE.md
+        - Device Field Lock: API_DEVICE_FIELD_LOCK.md
         - Sessions: API_SESSIONS.md
         - Settings: API_SETTINGS.md
         - Events: API_EVENTS.md

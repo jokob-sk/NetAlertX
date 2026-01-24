@@ -639,7 +639,10 @@ function ImportPastedCSV()
     data: JSON.stringify({ content: csvBase64 }),
     contentType: "application/json",
     success: function(response) {
-      showMessage(response.success ? (response.message || "Devices imported successfully") : (response.error || "Unknown error"));
+
+      console.log(response);
+
+      showMessage(response.success ? (response.message ||  response.inserted + " Devices imported successfully") : (response.error || "Unknown error"));
       write_notification(`[Maintenance] Devices imported from pasted content`, 'info');
     },
     error: function(xhr, status, error) {

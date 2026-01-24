@@ -16,3 +16,9 @@ def test_normalize_mac_preserves_wildcard():
     result = normalize_mac("aabbcc*")
     assert result == "AA:BB:CC:*", f"Expected 'AA:BB:CC:*' but got '{result}'"
     assert normalize_mac("aa:bb:cc:dd:ee:ff") == "AA:BB:CC:DD:EE:FF"
+
+
+def test_normalize_mac_preserves_internet_root():
+    assert normalize_mac("internet") == "Internet"
+    assert normalize_mac("Internet") == "Internet"
+    assert normalize_mac("INTERNET") == "Internet"

@@ -147,10 +147,38 @@ class DB:
             # Add Devices fields if missing
             if not ensure_column(self.sql, "Devices", "devFQDN", "TEXT"):
                 raise RuntimeError("ensure_column(devFQDN) failed")
+            if not ensure_column(self.sql, "Devices", "devPrimaryIPv4", "TEXT"):
+                raise RuntimeError("ensure_column(devPrimaryIPv4) failed")
+            if not ensure_column(self.sql, "Devices", "devPrimaryIPv6", "TEXT"):
+                raise RuntimeError("ensure_column(devPrimaryIPv6) failed")
+            if not ensure_column(self.sql, "Devices", "devVlan", "TEXT"):
+                raise RuntimeError("ensure_column(devVlan) failed")
+            if not ensure_column(self.sql, "Devices", "devForceStatus", "TEXT"):
+                raise RuntimeError("ensure_column(devForceStatus) failed")
             if not ensure_column(self.sql, "Devices", "devParentRelType", "TEXT"):
                 raise RuntimeError("ensure_column(devParentRelType) failed")
             if not ensure_column(self.sql, "Devices", "devReqNicsOnline", "INTEGER"):
                 raise RuntimeError("ensure_column(devReqNicsOnline) failed")
+            if not ensure_column(self.sql, "Devices", "devMacSource", "TEXT"):
+                raise RuntimeError("ensure_column(devMacSource) failed")
+            if not ensure_column(self.sql, "Devices", "devNameSource", "TEXT"):
+                raise RuntimeError("ensure_column(devNameSource) failed")
+            if not ensure_column(self.sql, "Devices", "devFQDNSource", "TEXT"):
+                raise RuntimeError("ensure_column(devFQDNSource) failed")
+            if not ensure_column(self.sql, "Devices", "devLastIPSource", "TEXT"):
+                raise RuntimeError("ensure_column(devLastIPSource) failed")
+            if not ensure_column(self.sql, "Devices", "devVendorSource", "TEXT"):
+                raise RuntimeError("ensure_column(devVendorSource) failed")
+            if not ensure_column(self.sql, "Devices", "devSSIDSource", "TEXT"):
+                raise RuntimeError("ensure_column(devSSIDSource) failed")
+            if not ensure_column(self.sql, "Devices", "devParentMACSource", "TEXT"):
+                raise RuntimeError("ensure_column(devParentMACSource) failed")
+            if not ensure_column(self.sql, "Devices", "devParentPortSource", "TEXT"):
+                raise RuntimeError("ensure_column(devParentPortSource) failed")
+            if not ensure_column(self.sql, "Devices", "devParentRelTypeSource", "TEXT"):
+                raise RuntimeError("ensure_column(devParentRelTypeSource) failed")
+            if not ensure_column(self.sql, "Devices", "devVlanSource", "TEXT"):
+                raise RuntimeError("ensure_column(devVlanSource) failed")
 
             # Settings table setup
             ensure_Settings(self.sql)

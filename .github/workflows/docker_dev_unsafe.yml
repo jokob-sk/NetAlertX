@@ -1,0 +1,112 @@
+name: docker-unsafe
+
+on:
+  push:
+    branches:
+      - next_release
+  pull_request:
+    branches:
+      - next_release
+
+jobs:
+  docker_dev_unsafe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    permissions:
+      contents: read
+      packages: write
+    if: >
+      !contains(github.event.head_commit.message, 'PUSHPROD') &&
+      (
+        github.repository == 'jokob-sk/NetAlertX' ||
+        github.repository == 'netalertx/NetAlertX'
+      )
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # --- Generate timestamped dev version
+      - name: Generate timestamp version
+        id: timestamp
+        run: |
+          ts=$(date -u +'%Y%m%d-%H%M%S')
+          echo "version=dev-${ts}" >> $GITHUB_OUTPUT
+          echo "Generated version: dev-${ts}"
+
+      - name: Set up dynamic build ARGs
+        id: getargs
+        run: echo "version=$(cat ./stable/VERSION)" >> $GITHUB_OUTPUT
+
+      - name: Get release version
+        id: get_version
+        run: echo "version=Dev" >> $GITHUB_OUTPUT
+
+      # --- debug output
+      - name: Debug version
+        run: |
+          echo "GITHUB_REF: $GITHUB_REF"
+          echo "Version: '${{ steps.get_version.outputs.version }}'"
+
+      # --- Write the timestamped version to .VERSION file
+      - name: Create .VERSION file
+        run: echo "${{ steps.timestamp.outputs.version }}" > .VERSION
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ghcr.io/netalertx/netalertx-dev-unsafe
+            jokobsk/netalertx-dev-unsafe
+          tags: |
+            type=raw,value=unsafe
+            type=raw,value=${{ steps.timestamp.outputs.version }}
+            type=ref,event=branch
+            type=ref,event=pr
+            type=sha
+
+      - name: Login GHCR (netalertx org)
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Login GHCR (jokob-sk legacy)
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: jokob-sk
+          password: ${{ secrets.GHCR_JOKOBSK_PAT }}
+
+      - name: Log in to DockerHub
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: |
+            org.opencontainers.image.title=NetAlertX Dev Unsafe
+            org.opencontainers.image.description=EXPERIMENTAL BUILD – NOT SUPPORTED – DATA LOSS POSSIBLE
+            org.opencontainers.image.version=${{ steps.timestamp.outputs.version }}
+            netalertx.stability=unsafe
+            netalertx.support=none
+            netalertx.data_risk=high
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

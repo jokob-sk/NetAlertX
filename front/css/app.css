@@ -99,13 +99,13 @@ a[target="_blank"] {
 /* -----------------------------------------------------------------------------
    Text Classes
 ----------------------------------------------------------------------------- */
-.logs
+.logs, .log-area textarea
 {
-  color:white;
-  background-color: black;
+  color:white !important;
+  background-color: black !important;
   font-family: 'Courier New', monospace;
   font-size: .85em;
-
+  cursor: pointer;
 }
 .logs-row textarea
 {
@@ -1216,12 +1216,14 @@ height: 50px;
     width: 20%;
 }
 
-input[readonly] {
-    /* Apply styles to the readonly input */
-    background-color: #646566 !important;
-    color: #e6e6e6;
+input[readonly],
+textarea[readonly],
+.form-control[readonly] {
+    background-color: #f4f6f8;
+    border-color: #d2d6de;
+    color: #6b7280;
     cursor: not-allowed;
-  }
+}
 
   .interactable-option:hover::before {
     opacity: 1;
@@ -1491,12 +1493,12 @@ input[readonly] {
 }
 .select2-container--default .select2-selection--multiple
 {
-    background-color:#606060 !important;
+    background-color:#ffffff !important;
 }
 
 .select2-container .select2-dropdown
 {
-    background-color:#606060 !important;
+    background-color:#ffffff !important;
 }
 
 .select2-container--default .select2-selection--multiple,
@@ -2438,4 +2440,36 @@ table.dataTable tbody > tr.selected
 .donations h3
 {
     margin-top: 10px;
+}
+/* -----------------------------------------------------------------------------
+   Field Lock/Unlock Buttons & Source Indicators
+----------------------------------------------------------------------------- */
+.field-lock-btn {
+    cursor: pointer;
+    transition: opacity 0.2s ease, background-color 0.2s ease;
+    padding: 8px 10px;
+}
+
+.field-lock-btn:hover {
+    opacity: 0.8 !important;
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.field-lock-btn:active {
+    opacity: 0.6 !important;
+}
+
+.input-group-addon.text-warning {
+    color: #f39c12;
+    background-color: rgba(243, 156, 18, 0.1);
+}
+
+.input-group-addon.text-danger {
+    color: #dd4b39;
+    background-color: rgba(221, 75, 57, 0.1);
+}
+
+.input-group-addon.text-muted {
+    color: #8c8c8c;
+    background-color: rgba(140, 140, 140, 0.05);
 }

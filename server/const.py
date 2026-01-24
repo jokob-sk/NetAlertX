@@ -67,6 +67,10 @@ sql_devices_all = """
                         IFNULL(devFirstConnection, '') AS devFirstConnection,
                         IFNULL(devLastConnection, '') AS devLastConnection,
                         IFNULL(devLastIP, '') AS devLastIP,
+                        IFNULL(devPrimaryIPv4, '') AS devPrimaryIPv4,
+                        IFNULL(devPrimaryIPv6, '') AS devPrimaryIPv6,
+                        IFNULL(devVlan, '') AS devVlan,
+                        IFNULL(devForceStatus, '') AS devForceStatus,
                         IFNULL(devStaticIP, '') AS devStaticIP,
                         IFNULL(devScan, '') AS devScan,
                         IFNULL(devLogEvents, '') AS devLogEvents,
@@ -90,6 +94,16 @@ sql_devices_all = """
                         IFNULL(devFQDN, '') AS devFQDN,
                         IFNULL(devParentRelType, '') AS devParentRelType,
                         IFNULL(devReqNicsOnline, '') AS devReqNicsOnline,
+                        IFNULL(devMacSource, '') AS devMacSource,
+                        IFNULL(devNameSource, '') AS devNameSource,
+                        IFNULL(devFQDNSource, '') AS devFQDNSource,
+                        IFNULL(devLastIPSource, '') AS devLastIPSource,
+                        IFNULL(devVendorSource, '') AS devVendorSource,
+                        IFNULL(devSSIDSource, '') AS devSSIDSource,
+                        IFNULL(devParentMACSource, '') AS devParentMACSource,
+                        IFNULL(devParentPortSource, '') AS devParentPortSource,
+                        IFNULL(devParentRelTypeSource, '') AS devParentRelTypeSource,
+                        IFNULL(devVlanSource, '') AS devVlanSource,
                         CASE
                             WHEN devIsNew = 1 THEN 'New'
                             WHEN devPresentLastScan = 1 THEN 'On-line'
@@ -179,14 +193,18 @@ sql_online_history = "SELECT  * FROM Online_History"
 sql_plugins_events = "SELECT  * FROM Plugins_Events"
 sql_plugins_history = "SELECT  * FROM Plugins_History ORDER BY DateTimeChanged DESC"
 sql_new_devices = """SELECT * FROM (
-                        SELECT eve_IP as devLastIP, eve_MAC as devMac
+                        SELECT eve_IP as devLastIP,
+                               eve_MAC as devMac,
+                               MAX(eve_DateTime) as lastEvent
                         FROM Events_Devices
                         WHERE eve_PendingAlertEmail = 1
                         AND eve_EventType = 'New Device'
-                        ORDER BY eve_DateTime ) t1
-                        LEFT JOIN
-                        ( SELECT devName, devMac as devMac_t2 FROM Devices) t2
-                        ON t1.devMac = t2.devMac_t2"""
+                        GROUP BY eve_MAC
+                        ORDER BY lastEvent
+                     ) t1
+                     LEFT JOIN
+                     ( SELECT devName, devMac as devMac_t2 FROM Devices ) t2
+                     ON t1.devMac = t2.devMac_t2"""
 
 
 sql_generateGuid = """

@@ -4,7 +4,7 @@ Please follow tips 1 - 4 to get a more detailed error.
 
 ## 1. More Logging
 
-When debugging an issue always set the highest log level:
+When debugging an issue always set the highest log level in **Settings -> Core**:
 
 `LOG_LEVEL='trace'`
 
