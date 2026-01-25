@@ -31,5 +31,6 @@
   "python.formatting.blackArgs": [
     "--line-length=180"
   ],
+  "chat.useAgentSkills": true,
 
 }
