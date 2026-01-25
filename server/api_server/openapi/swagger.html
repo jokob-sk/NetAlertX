@@ -16,7 +16,8 @@
   <script>
     window.onload = () => {
       window.ui = SwaggerUIBundle({
-        url: '/openapi.json',
+        // Use a relative path so the UI works whether served at /docs or /server/docs
+        url: 'openapi.json',
         dom_id: '#swagger-ui',
         deepLinking: true,
         presets: [
