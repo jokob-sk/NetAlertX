@@ -41,7 +41,7 @@ NetAlertX uses a frontend–backend architecture: the frontend runs on **PHP + N
 
 ## Environment Variables
 
-Use these instead of hardcoding paths:
+Use these NETALERTX_* instead of hardcoding paths. Examples:
 
 - `NETALERTX_DB`
 - `NETALERTX_LOG`

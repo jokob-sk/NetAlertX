@@ -16,7 +16,8 @@ Network monitoring & alerting. Provides inventory, awareness, insight, categoriz
 ## Architecture
 
 - **Backend (Python):** `server/__main__.py`, `server/plugin.py`, `server/api_server/api_server_start.py`
-- **Data (SQLite):** `db/app.db`; helpers in `server/db/*`
+- **Backend Config:** `/data/config/app.conf`
+- **Data (SQLite):** `/data/db/app.db`; helpers in `server/db/*`
 - **Frontend (Nginx + PHP + JS):** `front/`
 - **Plugins (Python):** `front/plugins/*` with `config.json` manifests
 
@@ -32,7 +33,7 @@ Procedural knowledge lives in `.github/skills/`. Load the appropriate skill when
 | Load sample devices | `sample-data` |
 | Build Docker images | `docker-build` |
 | Reprovision devcontainer | `devcontainer-setup` |
-| Create or run plugins | `plugin-development` |
+| Create or run plugins | `plugin-run-development` |
 | Analyze PR comments | `pr-analysis` |
 | Clean Docker resources | `docker-prune` |
 | Generate devcontainer configs | `devcontainer-configs` |

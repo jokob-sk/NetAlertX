@@ -38,7 +38,15 @@ Retrieve token via `get_setting_value('API_TOKEN')`.
 
 **MANDATORY:** All responses must include `"success": true|false`
 
-On failure, include error message:
+```python
+return {"success": False, "error": "Description of what went wrong"}
+```
+
+On success:
+
+```python
+return {"success": True, "data": result}
+```
 
 ```python
 return {"success": False, "error": "Description of what went wrong"}
@@ -49,6 +57,9 @@ On success:
 ```python
 return {"success": True, "data": result}
 ```
+
+
+**Exception:** The legacy `/device/<mac>` GET endpoint does not follow this contract to maintain backward compatibility with the UI.
 
 ## Adding New Endpoints
 

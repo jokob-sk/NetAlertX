@@ -23,7 +23,7 @@ Ensure `sys.path` includes `/app/front/plugins` and `/app/server` (as in the tem
 
 ## Plugin Structure
 
-```
+```text
 front/plugins/<code_name>/
 ├── config.json      # Manifest with settings
 ├── script.py        # Main script

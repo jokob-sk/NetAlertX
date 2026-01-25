@@ -1,5 +1,5 @@
 ---
-name: netalertx-idempotent—setup
+name: netalertx-idempotent-setup
 description: Reprovision and reset the devcontainer environment. Use this when asked to re-run startup, reprovision, setup devcontainer, fix permissions, or reset runtime state.
 ---
 
