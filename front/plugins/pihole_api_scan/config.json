@@ -264,6 +264,34 @@
       ]
     },
     {
+      "function": "CONSIDER_ONLINE",
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "number" }],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": 300,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Online if last seen"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Time in seconds to consider a device online."
+        }
+      ]
+    },
+    {
       "function": "VERIFY_SSL",
       "type": {
         "dataType": "boolean",
