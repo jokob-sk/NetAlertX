@@ -12,7 +12,7 @@ NetAlertX can be installed several ways. The best supported option is Docker, fo
 
 ## Help
 
-If facing issues, please spend a few minutes seraching.
+If facing issues, please spend a few minutes searching.
 
 - Check [common issues](./COMMON_ISSUES.md)
 - Have a look at [Community guides](./COMMUNITY_GUIDES.md)
