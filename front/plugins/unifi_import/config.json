@@ -935,6 +935,7 @@
         "devName",
         "devVendor",
         "devSSID",
+        "devType",
         "devParentMAC",
         "devParentPort"
       ],

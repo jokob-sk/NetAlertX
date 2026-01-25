@@ -483,7 +483,11 @@
       "default_value": ["devMac", "devLastIP"],
       "options": [
         "devMac",
-        "devLastIP"
+        "devLastIP",
+        "devName",
+        "devParentMAC",
+        "devSSID",
+        "devType"
       ],
       "localized": ["name", "description"],
       "name": [

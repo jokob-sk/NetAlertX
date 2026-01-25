@@ -129,7 +129,8 @@
         }
       ]
     },
-    {      "function": "SET_ALWAYS",
+    {
+      "function": "SET_ALWAYS",
       "type": {
         "dataType": "array",
         "elements": [
@@ -143,7 +144,9 @@
       "default_value": ["devMac", "devLastIP"],
       "options": [
         "devMac",
-        "devLastIP"
+        "devLastIP",
+        "devName",
+        "devVendor"
       ],
       "localized": ["name", "description"],
       "name": [

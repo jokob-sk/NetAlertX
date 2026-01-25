@@ -319,7 +319,10 @@
       "default_value": ["devMac", "devLastIP"],
       "options": [
         "devMac",
-        "devLastIP"
+        "devLastIP",
+        "devName",
+        "devVendor",
+        "devType"
       ],
       "localized": ["name", "description"],
       "name": [

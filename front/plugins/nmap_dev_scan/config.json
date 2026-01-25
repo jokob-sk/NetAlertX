@@ -467,7 +467,9 @@
       "default_value": ["devMac", "devLastIP"],
       "options": [
         "devMac",
-        "devLastIP"
+        "devLastIP",
+        "devName",
+        "devVendor"
       ],
       "localized": ["name", "description"],
       "name": [
