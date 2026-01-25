@@ -72,6 +72,13 @@ In the **Environment variables** section of Portainer, add the following:
 * `PORT=22022` (or another port if needed)
 * `APP_CONF_OVERRIDE={"GRAPHQL_PORT":"22023"}` (optional advanced settings, otherwise the backend API server PORT defaults to `20212`)
 
+Additional environment variables (advanced / testing):
+
+* `SKIP_TESTS=1` — when set, the container entrypoint will skip all startup checks and print the message `Skipping startup checks as SKIP_TESTS is set.`. Useful for automated test runs or CI where the container should not perform environment-specific checks.
+* `SKIP_STARTUP_CHECKS="<check names>"` — space-delimited list of specific startup checks to skip. Names are the human-friendly names derived from files in `/entrypoint.d` (remove the leading numeric prefix and file extension). Example: `SKIP_STARTUP_CHECKS="mandatory folders"` will skip `30-mandatory-folders.sh`.
+
+Note: these variables are primarily useful for non-production scenarios (testing, CI, or specific deployments) and are processed by the entrypoint scripts. See `entrypoint.sh` and `entrypoint.d/*` for exact behaviour and available check names.
+
 ---
 
 ## 5. Ensure permissions
