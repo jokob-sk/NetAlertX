@@ -42,19 +42,19 @@ def in_memory_db():
     cur.execute(
         """
         CREATE TABLE CurrentScan (
-            cur_MAC TEXT,
-            cur_IP TEXT,
-            cur_Vendor TEXT,
-            cur_ScanMethod TEXT,
-            cur_Name TEXT,
-            cur_LastQuery TEXT,
-            cur_DateTime TEXT,
-            cur_SyncHubNodeName TEXT,
-            cur_NetworkSite TEXT,
-            cur_SSID TEXT,
-            cur_NetworkNodeMAC TEXT,
-            cur_PORT TEXT,
-            cur_Type TEXT
+            scanMac TEXT,
+            scanLastIP TEXT,
+            scanVendor TEXT,
+            scanSourcePlugin TEXT,
+            scanName TEXT,
+            scanLastQuery TEXT,
+            scanLastConnection TEXT,
+            scanSyncHubNode TEXT,
+            scanSite TEXT,
+            scanSSID TEXT,
+            scanParentMAC TEXT,
+            scanParentPort TEXT,
+            scanType TEXT
         )
         """
     )
@@ -118,9 +118,9 @@ def test_primary_ipv6_is_set_and_ipv4_preserved(in_memory_db, mock_device_handli
     cur.execute(
         """
         INSERT INTO CurrentScan (
-            cur_MAC, cur_IP, cur_Vendor, cur_ScanMethod, cur_Name,
-            cur_LastQuery, cur_DateTime, cur_SyncHubNodeName,
-            cur_NetworkSite, cur_SSID, cur_NetworkNodeMAC, cur_PORT, cur_Type
+            scanMac, scanLastIP, scanVendor, scanSourcePlugin, scanName,
+            scanLastQuery, scanLastConnection, scanSyncHubNode,
+            scanSite, scanSSID, scanParentMAC, scanParentPort, scanType
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
@@ -145,7 +145,7 @@ def test_primary_ipv6_is_set_and_ipv4_preserved(in_memory_db, mock_device_handli
     db = Mock()
     db.sql_connection = in_memory_db
     db.sql = cur
-    
+
     device_handling.update_devices_data_from_scan(db)
 
     row = cur.execute(
@@ -193,9 +193,9 @@ def test_primary_ipv4_is_set_and_ipv6_preserved(in_memory_db, mock_device_handli
     cur.execute(
         """
         INSERT INTO CurrentScan (
-            cur_MAC, cur_IP, cur_Vendor, cur_ScanMethod, cur_Name,
-            cur_LastQuery, cur_DateTime, cur_SyncHubNodeName,
-            cur_NetworkSite, cur_SSID, cur_NetworkNodeMAC, cur_PORT, cur_Type
+            scanMac, scanLastIP, scanVendor, scanSourcePlugin, scanName,
+            scanLastQuery, scanLastConnection, scanSyncHubNode,
+            scanSite, scanSSID, scanParentMAC, scanParentPort, scanType
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
@@ -220,7 +220,7 @@ def test_primary_ipv4_is_set_and_ipv6_preserved(in_memory_db, mock_device_handli
     db = Mock()
     db.sql_connection = in_memory_db
     db.sql = cur
-    
+
     device_handling.update_devices_data_from_scan(db)
 
     row = cur.execute(

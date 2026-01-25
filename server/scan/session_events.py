@@ -174,7 +174,7 @@ def insert_events(db):
                     WHERE devAlertDown != 0
                       AND devPresentLastScan = 1
                       AND NOT EXISTS (SELECT 1 FROM CurrentScan
-                                      WHERE devMac = cur_MAC
+                                      WHERE devMac = scanMac
                                          ) """)
 
     # Check new Connections or Down Reconnections
@@ -182,7 +182,7 @@ def insert_events(db):
     sql.execute(f"""    INSERT INTO Events (eve_MAC, eve_IP, eve_DateTime,
                                             eve_EventType, eve_AdditionalInfo,
                                             eve_PendingAlertEmail)
-                        SELECT DISTINCT c.cur_MAC, c.cur_IP, '{startTime}',
+                        SELECT DISTINCT c.scanMac, c.scanLastIP, '{startTime}',
                                         CASE
                                             WHEN last_event.eve_EventType = 'Device Down' and  last_event.eve_PendingAlertEmail = 0 THEN 'Down Reconnected'
                                             ELSE 'Connected'
@@ -190,7 +190,7 @@ def insert_events(db):
                                         '',
                                         1
                         FROM CurrentScan AS c
-                        LEFT JOIN LatestEventsPerMAC AS last_event ON c.cur_MAC = last_event.eve_MAC
+                        LEFT JOIN LatestEventsPerMAC AS last_event ON c.scanMac = last_event.eve_MAC
                         WHERE last_event.devPresentLastScan = 0 OR last_event.eve_MAC IS NULL
                         """)
 
@@ -205,7 +205,7 @@ def insert_events(db):
                     WHERE devAlertDown = 0
                       AND devPresentLastScan = 1
                       AND NOT EXISTS (SELECT 1 FROM CurrentScan
-                                      WHERE devMac = cur_MAC
+                                      WHERE devMac = scanMac
                                          ) """)
 
     # Check IP Changed
@@ -213,15 +213,15 @@ def insert_events(db):
     sql.execute(f"""INSERT INTO Events (eve_MAC, eve_IP, eve_DateTime,
                         eve_EventType, eve_AdditionalInfo,
                         eve_PendingAlertEmail)
-                    SELECT cur_MAC, cur_IP, '{startTime}', 'IP Changed',
+                    SELECT scanMac, scanLastIP, '{startTime}', 'IP Changed',
                         'Previous IP: '|| devLastIP, devAlertEvents
                     FROM Devices, CurrentScan
-                    WHERE devMac = cur_MAC
-                      AND cur_IP IS NOT NULL
-                      AND cur_IP NOT IN ('', 'null', '(unknown)', '(Unknown)')
-                      AND cur_IP <> COALESCE(devPrimaryIPv4, '')
-                      AND cur_IP <> COALESCE(devPrimaryIPv6, '')
-                      AND cur_IP <> COALESCE(devLastIP, '') """)
+                    WHERE devMac = scanMac
+                      AND scanLastIP IS NOT NULL
+                      AND scanLastIP NOT IN ('', 'null', '(unknown)', '(Unknown)')
+                      AND scanLastIP <> COALESCE(devPrimaryIPv4, '')
+                      AND scanLastIP <> COALESCE(devPrimaryIPv6, '')
+                      AND scanLastIP <> COALESCE(devLastIP, '') """)
     mylog("debug", "[Events] - Events end")
 
 

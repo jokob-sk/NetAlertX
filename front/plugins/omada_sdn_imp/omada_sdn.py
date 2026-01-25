@@ -320,7 +320,7 @@ def main():
         # "database_column_definitions": [
         # {
         #   "column": "Object_PrimaryID",                 <--------- the value I save into primaryId
-        #   "mapped_to_column": "cur_MAC",                <--------- gets unserted into the CurrentScan DB table column cur_MAC
+        #   "mapped_to_column": "scanMac",                <--------- gets unserted into the CurrentScan DB table column scanMac
         #  watched1    = 'null' ,
         #  figure a way to run my udpate script delayed
 
@@ -342,7 +342,7 @@ def main():
                 watched3=myport,  # PORT
                 watched4=myssid,  # SSID
                 extra=device[TYPE],
-                # omada_site,    #  SITENAME (cur_NetworkSite) or VENDOR (cur_Vendor) (PICK one and adjust config.json -> "column": "Extra")
+                # omada_site,    #  SITENAME (scanSite) or VENDOR (scanVendor) (PICK one and adjust config.json -> "column": "Extra")
                 foreignKey=device[MAC].lower().replace("-", ":"),
             )  # usually MAC
 

@@ -440,7 +440,7 @@ To import plugin data into the device scan pipeline (for notifications, heuristi
   "database_column_definitions": [
     {
       "column": "Object_PrimaryID",
-      "mapped_to_column": "cur_MAC",
+      "mapped_to_column": "scanMac",
       "show": true,
       "type": "device_mac",
       "localized": ["name"],
@@ -448,7 +448,7 @@ To import plugin data into the device scan pipeline (for notifications, heuristi
     },
     {
       "column": "Object_SecondaryID",
-      "mapped_to_column": "cur_IP",
+      "mapped_to_column": "scanLastIP",
       "show": true,
       "type": "device_ip",
       "localized": ["name"],
@@ -456,7 +456,7 @@ To import plugin data into the device scan pipeline (for notifications, heuristi
     },
     {
       "column": "NameDoesntMatter",
-      "mapped_to_column": "cur_ScanMethod",
+      "mapped_to_column": "scanSourcePlugin",
       "mapped_to_column_data": {
         "value": "MYSCAN"
       },
@@ -478,7 +478,7 @@ Use `mapped_to_column_data` to map a static value instead of reading from a colu
 ```json
 {
   "column": "NameDoesntMatter",
-  "mapped_to_column": "cur_ScanMethod",
+  "mapped_to_column": "scanSourcePlugin",
   "mapped_to_column_data": {
     "value": "MYSCAN"
   },
@@ -489,7 +489,7 @@ Use `mapped_to_column_data` to map a static value instead of reading from a colu
 }
 ```
 
-This always sets `cur_ScanMethod` to `"MYSCAN"` regardless of column data.
+This always sets `scanSourcePlugin` to `"MYSCAN"` regardless of column data.
 
 ---
 
@@ -546,7 +546,7 @@ When viewing a device detail page, the `txtMacFilter` field is populated with th
   "database_column_definitions": [
     {
       "column": "Object_PrimaryID",
-      "mapped_to_column": "cur_MAC",
+      "mapped_to_column": "scanMac",
       "css_classes": "col-sm-2",
       "show": true,
       "type": "device_mac",
@@ -556,7 +556,7 @@ When viewing a device detail page, the `txtMacFilter` field is populated with th
     },
     {
       "column": "Object_SecondaryID",
-      "mapped_to_column": "cur_IP",
+      "mapped_to_column": "scanLastIP",
       "css_classes": "col-sm-2",
       "show": true,
       "type": "device_ip",

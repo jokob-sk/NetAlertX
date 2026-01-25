@@ -133,7 +133,7 @@ def ensure_views(sql) -> bool:
                                     c.*
                                 FROM RankedEvents AS e
                                 LEFT JOIN Devices AS d ON e.eve_MAC = d.devMac
-                                INNER JOIN CurrentScan AS c ON e.eve_MAC = c.cur_MAC
+                                INNER JOIN CurrentScan AS c ON e.eve_MAC = c.scanMac
                                 WHERE e.row_num = 1;""")
 
     sql.execute(""" DROP VIEW IF EXISTS Sessions_Devices;""")
@@ -177,8 +177,8 @@ def ensure_views(sql) -> bool:
                             SELECT
                                 c.*,
                                 ROW_NUMBER() OVER (
-                                    PARTITION BY c.cur_MAC, c.cur_ScanMethod
-                                    ORDER BY c.cur_DateTime DESC
+                                    PARTITION BY c.scanMac, c.scanSourcePlugin
+                                    ORDER BY c.scanLastConnection DESC
                                 ) AS rn
                             FROM CurrentScan c
                         )
@@ -187,7 +187,7 @@ def ensure_views(sql) -> bool:
                             r.*            -- all CurrentScan fields (cur_*)
                         FROM Devices d
                         LEFT JOIN RankedScans r
-                            ON d.devMac = r.cur_MAC
+                            ON d.devMac = r.scanMac
                         WHERE r.rn = 1;
 
                           """)
@@ -282,20 +282,20 @@ def ensure_CurrentScan(sql) -> bool:
     # 🐛 CurrentScan DEBUG: comment out below when debugging to keep the CurrentScan table after restarts/scan finishes
     sql.execute("DROP TABLE IF EXISTS CurrentScan;")
     sql.execute(""" CREATE TABLE IF NOT EXISTS CurrentScan (
-                                cur_MAC STRING(50) NOT NULL COLLATE NOCASE,
-                                cur_IP STRING(50) NOT NULL COLLATE NOCASE,
-                                cur_Vendor STRING(250),
-                                cur_ScanMethod STRING(10),
-                                cur_Name STRING(250),
-                                cur_LastQuery STRING(250),
-                                cur_DateTime STRING(250),
-                                cur_SyncHubNodeName STRING(50),
-                                cur_NetworkSite STRING(250),
-                                cur_SSID STRING(250),
-                                cur_devVlan STRING(250),
-                                cur_NetworkNodeMAC STRING(250),
-                                cur_PORT STRING(250),
-                                cur_Type STRING(250)
+                                scanMac STRING(50) NOT NULL COLLATE NOCASE,
+                                scanLastIP STRING(50) NOT NULL COLLATE NOCASE,
+                                scanVendor STRING(250),
+                                scanSourcePlugin STRING(10),
+                                scanName STRING(250),
+                                scanLastQuery STRING(250),
+                                scanLastConnection STRING(250),
+                                scanSyncHubNode STRING(50),
+                                scanSite STRING(250),
+                                scanSSID STRING(250),
+                                scanVlan STRING(250),
+                                scanParentMAC STRING(250),
+                                scanParentPort STRING(250),
+                                scanType STRING(250)
                             );
                         """)
 

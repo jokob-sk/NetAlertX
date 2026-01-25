@@ -51,8 +51,8 @@ def main():
         # "database_column_definitions": [
         # {
         #   "column": "Object_PrimaryID",    <--------- the value I save into primaryId
-        #   "mapped_to_column": "cur_MAC",   <--------- gets inserted into the CurrentScan DB
-        #                                               table column cur_MAC
+        #   "mapped_to_column": "scanMac",   <--------- gets inserted into the CurrentScan DB
+        #                                               table column scanMac
         #
         for device in device_data:
             plugin_objects.add_object(

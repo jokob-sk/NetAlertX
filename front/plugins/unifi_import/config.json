@@ -123,7 +123,7 @@
       "css_classes": "col-sm-2",
       "default_value": "",
       "localized": ["name"],
-      "mapped_to_column": "cur_MAC",
+      "mapped_to_column": "scanMac",
       "name": [
         {
           "language_code": "en_us",
@@ -147,7 +147,7 @@
       "css_classes": "col-sm-2",
       "default_value": "",
       "localized": ["name"],
-      "mapped_to_column": "cur_IP",
+      "mapped_to_column": "scanLastIP",
       "name": [
         {
           "language_code": "en_us",
@@ -194,7 +194,7 @@
       "css_classes": "col-sm-2",
       "default_value": "",
       "localized": ["name"],
-      "mapped_to_column": "cur_DateTime",
+      "mapped_to_column": "scanLastConnection",
       "name": [
         {
           "language_code": "en_us",
@@ -218,7 +218,7 @@
       "css_classes": "col-sm-2",
       "default_value": "",
       "localized": ["name"],
-      "mapped_to_column": "cur_Name",
+      "mapped_to_column": "scanName",
       "name": [
         {
           "language_code": "en_us",
@@ -239,7 +239,7 @@
     },
     {
       "column": "Watched_Value2",
-      "mapped_to_column": "cur_Vendor",
+      "mapped_to_column": "scanVendor",
       "css_classes": "col-sm-2",
       "default_value": "",
       "localized": ["name"],
@@ -263,7 +263,7 @@
     },
     {
       "column": "Watched_Value3",
-      "mapped_to_column": "cur_Type",
+      "mapped_to_column": "scanType",
       "css_classes": "col-sm-2",
       "default_value": "",
       "localized": ["name"],
@@ -336,7 +336,7 @@
       "css_classes": "col-sm-2",
       "default_value": "",
       "localized": ["name"],
-      "mapped_to_column": "cur_ScanMethod",
+      "mapped_to_column": "scanSourcePlugin",
       "mapped_to_column_data": {
         "value": "UNFIMP"
       },
@@ -383,7 +383,7 @@
     },
     {
       "column": "HelpVal1",
-      "mapped_to_column": "cur_NetworkNodeMAC",
+      "mapped_to_column": "scanParentMAC",
       "css_classes": "col-sm-2",
       "default_value": "",
       "localized": ["name"],
@@ -399,7 +399,7 @@
     },
     {
       "column": "HelpVal2",
-      "mapped_to_column": "cur_PORT",
+      "mapped_to_column": "scanParentPort",
       "css_classes": "col-sm-2",
       "default_value": "",
       "localized": ["name"],

@@ -54,7 +54,7 @@ Input data from the plugin might cause mapping issues in specific edge cases. Lo
 17:31:05 [Plugin utils] In pluginObjects there are 2 events with the status "missing-in-last-scan"
 17:31:05 [Plugin utils] In pluginObjects there are 2 events with the status "watched-not-changed"
 17:31:05 [Plugins] Mapping objects to database table: CurrentScan
-17:31:05 [Plugins] SQL query for mapping: INSERT into CurrentScan ( "cur_MAC", "cur_IP", "cur_LastQuery", "cur_Name", "cur_Vendor", "cur_ScanMethod") VALUES ( ?, ?, ?, ?, ?, ?)
+17:31:05 [Plugins] SQL query for mapping: INSERT into CurrentScan ( "scanMac", "scanLastIP", "scanLastQuery", "scanName", "scanVendor", "scanSourcePlugin") VALUES ( ?, ?, ?, ?, ?, ?)
 17:31:05 [Plugins] SQL sqlParams for mapping: [('01:01:01:01:01:01', '172.30.0.1', 0, 'aaaa', 'vvvvvvvvv', 'PIHOLE'), ('02:42:ac:1e:00:02', '172.30.0.2', 0, 'dddd', 'vvvvv2222', 'PIHOLE')]
 🔺
 17:31:05 [API] Update API starting

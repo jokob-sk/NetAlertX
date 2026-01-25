@@ -36,7 +36,7 @@ def check_and_clean_device():
             tables_checks = [
                 f"SELECT 'Events' as source, * FROM Events WHERE eve_MAC='{mac}'",
                 f"SELECT 'Devices' as source, * FROM Devices WHERE dev_MAC='{mac}'",
-                f"SELECT 'CurrentScan' as source, * FROM CurrentScan WHERE cur_MAC='{mac}'",
+                f"SELECT 'CurrentScan' as source, * FROM CurrentScan WHERE scanMac='{mac}'",
                 f"SELECT 'Notifications' as source, * FROM Notifications WHERE JSON LIKE '%{mac}%'",
                 f"SELECT 'AppEvents' as source, * FROM AppEvents WHERE ObjectPrimaryID LIKE '%{mac}%' OR ObjectSecondaryID LIKE '%{mac}%'",
                 f"SELECT 'Plugins_Objects' as source, * FROM Plugins_Objects WHERE Object_PrimaryID LIKE '%{mac}%'"
@@ -56,7 +56,7 @@ def check_and_clean_device():
                     deletes = [
                         f"DELETE FROM Events WHERE eve_MAC='{mac}'",
                         f"DELETE FROM Devices WHERE dev_MAC='{mac}'",
-                        f"DELETE FROM CurrentScan WHERE cur_MAC='{mac}'",
+                        f"DELETE FROM CurrentScan WHERE scanMac='{mac}'",
                         f"DELETE FROM Notifications WHERE JSON LIKE '%{mac}%'",
                         f"DELETE FROM AppEvents WHERE ObjectPrimaryID LIKE '%{mac}%' OR ObjectSecondaryID LIKE '%{mac}%'",
                         f"DELETE FROM Plugins_Objects WHERE Object_PrimaryID LIKE '%{mac}%'"
@@ -75,7 +75,7 @@ def check_and_clean_device():
             tables_checks = [
                 f"SELECT 'Events' as source, * FROM Events WHERE eve_IP='{ip}'",
                 f"SELECT 'Devices' as source, * FROM Devices WHERE dev_LastIP='{ip}'",
-                f"SELECT 'CurrentScan' as source, * FROM CurrentScan WHERE cur_IP='{ip}'",
+                f"SELECT 'CurrentScan' as source, * FROM CurrentScan WHERE scanLastIP='{ip}'",
                 f"SELECT 'Notifications' as source, * FROM Notifications WHERE JSON LIKE '%{ip}%'",
                 f"SELECT 'AppEvents' as source, * FROM AppEvents WHERE ObjectSecondaryID LIKE '%{ip}%'",
                 f"SELECT 'Plugins_Objects' as source, * FROM Plugins_Objects WHERE Object_SecondaryID LIKE '%{ip}%'"
@@ -95,7 +95,7 @@ def check_and_clean_device():
                     deletes = [
                         f"DELETE FROM Events WHERE eve_IP='{ip}'",
                         f"DELETE FROM Devices WHERE dev_LastIP='{ip}'",
-                        f"DELETE FROM CurrentScan WHERE cur_IP='{ip}'",
+                        f"DELETE FROM CurrentScan WHERE scanLastIP='{ip}'",
                         f"DELETE FROM Notifications WHERE JSON LIKE '%{ip}%'",
                         f"DELETE FROM AppEvents WHERE ObjectSecondaryID LIKE '%{ip}%'",
                         f"DELETE FROM Plugins_Objects WHERE Object_SecondaryID LIKE '%{ip}%'"

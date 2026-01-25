@@ -105,7 +105,7 @@ a[target="_blank"] {
   background-color: black !important;
   font-family: 'Courier New', monospace;
   font-size: .85em;
-  cursor: pointer;
+  cursor: pointer !important;
 }
 .logs-row textarea
 {

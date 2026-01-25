@@ -56,10 +56,10 @@ def exclude_ignored_devices(db):
     sql = db.sql  # Database interface for executing queries
 
     mac_condition = list_to_where(
-        "OR", "cur_MAC", "LIKE", get_setting_value("NEWDEV_ignored_MACs")
+        "OR", "scanMac", "LIKE", get_setting_value("NEWDEV_ignored_MACs")
     )
     ip_condition = list_to_where(
-        "OR", "cur_IP", "LIKE", get_setting_value("NEWDEV_ignored_IPs")
+        "OR", "scanLastIP", "LIKE", get_setting_value("NEWDEV_ignored_IPs")
     )
 
     # Only delete if either the MAC or IP matches an ignored condition
@@ -93,7 +93,7 @@ FIELD_SPECS = {
     # DEVICE NAME
     # ==========================================================
     "devName": {
-        "scan_col": "cur_Name",
+        "scan_col": "scanName",
         "source_col": "devNameSource",
         "empty_values": ["", "null", "(unknown)", "(name not found)"],
         "default_value": "(unknown)",
@@ -104,7 +104,7 @@ FIELD_SPECS = {
     # DEVICE FQDN
     # ==========================================================
     "devFQDN": {
-        "scan_col": "cur_Name",
+        "scan_col": "scanName",
         "source_col": "devNameSource",
         "empty_values": ["", "null", "(unknown)", "(name not found)"],
         "priority": ["NSLOOKUP", "AVAHISCAN", "NBTSCAN", "DIGSCAN", "ARPSCAN", "DHCPLSS", "NEWDEV", "N/A"],
@@ -114,7 +114,7 @@ FIELD_SPECS = {
     # IP ADDRESS (last seen)
     # ==========================================================
     "devLastIP": {
-        "scan_col": "cur_IP",
+        "scan_col": "scanLastIP",
         "source_col": "devLastIPSource",
         "empty_values": ["", "null", "(unknown)", "(Unknown)"],
         "priority": ["ARPSCAN", "NEWDEV", "N/A"],
@@ -125,7 +125,7 @@ FIELD_SPECS = {
     # VENDOR
     # ==========================================================
     "devVendor": {
-        "scan_col": "cur_Vendor",
+        "scan_col": "scanVendor",
         "source_col": "devVendorSource",
         "empty_values": ["", "null", "(unknown)", "(Unknown)"],
         "priority": ["VNDRPDT", "ARPSCAN", "NEWDEV", "N/A"],
@@ -136,7 +136,7 @@ FIELD_SPECS = {
     # SYNC HUB NODE NAME
     # ==========================================================
     "devSyncHubNode": {
-        "scan_col": "cur_SyncHubNodeName",
+        "scan_col": "scanSyncHubNode",
         "source_col": None,
         "empty_values": ["", "null"],
         "priority": None,
@@ -146,7 +146,7 @@ FIELD_SPECS = {
     # Network Site
     # ==========================================================
     "devSite": {
-        "scan_col": "cur_NetworkSite",
+        "scan_col": "scanSite",
         "source_col": None,
         "empty_values": ["", "null"],
         "priority": None,
@@ -156,7 +156,7 @@ FIELD_SPECS = {
     # VLAN
     # ==========================================================
     "devVlan": {
-        "scan_col": "cur_devVlan",
+        "scan_col": "scanVlan",
         "source_col": "devVlanSource",
         "empty_values": ["", "null"],
         "priority": None,
@@ -166,7 +166,7 @@ FIELD_SPECS = {
     # devType
     # ==========================================================
     "devType": {
-        "scan_col": "cur_Type",
+        "scan_col": "scanType",
         "source_col": None,
         "empty_values": ["", "null"],
         "priority": None,
@@ -176,14 +176,14 @@ FIELD_SPECS = {
     # TOPOLOGY (PARENT NODE)
     # ==========================================================
     "devParentMAC": {
-        "scan_col": "cur_NetworkNodeMAC",
+        "scan_col": "scanParentMAC",
         "source_col": "devParentMACSource",
         "empty_values": ["", "null"],
         "priority": ["SNMPDSC", "UNIFIAPI", "UNFIMP", "NEWDEV", "N/A"],
     },
 
     "devParentPort": {
-        "scan_col": "cur_PORT",
+        "scan_col": "scanParentPort",
         "source_col": None,
         "empty_values": ["", "null"],
         "priority": ["SNMPDSC", "UNIFIAPI", "UNFIMP", "NEWDEV", "N/A"],
@@ -193,7 +193,7 @@ FIELD_SPECS = {
     # WIFI SSID
     # ==========================================================
     "devSSID": {
-        "scan_col": "cur_SSID",
+        "scan_col": "scanSSID",
         "source_col": None,
         "empty_values": ["", "null"],
         "priority": ["SNMPDSC", "UNIFIAPI", "UNFIMP", "NEWDEV", "N/A"],
@@ -214,7 +214,7 @@ def update_presence_from_CurrentScan(db):
         SET devPresentLastScan = 1
         WHERE EXISTS (
             SELECT 1 FROM CurrentScan
-            WHERE devMac = cur_MAC
+            WHERE devMac = scanMac
         )
     """)
 
@@ -224,7 +224,7 @@ def update_presence_from_CurrentScan(db):
         SET devPresentLastScan = 0
         WHERE NOT EXISTS (
             SELECT 1 FROM CurrentScan
-            WHERE devMac = cur_MAC
+            WHERE devMac = scanMac
         )
     """)
 
@@ -242,7 +242,7 @@ def update_devLastConnection_from_CurrentScan(db):
         SET devLastConnection = '{startTime}'
         WHERE EXISTS (
             SELECT 1 FROM CurrentScan
-            WHERE devMac = cur_MAC
+            WHERE devMac = scanMac
         )
     """)
 
@@ -253,7 +253,7 @@ def update_devices_data_from_scan(db):
     # ----------------------------------------------------------------
     # 1️⃣ Get plugin scan methods
     # ----------------------------------------------------------------
-    plugin_rows = sql.execute("SELECT DISTINCT cur_ScanMethod FROM CurrentScan").fetchall()
+    plugin_rows = sql.execute("SELECT DISTINCT scanSourcePlugin FROM CurrentScan").fetchall()
     plugin_prefixes = [row[0] for row in plugin_rows if row[0]] or [None]
 
     plugin_settings_cache = {}
@@ -275,7 +275,7 @@ def update_devices_data_from_scan(db):
         sql_tmp = f"""
             SELECT *
             FROM LatestDeviceScan
-            {"WHERE cur_ScanMethod = ?" if filter_by_scan_method else ""}
+            {"WHERE scanSourcePlugin = ?" if filter_by_scan_method else ""}
         """
         rows = sql.execute(sql_tmp, (source_prefix,) if filter_by_scan_method else ()).fetchall()
         col_names = [desc[0] for desc in sql.description]
@@ -444,8 +444,8 @@ def update_vendors_from_mac(db):
 
     # Build mapping: devMac -> vendor (skip unknown or invalid)
     vendor_map = {}
-    for row in sql.execute("SELECT DISTINCT cur_MAC FROM CurrentScan"):
-        mac = row["cur_MAC"]
+    for row in sql.execute("SELECT DISTINCT scanMac FROM CurrentScan"):
+        mac = row["scanMac"]
         vendor = query_MAC_vendor(mac)
         if vendor not in (-1, -2):
             vendor_map[mac] = vendor
@@ -518,7 +518,7 @@ def save_scanned_devices(db):
     # Proceed if variable contains valid MAC
     if check_mac_or_internet(local_mac):
         sql.execute(
-            f"""INSERT OR IGNORE INTO CurrentScan (cur_MAC, cur_IP, cur_Vendor, cur_ScanMethod) VALUES ( '{local_mac}', '{local_ip}', Null, 'local_MAC') """
+            f"""INSERT OR IGNORE INTO CurrentScan (scanMac, scanLastIP, scanVendor, scanSourcePlugin) VALUES ( '{local_mac}', '{local_ip}', Null, 'local_MAC') """
         )
 
 
@@ -529,23 +529,23 @@ def print_scan_stats(db):
     query = """
     SELECT
         (SELECT COUNT(*) FROM CurrentScan) AS devices_detected,
-        (SELECT COUNT(*) FROM CurrentScan WHERE NOT EXISTS (SELECT 1 FROM Devices WHERE devMac = cur_MAC)) AS new_devices,
-        (SELECT COUNT(*) FROM Devices WHERE devAlertDown != 0 AND NOT EXISTS (SELECT 1 FROM CurrentScan WHERE devMac = cur_MAC)) AS down_alerts,
-        (SELECT COUNT(*) FROM Devices WHERE devAlertDown != 0 AND devPresentLastScan = 1 AND NOT EXISTS (SELECT 1 FROM CurrentScan WHERE devMac = cur_MAC)) AS new_down_alerts,
+        (SELECT COUNT(*) FROM CurrentScan WHERE NOT EXISTS (SELECT 1 FROM Devices WHERE devMac = scanMac)) AS new_devices,
+        (SELECT COUNT(*) FROM Devices WHERE devAlertDown != 0 AND NOT EXISTS (SELECT 1 FROM CurrentScan WHERE devMac = scanMac)) AS down_alerts,
+        (SELECT COUNT(*) FROM Devices WHERE devAlertDown != 0 AND devPresentLastScan = 1 AND NOT EXISTS (SELECT 1 FROM CurrentScan WHERE devMac = scanMac)) AS new_down_alerts,
         (SELECT COUNT(*) FROM Devices WHERE devPresentLastScan = 0) AS new_connections,
-        (SELECT COUNT(*) FROM Devices WHERE devPresentLastScan = 1 AND NOT EXISTS (SELECT 1 FROM CurrentScan WHERE devMac = cur_MAC)) AS disconnections,
+        (SELECT COUNT(*) FROM Devices WHERE devPresentLastScan = 1 AND NOT EXISTS (SELECT 1 FROM CurrentScan WHERE devMac = scanMac)) AS disconnections,
                 (SELECT COUNT(*) FROM Devices, CurrentScan
-                        WHERE devMac = cur_MAC
-                            AND cur_IP IS NOT NULL
-                            AND cur_IP NOT IN ('', 'null', '(unknown)', '(Unknown)')
-                            AND cur_IP <> COALESCE(devPrimaryIPv4, '')
-                            AND cur_IP <> COALESCE(devPrimaryIPv6, '')
-                            AND cur_IP <> COALESCE(devLastIP, '')
+                        WHERE devMac = scanMac
+                            AND scanLastIP IS NOT NULL
+                            AND scanLastIP NOT IN ('', 'null', '(unknown)', '(Unknown)')
+                            AND scanLastIP <> COALESCE(devPrimaryIPv4, '')
+                            AND scanLastIP <> COALESCE(devPrimaryIPv6, '')
+                            AND scanLastIP <> COALESCE(devLastIP, '')
                 ) AS ip_changes,
-        cur_ScanMethod,
+        scanSourcePlugin,
         COUNT(*) AS scan_method_count
     FROM CurrentScan
-    GROUP BY cur_ScanMethod
+    GROUP BY scanSourcePlugin
     """
 
     sql.execute(query)
@@ -590,8 +590,8 @@ def print_scan_stats(db):
 
     mylog("verbose", "[Scan Stats] Scan Method Statistics:")
     for row in stats:
-        if row["cur_ScanMethod"] is not None:
-            mylog("verbose", f"    {row['cur_ScanMethod']}: {row['scan_method_count']}")
+        if row["scanSourcePlugin"] is not None:
+            mylog("verbose", f"    {row['scanSourcePlugin']}: {row['scan_method_count']}")
 
 
 # -------------------------------------------------------------------------------
@@ -608,11 +608,11 @@ def create_new_devices(db):
         eve_EventType, eve_AdditionalInfo,
         eve_PendingAlertEmail
     )
-    SELECT DISTINCT cur_MAC, cur_IP, '{startTime}', 'New Device', cur_Vendor, 1
+    SELECT DISTINCT scanMac, scanLastIP, '{startTime}', 'New Device', scanVendor, 1
     FROM CurrentScan
     WHERE NOT EXISTS (
         SELECT 1 FROM Devices
-        WHERE devMac = cur_MAC
+        WHERE devMac = scanMac
     )
     """
 
@@ -627,15 +627,15 @@ def create_new_devices(db):
                         ses_EventTypeDisconnection, ses_DateTimeDisconnection,
                         ses_StillConnected, ses_AdditionalInfo
                     )
-                    SELECT cur_MAC, cur_IP, 'Connected', '{startTime}', NULL, NULL, 1, cur_Vendor
+                    SELECT scanMac, scanLastIP, 'Connected', '{startTime}', NULL, NULL, 1, scanVendor
                     FROM CurrentScan
                     WHERE EXISTS (
                         SELECT 1 FROM Devices
-                        WHERE devMac = cur_MAC
+                        WHERE devMac = scanMac
                     )
                     AND NOT EXISTS (
                         SELECT 1 FROM Sessions
-                        WHERE ses_MAC = cur_MAC AND ses_StillConnected = 1
+                        WHERE ses_MAC = scanMac AND ses_StillConnected = 1
                     )
                     """)
 
@@ -680,7 +680,7 @@ def create_new_devices(db):
                         """
 
     # Fetch data from CurrentScan skipping ignored devices by IP and MAC
-    query = """SELECT cur_MAC, cur_Name, cur_Vendor, cur_ScanMethod, cur_IP, cur_SyncHubNodeName, cur_NetworkNodeMAC, cur_PORT, cur_NetworkSite, cur_SSID, cur_Type
+    query = """SELECT scanMac, scanName, scanVendor, scanSourcePlugin, scanLastIP, scanSyncHubNode, scanParentMAC, scanParentPort, scanSite, scanSSID, scanType
                 FROM CurrentScan """
 
     mylog("debug", f"[New Devices] Collecting New Devices Query: {query}")
@@ -688,61 +688,61 @@ def create_new_devices(db):
 
     for row in current_scan_data:
         (
-            cur_MAC,
-            cur_Name,
-            cur_Vendor,
-            cur_ScanMethod,
-            cur_IP,
-            cur_SyncHubNodeName,
-            cur_NetworkNodeMAC,
-            cur_PORT,
-            cur_NetworkSite,
-            cur_SSID,
-            cur_Type,
+            scanMac,
+            scanName,
+            scanVendor,
+            scanSourcePlugin,
+            scanLastIP,
+            scanSyncHubNode,
+            scanParentMAC,
+            scanParentPort,
+            scanSite,
+            scanSSID,
+            scanType,
         ) = row
 
         # Preserve raw values to determine source attribution
-        raw_name = str(cur_Name).strip() if cur_Name else ""
-        raw_vendor = str(cur_Vendor).strip() if cur_Vendor else ""
-        raw_ip = str(cur_IP).strip() if cur_IP else ""
+        raw_name = str(scanName).strip() if scanName else ""
+        raw_vendor = str(scanVendor).strip() if scanVendor else ""
+        raw_ip = str(scanLastIP).strip() if scanLastIP else ""
         if raw_ip.lower() in ("null", "(unknown)"):
             raw_ip = ""
-        raw_ssid = str(cur_SSID).strip() if cur_SSID else ""
+        raw_ssid = str(scanSSID).strip() if scanSSID else ""
         if raw_ssid.lower() in ("null", "(unknown)"):
             raw_ssid = ""
-        raw_parent_mac = str(cur_NetworkNodeMAC).strip() if cur_NetworkNodeMAC else ""
+        raw_parent_mac = str(scanParentMAC).strip() if scanParentMAC else ""
         if raw_parent_mac.lower() in ("null", "(unknown)"):
             raw_parent_mac = ""
-        raw_parent_port = str(cur_PORT).strip() if cur_PORT else ""
+        raw_parent_port = str(scanParentPort).strip() if scanParentPort else ""
         if raw_parent_port.lower() in ("null", "(unknown)"):
             raw_parent_port = ""
 
         # Handle NoneType
-        cur_Name = raw_name if raw_name else "(unknown)"
-        cur_Type = (
-            str(cur_Type).strip() if cur_Type else get_setting_value("NEWDEV_devType")
+        scanName = raw_name if raw_name else "(unknown)"
+        scanType = (
+            str(scanType).strip() if scanType else get_setting_value("NEWDEV_devType")
         )
-        cur_NetworkNodeMAC = raw_parent_mac
-        cur_NetworkNodeMAC = (
-            cur_NetworkNodeMAC
-            if cur_NetworkNodeMAC and cur_MAC != "Internet"
+        scanParentMAC = raw_parent_mac
+        scanParentMAC = (
+            scanParentMAC
+            if scanParentMAC and scanMac != "Internet"
             else (
                 get_setting_value("NEWDEV_devParentMAC")
-                if cur_MAC != "Internet"
+                if scanMac != "Internet"
                 else "null"
             )
         )
-        cur_SyncHubNodeName = (
-            cur_SyncHubNodeName
-            if cur_SyncHubNodeName and cur_SyncHubNodeName != "null"
+        scanSyncHubNode = (
+            scanSyncHubNode
+            if scanSyncHubNode and scanSyncHubNode != "null"
             else (get_setting_value("SYNC_node_name"))
         )
 
         # Derive primary IP family values
-        cur_IP = raw_ip
-        cur_SSID = raw_ssid
-        cur_PORT = raw_parent_port
-        cur_IP_normalized = check_IP_format(cur_IP) if ":" not in cur_IP else cur_IP
+        scanLastIP = raw_ip
+        scanSSID = raw_ssid
+        scanParentPort = raw_parent_port
+        cur_IP_normalized = check_IP_format(scanLastIP) if ":" not in scanLastIP else scanLastIP
 
         # Validate IPv6 addresses using format_ip_long for consistency (do not store integer result)
         if cur_IP_normalized and ":" in cur_IP_normalized:
@@ -753,10 +753,10 @@ def create_new_devices(db):
         primary_ipv4 = cur_IP_normalized if cur_IP_normalized and ":" not in cur_IP_normalized else ""
         primary_ipv6 = cur_IP_normalized if cur_IP_normalized and ":" in cur_IP_normalized else ""
 
-        plugin_prefix = str(cur_ScanMethod).strip() if cur_ScanMethod else "NEWDEV"
+        plugin_prefix = str(scanSourcePlugin).strip() if scanSourcePlugin else "NEWDEV"
 
         dev_mac_source = get_source_for_field_update_with_value(
-            "devMac", plugin_prefix, cur_MAC, is_user_override=False
+            "devMac", plugin_prefix, scanMac, is_user_override=False
         )
         dev_name_source = get_source_for_field_update_with_value(
             "devName", plugin_prefix, raw_name, is_user_override=False
@@ -813,22 +813,22 @@ def create_new_devices(db):
                         )
                         VALUES
                         (
-                            '{sanitize_SQL_input(cur_MAC)}',
-                            '{sanitize_SQL_input(cur_Name)}',
-                            '{sanitize_SQL_input(cur_Vendor)}',
+                            '{sanitize_SQL_input(scanMac)}',
+                            '{sanitize_SQL_input(scanName)}',
+                            '{sanitize_SQL_input(scanVendor)}',
                             '{sanitize_SQL_input(cur_IP_normalized)}',
                             '{sanitize_SQL_input(primary_ipv4)}',
                             '{sanitize_SQL_input(primary_ipv6)}',
                             ?,
                             ?,
-                            '{sanitize_SQL_input(cur_SyncHubNodeName)}',
+                            '{sanitize_SQL_input(scanSyncHubNode)}',
                             {sql_generateGuid},
-                            '{sanitize_SQL_input(cur_NetworkNodeMAC)}',
-                            '{sanitize_SQL_input(cur_PORT)}',
-                            '{sanitize_SQL_input(cur_NetworkSite)}',
-                            '{sanitize_SQL_input(cur_SSID)}',
-                            '{sanitize_SQL_input(cur_Type)}',
-                            '{sanitize_SQL_input(cur_ScanMethod)}',
+                            '{sanitize_SQL_input(scanParentMAC)}',
+                            '{sanitize_SQL_input(scanParentPort)}',
+                            '{sanitize_SQL_input(scanSite)}',
+                            '{sanitize_SQL_input(scanSSID)}',
+                            '{sanitize_SQL_input(scanType)}',
+                            '{sanitize_SQL_input(scanSourcePlugin)}',
                             '{sanitize_SQL_input(dev_mac_source)}',
                             '{sanitize_SQL_input(dev_name_source)}',
                             '{sanitize_SQL_input(dev_fqdn_source)}',

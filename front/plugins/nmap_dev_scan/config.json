@@ -538,7 +538,7 @@
     },
     {
       "column": "Object_PrimaryID",
-      "mapped_to_column": "cur_MAC",
+      "mapped_to_column": "scanMac",
       "css_classes": "col-sm-3",
       "show": true,
       "type": "device_name_mac",
@@ -556,7 +556,7 @@
     },
     {
       "column": "Object_SecondaryID",
-      "mapped_to_column": "cur_IP",
+      "mapped_to_column": "scanLastIP",
       "css_classes": "col-sm-2",
       "show": true,
       "type": "device_ip",
@@ -574,7 +574,7 @@
     },
     {
       "column": "Watched_Value1",
-      "mapped_to_column": "cur_Name",
+      "mapped_to_column": "scanName",
       "css_classes": "col-sm-2",
       "show": true,
       "type": "label",
@@ -592,7 +592,7 @@
     },
     {
       "column": "Watched_Value2",
-      "mapped_to_column": "cur_Vendor",
+      "mapped_to_column": "scanVendor",
       "css_classes": "col-sm-2",
       "show": true,
       "type": "label",
@@ -618,7 +618,7 @@
     },
     {
       "column": "Watched_Value3",
-      "mapped_to_column": "cur_LastQuery",
+      "mapped_to_column": "scanLastQuery",
       "css_classes": "col-sm-2",
       "show": true,
       "type": "label",
@@ -640,7 +640,7 @@
     },
     {
       "column": "Dummy",
-      "mapped_to_column": "cur_ScanMethod",
+      "mapped_to_column": "scanSourcePlugin",
       "mapped_to_column_data": {
         "value": "NMAPDEV"
       },

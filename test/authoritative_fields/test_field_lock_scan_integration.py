@@ -66,19 +66,19 @@ def scan_db():
     cur.execute(
         """
         CREATE TABLE CurrentScan (
-            cur_MAC TEXT,
-            cur_IP TEXT,
-            cur_Vendor TEXT,
-            cur_ScanMethod TEXT,
-            cur_Name TEXT,
-            cur_LastQuery TEXT,
-            cur_DateTime TEXT,
-            cur_SyncHubNodeName TEXT,
-            cur_NetworkSite TEXT,
-            cur_SSID TEXT,
-            cur_NetworkNodeMAC TEXT,
-            cur_PORT TEXT,
-            cur_Type TEXT
+            scanMac TEXT,
+            scanLastIP TEXT,
+            scanVendor TEXT,
+            scanSourcePlugin TEXT,
+            scanName TEXT,
+            scanLastQuery TEXT,
+            scanLastConnection TEXT,
+            scanSyncHubNode TEXT,
+            scanSite TEXT,
+            scanSSID TEXT,
+            scanParentMAC TEXT,
+            scanParentPort TEXT,
+            scanType TEXT
         )
         """
     )
@@ -196,17 +196,17 @@ def scan_db_for_new_devices():
     cur.execute(
         """
         CREATE TABLE CurrentScan (
-            cur_MAC TEXT,
-            cur_Name TEXT,
-            cur_Vendor TEXT,
-            cur_ScanMethod TEXT,
-            cur_IP TEXT,
-            cur_SyncHubNodeName TEXT,
-            cur_NetworkNodeMAC TEXT,
-            cur_PORT TEXT,
-            cur_NetworkSite TEXT,
-            cur_SSID TEXT,
-            cur_Type TEXT
+            scanMac TEXT,
+            scanName TEXT,
+            scanVendor TEXT,
+            scanSourcePlugin TEXT,
+            scanLastIP TEXT,
+            scanSyncHubNode TEXT,
+            scanParentMAC TEXT,
+            scanParentPort TEXT,
+            scanSite TEXT,
+            scanSSID TEXT,
+            scanType TEXT
         )
         """
     )
@@ -250,9 +250,9 @@ def test_create_new_devices_sets_sources(scan_db_for_new_devices):
     cur.execute(
         """
         INSERT INTO CurrentScan (
-            cur_MAC, cur_Name, cur_Vendor, cur_ScanMethod, cur_IP,
-            cur_SyncHubNodeName, cur_NetworkNodeMAC, cur_PORT,
-            cur_NetworkSite, cur_SSID, cur_Type
+            scanMac, scanName, scanVendor, scanSourcePlugin, scanLastIP,
+            scanSyncHubNode, scanParentMAC, scanParentPort,
+            scanSite, scanSSID, scanType
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
@@ -364,9 +364,9 @@ def test_scan_updates_newdev_device_name(scan_db, mock_device_handlers):
     cur.execute(
         """
         INSERT INTO CurrentScan (
-            cur_MAC, cur_IP, cur_Vendor, cur_ScanMethod, cur_Name,
-            cur_LastQuery, cur_DateTime, cur_SyncHubNodeName,
-            cur_NetworkSite, cur_SSID, cur_NetworkNodeMAC, cur_PORT, cur_Type
+            scanMac, scanLastIP, scanVendor, scanSourcePlugin, scanName,
+            scanLastQuery, scanLastConnection, scanSyncHubNode,
+            scanSite, scanSSID, scanParentMAC, scanParentPort, scanType
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
@@ -439,9 +439,9 @@ def test_scan_does_not_update_user_field_name(scan_db, mock_device_handlers):
     cur.execute(
         """
         INSERT INTO CurrentScan (
-            cur_MAC, cur_IP, cur_Vendor, cur_ScanMethod, cur_Name,
-            cur_LastQuery, cur_DateTime, cur_SyncHubNodeName,
-            cur_NetworkSite, cur_SSID, cur_NetworkNodeMAC, cur_PORT, cur_Type
+            scanMac, scanLastIP, scanVendor, scanSourcePlugin, scanName,
+            scanLastQuery, scanLastConnection, scanSyncHubNode,
+            scanSite, scanSSID, scanParentMAC, scanParentPort, scanType
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
@@ -514,9 +514,9 @@ def test_scan_does_not_update_locked_field(scan_db, mock_device_handlers):
     cur.execute(
         """
         INSERT INTO CurrentScan (
-            cur_MAC, cur_IP, cur_Vendor, cur_ScanMethod, cur_Name,
-            cur_LastQuery, cur_DateTime, cur_SyncHubNodeName,
-            cur_NetworkSite, cur_SSID, cur_NetworkNodeMAC, cur_PORT, cur_Type
+            scanMac, scanLastIP, scanVendor, scanSourcePlugin, scanName,
+            scanLastQuery, scanLastConnection, scanSyncHubNode,
+            scanSite, scanSSID, scanParentMAC, scanParentPort, scanType
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
@@ -589,9 +589,9 @@ def test_scan_updates_empty_vendor_field(scan_db, mock_device_handlers):
     cur.execute(
         """
         INSERT INTO CurrentScan (
-            cur_MAC, cur_IP, cur_Vendor, cur_ScanMethod, cur_Name,
-            cur_LastQuery, cur_DateTime, cur_SyncHubNodeName,
-            cur_NetworkSite, cur_SSID, cur_NetworkNodeMAC, cur_PORT, cur_Type
+            scanMac, scanLastIP, scanVendor, scanSourcePlugin, scanName,
+            scanLastQuery, scanLastConnection, scanSyncHubNode,
+            scanSite, scanSSID, scanParentMAC, scanParentPort, scanType
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
@@ -667,9 +667,9 @@ def test_scan_updates_ip_addresses(scan_db, mock_device_handlers):
     cur.execute(
         """
         INSERT INTO CurrentScan (
-            cur_MAC, cur_IP, cur_Vendor, cur_ScanMethod, cur_Name,
-            cur_LastQuery, cur_DateTime, cur_SyncHubNodeName,
-            cur_NetworkSite, cur_SSID, cur_NetworkNodeMAC, cur_PORT, cur_Type
+            scanMac, scanLastIP, scanVendor, scanSourcePlugin, scanName,
+            scanLastQuery, scanLastConnection, scanSyncHubNode,
+            scanSite, scanSSID, scanParentMAC, scanParentPort, scanType
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
@@ -747,9 +747,9 @@ def test_scan_updates_ipv6_without_changing_ipv4(scan_db, mock_device_handlers):
     cur.execute(
         """
         INSERT INTO CurrentScan (
-            cur_MAC, cur_IP, cur_Vendor, cur_ScanMethod, cur_Name,
-            cur_LastQuery, cur_DateTime, cur_SyncHubNodeName,
-            cur_NetworkSite, cur_SSID, cur_NetworkNodeMAC, cur_PORT, cur_Type
+            scanMac, scanLastIP, scanVendor, scanSourcePlugin, scanName,
+            scanLastQuery, scanLastConnection, scanSyncHubNode,
+            scanSite, scanSSID, scanParentMAC, scanParentPort, scanType
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
@@ -890,9 +890,9 @@ def test_scan_multiple_devices_mixed_sources(scan_db, mock_device_handlers):
         cur.execute(
             """
             INSERT INTO CurrentScan (
-                cur_MAC, cur_IP, cur_Vendor, cur_ScanMethod, cur_Name,
-                cur_LastQuery, cur_DateTime, cur_SyncHubNodeName,
-                cur_NetworkSite, cur_SSID, cur_NetworkNodeMAC, cur_PORT, cur_Type
+                scanMac, scanLastIP, scanVendor, scanSourcePlugin, scanName,
+                scanLastQuery, scanLastConnection, scanSyncHubNode,
+                scanSite, scanSSID, scanParentMAC, scanParentPort, scanType
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (mac, ip, vendor, scan_method, name, "", "2025-01-01 01:00:00", "", "", "", "", "", ""),

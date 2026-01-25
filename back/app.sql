@@ -150,21 +150,21 @@ CREATE TABLE Plugins_Language_Strings(
                                 PRIMARY KEY("Index" AUTOINCREMENT)
                         );
 CREATE TABLE CurrentScan (
-                                cur_MAC STRING(50) NOT NULL COLLATE NOCASE,
-                                cur_IP STRING(50) NOT NULL COLLATE NOCASE,
-                                cur_Vendor STRING(250),
-                                cur_ScanMethod STRING(10),
-                                cur_Name STRING(250),
-                                cur_LastQuery STRING(250),
-                                cur_DateTime STRING(250),
-                                cur_SyncHubNodeName STRING(50),
-                                cur_NetworkSite STRING(250),
-                                cur_SSID STRING(250),
-                                cur_devVlan STRING(250),
-                                cur_NetworkNodeMAC STRING(250),
-                                cur_PORT STRING(250),
-                                cur_Type STRING(250),
-                                UNIQUE(cur_MAC)
+                                scanMac STRING(50) NOT NULL COLLATE NOCASE,
+                                scanLastIP STRING(50) NOT NULL COLLATE NOCASE,
+                                scanVendor STRING(250),
+                                scanSourcePlugin STRING(10),
+                                scanName STRING(250),
+                                scanLastQuery STRING(250),
+                                scanLastConnection STRING(250),
+                                scanSyncHubNode STRING(50),
+                                scanSite STRING(250),
+                                scanSSID STRING(250),
+                                scanVlan STRING(250),
+                                scanParentMAC STRING(250),
+                                scanParentPort STRING(250),
+                                scanType STRING(250),
+                                UNIQUE(scanMac)
                             );
 CREATE TABLE IF NOT EXISTS "AppEvents" (
                 "Index" INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -237,9 +237,9 @@ CREATE VIEW LatestEventsPerMAC AS
                                     c.*
                                 FROM RankedEvents AS e
                                 LEFT JOIN Devices AS d ON e.eve_MAC = d.devMac
-                                INNER JOIN CurrentScan AS c ON e.eve_MAC = c.cur_MAC
+                                INNER JOIN CurrentScan AS c ON e.eve_MAC = c.scanMac
                                 WHERE e.row_num = 1
-/* LatestEventsPerMAC(eve_MAC,eve_IP,eve_DateTime,eve_EventType,eve_AdditionalInfo,eve_PendingAlertEmail,eve_PairEventRowid,row_num,devMac,devName,devOwner,devType,devVendor,devFavorite,devGroup,devComments,devFirstConnection,devLastConnection,devLastIP,devStaticIP,devScan,devLogEvents,devAlertEvents,devAlertDown,devSkipRepeated,devLastNotification,devPresentLastScan,devIsNew,devLocation,devIsArchived,devParentMAC,devParentPort,devIcon,devGUID,devSite,devSSID,devSyncHubNode,devSourcePlugin,devCustomProps,cur_MAC,cur_IP,cur_Vendor,cur_ScanMethod,cur_Name,cur_LastQuery,cur_DateTime,cur_SyncHubNodeName,cur_NetworkSite,cur_SSID,cur_NetworkNodeMAC,cur_PORT,cur_Type) */;
+/* LatestEventsPerMAC(eve_MAC,eve_IP,eve_DateTime,eve_EventType,eve_AdditionalInfo,eve_PendingAlertEmail,eve_PairEventRowid,row_num,devMac,devName,devOwner,devType,devVendor,devFavorite,devGroup,devComments,devFirstConnection,devLastConnection,devLastIP,devStaticIP,devScan,devLogEvents,devAlertEvents,devAlertDown,devSkipRepeated,devLastNotification,devPresentLastScan,devIsNew,devLocation,devIsArchived,devParentMAC,devParentPort,devIcon,devGUID,devSite,devSSID,devSyncHubNode,devSourcePlugin,devCustomProps,scanMac,scanLastIP,scanVendor,scanSourcePlugin,scanName,scanLastQuery,scanLastConnection,scanSyncHubNode,scanSite,scanSSID,scanParentMAC,scanParentPort,scanType) */;
 CREATE VIEW Sessions_Devices AS SELECT * FROM Sessions LEFT JOIN "Devices" ON ses_MAC = devMac
 /* Sessions_Devices(ses_MAC,ses_IP,ses_EventTypeConnection,ses_DateTimeConnection,ses_EventTypeDisconnection,ses_DateTimeDisconnection,ses_StillConnected,ses_AdditionalInfo,devMac,devName,devOwner,devType,devVendor,devFavorite,devGroup,devComments,devFirstConnection,devLastConnection,devLastIP,devStaticIP,devScan,devLogEvents,devAlertEvents,devAlertDown,devSkipRepeated,devLastNotification,devPresentLastScan,devIsNew,devLocation,devIsArchived,devParentMAC,devParentPort,devIcon,devGUID,devSite,devSSID,devSyncHubNode,devSourcePlugin,devCustomProps) */;
 CREATE VIEW Convert_Events_to_Sessions AS  SELECT EVE1.eve_MAC,

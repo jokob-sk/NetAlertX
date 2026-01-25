@@ -451,7 +451,7 @@
       "localized": [
         "name"
       ],
-      "mapped_to_column": "cur_MAC",
+      "mapped_to_column": "scanMac",
       "name": [
         {
           "language_code": "en_us",
@@ -477,7 +477,7 @@
       "localized": [
         "name"
       ],
-      "mapped_to_column": "cur_IP",
+      "mapped_to_column": "scanLastIP",
       "name": [
         {
           "language_code": "en_us",
@@ -503,7 +503,7 @@
       "localized": [
         "name"
       ],
-      "mapped_to_column": "cur_Name",
+      "mapped_to_column": "scanName",
       "name": [
         {
           "language_code": "en_us",
@@ -524,7 +524,7 @@
     },
     {
       "column": "Watched_Value2",
-      "mapped_to_column": "cur_Vendor",
+      "mapped_to_column": "scanVendor",
       "css_classes": "col-sm-2",
       "default_value": "",
       "localized": [
@@ -550,7 +550,7 @@
     },
     {
       "column": "Dummy",
-      "mapped_to_column": "cur_ScanMethod",
+      "mapped_to_column": "scanSourcePlugin",
       "mapped_to_column_data": {
         "value": "ASUSWRT"
       },

@@ -51,19 +51,19 @@ def ip_test_db():
     cur.execute(
         """
         CREATE TABLE CurrentScan (
-            cur_MAC TEXT,
-            cur_IP TEXT,
-            cur_Vendor TEXT,
-            cur_ScanMethod TEXT,
-            cur_Name TEXT,
-            cur_LastQuery TEXT,
-            cur_DateTime TEXT,
-            cur_SyncHubNodeName TEXT,
-            cur_NetworkSite TEXT,
-            cur_SSID TEXT,
-            cur_NetworkNodeMAC TEXT,
-            cur_PORT TEXT,
-            cur_Type TEXT
+            scanMac TEXT,
+            scanLastIP TEXT,
+            scanVendor TEXT,
+            scanSourcePlugin TEXT,
+            scanName TEXT,
+            scanLastQuery TEXT,
+            scanLastConnection TEXT,
+            scanSyncHubNode TEXT,
+            scanSite TEXT,
+            scanSSID TEXT,
+            scanParentMAC TEXT,
+            scanParentPort TEXT,
+            scanType TEXT
         )
         """
     )
@@ -123,9 +123,9 @@ def test_valid_ipv4_format_accepted(ip_test_db, mock_ip_handlers):
     cur.execute(
         """
         INSERT INTO CurrentScan (
-            cur_MAC, cur_IP, cur_Vendor, cur_ScanMethod, cur_Name,
-            cur_LastQuery, cur_DateTime, cur_SyncHubNodeName,
-            cur_NetworkSite, cur_SSID, cur_NetworkNodeMAC, cur_PORT, cur_Type
+            scanMac, scanLastIP, scanVendor, scanSourcePlugin, scanName,
+            scanLastQuery, scanLastConnection, scanSyncHubNode,
+            scanSite, scanSSID, scanParentMAC, scanParentPort, scanType
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
@@ -197,9 +197,9 @@ def test_valid_ipv6_format_accepted(ip_test_db, mock_ip_handlers):
     cur.execute(
         """
         INSERT INTO CurrentScan (
-            cur_MAC, cur_IP, cur_Vendor, cur_ScanMethod, cur_Name,
-            cur_LastQuery, cur_DateTime, cur_SyncHubNodeName,
-            cur_NetworkSite, cur_SSID, cur_NetworkNodeMAC, cur_PORT, cur_Type
+            scanMac, scanLastIP, scanVendor, scanSourcePlugin, scanName,
+            scanLastQuery, scanLastConnection, scanSyncHubNode,
+            scanSite, scanSSID, scanParentMAC, scanParentPort, scanType
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
@@ -274,9 +274,9 @@ def test_invalid_ip_values_rejected(ip_test_db, mock_ip_handlers):
         cur.execute(
             """
             INSERT INTO CurrentScan (
-                cur_MAC, cur_IP, cur_Vendor, cur_ScanMethod, cur_Name,
-                cur_LastQuery, cur_DateTime, cur_SyncHubNodeName,
-                cur_NetworkSite, cur_SSID, cur_NetworkNodeMAC, cur_PORT, cur_Type
+                scanMac, scanLastIP, scanVendor, scanSourcePlugin, scanName,
+                scanLastQuery, scanLastConnection, scanSyncHubNode,
+                scanSite, scanSSID, scanParentMAC, scanParentPort, scanType
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
@@ -348,9 +348,9 @@ def test_ipv4_ipv6_mixed_in_multiple_scans(ip_test_db, mock_ip_handlers):
     cur.execute(
         """
         INSERT INTO CurrentScan (
-            cur_MAC, cur_IP, cur_Vendor, cur_ScanMethod, cur_Name,
-            cur_LastQuery, cur_DateTime, cur_SyncHubNodeName,
-            cur_NetworkSite, cur_SSID, cur_NetworkNodeMAC, cur_PORT, cur_Type
+            scanMac, scanLastIP, scanVendor, scanSourcePlugin, scanName,
+            scanLastQuery, scanLastConnection, scanSyncHubNode,
+            scanSite, scanSSID, scanParentMAC, scanParentPort, scanType
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
@@ -390,9 +390,9 @@ def test_ipv4_ipv6_mixed_in_multiple_scans(ip_test_db, mock_ip_handlers):
     cur.execute(
         """
         INSERT INTO CurrentScan (
-            cur_MAC, cur_IP, cur_Vendor, cur_ScanMethod, cur_Name,
-            cur_LastQuery, cur_DateTime, cur_SyncHubNodeName,
-            cur_NetworkSite, cur_SSID, cur_NetworkNodeMAC, cur_PORT, cur_Type
+            scanMac, scanLastIP, scanVendor, scanSourcePlugin, scanName,
+            scanLastQuery, scanLastConnection, scanSyncHubNode,
+            scanSite, scanSSID, scanParentMAC, scanParentPort, scanType
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
@@ -455,9 +455,9 @@ def test_ipv4_address_format_variations(ip_test_db, mock_ip_handlers):
         cur.execute(
             """
             INSERT INTO CurrentScan (
-                cur_MAC, cur_IP, cur_Vendor, cur_ScanMethod, cur_Name,
-                cur_LastQuery, cur_DateTime, cur_SyncHubNodeName,
-                cur_NetworkSite, cur_SSID, cur_NetworkNodeMAC, cur_PORT, cur_Type
+                scanMac, scanLastIP, scanVendor, scanSourcePlugin, scanName,
+                scanLastQuery, scanLastConnection, scanSyncHubNode,
+                scanSite, scanSSID, scanParentMAC, scanParentPort, scanType
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (mac, ipv4, "Vendor", "ARPSCAN", "", "", "2025-01-01 01:00:00", "", "", "", "", "", ""),
@@ -509,9 +509,9 @@ def test_ipv6_address_format_variations(ip_test_db, mock_ip_handlers):
         cur.execute(
             """
             INSERT INTO CurrentScan (
-                cur_MAC, cur_IP, cur_Vendor, cur_ScanMethod, cur_Name,
-                cur_LastQuery, cur_DateTime, cur_SyncHubNodeName,
-                cur_NetworkSite, cur_SSID, cur_NetworkNodeMAC, cur_PORT, cur_Type
+                scanMac, scanLastIP, scanVendor, scanSourcePlugin, scanName,
+                scanLastQuery, scanLastConnection, scanSyncHubNode,
+                scanSite, scanSSID, scanParentMAC, scanParentPort, scanType
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (mac, ipv6, "Vendor", "ARPSCAN", "", "", "2025-01-01 01:00:00", "", "", "", "", "", ""),

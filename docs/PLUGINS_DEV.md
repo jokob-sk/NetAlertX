@@ -268,7 +268,7 @@ To import plugin data into NetAlertX tables for device discovery or notification
   "database_column_definitions": [
     {
       "column": "Object_PrimaryID",
-      "mapped_to_column": "cur_MAC",
+      "mapped_to_column": "scanMac",
       "show": true,
       "type": "device_mac",
       "localized": ["name"],
@@ -287,7 +287,7 @@ To always map a static value (not read from plugin output):
 ```json
 {
   "column": "NameDoesntMatter",
-  "mapped_to_column": "cur_ScanMethod",
+  "mapped_to_column": "scanSourcePlugin",
   "mapped_to_column_data": {
     "value": "MYPLN"
   }
