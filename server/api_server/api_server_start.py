@@ -114,7 +114,6 @@ if not _cors_origins:
         "http://localhost:20212",
         "http://127.0.0.1:20211",
         "http://127.0.0.1:20212",
-        "*"                          #  Allow all origins as last resort
     ]
 
 CORS(
