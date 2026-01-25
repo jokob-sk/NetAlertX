@@ -10,14 +10,19 @@ The device field lock/unlock system allows you to protect specific device fields
 
 These are the ONLY fields that can be locked:
 
-- devName - Device hostname/alias
-- devVendor - Device manufacturer
-- devFQDN - Fully qualified domain name
-- devSSID - WiFi network name
-- devParentMAC - Parent/gateway MAC
-- devParentPort - Parent device port
-- devParentRelType - Relationship type (e.g., "gateway")
-- devVlan - VLAN identifier
+- `devName` - Device hostname/alias
+- `devVendor` - Device manufacturer
+- `devSSID` - WiFi network name
+- `devParentMAC` - Parent/gateway MAC
+- `devParentPort` - Parent device port
+- `devParentRelType` - Relationship type (e.g., "gateway")
+- `devVlan` - VLAN identifier
+
+Additional fields that are tracked (and their source is dispalyed in the UI if available):
+
+- `devMac`
+- `devLastIP`
+- `devFQDN`
 
 ## Source Values Explained
 

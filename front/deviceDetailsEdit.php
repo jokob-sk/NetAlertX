@@ -147,7 +147,7 @@ function getDeviceData() {
               },
               // Group for network details
               DevDetail_MainInfo_Network_Title: {
-                data: ["devParentMAC", "devParentRelType", "devParentPort", "devSSID", "devSite", "devSyncHubNode"],
+                data: ["devParentMAC", "devParentRelType", "devParentPort", "devSSID", "devSite", "devVlan", "devSyncHubNode"],
                 docs: "https://docs.netalertx.com/NETWORK_TREE",
                 iconClass: "fa fa-sitemap fa-rotate-270",
                 inputGroupClasses: "field-group network-group col-lg-4 col-sm-6 col-xs-12",
