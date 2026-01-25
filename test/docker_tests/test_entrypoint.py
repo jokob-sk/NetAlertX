@@ -81,3 +81,12 @@ def test_no_app_conf_override_when_no_graphql_port():
     result = _run_entrypoint(env={"SKIP_TESTS": "1"}, check_only=True)
     assert 'Setting APP_CONF_OVERRIDE to' not in result.stdout
     assert result.returncode == 0
+
+
+def test_skip_startup_checks_env_var():
+    # If SKIP_STARTUP_CHECKS contains the human-readable name of a check (e.g. "mandatory folders"),
+    # the entrypoint should skip that specific check. We check that the "Creating NetAlertX log directory." 
+    # message (from the mandatory folders check) is not printed when skipped.
+    result = _run_entrypoint(env={"SKIP_STARTUP_CHECKS": "mandatory folders"}, check_only=True)
+    assert "Creating NetAlertX log directory" not in result.stdout
+    assert result.returncode == 0
