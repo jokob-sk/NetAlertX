@@ -23,6 +23,8 @@ curl 'http://host:GRAPHQL_PORT/graphql' \
 
 The API server runs on `0.0.0.0:<graphql_port>` with **CORS enabled** for all main endpoints.
 
+CORS configuration: You can limit allowed CORS origins with the `CORS_ORIGINS` environment variable. Set it to a comma-separated list of origins (for example: `CORS_ORIGINS="https://example.com,http://localhost:3000"`). The server parses this list at startup and only allows origins that begin with `http://` or `https://`. If `CORS_ORIGINS` is unset or parses to an empty list, the API falls back to a safe development default list (localhosts) and will include `*` as a last-resort permissive origin.
+
 ---
 
 ## Authentication
