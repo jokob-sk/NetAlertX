@@ -176,6 +176,12 @@ $db->close();
                     </div>
                     <div class="db_info_table_row">
                         <div class="db_tools_table_cell_a" >
+                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnUnlockFields" onclick="askUnlockFields()"><?= lang('Maintenance_Tool_UnlockFields');?></button>
+                        </div>
+                        <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_UnlockFields_text');?></div>
+                    </div>
+                    <div class="db_info_table_row">
+                        <div class="db_tools_table_cell_a" >
                             <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteActHistory" onclick="askDeleteActHistory()"><?= lang('Maintenance_Tool_del_ActHistory');?></button>
                         </div>
                         <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_del_ActHistory_text');?></div>
@@ -459,6 +465,46 @@ function deleteEvents30()
     },
     error: function(xhr, status, error) {
       console.error("Error deleting events:", status, error);
+      showMessage("Error: " + (xhr.responseJSON?.error || error));
+    }
+  });
+}
+
+// -----------------------------------------------------------
+// Unlock/clear sources
+function askUnlockFields () {
+  // Ask
+  showModalWarning('<?= lang('Maintenance_Tool_UnlockFields_noti');?>', '<?= lang('Maintenance_Tool_UnlockFields_noti_text');?>',
+    '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Delete');?>', 'unlockFields');
+}
+function unlockFields() {
+  const apiBase = getApiBase();
+  const apiToken = getSetting("API_TOKEN");
+  const url = `${apiBase}/devices/fields/unlock`;
+
+  // Payload: clear all sources for all devices and all fields
+  const payload = {
+    mac: null,        // null = all devices
+    fields: null,     // null = all tracked fields
+    clearAll: true    // clear all source values
+  };
+
+  $.ajax({
+    url: url,
+    method: "POST",
+    contentType: "application/json",
+    headers: {
+      "Authorization": `Bearer ${apiToken}`
+    },
+    data: JSON.stringify(payload),
+    success: function(response) {
+      showMessage(response.success
+        ? "All device fields unlocked/cleared successfully"
+        : (response.error || "Unknown error")
+      );
+    },
+    error: function(xhr, status, error) {
+      console.error("Error unlocking fields:", status, error);
       showMessage("Error: " + (xhr.responseJSON?.error || error));
     }
   });

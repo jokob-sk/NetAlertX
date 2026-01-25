@@ -15,6 +15,7 @@ from db.authoritative_handler import (
     lock_field,
     unlock_field,
     FIELD_SOURCE_MAP,
+    unlock_fields
 )
 from helper import is_random_mac, get_setting_value
 from utils.datetime_utils import timeNowDB, format_date
@@ -804,10 +805,12 @@ class DeviceInstance:
         mac_normalized = normalize_mac(mac)
         conn = get_temp_db_connection()
         try:
-            lock_field(mac_normalized, field_name, conn)
-            return {"success": True, "message": f"Field {field_name} locked"}
+            result = lock_field(mac_normalized, field_name, conn)
+            # Include field name in response
+            result["fieldName"] = field_name
+            return result
         except Exception as e:
-            return {"success": False, "error": str(e)}
+            return {"success": False, "error": str(e), "fieldName": field_name}
         finally:
             conn.close()
 
@@ -819,12 +822,54 @@ class DeviceInstance:
         mac_normalized = normalize_mac(mac)
         conn = get_temp_db_connection()
         try:
-            unlock_field(mac_normalized, field_name, conn)
-            return {"success": True, "message": f"Field {field_name} unlocked"}
+            result = unlock_field(mac_normalized, field_name, conn)
+            # Include field name in response
+            result["fieldName"] = field_name
+            return result
         except Exception as e:
-            return {"success": False, "error": str(e)}
+            return {"success": False, "error": str(e), "fieldName": field_name}
         finally:
             conn.close()
+
+    def unlockFields(self, mac=None, fields=None, clear_all=False):
+        """
+        Wrapper to unlock one field, multiple fields, or all fields of a device or all devices.
+
+        Args:
+            mac: Optional MAC address of a single device (string) or multiple devices (list of strings).
+                If None, the operation applies to all devices.
+            fields: Optional list of field names to unlock. If None, all tracked fields are unlocked.
+            clear_all: If True, clear all values in the corresponding source fields.
+                    If False, only clear fields whose source is 'LOCKED' or 'USER'.
+
+        Returns:
+            dict: {
+                "success": bool,
+                "error": str|None,
+                "devicesAffected": int,
+                "fieldsAffected": list
+            }
+        """
+        # If no fields specified, unlock all tracked fields
+        if fields is None:
+            fields_to_unlock = list(FIELD_SOURCE_MAP.keys())
+        else:
+            # Validate fields
+            invalid_fields = [f for f in fields if f not in FIELD_SOURCE_MAP]
+            if invalid_fields:
+                return {
+                    "success": False,
+                    "error": f"Invalid fields: {', '.join(invalid_fields)}",
+                    "devicesAffected": 0,
+                    "fieldsAffected": []
+                }
+            fields_to_unlock = fields
+
+        conn = get_temp_db_connection()
+        result = unlock_fields(conn, mac=mac, fields=fields_to_unlock, clear_all=clear_all)
+        conn.close()
+
+        return result
 
     def copyDevice(self, mac_from, mac_to):
         """Copy a device entry from one MAC to another."""

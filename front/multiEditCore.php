@@ -58,12 +58,18 @@
         <h3 class="box-title"><?= lang('Device_MultiEdit_MassActions');?></h3>
       </div>
       <div class="box-body">
-
+        <div class="col-md-12">
           <div class="col-md-2" style="">
               <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red" id="btnDeleteMAC" onclick="askDeleteSelectedDevices()"><?= lang('Maintenance_Tool_del_selecteddev');?></button>
           </div>
           <div class="col-md-10"><?= lang('Maintenance_Tool_del_selecteddev_text');?></div>
-
+        </div>
+        <div class="col-md-12">
+          <div class="col-md-2" style="">
+              <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red" id="btnUnlockFieldsSelected" onclick="askUnlockFieldsSelected()"><?= lang('Maintenance_Tool_unlockFields_selecteddev');?></button>
+          </div>
+          <div class="col-md-10"><?= lang('Maintenance_Tool_del_unlockFields_selecteddev_text');?></div>
+        </div>
       </div>
     </div>
   </div>
@@ -415,6 +421,77 @@ function executeAction(action, whereColumnName, key, targetColumns, newTargetCol
       showMessage("Error: " + (xhr.responseJSON?.error || error));
     }
   });
+}
+
+
+// -----------------------------------------------------------------------------
+// Ask to unlock fields of selected devices
+function askUnlockFieldsSelected () {
+  // Ask
+  showModalWarning(
+    getString('Maintenance_Tool_unlockFields_selecteddev_noti'),
+    getString('Gen_AreYouSure'),
+    getString('Gen_Cancel'),
+    getString('Gen_Okay'),
+    'unlockFieldsSelected');
+}
+
+// -----------------------------------------------------------------------------
+// Unlock fields for selected devices
+function unlockFieldsSelected(fields = null, clearAll = false) {
+    // Get selected MACs
+    const macs_tmp = selectorMacs(); // returns array of MACs
+
+    console.log(macs_tmp);
+
+
+    if (!macs_tmp || macs_tmp == "" || macs_tmp.length === 0) {
+        showMessage(textMessage = "No devices selected", timeout = 3000, colorClass = "modal_red")
+        return;
+    }
+
+    // API setup
+    const apiBase = getApiBase();
+    const apiToken = getSetting("API_TOKEN");
+    const url = `${apiBase}/devices/fields/unlock`;
+
+    // Convert string to array
+    const macsArray = macs_tmp.split(",").map(m => m.trim()).filter(Boolean);
+
+    const payload = {
+        mac: macsArray,      // array of MACs for backend
+        fields: fields,      // null for all tracked fields
+        clear_all: clearAll  // true to clear all sources, false to clear only LOCKED/USER
+    };
+
+    $.ajax({
+        url: url,
+        method: "POST",
+        headers: { "Authorization": `Bearer ${apiToken}` },
+        contentType: "application/json",
+        data: JSON.stringify(payload),
+        success: function(response) {
+            if (response.success) {
+                showMessage(getString('Gen_DataUpdatedUITakesTime'));
+                write_notification(
+                    `[Multi edit] Successfully unlocked fields of devices with MACs: ${macs_tmp}`,
+                    "info"
+                );
+            } else {
+                write_notification(
+                    `[Multi edit] Failed to unlock fields: ${response.error || "Unknown error"}`,
+                    "interrupt"
+                );
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Error unlocking fields:", status, error);
+            write_notification(
+                `[Multi edit] Error unlocking fields: ${xhr.responseJSON?.error || error}`,
+                "error"
+            );
+        }
+    });
 }
 
 

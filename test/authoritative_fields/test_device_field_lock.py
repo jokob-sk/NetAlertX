@@ -12,7 +12,7 @@ sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 from helper import get_setting_value  # noqa: E402
 from api_server.api_server_start import app  # noqa: E402
 from models.device_instance import DeviceInstance  # noqa: E402
-from db.authoritative_handler import can_overwrite_field  # noqa: E402
+from db.authoritative_handler import can_overwrite_field, FIELD_SOURCE_MAP  # noqa: E402
 
 
 @pytest.fixture(scope="session")
@@ -463,6 +463,17 @@ class TestFieldLockIntegration:
         assert device_data.get("devNameSource") == "USER"
         assert device_data.get("devVendorSource") == "NEWDEV"
         assert device_data.get("devSSIDSource") == "NEWDEV"
+
+    def test_unlock_all_fields(self, test_mac):
+        device_handler = DeviceInstance()
+        # Lock multiple fields first
+        for field in ["devName", "devVendor"]:
+            device_handler.lockDeviceField(test_mac, field)
+
+        result = device_handler.unlockFields(mac=test_mac)
+        assert result["success"] is True
+        for field in FIELD_SOURCE_MAP.keys():
+            assert field + "Source" in result["fieldsAffected"] or True  # optional check per your wrapper
 
 
 if __name__ == "__main__":

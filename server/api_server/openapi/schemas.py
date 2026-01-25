@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import re
 import ipaddress
-from typing import Optional, List, Literal, Any, Dict
+from typing import Optional, List, Literal, Any, Dict, Union
 from pydantic import BaseModel, Field, field_validator, model_validator, ConfigDict, RootModel
 
 # Internal helper imports
@@ -277,6 +277,22 @@ class LockDeviceFieldRequest(BaseModel):
     """Request to lock/unlock a device field."""
     fieldName: Optional[str] = Field(None, description="Field name to lock/unlock (devMac, devName, devLastIP, etc.)")
     lock: bool = Field(True, description="True to lock the field, False to unlock")
+
+
+class UnlockDeviceFieldsRequest(BaseModel):
+    """Request to unlock/clear device fields for one or multiple devices."""
+    mac: Optional[Union[str, List[str]]] = Field(
+        None,
+        description="Single MAC, list of MACs, or None to target all devices"
+    )
+    fields: Optional[List[str]] = Field(
+        None,
+        description="List of field names to unlock. If omitted, all tracked fields will be unlocked"
+    )
+    clear_all: bool = Field(
+        False,
+        description="True to clear all sources, False to clear only LOCKED/USER"
+    )
 
 
 class DeviceUpdateRequest(BaseModel):

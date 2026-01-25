@@ -18,6 +18,7 @@ sys.path.extend([f"{INSTALL_PATH}/server"])
 from logger import mylog  # noqa: E402 [flake8 lint suppression]
 from helper import get_setting_value  # noqa: E402 [flake8 lint suppression]
 from db.db_helper import row_to_json  # noqa: E402 [flake8 lint suppression]
+from plugin_helper import normalize_mac  # noqa: E402 [flake8 lint suppression]
 
 
 # Map of field to its source tracking field
@@ -287,27 +288,28 @@ def lock_field(devMac, field_name, conn):
     """
     Lock a field so it won't be overwritten by plugins.
 
-    Args:
-        devMac: The MAC address of the device.
-        field_name: The field to lock.
-        conn: Database connection object.
+    Returns:
+        dict: {"success": bool, "error": str|None}
     """
-
     if field_name not in FIELD_SOURCE_MAP:
-        mylog("debug", [f"[lock_field] Field {field_name} does not support locking"])
-        return
+        msg = f"Field {field_name} does not support locking"
+        mylog("debug", [f"[lock_field] {msg}"])
+        return {"success": False, "error": msg}
 
     source_field = FIELD_SOURCE_MAP[field_name]
     cur = conn.cursor()
+
     try:
         cur.execute("PRAGMA table_info(Devices)")
         device_columns = {row["name"] for row in cur.fetchall()}
-    except Exception:
+    except Exception as e:
         device_columns = set()
+        mylog("none", [f"[lock_field] Failed to get table info: {e}"])
 
     if device_columns and source_field not in device_columns:
-        mylog("debug", [f"[lock_field] Source column {source_field} missing for {field_name}"])
-        return
+        msg = f"Source column {source_field} missing for {field_name}"
+        mylog("debug", [f"[lock_field] {msg}"])
+        return {"success": False, "error": msg}
 
     sql = f"UPDATE Devices SET {source_field}='LOCKED' WHERE devMac = ?"
 
@@ -315,46 +317,128 @@ def lock_field(devMac, field_name, conn):
         cur.execute(sql, (devMac,))
         conn.commit()
         mylog("debug", [f"[lock_field] Locked {field_name} for {devMac}"])
+        return {"success": True, "error": None}
     except Exception as e:
         mylog("none", [f"[lock_field] ERROR: {e}"])
-        conn.rollback()
-        raise
+        try:
+            conn.rollback()
+        except Exception:
+            pass
+        return {"success": False, "error": str(e)}
 
 
 def unlock_field(devMac, field_name, conn):
     """
     Unlock a field so plugins can overwrite it again.
 
-    Args:
-        devMac: The MAC address of the device.
-        field_name: The field to unlock.
-        conn: Database connection object.
+    Returns:
+        dict: {"success": bool, "error": str|None}
     """
-
     if field_name not in FIELD_SOURCE_MAP:
-        mylog("debug", [f"[unlock_field] Field {field_name} does not support unlocking"])
-        return
+        msg = f"Field {field_name} does not support unlocking"
+        mylog("debug", [f"[unlock_field] {msg}"])
+        return {"success": False, "error": msg}
 
     source_field = FIELD_SOURCE_MAP[field_name]
     cur = conn.cursor()
+
     try:
         cur.execute("PRAGMA table_info(Devices)")
         device_columns = {row["name"] for row in cur.fetchall()}
-    except Exception:
+    except Exception as e:
         device_columns = set()
+        mylog("none", [f"[unlock_field] Failed to get table info: {e}"])
 
     if device_columns and source_field not in device_columns:
-        mylog("debug", [f"[unlock_field] Source column {source_field} missing for {field_name}"])
-        return
+        msg = f"Source column {source_field} missing for {field_name}"
+        mylog("debug", [f"[unlock_field] {msg}"])
+        return {"success": False, "error": msg}
 
-    # Unlock by resetting to empty (allows overwrite)
     sql = f"UPDATE Devices SET {source_field}='' WHERE devMac = ?"
 
     try:
         cur.execute(sql, (devMac,))
         conn.commit()
         mylog("debug", [f"[unlock_field] Unlocked {field_name} for {devMac}"])
+        return {"success": True, "error": None}
     except Exception as e:
         mylog("none", [f"[unlock_field] ERROR: {e}"])
-        conn.rollback()
-        raise
+        try:
+            conn.rollback()
+        except Exception:
+            pass
+        return {"success": False, "error": str(e)}
+
+
+def unlock_fields(conn, mac=None, fields=None, clear_all=False):
+    """
+    Unlock or clear source fields for one device, multiple devices, or all devices.
+
+    Args:
+        conn: Database connection object.
+        mac: Device MAC address (string) or list of MACs. If None, operate on all devices.
+        fields: Optional list of fields to unlock. If None, use all tracked fields.
+        clear_all: If True, clear all values in source fields; otherwise, only clear LOCKED/USER.
+
+    Returns:
+        dict: {
+            "success": bool,
+            "error": str|None,
+            "devicesAffected": int,
+            "fieldsAffected": list
+        }
+    """
+    target_fields = fields if fields else list(FIELD_SOURCE_MAP.keys())
+    if not target_fields:
+        return {"success": False, "error": "No fields to process", "devicesAffected": 0, "fieldsAffected": []}
+
+    try:
+        cur = conn.cursor()
+        fields_set_clauses = []
+
+        for field in target_fields:
+            source_field = FIELD_SOURCE_MAP[field]
+            if clear_all:
+                fields_set_clauses.append(f"{source_field}=''")
+            else:
+                fields_set_clauses.append(
+                    f"{source_field}=CASE WHEN {source_field} IN ('LOCKED','USER') THEN '' ELSE {source_field} END"
+                )
+
+        set_clause = ", ".join(fields_set_clauses)
+
+        if mac:
+            # mac can be a single string or a list
+            macs = mac if isinstance(mac, list) else [mac]
+            normalized_macs = [normalize_mac(m) for m in macs]
+
+            placeholders = ",".join("?" for _ in normalized_macs)
+            sql = f"UPDATE Devices SET {set_clause} WHERE devMac IN ({placeholders})"
+            cur.execute(sql, normalized_macs)
+        else:
+            # All devices
+            sql = f"UPDATE Devices SET {set_clause}"
+            cur.execute(sql)
+
+        conn.commit()
+        return {
+            "success": True,
+            "error": None,
+            "devicesAffected": cur.rowcount,
+            "fieldsAffected": target_fields,
+        }
+
+    except Exception as e:
+        try:
+            conn.rollback()
+        except Exception:
+            pass
+        return {
+            "success": False,
+            "error": str(e),
+            "devicesAffected": 0,
+            "fieldsAffected": [],
+        }
+    finally:
+        conn.close()
+

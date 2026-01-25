@@ -72,7 +72,7 @@ from .openapi.schemas import (  # noqa: E402 [flake8 lint suppression]
     BaseResponse, DeviceTotalsResponse,
     DeleteDevicesRequest, DeviceImportRequest,
     DeviceImportResponse, UpdateDeviceColumnRequest,
-    LockDeviceFieldRequest,
+    LockDeviceFieldRequest, UnlockDeviceFieldsRequest,
     CopyDeviceRequest, TriggerScanRequest,
     OpenPortsRequest,
     OpenPortsResponse, WakeOnLanRequest,
@@ -445,6 +445,10 @@ def api_device_update_column(mac, payload=None):
     return jsonify(result)
 
 
+# --------------------------
+# Field sources and locking
+# --------------------------
+
 @app.route("/device/<mac>/field/lock", methods=["POST"])
 @validate_request(
     operation_id="lock_device_field",
@@ -495,6 +499,44 @@ def api_device_field_lock(mac, payload=None):
         mylog("none", f"Error locking field {field_name} for {mac}: {str(e)}")
         return jsonify({"success": False, "error": str(e)}), 500
 
+
+@app.route("/devices/fields/unlock", methods=["POST"])
+@validate_request(
+    operation_id="unlock_device_fields",
+    summary="Unlock/Clear Device Fields",
+    description=(
+        "Unlock device fields (clear LOCKED/USER sources) or clear all sources. "
+        "Can target one device or all devices, and one or multiple fields."
+    ),
+    request_model=UnlockDeviceFieldsRequest,
+    response_model=BaseResponse,
+    tags=["devices"],
+    auth_callable=is_authorized
+)
+def api_device_fields_unlock(payload=None):
+    """
+    Unlock or clear fields for one device or all devices.
+    """
+    data = request.get_json() or {}
+
+    mac = data.get("mac")
+    fields = data.get("fields")
+    if fields and not isinstance(fields, list):
+        return jsonify({
+            "success": False,
+            "error": "fields must be a list of field names"
+        }), 400
+
+    clear_all = bool(data.get("clearAll", False))
+    device_handler = DeviceInstance()
+
+    # Call wrapper directly — it handles validation and normalization
+    result = device_handler.unlockFields(mac=mac, fields=fields, clear_all=clear_all)
+    return jsonify(result)
+
+# --------------------------
+# Devices Collections
+# --------------------------
 
 @app.route('/mcp/sse/device/<mac>/set-alias', methods=['POST'])
 @app.route('/device/<mac>/set-alias', methods=['POST'])
@@ -553,9 +595,6 @@ def api_device_open_ports(payload=None):
     return jsonify({"success": True, "target": target, "open_ports": open_ports})
 
 
-# --------------------------
-# Devices Collections
-# --------------------------
 @app.route("/devices", methods=["GET"])
 @validate_request(
     operation_id="get_all_devices",
