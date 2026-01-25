@@ -42,6 +42,7 @@ PIHOLEAPI_SES_SID = None
 PIHOLEAPI_SES_CSRF = None
 PIHOLEAPI_API_MAXCLIENTS = None
 PIHOLEAPI_VERIFY_SSL = True
+PIHOLEAPI_GET_OFFLINE = False
 PIHOLEAPI_RUN_TIMEOUT = 10
 PIHOLEAPI_FAKE_MAC = get_setting_value('PIHOLEAPI_FAKE_MAC')
 VERSION_DATE = "NAX-PIHOLEAPI-1.0"
@@ -200,7 +201,7 @@ def gather_device_entries():
     """
     entries = []
 
-    iface_map = get_pihole_interface_data()
+    iface_map = get_pihole_interface_data()  # mac -> [ips]
     devices = get_pihole_network_devices()
     now_ts = int(datetime.datetime.now().timestamp())
 
@@ -211,31 +212,41 @@ def gather_device_entries():
 
         macVendor = device.get('macVendor', '')
         lastQuery = device.get('lastQuery')
-        # 'ips' is a list of dicts: {ip, name}
-        for ip_info in device.get('ips', []):
+
+        # collect all IPs for this device
+        device_ips = device.get('ips', [])
+        if not device_ips:
+            continue
+
+        for ip_info in device_ips:
             ip = ip_info.get('ip')
             if not ip:
                 continue
 
             name = ip_info.get('name') or '(unknown)'
 
-            # mark active if ip present on local interfaces
-            for mac, iplist in iface_map.items():
-                if ip in iplist:
-                    lastQuery = str(now_ts)
+            # Determine if this device is "online"
+            online = any(ip in iplist for iplist in iface_map.values())
+
+            # Skip offline devices unless PIHOLEAPI_GET_OFFLINE=True
+            if not online and not PIHOLEAPI_GET_OFFLINE:
+                continue
 
             tmpMac = hwaddr.lower()
 
             # ensure fake mac if enabled
-            if PIHOLEAPI_FAKE_MAC and is_mac(tmpMac) is False:
+            if PIHOLEAPI_FAKE_MAC and not is_mac(tmpMac):
                 tmpMac = string_to_fake_mac(ip)
+
+            # mark lastQuery as now if online, else keep original
+            last_query_val = str(now_ts) if online else str(lastQuery) if lastQuery else ''
 
             entries.append({
                 'mac': tmpMac,
                 'ip': ip,
                 'name': name,
                 'macVendor': macVendor,
-                'lastQuery': str(lastQuery) if lastQuery is not None else ''
+                'lastQuery': last_query_val
             })
 
     return entries
@@ -244,7 +255,7 @@ def gather_device_entries():
 # ------------------------------------------------------------------
 def main():
     """Main plugin entrypoint."""
-    global PIHOLEAPI_URL, PIHOLEAPI_PASSWORD, PIHOLEAPI_API_MAXCLIENTS, PIHOLEAPI_VERIFY_SSL, PIHOLEAPI_RUN_TIMEOUT
+    global PIHOLEAPI_URL, PIHOLEAPI_PASSWORD, PIHOLEAPI_API_MAXCLIENTS, PIHOLEAPI_VERIFY_SSL, PIHOLEAPI_RUN_TIMEOUT, PIHOLEAPI_GET_OFFLINE
 
     mylog('verbose', [f'[{pluginName}] start script.'])
 
@@ -260,6 +271,7 @@ def main():
     # Accept boolean or string "True"/"False"
     PIHOLEAPI_VERIFY_SSL = get_setting_value('PIHOLEAPI_SSL_VERIFY')
     PIHOLEAPI_RUN_TIMEOUT = get_setting_value('PIHOLEAPI_RUN_TIMEOUT')
+    PIHOLEAPI_GET_OFFLINE = get_setting_value('PIHOLEAPI_GET_OFFLINE')
 
     # Authenticate
     if not pihole_api_auth():
