@@ -113,12 +113,14 @@ Each locked field has a "source" indicator that shows you why the value is prote
 ## When to Lock vs. When NOT to Lock
 
 ### ✅ **Good reasons to lock:**
+
 - You've customized the device name and it's correct
 - You've set a static IP and it shouldn't change
 - You've configured VLAN information
 - You know the parent device and don't want it auto-corrected
 
 ### ❌ **Bad reasons to lock:**
+
 - The value seems wrong—edit it first, then lock
 - You want to prevent data from another source—use field lock, not to hide problems
 - You're trying to force a value the system disagrees with
@@ -126,17 +128,20 @@ Each locked field has a "source" indicator that shows you why the value is prote
 ## Troubleshooting
 
 **Lock button not appearing:**
+
 - Confirm the field is one of the tracked fields (see list above)
 - Confirm the device is already saved (new devices don't show lock buttons)
 - Refresh the page
 
 **Lock button is there but click doesn't work:**
+
 - Check your internet connection
 - Check you have permission to edit devices
 - Look at browser console (F12 > Console tab) for error messages
 - Try again in a few seconds
 
 **Field still changes after locking:**
+
 - Double-check the lock icon shows
 - Reload the page—the change might be a display issue
 - Check if you accidentally unlocked it

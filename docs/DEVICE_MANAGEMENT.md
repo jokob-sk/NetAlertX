@@ -59,11 +59,6 @@ NetAlertX allows you to "lock" specific device fields to prevent plugins from au
 2. Click the **lock button** (🔒) next to any tracked field
 3. The field is now protected—plugins cannot change it until you unlock it
 
-### Tracked Fields
-
-The following 10 fields support locking:
-- devMac, devName, devLastIP, devVendor, devFQDN, devSSID, devParentMAC, devParentPort, devParentRelType, devVlan
-
 ### See Also
 
 - **For Users:** [Quick Reference - Device Field Lock/Unlock](DEVICE_FIELD_LOCK.md) - How to use field locking

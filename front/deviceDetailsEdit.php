@@ -138,7 +138,7 @@ function getDeviceData() {
               },
               // Group for event and alert settings
               DevDetail_EveandAl_Title: {
-                data: ["devAlertEvents", "devAlertDown", "devSkipRepeated", "devReqNicsOnline", "devChildrenNicsDynamic"],
+                data: ["devAlertEvents", "devAlertDown", "devSkipRepeated", "devReqNicsOnline", "devChildrenNicsDynamic", "devForceStatus"],
                 docs: "https://docs.netalertx.com/NOTIFICATIONS",
                 iconClass: "fa fa-bell",
                 inputGroupClasses: "field-group alert-group col-lg-4 col-sm-6 col-xs-12",
@@ -156,7 +156,7 @@ function getDeviceData() {
               },
               // Group for other fields like static IP, archived status, etc.
               DevDetail_DisplayFields_Title: {
-                data: ["devStaticIP", "devIsNew", "devFavorite", "devIsArchived", "devForceStatus"],
+                data: ["devStaticIP", "devIsNew", "devFavorite", "devIsArchived"],
                 docs: "https://docs.netalertx.com/DEVICE_DISPLAY_SETTINGS",
                 iconClass: "fa fa-list-check",
                 inputGroupClasses: "field-group display-group col-lg-4 col-sm-6 col-xs-12",
