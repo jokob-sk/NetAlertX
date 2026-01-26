@@ -6,7 +6,7 @@ hide:
 
 # NetAlertX Documentation
 
-Welcome to the official NetAlertX documentation! NetAlertX is a powerful tool designed to simplify the management and monitoring of your network. Below, you will find guides and resources to help you set up, configure, and troubleshoot your NetAlertX instance.
+Find guides and resources to help you set up, configure, and troubleshoot your NetAlertX instance.
 
 ![Preview](./img/devices_split.png)
 
@@ -15,7 +15,7 @@ Welcome to the official NetAlertX documentation! NetAlertX is a powerful tool de
 NetAlertX provides contextual help within the application:
 
 - **Hover over settings, fields, or labels** to see additional tooltips and guidance.
-- **Click ❔ (question-mark) icons** next to various elements to view detailed information.
+- **Click ? (question-mark) icons** next to various elements to view detailed information.
 
 ---
 

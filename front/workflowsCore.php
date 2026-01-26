@@ -12,7 +12,7 @@
 <section class="content workflows col-sm-12 col-xs-12">
   <div id="workflowContainerWrap" class="bg-grey-dark color-palette  col-sm-12 col-xs-12 box-default box-info ">
     <div id="workflowContainer"></div>
-    
+
   </div>
   <div id="buttons" class="bottom-buttons col-sm-12 col-xs-12">
     <div class="add-workflow col-sm-4 col-xs-12">
@@ -48,10 +48,12 @@ let fieldOptions = [
         "devLastIP", "devStaticIP", "devScan", "devLogEvents", "devAlertEvents",
         "devAlertDown", "devSkipRepeated", "devLastNotification", "devPresentLastScan",
         "devIsNew", "devLocation", "devIsArchived", "devParentMAC", "devParentPort",
-        "devIcon", "devSite", "devSSID", "devSyncHubNode", "devSourcePlugin", "devFQDN", 
-        "devParentRelType", "devReqNicsOnline"
+        "devIcon", "devSite", "devSSID", "devSyncHubNode", "devSourcePlugin", "devFQDN",
+        "devParentRelType", "devReqNicsOnline", "devNameSource", "devVendorSource" ,
+        "devSSIDSource", "devParentMACSource" , "devParentPortSource" , "devParentRelTypeSource",
+        "devVlanSource"
       ];
-      
+
 let triggerTypes = [
   "Devices"
 ];
@@ -79,7 +81,7 @@ let emptyWorkflow = {
       },
       "conditions": [
       ],
-      "actions": [     
+      "actions": [
       ]
     };
 
@@ -131,25 +133,25 @@ function renderWorkflows() {
 // Generate UI for a single workflow
 function generateWorkflowUI(wf, wfIndex) {
 
-  let wfEnabled = (wf?.enabled ?? "No") == "Yes"; 
+  let wfEnabled = (wf?.enabled ?? "No") == "Yes";
 
-  let $wfContainer = $("<div>", { 
-    class: "workflow-card panel col-sm-12 col-sx-12", 
-    id: `wf-${wfIndex}-container` 
+  let $wfContainer = $("<div>", {
+    class: "workflow-card panel col-sm-12 col-sx-12",
+    id: `wf-${wfIndex}-container`
   });
 
   // Workflow Name
   let $wfLinkWrap = $("<div>",
     {
       class: " ",
-      id: `wf-${wfIndex}-header` 
+      id: `wf-${wfIndex}-header`
     }
   )
 
-  let $wfEnabledIcon = $("<i>", { 
+  let $wfEnabledIcon = $("<i>", {
       class: `alignRight fa ${wfEnabled ? "fa-dot-circle" : "fa-circle" }`
     });
-  
+
 
   let $wfHeaderLink = $("<a>",
     {
@@ -163,7 +165,7 @@ function generateWorkflowUI(wf, wfIndex) {
 
   let $wfHeaderHeading = $("<h4>",
     {
-      class: "panel-title"    
+      class: "panel-title"
     }
   ).text(wf.name)
 
@@ -176,34 +178,34 @@ function generateWorkflowUI(wf, wfIndex) {
   let isOpen = panelState === "true"; // Convert stored string to boolean
 
   console.log(`panel isOpen: ${isOpen}` );
-  
 
-  let $wfCollapsiblePanel = $("<div>", { 
-    class: ` panel-collapse collapse  ${isOpen ? 'in' : ''}`, 
-    id: `wf-${wfIndex}-collapsible-panel` 
+
+  let $wfCollapsiblePanel = $("<div>", {
+    class: ` panel-collapse collapse  ${isOpen ? 'in' : ''}`,
+    id: `wf-${wfIndex}-collapsible-panel`
   });
 
   let $wfEnabled = createEditableDropdown(
-    `[${wfIndex}].enabled`, 
+    `[${wfIndex}].enabled`,
     getString("WF_Enabled"),
-    wfEnabledOptions, 
-    wfEnabled ? "Yes" :"No", 
+    wfEnabledOptions,
+    wfEnabled ? "Yes" :"No",
     `wf-${wfIndex}-enabled`
   );
 
   $wfCollapsiblePanel.append($wfEnabled)
 
   let $wfNameInput = createEditableInput(
-    `[${wfIndex}].name`, 
-    getString("WF_Name"), 
-    wf.name, 
-    `wf-${wfIndex}-name`, 
+    `[${wfIndex}].name`,
+    getString("WF_Name"),
+    wf.name,
+    `wf-${wfIndex}-name`,
     "workflow-name-input"
   );
 
   $wfCollapsiblePanel.append($wfNameInput)
 
-  let $triggersIcon = $("<i>", { 
+  let $triggersIcon = $("<i>", {
       class: "fa-solid fa-bolt"
     });
 
@@ -221,34 +223,34 @@ function generateWorkflowUI(wf, wfIndex) {
   ).append($triggerTitle);
 
   let $triggerTypeDropdown = createEditableDropdown(
-    `[${wfIndex}].trigger.object_type`, 
+    `[${wfIndex}].trigger.object_type`,
     getString("WF_Trigger_type"),
-    triggerTypes, 
-    wf.trigger.object_type, 
+    triggerTypes,
+    wf.trigger.object_type,
     `wf-${wfIndex}-trigger-object-type`
   );
 
   let $eventTypeDropdown = createEditableDropdown(
-    `[${wfIndex}].trigger.event_type`, 
-    getString("WF_Trigger_event_type"), 
-    triggerEvents, 
-    wf.trigger.event_type, 
+    `[${wfIndex}].trigger.event_type`,
+    getString("WF_Trigger_event_type"),
+    triggerEvents,
+    wf.trigger.event_type,
     `wf-${wfIndex}-trigger-event-type`
   );
 
-  let $triggerIcon = $("<i>", { 
+  let $triggerIcon = $("<i>", {
       class: "fa-solid fa-bolt bckg-icon-2-line"
     });
 
   $triggerSection.append($triggerIcon);
   $triggerSection.append($triggerTypeDropdown);
   $triggerSection.append($eventTypeDropdown);
-  
+
   $wfCollapsiblePanel.append($triggerSection);
 
   // Conditions
 
-  let $conditionsIcon = $("<i>", { 
+  let $conditionsIcon = $("<i>", {
     class: "fa-solid  fa-arrows-split-up-and-left fa-rotate-270"
   });
 
@@ -262,10 +264,10 @@ function generateWorkflowUI(wf, wfIndex) {
 
 
   $conditionsContainer.append(renderConditions(wfIndex, `[${wfIndex}]`, 0, wf.conditions));
-  
+
   $wfCollapsiblePanel.append($conditionsContainer);
 
-  let $actionsIcon = $("<i>", { 
+  let $actionsIcon = $("<i>", {
       class: "fa-solid fa-person-running fa-flip-horizontal"
     });
 
@@ -295,10 +297,10 @@ function generateWorkflowUI(wf, wfIndex) {
 
     // Dropdown for action.type
     let $actionDropdown= createEditableDropdown(
-      `[${wfIndex}].actions[${actionIndex}].type`, 
-      getString("WF_Action_type"),  
-      actionTypes, 
-      action.type, 
+      `[${wfIndex}].actions[${actionIndex}].type`,
+      getString("WF_Action_type"),
+      actionTypes,
+      action.type,
       `wf-${wfIndex}-actionIndex-${actionIndex}-type`
     );
 
@@ -314,23 +316,23 @@ function generateWorkflowUI(wf, wfIndex) {
 
       // Dropdown for action.field
       let $fieldDropdown = createEditableDropdown(
-        `[${wfIndex}].actions[${actionIndex}].field`, 
-        getString("WF_Action_field"),  
-        fieldOptions, 
-        action.field, 
+        `[${wfIndex}].actions[${actionIndex}].field`,
+        getString("WF_Action_field"),
+        fieldOptions,
+        action.field,
         `wf-${wfIndex}-actionIndex-${actionIndex}-field`
       );
 
       // Textbox for  action.value
       let $actionValueInput = createEditableInput(
-        `[${wfIndex}].actions[${actionIndex}].value`, 
-        getString("WF_Action_value"), 
-        action.value, 
-        `wf-${wfIndex}-actionIndex-${actionIndex}-value`, 
+        `[${wfIndex}].actions[${actionIndex}].value`,
+        getString("WF_Action_value"),
+        action.value,
+        `wf-${wfIndex}-actionIndex-${actionIndex}-value`,
         "action-value-input"
       );
 
-      
+
       $actionEl.append($fieldDropdown);
       $actionEl.append($actionValueInput);
 
@@ -340,7 +342,7 @@ function generateWorkflowUI(wf, wfIndex) {
 
     let $actionRemoveButtonWrap = $("<div>", { class: "button-container col-sm-1 col-sx-12" });
 
-    let $actionRemoveIcon = $("<i>", { 
+    let $actionRemoveIcon = $("<i>", {
       class: "fa-solid fa-trash"
     });
 
@@ -353,14 +355,14 @@ function generateWorkflowUI(wf, wfIndex) {
 
     $actionRemoveButtonWrap.append($actionRemoveButton);
 
-    let $actionIcon = $("<i>", { 
+    let $actionIcon = $("<i>", {
       class: `fa-solid  fa-person-running fa-flip-horizontal bckg-icon-${numberOfLines}-line `
     });
 
     $actionEl.prepend($actionIcon)
 
     $actionElWrap.append($actionEl)
-    
+
     $actionElWrap.append($actionRemoveButtonWrap)
 
     $actionsContainer.append($actionElWrap);
@@ -370,7 +372,7 @@ function generateWorkflowUI(wf, wfIndex) {
 
   // add action button
   let $actionAddButtonWrap = $("<div>", { class: "button-container col-sm-12 col-sx-12" });
-  let $actionAddIcon = $("<i>", { 
+  let $actionAddIcon = $("<i>", {
       class: "fa-solid fa-plus"
     });
   let $actionAddButton = $("<div>", {
@@ -382,10 +384,10 @@ function generateWorkflowUI(wf, wfIndex) {
   $actionAddButtonWrap.append($actionAddButton)
   $actionsContainer.append($actionAddButtonWrap)
 
-  
+
   let $wfRemoveButtonWrap = $("<div>", { class: "button-container col-sm-4 col-sx-12" });
 
-  let $wfRemoveIcon = $("<i>", { 
+  let $wfRemoveIcon = $("<i>", {
     class: "fa-solid fa-trash"
   });
 
@@ -399,7 +401,7 @@ function generateWorkflowUI(wf, wfIndex) {
 
   let $wfDuplicateButtonWrap = $("<div>", { class: "button-container col-sm-4 col-sx-12" });
 
-  let $wfDuplicateIcon = $("<i>", { 
+  let $wfDuplicateIcon = $("<i>", {
     class: "fa-solid fa-copy"
   });
 
@@ -412,7 +414,7 @@ function generateWorkflowUI(wf, wfIndex) {
 
   let $wfExportButtonWrap = $("<div>", { class: "button-container col-sm-4 col-sx-12" });
 
-  let $wfExportIcon = $("<i>", { 
+  let $wfExportIcon = $("<i>", {
     class: "fa-solid fa-file-export"
   });
 
@@ -422,13 +424,13 @@ function generateWorkflowUI(wf, wfIndex) {
   })
   .append($wfExportIcon) // Add icon
   .append(` ${getString("WF_Export")}`); // Add text
- 
+
   $wfCollapsiblePanel.append($actionsContainer);
 
   $wfCollapsiblePanel.append($wfDuplicateButtonWrap.append($wfDuplicateButton))
   $wfCollapsiblePanel.append($wfExportButtonWrap.append($wfExportButton))
   $wfCollapsiblePanel.append($wfRemoveButtonWrap.append($wfRemoveButton))
-  
+
 
   $wfContainer.append($wfCollapsiblePanel)
 
@@ -439,24 +441,24 @@ function generateWorkflowUI(wf, wfIndex) {
 // --------------------------------------
 // Render conditions recursively
 function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, conditions) {
-  let $conditionList = $("<div>", { 
+  let $conditionList = $("<div>", {
     class: "condition-list panel  col-sm-12 col-sx-12",
-    parentIndexPath: parentIndexPath 
+    parentIndexPath: parentIndexPath
   });
 
   lastConditionIndex = 0
 
-  let $conditionListWrap = $("<div>", { 
+  let $conditionListWrap = $("<div>", {
     class: `condition-list-wrap ${conditionGroupsIndex==0?"col-sm-12":"col-sm-11"} col-sx-12`,
     conditionGroupsIndex: conditionGroupsIndex
   });
 
-  let $deleteConditionGroupWrap = $("<div>", { 
+  let $deleteConditionGroupWrap = $("<div>", {
     class: "condition-group-wrap-del col-sm-1 col-sx-12"
   });
 
   $.each(conditions, function (conditionIndex, condition) {
-    
+
     let currentPath = `${parentIndexPath}.conditions[${conditionIndex}]`;
 
     if (condition.logic) {
@@ -467,16 +469,16 @@ function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, condit
       );
 
       let $logicDropdown = createEditableDropdown(
-        `${currentPath}.logic`, 
-        getString("WF_Conditions_logic_rules"), 
-        ["AND", "OR"], 
-        condition.logic, 
+        `${currentPath}.logic`,
+        getString("WF_Conditions_logic_rules"),
+        ["AND", "OR"],
+        condition.logic,
         `wf-${wfIndex}-${currentPath.replace(/\./g, "-")}-logic` // id
       );
 
       $nestedCondition.append($logicDropdown);
-      
-      $conditionListNested = renderConditions(wfIndex, currentPath, conditionGroupsIndex+1, condition.conditions) 
+
+      $conditionListNested = renderConditions(wfIndex, currentPath, conditionGroupsIndex+1, condition.conditions)
 
       $nestedCondition.append($conditionListNested); // Recursive call for nested conditions
 
@@ -484,7 +486,7 @@ function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, condit
 
     } else {
       // INDIVIDUAL CONDITIONS
-      let $conditionIcon = $("<i>", { 
+      let $conditionIcon = $("<i>", {
         class: "fa-solid  fa-arrows-split-up-and-left fa-rotate-270 bckg-icon-3-line "
       });
 
@@ -505,27 +507,27 @@ function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, condit
       // Create dropdown for condition field
       let $fieldDropdown = createEditableDropdown(
         `${currentPath}.field`,
-        getString("WF_Condition_field"), 
-        fieldOptions, 
-        condition.field, 
+        getString("WF_Condition_field"),
+        fieldOptions,
+        condition.field,
         `wf-${wfIndex}-${currentPath.replace(/\./g, "-")}-field`
       );
 
       // Create dropdown for operator
       let $operatorDropdown = createEditableDropdown(
-        `${currentPath}.operator`, 
-        getString("WF_Condition_operator"), 
-        operatorTypes, 
-        condition.operator, 
+        `${currentPath}.operator`,
+        getString("WF_Condition_operator"),
+        operatorTypes,
+        condition.operator,
         `wf-${wfIndex}-${currentPath.replace(/\./g, "-")}-operator`
       );
 
       // Editable input for condition value
       let $editableInput = createEditableInput(
-          `${currentPath}.value`, 
-          getString("WF_Condition_value"), 
-          condition.value, 
-          `wf-${wfIndex}-${currentPath.replace(/\./g, "-")}-value`, 
+          `${currentPath}.value`,
+          getString("WF_Condition_value"),
+          condition.value,
+          `wf-${wfIndex}-${currentPath.replace(/\./g, "-")}-value`,
           "condition-value-input"
        );
 
@@ -535,7 +537,7 @@ function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, condit
       $conditionItemsWrap.append($editableInput); // Append editable input for condition value
 
       let $conditionRemoveButtonWrap = $("<div>", { class: "button-container col-sm-1 col-sx-12" });
-      let $conditionRemoveButtonIcon = $("<i>", { 
+      let $conditionRemoveButtonIcon = $("<i>", {
         class: "fa-solid fa-trash"
       });
       let $conditionRemoveButton = $("<div>", {
@@ -549,7 +551,7 @@ function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, condit
       $conditionItem.append($conditionItemsWrap);
       $conditionItem.append($conditionRemoveButtonWrap);
 
-      $conditionList.append($conditionItem);      
+      $conditionList.append($conditionItem);
     }
 
     lastConditionIndex = conditionIndex
@@ -562,7 +564,7 @@ function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, condit
   if (conditionGroupsIndex != 0) {
     // Add Condition button
     let $conditionAddWrap = $("<div>", { class: "button-container col-sm-6 col-sx-12" });
-    let $conditionAddIcon = $("<i>", { 
+    let $conditionAddIcon = $("<i>", {
       class: "fa-solid fa-plus"
     });
     let $conditionAddButton = $("<div>", {
@@ -574,7 +576,7 @@ function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, condit
 
     // Remove Condition Group button
     let $conditionGroupRemoveWrap = $("<div>", { class: "button-container col-sx-12" });
-    let $conditionGroupRemoveIcon = $("<i>", { 
+    let $conditionGroupRemoveIcon = $("<i>", {
       class: "fa-solid fa-trash"
     });
     let $conditionGroupRemoveButton = $("<div>", {
@@ -592,7 +594,7 @@ function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, condit
 
   // Add Condition Group button
   let $conditionsGroupAddWrap = $("<div>", { class: "button-container col-sm-6 col-sx-12" });
-  let $conditionsGroupAddIcon = $("<i>", { 
+  let $conditionsGroupAddIcon = $("<i>", {
       class: "fa-solid fa-plus"
     });
   let $conditionsGroupAddButton = $("<div>", {
@@ -606,9 +608,9 @@ function renderConditions(wfIndex, parentIndexPath, conditionGroupsIndex, condit
   $conditionList.append($addButtonWrap);
 
   $conditionListWrap.append($conditionList)
-  
-  
-  let $res = $("<div>", { 
+
+
+  let $res = $("<div>", {
     class: "condition-list-res col-sm-12 col-sx-12"
   });
 
@@ -627,8 +629,8 @@ function createEditableDropdown(jsonPath, labelText, options, selectedValue, id)
     class: "form-group col-sm-12 col-sx-12"
   });
 
-  let $label = $("<label>", {   
-    for: id, 
+  let $label = $("<label>", {
+    for: id,
     class: "col-sm-4 col-xs-12 control-label "
   }).text(labelText);
 
@@ -643,7 +645,7 @@ function createEditableDropdown(jsonPath, labelText, options, selectedValue, id)
     jsonPath: jsonPath,
     class: "form-control col-sm-8 col-xs-12"
   });
- 
+
 
   // Add options to the select dropdown
   $.each(options, function (_, option) {
@@ -659,7 +661,7 @@ function createEditableDropdown(jsonPath, labelText, options, selectedValue, id)
     let newValue = $select.val();
     console.log(`Selected new value: ${newValue}`);
     console.log(`Selected new jsonPath: ${$select.attr("jsonPath")}`);
-    
+
     updateWorkflowObject(newValue, $select.attr("jsonPath")); // Call the onSave callback with the new value
 
   });
@@ -678,8 +680,8 @@ function createEditableInput(jsonPath, labelText, value, id, className = "") {
     class: "form-group col-sm-12 col-xs-12"
   });
 
-  let $label = $("<label>", {   
-    for: id, 
+  let $label = $("<label>", {
+    for: id,
     class: "col-sm-4 col-xs-12 control-label "
   }).text(labelText);
 
@@ -689,7 +691,7 @@ function createEditableInput(jsonPath, labelText, value, id, className = "") {
   });
 
   // console.log(jsonPath);
-  
+
   let $input = $("<input>", {
     type: "text",
     jsonPath: jsonPath,
@@ -706,11 +708,11 @@ function createEditableInput(jsonPath, labelText, value, id, className = "") {
 
   // Trigger onSave when the user presses Enter or the input loses focus
   $input.on("blur keyup", function (e) {
-    if (e.type === "blur" || e.key === "Enter") {      
+    if (e.type === "blur" || e.key === "Enter") {
       let newValue = $input.val();
       console.log(`Selected new value: ${newValue}`);
 
-      updateWorkflowObject(newValue, $input.attr("jsonPath")); // Call the onSave callback with the new value      
+      updateWorkflowObject(newValue, $input.attr("jsonPath")); // Call the onSave callback with the new value
     }
   });
 
@@ -763,15 +765,15 @@ function recursiveUpdate(current, tokens, newValue) {
     current[key] = newValue;
     return;
   }
-  
+
   const token = tokens[0];
-  
+
   // If the next level does not exist, optionally create it.
   if (current[token] === undefined) {
     // Determine if the next token is an array index or a property.
     current[token] = typeof tokens[1] === 'number' ? [] : {};
   }
-  
+
   // Recursively update the next level.
   recursiveUpdate(current[token], tokens.slice(1), newValue);
 }
@@ -817,7 +819,7 @@ function addWorkflow(workflows) {
 // ---------------------------------------------------
 // Function to remove a Workflow
 function removeWorkflow(workflows, wfIndex) {
-  
+
   showModalWarning ('<?= lang('WF_Remove');?>', '<?= lang('WF_Remove_Copy');?>',
             '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Delete');?>', `executeRemoveWorkflow`, wfIndex);
 }
@@ -825,7 +827,7 @@ function removeWorkflow(workflows, wfIndex) {
 // ---------------------------------------------------
 // Function to execute the remove of a Workflow
 function executeRemoveWorkflow() {
-  
+
   workflows = getWorkflowsJson()
 
   workflows.splice($('#modal-warning').attr("data-myparam-triggered-by"), 1);
@@ -839,7 +841,7 @@ function executeRemoveWorkflow() {
 // ---------------------------------------------------
 // Function to duplicate a Workflow
 function duplicateWorkflow(workflows, wfIndex) {
-  
+
   workflows.push(workflows[wfIndex])
 
   updateWorkflowsJson(workflows)
@@ -852,7 +854,7 @@ function duplicateWorkflow(workflows, wfIndex) {
 // Function to export a Workflow
 function exportWorkflow(workflows, wfIndex) {
 
-// Add new icon as base64 string 
+// Add new icon as base64 string
 showModalInput ('<i class="fa  fa-file-export pointer"></i> <?= lang('WF_Export');?>', '<?= lang('WF_Export_Copy');?>',
     '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Okay');?>', null, null,  JSON.stringify(workflows[wfIndex], null, 2));
 }
@@ -861,18 +863,18 @@ showModalInput ('<i class="fa  fa-file-export pointer"></i> <?= lang('WF_Export'
 // Function to import a Workflow
 function importWorkflow(workflows, wfIndex) {
 
-// Add new icon as base64 string 
+// Add new icon as base64 string
 showModalInput ('<i class="fa  fa-file-import pointer"></i> <?= lang('WF_Import');?>', '<?= lang('WF_Import_Copy');?>',
     '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Okay');?>', 'importWorkflowExecute', null, "" );
 
 }
 
 function importWorkflowExecute()
-{   
+{
   var json = JSON.parse($('#modal-input-textarea').val());
-  
+
   workflows = getWorkflowsJson()
-  
+
   workflows.push(json);
 
   updateWorkflowsJson(workflows)
@@ -998,7 +1000,7 @@ function removeAction(workflows, wfIndex, actionIndex) {
     }
 
     console.log(actionIndex);
-    
+
     // Remove the specified condition
     target.actions.splice(actionIndex, 1);
 
@@ -1016,15 +1018,15 @@ function removeConditionGroup(workflows, wfIndex, parentIndexPath) {
 
     // Split the path by dots
     const parts = parentIndexPath.split('.');
-    
+
     // Extract the last part (index)
     const lastIndex = parts.pop().replace(/\D/g, '');  // Remove any non-numeric characters
-    
+
     // Rebuild the path without the last part
     const newPath = parts.join('.');
 
-    console.log(parentIndexPath);    
-    console.log(newPath);    
+    console.log(parentIndexPath);
+    console.log(newPath);
 
     // Navigate to the target nested object
     let target = getNestedObject(workflows, newPath);
@@ -1074,22 +1076,22 @@ function getNestedObject(obj, path) {
 function getWorkflowsJson()
 {
   return workflows = JSON.parse(getCache('workflows')) || getEmptyWorkflowJson();
-} 
+}
 
 // ---------------------------------------------------
 // Get workflows JSON
 function updateWorkflowsJson(workflows)
-{  
+{
     // Store the updated workflows object back into cache
     setCache('workflows', JSON.stringify(workflows));
-} 
+}
 
 // ---------------------------------------------------
 // Get empty workflow JSON
 function getEmptyWorkflowJson()
 {
   return emptyWorkflow;
-} 
+}
 
 // ---------------------------------------------------
 // Save workflows JSON
@@ -1100,11 +1102,11 @@ function saveWorkflows()
 
   // import
   $.post('php/server/query_replace_config.php', { base64data: appConfBase64, fileName: "workflows.json" }, function(msg) {
-    console.log(msg);            
-    // showMessage(msg);            
+    console.log(msg);
+    // showMessage(msg);
     write_notification(`[WF]: ${msg}`, 'interrupt');
   });
-} 
+}
 
 // ---------------------------------------------------
 // Event listeners
@@ -1154,7 +1156,7 @@ $(document).on("click", ".remove-condition", function () {
     let wfIndex = $(this).attr("wfindex");
     let parentIndexPath = $(this).attr("parentIndexPath");
     let conditionIndex = parseInt($(this).attr("conditionIndex"), 10);
-    
+
     removeCondition(getWorkflowsJson(), wfIndex, parentIndexPath, conditionIndex);
 });
 
@@ -1162,7 +1164,7 @@ $(document).on("click", ".remove-condition", function () {
 $(document).on("click", ".remove-action", function () {
     let wfIndex = $(this).attr("wfindex");
     let actionIndex = $(this).attr("actionIndex");
-    
+
     removeAction(getWorkflowsJson(), wfIndex, actionIndex);
 });
 
