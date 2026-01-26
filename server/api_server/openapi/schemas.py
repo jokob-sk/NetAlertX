@@ -43,7 +43,7 @@ ALLOWED_NMAP_MODES = Literal[
     "-sS", "-sT", "-sU", "-sV", "-O"
 ]
 
-NOTIFICATION_LEVELS = Literal["info", "warning", "error", "alert"]
+NOTIFICATION_LEVELS = Literal["info", "warning", "error", "alert", "interrupt"]
 
 ALLOWED_TABLES = Literal["Devices", "Events", "Sessions", "Settings", "CurrentScan", "Online_History", "Plugins_Objects"]
 
