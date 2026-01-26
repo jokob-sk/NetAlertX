@@ -76,7 +76,7 @@ nav:
         - Custom Properties: CUSTOM_PROPERTIES.md
         - Device Display Settings: DEVICE_DISPLAY_SETTINGS.md
         - Session Info: SESSION_INFO.md
-        - Field Lock/Unlock: QUICK_REFERENCE_FIELD_LOCK.md
+        - Field Lock/Unlock: DEVICE_FIELD_LOCK.md
       - Icons and Topology:
         - Icons: ICONS.md
         - Network Topology: NETWORK_TREE.md

@@ -300,6 +300,7 @@
     "FieldLock_Error": "",
     "FieldLock_Lock_Tooltip": "",
     "FieldLock_Locked": "",
+    "FieldLock_SaveBeforeLocking": "",
     "FieldLock_Source_Label": "",
     "FieldLock_Unlock_Tooltip": "",
     "FieldLock_Unlocked": "",

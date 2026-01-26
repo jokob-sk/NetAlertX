@@ -1,6 +1,8 @@
 # Quick Reference Guide - Device Field Lock/Unlock System
 
-## One-Minute Overview
+## Overview
+
+![Field source and locks](./img/DEVICE_MANAGEMENT/field_sources_and_locks.png)
 
 The device field lock/unlock system allows you to protect specific device fields from being automatically overwritten by scanning plugins. When you lock a field, NetAlertX remembers your choice and prevents plugins from changing that value until you unlock it.
 

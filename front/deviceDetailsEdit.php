@@ -440,6 +440,7 @@ function setDeviceData(direction = '', refreshCallback = '') {
 
     devSSID: $('#NEWDEV_devSSID').val(),
     devSite: $('#NEWDEV_devSite').val(),
+    devVlan: $('#NEWDEV_devVlan').val(),
 
     devStaticIP: ($('#NEWDEV_devStaticIP')[0].checked * 1),
     devScan: 1,
@@ -579,6 +580,12 @@ function toggleFieldLock(mac, fieldName) {
   const sourceField = fieldName + "Source";
   const currentSource = deviceData[sourceField] || "N/A";
   const shouldLock = currentSource !== "LOCKED";
+
+  if(shouldLock && somethingChanged)
+  {
+    showMessage(getString("FieldLock_SaveBeforeLocking"), 5000, "modal_red");
+    return;
+  }
 
   const payload = {
     fieldName: fieldName,

@@ -300,6 +300,7 @@
     "FieldLock_Error": "Ошибка при обновлении статуса блокировки поля",
     "FieldLock_Lock_Tooltip": "Заблокировать поле (предотвратить перезапись плагином)",
     "FieldLock_Locked": "Поле заблокировано",
+    "FieldLock_SaveBeforeLocking": "",
     "FieldLock_Source_Label": "Источник: ",
     "FieldLock_Unlock_Tooltip": "Разблокировать поле (разрешить перезапись плагином)",
     "FieldLock_Unlocked": "Поле разблокировано",

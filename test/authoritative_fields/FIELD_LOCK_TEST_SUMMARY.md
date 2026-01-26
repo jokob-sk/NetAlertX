@@ -165,20 +165,20 @@ def test_scenario():
 ```python
 def test_scan_scenario(scan_db, mock_device_handlers):
     cur = scan_db.cursor()
-    
+
     # Insert device with specific source
     cur.execute("INSERT INTO Devices ...")
-    
+
     # Insert scan results
     cur.execute("INSERT INTO CurrentScan ...")
     scan_db.commit()
-    
+
     # Run actual scan update
     db = Mock()
     db.sql_connection = scan_db
     db.sql = cur
     device_handling.update_devices_data_from_scan(db)
-    
+
     # Verify results
     row = cur.execute("SELECT ... FROM Devices")
     assert row["field"] == "expected_value"
@@ -246,7 +246,7 @@ All 10 lockable fields tested:
 5. **Rule 5 (Default):** If current_source is empty/"NEWDEV" → Return `True`, else → Return `False`
    - Default behavior: only overwrite empty/unset fields
 
-**Key Principles:** 
+**Key Principles:**
 - **USER and LOCKED** = Absolute protection (cannot be overwritten, even with SET_ALWAYS)
 - **SET_ALWAYS** = Allow overwrite of: own fields, other plugin fields, empty current values, NEWDEV fields
 - **SET_EMPTY** = "Set only if empty" - fills empty fields only, won't overwrite existing plugin data
@@ -257,7 +257,7 @@ All 10 lockable fields tested:
 
 ## Related Documentation
 
-- **User Guide:** [QUICK_REFERENCE_FIELD_LOCK.md](../../docs/QUICK_REFERENCE_FIELD_LOCK.md) - User-friendly field locking instructions
+- **User Guide:** [DEVICE_FIELD_LOCK.md](../../docs/DEVICE_FIELD_LOCK.md) - User-friendly field locking instructions
 - **API Documentation:** [API_DEVICE_FIELD_LOCK.md](../../docs/API_DEVICE_FIELD_LOCK.md) - Endpoint documentation
 - **Plugin Configuration:** [PLUGINS_DEV_CONFIG.md](../../docs/PLUGINS_DEV_CONFIG.md) - SET_ALWAYS/SET_EMPTY configuration guide
 - **Device Management:** [DEVICE_MANAGEMENT.md](../../docs/DEVICE_MANAGEMENT.md) - Device management admin guide

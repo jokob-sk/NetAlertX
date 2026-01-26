@@ -300,6 +300,7 @@
     "FieldLock_Error": "Error updating field lock status",
     "FieldLock_Lock_Tooltip": "Lock field (prevent plugin overwrites)",
     "FieldLock_Locked": "Field locked",
+    "FieldLock_SaveBeforeLocking": "Save your changes before locking",
     "FieldLock_Source_Label": "Source: ",
     "FieldLock_Unlock_Tooltip": "Unlock field (allow plugin overwrites)",
     "FieldLock_Unlocked": "Field unlocked",
