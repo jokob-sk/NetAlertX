@@ -6,6 +6,21 @@
 
 # NetAlertX - Network Visibility & Asset Intelligence Framework
 
+![main][main]
+
+<details>
+  <summary>📷 Click for more screenshots</summary>
+
+  | ![Main screen][main] | ![device_details 1][device_details]  | ![Screen network][network] |
+  |----------------------|----------------------|----------------------|
+  | ![presence][presence] | ![maintenance][maintenance] | ![settings][settings]  |
+  | ![sync_hub][sync_hub] | ![report1][report1] | ![device_nmap][device_nmap]  |
+
+  Head to [https://netalertx.com/](https://netalertx.com/) for even more gifs and screenshots 📷.
+
+</details>
+
+
 Centralized network visibility and continuous asset discovery.
 
 Monitor devices, detect change, and stay aware across distributed networks.
@@ -58,25 +73,11 @@ Need help configuring it? Check the [usage guide](https://docs.netalertx.com/REA
 
 For Home Assistant users: [Click here to add NetAlertX](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Falexbelgium%2Fhassio-addons)
 
-For other install methods, check the [installation docs](#-documentation)
+For other install methods, check the [installation docs](#documentation)
 
-
-| [Docker guide](https://docs.netalertx.com/DOCKER_INSTALLATION) | [Releases](https://github.com/netalertx/NetAlertX/releases) | [Docs](https://docs.netalertx.com/) | [Plugins](https://docs.netalertx.com/PLUGINS) |
-|----------------------| ----------------------|  ----------------------| ----------------------| ----------------------|
-
-![showcase][showcase]
-
-<details>
-  <summary>📷 Click for more screenshots</summary>
-
-  | ![Main screen][main] | ![device_details 1][device_details]  | ![Screen network][network] |
-  |----------------------|----------------------|----------------------|
-  | ![presence][presence] | ![maintenance][maintenance] | ![settings][settings]  |
-  | ![sync_hub][sync_hub] | ![report1][report1] | ![device_nmap][device_nmap]  |
-
-  Head to [https://netalertx.com/](https://netalertx.com/) for even more gifs and screenshots 📷.
-
-</details>
+---
+### || [Docker guide](https://docs.netalertx.com/DOCKER_INSTALLATION) || [Releases](https://github.com/netalertx/NetAlertX/releases) || [Docs](https://docs.netalertx.com/) || [Plugins](https://docs.netalertx.com/PLUGINS) || [Website](https://netalertx.com)
+---
 
 ## Features
 
