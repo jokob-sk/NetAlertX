@@ -2,6 +2,10 @@ name: Bug Report
 description: 'When submitting an issue enable LOG_LEVEL="trace" and have a look at the docs.'
 labels: ['bug 🐛']
 body:
+- type: markdown
+  attributes:
+    value: |
+      <!-- NETALERTX_TEMPLATE -->
 - type: dropdown
   id: installation_type
   attributes:

@@ -15,21 +15,28 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const body = context.payload.issue.body;
+            const body = (context.payload.issue.body || "").toLowerCase();
 
-            const lowerBody = body.toLowerCase();
+            // --- Check for template marker ---
+            const hasTemplate = body.includes('netalertx_template');
 
+            if (!hasTemplate) {
+              console.log("No template marker found, skipping labeling.");
+              return; // skip labeling
+            }
+
+            // --- Proceed with normal labeling ---
             let labelsToAdd = [];
 
-            if (lowerBody.includes('bare-metal') || lowerBody.includes('proxmox')) {
+            if (body.includes('bare-metal') || body.includes('proxmox')) {
               labelsToAdd.push('bare-metal ❗');
             }
 
-            if (lowerBody.includes('home assistant')) {
+            if (body.includes('home assistant')) {
               labelsToAdd.push('Home Assistant 🏠');
             }
 
-            if (lowerBody.includes('production (netalertx)') || lowerBody.includes('dev (netalertx-dev)')) {
+            if (body.includes('production (netalertx)') || body.includes('dev (netalertx-dev)')) {
               labelsToAdd.push('Docker 🐋');
             }
 
@@ -40,4 +47,6 @@ jobs:
                 issue_number: context.issue.number,
                 labels: labelsToAdd
               });
+
+              console.log(`Added labels: ${labelsToAdd.join(", ")}`);
             }

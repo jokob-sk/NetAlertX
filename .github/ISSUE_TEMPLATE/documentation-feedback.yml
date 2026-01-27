@@ -2,6 +2,10 @@ name: Documentation Feedback 📝
 description: Suggest improvements, clarify inconsistencies, or report issues related to the documentation.
 labels: ['documentation 📚']
 body:
+- type: markdown
+  attributes:
+    value: |
+      <!-- NETALERTX_TEMPLATE -->
 - type: checkboxes
   attributes:
     label: Is there an existing issue for this?

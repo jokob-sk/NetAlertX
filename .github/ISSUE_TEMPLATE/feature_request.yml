@@ -2,6 +2,10 @@ name: Feature Request
 description: 'Suggest an idea for NetAlertX'
 labels: ['Feature request ➕']
 body:
+- type: markdown
+  attributes:
+    value: |
+      <!-- NETALERTX_TEMPLATE -->
 - type: checkboxes
   attributes:
     label: Is there an existing issue for this?

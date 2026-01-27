@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Discussions
+    url: https://github.com/netalertx/NetAlertX/discussions
+    about: Ask questions or start discussions here.
+  - name: 🗯 Discord
+    url: https://discord.com/invite/NczTUTWyRr
+    about: Ask the community for help.

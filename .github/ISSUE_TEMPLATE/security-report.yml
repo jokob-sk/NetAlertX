@@ -5,9 +5,13 @@ body:
 - type: markdown
   attributes:
     value: |
+      <!-- NETALERTX_TEMPLATE -->
+- type: markdown
+  attributes:
+    value: |
       **Important:** For security reasons, please do **not** post sensitive security issues publicly in the issue tracker.
       Instead, send details to our security contact email: [jokob@duck.com](mailto:jokob@duck.com).
-      
+
       We appreciate your responsible disclosure.
 - type: textarea
   attributes:

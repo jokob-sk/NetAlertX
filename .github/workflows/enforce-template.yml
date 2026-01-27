@@ -1,0 +1,69 @@
+name: Enforce Issue Templates
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  issues: write
+
+jobs:
+  enforce-template:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for template usage
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = (context.payload.issue.body || "").toLowerCase();
+            const title = (context.payload.issue.title || "").toLowerCase();
+
+            // 1. Check for template marker
+            const usedTemplate = body.includes('netalertx_template');
+
+            // 2. Security Bypass: Don't close if it looks like a security report
+            const isSecurity = title.includes('security') || title.includes('vulnerability');
+
+            if (!usedTemplate && !isSecurity) {
+              const warningLabel = 'missing-template 📋';
+
+              // Add descriptive label
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                labels: [warningLabel]
+              });
+
+              // Post polite comment with direct link to new issue
+              const commentMessage = `
+            Hi there! 👋 Thanks for reaching out.
+
+            To help the maintainers triage issues effectively, we **enforce the use of issue templates**. This helps us resolve problems much faster!
+
+            **This issue has been closed** because it is missing the required template.
+
+            Please [open a new issue here](https://github.com/${context.repo.owner}/${context.repo.repo}/issues/new/choose) and select the appropriate template.
+
+            Thank you for your understanding! 🙏
+              `;
+
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: commentMessage
+              });
+
+              // Close the issue (but do NOT lock it)
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                state: 'closed'
+              });
+
+              return;
+            }
+
+            console.log("Template detected or security keyword found ✅. Proceeding.");

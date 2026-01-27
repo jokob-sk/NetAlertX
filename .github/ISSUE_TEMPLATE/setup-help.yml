@@ -2,6 +2,10 @@ name: Setup help
 description: 'When submitting an issue enable LOG_LEVEL="trace" and re-search first.'
 labels: ['Setup 📥']
 body:
+- type: markdown
+  attributes:
+    value: |
+      <!-- NETALERTX_TEMPLATE -->
 - type: dropdown
   id: installation_type
   attributes:
