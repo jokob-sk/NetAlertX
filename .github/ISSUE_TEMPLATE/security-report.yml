@@ -1,4 +1,4 @@
-name: Security Report 🔐
+name: 🔐 Security Report
 description: Report a security vulnerability or concern privately.
 labels: ['security 🔐']
 body:

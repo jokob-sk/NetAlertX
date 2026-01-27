@@ -1,4 +1,4 @@
-name: Setup help
+name: 📥 Setup help
 description: 'When submitting an issue enable LOG_LEVEL="trace" and re-search first.'
 labels: ['Setup 📥']
 body:
