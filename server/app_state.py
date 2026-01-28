@@ -42,7 +42,8 @@ class app_state_class:
         graphQLServerStarted=0,
         processScan=False,
         pluginsStates=None,
-        appVersion=None
+        appVersion=None,
+        buildTimestamp=None
     ):
         """
         Initialize the application state, optionally overwriting previous values.
@@ -59,6 +60,7 @@ class app_state_class:
             processScan (bool, optional): Initial processScan flag.
             pluginsStates (dict, optional): Initial plugin states to merge with previous state.
             appVersion (str, optional): Application version.
+            buildTimestamp (str, optional): ABuild timestamp.
         """
         # json file containing the state to communicate with the frontend
         stateFile = apiPath + "app_state.json"
@@ -86,6 +88,7 @@ class app_state_class:
             self.currentState           = previousState.get("currentState", "Init")
             self.pluginsStates          = previousState.get("pluginsStates", {})
             self.appVersion             = previousState.get("appVersion", "")
+            self.buildTimestamp         = previousState.get("buildTimestamp", "")
         else:  # init first time values
             self.settingsSaved          = 0
             self.settingsImported       = 0
@@ -97,6 +100,7 @@ class app_state_class:
             self.currentState           = "Init"
             self.pluginsStates          = {}
             self.appVersion             = ""
+            self.buildTimestamp         = ""
 
         # Overwrite with provided parameters if supplied
         if settingsSaved is not None:
@@ -127,6 +131,8 @@ class app_state_class:
                     self.pluginsStates[plugin] = state
         if appVersion is not None:
             self.appVersion = appVersion
+        if buildTimestamp is not None:
+            self.buildTimestamp = buildTimestamp
         # check for new version every hour and if currently not running new version
         if self.isNewVersion is False and self.isNewVersionChecked + 3600 < int(
             timeNow().timestamp()
@@ -154,7 +160,13 @@ class app_state_class:
 
             # Broadcast state change via SSE if available
             try:
-                broadcast_state_update(self.currentState, self.settingsImported, timestamp=self.lastUpdated)
+                broadcast_state_update(
+                    self.currentState,
+                    self.settingsImported,
+                    timestamp=self.lastUpdated,
+                    appVersion=self.appVersion,
+                    buildTimestamp=self.buildTimestamp
+                )
             except Exception as e:
                 mylog("none", [f"[app_state] SSE broadcast: {e}"])
 
@@ -170,7 +182,8 @@ def updateState(newState = None,
                 graphQLServerStarted = None,
                 processScan = None,
                 pluginsStates=None,
-                appVersion=None):
+                appVersion=None,
+                buildTimestamp=None):
     """
     Convenience method to create or update the app state.
 
@@ -183,6 +196,7 @@ def updateState(newState = None,
         processScan (bool, optional): Flag indicating if a scan is active.
         pluginsStates (dict, optional): Plugin state updates.
         appVersion (str, optional): Application version.
+        buildTimestamp (str, optional): Build timestamp.
 
     Returns:
         app_state_class: Updated state object.
@@ -195,7 +209,8 @@ def updateState(newState = None,
         graphQLServerStarted,
         processScan,
         pluginsStates,
-        appVersion
+        appVersion,
+        buildTimestamp
     )
 
 

@@ -42,7 +42,9 @@ ARPSCAN_DURATION=30
 
 ### ✅ Add ICMP (Ping) Scanning
 
-Enable the `ICMP` scan plugin to complement ARP detection. ICMP is often more reliable for detecting active hosts, especially when ARP fails. 
+Enable the `ICMP` scan plugin to complement ARP detection. ICMP is often more reliable for detecting active hosts, especially when ARP fails.
+
+> [!IMPORTANT] If using AdGuard/Pi-hole: If devices still show offline after enabling ICMP, temporarily disable your content blocker. If the issue disappears, whitelist the NetAlertX host IP in your blocker's settings to prevent pings from being dropped.
 
 ### ✅ Use Multiple Detection Methods
 
@@ -52,7 +54,7 @@ A combined approach greatly improves detection robustness:
 * `ICMP` (ping)
 * `NMAPDEV` (nmap)
 
-This hybrid strategy increases reliability, especially for down detection and alerting. See [other plugins](./PLUGINS.md) that might be compatible with your setup. See benefits and drawbacks of individual scan methods in their respective docs. 
+This hybrid strategy increases reliability, especially for down detection and alerting. See [other plugins](./PLUGINS.md) that might be compatible with your setup. See benefits and drawbacks of individual scan methods in their respective docs.
 
 ## Results
 
@@ -76,4 +78,4 @@ After increasing the ARP timeout and adding ICMP scanning (on select IP ranges),
 
 Let us know in the [NetAlertX Discussions](https://github.com/jokob-sk/NetAlertX/discussions) if you have further feedback or edge cases.
 
-See also [Remote Networks](./REMOTE_NETWORKS.md) for more advanced setups. 
+See also [Remote Networks](./REMOTE_NETWORKS.md) for more advanced setups.

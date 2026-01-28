@@ -57,7 +57,7 @@
               </div>
               <div class="box-body">
                 <div class="chart">
-                  <script src="lib/chart.js/Chart.js?v=<?php include 'php/templates/version.php'; ?>"></script>
+                  <script src="lib/chart.js/Chart.js"></script>
                   <!-- presence chart -->
                   <?php
                       require 'php/components/graph_online_history.php';

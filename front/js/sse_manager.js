@@ -128,14 +128,31 @@ class NetAlertXStateManager {
   }
 
   /**
-   * Handle state update from SSE
+   * Handle state update from SSE or Polling
    */
   handleStateUpdate(appState) {
     try {
-      if (document.getElementById("state")) {
-        const cleanState = appState["currentState"].replaceAll('"', "");
-        document.getElementById("state").innerHTML = cleanState;
+      // 1. Update the main status text
+      if (appState["currentState"]) {
+        const cleanState = appState["currentState"].replace(/"/g, "");
+        $("#state").html(cleanState);
       }
+
+      // 2. Update Version placeholders
+      const version = appState["appVersion"] || "UNKNOWN";
+      $('[data-plc="version"]')
+        .html(version)
+        .attr('data-version', version);
+
+      // 3. Update Build Timestamp placeholders
+      const buildTime = appState["buildTimestamp"] !== undefined ? appState["buildTimestamp"] : "";
+      const displayTime = (buildTime === 0) ? "UNKNOWN" : buildTime;
+
+      $('[data-plc="build-timestamp"]')
+        .html(displayTime)
+        .attr('data-build-time', buildTime);
+
+      console.log("[NetAlertX State] UI updated via jQuery");
     } catch (e) {
       console.error("[NetAlertX State] Failed to update state display:", e);
     }

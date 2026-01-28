@@ -715,7 +715,7 @@ def importConfigs(pm, db, all_plugins):
     #             settingsImported = None (timestamp),
     #             showSpinner = False (1/0),
     #             graphQLServerStarted = 1 (1/0))
-    updateState("Config imported", conf.lastImportedConfFile, conf.lastImportedConfFile, False, 1, None, None, new_version)
+    updateState("Config imported", conf.lastImportedConfFile, conf.lastImportedConfFile, False, 1, None, None, new_version, buildTimestamp)
 
     msg = '[Config] Imported new settings config'
     mylog('minimal', msg)

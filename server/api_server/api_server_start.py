@@ -13,7 +13,7 @@ INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
 sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
 
 from logger import mylog  # noqa: E402 [flake8 lint suppression]
-from helper import get_setting_value, get_env_setting_value  # noqa: E402 [flake8 lint suppression]
+from helper import get_setting_value, get_env_setting_value, getBuildTimeStampAndVersion  # noqa: E402 [flake8 lint suppression]
 from db.db_helper import get_date_from_period  # noqa: E402 [flake8 lint suppression]
 from app_state import updateState  # noqa: E402 [flake8 lint suppression]
 
@@ -1808,6 +1808,9 @@ def start_server(graphql_port, app_state):
             )
         )
         thread.start()
+
+        # Pass Application "VERSION" into the app_state
+        buildTimestamp, newBuildVersion = getBuildTimeStampAndVersion()
 
         # Update the state to indicate the server has started
         app_state = updateState("Process: Idle", None, None, None, 1)

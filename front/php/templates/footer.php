@@ -32,8 +32,8 @@
       | <a href="https://docs.netalertx.com/" class="pointer" target="_blank" title="Documentation"><i class="fa fa-book"></i></a>
       | <a href="https://github.com/jokob-sk/NetAlertX/issues" class="pointer" target="_blank"><i class="fa fa-bug" title="Report a bug"></i></a>
       | <a href="https://discord.com/invite/NczTUTWyRr" class="pointer" target="_blank"><i class="fa-brands fa-discord" title="Join Discord"></i></a>
-      | <?= lang('Maintenance_built_on');?>:  <?php include 'php/templates/build.php'; ?>
-      |  Version:  <?php include 'php/templates/version.php'; ?>
+      | <?= lang('Maintenance_built_on');?>:  <span data-plc="build-timestamp"></span>
+      |  Version:  <span data-plc="version"></span>
       |
     </div>
   </footer>

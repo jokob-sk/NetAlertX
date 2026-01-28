@@ -1,7 +1,7 @@
 # Troubleshooting plugins
 
 > [!TIP]
-> Before troubleshooting, please ensure you have the right [Debugging and LOG_LEVEL set](./DEBUG_TIPS.md).
+> Before troubleshooting, please ensure you have the right [Debugging and LOG_LEVEL set](./DEBUG_TIPS.md) in Settings.
 
 ## High-level overview
 
@@ -22,10 +22,25 @@ For a more in-depth overview on how plugins work check the [Plugins development 
 
 #### Incorrect input data
 
-Input data from the plugin might cause mapping issues in specific edge cases. Look for a corresponding section in the `app.log` file, for example notice the first line of the execution run of the `PIHOLE` plugin below:
+Input data from the plugin might cause mapping issues in specific edge cases. Look for a corresponding section in the `app.log` file, and search for `[Scheduler] run for PLUGINNAME: YES`, so for ICMP you would look for `[Scheduler] run for ICMP: YES`. You can find examples of useful logs below. If your issue is related to a plugin, and you don't include a log section with this data, we can't help you to resolve your issue.
+
+##### ICMP log example
 
 ```
-17:31:05 [Scheduler] - Scheduler run for PIHOLE: YES
+20:39:04 [Scheduler] run for ICMP: YES
+20:39:04 [ICMP] fping skipping 192.168.1.124 : [2], timed out (NaN avg, 100% loss)
+20:39:04 [ICMP] adding 192.168.1.123 from 192.168.1.123 : [2], 64 bytes, 20.1 ms (8.22 avg, 0% loss)
+20:39:04 [ICMP] fping skipping 192.168.1.157 : [1], timed out (NaN avg, 100% loss)
+20:39:04 [ICMP] adding 192.168.1.79 from 192.168.1.79  : [2], 64 bytes, 48.3 ms (60.9 avg, 0% loss)
+20:39:04 [ICMP] fping skipping 192.168.1.128 : [2], timed out (NaN avg, 100% loss)
+20:39:04 [ICMP] fping skipping 192.168.1.129 : [2], timed out (NaN avg, 100% loss)
+```
+
+
+##### PIHOLE log example
+
+```
+17:31:05 [Scheduler] run for PIHOLE: YES
 17:31:05 [Plugin utils] ---------------------------------------------
 17:31:05 [Plugin utils] display_name: PiHole (Device sync)
 17:31:05 [Plugins] CMD: SELECT n.hwaddr AS Object_PrimaryID, {s-quote}null{s-quote} AS Object_SecondaryID, datetime() AS DateTime, na.ip  AS Watched_Value1, n.lastQuery AS Watched_Value2, na.name AS Watched_Value3, n.macVendor AS Watched_Value4, {s-quote}null{s-quote} AS Extra, n.hwaddr AS ForeignKey FROM EXTERNAL_PIHOLE.Network AS n LEFT JOIN EXTERNAL_PIHOLE.Network_Addresses AS na ON na.network_id = n.id WHERE n.hwaddr NOT LIKE {s-quote}ip-%{s-quote} AND n.hwaddr is not {s-quote}00:00:00:00:00:00{s-quote}  AND na.ip is not null
@@ -60,7 +75,7 @@ Input data from the plugin might cause mapping issues in specific edge cases. Lo
 17:31:05 [API] Update API starting
 17:31:06 [API] Updating table_plugins_history.json file in /api
 ```
-
+> [!NOTE]
 > The debug output between the 🔻red arrows🔺 is important for debugging (arrows added only to highlight the section on this page, they are not available in the actual debug log)
 
 In the above output notice the section logging how many events are produced by the plugin:
@@ -80,12 +95,11 @@ These values, if formatted correctly, will also show up in the UI:
 
 ![Plugins table](./img/DEBUG_PLUGINS/plugin_objects_pihole.png)
 
-
 ### Sharing application state
 
 Sometimes specific log sections are needed to debug issues. The Devices and CurrentScan table data is sometimes needed to figure out what's wrong.
 
-1. Please set `LOG_LEVEL` to `trace` (Disable it once you have the info as this produces big log files).
+1. Please set `LOG_LEVEL` to `trace` in the Settings (Disable it once you have the info as this produces big log files).
 2. Wait for the issue to occur.
 3. Search for `================ DEVICES table content  ================` in your logs.
 4. Search for `================ CurrentScan table content  ================` in your logs.

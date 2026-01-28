@@ -66,21 +66,24 @@ $db->close();
                           <a href="https://docs.netalertx.com/VERSIONS" target="_blank"> <span><i class="fa fa-circle-question"></i></a></span>
                         </div>
                         <div class="db_info_table_cell">
-                        <div class="version" id="version" data-build-time="<?php echo file_get_contents( "buildtimestamp.txt");?>">
-                          <?php echo '<span id="new-version-text" class="myhidden"><i class="fa-solid fa-rocket fa-beat"></i> ' .lang('Maintenance_new_version').'</span>'.'<span id="current-version-text" class="myhidden">' .lang('Maintenance_current_version').'</span>';?>
+                        <div class="version" id="version" data-build-time="">
+                          <span id="new-version-text" class="myhidden"><i class="fa-solid fa-rocket fa-beat"></i>
+                            <?php echo lang('Maintenance_new_version');?> </span> <span id="current-version-text" class="myhidden">
+                            <?php echo lang('Maintenance_current_version') ;?> </span>
+
                         </div>
                         </div>
                     </div>
                     <div class="db_info_table_row">
                         <div class="db_info_table_cell" style="min-width: 140px"><?= lang('Maintenance_built_on');?></div>
                         <div class="db_info_table_cell">
-                            <?php echo date("Y-m-d", ((int)file_get_contents( "buildtimestamp.txt")));?>
+                            <span data-plc="build-timestamp"></span>
                         </div>
                     </div>
                     <div class="db_info_table_row">
                         <div class="db_info_table_cell" style="min-width: 140px"><?= lang('Maintenance_Running_Version');?></div>
                         <div class="db_info_table_cell">
-                          <?php include 'php/templates/version.php'; ?>
+                          <span data-plc="version"></span>
                         </div>
                     </div>
                     <div class="db_info_table_row">
