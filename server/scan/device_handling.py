@@ -360,11 +360,14 @@ def update_ipv4_ipv6(db):
     if records_to_update:
         # We use COALESCE(?, Column) so that if the first arg is NULL,
         # it keeps the current value of the column.
+
+        mylog("none", f"[Update Devices] Updated records_to_update: {records_to_update}")
+
         sql.executemany(
             """
             UPDATE Devices
-            SET devPrimaryIPv4 = COALESCE(?, devPrimaryIPv4),
-                devPrimaryIPv6 = COALESCE(?, devPrimaryIPv6)
+            SET devPrimaryIPv4 = COALESCE(?, NULLIF(devPrimaryIPv4, '')),
+                devPrimaryIPv6 = COALESCE(?, NULLIF(devPrimaryIPv6, ''))
             WHERE devMac = ?
             """,
             records_to_update,

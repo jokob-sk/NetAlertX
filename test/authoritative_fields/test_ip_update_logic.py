@@ -3,9 +3,7 @@ Unit tests for device IP update logic (devPrimaryIPv4/devPrimaryIPv6 handling).
 """
 
 from unittest.mock import Mock, patch
-
 import pytest
-
 from server.scan import device_handling
 
 
@@ -28,68 +26,29 @@ def mock_device_handling():
         yield
 
 
-def test_primary_ipv6_is_set_and_ipv4_preserved(in_memory_db, mock_device_handling):
+def test_primary_ipv6_is_set_and_ipv4_preserved(scan_db, mock_device_handling):
     """Setting IPv6 in CurrentScan should update devPrimaryIPv6 without changing devPrimaryIPv4."""
-    cur = in_memory_db.cursor()
+    cur = scan_db.cursor()
 
     # Create device with IPv4 primary
     cur.execute(
         """
         INSERT INTO Devices (
             devMac, devLastConnection, devPresentLastScan, devLastIP,
-            devPrimaryIPv4, devPrimaryIPv6, devVendor, devParentPort,
-            devParentMAC, devSite, devSSID, devType, devName, devIcon
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            devPrimaryIPv4, devPrimaryIPv6, devVendor, devType, devName, devIcon
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
-        (
-            "AA:BB:CC:DD:EE:FF",
-            "2025-01-01 00:00:00",
-            0,
-            "192.168.1.10",
-            "192.168.1.10",
-            "",
-            "TestVendor",
-            "",
-            "",
-            "",
-            "",
-            "type",
-            "Device",
-            "icon",
-        ),
+        ("AA:BB:CC:DD:EE:FF", "2025-01-01 00:00:00", 0, "192.168.1.10", "192.168.1.10", "", "TestVendor", "type", "Device", "icon")
     )
 
     # CurrentScan with IPv6
     cur.execute(
-        """
-        INSERT INTO CurrentScan (
-            scanMac, scanLastIP, scanVendor, scanSourcePlugin, scanName,
-            scanLastQuery, scanLastConnection, scanSyncHubNode,
-            scanSite, scanSSID, scanParentMAC, scanParentPort, scanType
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """,
-        (
-            "AA:BB:CC:DD:EE:FF",
-            "2001:db8::1",
-            "",
-            "",
-            "",
-            "",
-            "2025-01-01 01:00:00",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-        ),
+        "INSERT INTO CurrentScan (scanMac, scanLastIP, scanSourcePlugin, scanLastConnection) VALUES (?, ?, ?, ?)",
+        ("AA:BB:CC:DD:EE:FF", "2001:db8::1", "IPv6SCAN", "2025-01-01 01:00:00")
     )
-    in_memory_db.commit()
+    scan_db.commit()
 
-    # Mock DummyDB-like object
-    db = Mock()
-    db.sql_connection = in_memory_db
-    db.sql = cur
+    db = Mock(sql_connection=scan_db, sql=cur)
 
     device_handling.update_devices_data_from_scan(db)
     device_handling.update_ipv4_ipv6(db)
@@ -104,68 +63,29 @@ def test_primary_ipv6_is_set_and_ipv4_preserved(in_memory_db, mock_device_handli
     assert row["devPrimaryIPv6"] == "2001:db8::1"
 
 
-def test_primary_ipv4_is_set_and_ipv6_preserved(in_memory_db, mock_device_handling):
+def test_primary_ipv4_is_set_and_ipv6_preserved(scan_db, mock_device_handling):
     """Setting IPv4 in CurrentScan should update devPrimaryIPv4 without changing devPrimaryIPv6."""
-    cur = in_memory_db.cursor()
+    cur = scan_db.cursor()
 
     # Create device with IPv6 primary
     cur.execute(
         """
         INSERT INTO Devices (
             devMac, devLastConnection, devPresentLastScan, devLastIP,
-            devPrimaryIPv4, devPrimaryIPv6, devVendor, devParentPort,
-            devParentMAC, devSite, devSSID, devType, devName, devIcon
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            devPrimaryIPv4, devPrimaryIPv6, devVendor, devType, devName, devIcon
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
-        (
-            "11:22:33:44:55:66",
-            "2025-01-01 00:00:00",
-            0,
-            "2001:db8::2",
-            "",
-            "2001:db8::2",
-            "TestVendor",
-            "",
-            "",
-            "",
-            "",
-            "type",
-            "Device",
-            "icon",
-        ),
+        ("11:22:33:44:55:66", "2025-01-01 00:00:00", 0, "2001:db8::2", "", "2001:db8::2", "TestVendor", "type", "Device", "icon")
     )
 
     # CurrentScan with IPv4
     cur.execute(
-        """
-        INSERT INTO CurrentScan (
-            scanMac, scanLastIP, scanVendor, scanSourcePlugin, scanName,
-            scanLastQuery, scanLastConnection, scanSyncHubNode,
-            scanSite, scanSSID, scanParentMAC, scanParentPort, scanType
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """,
-        (
-            "11:22:33:44:55:66",
-            "10.0.0.5",
-            "",
-            "",
-            "",
-            "",
-            "2025-01-01 02:00:00",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-        ),
+        "INSERT INTO CurrentScan (scanMac, scanLastIP, scanSourcePlugin, scanLastConnection) VALUES (?, ?, ?, ?)",
+        ("11:22:33:44:55:66", "10.0.0.5", "ARPSCAN", "2025-01-01 02:00:00")
     )
-    in_memory_db.commit()
+    scan_db.commit()
 
-    # Mock DummyDB-like object
-    db = Mock()
-    db.sql_connection = in_memory_db
-    db.sql = cur
+    db = Mock(sql_connection=scan_db, sql=cur)
 
     device_handling.update_devices_data_from_scan(db)
     device_handling.update_ipv4_ipv6(db)
@@ -178,3 +98,4 @@ def test_primary_ipv4_is_set_and_ipv6_preserved(in_memory_db, mock_device_handli
     assert row["devLastIP"] == "10.0.0.5"
     assert row["devPrimaryIPv4"] == "10.0.0.5"
     assert row["devPrimaryIPv6"] == "2001:db8::2"
+
