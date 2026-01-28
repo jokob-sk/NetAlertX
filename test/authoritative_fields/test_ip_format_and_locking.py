@@ -80,30 +80,52 @@ def test_invalid_ip_values_rejected(scan_db, mock_ip_handlers):
         assert row["devPrimaryIPv4"] == "192.168.1.50", f"Failed on {invalid_ip}"
 
 
-def test_ipv4_ipv6_mixed_in_multiple_scans(scan_db, mock_ip_handlers):
-    """Multiple scans with different IP types should set both primary fields correctly."""
+def test_ipv4_then_ipv6_scan_updates_primary_ips(scan_db, mock_ip_handlers):
+    """
+    Test that multiple scans with different IP types correctly update:
+    - devLastIP to the latest scan
+    - devPrimaryIPv4 and devPrimaryIPv6 appropriately
+    """
     cur = scan_db.cursor()
+
+    # 1️⃣ Create device
     cur.execute("INSERT INTO Devices (devMac) VALUES (?)", ("AA:BB:CC:DD:EE:04",))
-
-    # Scan 1: IPv4
-    cur.execute("INSERT INTO CurrentScan (scanMac, scanLastIP, scanSourcePlugin, scanLastConnection) VALUES (?, ?, ?, ?)",
-                ("AA:BB:CC:DD:EE:04", "192.168.1.100", "ARPSCAN", "2025-01-01 01:00:00"))
     scan_db.commit()
+
     db = Mock(sql_connection=scan_db, sql=cur)
-    device_handling.update_devices_data_from_scan(db)
-    device_handling.update_ipv4_ipv6(db)
 
-    # Scan 2: IPv6
-    cur.execute("DELETE FROM CurrentScan")
-    cur.execute("INSERT INTO CurrentScan (scanMac, scanLastIP, scanSourcePlugin, scanLastConnection) VALUES (?, ?, ?, ?)",
-                ("AA:BB:CC:DD:EE:04", "fe80::1", "IPv6SCAN", "2025-01-01 02:00:00"))
+    # 2️⃣ First scan: IPv4
+    cur.execute(
+        "INSERT INTO CurrentScan (scanMac, scanLastIP, scanSourcePlugin, scanLastConnection) VALUES (?, ?, ?, ?)",
+        ("AA:BB:CC:DD:EE:04", "192.168.1.100", "ARPSCAN", "2025-01-01 01:00:00")
+    )
     scan_db.commit()
-    device_handling.update_devices_data_from_scan(db)
-    device_handling.update_ipv4_ipv6(db)
 
-    row = cur.execute("SELECT devPrimaryIPv4, devPrimaryIPv6 FROM Devices WHERE devMac = ?", ("AA:BB:CC:DD:EE:04",)).fetchone()
-    assert row["devPrimaryIPv4"] == "192.168.1.100"
-    assert row["devPrimaryIPv6"] == "fe80::1"
+    with patch("server.scan.device_handling.get_plugin_authoritative_settings", return_value={}):
+        device_handling.update_devices_data_from_scan(db)
+        device_handling.update_ipv4_ipv6(db)
+
+    # 3️⃣ Second scan: IPv6
+    cur.execute("DELETE FROM CurrentScan")
+    cur.execute(
+        "INSERT INTO CurrentScan (scanMac, scanLastIP, scanSourcePlugin, scanLastConnection) VALUES (?, ?, ?, ?)",
+        ("AA:BB:CC:DD:EE:04", "fe80::1", "IPv6SCAN", "2025-01-01 02:00:00")
+    )
+    scan_db.commit()
+
+    with patch("server.scan.device_handling.get_plugin_authoritative_settings", return_value={}):
+        device_handling.update_devices_data_from_scan(db)
+        device_handling.update_ipv4_ipv6(db)
+
+    # 4️⃣ Verify results
+    row = cur.execute(
+        "SELECT devLastIP, devPrimaryIPv4, devPrimaryIPv6 FROM Devices WHERE devMac = ?",
+        ("AA:BB:CC:DD:EE:04",)
+    ).fetchone()
+
+    assert row["devLastIP"] == "fe80::1"       # Latest scan IP (IPv6)
+    assert row["devPrimaryIPv4"] == "192.168.1.100"  # IPv4 preserved
+    assert row["devPrimaryIPv6"] == "fe80::1"        # IPv6 set
 
 
 def test_ipv4_address_format_variations(scan_db, mock_ip_handlers):

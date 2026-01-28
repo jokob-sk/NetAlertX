@@ -26,17 +26,22 @@ def mock_device_handling():
         yield
 
 
-def test_primary_ipv6_is_set_and_ipv4_preserved(scan_db, mock_device_handling):
+def test_ipv6_update_preserves_ipv4(scan_db, mock_device_handling):
+    """
+    Test that when a device already has a primary IPv4 and receives an IPv6 scan:
+    - devLastIP is updated to the latest IP (IPv6)
+    - devPrimaryIPv6 is set to the new IPv6
+    - devPrimaryIPv4 is preserved
+    """
     cur = scan_db.cursor()
 
-    # 1. Create device
+    # 1️⃣ Create device with IPv4
     cur.execute(
         "INSERT INTO Devices (devMac, devLastIP, devPrimaryIPv4, devName) VALUES (?, ?, ?, ?)",
         ("AA:BB:CC:DD:EE:FF", "192.168.1.10", "192.168.1.10", "Device")
     )
 
-    # 2. Insert Scan with a SPECIFIC plugin name
-    # This is critical so the logic inside update_devices_data_from_scan finds it
+    # 2️⃣ Insert a scan reporting IPv6
     cur.execute(
         """
         INSERT INTO CurrentScan (scanMac, scanLastIP, scanSourcePlugin, scanLastConnection)
@@ -48,20 +53,20 @@ def test_primary_ipv6_is_set_and_ipv4_preserved(scan_db, mock_device_handling):
 
     db = Mock(sql_connection=scan_db, sql=cur)
 
-    # We must mock get_plugin_authoritative_settings to allow updates from "TEST_PLUGIN"
+    # 3️⃣ Mock plugin authoritative settings
     with patch("server.scan.device_handling.get_plugin_authoritative_settings", return_value={}):
         device_handling.update_devices_data_from_scan(db)
         device_handling.update_ipv4_ipv6(db)
 
+    # 4️⃣ Verify the device fields
     row = cur.execute(
         "SELECT devLastIP, devPrimaryIPv4, devPrimaryIPv6 FROM Devices WHERE devMac = ?",
         ("AA:BB:CC:DD:EE:FF",),
     ).fetchone()
 
-    # These were failing because devLastIP remained 192.168.1.10
-    assert row["devLastIP"] == "2001:db8::1"
-    assert row["devPrimaryIPv6"] == "2001:db8::1"
-    assert row["devPrimaryIPv4"] == "192.168.1.10"
+    assert row["devLastIP"] == "2001:db8::1"        # Latest IP is now IPv6
+    assert row["devPrimaryIPv6"] == "2001:db8::1"   # IPv6 field updated
+    assert row["devPrimaryIPv4"] == "192.168.1.10"  # IPv4 preserved
 
 
 def test_primary_ipv4_is_set_and_ipv6_preserved(scan_db, mock_device_handling):
