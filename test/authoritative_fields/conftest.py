@@ -30,6 +30,7 @@ def scan_db():
             devName TEXT,
             devIcon TEXT,
             devGUID TEXT,
+            devFQDN TEXT,
             devSyncHubNode TEXT,
             devOwner TEXT,
             devGroup TEXT,
