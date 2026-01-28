@@ -134,6 +134,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     mtr \
     procps \
     gosu \
+    jq \
     && wget -qO /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg \
     && echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list \
     && apt-get update \
