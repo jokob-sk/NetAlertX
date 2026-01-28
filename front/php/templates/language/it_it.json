@@ -300,7 +300,7 @@
     "FieldLock_Error": "Errore durante l'aggiornamento dello stato di blocco del campo",
     "FieldLock_Lock_Tooltip": "Blocca campo (impedisci sovrascrittura plugin)",
     "FieldLock_Locked": "Campo bloccato",
-    "FieldLock_SaveBeforeLocking": "",
+    "FieldLock_SaveBeforeLocking": "Salva modifiche prima di bloccare",
     "FieldLock_Source_Label": "Sorgente: ",
     "FieldLock_Unlock_Tooltip": "Sblocca campo (consenti sovrascritture plugin)",
     "FieldLock_Unlocked": "Campo sbloccato",
