@@ -331,10 +331,9 @@ def update_devices_data_from_scan(db):
 def update_ipv4_ipv6(db):
     """
     Fill devPrimaryIPv4 and devPrimaryIPv6 based on devLastIP.
-    Skips empty devLastIP.
+    Skips empty devLastIP and preserves existing values for the other version.
     """
     sql = db.sql
-
     mylog("debug", "[Update Devices] Updating devPrimaryIPv4 / devPrimaryIPv6 from devLastIP")
 
     devices = sql.execute("SELECT devMac, devLastIP FROM Devices").fetchall()
@@ -342,8 +341,9 @@ def update_ipv4_ipv6(db):
 
     for device in devices:
         last_ip = device["devLastIP"]
+        # Keeping your specific skip logic
         if not last_ip or last_ip.lower() in ("", "null", "(unknown)", "(Unknown)"):
-            continue  # skip empty
+            continue
 
         ipv4, ipv6 = None, None
         try:
@@ -353,13 +353,20 @@ def update_ipv4_ipv6(db):
             else:
                 ipv6 = last_ip
         except ValueError:
-            continue  # invalid IP, skip
+            continue
 
-        records_to_update.append([ipv4, ipv6, device["devMac"]])
+        records_to_update.append((ipv4, ipv6, device["devMac"]))
 
     if records_to_update:
+        # We use COALESCE(?, Column) so that if the first arg is NULL,
+        # it keeps the current value of the column.
         sql.executemany(
-            "UPDATE Devices SET devPrimaryIPv4 = ?, devPrimaryIPv6 = ? WHERE devMac = ?",
+            """
+            UPDATE Devices
+            SET devPrimaryIPv4 = COALESCE(?, devPrimaryIPv4),
+                devPrimaryIPv6 = COALESCE(?, devPrimaryIPv6)
+            WHERE devMac = ?
+            """,
             records_to_update,
         )
 

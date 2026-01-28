@@ -151,6 +151,7 @@ def test_valid_ipv4_format_accepted(ip_test_db, mock_ip_handlers):
     db.sql = cur
 
     device_handling.update_devices_data_from_scan(db)
+    device_handling.update_ipv4_ipv6(db)
 
     row = cur.execute(
         "SELECT devLastIP, devPrimaryIPv4, devPrimaryIPv6 FROM Devices WHERE devMac = ?",
@@ -225,6 +226,7 @@ def test_valid_ipv6_format_accepted(ip_test_db, mock_ip_handlers):
     db.sql = cur
 
     device_handling.update_devices_data_from_scan(db)
+    device_handling.update_ipv4_ipv6(db)
 
     row = cur.execute(
         "SELECT devLastIP, devPrimaryIPv4, devPrimaryIPv6 FROM Devices WHERE devMac = ?",
@@ -302,6 +304,7 @@ def test_invalid_ip_values_rejected(ip_test_db, mock_ip_handlers):
         db.sql = cur
 
         device_handling.update_devices_data_from_scan(db)
+        device_handling.update_ipv4_ipv6(db)
 
         row = cur.execute(
             "SELECT devPrimaryIPv4 FROM Devices WHERE devMac = ?",
@@ -376,6 +379,7 @@ def test_ipv4_ipv6_mixed_in_multiple_scans(ip_test_db, mock_ip_handlers):
     db.sql = cur
 
     device_handling.update_devices_data_from_scan(db)
+    device_handling.update_ipv4_ipv6(db)
 
     row1 = cur.execute(
         "SELECT devPrimaryIPv4, devPrimaryIPv6 FROM Devices WHERE devMac = ?",
@@ -415,6 +419,7 @@ def test_ipv4_ipv6_mixed_in_multiple_scans(ip_test_db, mock_ip_handlers):
 
     db.sql = cur
     device_handling.update_devices_data_from_scan(db)
+    device_handling.update_ipv4_ipv6(db)
 
     row2 = cur.execute(
         "SELECT devPrimaryIPv4, devPrimaryIPv6 FROM Devices WHERE devMac = ?",
@@ -470,6 +475,7 @@ def test_ipv4_address_format_variations(ip_test_db, mock_ip_handlers):
     db.sql = cur
 
     device_handling.update_devices_data_from_scan(db)
+    device_handling.update_ipv4_ipv6(db)
 
     for idx, expected_ipv4 in enumerate(ipv4_addresses):
         mac = f"AA:BB:CC:DD:EE:{idx:02X}"
@@ -524,6 +530,7 @@ def test_ipv6_address_format_variations(ip_test_db, mock_ip_handlers):
     db.sql = cur
 
     device_handling.update_devices_data_from_scan(db)
+    device_handling.update_ipv4_ipv6(db)
 
     for idx, expected_ipv6 in enumerate(ipv6_addresses):
         mac = f"BB:BB:CC:DD:EE:{idx:02X}"
