@@ -111,6 +111,27 @@ def scan_db():
         """
     )
 
+    # Add the View logic provided
+    cur.execute("""
+        CREATE VIEW LatestDeviceScan AS
+        WITH RankedScans AS (
+            SELECT
+                c.*,
+                ROW_NUMBER() OVER (
+                    PARTITION BY c.scanMac, c.scanSourcePlugin
+                    ORDER BY c.scanLastConnection DESC
+                ) AS rn
+            FROM CurrentScan c
+        )
+        SELECT
+            d.*,
+            r.*
+        FROM Devices d
+        LEFT JOIN RankedScans r
+            ON d.devMac = r.scanMac
+        WHERE r.rn = 1;
+    """)
+
     conn.commit()
     yield conn
     conn.close()

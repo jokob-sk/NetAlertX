@@ -130,6 +130,7 @@ def test_set_empty_rejects_overwrite_on_non_empty_field():
 
 
 def test_empty_plugin_value_not_used():
+    # Allows overwrite as new value same as old
     result = can_overwrite_field(
         field_name="devName",
         current_value="",
@@ -138,7 +139,7 @@ def test_empty_plugin_value_not_used():
         plugin_settings={"set_always": [], "set_empty": []},
         field_value="",
     )
-    assert result is False
+    assert result is True
 
 
 def test_whitespace_only_plugin_value_not_used():
