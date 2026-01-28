@@ -1,4 +1,4 @@
-name: docker
+name: 🐳 👩‍💻 docker dev
 
 on:
   push:

@@ -1,4 +1,4 @@
-name: Code checks
+name: ✅ Code checks
 on:
   push:
     branches:

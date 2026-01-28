@@ -1,4 +1,4 @@
-name: Manual Test Suite Selector
+name: 🧪 Manual Test Suite Selector
 
 on:
   workflow_dispatch:
@@ -42,20 +42,20 @@ jobs:
         id: builder
         run: |
           PATHS=""
-          # Folder Mapping
-          if [ "${{ github.event.inputs.run_authoritative }}" == "true" ]; then PATHS="$PATHS authoritative_fields/"; fi
-          if [ "${{ github.event.inputs.run_api }}" == "true" ]; then PATHS="$PATHS api_endpoints/ server/"; fi
-          if [ "${{ github.event.inputs.run_backend }}" == "true" ]; then PATHS="$PATHS backend/"; fi
-          if [ "${{ github.event.inputs.run_docker_env }}" == "true" ]; then PATHS="$PATHS docker_tests/"; fi
-          if [ "${{ github.event.inputs.run_ui }}" == "true" ]; then PATHS="$PATHS ui/"; fi
+          # Folder Mapping with 'test/' prefix
+          if [ "${{ github.event.inputs.run_authoritative }}" == "true" ]; then PATHS="$PATHS test/authoritative_fields/"; fi
+          if [ "${{ github.event.inputs.run_api }}" == "true" ]; then PATHS="$PATHS test/api_endpoints/ test/server/"; fi
+          if [ "${{ github.event.inputs.run_backend }}" == "true" ]; then PATHS="$PATHS test/backend/"; fi
+          if [ "${{ github.event.inputs.run_docker_env }}" == "true" ]; then PATHS="$PATHS test/docker_tests/"; fi
+          if [ "${{ github.event.inputs.run_ui }}" == "true" ]; then PATHS="$PATHS test/ui/"; fi
 
-          # Root Files Mapping (Selects test_*.py directly in /test/)
+          # Root Files Mapping (files sitting directly in /test/)
           if [ "${{ github.event.inputs.run_root_files }}" == "true" ]; then
-            PATHS="$PATHS test_device_atomicity.py test_mcp_disablement.py test_plugin_helper.py test_wol_validation.py"
+            PATHS="$PATHS test/test_device_atomicity.py test/test_mcp_disablement.py test/test_plugin_helper.py test/test_wol_validation.py"
           fi
 
-          # Default to root if somehow nothing is selected
-          if [ -z "$PATHS" ]; then PATHS="."; fi
+          # If nothing is selected, default to the whole test folder
+          if [ -z "$PATHS" ]; then PATHS="test/"; fi
 
           echo "final_paths=$PATHS" >> $GITHUB_OUTPUT
 

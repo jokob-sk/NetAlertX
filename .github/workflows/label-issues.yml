@@ -1,4 +1,4 @@
-name: Label Issues by Installation Type
+name: 🏷 Label Issues by Installation Type
 
 on:
   issues:
