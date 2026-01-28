@@ -44,7 +44,8 @@ ARPSCAN_DURATION=30
 
 Enable the `ICMP` scan plugin to complement ARP detection. ICMP is often more reliable for detecting active hosts, especially when ARP fails.
 
-> [!IMPORTANT] If using AdGuard/Pi-hole: If devices still show offline after enabling ICMP, temporarily disable your content blocker. If the issue disappears, whitelist the NetAlertX host IP in your blocker's settings to prevent pings from being dropped.
+> [!IMPORTANT]
+> If using AdGuard/Pi-hole: If devices still show offline after enabling ICMP, temporarily disable your content blocker. If the issue disappears, whitelist the NetAlertX host IP in your blocker's settings to prevent pings from being dropped.
 
 ### ✅ Use Multiple Detection Methods
 
