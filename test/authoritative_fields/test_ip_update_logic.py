@@ -2,87 +2,11 @@
 Unit tests for device IP update logic (devPrimaryIPv4/devPrimaryIPv6 handling).
 """
 
-import sqlite3
 from unittest.mock import Mock, patch
 
 import pytest
 
 from server.scan import device_handling
-
-
-@pytest.fixture
-def in_memory_db():
-    """Create an in-memory SQLite database for testing."""
-    conn = sqlite3.connect(":memory:")
-    conn.row_factory = sqlite3.Row
-    cur = conn.cursor()
-
-    cur.execute(
-        """
-        CREATE TABLE Devices (
-            devMac TEXT PRIMARY KEY,
-            devLastConnection TEXT,
-            devPresentLastScan INTEGER,
-            devForceStatus TEXT,
-            devLastIP TEXT,
-            devPrimaryIPv4 TEXT,
-            devPrimaryIPv6 TEXT,
-            devVendor TEXT,
-            devParentPort TEXT,
-            devParentMAC TEXT,
-            devSite TEXT,
-            devSSID TEXT,
-            devType TEXT,
-            devName TEXT,
-            devIcon TEXT
-        )
-        """
-    )
-
-    cur.execute(
-        """
-        CREATE TABLE CurrentScan (
-            scanMac TEXT,
-            scanLastIP TEXT,
-            scanVendor TEXT,
-            scanSourcePlugin TEXT,
-            scanName TEXT,
-            scanLastQuery TEXT,
-            scanLastConnection TEXT,
-            scanSyncHubNode TEXT,
-            scanSite TEXT,
-            scanSSID TEXT,
-            scanParentMAC TEXT,
-            scanParentPort TEXT,
-            scanType TEXT
-        )
-        """
-    )
-
-    # Add the View logic provided
-    cur.execute("""
-        CREATE VIEW LatestDeviceScan AS
-        WITH RankedScans AS (
-            SELECT
-                c.*,
-                ROW_NUMBER() OVER (
-                    PARTITION BY c.scanMac, c.scanSourcePlugin
-                    ORDER BY c.scanLastConnection DESC
-                ) AS rn
-            FROM CurrentScan c
-        )
-        SELECT
-            d.*,
-            r.*
-        FROM Devices d
-        LEFT JOIN RankedScans r
-            ON d.devMac = r.scanMac
-        WHERE r.rn = 1;
-    """)
-
-    conn.commit()
-    yield conn
-    conn.close()
 
 
 @pytest.fixture
