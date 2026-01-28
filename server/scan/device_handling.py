@@ -121,6 +121,7 @@ FIELD_SPECS = {
         "empty_values": ["", "null", "(unknown)", "(Unknown)"],
         "priority": ["ARPSCAN", "NEWDEV", "N/A"],
         "default_value": "0.0.0.0",
+        "allow_update_if_changed": True,
     },
 
     # ==========================================================
@@ -304,6 +305,7 @@ def update_devices_data_from_scan(db):
                     plugin_prefix=source_prefix,
                     plugin_settings=plugin_settings,
                     field_value=new_value,
+                    allow_override_if_changed=spec.get("allow_override_if_changed", False)
                 ):
                     # Build UPDATE dynamically
                     update_cols = [f"{field} = ?"]

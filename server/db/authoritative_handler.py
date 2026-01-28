@@ -74,7 +74,7 @@ def get_plugin_authoritative_settings(plugin_prefix):
         return {"set_always": [], "set_empty": []}
 
 
-def can_overwrite_field(field_name, current_value, current_source, plugin_prefix, plugin_settings, field_value):
+def can_overwrite_field(field_name, current_value, current_source, plugin_prefix, plugin_settings, field_value, allow_override_if_changed=False):
     """
     Determine if a plugin can overwrite a field.
 
@@ -121,7 +121,14 @@ def can_overwrite_field(field_name, current_value, current_source, plugin_prefix
         return False
 
     # Rule 5: Default - overwrite if current value empty
-    return current_value in empty_values
+    if current_value in empty_values:
+        return True
+
+    # Rule 6: Optional override flag to allow overwrite if value changed (devLastIP)
+    if allow_override_if_changed and field_value != current_value:
+        return True
+
+    return False
 
 
 def get_overwrite_sql_clause(field_name, source_column, plugin_settings):
