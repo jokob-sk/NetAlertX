@@ -198,7 +198,7 @@
     "DevDetail_button_Save": "Lagre",
     "DeviceEdit_ValidMacIp": "",
     "Device_MultiEdit": "Multiredigering",
-    "Device_MultiEdit_Backup": "Forsiktig, hvis du legger inn feil verdier nedenfor, vil oppsettet ditt ødelegges. Ta sikkerhetskopi av databasen eller enhetskonfigurasjonen først (<a href=\"php/server/devices.php?action=ExportCSV\">klikk for å laste ned <i class=\"fa-solid fa-download fa-bounce\"></i> </a>). Les hvordan du gjenoppretter enheter fra denne filen i <a href=\"https://docs.netalertx.com/BACKUPS#scenario-2-corrupted-database\" target=\"_blank\">Sikkerhetskopierings dokumentasjon</a>.",
+    "Device_MultiEdit_Backup": "Forsiktig, hvis du legger inn feil verdier nedenfor, vil oppsettet ditt ødelegges. Ta sikkerhetskopi av databasen eller enhetskonfigurasjonen først (<a href=\"#\" onclick=\"ExportCSV()\">klikk for å laste ned <i class=\"fa-solid fa-download fa-bounce\"></i> </a>). Les hvordan du gjenoppretter enheter fra denne filen i <a href=\"https://docs.netalertx.com/BACKUPS#scenario-2-corrupted-database\" target=\"_blank\">Sikkerhetskopierings dokumentasjon</a>.",
     "Device_MultiEdit_Fields": "Rediger felt:",
     "Device_MultiEdit_MassActions": "Flerhandlinger:",
     "Device_MultiEdit_No_Devices": "",

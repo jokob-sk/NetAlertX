@@ -198,7 +198,7 @@
     "DevDetail_button_Save": "保存",
     "DeviceEdit_ValidMacIp": "有効な<b>Mac</b>と<b>IP</b>アドレスを入力します.",
     "Device_MultiEdit": "マルチエディタ",
-    "Device_MultiEdit_Backup": "注意：以下の項目に誤った値を入力すると設定が破損します。まずデータベースまたはデバイスの設定をバックアップしてください（<a href=\"php/server/devices.php?action=ExportCSV\">クリックしてダウンロード<i class=\"fa-solid fa-download fa-bounce\"></i></a>）。このファイルからデバイスを復元する方法については、<a href=\"https://docs.netalertx.com/BACKUPS#scenario-2-corrupted-database\" target=\"_blank\">バックアップのドキュメント</a>を参照してください。変更を適用するには、更新したい各フィールドの<b>保存<i class=\"fa-solid fa-save\"></i></b>アイコンをクリックしてください。",
+    "Device_MultiEdit_Backup": "注意：以下の項目に誤った値を入力すると設定が破損します。まずデータベースまたはデバイスの設定をバックアップしてください（<a href=\"#\" onclick=\"ExportCSV()\">クリックしてダウンロード<i class=\"fa-solid fa-download fa-bounce\"></i></a>）。このファイルからデバイスを復元する方法については、<a href=\"https://docs.netalertx.com/BACKUPS#scenario-2-corrupted-database\" target=\"_blank\">バックアップのドキュメント</a>を参照してください。変更を適用するには、更新したい各フィールドの<b>保存<i class=\"fa-solid fa-save\"></i></b>アイコンをクリックしてください。",
     "Device_MultiEdit_Fields": "フィールドの編集:",
     "Device_MultiEdit_MassActions": "大量のアクション:",
     "Device_MultiEdit_No_Devices": "デバイスが選択されていません。",

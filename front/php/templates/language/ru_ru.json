@@ -198,7 +198,7 @@
     "DevDetail_button_Save": "Сохранить",
     "DeviceEdit_ValidMacIp": "Введите действительный <b>Mac</b> и <b>IP</b> адрес.",
     "Device_MultiEdit": "Мультиредакт",
-    "Device_MultiEdit_Backup": "Будьте осторожны: ввод неправильных значений ниже приведет к поломке вашей настройки. Сначала сделайте резервную копию базы данных или конфигурации устройств (<a href=\"php/server/devices.php?action=ExportCSV\">нажмите для загрузки <i class=\"fa-solid fa-download fa-bounce\"></i></a>). О том, как восстановить Устройства из этого файла, читайте в разделе <a href=\"https://docs.netalertx.com/BACKUPS#scenario-2-corrupted-database\" target=\"_blank\">Документация о резервном копировании</a>. Чтобы применить свои изменения, нажмите на значок <b> Сохранить <i class = \"fa-solid fa-save\"> </i> </b> в каждом поле, которое вы хотите обновить.",
+    "Device_MultiEdit_Backup": "Будьте осторожны: ввод неправильных значений ниже приведет к поломке вашей настройки. Сначала сделайте резервную копию базы данных или конфигурации устройств (<a href=\"#\" onclick=\"ExportCSV()\">нажмите для загрузки <i class=\"fa-solid fa-download fa-bounce\"></i></a>). О том, как восстановить Устройства из этого файла, читайте в разделе <a href=\"https://docs.netalertx.com/BACKUPS#scenario-2-corrupted-database\" target=\"_blank\">Документация о резервном копировании</a>. Чтобы применить свои изменения, нажмите на значок <b> Сохранить <i class = \"fa-solid fa-save\"> </i> </b> в каждом поле, которое вы хотите обновить.",
     "Device_MultiEdit_Fields": "Редактировать поля:",
     "Device_MultiEdit_MassActions": "Массовые действия:",
     "Device_MultiEdit_No_Devices": "Устройства не выбраны.",

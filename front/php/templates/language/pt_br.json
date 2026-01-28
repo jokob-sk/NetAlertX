@@ -198,7 +198,7 @@
     "DevDetail_button_Save": "Salvar",
     "DeviceEdit_ValidMacIp": "Insira um endereço <b>Mac</b> e <b>IP</b> válidos.",
     "Device_MultiEdit": "Edição múltipla",
-    "Device_MultiEdit_Backup": "Cuidado, inserir valores errados abaixo interromperá sua configuração. Faça backup do seu banco de dados ou da configuração dos dispositivos primeiro (<a href=\"php/server/devices.php?action=ExportCSV\">clique para baixar <i class=\"fa-solid fa-download fa-bounce\"></i> </a>). Leia como recuperar dispositivos deste arquivo no <a href=\"https://docs.netalertx.com/BACKUPS#scenario-2-corrupted-database\" target=\" _blank\">Documentação de backups</a>.",
+    "Device_MultiEdit_Backup": "Cuidado, inserir valores errados abaixo interromperá sua configuração. Faça backup do seu banco de dados ou da configuração dos dispositivos primeiro (<a href=\"#\" onclick=\"ExportCSV()\">clique para baixar <i class=\"fa-solid fa-download fa-bounce\"></i> </a>). Leia como recuperar dispositivos deste arquivo no <a href=\"https://docs.netalertx.com/BACKUPS#scenario-2-corrupted-database\" target=\" _blank\">Documentação de backups</a>.",
     "Device_MultiEdit_Fields": "Editar campos:",
     "Device_MultiEdit_MassActions": "Ações em massa:",
     "Device_MultiEdit_No_Devices": "",

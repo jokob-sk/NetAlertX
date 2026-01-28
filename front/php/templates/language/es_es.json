@@ -200,7 +200,7 @@
     "DevDetail_button_Save": "Guardar",
     "DeviceEdit_ValidMacIp": "Introduzca una dirección <b>Mac</b> y una dirección <b>IP</b> válidas .",
     "Device_MultiEdit": "Edición múltiple",
-    "Device_MultiEdit_Backup": "Tenga cuidado, ingresar valores incorrectos o romperá su configuración. Por favor, haga una copia de seguridad de su base de datos o de la configuración de los dispositivos primero (<a href=\"php/server/devices.php?action=ExportCSV\">haga clic para descargar <i class=\"fa-solid fa-download fa-bounce\"></i></a>). Lea cómo recuperar dispositivos de este archivo en la documentación de <a href=\"https://docs.netalertx.com/BACKUPS#scenario-2-corrupted-database\" target=\"_blank\">Copia de seguridad</a>. Para aplicar sus cambios haga click en el ícono de   <b>Guardar<i class=\"fa-solid fa-save\"></i></b> en cada campo que quiera actualizar.",
+    "Device_MultiEdit_Backup": "Tenga cuidado, ingresar valores incorrectos o romperá su configuración. Por favor, haga una copia de seguridad de su base de datos o de la configuración de los dispositivos primero (<a href=\"#\" onclick=\"ExportCSV()\">haga clic para descargar <i class=\"fa-solid fa-download fa-bounce\"></i></a>). Lea cómo recuperar dispositivos de este archivo en la documentación de <a href=\"https://docs.netalertx.com/BACKUPS#scenario-2-corrupted-database\" target=\"_blank\">Copia de seguridad</a>. Para aplicar sus cambios haga click en el ícono de   <b>Guardar<i class=\"fa-solid fa-save\"></i></b> en cada campo que quiera actualizar.",
     "Device_MultiEdit_Fields": "Editar campos:",
     "Device_MultiEdit_MassActions": "Acciones masivas:",
     "Device_MultiEdit_No_Devices": "",

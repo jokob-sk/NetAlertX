@@ -198,7 +198,7 @@
     "DevDetail_button_Save": "Salva",
     "DeviceEdit_ValidMacIp": "Inserisci un indirizzo <b>Mac</b> e un indirizzo <b>IP</b> validi.",
     "Device_MultiEdit": "Modifica multipla",
-    "Device_MultiEdit_Backup": "Attento, l'inserimento di valori errati di seguito interromperà la configurazione. Effettua prima il backup del database o della configurazione dei dispositivi (<a href=\"php/server/devices.php?action=ExportCSV\">fai clic per scaricare <i class=\"fa-solid fa-download fa-bounce\"></i> </a>). Leggi come ripristinare i dispositivi da questo file nella <a href=\"https://docs.netalertx.com/BACKUPS#scenario-2-corrupted-database\" target=\" _blank\">Documentazione di backup</a>. Per applicare le modifiche, fai clic sull'icona <b>Salva<i class=\"fa-solid fa-save\"></i></b> su ogni campo che desideri aggiornare.",
+    "Device_MultiEdit_Backup": "Attento, l'inserimento di valori errati di seguito interromperà la configurazione. Effettua prima il backup del database o della configurazione dei dispositivi (<a href=\"#\" onclick=\"ExportCSV()\">fai clic per scaricare <i class=\"fa-solid fa-download fa-bounce\"></i> </a>). Leggi come ripristinare i dispositivi da questo file nella <a href=\"https://docs.netalertx.com/BACKUPS#scenario-2-corrupted-database\" target=\" _blank\">Documentazione di backup</a>. Per applicare le modifiche, fai clic sull'icona <b>Salva<i class=\"fa-solid fa-save\"></i></b> su ogni campo che desideri aggiornare.",
     "Device_MultiEdit_Fields": "Modifica campi:",
     "Device_MultiEdit_MassActions": "Azioni di massa:",
     "Device_MultiEdit_No_Devices": "Nessun dispositivo selezionato.",

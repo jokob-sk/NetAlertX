@@ -198,7 +198,7 @@
     "DevDetail_button_Save": "Guardar",
     "DeviceEdit_ValidMacIp": "Entra una adreça <b>IP</b> i <b>Mac</b> vàlides.",
     "Device_MultiEdit": "Multi-edició",
-    "Device_MultiEdit_Backup": "Atenció, entrar valors incorrectes a continuació trencarà la configuració. Si us plau, abans feu còpia de seguretat la vostra base de dades o configuració de Dispositius (<a href=\"php/server/devices.php?action=ExportCSV\">clic per descarregar <i class=\"fa-solid fa-download fa-bounce\"></i></a>). Llegiu com per recuperar Dispositius des d'aquest fitxer al <a href=\"https://docs.netalertx.com/BACKUPS#scenario-2-corrupted-database\" target=\"_blank\">documentació de Còpies de seguretat</a>. Per aplicar els canvis, feu click a la  <b>Save<i class=\"fa-solid fa-save\"></i></b> icona de cada camp que volgueu actualitzar.",
+    "Device_MultiEdit_Backup": "Atenció, entrar valors incorrectes a continuació trencarà la configuració. Si us plau, abans feu còpia de seguretat la vostra base de dades o configuració de Dispositius (<a href=\"#\" onclick=\"ExportCSV()\">clic per descarregar <i class=\"fa-solid fa-download fa-bounce\"></i></a>). Llegiu com per recuperar Dispositius des d'aquest fitxer al <a href=\"https://docs.netalertx.com/BACKUPS#scenario-2-corrupted-database\" target=\"_blank\">documentació de Còpies de seguretat</a>. Per aplicar els canvis, feu click a la  <b>Save<i class=\"fa-solid fa-save\"></i></b> icona de cada camp que volgueu actualitzar.",
     "Device_MultiEdit_Fields": "Editar camps:",
     "Device_MultiEdit_MassActions": "Accions massives:",
     "Device_MultiEdit_No_Devices": "Cap dispositiu seleccionat.",

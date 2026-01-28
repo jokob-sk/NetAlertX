@@ -202,7 +202,7 @@
     "DevDetail_button_Save": "Speichern",
     "DeviceEdit_ValidMacIp": "Gib eine gültige <b>MAC</b>- und <b>IP</b>-Adresse ein.",
     "Device_MultiEdit": "Mehrfach-bearbeiten",
-    "Device_MultiEdit_Backup": "Achtung! Falsche Eingaben können die Installation beschädigen. Bitte sichere deine Datenbank oder Gerätekonfiguration zuerst: (<a href=\"php/server/devices.php?action=ExportCSV\">Konfiguration herunterladen <i class=\"fa-solid fa-download fa-bounce\"></i></a>). Wie du dein Gerät wiederherstellen kannst findest du in der <a href=\"https://docs.netalertx.com/BACKUPS#scenario-2-corrupted-database\" target=\"_blank\">Dokumentation über Backups</a>.",
+    "Device_MultiEdit_Backup": "Achtung! Falsche Eingaben können die Installation beschädigen. Bitte sichere deine Datenbank oder Gerätekonfiguration zuerst: (<a href=\"#\" onclick=\"ExportCSV()\">Konfiguration herunterladen <i class=\"fa-solid fa-download fa-bounce\"></i></a>). Wie du dein Gerät wiederherstellen kannst findest du in der <a href=\"https://docs.netalertx.com/BACKUPS#scenario-2-corrupted-database\" target=\"_blank\">Dokumentation über Backups</a>.",
     "Device_MultiEdit_Fields": "Felder bearbeiten:",
     "Device_MultiEdit_MassActions": "Massen aktionen:",
     "Device_MultiEdit_No_Devices": "Keine Geräte ausgewählt.",

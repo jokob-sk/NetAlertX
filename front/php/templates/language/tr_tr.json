@@ -198,7 +198,7 @@
     "DevDetail_button_Save": "Kaydet",
     "DeviceEdit_ValidMacIp": "Geçerli bir <b>Mac</b> ve <b>IP</b> adresi girin.",
     "Device_MultiEdit": "Çoklu Düzenleme",
-    "Device_MultiEdit_Backup": "Dikkat, aşağıya yanlış değerler girmeniz yapılandırmanızı bozabilir. Lütfen önce veritabanınızı veya Cihazlar yapılandırmanızı yedekleyin (<a href=\"php/server/devices.php?action=ExportCSV\">İndirmeniz için tıklayın <i class=\"fa-solid fa-download fa-bounce\"></i></a>). Bu dosyadan Cihazları nasıl geri yükleyeceğinizi öğrenmek için <a href=\"https://docs.netalertx.com/BACKUPS#scenario-2-corrupted-database\" target=\"_blank\">Yedekleme dökümantasyonunu</a> okuyun.",
+    "Device_MultiEdit_Backup": "Dikkat, aşağıya yanlış değerler girmeniz yapılandırmanızı bozabilir. Lütfen önce veritabanınızı veya Cihazlar yapılandırmanızı yedekleyin (<a href=\"#\" onclick=\"ExportCSV()\">İndirmeniz için tıklayın <i class=\"fa-solid fa-download fa-bounce\"></i></a>). Bu dosyadan Cihazları nasıl geri yükleyeceğinizi öğrenmek için <a href=\"https://docs.netalertx.com/BACKUPS#scenario-2-corrupted-database\" target=\"_blank\">Yedekleme dökümantasyonunu</a> okuyun.",
     "Device_MultiEdit_Fields": "Alanları Düzenle:",
     "Device_MultiEdit_MassActions": "Toplu komutlar:",
     "Device_MultiEdit_No_Devices": "",
