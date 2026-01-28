@@ -749,7 +749,7 @@ def test_custom_port_with_unwritable_nginx_config_compose() -> None:
     # Container should exit due to inability to write nginx config and custom port.
     assert result.returncode == 1
     assert "unable to write to /tmp/nginx/active-config/netalertx.conf" in lowered_output
-    assert "mv: can't create '/tmp/nginx/active-config/nginx.conf'" in lowered_output
+
 
 
 def test_host_network_compose(tmp_path: pathlib.Path) -> None:

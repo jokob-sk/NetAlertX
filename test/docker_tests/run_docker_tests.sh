@@ -17,6 +17,9 @@ else
     echo "ERROR: generate-configs.sh not found. Aborting."
     exit 1
 fi
+echo "Development $(git rev-parse --short=8 HEAD)" |  tee ".VERSION" >/dev/null
+date +%s > front/buildtimestamp.txt
+
 
 # --- 2. Build the Docker Image ---
 echo "--- Building 'netalertx-dev-test' image ---"

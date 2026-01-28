@@ -32,7 +32,6 @@ LOG_FILES=(
   LOG_DB_IS_LOCKED
   LOG_NGINX_ERROR
 )
-
 sudo chmod 666 /var/run/docker.sock 2>/dev/null || true
 sudo chown "$(id -u)":"$(id -g)" /workspaces
 sudo chmod 755 /workspaces
@@ -54,6 +53,9 @@ sudo install -d -m 777 /tmp/log/plugins
 
 sudo rm -rf /entrypoint.d
 sudo ln -s "${SOURCE_DIR}/install/production-filesystem/entrypoint.d" /entrypoint.d
+
+sudo rm -rf /services
+sudo ln -s "${SOURCE_DIR}/install/production-filesystem/services" /services
 
 sudo rm -rf "${NETALERTX_APP}"
 sudo ln -s "${SOURCE_DIR}/" "${NETALERTX_APP}"
@@ -87,8 +89,6 @@ printf '0\n' | sudo tee "${LOG_DB_IS_LOCKED}" >/dev/null
 sudo chmod 777 "${LOG_DB_IS_LOCKED}"
 
 sudo pkill -f python3 2>/dev/null || true
-
-sudo chmod -R 777 "${PY_SITE_PACKAGES}" "${NETALERTX_DATA}" 2>/dev/null || true
 
 sudo chown -R "${NETALERTX_USER}:${NETALERTX_GROUP}" "${NETALERTX_APP}"
 date +%s | sudo tee "${NETALERTX_FRONT}/buildtimestamp.txt" >/dev/null

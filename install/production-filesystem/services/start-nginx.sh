@@ -42,9 +42,32 @@ if [ "$(id -u)" -eq 0 ]; then
     NGINX_USER_DIRECTIVE="user root;"
 fi
 
+# ------------------------------------------------------------------
+# BACKEND_PORT RESOLUTION
+# ------------------------------------------------------------------
+# Priority 1: APP_CONF_OVERRIDE (parsed via jq)
+# Priority 2: GRAPHQL_PORT env var
+# Priority 3: Default 20212
+
+# Default
+export BACKEND_PORT=20212
+
+# Check env var
+if [ -n "${GRAPHQL_PORT:-}" ]; then
+    export BACKEND_PORT="${GRAPHQL_PORT}"
+fi
+
+# Check override (highest priority)
+if [ -n "${APP_CONF_OVERRIDE:-}" ]; then
+    override_port=$(echo "${APP_CONF_OVERRIDE}" | jq -r '.GRAPHQL_PORT // empty')
+    if [ -n "${override_port}" ]; then
+        export BACKEND_PORT="${override_port}"
+    fi
+fi
+
 # Shell check doesn't recognize envsubst variables
 # shellcheck disable=SC2016
-if envsubst '${LISTEN_ADDR} ${PORT} ${NGINX_USER_DIRECTIVE}' < "${SYSTEM_NGINX_CONFIG_TEMPLATE}" > "${TEMP_CONFIG_FILE}" 2>/dev/null; then
+if envsubst '${LISTEN_ADDR} ${PORT} ${NGINX_USER_DIRECTIVE} ${BACKEND_PORT}' < "${SYSTEM_NGINX_CONFIG_TEMPLATE}" > "${TEMP_CONFIG_FILE}" 2>/dev/null; then
 	mv "${TEMP_CONFIG_FILE}" "${SYSTEM_SERVICES_ACTIVE_CONFIG_FILE}"
 else
 	echo "Note: Unable to write to ${SYSTEM_SERVICES_ACTIVE_CONFIG_FILE}. Using default configuration."

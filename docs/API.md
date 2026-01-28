@@ -78,6 +78,7 @@ http://<server>:<GRAPHQL_PORT>/
 * [Sync](API_SYNC.md) – Synchronization between multiple NetAlertX instances
 * [Logs](API_LOGS.md) – Purging of logs and adding to the event execution queue for user triggered events
 * [DB query](API_DBQUERY.md) (⚠ Internal) - Low level database access - use other endpoints if possible
+* `/server` (⚠ Internal) - Backend server endpoint for internal communication only - **do not use directly**
 
 ### MCP Server Bridge
 

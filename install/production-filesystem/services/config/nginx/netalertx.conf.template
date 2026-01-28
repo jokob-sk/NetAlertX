@@ -94,6 +94,19 @@ http {
 	access_log /tmp/log/nginx-access.log main;
 
 
+    # Map 1: The Legacy Logic (Referer Match)
+    map "$http_referer|$http_host" $sec_legacy {
+        "~^https?://(?<ref_host>[^/:]+)(?::\d+)?/.*\|\k<ref_host>(?::\d+)?$" "TRUSTED";
+        default "UNTRUSTED";
+    }
+
+    # Map 2: Strict Same-Origin Enforcement
+    map $http_sec_fetch_site $is_trusted {
+        "same-origin" "TRUSTED";
+        ""            $sec_legacy; # Fallback only if header is missing
+        default       "UNTRUSTED"; # Blocks 'same-site' and 'cross-site'
+    }
+
 	# Virtual host config
     server {
         listen ${LISTEN_ADDR}:${PORT} default_server;
@@ -102,6 +115,30 @@ http {
         index index.php;
         add_header X-Forwarded-Prefix "/app" always;
 
+        location /server/ {
+            # 1. Enforcement
+            if ($is_trusted != "TRUSTED") {
+                return 403;
+            }
+
+            # 2. Path Rewriting & Proxy
+            rewrite ^/server/(.*)$ /$1 break;
+            proxy_pass http://127.0.0.1:${BACKEND_PORT};
+
+            # 3. Performance & SSE (Per #1440)
+            proxy_buffering off;
+            proxy_cache off;
+            proxy_http_version 1.1;
+            proxy_set_header Connection "";
+            client_max_body_size 50m;
+			proxy_read_timeout 3600s;
+
+            # 4. Standard Proxy Headers
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
 
         location ~* \.php$ {
             # Set Cache-Control header to prevent caching on the first load

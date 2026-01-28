@@ -4,11 +4,8 @@ function getApiBase()
 
     if(apiBase == "")
     {
-        const protocol = window.location.protocol.replace(':', '');
-        const host = window.location.hostname;
-        const port = getSetting("GRAPHQL_PORT");
-
-        apiBase = `${protocol}://${host}:${port}`;
+        // Default to the same-origin proxy bridge
+        apiBase = "/server";
     }
 
     // Remove trailing slash for consistency

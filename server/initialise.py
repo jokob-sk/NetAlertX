@@ -273,7 +273,7 @@ def importConfigs(pm, db, all_plugins):
     )
     conf.BACKEND_API_URL = ccd(
         "BACKEND_API_URL",
-        "",
+        "/server",
         c_d,
         "API URL",
         '{"dataType":"string", "elements": [{"elementType" : "input", "elementOptions" : [] ,"transformers": []}]}',
