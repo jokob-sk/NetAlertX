@@ -147,6 +147,7 @@ def test_primary_ipv6_is_set_and_ipv4_preserved(in_memory_db, mock_device_handli
     db.sql = cur
 
     device_handling.update_devices_data_from_scan(db)
+    device_handling.update_ipv4_ipv6(db)
 
     row = cur.execute(
         "SELECT devLastIP, devPrimaryIPv4, devPrimaryIPv6 FROM Devices WHERE devMac = ?",
@@ -222,6 +223,7 @@ def test_primary_ipv4_is_set_and_ipv6_preserved(in_memory_db, mock_device_handli
     db.sql = cur
 
     device_handling.update_devices_data_from_scan(db)
+    device_handling.update_ipv4_ipv6(db)
 
     row = cur.execute(
         "SELECT devLastIP, devPrimaryIPv4, devPrimaryIPv6 FROM Devices WHERE devMac = ?",

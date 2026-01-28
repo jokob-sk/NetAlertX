@@ -717,6 +717,7 @@ def test_scan_updates_ip_addresses(scan_db, mock_device_handlers):
 
     # Run scan update
     device_handling.update_devices_data_from_scan(db)
+    device_handling.update_ipv4_ipv6(db)
 
     row = cur.execute(
         "SELECT devLastIP, devPrimaryIPv4, devPrimaryIPv6 FROM Devices WHERE devMac = ?",
@@ -797,6 +798,7 @@ def test_scan_updates_ipv6_without_changing_ipv4(scan_db, mock_device_handlers):
 
     # Run scan update
     device_handling.update_devices_data_from_scan(db)
+    device_handling.update_ipv4_ipv6(db)
 
     row = cur.execute(
         "SELECT devPrimaryIPv4, devPrimaryIPv6 FROM Devices WHERE devMac = ?",
@@ -849,6 +851,7 @@ def test_scan_updates_presence_status(scan_db, mock_device_handlers):
 
     # Run scan update
     device_handling.update_devices_data_from_scan(db)
+    device_handling.update_presence_from_CurrentScan(db)
 
     row = cur.execute(
         "SELECT devPresentLastScan FROM Devices WHERE devMac = ?",
