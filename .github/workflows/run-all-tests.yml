@@ -1,0 +1,76 @@
+name: Manual Test Suite Selector
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_unit_tests:
+        description: 'Core Logic Tests (Default)'
+        type: boolean
+        default: true
+      run_docker_tests:
+        description: 'Docker/Integration Tests'
+        type: boolean
+        default: false
+      run_feature_complete:
+        description: 'Feature Complete (E2E) Tests'
+        type: boolean
+        default: false
+      run_path_checks:
+        description: 'URL/Path Consistency Checks'
+        type: boolean
+        default: true
+
+jobs:
+  comprehensive-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Environment
+        run: sudo apt-get update && sudo apt-get install -y sqlite3
+
+      - name: Configure Test Command
+        id: config
+        run: |
+          # Build the pytest marker filter based on checkboxes
+          # Logic: Start by excluding everything, then add what was checked
+          MARKERS=""
+
+          if [ "${{ github.event.inputs.run_unit_tests }}" == "true" ]; then
+            # This usually covers tests without specific markers
+            MARKERS="not (docker or compose or feature_complete)"
+          fi
+
+          if [ "${{ github.event.inputs.run_docker_tests }}" == "true" ]; then
+            [ -n "$MARKERS" ] && MARKERS="$MARKERS or "
+            MARKERS="${MARKERS}docker or compose"
+          fi
+
+          if [ "${{ github.event.inputs.run_feature_complete }}" == "true" ]; then
+            [ -n "$MARKERS" ] && MARKERS="$MARKERS or "
+            MARKERS="${MARKERS}feature_complete"
+          fi
+
+          echo "final_markers=$MARKERS" >> $GITHUB_OUTPUT
+
+      - name: Run Docker Integration Script
+        run: |
+          chmod +x ./test/docker_tests/run_docker_tests.sh
+
+          # Inject the custom marker list into your script
+          # This replaces the hardcoded line in your run_docker_tests.sh
+          SED_COMMAND="pytest -m '${{ steps.config.outputs.final_markers }}'"
+          sed -i "s|pytest -m 'not (docker or compose or feature_complete)'|$SED_COMMAND|g" ./test/docker_tests/run_docker_tests.sh
+
+          ./test/docker_tests/run_docker_tests.sh
+
+      - name: Path Consistency Check
+        if: github.event.inputs.run_path_checks == 'true'
+        run: |
+          echo "🔍 Checking for incorrect absolute '/php/' URLs..."
+          MATCHES=$(grep -rE "['\"]/php/" --include=\*.{js,php,html} ./front | grep -E "\.get|\.post|\.ajax|fetch|url\s*:") || true
+          if [ -n "$MATCHES" ]; then
+            echo "$MATCHES"
+            exit 1
+          fi
