@@ -27,40 +27,41 @@ def mock_device_handling():
 
 
 def test_primary_ipv6_is_set_and_ipv4_preserved(scan_db, mock_device_handling):
-    """Setting IPv6 in CurrentScan should update devPrimaryIPv6 without changing devPrimaryIPv4."""
     cur = scan_db.cursor()
 
-    # Create device with IPv4 primary
+    # 1. Create device
     cur.execute(
-        """
-        INSERT INTO Devices (
-            devMac, devLastConnection, devPresentLastScan, devLastIP,
-            devPrimaryIPv4, devPrimaryIPv6, devVendor, devType, devName, devIcon
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """,
-        ("AA:BB:CC:DD:EE:FF", "2025-01-01 00:00:00", 0, "192.168.1.10", "192.168.1.10", "", "TestVendor", "type", "Device", "icon")
+        "INSERT INTO Devices (devMac, devLastIP, devPrimaryIPv4, devName) VALUES (?, ?, ?, ?)",
+        ("AA:BB:CC:DD:EE:FF", "192.168.1.10", "192.168.1.10", "Device")
     )
 
-    # CurrentScan with IPv6
+    # 2. Insert Scan with a SPECIFIC plugin name
+    # This is critical so the logic inside update_devices_data_from_scan finds it
     cur.execute(
-        "INSERT INTO CurrentScan (scanMac, scanLastIP, scanSourcePlugin, scanLastConnection) VALUES (?, ?, ?, ?)",
-        ("AA:BB:CC:DD:EE:FF", "2001:db8::1", "IPv6SCAN", "2025-01-01 01:00:00")
+        """
+        INSERT INTO CurrentScan (scanMac, scanLastIP, scanSourcePlugin, scanLastConnection)
+        VALUES (?, ?, ?, ?)
+        """,
+        ("AA:BB:CC:DD:EE:FF", "2001:db8::1", "TEST_PLUGIN", "2025-01-01 01:00:00")
     )
     scan_db.commit()
 
     db = Mock(sql_connection=scan_db, sql=cur)
 
-    device_handling.update_devices_data_from_scan(db)
-    device_handling.update_ipv4_ipv6(db)
+    # We must mock get_plugin_authoritative_settings to allow updates from "TEST_PLUGIN"
+    with patch("server.scan.device_handling.get_plugin_authoritative_settings", return_value={}):
+        device_handling.update_devices_data_from_scan(db)
+        device_handling.update_ipv4_ipv6(db)
 
     row = cur.execute(
         "SELECT devLastIP, devPrimaryIPv4, devPrimaryIPv6 FROM Devices WHERE devMac = ?",
         ("AA:BB:CC:DD:EE:FF",),
     ).fetchone()
 
+    # These were failing because devLastIP remained 192.168.1.10
     assert row["devLastIP"] == "2001:db8::1"
-    assert row["devPrimaryIPv4"] == "192.168.1.10"
     assert row["devPrimaryIPv6"] == "2001:db8::1"
+    assert row["devPrimaryIPv4"] == "192.168.1.10"
 
 
 def test_primary_ipv4_is_set_and_ipv6_preserved(scan_db, mock_device_handling):
