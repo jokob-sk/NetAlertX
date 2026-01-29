@@ -77,6 +77,7 @@ class TestDeviceAtomicity(unittest.TestCase):
                 devLocationSource TEXT,
                 devCommentsSource TEXT,
                 devMacSource TEXT,
+                devVlan TEXT,
                 devForceStatus STRING DEFAULT NULL
             )
         """)
