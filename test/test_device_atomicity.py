@@ -76,7 +76,8 @@ class TestDeviceAtomicity(unittest.TestCase):
                 devGroupSource TEXT,
                 devLocationSource TEXT,
                 devCommentsSource TEXT,
-                devMacSource TEXT
+                devMacSource TEXT,
+                devForceStatus STRING DEFAULT NULL
             )
         """)
         conn.commit()
