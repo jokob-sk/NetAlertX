@@ -121,7 +121,7 @@ FIELD_SPECS = {
         "empty_values": ["", "null", "(unknown)", "(Unknown)"],
         "priority": ["ARPSCAN", "NEWDEV", "N/A"],
         "default_value": "0.0.0.0",
-        "allow_update_if_changed": True,
+        "allow_override_if_changed": True,
     },
 
     # ==========================================================
