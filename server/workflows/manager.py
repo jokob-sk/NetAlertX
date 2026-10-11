@@ -79,7 +79,7 @@ class WorkflowManager:
 
         result = get_unprocessed(self.db)
 
-        mylog("none", [f"[WF] get_new_app_events - new events count: {len(result)}"])
+        mylog("debug", [f"[WF] get_new_app_events - new events count: {len(result)}"])
 
         return result
 
