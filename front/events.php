@@ -172,9 +172,13 @@ function initializeDatatable() {
       { targets: [9], orderData: [10] },
       // Use `render` (not `createdCell`) so encodeSpecialChars runs before
       // DataTables sets td.innerHTML, preventing devName XSS execution.
+      // devName is null for a deleted device's still-shown historical event
+      // (Events_Devices LEFT JOINs Devices) - fall back to the MAC (row[13])
+      // instead of rendering the literal string "null".
       { targets: [1], render: function (data, type, row) {
           if (type !== 'display') { return data; }
-          return `<b><a href="deviceDetails.php?mac=${row[13]}">${encodeSpecialChars(data)}</a></b>`;
+          const label = (data === null || data === undefined || data === '') ? row[13] : data;
+          return `<b><a href="deviceDetails.php?mac=${row[13]}">${encodeSpecialChars(label)}</a></b>`;
       }},
       { targets: [3], createdCell: (td, cellData) => $(td).html(localizeTimestamp(cellData)) },
       { targets: [4,5,6,7], createdCell: (td, cellData) => $(td).html(translateHTMLcodes(cellData)) }
