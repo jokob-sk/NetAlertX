@@ -17,6 +17,8 @@ global $configFolderPath;
 // Handle incoming requests
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
+    requireCsrfToken();
+
     $base64Data = $_POST['base64data'] ?? null;
     if (!$base64Data) {
         http_response_code(400);

@@ -1231,7 +1231,7 @@ function saveWorkflows()
   appConfBase64 = btoa(JSON.stringify(getWorkflowsJson()))
 
   // import
-  $.post('php/server/query_replace_config.php', { base64data: appConfBase64, fileName: "workflows.json" })
+  $.post('php/server/query_replace_config.php', { base64data: appConfBase64, fileName: "workflows.json", csrf_token: <?= json_encode(getCsrfToken()) ?> })
     .done(function(msg) {
       console.log(msg);
       write_notification(`[WF]: ${msg}`, 'interrupt');
