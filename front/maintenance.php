@@ -508,7 +508,7 @@ function UploadConfig()
   appConfBase64 = btoa(appConf)
 
   // import
-  $.post('php/server/query_replace_config.php', { base64data: appConfBase64, fileName: "app.conf" }, function(msg) {
+  $.post('php/server/query_replace_config.php', { base64data: appConfBase64, fileName: "app.conf", csrf_token: <?= json_encode(getCsrfToken()) ?> }, function(msg) {
     console.log(msg);
     // showMessage(msg);
     write_notification(`[Maintenance]: ${msg}`, 'interrupt');
