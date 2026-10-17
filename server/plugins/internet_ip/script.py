@@ -144,9 +144,21 @@ def get_internet_IP(DIG_GET_IP_ARG):
 
 # -------------------------------------------------------------------------------
 def fallback_check_ip():
-    """Fallback mechanism using `curl ifconfig.me/ip`."""
+    """Fallback mechanism using curl, forced to IPv4 over HTTPS and bounded in time.
+
+    The result is validated against an IPv4-only pattern below, so the request
+    has to be IPv4 too: on a dual-stack host, curl left to its own choice can
+    answer with the public IPv6 address, which then fails validation and makes
+    the plugin report no internet despite a working connection. The time limits
+    keep a hung fallback from consuming the whole INTRNT_RUN_TIMEOUT budget,
+    which the plugin runner enforces as a kill-timeout for the entire script.
+    """
     try:
-        cmd_output = subprocess.check_output(['curl', '-s', 'ifconfig.me/ip'], text=True).strip()
+        cmd_output = subprocess.check_output(
+            ['curl', '-4', '-fsS', '--connect-timeout', '3', '--max-time', '8',
+             'https://ifconfig.me/ip'],
+            text=True, timeout=10
+        ).strip()
         if cmd_output and re.match(r"^\d{1,3}(\.\d{1,3}){3}$", cmd_output):
             mylog('verbose', [f'[{pluginName}] Fallback IP retrieved via curl: {cmd_output}'])
             return cmd_output, f'Fallback via curl: "{cmd_output}"'
