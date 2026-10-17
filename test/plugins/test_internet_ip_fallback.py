@@ -35,6 +35,8 @@ _stubbed_module_names = []
 
 
 def _stub(name: str, **attrs):
+    """Register a fake module under `name` with `attrs` set on it, unless the
+    real one is already importable, and record it for later removal."""
     if name not in sys.modules:
         mod = types.ModuleType(name)
         for k, v in attrs.items():
