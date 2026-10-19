@@ -36,11 +36,18 @@ sys.path.extend([f"{INSTALL_PATH}/server"])
 
 import conf  # noqa: E402
 
-# json2table isn't needed by this test (only finalize_html() uses it) and
-# isn't always installed outside the container; stub it for the duration of
-# the import below, then drop it so it doesn't leak into other test files.
-_json2table_was_stubbed = "json2table" not in sys.modules
-if _json2table_was_stubbed:
+# json2table isn't needed by this test (only finalize_html() uses it), but
+# notification_instance.py imports it at module level; it's a real
+# requirements.txt dependency, normally installed. Only stub it, for the
+# duration of the import below, when genuinely unavailable (e.g. a sandbox
+# without the full requirements installed) - stubbing it unconditionally
+# would shadow the real package for every other test file sharing this
+# pytest session once models.notification_instance is cached in sys.modules.
+try:
+    import json2table  # noqa: F401
+    _json2table_was_stubbed = False
+except ImportError:
+    _json2table_was_stubbed = True
     _stub = types.ModuleType("json2table")
     _stub.convert = lambda *a, **k: ""
     sys.modules["json2table"] = _stub
