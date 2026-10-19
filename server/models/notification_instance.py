@@ -232,8 +232,10 @@ class NotificationInstance:
 
         self.save()
 
-    # Clear the Pending Email flag from all events and devices
     def clearPendingEmailFlag(self):
+        """Clear evePendingAlertEmail on reported Events and stamp
+        devLastNotification on their devices; 'Device Down' events are only
+        cleared once NTFPRCS_alert_down_time minutes have passed."""
 
         # Clean Pending Alert Events
         self.db.sql.execute("""
