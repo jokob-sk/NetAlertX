@@ -129,8 +129,7 @@ def test_existing_db_compatibility():
             'NTFPRCS_alert_down_time': '60'
         }.get(k, '')
 
-        with patch('messaging.reporting.get_timezone_offset', return_value='+00:00'):
-            result = get_notifications(mock_db)
+        result = get_notifications(mock_db)
 
     assert 'new_devices' in result
     assert 'events' in result
