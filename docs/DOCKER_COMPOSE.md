@@ -3,7 +3,7 @@
 > [!WARNING]
 > ⚠️ **Important:** The docker-compose has recently changed. Carefully read the [Migration guide](https://docs.netalertx.com/MIGRATION/?h=migrat#12-migration-from-netalertx-v25524) for detailed instructions.
 
-Great care is taken to ensure NetAlertX meets the needs of everyone while being flexible enough for anyone. This document outlines how you can configure your docker-compose. There are many settings, so we recommend using the Baseline Docker Compose as-is, or modifying it for your system.Good care is taken to ensure NetAlertX meets the needs of everyone while being flexible enough for anyone. This document outlines how you can configure your docker-compose. There are many settings, so we recommend using the Baseline Docker Compose as-is, or modifying it for your system.
+Great care is taken to ensure NetAlertX meets the needs of everyone while being flexible enough for anyone. This document outlines how you can configure your docker-compose. There are many settings, so we recommend using the Baseline Docker Compose as-is, or modifying it for your system.
 
 > [!NOTE]
 > The container needs to run in `network_mode:"host"` to access Layer 2 networking such as arp, nmap and others. Due to lack of support for this feature, Windows host is not a supported operating system.
