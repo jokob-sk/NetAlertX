@@ -20,7 +20,7 @@
 #
 # This file can be built with `docker-compose -f docker-compose.yml up --build --force-recreate`
 
-FROM alpine:3.22 AS builder
+FROM alpine:3.24 AS builder
 
 ARG INSTALL_DIR=/app
 
@@ -53,7 +53,7 @@ RUN python -m pip install --upgrade pip setuptools wheel && \
 
 # second stage is the main runtime stage with just the minimum required to run the application
 # The runner is used for both devcontainer, and as a base for the hardened stage.
-FROM alpine:3.22 AS runner
+FROM alpine:3.24 AS runner
 
 ARG INSTALL_DIR=/app
 # Runtime service account (override at build; container user can still be overridden at run time)
@@ -119,7 +119,7 @@ ENV READ_WRITE_FOLDERS="${NETALERTX_DATA} ${NETALERTX_CONFIG} ${NETALERTX_DB} ${
 ENV PYTHONUNBUFFERED=1
 ENV VIRTUAL_ENV=/opt/venv
 ENV VIRTUAL_ENV_BIN=/opt/venv/bin
-ENV PYTHONPATH=${NETALERTX_APP}:${NETALERTX_SERVER}:${NETALERTX_PLUGINS}:${VIRTUAL_ENV}/lib/python3.12/site-packages
+ENV PYTHONPATH=${NETALERTX_APP}:${NETALERTX_SERVER}:${NETALERTX_PLUGINS}:${VIRTUAL_ENV}/lib/python3.14/site-packages
 ENV PATH="${SYSTEM_SERVICES}:${VIRTUAL_ENV_BIN}:$PATH"
 
 # App Environment
@@ -134,9 +134,11 @@ ENV NETALERTX_USER=netalertx NETALERTX_GROUP=netalertx
 ENV LANG=C.UTF-8
 
 
+# PHP 8.3.36 fixes CVE-2026-109618 and CVE-2026-109619.
 RUN apk add --no-cache bash mtr libbsd zip lsblk tzdata curl arp-scan iproute2 iproute2-ss iw nmap fping \
     nmap-scripts traceroute nbtscan net-tools net-snmp-tools bind-tools awake ca-certificates \
-    sqlite php83 php83-fpm php83-cgi php83-curl php83-sqlite3 php83-session python3 py3-psutil envsubst \
+    sqlite 'php83>=8.3.36' 'php83-fpm>=8.3.36' 'php83-cgi>=8.3.36' \
+    'php83-curl>=8.3.36' 'php83-sqlite3>=8.3.36' 'php83-session>=8.3.36' python3 py3-psutil envsubst \
     nginx supercronic shadow su-exec jq && \
     rm -Rf /var/cache/apk/*  && \
     rm -Rf /etc/nginx && \
@@ -264,7 +266,7 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
 FROM runner AS netalertx-devcontainer
 ENV INSTALL_DIR=/app
 
-ENV PYTHONPATH=${PYTHONPATH}:/workspaces/NetAlertX/test:/workspaces/NetAlertX/server:/usr/lib/python3.12/site-packages
+ENV PYTHONPATH=${PYTHONPATH}:/workspaces/NetAlertX/test:/workspaces/NetAlertX/server:/usr/lib/python3.14/site-packages
 ENV PATH=/services:${PATH}
 ENV PHP_INI_SCAN_DIR=/services/config/php/conf.d:/etc/php83/conf.d
 ENV LISTEN_ADDR=0.0.0.0

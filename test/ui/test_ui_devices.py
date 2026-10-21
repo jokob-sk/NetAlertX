@@ -7,6 +7,8 @@ Tests device details page, field updates, and delete operations
 import sys
 import os
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 
 # Add test directory to path
 sys.path.insert(0, os.path.dirname(__file__))
@@ -117,7 +119,9 @@ def test_add_device_with_generated_mac_ip(driver, api_token):
     assert test_ip, "IP should be generated"
 
     # --- Fill Name ---
-    name_field = driver.find_element(By.ID, "NEWDEV_devName")
+    name_field = WebDriverWait(driver, 10).until(
+        EC.element_to_be_clickable((By.ID, "NEWDEV_devName"))
+    )
     name_field.clear()
     name_field.send_keys("Test Device Selenium")
 
