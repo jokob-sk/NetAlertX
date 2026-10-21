@@ -22,12 +22,14 @@ from utils.plugin_utils import (
     combine_plugin_objects,
     resolve_wildcards_arr,
     handle_empty,
-    decode_and_rename_files
+    decode_and_rename_files,
+    primary_id_is_mac
 )
 from models.notification_instance import NotificationInstance
 from messaging.in_app import write_notification
 from models.user_events_queue_instance import UserEventsQueueInstance
 from utils.crypto_utils import generate_deterministic_guid
+from plugin_helper import normalize_mac, sanitize_plugin_text
 
 
 # -------------------------------------------------------------------------------
@@ -397,8 +399,8 @@ def execute_plugin(db, all_plugins, plugin):
     set_CMD = set["value"]
 
     # Replace hardcoded /app paths with environment-aware path
-    if "/app/front/plugins" in set_CMD:
-        set_CMD = set_CMD.replace("/app/front/plugins", str(pluginsPath))
+    if "/app/server/plugins" in set_CMD:
+        set_CMD = set_CMD.replace("/app/server/plugins", str(pluginsPath))
     if "/app/" in set_CMD:
         set_CMD = set_CMD.replace("/app/", f"{applicationPath}/")
 
@@ -543,10 +545,12 @@ def execute_plugin(db, all_plugins, plugin):
                     # Append the final parameters to sqlParams
                     sqlParams.append(tuple(base_params))
 
-            # keep current instance log file, delete all from other nodes
-            if filename != "last_result.log" and os.path.exists(full_path):
-                os.remove(full_path)  # DEBUG:TODO uncomment 🐛
-                mylog("verbose", f"[Plugins] Processed and deleted file: {full_path} ")
+            # Delete only files received from other nodes (identified by .encoded. or .decoded. in the name).
+            # Local result files (e.g. last_result.ARPSCAN.log) are overwritten each cycle and must
+            # survive so the SYNC plugin can read and forward them to the hub.
+            if (".encoded." in filename or ".decoded." in filename) and os.path.exists(full_path):
+                os.remove(full_path)
+                mylog("verbose", f"[Plugins] Processed and deleted node-sync file: {full_path}")
 
     # app-db-query
     if plugin["data_source"] == "app-db-query":
@@ -762,6 +766,29 @@ def process_plugin_events(db, plugin, plugEventsArr):
             mylog("debug", f"[Plugins] Existing objects from Plugins_Objects: {len(pluginObjects)}")
             mylog("debug", f"[Plugins] Logged events from the plugin run    : {len(pluginEvents)}")
 
+            # Reject this run's whole batch if two of its own events share an
+            # idsHash - nothing in the merge loop below expects that, and
+            # merging both into the same object would silently conflate two
+            # distinct discovered identities. Only checked within this run's
+            # own events, not against pre-existing pluginObjects - matching
+            # an existing object there is the normal "exists" case, not a
+            # collision. Doesn't pick a winner and doesn't touch the merge
+            # loop itself; a run with no collision behaves exactly as before.
+            seen_by_hash = {}
+            for tmpObjFromEvent in pluginEvents:
+                prior = seen_by_hash.get(tmpObjFromEvent.idsHash)
+                if prior is not None:
+                    mylog(
+                        "none",
+                        f"[Plugins] {pluginPref}: identity-hash collision between "
+                        f"({prior.primaryId!r}, {prior.secondaryId!r}) and "
+                        f"({tmpObjFromEvent.primaryId!r}, {tmpObjFromEvent.secondaryId!r}) "
+                        f"in this run's events - rejecting all {len(pluginEvents)} events "
+                        "without persisting any of them.",
+                    )
+                    return
+                seen_by_hash[tmpObjFromEvent.idsHash] = tmpObjFromEvent
+
             #  Loop thru all current events and update the status to "exists" if the event matches an existing object
             index = 0
             for tmpObjFromEvent in pluginEvents:
@@ -821,7 +848,9 @@ def process_plugin_events(db, plugin, plugEventsArr):
                     for plugObj in pluginObjects:
                         # find corresponding object for the event and merge
                         if plugObj.idsHash == tmpObjFromEvent.idsHash:
-                            if plugObj.status == "missing-in-last-scan" or tmpObjFromEvent.status == "watched-changed":
+                            if (
+                                plugObj.status == "missing-in-last-scan" or tmpObjFromEvent.status == "watched-changed"
+                            ):
                                 changed_this_cycle.add(tmpObjFromEvent.idsHash)
                             pluginObjects[index] = combine_plugin_objects(
                                 plugObj, tmpObjFromEvent
@@ -968,7 +997,18 @@ def process_plugin_events(db, plugin, plugEventsArr):
         raise e
 
     # Perform database table mapping if enabled for the plugin
-    if len(pluginEvents) > 0 and "mapped_to_table" in plugin:
+    # get_setting_value(default=None) distinguishes "IMPORT_ON never declared"
+    # (None, always import) from "declared and turned off" (falsy). Gate is
+    # scoped to CurrentScan specifically - it must not skip mapping to any
+    # other destination table.
+    import_on_key = pluginPref + "_IMPORT_ON"
+    import_on = get_setting_value(import_on_key, default=None)
+    import_disabled = import_on is not None and not import_on
+    skip_currentscan_promotion = import_disabled and plugin.get("mapped_to_table") == "CurrentScan"
+
+    if skip_currentscan_promotion:
+        mylog("debug", f"[Plugins] {import_on_key} is disabled - skipping table mapping for {pluginPref} this run")
+    elif len(pluginEvents) > 0 and "mapped_to_table" in plugin:
         # Initialize an empty list to store SQL parameters.
         sqlParams = []
 
@@ -997,11 +1037,22 @@ def process_plugin_events(db, plugin, plugEventsArr):
             columnsStr = columnsStr[1:]
             valuesStr = valuesStr[1:]
 
+        # Destination CurrentScan columns that hold a MAC address.
+        # scanMac is normally already lowercase by this point - plugin_object_class.__init__
+        # (below) normalizes objectPrimaryId via primary_id_is_mac(), and every current
+        # CurrentScan-mapped plugin declares "type": "device_mac"/"device_name_mac" on that
+        # column - so this is defense-in-depth for a plugin that omits that type annotation.
+        # scanParentMAC has no equivalent upstream normalization at all (primary_id_is_mac()
+        # only ever checks objectPrimaryId), so this is the only place it gets normalized.
+        _MAC_COLUMNS = ("scanMac", "scanParentMAC")
+
         # Map the column names to plugin object event values and create a list of tuples 'sqlParams'.
         for plgEv in pluginEvents:
             tmpList = []
 
             for col in mappedCols:
+                _tmpList_len_before = len(tmpList)
+
                 if col["column"] == "index":
                     tmpList.append(plgEv.index)
                 elif col["column"] == "plugin":
@@ -1045,6 +1096,11 @@ def process_plugin_events(db, plugin, plugEventsArr):
                 ):
                     tmpList.append(col["mapped_to_column_data"]["value"])
 
+                if dbTable == "CurrentScan" and col.get("mapped_to_column") in _MAC_COLUMNS:
+                    for _i in range(_tmpList_len_before, len(tmpList)):
+                        if tmpList[_i]:
+                            tmpList[_i] = normalize_mac(tmpList[_i])
+
             # Append the mapped values to the list 'sqlParams' as a tuple.
             sqlParams.append(tuple(tmpList))
 
@@ -1072,12 +1128,32 @@ def process_plugin_events(db, plugin, plugEventsArr):
     return
 
 
+# Maps a database_column_definitions "column" name to the plugin_object_class
+# attribute it feeds, for the sanitize-by-default pass below. Same vocabulary
+# already used by the CurrentScan-mapping loop in process_plugin_events().
+_SANITIZE_COLUMN_MAP = {
+    "objectPrimaryId": "primaryId",
+    "objectSecondaryId": "secondaryId",
+    "watchedValue1": "watched1",
+    "watchedValue2": "watched2",
+    "watchedValue3": "watched3",
+    "watchedValue4": "watched4",
+    "extra": "extra",
+    "helpVal1": "helpVal1",
+    "helpVal2": "helpVal2",
+    "helpVal3": "helpVal3",
+    "helpVal4": "helpVal4",
+}
+
+
 # -------------------------------------------------------------------------------
 class plugin_object_class:
     def __init__(self, plugin, objDbRow):
         self.index = objDbRow[0]
         self.pluginPref = objDbRow[1]
         self.primaryId = objDbRow[2]
+        if self.primaryId and primary_id_is_mac(plugin):
+            self.primaryId = normalize_mac(self.primaryId)
         self.secondaryId = objDbRow[3]
         self.created = objDbRow[4]  # can be null
         self.changed = objDbRow[5]  # never null (data coming from plugin)
@@ -1094,6 +1170,34 @@ class plugin_object_class:
         self.helpVal2 = objDbRow[16]
         self.helpVal3 = objDbRow[17]
         self.helpVal4 = objDbRow[18]
+
+        # Sanitize plugin-sourced text fields by default (defense-in-depth
+        # against a plugin persisting HTML-dangerous content) - skip a field
+        # only if its config.json entry declares "allow_raw_text": true.
+        for col in plugin.get("database_column_definitions", []):
+            attr = _SANITIZE_COLUMN_MAP.get(col.get("column"))
+            if attr is None or col.get("allow_raw_text"):
+                continue
+            raw_value = getattr(self, attr)
+            sanitized = sanitize_plugin_text(raw_value)
+            if sanitized != raw_value:
+                mylog(
+                    "none",
+                    f"[Plugins] {plugin['unique_prefix']}.{col['column']} sanitized (HTML/control chars stripped): {raw_value!r} -> {sanitized!r}",
+                )
+            setattr(self, attr, sanitized)
+
+        # foreignKey has no database_column_definitions entry of its own (no
+        # config flag to attach an opt-out to), so it's sanitized unconditionally.
+        if self.foreignKey:
+            sanitized = sanitize_plugin_text(self.foreignKey)
+            if sanitized != self.foreignKey:
+                mylog(
+                    "none",
+                    f"[Plugins] {plugin['unique_prefix']}.foreignKey sanitized (HTML/control chars stripped): {self.foreignKey!r} -> {sanitized!r}",
+                )
+            self.foreignKey = sanitized
+
         self.objectGUID = generate_deterministic_guid(
             self.pluginPref, self.primaryId, self.secondaryId
         )
@@ -1112,8 +1216,12 @@ class plugin_object_class:
                 objDbRow,
             )
 
-        self.idsHash = str(hash(str(self.primaryId) + str(self.secondaryId)))
-        # self.idsHash      = str(self.primaryId) + str(self.secondaryId)
+        # Hashing the pair, not their concatenation - str(primaryId) + str(secondaryId)
+        # would make ("ab", "c") and ("a", "bc") produce the identical string "abc"
+        # and therefore the identical hash, wrongly treating two distinct identities
+        # as one (and, since seen_by_hash above compares idsHash too, wrongly
+        # rejecting a legitimate batch as a collision).
+        self.idsHash = str(hash((str(self.primaryId), str(self.secondaryId))))
 
         self.watchedClmns = []
         self.watchedIndxs = []
@@ -1127,6 +1235,12 @@ class plugin_object_class:
             (8, "watchedValue3"),
             (9, "watchedValue4"),
         ]
+        indexAttrMapping = {
+            6: "watched1",
+            7: "watched2",
+            8: "watched3",
+            9: "watched4",
+        }
 
         if setObj is not None:
             self.watchedClmns = setObj["value"]
@@ -1136,9 +1250,11 @@ class plugin_object_class:
                     if clmName == mapping[1]:
                         self.watchedIndxs.append(mapping[0])
 
+        # Use the sanitized watched1-4 attributes, not the raw objDbRow values,
+        # so two events exposing the same sanitized value hash identically.
         tmp = ""
         for indx in self.watchedIndxs:
-            tmp += str(objDbRow[indx])
+            tmp += str(getattr(self, indexAttrMapping[indx]))
 
         self.watchedHash = str(hash(tmp))
 

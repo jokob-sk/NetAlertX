@@ -7,7 +7,6 @@ import json
 import shutil
 import re
 import uuid
-import helper
 
 # Register NetAlertX libraries
 import conf
@@ -22,6 +21,7 @@ from scheduler import schedule_class
 from plugin import plugin_manager, print_plugin_info
 from utils.plugin_utils import get_plugins_configs, get_set_value_for_init
 from messaging.in_app import write_notification
+from utils.plugin_utils import list_to_csv
 
 # ===============================================================================
 # Language helpers
@@ -51,12 +51,6 @@ def _load_language_display_names():
 # ===============================================================================
 # Initialise user defined values
 # ===============================================================================
-
-# -------------------------------------------------------------------------------
-# Import user values
-# Check config dictionary
-
-
 # -------------------------------------------------------------------------------
 # managing application settings, ensuring SQL safety for user input, and updating internal configuration lists
 def ccd(
@@ -75,6 +69,43 @@ def ccd(
     overriddenByEnv=0,
     all_plugins=[],
 ):
+    """
+    Create or update a configuration setting entry and synchronise it across
+    in-memory config, plugin settings, and SQL-safe storage structures.
+
+    This function is responsible for:
+    - Resolving a setting value from defaults or existing config
+    - Sanitising text inputs for SQL safety
+    - Propagating updates into plugin configuration structures when
+      overridden by environment variables
+    - Maintaining both raw and SQL-safe representations of settings
+    - Storing optional JSON metadata alongside settings entries
+
+    Parameters:
+        key (str): Unique identifier for the setting.
+        default (any): Default value used if no existing config value exists.
+        config_dir (dict): Dictionary holding current runtime configuration.
+        name (str): Human-readable name of the setting.
+        inputtype (str): Type of input (e.g. "text", "number", etc.).
+        options (list|str): Allowed options or configuration constraints.
+        group (str): Logical grouping/category of the setting.
+        events (list, optional): Events triggered by changes to this setting.
+        desc (str, optional): Human-readable description of the setting.
+        setJsonMetadata (dict, optional): Additional metadata stored as JSON.
+        overrideTemplate (dict, optional): Template overrides (currently unused).
+        forceDefault (bool, optional): If True, ignores existing config value.
+        overriddenByEnv (int, optional): Flag indicating environment override.
+        all_plugins (list, optional): Plugin list for propagating updates.
+
+    Returns:
+        any: The resolved configuration value after processing.
+
+    Side Effects:
+        - Updates config_dir in-place
+        - Updates conf.mySettings and conf.mySettingsSQLsafe
+        - Updates plugin setting values if overridden by environment
+        - Adds/updates metadata entries for non-metadata keys
+    """
     if events is None:
         events = []
     if setJsonMetadata is None:
@@ -199,17 +230,14 @@ def importConfigs(pm, db, all_plugins):
     # get config file name
     config_file = Path(fullConfPath)
 
-    # Only import file if the file was modifed since last import.
+    # Only import file if the file was modified since last import.
     # this avoids time zone issues as we just compare the previous timestamp to the current time stamp
 
     # rename settings that have changed names due to code cleanup and migration to plugins
     # renameSettings(config_file)
 
-    # rename legacy DB column references in user config values (e.g. templates, WATCH lists)
-    renameColumnReferences(config_file)
-
     fileModifiedTime = os.path.getmtime(config_file)
-
+    
     mylog("debug", ["[Import Config] checking config file "])
     mylog("debug", ["[Import Config] lastImportedConfFile     :", conf.lastImportedConfFile],)
     mylog("debug", ["[Import Config] fileModifiedTime         :", fileModifiedTime])
@@ -217,6 +245,9 @@ def importConfigs(pm, db, all_plugins):
     if (fileModifiedTime == conf.lastImportedConfFile) and all_plugins is not None:
         mylog("debug", ["[Import Config] skipping config file import"])
         return pm, all_plugins, False
+
+    # rename legacy column references only when the config file actually changed
+    renameColumnReferences(config_file)
 
     # Header
     updateState("Import config", showSpinner=True)
@@ -228,12 +259,6 @@ def importConfigs(pm, db, all_plugins):
     mylog("debug", ["[Import Config] importing config file"])
     conf.mySettings = []  # reset settings
     conf.mySettingsSQLsafe = []  # same as above but safe to be passed into a SQL query
-
-    # Invalidate secondary cache from helper since conf.mySettings changed
-    try:
-        helper.SETTINGS_SECONDARYCACHE = {}
-    except Exception:
-        pass
 
     # User values loaded from now
     c_d = read_config_file(config_file)
@@ -333,6 +358,26 @@ def importConfigs(pm, db, all_plugins):
         '{"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type": "number"}] ,"transformers": []}]}',
         "[]",
         "General",
+    )
+    conf.DEV_HIST_DAYS = ccd(
+        "DEV_HIST_DAYS",
+        1,
+        c_d,
+        "Device history retention (days)",
+        '{"dataType":"integer", "elements": [{"elementType" : "input", "elementOptions" : [{"type": "number"}] ,"transformers": []}]}',
+        "[]",
+        "General",
+        desc="Number of days to retain device change history. Set to 0 to completely disable the auditing engine.",
+    )
+    conf.DEV_HIST_TRACKED = ccd(
+        "DEV_HIST_TRACKED",
+        ['devMac', 'devName', 'devOwner', 'devType', 'devVendor', 'devFavorite', 'devGroup', 'devComments', 'devLastIP', 'devFQDN', 'devPrimaryIPv4', 'devPrimaryIPv6', 'devVlan', 'devForceStatus', 'devStaticIP', 'devScan', 'devAlertDown', 'devCanSleep', 'devSkipRepeated', 'devLocation', 'devIsArchived', 'devParentMAC', 'devParentPort', 'devParentRelType', 'devReqNicsOnline', 'devIcon', 'devSite', 'devSSID', 'devSyncHubNode'],  # noqa: E501
+        c_d,
+        "Device history tracked fields",
+        '{"dataType":"array","elements":[{"elementType":"select","elementHasInputValue":1,"elementOptions":[{"multiple":"true","orderable":"true"}],"transformers":[]},{"elementType":"button","elementOptions":[{"sourceSuffixes":[]},{"separator":""},{"cssClasses":"col-xs-12"},{"onClick":"selectChange(this)"},{"getStringKey":"Gen_Change"}],"transformers":[]}]}',  # noqa: E501
+        list_to_csv(['devMac', 'devName', 'devOwner', 'devType', 'devVendor', 'devFavorite', 'devGroup', 'devComments', 'devLastIP', 'devFQDN', 'devPrimaryIPv4', 'devPrimaryIPv6', 'devVlan', 'devForceStatus', 'devStaticIP', 'devScan', 'devAlertDown', 'devCanSleep', 'devSkipRepeated', 'devLocation', 'devIsArchived', 'devParentMAC', 'devParentPort', 'devParentRelType', 'devReqNicsOnline', 'devIcon', 'devSite', 'devSSID', 'devSyncHubNode', 'devSourcePlugin', 'devMacSource', 'devNameSource', 'devFQDNSource', 'devLastIPSource', 'devVendorSource', 'devSSIDSource', 'devParentMACSource', 'devParentPortSource', 'devParentRelTypeSource', 'devVlanSource', 'devCustomProps']),  # noqa: E501
+        "General",
+        desc="List of Devices column names to monitor for changes. Add or remove field names to control what gets audited.",
     )
     conf.HRS_TO_KEEP_NEWDEV = ccd(
         "HRS_TO_KEEP_NEWDEV",
@@ -495,7 +540,7 @@ def importConfigs(pm, db, all_plugins):
     # Plugins START
     # -----------------
 
-    # necessary_plugins = ['UI', 'CUSTPROP', 'CLOUD' ,'DBCLNP', 'INTRNT','MAINT','NEWDEV', 'SETPWD', 'SYNC', 'VNDRPDT', 'WORKFLOWS']
+    # necessary_plugins = ['UI', 'CUSTPROP', 'HEARTBEAT' ,'DBCLNP', 'INTRNT','MAINT','NEWDEV', 'SETPWD', 'SYNC', 'VNDRPDT', 'WORKFLOWS']
     necessary_plugins = [
         "UI",
         "CUSTPROP",
@@ -731,13 +776,13 @@ def importConfigs(pm, db, all_plugins):
 
         write_notification(
             f"""[Upgrade]: App upgraded from <code>{prev_version}</code> to \
-            <code>{new_version}</code> 🚀 Please clear the cache: \
+            <code>{new_version}</code> <i class="fa-solid fa-rocket"></i> Please clear the cache: \
             <ol> <li>Click OK below</li>  \
             <li>Clear the browser cache (shift + browser refresh button)</li> \
             <li> Clear app cache with the <i class="fa-solid fa-rotate"></i> (reload) button in the header</li>\
             <li>Go to Settings and click Save</li> </ol>\
             Check out new features and what has changed in the \
-            <a href="https://github.com/netalertx/NetAlertX/releases" target="_blank">📓 release notes</a>.""",
+            <a href="https://github.com/netalertx/NetAlertX/releases" target="_blank"><i class="fa-solid fa-file-pen"></i> release notes</a>.""",
             'interrupt',
             timeNowUTC()
         )
@@ -812,6 +857,8 @@ replacements = {
     r"\bSYNC_node_name=\'\'": f"SYNC_node_name='NAX-{str(uuid.uuid4()).split('-')[0]}'",
     # Detect SMTP_PASS='anything' BUT not starting with base64:
     r"SMTP_PASS='(?!base64:)([^']*)'": r"SMTP_PASS='base64:\1'",
+    # Migrate plugin paths from /app/front/plugins to /app/server/plugins
+    r"/app/front/plugins/": "/app/server/plugins/",
 }
 
 
