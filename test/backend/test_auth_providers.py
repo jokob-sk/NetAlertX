@@ -146,7 +146,7 @@ class TestLdapProvider:
         svc_conn = MagicMock()
         svc_conn.bind.return_value = bind_success
         svc_conn.result = {"description": "success"} if bind_success else {"description": "invalidCredentials"}
-        fake_entries = [MagicMock(entry_dn=f"uid=alice,dc=example,dc=com") for _ in range(search_entries)]
+        fake_entries = [MagicMock(entry_dn="uid=alice,dc=example,dc=com") for _ in range(search_entries)]
         svc_conn.entries = fake_entries
 
         # User connection
@@ -274,7 +274,8 @@ class TestAuthManager:
         from auth.base import AuthResult
 
         def mock_settings(key):
-            if key == "SETPWD_enable_password": return True
+            if key == "SETPWD_enable_password":
+                return True
             return False
 
         manager = AuthManager()
