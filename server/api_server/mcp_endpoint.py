@@ -1057,8 +1057,9 @@ def mcp_sse():
 
     def stream():
         """Generator for SSE stream."""
-        # Send endpoint event with session ID
-        yield f"event: endpoint\ndata: /mcp/messages?session_id={session_id}\n\n"
+        # Send endpoint event with session ID. Relative path, so clients resolve it against
+        # the SSE URL they used (works directly and behind the nginx /server prefix).
+        yield f"event: endpoint\ndata: messages?session_id={session_id}\n\n"
 
         try:
             while True:
