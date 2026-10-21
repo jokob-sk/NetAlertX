@@ -1,4 +1,5 @@
 import os
+import json
 import pathlib
 import subprocess
 import time
@@ -108,17 +109,19 @@ def test_ldap_ui_login(tmp_path: pathlib.Path):
                     "NETALERTX_DEBUG": "1",
                     "NETALERTX_CHECK_ONLY": "0",  # We want the container to stay running
                     "SKIP_STARTUP_CHECKS": "host optimization",
-                    "LDAP_ENABLED": "True",
-                    "LDAP_SERVER": "ldap",
-                    "LDAP_PORT": "389",
-                    "LDAP_BASE_DN": "dc=example,dc=org",
-                    "LDAP_USER_FILTER": "(uid={username})",
-                    "LDAP_USERNAME_ATTRIBUTE": "uid",
-                    "LDAP_BIND_DN": "cn=admin,dc=example,dc=org",
-                    "LDAP_BIND_PASSWORD": "admin",
-                    "LDAP_USE_SSL": "False",
-                    "LDAP_USE_START_TLS": "False",
-                    "APP_CONF_OVERRIDE": '{"LDAP_enabled": "True"}'
+                    "APP_CONF_OVERRIDE": json.dumps({
+                        "LDAP_enabled": True,
+                        "LDAP_server": "ldap",
+                        "LDAP_port": 389,
+                        "LDAP_base_dn": "dc=example,dc=org",
+                        "LDAP_user_filter": "(uid={username})",
+                        "LDAP_username_attribute": "uid",
+                        "LDAP_bind_dn": "cn=admin,dc=example,dc=org",
+                        "LDAP_bind_password": "admin",
+                        "LDAP_use_ssl": False,
+                        "LDAP_use_start_tls": False,
+                        "SETPWD_enable_password": True
+                    })
                 }
             }
         }

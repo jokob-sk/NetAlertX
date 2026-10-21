@@ -20,7 +20,7 @@
   "description": [
     {
       "language_code": "en_us",
-      "string": "Configure LDAP / Active Directory authentication as an alternative to the local password. When enabled, the login form accepts a username and password which are validated against the LDAP server. The local password (SETPWD) continues to work as a fallback when LDAP is disabled or when the local admin account is not disabled. <br><br><b>Security:</b> Always enable TLS certificate verification and use LDAPS or StartTLS in production."
+      "string": "Authenticate users against an LDAP or Active Directory server."
     }
   ],
   "icon": [

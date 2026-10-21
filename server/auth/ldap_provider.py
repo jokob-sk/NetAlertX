@@ -197,6 +197,8 @@ class LdapProvider(AuthProvider):
         }
 
         server = cfg["server"]
+        # Validate that the server value matches an RFC 1123 hostname/FQDN,
+        # an IPv4 address (e.g. 192.168.1.10), or bracketed IPv6 address (e.g. [::1])
         if server and not re.match(
             r'^(?:[a-zA-Z0-9](?:[a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?)*'
             r'|\d{1,3}(?:\.\d{1,3}){3}'
