@@ -83,7 +83,7 @@ class AuthManager:
             except Exception as e:
                 # Infrastructure error
                 mylog("warning", [f"[auth.manager] LDAP infrastructure error: {e}."])
-                
+
                 if not disable_local and username == "admin":
                     mylog("warning", ["[auth.manager] LDAP failed, falling back to local provider for 'admin' user"])
                     local_result = LocalProvider().authenticate(username, password)

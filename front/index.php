@@ -21,8 +21,32 @@ const DEFAULT_REDIRECT = '/devices.php';
    $configLines and $api_token are already loaded by security.php
 ===================================================== */
 
-// Config file is the single source of truth (Python backend resolves env vars at startup)
+// Config file is the primary source of truth; fall back to table_settings.json / SQLite if not yet persisted to file
 $ldap_enabled = strtolower(trim(getConfigLine('/^LDAP_enabled\s*=/', $configLines)[1] ?? 'false')) === 'true';
+if (!$ldap_enabled) {
+    if (file_exists($_SERVER['DOCUMENT_ROOT'] . '/php/server/util.php')) {
+        require_once $_SERVER['DOCUMENT_ROOT'] . '/php/server/util.php';
+        if (function_exists('getSettingValue')) {
+            $table_ldap = getSettingValue('LDAP_enabled');
+            if (is_string($table_ldap) && strtolower(trim($table_ldap)) === 'true') {
+                $ldap_enabled = true;
+            }
+        }
+    }
+    if (!$ldap_enabled) {
+        try {
+            $db = SQLite3_connect();
+            if ($db) {
+                $db_ldap = $db->querySingle("SELECT setValue FROM Settings WHERE setKey = 'LDAP_enabled'");
+                if (is_string($db_ldap) && strtolower(trim($db_ldap)) === 'true') {
+                    $ldap_enabled = true;
+                }
+            }
+        } catch (\Throwable $e) {
+            // Ignore connection errors if database is uninitialized
+        }
+    }
+}
 
 /**
  * Derive the Python API port from the GRAPHQL_PORT setting in app.conf.
@@ -159,34 +183,62 @@ if (!empty($_POST['loginpassword']) &&
     hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])) {
 
     if ($ldap_enabled) {
+        // Resolve API token if empty (may be in SQLite or table_settings.json rather than app.conf)
+        if (empty($api_token)) {
+            if (file_exists($_SERVER['DOCUMENT_ROOT'] . '/php/server/util.php')) {
+                require_once $_SERVER['DOCUMENT_ROOT'] . '/php/server/util.php';
+                if (function_exists('getSettingValue')) {
+                    $table_token = getSettingValue('API_TOKEN');
+                    if (!empty($table_token) && !str_starts_with($table_token, 'Could not')) {
+                        $api_token = $table_token;
+                    }
+                }
+            }
+            if (empty($api_token)) {
+                try {
+                    $db = SQLite3_connect();
+                    if ($db) {
+                        $db_token = $db->querySingle("SELECT setValue FROM Settings WHERE setKey = 'API_TOKEN'");
+                        if (!empty($db_token) && is_string($db_token)) {
+                            $api_token = $db_token;
+                        }
+                    }
+                } catch (\Throwable $e) {
+                    // Ignore connection errors if database is locked or uninitialized
+                }
+            }
+        }
+
         // LDAP path: delegate credential validation to the Python API.
         // The API token is required so only server-side callers can reach the endpoint.
         if (empty($api_token)) {
-            throw new RuntimeException('API_TOKEN is not configured');
-        }
+            error_log('[LDAP] Authentication error: API_TOKEN is not configured');
+        } else {
+            $ldap_payload = json_encode([
+                'username' => isset($_POST['loginusername']) ? trim($_POST['loginusername']) : '',
+                'password' => $_POST['loginpassword'],
+            ]);
+            $stream_opts = [
+                'http' => [
+                    'method'        => 'POST',
+                    'header'        => "Content-Type: application/json\r\n"
+                                     . "Authorization: Bearer " . $api_token . "\r\n"
+                                     . "X-Forwarded-For: " . ($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1') . "\r\n",
+                    'content'       => $ldap_payload,
+                    'timeout'       => 5,
+                    'ignore_errors' => true,
+                ]
+            ];
+            $ctx      = stream_context_create($stream_opts);
+            $raw      = @file_get_contents($ldap_login_url, false, $ctx);
+            $api_resp = ($raw !== false) ? @json_decode($raw, true) : null;
 
-        $ldap_payload = json_encode([
-            'username' => isset($_POST['loginusername']) ? trim($_POST['loginusername']) : '',
-            'password' => $_POST['loginpassword'],
-        ]);
-        $stream_opts = [
-            'http' => [
-                'method'        => 'POST',
-                'header'        => "Content-Type: application/json\r\n"
-                                 . "Authorization: Bearer " . $api_token . "\r\n"
-                                 . "X-Forwarded-For: " . ($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1') . "\r\n",
-                'content'       => $ldap_payload,
-                'timeout'       => 5,
-                'ignore_errors' => true,
-            ]
-        ];
-        $ctx      = stream_context_create($stream_opts);
-        $raw      = @file_get_contents($ldap_login_url, false, $ctx);
-        $api_resp = ($raw !== false) ? @json_decode($raw, true) : null;
-
-        if (is_array($api_resp) && $api_resp['success'] === true) {
-            login_user();
-            safe_redirect(append_hash($redirectTo));
+            if (is_array($api_resp) && ($api_resp['success'] ?? false) === true) {
+                login_user();
+                safe_redirect(append_hash($redirectTo));
+            } else {
+                error_log('[LDAP] Auth failed from API: ' . ($raw !== false ? $raw : 'connection failed to ' . $ldap_login_url));
+            }
         }
         // Fall through to show the login form with an error state.
     } else {

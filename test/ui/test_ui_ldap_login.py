@@ -7,14 +7,13 @@ This test is meant to be run inside the container when LDAP is configured.
 
 import sys
 import os
-import time
 import pytest
 from selenium.webdriver.common.by import By
 
 # Add test directory to path
 sys.path.insert(0, os.path.dirname(__file__))
 
-from test_helpers import BASE_URL, wait_for_page_load, get_driver  # noqa: E402
+from test_helpers import BASE_URL, wait_for_page_load  # noqa: E402
 
 
 def test_ldap_login_success(driver):
@@ -27,7 +26,7 @@ def test_ldap_login_success(driver):
     username_field = driver.find_elements(By.NAME, "loginusername")
     if not username_field:
         pytest.skip("LDAP login field not present; LDAP is likely disabled in this environment.")
-    
+
     username_input = username_field[0]
     password_input = driver.find_element(By.NAME, "loginpassword")
 
@@ -40,13 +39,28 @@ def test_ldap_login_success(driver):
 
     # Wait for page to respond to form submission
     print("Waiting for login to complete...")
-    
+
     # Wait for URL to change away from login page
     from selenium.webdriver.support.ui import WebDriverWait
-    WebDriverWait(driver, 10).until(
-        lambda d: '/devices.php' in d.current_url or '/index.php' not in d.current_url
-    )
-    
+    try:
+        WebDriverWait(driver, 10).until(
+            lambda d: '/devices.php' in d.current_url or '/index.php' not in d.current_url
+        )
+    except Exception as e:
+        print(f"FAILED TO REDIRECT! Current URL: {driver.current_url}")
+        print("--- PAGE BODY TEXT ---")
+        try:
+            print(driver.find_element(By.TAG_NAME, "body").text)
+        except Exception:
+            pass
+        print("--- PAGE LOGS ---")
+        try:
+            for entry in driver.get_log('browser'):
+                print(entry)
+        except Exception:
+            pass
+        raise e
+
     wait_for_page_load(driver, timeout=5)
 
     # Should be redirected to devices page or dashboard
