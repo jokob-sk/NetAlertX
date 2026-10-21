@@ -92,6 +92,7 @@ These function names have special meaning and control core plugin behavior:
 | `WATCH` | **Which columns to monitor for changes** | multi-select | optional | Column names from data contract |
 | `REPORT_ON` | **When to send notifications** | select | optional | `"new"`, `"watched-changed"`, `"watched-not-changed"`, `"missing-in-last-scan"` |
 | `DB_PATH` | **External database path** | input | If using SQLite plugin | File path: `"/etc/pihole/pihole-FTL.db"` |
+| `IMPORT_ON` | **Gates whether this run's rows get promoted into `CurrentScan`** | checkbox | optional | Boolean. Only meaningful for plugins with `mapped_to_table: "CurrentScan"`. Absent = always import. `False` skips *only* the `CurrentScan` promotion — the plugin still runs, and its own data table (`Plugins_Objects`) still gets written. See [Data contract](PLUGINS_DEV_DATA_CONTRACT.md) for the related per-row `scanCreatesDevice`/`scanNotificationMode`/`scanPresence` columns, which control finer-grained behavior once a row *does* reach `CurrentScan`. |
 
 ### API & Data Settings
 
@@ -316,7 +317,7 @@ Update your `CMD` setting:
 ```json
 {
   "function": "CMD",
-  "default_value": "python3 /app/front/plugins/my_plugin/script.py --url={api_url} --timeout={timeout}"
+  "default_value": "python3 /app/server/plugins/my_plugin/script.py --url={api_url} --timeout={timeout}"
 }
 ```
 
@@ -408,7 +409,7 @@ Settings and UI text support multiple languages. Define translations in the `nam
     {
       "function": "CMD",
       "type": {"dataType": "string", "elements": [{"elementType": "input", "elementOptions": [], "transformers": []}]},
-      "default_value": "python3 /app/front/plugins/website_monitor/script.py urls={urls}",
+      "default_value": "python3 /app/server/plugins/website_monitor/script.py urls={urls}",
       "localized": ["name", "description"],
       "name": [{"language_code": "en_us", "string": "Command"}],
       "description": [{"language_code": "en_us", "string": "Command to execute"}]
@@ -507,7 +508,7 @@ mylog('none', f"Setting value: {value}")
 Check backend logs:
 
 ```bash
-tail -f /tmp/log/stdout.log | grep -i "setting\|MYPLN"
+tail -f /tmp/log/app.log | grep -i "setting\|MYPLN"
 ```
 
 ## See Also

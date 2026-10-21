@@ -11,12 +11,22 @@ Tests all combinations of field sources (LOCKED, USER, NEWDEV, plugin name)
 with realistic scan data.
 """
 
-import sqlite3
+import os
+import sys
 from unittest.mock import Mock, patch
 
 import pytest
 
 from server.scan import device_handling
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+from db_test_helpers import (  # noqa: E402
+    DummyDB,
+    insert_current_scan_row_from_dict,
+    insert_device_from_dict,
+    make_current_scan_dict,
+    make_device_dict,
+)
 
 
 @pytest.fixture
@@ -40,139 +50,21 @@ def mock_device_handlers():
         yield
 
 
-@pytest.fixture
-def scan_db_for_new_devices():
-    """Create an in-memory SQLite database for create_new_devices tests."""
-    conn = sqlite3.connect(":memory:")
-    conn.row_factory = sqlite3.Row
-    cur = conn.cursor()
-
-    cur.execute(
-        """
-        CREATE TABLE Devices (
-            devMac TEXT PRIMARY KEY,
-            devName TEXT,
-            devVendor TEXT,
-            devLastIP TEXT,
-            devPrimaryIPv4 TEXT,
-            devPrimaryIPv6 TEXT,
-            devFirstConnection TEXT,
-            devLastConnection TEXT,
-            devSyncHubNode TEXT,
-            devGUID TEXT,
-            devParentMAC TEXT,
-            devParentPort TEXT,
-            devSite TEXT,
-            devSSID TEXT,
-            devType TEXT,
-            devSourcePlugin TEXT,
-            devMacSource TEXT,
-            devNameSource TEXT,
-            devFQDNSource TEXT,
-            devLastIPSource TEXT,
-            devVendorSource TEXT,
-            devSSIDSource TEXT,
-            devParentMACSource TEXT,
-            devParentPortSource TEXT,
-            devParentRelTypeSource TEXT,
-            devVlanSource TEXT,
-            devAlertEvents INTEGER,
-            devAlertDown INTEGER,
-            devPresentLastScan INTEGER,
-            devIsArchived INTEGER,
-            devIsNew INTEGER,
-            devSkipRepeated INTEGER,
-            devScan INTEGER,
-            devOwner TEXT,
-            devFavorite INTEGER,
-            devGroup TEXT,
-            devComments TEXT,
-            devLogEvents INTEGER,
-            devLocation TEXT,
-            devCustomProps TEXT,
-            devParentRelType TEXT,
-            devReqNicsOnline INTEGER
-        )
-        """
-    )
-
-    cur.execute(
-        """
-        CREATE TABLE CurrentScan (
-            scanMac TEXT,
-            scanName TEXT,
-            scanVendor TEXT,
-            scanSourcePlugin TEXT,
-            scanLastIP TEXT,
-            scanSyncHubNode TEXT,
-            scanParentMAC TEXT,
-            scanParentPort TEXT,
-            scanSite TEXT,
-            scanSSID TEXT,
-            scanType TEXT
-        )
-        """
-    )
-
-    cur.execute(
-        """
-        CREATE TABLE Events (
-            eveMac TEXT,
-            eveIp TEXT,
-            eveDateTime TEXT,
-            eveEventType TEXT,
-            eveAdditionalInfo TEXT,
-            evePendingAlertEmail INTEGER
-        )
-        """
-    )
-
-    cur.execute(
-        """
-        CREATE TABLE Sessions (
-            sesMac TEXT,
-            sesIp TEXT,
-            sesEventTypeConnection TEXT,
-            sesDateTimeConnection TEXT,
-            sesEventTypeDisconnection TEXT,
-            sesDateTimeDisconnection TEXT,
-            sesStillConnected INTEGER,
-            sesAdditionalInfo TEXT
-        )
-        """
-    )
-
-    conn.commit()
-    yield conn
-    conn.close()
-
-
-def test_create_new_devices_sets_sources(scan_db_for_new_devices):
+def test_create_new_devices_sets_sources(scan_db):
     """New device insert initializes source fields from scan method."""
-    cur = scan_db_for_new_devices.cursor()
-    cur.execute(
-        """
-        INSERT INTO CurrentScan (
-            scanMac, scanName, scanVendor, scanSourcePlugin, scanLastIP,
-            scanSyncHubNode, scanParentMAC, scanParentPort,
-            scanSite, scanSSID, scanType
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """,
-        (
+    insert_current_scan_row_from_dict(
+        scan_db,
+        make_current_scan_dict(
             "aa:bb:cc:dd:ee:10",
-            "DeviceOne",
-            "AcmeVendor",
-            "ARPSCAN",
-            "192.168.1.10",
-            "",
-            "11:22:33:44:55:66",
-            "1",
-            "",
-            "MyWifi",
-            "",
+            scanName="DeviceOne",
+            scanVendor="AcmeVendor",
+            scanSourcePlugin="ARPSCAN",
+            scanLastIP="192.168.1.10",
+            scanParentMAC="11:22:33:44:55:66",
+            scanParentPort="1",
+            scanSSID="MyWifi",
         ),
     )
-    scan_db_for_new_devices.commit()
 
     settings = {
         "NEWDEV_devType": "default-type",
@@ -186,22 +78,16 @@ def test_create_new_devices_sets_sources(scan_db_for_new_devices):
         "SYNC_node_name": "SYNCNODE",
     }
 
-    def get_setting_value_side_effect(key):
-        return settings.get(key, "")
-
-    db = Mock()
-    db.sql_connection = scan_db_for_new_devices
-    db.sql = cur
-    db.commitDB = scan_db_for_new_devices.commit
+    db = DummyDB(scan_db)
 
     with patch.multiple(
         device_handling,
-        get_setting_value=Mock(side_effect=get_setting_value_side_effect),
+        get_setting_value=Mock(side_effect=lambda key: settings.get(key, "")),
         safe_int=Mock(return_value=0),
     ):
         device_handling.create_new_devices(db)
 
-    row = cur.execute(
+    row = scan_db.execute(
         """
         SELECT
             devMacSource,
@@ -231,73 +117,88 @@ def test_create_new_devices_sets_sources(scan_db_for_new_devices):
     assert row["devVlanSource"] == "NEWDEV"
 
 
+def test_create_new_devices_ignores_dangling_newdev_parentmac(scan_db):
+    """A stale NEWDEV_devParentMAC pointing to a since-deleted device is treated as unset,
+    instead of seeding the new device with another dangling Parent Node reference."""
+    insert_current_scan_row_from_dict(
+        scan_db,
+        make_current_scan_dict(
+            "aa:bb:cc:dd:ee:11",
+            scanName="DeviceTwo",
+            scanVendor="AcmeVendor",
+            scanSourcePlugin="ARPSCAN",
+            scanLastIP="192.168.1.11",
+        ),
+    )
+
+    settings = {
+        "NEWDEV_devType": "default-type",
+        # points to a MAC that does not (and never did, in this test) exist in Devices
+        "NEWDEV_devParentMAC": "99:99:99:99:99:99",
+        "NEWDEV_devOwner": "owner",
+        "NEWDEV_devGroup": "group",
+        "NEWDEV_devComments": "",
+        "NEWDEV_devLocation": "",
+        "NEWDEV_devCustomProps": "",
+        "NEWDEV_devParentRelType": "uplink",
+        "SYNC_node_name": "SYNCNODE",
+    }
+
+    db = DummyDB(scan_db)
+
+    with patch.multiple(
+        device_handling,
+        get_setting_value=Mock(side_effect=lambda key: settings.get(key, "")),
+        safe_int=Mock(return_value=0),
+    ):
+        device_handling.create_new_devices(db)
+
+    row = scan_db.execute(
+        "SELECT devParentMAC FROM Devices WHERE devMac = ?", ("aa:bb:cc:dd:ee:11",)
+    ).fetchone()
+
+    assert row["devParentMAC"] == ""
+
+
 def test_scan_updates_newdev_device_name(scan_db, mock_device_handlers):
     """Scanner discovers name for device with NEWDEV source."""
-    cur = scan_db.cursor()
-
-    # Device with empty name (NEWDEV)
-    cur.execute(
-        """
-        INSERT INTO Devices (
-            devMac, devLastConnection, devPresentLastScan, devLastIP,
-            devName, devNameSource, devVendor, devVendorSource, devLastIPSource,
-            devType, devIcon, devParentPort, devParentMAC, devSite, devSSID
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """,
-        (
+    insert_device_from_dict(
+        scan_db,
+        make_device_dict(
             "aa:bb:cc:dd:ee:01",
-            "2025-01-01 00:00:00",
-            0,
-            "192.168.1.1",
-            "",  # No name yet
-            "NEWDEV",  # Default/unset
-            "TestVendor",
-            "NEWDEV",
-            "ARPSCAN",
-            "type",
-            "icon",
-            "",
-            "",
-            "",
-            "",
+            devLastConnection="2025-01-01 00:00:00",
+            devPresentLastScan=0,
+            devLastIP="192.168.1.1",
+            devName="",  # No name yet
+            devNameSource="NEWDEV",
+            devVendor="TestVendor",
+            devVendorSource="NEWDEV",
+            devLastIPSource="ARPSCAN",
         ),
     )
 
     # Scanner discovers name
-    cur.execute(
-        """
-        INSERT INTO CurrentScan (
-            scanMac, scanLastIP, scanVendor, scanSourcePlugin, scanName,
-            scanLastQuery, scanLastConnection, scanSyncHubNode,
-            scanSite, scanSSID, scanParentMAC, scanParentPort, scanType
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """,
-        (
+    insert_current_scan_row_from_dict(
+        scan_db,
+        make_current_scan_dict(
             "aa:bb:cc:dd:ee:01",
-            "192.168.1.1",
-            "TestVendor",
-            "NBTSCAN",
-            "DiscoveredDevice",
-            "",
-            "2025-01-01 01:00:00",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
+            scanLastIP="192.168.1.1",
+            scanVendor="TestVendor",
+            scanSourcePlugin="NBTSCAN",
+            scanName="DiscoveredDevice",
+            scanLastQuery="",
+            scanLastConnection="2025-01-01 01:00:00",
         ),
     )
-    scan_db.commit()
 
     db = Mock()
     db.sql_connection = scan_db
-    db.sql = cur
+    db.sql = scan_db.cursor()
 
     # Run scan update
     device_handling.update_devices_data_from_scan(db)
 
-    row = cur.execute(
+    row = scan_db.execute(
         "SELECT devName FROM Devices WHERE devMac = ?",
         ("aa:bb:cc:dd:ee:01",),
     ).fetchone()
@@ -308,71 +209,43 @@ def test_scan_updates_newdev_device_name(scan_db, mock_device_handlers):
 
 def test_scan_does_not_update_user_field_name(scan_db, mock_device_handlers):
     """Scanner cannot override devName when source is USER."""
-    cur = scan_db.cursor()
-
-    # Device with USER-edited name
-    cur.execute(
-        """
-        INSERT INTO Devices (
-            devMac, devLastConnection, devPresentLastScan, devLastIP,
-            devName, devNameSource, devVendor, devVendorSource, devLastIPSource,
-            devType, devIcon, devParentPort, devParentMAC, devSite, devSSID
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """,
-        (
+    insert_device_from_dict(
+        scan_db,
+        make_device_dict(
             "aa:bb:cc:dd:ee:02",
-            "2025-01-01 00:00:00",
-            0,
-            "192.168.1.2",
-            "My Custom Device",
-            "USER",  # User-owned
-            "TestVendor",
-            "NEWDEV",
-            "ARPSCAN",
-            "type",
-            "icon",
-            "",
-            "",
-            "",
-            "",
+            devLastConnection="2025-01-01 00:00:00",
+            devPresentLastScan=0,
+            devLastIP="192.168.1.2",
+            devName="My Custom Device",
+            devNameSource="USER",  # User-owned
+            devVendor="TestVendor",
+            devVendorSource="NEWDEV",
+            devLastIPSource="ARPSCAN",
         ),
     )
 
     # Scanner tries to update name
-    cur.execute(
-        """
-        INSERT INTO CurrentScan (
-            scanMac, scanLastIP, scanVendor, scanSourcePlugin, scanName,
-            scanLastQuery, scanLastConnection, scanSyncHubNode,
-            scanSite, scanSSID, scanParentMAC, scanParentPort, scanType
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """,
-        (
+    insert_current_scan_row_from_dict(
+        scan_db,
+        make_current_scan_dict(
             "aa:bb:cc:dd:ee:02",
-            "192.168.1.2",
-            "TestVendor",
-            "NBTSCAN",
-            "ScannedDevice",
-            "",
-            "2025-01-01 01:00:00",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
+            scanLastIP="192.168.1.2",
+            scanVendor="TestVendor",
+            scanSourcePlugin="NBTSCAN",
+            scanName="ScannedDevice",
+            scanLastQuery="",
+            scanLastConnection="2025-01-01 01:00:00",
         ),
     )
-    scan_db.commit()
 
     db = Mock()
     db.sql_connection = scan_db
-    db.sql = cur
+    db.sql = scan_db.cursor()
 
     # Run scan update
     device_handling.update_devices_data_from_scan(db)
 
-    row = cur.execute(
+    row = scan_db.execute(
         "SELECT devName FROM Devices WHERE devMac = ?",
         ("aa:bb:cc:dd:ee:02",),
     ).fetchone()
@@ -383,71 +256,43 @@ def test_scan_does_not_update_user_field_name(scan_db, mock_device_handlers):
 
 def test_scan_does_not_update_locked_field(scan_db, mock_device_handlers):
     """Scanner cannot override LOCKED devName."""
-    cur = scan_db.cursor()
-
-    # Device with LOCKED name
-    cur.execute(
-        """
-        INSERT INTO Devices (
-            devMac, devLastConnection, devPresentLastScan, devLastIP,
-            devName, devNameSource, devVendor, devVendorSource, devLastIPSource,
-            devType, devIcon, devParentPort, devParentMAC, devSite, devSSID
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """,
-        (
+    insert_device_from_dict(
+        scan_db,
+        make_device_dict(
             "aa:bb:cc:dd:ee:03",
-            "2025-01-01 00:00:00",
-            0,
-            "192.168.1.3",
-            "Important Device",
-            "LOCKED",  # Locked
-            "TestVendor",
-            "NEWDEV",
-            "ARPSCAN",
-            "type",
-            "icon",
-            "",
-            "",
-            "",
-            "",
+            devLastConnection="2025-01-01 00:00:00",
+            devPresentLastScan=0,
+            devLastIP="192.168.1.3",
+            devName="Important Device",
+            devNameSource="LOCKED",  # Locked
+            devVendor="TestVendor",
+            devVendorSource="NEWDEV",
+            devLastIPSource="ARPSCAN",
         ),
     )
 
     # Scanner tries to update name
-    cur.execute(
-        """
-        INSERT INTO CurrentScan (
-            scanMac, scanLastIP, scanVendor, scanSourcePlugin, scanName,
-            scanLastQuery, scanLastConnection, scanSyncHubNode,
-            scanSite, scanSSID, scanParentMAC, scanParentPort, scanType
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """,
-        (
+    insert_current_scan_row_from_dict(
+        scan_db,
+        make_current_scan_dict(
             "aa:bb:cc:dd:ee:03",
-            "192.168.1.3",
-            "TestVendor",
-            "NBTSCAN",
-            "Unknown",
-            "",
-            "2025-01-01 01:00:00",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
+            scanLastIP="192.168.1.3",
+            scanVendor="TestVendor",
+            scanSourcePlugin="NBTSCAN",
+            scanName="Unknown",
+            scanLastQuery="",
+            scanLastConnection="2025-01-01 01:00:00",
         ),
     )
-    scan_db.commit()
 
     db = Mock()
     db.sql_connection = scan_db
-    db.sql = cur
+    db.sql = scan_db.cursor()
 
     # Run scan update
     device_handling.update_devices_data_from_scan(db)
 
-    row = cur.execute(
+    row = scan_db.execute(
         "SELECT devName FROM Devices WHERE devMac = ?",
         ("aa:bb:cc:dd:ee:03",),
     ).fetchone()
@@ -458,71 +303,43 @@ def test_scan_does_not_update_locked_field(scan_db, mock_device_handlers):
 
 def test_scan_updates_empty_vendor_field(scan_db, mock_device_handlers):
     """Scan updates vendor when it's empty/NULL."""
-    cur = scan_db.cursor()
-
-    # Device with empty vendor
-    cur.execute(
-        """
-        INSERT INTO Devices (
-            devMac, devLastConnection, devPresentLastScan, devLastIP,
-            devName, devNameSource, devVendor, devVendorSource, devLastIPSource,
-            devType, devIcon, devParentPort, devParentMAC, devSite, devSSID
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """,
-        (
+    insert_device_from_dict(
+        scan_db,
+        make_device_dict(
             "aa:bb:cc:dd:ee:04",
-            "2025-01-01 00:00:00",
-            0,
-            "192.168.1.4",
-            "Device",
-            "NEWDEV",
-            "",  # Empty vendor
-            "NEWDEV",
-            "ARPSCAN",
-            "type",
-            "icon",
-            "",
-            "",
-            "",
-            "",
+            devLastConnection="2025-01-01 00:00:00",
+            devPresentLastScan=0,
+            devLastIP="192.168.1.4",
+            devName="Device",
+            devNameSource="NEWDEV",
+            devVendor="",  # Empty vendor
+            devVendorSource="NEWDEV",
+            devLastIPSource="ARPSCAN",
         ),
     )
 
     # Scan discovers vendor
-    cur.execute(
-        """
-        INSERT INTO CurrentScan (
-            scanMac, scanLastIP, scanVendor, scanSourcePlugin, scanName,
-            scanLastQuery, scanLastConnection, scanSyncHubNode,
-            scanSite, scanSSID, scanParentMAC, scanParentPort, scanType
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """,
-        (
+    insert_current_scan_row_from_dict(
+        scan_db,
+        make_current_scan_dict(
             "aa:bb:cc:dd:ee:04",
-            "192.168.1.4",
-            "Apple Inc.",
-            "ARPSCAN",
-            "",
-            "",
-            "2025-01-01 01:00:00",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
+            scanLastIP="192.168.1.4",
+            scanVendor="Apple Inc.",
+            scanSourcePlugin="ARPSCAN",
+            scanName="",
+            scanLastQuery="",
+            scanLastConnection="2025-01-01 01:00:00",
         ),
     )
-    scan_db.commit()
 
     db = Mock()
     db.sql_connection = scan_db
-    db.sql = cur
+    db.sql = scan_db.cursor()
 
     # Run scan update
     device_handling.update_devices_data_from_scan(db)
 
-    row = cur.execute(
+    row = scan_db.execute(
         "SELECT devVendor FROM Devices WHERE devMac = ?",
         ("aa:bb:cc:dd:ee:04",),
     ).fetchone()
@@ -533,75 +350,46 @@ def test_scan_updates_empty_vendor_field(scan_db, mock_device_handlers):
 
 def test_scan_updates_ip_addresses(scan_db, mock_device_handlers):
     """Scan updates IPv4 and IPv6 addresses correctly."""
-    cur = scan_db.cursor()
-
-    # Device with empty IPs
-    cur.execute(
-        """
-        INSERT INTO Devices (
-            devMac, devLastConnection, devPresentLastScan, devLastIP,
-            devName, devNameSource, devVendor, devVendorSource, devLastIPSource,
-            devType, devIcon, devParentPort, devParentMAC, devSite, devSSID,
-            devPrimaryIPv4, devPrimaryIPv6
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """,
-        (
+    insert_device_from_dict(
+        scan_db,
+        make_device_dict(
             "aa:bb:cc:dd:ee:05",
-            "2025-01-01 00:00:00",
-            0,
-            "",
-            "Device",
-            "NEWDEV",
-            "Vendor",
-            "NEWDEV",
-            "NEWDEV",
-            "type",
-            "icon",
-            "",
-            "",
-            "",
-            "",
-            "",  # No IPv4
-            "",  # No IPv6
+            devLastConnection="2025-01-01 00:00:00",
+            devPresentLastScan=0,
+            devLastIP="",
+            devName="Device",
+            devNameSource="NEWDEV",
+            devVendor="Vendor",
+            devVendorSource="NEWDEV",
+            devLastIPSource="NEWDEV",
+            devPrimaryIPv4="",  # No IPv4
+            devPrimaryIPv6="",  # No IPv6
         ),
     )
 
     # Scan discovers IPv4
-    cur.execute(
-        """
-        INSERT INTO CurrentScan (
-            scanMac, scanLastIP, scanVendor, scanSourcePlugin, scanName,
-            scanLastQuery, scanLastConnection, scanSyncHubNode,
-            scanSite, scanSSID, scanParentMAC, scanParentPort, scanType
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """,
-        (
+    insert_current_scan_row_from_dict(
+        scan_db,
+        make_current_scan_dict(
             "aa:bb:cc:dd:ee:05",
-            "192.168.1.100",
-            "Vendor",
-            "ARPSCAN",
-            "",
-            "",
-            "2025-01-01 01:00:00",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
+            scanLastIP="192.168.1.100",
+            scanVendor="Vendor",
+            scanSourcePlugin="ARPSCAN",
+            scanName="",
+            scanLastQuery="",
+            scanLastConnection="2025-01-01 01:00:00",
         ),
     )
-    scan_db.commit()
 
     db = Mock()
     db.sql_connection = scan_db
-    db.sql = cur
+    db.sql = scan_db.cursor()
 
     # Run scan update
     device_handling.update_devices_data_from_scan(db)
     device_handling.update_ipv4_ipv6(db)
 
-    row = cur.execute(
+    row = scan_db.execute(
         "SELECT devLastIP, devPrimaryIPv4, devPrimaryIPv6 FROM Devices WHERE devMac = ?",
         ("aa:bb:cc:dd:ee:05",),
     ).fetchone()
@@ -614,75 +402,46 @@ def test_scan_updates_ip_addresses(scan_db, mock_device_handlers):
 
 def test_scan_updates_ipv6_without_changing_ipv4(scan_db, mock_device_handlers):
     """Scan updates IPv6 without overwriting IPv4."""
-    cur = scan_db.cursor()
-
-    # Device with IPv4 already set
-    cur.execute(
-        """
-        INSERT INTO Devices (
-            devMac, devLastConnection, devPresentLastScan, devLastIP,
-            devName, devNameSource, devVendor, devVendorSource, devLastIPSource,
-            devType, devIcon, devParentPort, devParentMAC, devSite, devSSID,
-            devPrimaryIPv4, devPrimaryIPv6
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """,
-        (
+    insert_device_from_dict(
+        scan_db,
+        make_device_dict(
             "aa:bb:cc:dd:ee:06",
-            "2025-01-01 00:00:00",
-            0,
-            "192.168.1.101",
-            "Device",
-            "NEWDEV",
-            "Vendor",
-            "NEWDEV",
-            "NEWDEV",
-            "type",
-            "icon",
-            "",
-            "",
-            "",
-            "",
-            "192.168.1.101",  # IPv4 already set
-            "",  # No IPv6
+            devLastConnection="2025-01-01 00:00:00",
+            devPresentLastScan=0,
+            devLastIP="192.168.1.101",
+            devName="Device",
+            devNameSource="NEWDEV",
+            devVendor="Vendor",
+            devVendorSource="NEWDEV",
+            devLastIPSource="NEWDEV",
+            devPrimaryIPv4="192.168.1.101",  # IPv4 already set
+            devPrimaryIPv6="",  # No IPv6
         ),
     )
 
     # Scan discovers IPv6
-    cur.execute(
-        """
-        INSERT INTO CurrentScan (
-            scanMac, scanLastIP, scanVendor, scanSourcePlugin, scanName,
-            scanLastQuery, scanLastConnection, scanSyncHubNode,
-            scanSite, scanSSID, scanParentMAC, scanParentPort, scanType
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """,
-        (
+    insert_current_scan_row_from_dict(
+        scan_db,
+        make_current_scan_dict(
             "aa:bb:cc:dd:ee:06",
-            "fe80::1",
-            "Vendor",
-            "ARPSCAN",
-            "",
-            "",
-            "2025-01-01 01:00:00",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
+            scanLastIP="fe80::1",
+            scanVendor="Vendor",
+            scanSourcePlugin="ARPSCAN",
+            scanName="",
+            scanLastQuery="",
+            scanLastConnection="2025-01-01 01:00:00",
         ),
     )
-    scan_db.commit()
 
     db = Mock()
     db.sql_connection = scan_db
-    db.sql = cur
+    db.sql = scan_db.cursor()
 
     # Run scan update
     device_handling.update_devices_data_from_scan(db)
     device_handling.update_ipv4_ipv6(db)
 
-    row = cur.execute(
+    row = scan_db.execute(
         "SELECT devPrimaryIPv4, devPrimaryIPv6 FROM Devices WHERE devMac = ?",
         ("aa:bb:cc:dd:ee:06",),
     ).fetchone()
@@ -694,48 +453,32 @@ def test_scan_updates_ipv6_without_changing_ipv4(scan_db, mock_device_handlers):
 
 def test_scan_updates_presence_status(scan_db, mock_device_handlers):
     """Scan correctly updates devPresentLastScan status."""
-    cur = scan_db.cursor()
-
-    # Device not in current scan (offline)
-    cur.execute(
-        """
-        INSERT INTO Devices (
-            devMac, devLastConnection, devPresentLastScan, devLastIP,
-            devName, devNameSource, devVendor, devVendorSource, devLastIPSource,
-            devType, devIcon, devParentPort, devParentMAC, devSite, devSSID
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """,
-        (
+    insert_device_from_dict(
+        scan_db,
+        make_device_dict(
             "aa:bb:cc:dd:ee:07",
-            "2025-01-01 00:00:00",
-            1,  # Was online
-            "192.168.1.102",
-            "Device",
-            "NEWDEV",
-            "Vendor",
-            "NEWDEV",
-            "ARPSCAN",
-            "type",
-            "icon",
-            "",
-            "",
-            "",
-            "",
+            devLastConnection="2025-01-01 00:00:00",
+            devPresentLastScan=1,  # Was online
+            devLastIP="192.168.1.102",
+            devName="Device",
+            devNameSource="NEWDEV",
+            devVendor="Vendor",
+            devVendorSource="NEWDEV",
+            devLastIPSource="ARPSCAN",
         ),
     )
 
     # Note: No CurrentScan entry for this MAC - device is offline
-    scan_db.commit()
 
     db = Mock()
     db.sql_connection = scan_db
-    db.sql = cur
+    db.sql = scan_db.cursor()
 
     # Run scan update
     device_handling.update_devices_data_from_scan(db)
     device_handling.update_presence_from_CurrentScan(db)
 
-    row = cur.execute(
+    row = scan_db.execute(
         "SELECT devPresentLastScan FROM Devices WHERE devMac = ?",
         ("aa:bb:cc:dd:ee:07",),
     ).fetchone()
@@ -746,8 +489,6 @@ def test_scan_updates_presence_status(scan_db, mock_device_handlers):
 
 def test_scan_multiple_devices_mixed_sources(scan_db, mock_device_handlers):
     """Scan with multiple devices having different source combinations."""
-    cur = scan_db.cursor()
-
     devices_data = [
         # (MAC, Name, NameSource, Vendor, VendorSource)
         ("aa:bb:cc:dd:ee:11", "Device1", "NEWDEV", "", "NEWDEV"),  # Both updatable
@@ -757,30 +498,18 @@ def test_scan_multiple_devices_mixed_sources(scan_db, mock_device_handlers):
     ]
 
     for mac, name, name_src, vendor, vendor_src in devices_data:
-        cur.execute(
-            """
-            INSERT INTO Devices (
-                devMac, devLastConnection, devPresentLastScan, devLastIP,
-                devName, devNameSource, devVendor, devVendorSource, devLastIPSource,
-                devType, devIcon, devParentPort, devParentMAC, devSite, devSSID
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """,
-            (
+        insert_device_from_dict(
+            scan_db,
+            make_device_dict(
                 mac,
-                "2025-01-01 00:00:00",
-                0,
-                "192.168.1.1",
-                name,
-                name_src,
-                vendor,
-                vendor_src,
-                "ARPSCAN",
-                "type",
-                "icon",
-                "",
-                "",
-                "",
-                "",
+                devLastConnection="2025-01-01 00:00:00",
+                devPresentLastScan=0,
+                devLastIP="192.168.1.1",
+                devName=name,
+                devNameSource=name_src,
+                devVendor=vendor,
+                devVendorSource=vendor_src,
+                devLastIPSource="ARPSCAN",
             ),
         )
 
@@ -793,22 +522,22 @@ def test_scan_multiple_devices_mixed_sources(scan_db, mock_device_handlers):
     ]
 
     for mac, ip, vendor, scan_method, name in scan_entries:
-        cur.execute(
-            """
-            INSERT INTO CurrentScan (
-                scanMac, scanLastIP, scanVendor, scanSourcePlugin, scanName,
-                scanLastQuery, scanLastConnection, scanSyncHubNode,
-                scanSite, scanSSID, scanParentMAC, scanParentPort, scanType
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """,
-            (mac, ip, vendor, scan_method, name, "", "2025-01-01 01:00:00", "", "", "", "", "", ""),
+        insert_current_scan_row_from_dict(
+            scan_db,
+            make_current_scan_dict(
+                mac,
+                scanLastIP=ip,
+                scanVendor=vendor,
+                scanSourcePlugin=scan_method,
+                scanName=name,
+                scanLastQuery="",
+                scanLastConnection="2025-01-01 01:00:00",
+            ),
         )
-
-    scan_db.commit()
 
     db = Mock()
     db.sql_connection = scan_db
-    db.sql = cur
+    db.sql = scan_db.cursor()
 
     # Run scan update
     device_handling.update_devices_data_from_scan(db)
@@ -822,7 +551,7 @@ def test_scan_multiple_devices_mixed_sources(scan_db, mock_device_handlers):
     }
 
     for mac, expected in results.items():
-        row = cur.execute(
+        row = scan_db.execute(
             "SELECT devName, devVendor FROM Devices WHERE devMac = ?",
             (mac,),
         ).fetchone()

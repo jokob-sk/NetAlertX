@@ -5,7 +5,7 @@
 //
 //  db.php - Front module. Server side. DB common file
 //------------------------------------------------------------------------------
-#   2022 jokob             jokob@duck.com                GNU GPLv3
+#   2022 jokob             support@netalertx.com                GNU GPLv3
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -76,7 +76,13 @@ function SQLite3_connect($trytoreconnect = true, $retryCount = 0) {
         // Write unlock status to the locked file
         file_put_contents($DBFILE_LOCKED_FILE, '0');
 
-        return new SQLite3($DBFILE, SQLITE3_OPEN_READWRITE);
+        $conn = new SQLite3($DBFILE, SQLITE3_OPEN_READWRITE);
+        // Wait up to 5s for a lock before returning SQLITE_BUSY, matching the
+        // Python main-loop connection's PRAGMA busy_timeout - without this,
+        // any collision with a concurrent writer fails immediately instead
+        // of retrying internally.
+        $conn->busyTimeout(5000);
+        return $conn;
     } catch (Exception $exception) {
         // sqlite3 throws an exception when it is unable to connect
         global $db_locked;

@@ -1,7 +1,6 @@
 <?php
 
   require 'php/templates/header.php';
-  require 'php/templates/modals.php';
 
 ?>
 
@@ -10,7 +9,8 @@
 </script>
 
 <!-- Page ------------------------------------------------------------------ -->
-<div class="content-wrapper">
+<div class="content-wrapper" id="reportPage">
+<?php require 'php/templates/skel_report.php'; ?>
 
 <!-- Content header--------------------------------------------------------- -->
     <!-- Main content ---------------------------------------------------------- -->
@@ -126,6 +126,7 @@
             })
             .finally(() => {
                 hideSpinner(); // always called, even if error occurred
+                hideReportSkeleton();
             });
     }
 
@@ -183,6 +184,14 @@
   </script>
 
     <!-- /.content -->
+    <script>
+    function hideReportSkeleton() {
+      $('#report-skeleton').fadeOut(0, function() { $(this).remove(); });
+    }
+    window.addEventListener('load', function() {
+      setTimeout(hideReportSkeleton, 15000);
+    });
+    </script>
     <?php
       require 'php/templates/footer.php';
     ?>

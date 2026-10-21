@@ -68,11 +68,18 @@ def get_device_condition_by_status(device_status):
 
 # -------------------------------------------------------------------------------
 def get_sql_devices_tiles():
-    """Build the device tiles count SQL using get_device_conditions() to avoid duplicating filter logic."""
+    """Build the device tiles count SQL using get_device_conditions() to avoid duplicating filter logic.
+
+    Single pass over DevicesView with conditional-aggregation SUM(CASE...) columns,
+    rather than one independent `(SELECT COUNT(*) FROM DevicesView WHERE ...)`
+    scalar subquery per tile - SQLite doesn't share view-materialization across
+    independent subqueries in one statement, so the previous shape evaluated
+    DevicesView's own per-row cost (including the devFlapping correlated
+    subquery) once per tile (9 times) instead of once total."""
     conds = get_device_conditions()
 
     def f(key):
-        """Strip 'WHERE ' prefix for use inside SELECT subqueries."""
+        """Strip 'WHERE ' prefix for use inside a CASE WHEN condition."""
         return conds[key][len("WHERE "):]
 
     # UI_MY_DEVICES setting values mapped to their device_conditions keys
@@ -85,33 +92,31 @@ def get_sql_devices_tiles():
     ]
 
     my_devices_clauses = "\n                OR ".join(
-        f"(instr((SELECT setValue FROM Statuses), '{sk}') > 0 AND {f(ck)})"
+        f"(instr(Statuses.setValue, '{sk}') > 0 AND {f(ck)})"
         for sk, ck in my_devices_setting_map
     )
+
+    def tile(key, label):
+        return f'COALESCE(SUM(CASE WHEN {f(key)} THEN 1 ELSE 0 END), 0) AS "{label}"'
 
     return f"""
                         WITH Statuses AS (
                             SELECT setValue
                             FROM Settings
                             WHERE setKey = 'UI_MY_DEVICES'
-                        ),
-                        MyDevicesFilter AS (
-                            SELECT devMac, devIsSleeping
-                            FROM DevicesView
-                            WHERE
-                                {my_devices_clauses}
                         )
                         SELECT
-                            (SELECT COUNT(*) FROM DevicesView WHERE {f('connected')}) AS connected,
-                            (SELECT COUNT(*) FROM DevicesView WHERE {f('offline')}) AS offline,
-                            (SELECT COUNT(*) FROM DevicesView WHERE {f('down')}) AS down,
-                            (SELECT COUNT(*) FROM DevicesView WHERE {f('new')}) AS new,
-                            (SELECT COUNT(*) FROM DevicesView WHERE {f('archived')}) AS archived,
-                            (SELECT COUNT(*) FROM DevicesView WHERE {f('favorites')}) AS favorites,
-                            (SELECT COUNT(*) FROM DevicesView WHERE {f('all')}) AS "all",
-                            (SELECT COUNT(*) FROM DevicesView) AS "all_devices",
-                            (SELECT COUNT(*) FROM MyDevicesFilter) AS my_devices
-                        FROM Statuses;
+                            {tile('connected', 'connected')},
+                            {tile('offline', 'offline')},
+                            {tile('down', 'down')},
+                            {tile('new', 'new')},
+                            {tile('archived', 'archived')},
+                            {tile('favorites', 'favorites')},
+                            {tile('all', 'all')},
+                            COUNT(*) AS "all_devices",
+                            COALESCE(SUM(CASE WHEN {my_devices_clauses}
+                                THEN 1 ELSE 0 END), 0) AS "my_devices"
+                        FROM DevicesView, Statuses;
                     """
 
 

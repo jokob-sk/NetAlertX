@@ -34,7 +34,7 @@ NetAlertX comes with a plugin system to feed events from third-party scripts int
 
 ### 🐛 Troubleshooting
 - **[Debugging Plugins](DEBUG_PLUGINS.md)** - Troubleshoot plugin issues
-- **[Plugin Examples](https://github.com/netalertx/NetAlertX/tree/main/front/plugins)** - Study existing plugins as reference implementations
+- **[Plugin Examples](https://github.com/netalertx/NetAlertX/tree/main/server/plugins)** - Study existing plugins as reference implementations
 
 ### 🎥 Video Tutorial
 
@@ -91,17 +91,18 @@ If you can imagine it and script it, you can build a plugin.
 2. Test via Settings → Plugin Settings
 3. Verify results in UI and logs
 4. Check `/tmp/log/plugins/last_result.<PREFIX>.log`
+5. Add unit tests under `test/plugins/` for any new or changed plugin logic - see an existing plugin's test file (e.g. `test_fritzbox.py`) for the pattern
 
 See [Quick Start Guide](PLUGINS_DEV_QUICK_START.md) for detailed step-by-step instructions.
 
 ## Plugin File Structure
 
-Every plugin lives in its own folder under `/app/front/plugins/`.
+Every plugin lives in its own folder under `/app/server/plugins/`.
 
 > **Important:** Folder name must match the `"code_name"` value in `config.json`
 
 ```
-/app/front/plugins/
+/app/server/plugins/
 ├── __template/          # Copy this as a starting point
 │   ├── config.json      # Plugin manifest (configuration)
 │   ├── script.py        # Your plugin logic (optional, depends on data_source)
@@ -146,7 +147,7 @@ The `config.json` file is the **plugin manifest** - it tells NetAlertX everythin
     {
       "function": "CMD",
       "type": {"dataType": "string", "elements": [{"elementType": "input", "elementOptions": [], "transformers": []}]},
-      "default_value": "python3 /app/front/plugins/my_plugin/script.py",
+      "default_value": "python3 /app/server/plugins/my_plugin/script.py",
       "localized": ["name"],
       "name": [{"language_code": "en_us", "string": "Command"}]
     }
@@ -226,8 +227,27 @@ These control core plugin behavior:
 | `WATCH` | Monitor for changes | optional | Column names |
 | `REPORT_ON` | When to notify | optional | `new`, `watched-changed`, `watched-not-changed`, `missing-in-last-scan` |
 | `DB_PATH` | External DB path | If using SQLite | `/path/to/db.db` |
+| `IMPORT_ON` | Gate whether this run's rows are promoted into `CurrentScan` | optional | Boolean. Only affects plugins with `mapped_to_table: "CurrentScan"` — see [Database Mapping](#database-mapping) below. |
 
 See [PLUGINS_DEV_SETTINGS.md](PLUGINS_DEV_SETTINGS.md) for full component types and examples.
+
+### Conventions Checklist
+
+Check your plugin against these repo-wide conventions before opening a PR (verified against `server/plugins/*/config.json`):
+
+- **`RUN` defaults to `"disabled"`.** True for the large majority of plugins; only core maintenance plugins (`csv_backup`, `db_cleanup`, `maintenance`, `vendor_update`) default to `schedule`. A new optional plugin should load disabled until the user configures it.
+- **Pick `RUN_SCHD` from precedent, not an arbitrary value.** Check the closest existing plugin for its schedule (e.g. `pihole_api_scan` uses `*/5 * * * *`) rather than inventing a new cadence — consistency keeps first-time setup predictable across plugins.
+- **`RUN_TIMEOUT` is a subprocess kill-timer, not a per-request budget.** The core plugin runner (`server/plugin.py`) passes this same value as the hard timeout for the *entire* script (`subprocess` `timeout=`). If your script makes multiple sequential network calls (e.g. two upstream instances, or a per-device lookup in a loop), don't also reuse `RUN_TIMEOUT` as each individual call's timeout — one slow call can then consume the whole budget and get the process killed before it writes its result file, silently dropping the entire run. Two correct alternatives, depending on the shape of your loop:
+  - **Looping over a config-declared, known-length list** (e.g. a subnets or IPs setting) — mark that `params` entry with `"timeoutMultiplier": true` in `config.json`. The framework then multiplies the *outer* kill-timeout by that list's length before running your script, so each iteration can safely use the full `RUN_TIMEOUT` internally. See `arp_scan/config.json`'s `subnets` param for a working example.
+  - **Looping over a runtime-variable-length collection** (e.g. a notification queue, where length isn't known until the script runs) — `timeoutMultiplier` doesn't apply here since there's no config-declared count. Instead, divide the *inner* per-call timeout down using `plugin_helper.per_item_timeout(run_timeout, item_count)`, so N sequential calls can't collectively exceed the outer budget. See `server/plugins/_publisher_ntfy/ntfy.py`'s notification loop for a working example.
+- **Reuse existing core settings instead of duplicating them.** If NetAlertX already has a concept your plugin needs (e.g. `API_TOKEN` for its own GraphQL/API endpoint), read it with `get_setting_value("API_TOKEN")` rather than adding a plugin-specific `<PREFIX>_API_TOKEN` — see `server/plugins/sync/sync.py` for the pattern.
+- **Keep `description` strings short.** They render directly in the Settings UI. Put implementation rationale and design trade-offs in the plugin's README or code comments, not the UI-facing description.
+- **For "one or more instances of the same thing," use the nested array + popup-form settings pattern**, not a fixed hardcoded count (e.g. "primary"/"secondary"). See `rest_import` (`RSTIMPRT`)'s `imports` setting for a working example — it also gives each instance its own sub-settings (URL, credentials, per-instance flags) for free.
+- **Persist plugin state under `dbFolderPath`, config artifacts under `configPath`** — see [Persisting Plugin Data](#persisting-plugin-data-state--config-files) below.
+- **A plugin mapped to `mapped_to_table: "CurrentScan"` must also map `scanSourcePlugin`** (a static value via `mapped_to_column_data`, see [Static Value Mapping](#static-value-mapping) below), **and that value must equal the plugin's own `unique_prefix` exactly.** Whether the mapping is present at all isn't mechanically enforced by `test_plugin_conventions.py`, so review that by eye - but `test_scan_source_plugin_matches_unique_prefix` does mechanically check the value matches `unique_prefix` whenever the mapping exists, since `update_devices_data_from_scan()` (`server/scan/device_handling.py`) reads it verbatim to build the `<value>_SET_ALWAYS`/`<value>_SET_EMPTY` settings keys (`server/db/authoritative_handler.py`) - any mismatch (wrong case, a friendly display name, punctuation) means those settings silently never resolve, so the plugin's SET_ALWAYS/SET_EMPTY overrides get quietly ignored (this shipped for real: `freebox` used `"Freebox"` against `unique_prefix: "FREEBOX"`, `fritzbox` used `"Fritz!Box"` against `"FRITZBOX"`). Omitting the mapping entirely leaves `scanSourcePlugin` `NULL` on every row this plugin inserts, which silently breaks two other things: `create_new_devices()`'s `plugin_prefix = str(scanSourcePlugin).strip() if scanSourcePlugin else "NEWDEV"` mislabels devices this plugin creates as source `NEWDEV`; and `update_devices_data_from_scan()`'s `SELECT DISTINCT scanSourcePlugin FROM CurrentScan` + `[row[0] for row in plugin_rows if row[0]] or [None]` drops the `NULL` rows entirely (the `or [None]` fallback never triggers once any other plugin contributes a non-null prefix), so this plugin's `CurrentScan` rows never get picked up by the per-plugin device-update loop at all - the plugin can *insert* into `CurrentScan` but never actually confirm/update a device's presence.
+- **A setting's `dataType` and `default_value` must actually agree.** `dataType: "array"` (or `"object"`) means `default_value` must be a real JSON literal for that shape — `'["default"]'`, not the bare string `"default"`. `setting_value_to_python_type()` (`server/helper.py`) `json.loads()`s the default at runtime; a bare string fails that parse, silently logs a decode error, and returns `[]` instead of your intended default — this shipped for real in `devParentRelType`/`UI_theme`/`UI_TOPOLOGY_ORDER` before being caught. If `elementOptions` already sets `multiple`/`orderable: "false"`, that's a strong signal the setting is actually scalar and `dataType` should be `"string"`, not `"array"`, regardless of what UI widget (`select`, etc.) renders it.
+- **Only set `"allow_raw_text": true` on a display-only column type (`textarea_readonly`).** Every plugin-sourced field is HTML/control-char-stripped by default before it reaches the DB; see [Field Sanitization](#field-sanitization) below. `test_allow_raw_text_only_on_safe_types` (`test/plugins/test_plugin_conventions.py`) enforces the type restriction; it can't catch a column that legitimately needs the opt-out but is rendered somewhere unsafe, so use it only for values that are never interpreted as HTML.
+- **A new system package or Python dependency needs mirroring across every build target it should work on, not just the root `Dockerfile`.** `.devcontainer/Dockerfile` is auto-generated (its own header says so) by `.devcontainer/scripts/generate-configs.sh`, which concatenates the root `Dockerfile` with `.devcontainer/resources/devcontainer-Dockerfile`. It's a committed, git-tracked file, not something read fresh at build time - a package added to the root `Dockerfile` without re-running that script leaves the devcontainer's checked-in Dockerfile stale, so the package is silently missing there until someone regenerates it. `Dockerfile.debian` (`docs/BUILDS.md`) is a second, separately-maintained build target with its own `apt-get install` package list and `setcap` calls - a system package (and its `setcap` grant, if it needs one) has to be added there too, not just to the Alpine `Dockerfile`. For a new Python dependency, the root `requirements.txt` is not the only one either: `install/ubuntu24/requirements.txt` and `install/proxmox/requirements.txt` are separate lists for their respective non-Docker install methods, not mechanically kept in sync with the root file (no CI check covers this) - check whether the new dependency is actually needed by those install methods too rather than assuming the root file alone is enough.
 
 ---
 
@@ -294,6 +314,73 @@ To always map a static value (not read from plugin output):
 }
 ```
 
+Every `mapped_to_table: "CurrentScan"` plugin needs this `scanSourcePlugin` mapping — see the Conventions Checklist above for what breaks downstream if it's left out.
+
+### Field Sanitization
+
+Plugin output is untrusted: it's parsed from network responses, device-reported names, headers, and similar attacker-influenceable sources. `plugin_object_class.__init__` (`server/plugin.py`) strips HTML tag-delimiter (`<`, `>`) and control characters from every mapped `objectPrimaryId`/`objectSecondaryId`/`watchedValue1-4`/`extra`/`helpVal1-4` field by default, via `plugin_helper.sanitize_plugin_text()`, before the value is persisted. `foreignKey` is sanitized unconditionally the same way, since it has no `database_column_definitions` entry of its own to attach an opt-out to.
+
+This is defense-in-depth, not a substitute for output encoding: every renderer must still escape on display. It's also not a validator: a MAC-shaped `objectPrimaryId` still goes through `normalize_mac()` separately, and a malformed value is stripped of dangerous characters, not rejected or blanked.
+
+A column only needs to opt out (`"allow_raw_text": true`) if it legitimately displays raw text that sanitization would otherwise mangle, e.g. a publisher plugin's raw API response body, shown in a `textarea_readonly` field:
+
+```json
+{
+  "column": "watchedValue2",
+  "type": "textarea_readonly",
+  "allow_raw_text": true,
+  "name": [{"language_code": "en_us", "string": "Response"}]
+}
+```
+
+Restrict this to types that are never rendered as HTML; see the Conventions Checklist above.
+
+### Import Behavior Columns (`scanCreatesDevice`, `scanNotificationMode`, `scanPresence`)
+
+Three optional columns on `CurrentScan` control what happens once a row reaches it — see [Plugin Import Behavior](PLUGINS_IMPORT_BEHAVIOR.md) for the full contract (allowed values, defaults, downstream effects). All three default to today's behavior if never mapped, so existing plugins need no changes.
+
+Most plugins map a single static value for the whole import via `mapped_to_column_data` — e.g. an enrichment-only plugin that should never originate a new device:
+
+```json
+{
+  "column": "NameDoesntMatter",
+  "mapped_to_column": "scanCreatesDevice",
+  "mapped_to_column_data": {
+    "value": 0
+  }
+}
+```
+
+A plugin sophisticated enough to know per-row whether an entry is a live/active sighting (e.g. a DHCP lease with a `state` field) can instead map a per-row value via the normal `mapped_to_column` mechanism, the same way any other data-carrying column is mapped:
+
+```json
+{
+  "column": "watchedValue1",
+  "mapped_to_column": "scanPresence"
+}
+```
+
+---
+
+## Persisting Plugin Data (State & Config Files)
+
+Plugin settings (`config.json`) are already persisted for you. If your plugin also needs to write its **own files** to disk between runs — a cache, a "what did I already do" tracker, an exported artifact — pick the right base path from `const.py` rather than hardcoding one:
+
+| Purpose | Import from `const` | Default path | Use for |
+|---|---|---|---|
+| Internal state | `dbFolderPath` | `/data/db` | Bookkeeping the user never edits directly: sync state, dedupe caches, "managed items" trackers, etc. |
+| Config artifacts | `configPath` | `/data/config` | Files that are conceptually configuration: exports meant to be reviewed/edited by the user, generated config snippets, backups. |
+
+```python
+from const import dbFolderPath, configPath
+
+STATE_FILE = os.path.join(dbFolderPath, f"state.{pluginName}.json")
+```
+
+**Why it matters:** `/data/db` and `/data/config` are separate mount points. Users can point `/data/db` at fast/ephemeral storage (its contents are usually rebuildable) and `/data/config` at durable, backed-up storage — or the reverse, depending on their setup. Don't hardcode `/app/db`, `/app/config`, or write loose files directly under the bare data root (`dataPath`); those bypass this separation, and `/app/...` paths are the pre-`v25.10.1` legacy layout (see [MIGRATION.md](MIGRATION.md)).
+
+If you rename or move where a plugin stores its state file across a release, migrate the old file on startup instead of silently dropping user state — see `server/plugins/adguard_export/script.py` for a worked example.
+
 ---
 
 ## UI Component Types
@@ -302,44 +389,7 @@ Plugin results are displayed in the web interface using various component types.
 
 ### Common Display Types
 
-**Read settings in your Python script:**
-
-```python
-from helper import get_setting_value
-
-# Read a setting by code name (prefix + function)
-api_url = get_setting_value('MYPLN_API_URL')
-api_key = get_setting_value('MYPLN_API_KEY')
-watch_columns = get_setting_value('MYPLN_WATCH')
-
-print(f"Connecting to {api_url}")
-```
-
-**Pass settings as command parameters:**
-
-Define `params` in config to pass settings as script arguments:
-
-```json
-{
-  "params": [
-    {
-      "name": "api_url",
-      "type": "setting",
-      "value": "MYPLN_API_URL"
-    }
-  ]
-}
-```
-
-Then use in `CMD`: `python3 script.py --url={api_url}`
-
 See [PLUGINS_DEV_SETTINGS.md](PLUGINS_DEV_SETTINGS.md) for complete settings documentation, and [PLUGINS_DEV_DATASOURCES.md](PLUGINS_DEV_DATASOURCES.md) for data source details.
-
-[screen1]: https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/plugins.png                    "Screen 1"
-[screen2]: https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/plugins_settings.png           "Screen 2"
-[screen3]: https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/plugins_json_settings.png      "Screen 3"
-[screen4]: https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/plugins_json_ui.png            "Screen 4"
-[screen5]: https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/plugins_device_details.png     "Screen 5"
 
 ## Quick Reference: Key Concepts
 
@@ -384,13 +434,20 @@ See: [UI Components](PLUGINS_DEV_UI_COMPONENTS.md)
 
 ## Tools & References
 
-- **Template Plugin:** `/app/front/plugins/__template/` - Start here!
-- **Helper Library:** `/app/front/plugins/plugin_helper.py` - Use for output formatting
+- **Template Plugin:** `/app/server/plugins/__template/` - Start here!
+- **Helper Library:** `/app/server/plugins/plugin_helper.py` - Use for output formatting
 - **Settings Helper:** `/app/server/helper.py` - Use `get_setting_value()` in scripts
-- **Example Plugins:** `/app/front/plugins/*/` - Study working implementations
+- **Example Plugins:** `/app/server/plugins/*/` - Study working implementations
 - **Logs:** `/tmp/log/plugins/` - Plugin output and execution logs
-- **Backend Logs:** `/tmp/log/stdout.log` - Core system logs
+- **Backend Logs:** `/tmp/log/app.log` - Core system logs
+- **Persistent state:** `dbFolderPath` (`/data/db`) via `from const import dbFolderPath` - see [Persisting Plugin Data](#persisting-plugin-data-state--config-files)
+- **Config artifacts:** `configPath` (`/data/config`) via `from const import configPath` - see [Persisting Plugin Data](#persisting-plugin-data-state--config-files)
 
 ---
 
 
+[screen1]: https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/plugins.png                    "Screen 1"
+[screen2]: https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/plugins_settings.png           "Screen 2"
+[screen3]: https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/plugins_json_settings.png      "Screen 3"
+[screen4]: https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/plugins_json_ui.png            "Screen 4"
+[screen5]: https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/plugins_device_details.png     "Screen 5"

@@ -13,7 +13,7 @@ import datetime
 import pytest
 
 INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
-sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
+sys.path.extend([f"{INSTALL_PATH}/server/plugins", f"{INSTALL_PATH}/server"])
 
 from utils.datetime_utils import timeNowUTC, format_date_iso, DATETIME_PATTERN  # noqa: E402
 

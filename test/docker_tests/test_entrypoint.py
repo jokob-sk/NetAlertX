@@ -5,6 +5,8 @@ These tests verify the behavior of the entrypoint script under various condition
 such as environment variable settings and check skipping.
 '''
 
+import json
+import os
 import subprocess
 import uuid
 import pytest
@@ -57,6 +59,55 @@ def test_app_conf_override_from_graphql_port():
     assert 'Setting APP_CONF_OVERRIDE to' not in result.stdout
     assert 'APP_CONF_OVERRIDE detected' in result.stderr
     assert result.returncode == 0
+
+
+@pytest.mark.docker
+@pytest.mark.feature_complete
+def test_app_conf_override_file_written_from_graphql_port(tmp_path):
+    # Regression test: a bare GRAPHQL_PORT (no APP_CONF_OVERRIDE set) must result in
+    # app_conf_override.json actually being written by entrypoint.d/35-apply-conf-override.sh,
+    # which server/initialise.py reads to override the persisted GRAPHQL_PORT setting.
+    # This requires the GRAPHQL_PORT->APP_CONF_OVERRIDE derivation in entrypoint.sh to run
+    # BEFORE the entrypoint.d loop - it previously ran after, so on a fresh volume the
+    # derived value never reached the file and the setting silently stayed at its default.
+    config_dir = tmp_path / "config"
+    config_dir.mkdir()
+    os.chmod(config_dir, 0o777)
+
+    name = f"netalertx-test-entrypoint-{uuid.uuid4().hex[:8]}".lower()
+    cmd = [
+        "docker", "run", "--rm", "--name", name,
+        "--network", "host", "--userns", "host",
+        "--tmpfs", "/tmp:mode=777",
+        "--cap-add", "CHOWN",
+        "--cap-add", "NET_RAW", "--cap-add", "NET_ADMIN", "--cap-add", "NET_BIND_SERVICE",
+        "-v", f"{config_dir}:/data/config",
+        "-e", "GRAPHQL_PORT=20322",
+        "-e", "NETALERTX_DEBUG=1",
+        "-e", "NETALERTX_CHECK_ONLY=1",
+        "--entrypoint", "/bin/sh", IMAGE, "-c",
+        "sh /root-entrypoint.sh"
+    ]
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
+
+        override_file = config_dir / "app_conf_override.json"
+        assert override_file.exists(), (
+            "app_conf_override.json was never written by entrypoint.d/35-apply-conf-override.sh - "
+            "the GRAPHQL_PORT->APP_CONF_OVERRIDE derivation in entrypoint.sh must run before the "
+            f"entrypoint.d loop.\nstdout:\n{result.stdout}\nstderr:\n{result.stderr}"
+        )
+        assert json.loads(override_file.read_text()) == {"GRAPHQL_PORT": "20322"}
+    finally:
+        # The container writes app_conf_override.json as its own runtime UID, which the
+        # host test process doesn't own - reopen permissions via a throwaway container so
+        # pytest's tmp_path fixture teardown can actually delete config_dir afterwards.
+        subprocess.run(
+            ["docker", "run", "--rm", "--entrypoint", "chmod",
+             "-v", f"{config_dir}:/data/config", IMAGE,
+             "-R", "a+rwX", "/data/config"],
+            capture_output=True, text=True, timeout=30,
+        )
 
 
 @pytest.mark.docker

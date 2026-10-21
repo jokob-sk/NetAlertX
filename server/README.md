@@ -7,7 +7,7 @@ The original pilaert.py code is now moved to this new folder and split into diff
 |```__main__.py```| The MAIN program of NetAlertX|
 |```__init__.py```| an empty init file|
 |```README.md```| this readme file|
-|```../front/plugins ```| a folder containing all [plugins](/front/plugins/) that publish notifications or scan for devices|
+|```../server/plugins ```| a folder containing all [plugins](/server/plugins/) that publish notifications or scan for devices|
 |```api.py```| updating the API endpoints with the relevant data. |
 |```appevent.py```| TBC |
 |```const.py```| A place to define the constants for NetAlertX like log path or config path.|

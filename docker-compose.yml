@@ -46,7 +46,7 @@ services:
     # - /custom-enterprise.conf:/tmp/nginx/active-config/netalertx.conf:ro
 
     # Test your plugin on the production container
-    # - /path/on/host:/app/front/plugins/custom
+    # - /path/on/host:/app/server/plugins/custom
 
     # Retain logs - comment out tmpfs /tmp/log if you want to retain logs between container restarts
     # - /path/on/host/log:/tmp/log

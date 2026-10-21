@@ -413,4 +413,24 @@ Tests that the settings form submits correctly to `php/server/util.php` with `fu
 Verifies that all settings are preserved when saved (no data loss during save operation).
 
 **Key Coverage**: Form submission flow → PHP `saveSettings()` → Config file generation with Python-compatible formatting
+# Network topology rendering in WebKit, Chromium and Firefox
+
+The standalone regression uses the real Treeviz bundle, network renderer and styles
+with four fixture devices. No running NetAlertX backend or database is required.
+It checks painted pixels, node clicks, collapse/expand, wheel zoom and drag pan.
+Pixel checks are necessary because WebKit may return correct DOM bounds while
+painting positioned or translucent HTML at the SVG origin instead.
+
+Run from the repository root (Node.js required):
+
+```sh
+npm install --prefix /tmp/netalertx-browser-tests playwright pngjs
+/tmp/netalertx-browser-tests/node_modules/.bin/playwright install --with-deps webkit chromium firefox
+NODE_PATH=/tmp/netalertx-browser-tests/node_modules node test/ui/test_network_topology.cjs
+```
+
+Screenshots are written to `/tmp/netalertx-topology`, or to the directory specified
+by `NETALERTX_TOPOLOGY_ARTIFACTS`. This regression runs separately from pytest.
+Also verify the fixture in native Safari when a Mac is available; Playwright
+WebKit is useful regression coverage but is not the Safari application.
 

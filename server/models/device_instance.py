@@ -3,8 +3,9 @@ import base64
 import re
 import sqlite3
 import csv
+import uuid
 from io import StringIO
-from front.plugins.plugin_helper import is_mac, normalize_mac
+from server.plugins.plugin_helper import is_mac, normalize_mac
 from logger import mylog
 from models.plugin_object_instance import PluginObjectInstance
 from database import get_temp_db_connection
@@ -18,6 +19,7 @@ from db.authoritative_handler import (
     unlock_fields
 )
 from helper import is_random_mac, get_setting_value
+from workflows.constants import VALID_DEVICE_COLUMNS
 from utils.datetime_utils import timeNowUTC
 
 
@@ -44,13 +46,34 @@ class DeviceInstance:
         conn.close()
 
     # --- public API -----------------------------------------------------------
-    def getAll(self):
-        return self._fetchall("SELECT * FROM Devices")
+    def getAll(self, limit=None, offset=None):
+        """Return all devices, ordered by devMac for stable pagination.
+        Returns every device if limit is omitted."""
+        query = "SELECT * FROM Devices ORDER BY devMac"
+        params = []
+        if limit is not None:
+            query += " LIMIT ? OFFSET ?"
+            params.extend([limit, offset or 0])
+        elif offset is not None:
+            # SQLite's unlimited-limit form - an offset with no limit still
+            # needs a LIMIT clause for OFFSET to take effect.
+            query += " LIMIT -1 OFFSET ?"
+            params.append(offset)
+        return self._fetchall(query, params)
 
     def getUnknown(self):
         return self._fetchall("""
             SELECT * FROM Devices
             WHERE devName IN ("(unknown)", "(name not found)", "")
+        """)
+
+    def getResolvable(self):
+        """Return devices that have a name already set but are not USER/LOCKED protected.
+        Used by SET_ALWAYS name-resolution plugins to re-resolve existing names."""
+        return self._fetchall("""
+            SELECT * FROM Devices
+            WHERE devName NOT IN ("(unknown)", "(name not found)", "")
+              AND COALESCE(devNameSource, '') NOT IN ('USER', 'LOCKED')
         """)
 
     def getValueWithMac(self, column_name, devMac):
@@ -76,6 +99,24 @@ class DeviceInstance:
             SELECT * FROM Devices WHERE devGUID = ?
         """, (devGUID,))
 
+    def getByMac(self, mac):
+        return self._fetchone("""
+            SELECT * FROM Devices WHERE devMac = ?
+        """, (mac,))
+
+    def getAllByMacs(self, macs):
+        """Return every Devices row whose devMac is in `macs`, as a dict keyed
+        by lowercased devMac - one query for a batch of MACs instead of one
+        `getByMac()` call per MAC, for a caller that needs to cross-reference
+        several MACs against known devices in a single pass (e.g. WIFICANARY's
+        known-device-turned-rogue check)."""
+        macs = [m for m in dict.fromkeys(macs) if m]
+        if not macs:
+            return {}
+        placeholders = ",".join("?" for _ in macs)
+        rows = self._fetchall(f"SELECT * FROM Devices WHERE devMac IN ({placeholders})", tuple(macs))
+        return {row["devMac"].lower(): row for row in rows}
+
     def exists(self, devGUID):
         row = self._fetchone("""
             SELECT COUNT(*) as count FROM Devices WHERE devGUID = ?
@@ -86,6 +127,62 @@ class DeviceInstance:
         return self._fetchone("""
             SELECT * FROM Devices WHERE devLastIP = ?
         """, (ip,))
+
+    def getAllByName(self, name):
+        """Return every device whose devName matches (case-insensitive) - devName has
+        no column-level collation, so COLLATE NOCASE is explicit here, unlike devMac."""
+        return self._fetchall("""
+            SELECT * FROM Devices WHERE devName = ? COLLATE NOCASE
+        """, (name,))
+
+    def queryByConditions(self, conditions):
+        """Query Devices using a list of condition dicts.
+
+        Each condition dict must have ``field``, ``operator``, and ``value`` keys.
+        Supported operators: ``equals``, ``not_equals``, ``contains``, ``not_contains``.
+
+        Returns a list of device dicts (may be empty).  Only fields present in
+        the Devices schema are accepted; unrecognised fields are skipped with a
+        warning to prevent SQL injection.
+        """
+        clauses = []
+        params = []
+
+        for cond in conditions:
+            field = cond.get("field", "")
+            operator = cond.get("operator", "")
+            value = cond.get("value", "")
+
+            if field not in VALID_DEVICE_COLUMNS:
+                mylog("none", [f"[WF] queryByConditions: unknown field '{field}' — skipped"])
+                continue
+
+            # Normalize MAC values before comparison to match stored format
+            if field == "devMac" and value:
+                value = normalize_mac(value)
+
+            if operator == "equals":
+                clauses.append(f"{field} = ?")
+                params.append(value)
+            elif operator == "not_equals":
+                clauses.append(f"{field} != ?")
+                params.append(value)
+            elif operator == "contains":
+                clauses.append(f"{field} LIKE ?")
+                params.append(f"%{value}%")
+            elif operator == "not_contains":
+                clauses.append(f"{field} NOT LIKE ?")
+                params.append(f"%{value}%")
+            else:
+                mylog("none", [f"[WF] queryByConditions: unsupported operator '{operator}' — skipped"])
+                continue
+
+        if not clauses:
+            mylog("none", ["[WF] queryByConditions: no valid conditions — returning empty result"])
+            return []
+
+        where = " AND ".join(clauses)
+        return self._fetchall(f"SELECT * FROM Devices WHERE {where}", tuple(params))
 
     def search(self, query):
         like = f"%{query}%"
@@ -148,19 +245,25 @@ class DeviceInstance:
         )
 
         ports = []
+
         for o in objs:
+            try:
+                port = int(str(o.get('objectSecondaryId') or '').strip())
+            except (TypeError, ValueError):
+                continue
 
-            port = int(o.get('objectSecondaryId') or 0)
-
-            ports.append({"port": port, "service": o.get('watchedValue2', '')})
+            ports.append({
+                "port": port,
+                "service": o.get('watchedValue2', '')
+            })
 
         return ports
 
     # --- devices_endpoint.py methods (HTTP response layer) -------------------
 
-    def getAll_AsResponse(self):
+    def getAll_AsResponse(self, limit=None, offset=None):
         """Return all devices as raw data (not jsonified)."""
-        return self.getAll()
+        return self.getAll(limit, offset)
 
     def deleteDevices(self, macs):
         """
@@ -375,15 +478,16 @@ class DeviceInstance:
         # Join all sub-selects with commas
         query = "SELECT\n    " + ",\n    ".join(sub_queries)
 
-        mylog('none', [f'[getNamedTotals] query {query}'])
+        mylog('trace', [f'[getNamedTotals] query {query}'])
         json_obj = get_table_json(sql, query, parameters=None)
 
         return json_obj
 
-    def getByStatus(self, status=None):
+    def getByStatus(self, status=None, limit=None, offset=None):
         """
-        Return devices filtered by status. Returns all if no status provided.
-        Possible statuses: my, connected, favorites, new, down, archived
+        Return devices filtered by status, ordered by devMac for stable pagination.
+        Returns all matching devices if limit is omitted. Possible statuses:
+        my, connected, favorites, new, down, archived (see get_device_conditions()).
         """
         conn = get_temp_db_connection()
         sql = conn.cursor()
@@ -392,8 +496,17 @@ class DeviceInstance:
         condition = get_device_condition_by_status(status) if status else ""
 
         # Only DevicesView has devFlapping
-        query = f"SELECT * FROM DevicesView {condition}"
-        sql.execute(query)
+        query = f"SELECT * FROM DevicesView {condition} ORDER BY devMac"
+        params = []
+        if limit is not None:
+            query += " LIMIT ? OFFSET ?"
+            params.extend([limit, offset or 0])
+        elif offset is not None:
+            # SQLite's unlimited-limit form - an offset with no limit still
+            # needs a LIMIT clause for OFFSET to take effect.
+            query += " LIMIT -1 OFFSET ?"
+            params.append(offset)
+        sql.execute(query, params)
 
         table_data = []
         for row in sql.fetchall():
@@ -660,7 +773,7 @@ class DeviceInstance:
                     data.get("devLastConnection") or timeNowUTC(),
                     data.get("devFirstConnection") or timeNowUTC(),
                     data.get("devLastIP") or "",
-                    data.get("devGUID") or "",
+                    data.get("devGUID") or str(uuid.uuid4()),
                     data.get("devCustomProps") or "",
                     data.get("devSourcePlugin") or "DUMMY",
                     data.get("devForceStatus") or "dont_force",

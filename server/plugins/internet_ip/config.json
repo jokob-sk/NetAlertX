@@ -1,0 +1,835 @@
+{
+  "code_name": "internet_ip",
+  "unique_prefix": "INTRNT",
+  "plugin_type": "device_scanner",
+  "execution_order": "Layer_3",
+  "enabled": true,
+  "mapped_to_table": "CurrentScan",
+  "data_filters": [
+    {
+      "compare_column": "objectPrimaryId",
+      "compare_operator": "==",
+      "compare_field_id": "txtMacFilter",
+      "compare_js_template": "'{value}'.toString()",
+      "compare_use_quotes": true
+    }
+  ],
+  "data_source": "script",
+  "show_ui": true,
+  "localized": [
+    "display_name",
+    "description",
+    "icon"
+  ],
+  "display_name": [
+    {
+      "language_code": "en_us",
+      "string": "Internet check"
+    },
+    {
+      "language_code": "en_us",
+      "string": "Internet-Check"
+    }
+  ],
+  "icon": [
+    {
+      "language_code": "en_us",
+      "string": "<i class=\"fa-solid fa-globe\"></i>"
+    },
+    {
+      "language_code": "de_de",
+      "string": "<i class=\"fa-solid fa-globe\"></i>"
+    }
+  ],
+  "description": [
+    {
+      "language_code": "en_us",
+      "string": "A plugin to check your internet connectivity and IP."
+    },
+    {
+      "language_code": "de_de",
+      "string": "Ein Plugin zur Prüfung der Internetverbindung und externen IP."
+    }
+  ],
+  "params": [
+    {
+      "name": "prev_ip",
+      "type": "sql",
+      "value": "SELECT devLastIP FROM Devices WHERE devMac = 'Internet' "
+    },
+    {
+      "name": "INTRNT_DIG_GET_IP_ARG",
+      "type": "setting",
+      "value": "INTRNT_DIG_GET_IP_ARG",
+      "base64": true
+    }
+  ],
+  "settings": [
+    {
+      "function": "RUN",
+      "events": [
+        "run"
+      ],
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": "disabled",
+      "options": [
+        "disabled",
+        "once",
+        "schedule",
+        "always_after_scan"
+      ],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "When to run"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Cuándo ejecutar"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Wann ausführen"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "When the plugin should run. An hourly or daily <code>SCHEDULE</code> is a good option."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Wann das Plugin ausgeführt werden soll. Eine stündliche oder tägliche <code>SCHEDULE</code> wird empfohlen."
+        }
+      ]
+    },
+    {
+      "function": "CMD",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "readonly": "true"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": "python3 /app/server/plugins/internet_ip/script.py prev_ip={prev_ip} INTRNT_DIG_GET_IP_ARG={INTRNT_DIG_GET_IP_ARG}",
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Command"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Comando"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Befehl"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Command to run. This can not be changed"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Comando a ejecutar. Esto no se puede cambiar"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Befehl zum Ausführen. Dies kann nicht geändert werden"
+        }
+      ]
+    },
+    {
+      "function": "DIG_GET_IP_ARG",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": "-4 myip.opendns.com @resolver1.opendns.com",
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Internet IP discovery"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Descubrir de IP de Internet"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Erkennung externer IP (\"Internet IP\")"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Change the <a href=\"https://linux.die.net/man/1/dig\" target=\"_blank\">dig utility</a> arguments if you have issues resolving your Internet IP. Arguments are added at the end of the following command: <code>dig +short </code>. Tested with: <br/> <ul> <li><code>@ns1.google.com -t txt o-o.myaddr.l.google.com</code></li><li> <code>-4 myip.opendns.com @resolver1.opendns.com</code></li></ul>"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Cambie los argumentos de la <a href=\"https://linux.die.net/man/1/dig\" target=\"_blank\">utilidad de dig</a> si tiene problemas para resolver su IP de Internet. Los argumentos se agregan al final del siguiente comando: <code>dig +short </code>."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Ändere die Argumente des <a href=\"https://linux.die.net/man/1/dig\" target=\"_blank\">dig Dienstprogramms</a>, wenn Probleme beim Auflösen der externen IP auftreten. Argumente werden an das Ende des folgenden Befehls angehängt: <code>dig +short </code>."
+        }
+      ]
+    },
+    {
+      "function": "RUN_SCHD",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "span",
+            "elementOptions": [
+              {
+                "cssClasses": "input-group-addon validityCheck"
+              },
+              {
+                "getStringKey": "Gen_ValidIcon"
+              }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "focusout": "validateRegex(this)"
+              },
+              {
+                "base64Regex": "Xig/OlwqfCg/OlswLTldfFsxLTVdWzAtOV18WzAtOV0rLVswLTldKyg/Oi9bMC05XSspP3xcKi9bMC05XSspKSg/OiwoPzpbMC05XXxbMS01XVswLTldfFswLTldKy1bMC05XSsoPzovWzAtOV0rKT98XCovWzAtOV0rKSkqXHMrKD86XCp8KD86WzAtOV18MVswLTldfDJbMC0zXXxbMC05XSstWzAtOV0rKD86L1swLTldKyk/fFwqL1swLTldKykpKD86LCg/OlswLTldfDFbMC05XXwyWzAtM118WzAtOV0rLVswLTldKyg/Oi9bMC05XSspP3xcKi9bMC05XSspKSpccysoPzpcKnwoPzpbMS05XXxbMTJdWzAtOV18M1swMV18WzAtOV0rLVswLTldKyg/Oi9bMC05XSspP3xcKi9bMC05XSspKSg/OiwoPzpbMS05XXxbMTJdWzAtOV18M1swMV18WzAtOV0rLVswLTldKyg/Oi9bMC05XSspP3xcKi9bMC05XSspKSpccysoPzpcKnwoPzpbMS05XXwxWzAtMl18WzAtOV0rLVswLTldKyg/Oi9bMC05XSspP3xcKi9bMC05XSspKSg/OiwoPzpbMS05XXwxWzAtMl18WzAtOV0rLVswLTldKyg/Oi9bMC05XSspP3xcKi9bMC05XSspKSpccysoPzpcKnwoPzpbMC02XXxbMC02XS1bMC02XSg/Oi9bMC05XSspP3xcKi9bMC05XSspKSg/OiwoPzpbMC02XXxbMC02XS1bMC02XSg/Oi9bMC05XSspP3xcKi9bMC05XSspKSok"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": "*/5 * * * *",
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Schedule"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Schedule"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Zeitplan"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Only enabled if you select <code>schedule</code> in the <a href=\"#INTRNT_RUN\"><code>INTRNT_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes. It's recommended to use the same schedule interval for all plugins responsible for discovering new devices."
+        },
+        {
+          "language_code": "es_es",
+          "string": "Solo está habilitado si selecciona <code>schedule</code> en la configuración <a href=\"#INTRNT_RUN\"><code>INTRNT_RUN</code></a>. Asegúrese de ingresar la programación en el formato similar a cron correcto (por ejemplo, valide en <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). Por ejemplo, ingresar <code>0 4 * * *</code> ejecutará el escaneo después de las 4 a.m. en el <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</ código> que configuró arriba</a>. Se ejecutará la PRÓXIMA vez que pase el tiempo."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Nur aktiv, wenn <code>schedule</code> in der <a href=\"#INTRNT_RUN\"><code>INTRNT_RUN</code>Einstellung</a> ausgewählt wurde. Sichergehen, dass das Intervall in einem korrekten cron-ähnlichen Format angegeben wurde (z.B. auf <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a> testen). <code>0 4 * * *</code> würde den Scan täglich um 4 Uhr in der <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\">oben ausgewählten <code>TIMEZONE</code></a> starten. Wird erst beim NÄCHSTEN Intervall ausgeführt. <br/>Es wird empfohlen, das Intervall aller Plugins, welche nach neuen Geräten suchen, auf den gleichen Wert zu setzen."
+        }
+      ]
+    },
+    {
+      "function": "RUN_TIMEOUT",
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "type": "number"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": 30,
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Run timeout"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Tiempo límite de ejecución"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Zeitlimit"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Maximum time in seconds to wait for the script to finish. If this time is exceeded the script is aborted."
+        },
+        {
+          "language_code": "es_es",
+          "string": "Tiempo máximo en segundos para esperar a que finalice el script. Si se supera este tiempo, el script se cancela."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Maximale Zeit in Sekunden, die auf den Abschluss des Skripts gewartet werden soll. Bei Überschreitung dieser Zeit wird das Skript abgebrochen."
+        }
+      ]
+    },
+    {
+      "function": "RETRIES",
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "type": "number"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": 3,
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Retries"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Number of retries before Internet is marked as unreachable. Exponential backoff strategy is used between tries (1s - 1st retry, 2s - 2nd retry, etc)."
+        }
+      ]
+    },
+    {
+      "function": "WATCH",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [
+              {
+                "multiple": "true",
+                "orderable": "true"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": [
+        "watchedValue1"
+      ],
+      "options": [
+        "watchedValue1",
+        "watchedValue2",
+        "watchedValue3",
+        "watchedValue4"
+      ],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Watched"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Visto"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Überwacht"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Send a notification if selected values change. Use <code>CTRL + Click</code> to select/deselect. <ul> <li><code>watchedValue1</code> is Previous IP (not recommended)</li><li><code>watchedValue2</code> unused</li><li><code>watchedValue3</code> unused </li><li><code>watchedValue4</code> type </li></ul>"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Sende eine Benachrichtigung, wenn ein ausgwählter Wert sich ändert. <code>STRG + klicken</code> zum aus-/abwählen. <ul> <li><code>watchedValue1</code> ist die Vorige IP (nicht empfohlen)</li><li><code>watchedValue2</code> ist nicht in Verwendung</li><li><code>watchedValue3</code> ist nicht in Verwendung </li><li><code>watchedValue4</code> ist nicht in Verwendung </li></ul>"
+        }
+      ]
+    },
+    {
+      "function": "REPORT_ON",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [
+              {
+                "multiple": "true",
+                "orderable": "true"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": [
+        "new",
+        "watched-changed"
+      ],
+      "options": [
+        "new",
+        "watched-changed",
+        "watched-not-changed",
+        "missing-in-last-scan"
+      ],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Report on"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Informar sobre"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Benachrichtige wenn"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Send a notification only on these statuses. <code>new</code> means a new unique (unique combination of PrimaryId and SecondaryId) object was discovered. <code>watched-changed</code> means that selected <code>watchedValueN</code> columns changed."
+        },
+        {
+          "language_code": "es_es",
+          "string": "Envíe una notificación solo en estos estados. <code>new</code> significa que se descubrió un nuevo objeto único (una combinación única de PrimaryId y SecondaryId). <code>watched-changed</code> significa que las columnas <code>watchedValueN</code> seleccionadas cambiaron."
+        },
+        {
+          "language_code": "de_de",
+          "string": "Benachrichtige nur bei diesen Status. <code>new</code> bedeutet ein neues eindeutiges (einzigartige Kombination aus PrimaryId und SecondaryId) Objekt wurde erkennt. <code>watched-changed</code> bedeutet eine ausgewählte <code>watchedValueN</code>-Spalte hat sich geändert."
+        }
+      ]
+    },
+    {
+      "function": "SET_ALWAYS",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [
+              {
+                "multiple": "true",
+                "orderable": "true"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": [
+        "devMac",
+        "devLastIP"
+      ],
+      "options": [
+        "devMac",
+        "devLastIP"
+      ],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Set always columns"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "These columns are treated as authoritative and will overwrite existing values, including those set by other plugins, unless the current value was explicitly set by the user (<code>Source = USER</code> or <code>Source = LOCKED</code>)."
+        }
+      ]
+    },
+    {
+      "function": "SET_EMPTY",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [
+              {
+                "multiple": "true",
+                "orderable": "true"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": [],
+      "options": [
+        "devMac",
+        "devLastIP",
+        "devType",
+        "devSourcePlugin"
+      ],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Set empty columns"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "These columns are only overwritten if they are empty (<code>NULL</code> / empty string) or if their Source is set to <code>NEWDEV</code>"
+        }
+      ]
+    }
+  ],
+  "database_column_definitions": [
+    {
+      "column": "index",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "none",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Index"
+        }
+      ]
+    },
+    {
+      "column": "objectPrimaryId",
+      "mapped_to_column": "scanMac",
+      "css_classes": "col-sm-3",
+      "show": true,
+      "type": "device_name_mac",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "MAC (name)"
+        },
+        {
+          "language_code": "es_es",
+          "string": "MAC"
+        },
+        {
+          "language_code": "de_de",
+          "string": "MAC"
+        }
+      ]
+    },
+    {
+      "column": "objectSecondaryId",
+      "mapped_to_column": "scanLastIP",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "device_ip",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "IP"
+        },
+        {
+          "language_code": "es_es",
+          "string": "IP"
+        },
+        {
+          "language_code": "de_de",
+          "string": "IP"
+        }
+      ]
+    },
+    {
+      "column": "watchedValue1",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Extra"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Extra"
+        }
+      ]
+    },
+    {
+      "column": "watchedValue2",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "textarea_readonly",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Response"
+        }
+      ],
+      "allow_raw_text": true
+    },
+    {
+      "column": "watchedValue3",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Retries needed"
+        }
+      ]
+    },
+    {
+      "column": "watchedValue4",
+      "mapped_to_column": "scanType",
+      "css_classes": "col-sm-2",
+      "show": false,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Type"
+        }
+      ]
+    },
+    {
+      "column": "Dummy",
+      "mapped_to_column": "scanSourcePlugin",
+      "mapped_to_column_data": {
+        "value": "INTRNT"
+      },
+      "css_classes": "col-sm-2",
+      "show": false,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Scan method"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Método de escaneo"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Scanmethode"
+        }
+      ]
+    },
+    {
+      "column": "dateTimeCreated",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Created"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Creado"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Erstellt"
+        }
+      ]
+    },
+    {
+      "column": "dateTimeChanged",
+      "mapped_to_column": "scanLastConnection",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Changed"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Cambiado"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Geändert"
+        }
+      ]
+    },
+    {
+      "column": "status",
+      "css_classes": "col-sm-1",
+      "show": true,
+      "type": "replace",
+      "default_value": "",
+      "options": [
+        {
+          "equals": "watched-not-changed",
+          "replacement": "<div style='text-align:center'><i class='fa-solid fa-square-check'></i><div></div>"
+        },
+        {
+          "equals": "watched-changed",
+          "replacement": "<div style='text-align:center'><i class='fa-solid fa-triangle-exclamation'></i></div>"
+        },
+        {
+          "equals": "new",
+          "replacement": "<div style='text-align:center'><i class='fa-solid fa-circle-plus'></i></div>"
+        },
+        {
+          "equals": "missing-in-last-scan",
+          "replacement": "<div style='text-align:center'><i class='fa-solid fa-question'></i></div>"
+        }
+      ],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Status"
+        },
+        {
+          "language_code": "es_es",
+          "string": "Estado"
+        },
+        {
+          "language_code": "de_de",
+          "string": "Status"
+        }
+      ]
+    }
+  ]
+}

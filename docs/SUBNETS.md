@@ -34,6 +34,7 @@ You need to specify the network interface and the network mask. You can also con
 > If the timeout is too short, you may see timeout errors in the log. To prevent the application from hanging due to unresponsive plugins, scans are canceled when they exceed the timeout limit.
 >
 > To fix this:
+>
 > - Reduce the subnet size (e.g., change `/16` to `/24`).
 > - Increase the timeout (e.g., set `ARPSCAN_RUN_TIMEOUT` to `300` for a 5-minute timeout).
 > - Extend the scan interval (e.g., set `ARPSCAN_RUN_SCHD` to `*/10 * * * *` to scan every 10 minutes).

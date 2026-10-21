@@ -1,0 +1,587 @@
+{
+  "code_name": "pihole_monitor",
+  "unique_prefix": "PIHOLEMON",
+  "plugin_type": "device_scanner",
+  "execution_order": "Layer_0",
+  "enabled": true,
+  "data_source": "script",
+  "mapped_to_table": "CurrentScan",
+  "data_filters": [
+    {
+      "compare_column": "objectPrimaryId",
+      "compare_operator": "==",
+      "compare_field_id": "txtMacFilter",
+      "compare_js_template": "'{value}'.toString()",
+      "compare_use_quotes": true
+    }
+  ],
+  "show_ui": true,
+  "localized": ["display_name", "description", "icon"],
+  "display_name": [
+    {
+      "language_code": "en_us",
+      "string": "Pi-hole Monitor"
+    }
+  ],
+  "description": [
+    {
+      "language_code": "en_us",
+      "string": "Flags devices with a spike in blocked DNS queries - a common malware/compromised-device signature - and imports devices from one or two Pi-hole v6 instances."
+    }
+  ],
+  "icon": [
+    {
+      "language_code": "en_us",
+      "string": "<i class=\"fa-solid fa-shield-halved\"></i>"
+    }
+  ],
+  "params": [],
+  "settings": [
+    {
+      "function": "RUN",
+      "events": ["run"],
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "select", "elementOptions": [], "transformers": [] }
+        ]
+      },
+      "default_value": "disabled",
+      "options": [
+        "disabled",
+        "once",
+        "schedule",
+        "always_after_scan",
+        "on_new_device",
+        "on_notification"
+      ],
+      "localized": ["name", "description"],
+      "name": [{ "language_code": "en_us", "string": "When to run" }],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "<code>schedule</code> is recommended over <code>always_after_scan</code>."
+        }
+      ]
+    },
+    {
+      "function": "RUN_SCHD",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "span",
+            "elementOptions": [
+              { "cssClasses": "input-group-addon validityCheck" },
+              { "getStringKey": "Gen_ValidIcon" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "input",
+            "elementOptions": [
+              { "focusout": "validateRegex(this)" },
+              { "base64Regex": "Xig/OlwqfCg/OlswLTldfFsxLTVdWzAtOV18WzAtOV0rLVswLTldKyg/Oi9bMC05XSspP3xcKi9bMC05XSspKSg/OiwoPzpbMC05XXxbMS01XVswLTldfFswLTldKy1bMC05XSsoPzovWzAtOV0rKT98XCovWzAtOV0rKSkqXHMrKD86XCp8KD86WzAtOV18MVswLTldfDJbMC0zXXxbMC05XSstWzAtOV0rKD86L1swLTldKyk/fFwqL1swLTldKykpKD86LCg/OlswLTldfDFbMC05XXwyWzAtM118WzAtOV0rLVswLTldKyg/Oi9bMC05XSspP3xcKi9bMC05XSspKSpccysoPzpcKnwoPzpbMS05XXxbMTJdWzAtOV18M1swMV18WzAtOV0rLVswLTldKyg/Oi9bMC05XSspP3xcKi9bMC05XSspKSg/OiwoPzpbMS05XXxbMTJdWzAtOV18M1swMV18WzAtOV0rLVswLTldKyg/Oi9bMC05XSspP3xcKi9bMC05XSspKSpccysoPzpcKnwoPzpbMS05XXwxWzAtMl18WzAtOV0rLVswLTldKyg/Oi9bMC05XSspP3xcKi9bMC05XSspKSg/OiwoPzpbMS05XXwxWzAtMl18WzAtOV0rLVswLTldKyg/Oi9bMC05XSspP3xcKi9bMC05XSspKSpccysoPzpcKnwoPzpbMC02XXxbMC02XS1bMC02XSg/Oi9bMC05XSspP3xcKi9bMC05XSspKSg/OiwoPzpbMC02XXxbMC02XS1bMC02XSg/Oi9bMC05XSspP3xcKi9bMC05XSspKSok" }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": "*/5 * * * *",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [{ "language_code": "en_us", "string": "Schedule" }],
+      "description": [
+        { "language_code": "en_us", "string": "Only used when <code>RUN</code> is <code>schedule</code>. Default: every 5 minutes." }
+      ]
+    },
+    {
+      "function": "SET_ALWAYS",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          { "elementType": "select", "elementOptions": [{ "multiple": "true", "orderable": "true" }], "transformers": [] }
+        ]
+      },
+      "default_value": ["devMac", "devLastIP", "devName", "devVendor"],
+      "options": ["devMac", "devLastIP", "devName", "devVendor"],
+      "localized": ["name", "description"],
+      "name": [{ "language_code": "en_us", "string": "Set always columns" }],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "These columns are treated as authoritative and overwrite existing values (including those set by other plugins), unless the current value was set by the user (<code>Source = USER</code> or <code>LOCKED</code>)."
+        }
+      ]
+    },
+    {
+      "function": "SET_EMPTY",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          { "elementType": "select", "elementOptions": [{ "multiple": "true", "orderable": "true" }], "transformers": [] }
+        ]
+      },
+      "default_value": [],
+      "options": ["devMac", "devLastIP", "devName", "devVendor", "devType", "devSourcePlugin"],
+      "localized": ["name", "description"],
+      "name": [{ "language_code": "en_us", "string": "Set empty columns" }],
+      "description": [
+        { "language_code": "en_us", "string": "These columns are only overwritten if they are empty or their Source is <code>NEWDEV</code>." }
+      ]
+    },
+    {
+      "function": "PRIMARY_URL",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "input", "elementOptions": [], "transformers": [] }
+        ]
+      },
+      "default_value": "",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [{ "language_code": "en_us", "string": "Primary Pi-hole URL" }],
+      "description": [
+        { "language_code": "en_us", "string": "Required. URL to your primary Pi-hole instance, for example <code>http://pi.hole:8080/</code>." }
+      ]
+    },
+    {
+      "function": "PRIMARY_PASSWORD",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "input", "elementOptions": [{ "type": "password" }], "transformers": [] }
+        ]
+      },
+      "default_value": "",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [{ "language_code": "en_us", "string": "Primary Pi-hole password" }],
+      "description": [
+        { "language_code": "en_us", "string": "Web UI password or App Password for the primary Pi-hole. A dedicated App Password is recommended over the admin login password." }
+      ]
+    },
+    {
+      "function": "PRIMARY_VERIFY_SSL",
+      "type": {
+        "dataType": "boolean",
+        "elements": [
+          { "elementType": "input", "elementOptions": [{ "type": "checkbox" }], "transformers": [] }
+        ]
+      },
+      "default_value": true,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [{ "language_code": "en_us", "string": "Primary: Verify SSL" }],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Only relevant for an <code>https://</code> primary URL. Disabling this accepts any certificate, including one from an attacker on the network - install the self-signed CA as trusted instead if possible. Leave on unless you understand the trade-off."
+        }
+      ]
+    },
+    {
+      "function": "SECONDARY_URL",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "input", "elementOptions": [], "transformers": [] }
+        ]
+      },
+      "default_value": "",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [{ "language_code": "en_us", "string": "Secondary Pi-hole URL (optional)" }],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Optional. Leave empty if you only run one Pi-hole - most setups do. If set, this second instance (typically a failover/secondary resolver) is imported and its blocked-query counts combined with the primary's, so a device can't dodge detection by using the less-watched resolver, e.g. <code>http://192.168.1.11:8080/</code>."
+        }
+      ]
+    },
+    {
+      "function": "SECONDARY_PASSWORD",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "input", "elementOptions": [{ "type": "password" }], "transformers": [] }
+        ]
+      },
+      "default_value": "",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [{ "language_code": "en_us", "string": "Secondary Pi-hole password (optional)" }],
+      "description": [
+        { "language_code": "en_us", "string": "Only used if Secondary Pi-hole URL is set." }
+      ]
+    },
+    {
+      "function": "SECONDARY_VERIFY_SSL",
+      "type": {
+        "dataType": "boolean",
+        "elements": [
+          { "elementType": "input", "elementOptions": [{ "type": "checkbox" }], "transformers": [] }
+        ]
+      },
+      "default_value": true,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [{ "language_code": "en_us", "string": "Secondary: Verify SSL" }],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Only relevant for an <code>https://</code> secondary URL. Same trade-off as the primary instance's Verify SSL - independent because primary and secondary can each be on http:// or https:// separately."
+        }
+      ]
+    },
+    {
+      "function": "GET_OFFLINE",
+      "type": {
+        "dataType": "boolean",
+        "elements": [
+          { "elementType": "input", "elementOptions": [{ "type": "checkbox" }], "transformers": [] }
+        ]
+      },
+      "default_value": false,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [{ "language_code": "en_us", "string": "Import offline devices" }],
+      "description": [
+        { "language_code": "en_us", "string": "If enabled, devices not seen recently (see below) are still imported/updated." }
+      ]
+    },
+    {
+      "function": "CONSIDER_ONLINE",
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          { "elementType": "input", "elementOptions": [{ "type": "number" }], "transformers": [] }
+        ]
+      },
+      "default_value": 300,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [{ "language_code": "en_us", "string": "Online if last seen (seconds)" }],
+      "description": [
+        { "language_code": "en_us", "string": "Time in seconds to consider a device online." }
+      ]
+    },
+    {
+      "function": "API_MAXCLIENTS",
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          { "elementType": "input", "elementOptions": [{ "type": "number" }], "transformers": [] }
+        ]
+      },
+      "default_value": 500,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [{ "language_code": "en_us", "string": "Max clients per instance" }],
+      "description": [
+        { "language_code": "en_us", "string": "Maximum number of devices requested from each Pi-hole instance's device list." }
+      ]
+    },
+    {
+      "function": "FAKE_MAC",
+      "type": {
+        "dataType": "boolean",
+        "elements": [
+          { "elementType": "input", "elementOptions": [{ "type": "checkbox" }], "transformers": [] }
+        ]
+      },
+      "default_value": false,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [{ "language_code": "en_us", "string": "Generate fake MAC from IP" }],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Devices with a non-standard hardware address are skipped unless enabled, in which case a deterministic fake MAC is derived from the IP - accept the data-consistency trade-off that implies."
+        }
+      ]
+    },
+    {
+      "function": "GET_OWNER",
+      "type": {
+        "dataType": "boolean",
+        "elements": [
+          { "elementType": "input", "elementOptions": [{ "type": "checkbox" }], "transformers": [] }
+        ]
+      },
+      "default_value": true,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [{ "language_code": "en_us", "string": "Look up device owner" }],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "If enabled, looks up an already-known device's owner (<code>devOwner</code>) - device import itself never depends on this. Disable if you don't use device owners or don't want the extra lookup."
+        }
+      ]
+    },
+    {
+      "function": "MULTIPLIER",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "input", "elementOptions": [{ "type": "number" }], "transformers": [] }
+        ]
+      },
+      "default_value": "4",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [{ "language_code": "en_us", "string": "Anomaly multiplier" }],
+      "description": [
+        { "language_code": "en_us", "string": "Flag a device when the blocked queries it generated since the last run exceed this many times its own recent per-run average. Starting value, tune after a week of real data." }
+      ]
+    },
+    {
+      "function": "MIN_BLOCKED",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "input", "elementOptions": [{ "type": "number" }], "transformers": [] }
+        ]
+      },
+      "default_value": "20",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [{ "language_code": "en_us", "string": "Minimum blocked queries" }],
+      "description": [
+        { "language_code": "en_us", "string": "Ignore devices below this many blocked queries since the last run, even if the multiplier is exceeded (e.g. 1 -> 5 is technically 5x but is statistical noise). Depends on your Schedule - a more frequent schedule means fewer blocked queries accumulate per run, so a lower value may be needed." }
+      ]
+    },
+    {
+      "function": "HISTORY_DAYS",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "input", "elementOptions": [{ "type": "number" }], "transformers": [] }
+        ]
+      },
+      "default_value": "7",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [{ "language_code": "en_us", "string": "History window (days)" }],
+      "description": [
+        { "language_code": "en_us", "string": "How many days of recent runs to keep per device for the rolling baseline. A real time window, not a sample count - it means the same thing regardless of your <code>Schedule</code> above, and a faster schedule only adds more data points inside it. Default 7 (one week)." }
+      ]
+    },
+    {
+      "function": "WATCH",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          { "elementType": "select", "elementOptions": [{ "multiple": "true", "orderable": "true" }], "transformers": [] }
+        ]
+      },
+      "default_value": ["watchedValue4"],
+      "options": ["watchedValue1", "watchedValue2", "watchedValue3", "watchedValue4"],
+      "localized": ["name", "description"],
+      "name": [{ "language_code": "en_us", "string": "Watched" }],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Which columns count as \"changed\" for notification purposes. Default is <code>watchedValue4</code> (the anomaly/normal flag) only - <code>watchedValue3</code> (raw blocked-query count) fluctuates every run by design and would otherwise notify constantly."
+        }
+      ]
+    },
+    {
+      "function": "REPORT_ON",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          { "elementType": "select", "elementOptions": [{ "multiple": "true", "orderable": "true" }], "transformers": [] }
+        ]
+      },
+      "default_value": ["watched-changed"],
+      "options": ["new", "watched-changed", "watched-not-changed", "missing-in-last-scan"],
+      "localized": ["name", "description"],
+      "name": [{ "language_code": "en_us", "string": "Report on" }],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Which statuses generate a notification, dispatched through whichever publisher(s) you already have enabled under Settings (ntfy, Apprise, email, ...) - this plugin never sends notifications on its own. Default: only <code>watched-changed</code>, i.e. when a device flips between normal and anomaly."
+        }
+      ]
+    },
+    {
+      "function": "CMD",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          { "elementType": "input", "elementOptions": [{ "readonly": "true" }], "transformers": [] }
+        ]
+      },
+      "default_value": "python3 /app/server/plugins/pihole_monitor/pihole_monitor.py",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [{ "language_code": "en_us", "string": "Command" }],
+      "description": [{ "language_code": "en_us", "string": "Command to run. This can not be changed." }]
+    },
+    {
+      "function": "RUN_TIMEOUT",
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          { "elementType": "input", "elementOptions": [{ "type": "number" }], "transformers": [] }
+        ]
+      },
+      "default_value": 60,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [{ "language_code": "en_us", "string": "Run timeout" }],
+      "description": [
+        { "language_code": "en_us", "string": "Maximum time in seconds to wait for the script to finish (covers device list + stats for up to two Pi-hole instances, plus optional owner lookups)." }
+      ]
+    }
+  ],
+  "database_column_definitions": [
+    {
+      "column": "index",
+      "css_classes": "col-sm-1",
+      "show": true,
+      "type": "none",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [{ "language_code": "en_us", "string": "Index" }]
+    },
+    {
+      "column": "objectPrimaryId",
+      "mapped_to_column": "scanMac",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "device_name_mac",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [{ "language_code": "en_us", "string": "Device" }]
+    },
+    {
+      "column": "objectSecondaryId",
+      "mapped_to_column": "scanLastIP",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "device_ip",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [{ "language_code": "en_us", "string": "IP" }]
+    },
+    {
+      "column": "watchedValue1",
+      "mapped_to_column": "scanName",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [{ "language_code": "en_us", "string": "Name" }]
+    },
+    {
+      "column": "watchedValue2",
+      "mapped_to_column": "scanVendor",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [{ "language_code": "en_us", "string": "Vendor" }]
+    },
+    {
+      "column": "watchedValue3",
+      "css_classes": "col-sm-1",
+      "show": true,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [{ "language_code": "en_us", "string": "Blocked queries" }]
+    },
+    {
+      "column": "watchedValue4",
+      "css_classes": "col-sm-1",
+      "show": true,
+      "type": "replace",
+      "default_value": "",
+      "options": [
+        {
+          "equals": "anomaly",
+          "replacement": "<div style='text-align:center'><i class='fa-solid fa-triangle-exclamation'></i></div>"
+        },
+        {
+          "equals": "normal",
+          "replacement": "<div style='text-align:center'><i class='fa-solid fa-circle-check'></i></div>"
+        }
+      ],
+      "localized": ["name"],
+      "name": [{ "language_code": "en_us", "string": "Anomaly?" }]
+    },
+    {
+      "column": "extra",
+      "css_classes": "col-sm-3",
+      "show": true,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [{ "language_code": "en_us", "string": "Detail" }]
+    },
+    {
+      "column": "Dummy",
+      "mapped_to_column": "scanSourcePlugin",
+      "mapped_to_column_data": {
+        "value": "PIHOLEMON"
+      },
+      "css_classes": "col-sm-2",
+      "show": false,
+      "type": "none",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [{ "language_code": "en_us", "string": "N/A" }]
+    },
+    {
+      "column": "dateTimeChanged",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": ["name"],
+      "name": [{ "language_code": "en_us", "string": "Last checked" }]
+    },
+    {
+      "column": "status",
+      "css_classes": "col-sm-1",
+      "show": true,
+      "type": "replace",
+      "default_value": "",
+      "options": [
+        {
+          "equals": "watched-not-changed",
+          "replacement": "<div style='text-align:center'><i class='fa-solid fa-square-check'></i><div></div>"
+        },
+        {
+          "equals": "watched-changed",
+          "replacement": "<div style='text-align:center'><i class='fa-solid fa-triangle-exclamation'></i></div>"
+        },
+        {
+          "equals": "new",
+          "replacement": "<div style='text-align:center'><i class='fa-solid fa-circle-plus'></i></div>"
+        },
+        {
+          "equals": "missing-in-last-scan",
+          "replacement": "<div style='text-align:center'><i class='fa-solid fa-question'></i></div>"
+        }
+      ],
+      "localized": ["name"],
+      "name": [{ "language_code": "en_us", "string": "Status" }]
+    }
+  ]
+}

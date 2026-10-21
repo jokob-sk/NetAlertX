@@ -2,17 +2,24 @@
   //------------------------------------------------------------------------------
   // check if authenticated
   require_once  $_SERVER['DOCUMENT_ROOT'] . '/php/templates/security.php';
+
+  // Capture shared sub-tab skeleton template for JS injection
+  ob_start(); require $_SERVER['DOCUMENT_ROOT'] . '/php/templates/skel_tab_plugins_table.php'; $skelPluginsTable = ob_get_clean();
 ?>
 
 <!-- Main content ---------------------------------------------------------- -->
-<section class="content">
+<?php require 'php/templates/skel_plugins.php'; ?>
+<section class="content pluginsCore">
+  <span class="helpIcon"> 
+    <a target="_blank" href="https://docs.netalertx.com/PLUGINS_OVERVIEW"><i class="fa fa-circle-question"></i></a>
+  </span>
   <div class="plugin-filters hidden" >
     <div class="input-group col-sm-12">
       <label class="col-sm-3"><?= lang('Plugins_Filters_Mac');?></label>
       <input class="col-sm-3" id="txtMacFilter" type="text" value="--" readonly>
     </div>
   </div>
-  <div class="nav-tabs-custom plugin-content" style="margin-bottom: 0px;">
+  <div class="nav-tabs-custom plugin-content">
 
     <ul id="tabs-location" class="nav nav-tabs col-sm-2 ">
       <!-- PLACEHOLDER -->
@@ -26,6 +33,9 @@
 </section>
 
 <script>
+
+// Sub-tab skeleton HTML (server-rendered, shared across Objects / Events / History panes)
+const skelPluginsTable = <?= json_encode($skelPluginsTable) ?>;
 
 // Global variable to track the last MAC we initialized with
 let lastMac = null;
@@ -73,156 +83,18 @@ function initFields() {
     // Update the lastMac so we don't reload unnecessarily
     lastMac = currentVal;
 
-    // Trigger data loading based on new MAC
-    getData();
+    // Wait for full app init (strings + plugin strings) before rendering tabs.
+    // Without this guard getString() returns undefined during cold init.
+    callAfterAppInitialized(getData);
   } else if((currentVal === "--" || currentVal == null  ) && keepUpdating)
   {
     $("#txtMacFilter").val("--"); // need to set this as filters are using this later on
     keepUpdating = false; // stop updates
-    getData();
+    // Wait for full app init (strings + plugin strings) before rendering tabs.
+    // Without this guard getString() returns undefined during cold init.
+    callAfterAppInitialized(getData);
   }
 }
-
-// -----------------------------------------------------------------------------
-// Get form control according to the column definition from config.json > database_column_definitions
-function getFormControl(dbColumnDef, value, index) {
-
-  result = ''
-
-  // Check if mapped_to_column_data exists and has a value to override the supplied value which is most likely `undefined`
-  if (dbColumnDef.mapped_to_column_data && dbColumnDef.mapped_to_column_data.value) {
-    value = dbColumnDef.mapped_to_column_data.value;
-  }
-
-
-  result = processColumnValue(dbColumnDef, value, index, dbColumnDef.type)
-
-  return result;
-}
-
-// -----------------------------------------------------------------------------
-// Process column value
-function processColumnValue(dbColumnDef, value, index, type) {
-  if (type.includes('.')) {
-  const typeParts = type.split('.');
-
-  // recursion
-  for (const typePart of typeParts) {
-    value = processColumnValue(dbColumnDef, value, index, typePart)
-  }
-
-  } else{
-  // pick form control based on the supplied type
-  switch(type)
-  {
-    case 'label':
-      value = `<span>${value}<span>`;
-      break;
-    case 'none':
-      value = `${value}`;
-      break;
-    case 'textarea_readonly':
-      value = `<textarea cols="70" rows="3" wrap="off" readonly style="white-space: pre-wrap;">
-          ${value.replace(/^b'(.*)'$/gm, '$1').replace(/\\n/g, '\n').replace(/\\r/g, '\r')}
-          </textarea>`;
-      break;
-    case 'textbox_save':
-
-      value = value == 'null' ? '' : value; // hide 'null' values
-
-      id = `${dbColumnDef.column}_${index}`
-
-      value =  `<span class="form-group">
-              <div class="input-group">
-                <input class="form-control" type="text" value="${value}" id="${id}" data-my-column="${dbColumnDef.column}"  data-my-index="${index}" name="${dbColumnDef.column}">
-                <span class="input-group-addon"><i class="fa fa-save pointer" onclick="genericSaveData('${id}');"></i></span>
-              </div>
-            <span>`;
-      break;
-    case 'url':
-      value = `<span><a href="${value}" target="_blank">${value}</a><span>`;
-      break;
-    case 'url_http_https':
-
-      value = `<span>
-            <a href="http://${value}" target="_blank">
-              <i class="fa fa-lock-open "></i>
-            </a>
-            /
-            <a href="https://${value}" target="_blank">
-              <i class="fa fa-lock "></i>
-            </a>
-          <span>`;
-      break;
-    case 'device_name_mac':
-      value = `<div class="text-center"> ${value}
-                <br/>
-                (${createDeviceLink(value)})
-              </div>`;
-      break;
-    case 'device_mac':
-      value = `<span class="anonymizeMac"><a href="/deviceDetails.php?mac=${value}" target="_blank">${value}</a><span>`;
-      break;
-    case 'device_ip':
-      value = `<span class="anonymizeIp"><a href="#" onclick="navigateToDeviceWithIp('${value}')" >${value}</a><span>`;
-      break;
-    case 'threshold':
-
-      valueTmp = ''
-
-      $.each(dbColumnDef.options, function(index, obj) {
-        if(Number(value) < Number(obj.maximum) && valueTmp == '')
-        {
-          valueTmp = `<div class="thresholdFormControl" style="background-color:${obj.hexColor}">${value}</div>`
-          // return;
-        }
-      });
-
-      value = valueTmp;
-
-      break;
-    case 'replace':
-      $.each(dbColumnDef.options, function(index, obj) {
-        if(value == obj.equals)
-        {
-          value = `<span title="${value}">${obj.replacement}</span>`
-        }
-      });
-      break;
-    case 'regex':
-
-      for (const option of dbColumnDef.options) {
-        if (option.type === type) {
-
-          const regexPattern = new RegExp(option.param);
-          const match = value.match(regexPattern);
-          if (match) {
-            // Return the first match
-            value =  match[0];
-
-          }
-        }
-      }
-      break;
-    case 'eval':
-
-      for (const option of dbColumnDef.options) {
-        if (option.type === type) {
-          // console.log(option.param)
-          value =  eval(option.param);
-        }
-      }
-      break;
-
-    default:
-      value = value + `<div style='text-align:center' title="${getString("Plugins_no_control")}"><i class='fa-solid fa-circle-question'></i></div>` ;
-  }
-  }
-
-  // Default behavior if no match is found
-  return value;
-}
-
 
 
 // -----------------------------------------------------------------------------
@@ -283,7 +155,7 @@ async function getData() {
     showSpinner();
     console.log("Plugins getData called");
 
-    const plugins = await fetchJson('plugins.json');
+    const plugins = await fetchPluginJson('plugins.json');
     pluginDefinitions = plugins.data;
 
     // Fetch counts BEFORE rendering tabs so we can skip empty plugins (no flicker).
@@ -294,11 +166,16 @@ async function getData() {
     generateTabs();
   } catch (err) {
     console.error("Failed to load data", err);
+    hideSpinner();
+    hidePluginsSkeleton();
   }
 }
 
-async function fetchJson(filename) {
-  const response = await fetch(`php/server/query_json.php?file=${filename}`);
+// NOTE: Named fetchPluginJson (not fetchJson) to avoid colliding with the
+// module-level fetchJson defined in cache.js, which returns res['data'] and
+// is used by cachePluginStrings() during app initialization.
+async function fetchPluginJson(filename) {
+  const response = await fetch(`php/server/query_json.php?file=${encodeURIComponent(filename)}&nocache=${Date.now()}`);
   if (!response.ok) throw new Error(`Failed to load ${filename}`);
   return await response.json();
 }
@@ -373,7 +250,7 @@ async function fetchPluginCounts(prefixes) {
 
     if (!foreignKey) {
       // ---- FAST PATH: pre-computed static JSON ----
-      const stats = await fetchJson('table_plugins_stats.json');
+      const stats = await fetchPluginJson('table_plugins_stats.json');
       rows = stats.data;
     } else {
       // ---- MAC-FILTERED PATH: single SQL via REST endpoint ----
@@ -467,6 +344,11 @@ function autoHideEmptyTabs(counts, prefixes) {
   });
 }
 
+/**
+ * Build the plugin tab headers/panes for every show_ui plugin with a
+ * non-zero object/event/history count, and wire up (re-)initialization of
+ * each one's DataTable(s) via shown.bs.tab.
+ */
 function generateTabs() {
 
   // Reset the tabs by clearing previous headers and content
@@ -498,7 +380,10 @@ function generateTabs() {
 
   // Now that ALL DOM elements exist (both <a> headers and tab panes),
   // wire up DataTable initialization: immediate for the active tab,
-  // deferred via shown.bs.tab for the rest.
+  // on every subsequent shown.bs.tab for the rest - not just the first,
+  // so revisiting a plugin tab refreshes its active sub-table instead of
+  // leaving it stuck on whatever its one-time first fetch returned
+  // (namespaced + off() first so repeat calls don't stack duplicate handlers).
   let firstVisible = true;
   visiblePlugins.forEach(pluginObj => {
     const prefix = pluginObj.unique_prefix;
@@ -507,15 +392,18 @@ function generateTabs() {
       initializeDataTables(prefix, colDefinitions, pluginObj);
       firstVisible = false;
     } else {
-      $(`a[href="#${prefix}"]`).one('shown.bs.tab', function() {
-        initializeDataTables(prefix, colDefinitions, pluginObj);
-      });
+      $(`a[href="#${prefix}"]`)
+        .off('shown.bs.tab.pluginsCore')
+        .on('shown.bs.tab.pluginsCore', function() {
+          initializeDataTables(prefix, colDefinitions, pluginObj);
+        });
     }
   });
 
   if (visiblePlugins.length === 0) {
-    $('#tabs-content-location').html(`<p class="text-muted" style="padding: 15px;">${getString('Gen_No_Data')}</p>`);
+    $('#tabs-content-location').html(`<p class="text-muted plugin-no-data">${getString('Gen_No_Data')}</p>`);
     hideSpinner();
+    hidePluginsSkeleton();
     return;
   }
 
@@ -534,6 +422,7 @@ function generateTabs() {
   }
 
   hideSpinner()
+  hidePluginsSkeleton()
 }
 
 function resetTabs() {
@@ -574,11 +463,11 @@ function createTabContent(pluginObj, assignActive, counts) {
         ${generateDataTable(prefix, 'Objects', colDefinitions)}
         ${generateDataTable(prefix, 'Events', colDefinitions)}
         ${generateDataTable(prefix, 'History', colDefinitions)}
-      </div>
-      <div class='plugins-description'>
-        ${getString(`${prefix}_description`)} <!-- Display the plugin description -->
-        <span><a href="https://github.com/netalertx/NetAlertX/tree/main/front/plugins/${pluginObj.code_name}" target="_blank">${getString('Gen_ReadDocs')}</a></span> <!-- Link to documentation -->
-      </div>
+        <div class='plugins-description'>
+          ${getString(`${prefix}_description`)} <!-- Display the plugin description -->
+          <span><a href="https://docs.netalertx.com/plugins/${pluginObj.code_name}" target="_blank">${getString('Gen_ReadDocs')}</a></span> <!-- Link to documentation -->
+        </div>
+      </div>      
     </div>
   `);
 
@@ -595,19 +484,15 @@ function generateTabNavigation(prefix, counts) {
   const evtCount  = counts ? counts.events   : '…';
   const histCount = counts ? counts.history  : '…';
 
+  const navItems = buildTabNavItems([
+    { href: `#objectsTarget_${prefix}`, icon: 'fa-cube',  label: getString('Plugins_Objects'),            badgeHtml: `<span id="objCount_${prefix}">${objCount}</span>`,   active: true },
+    { href: `#eventsTarget_${prefix}`,  icon: 'fa-bolt',  label: getString('Plugins_Unprocessed_Events'), badgeHtml: `<span id="evtCount_${prefix}">${evtCount}</span>` },
+    { href: `#historyTarget_${prefix}`, icon: 'fa-clock', label: getString('Plugins_History'),            badgeHtml: `<span id="histCount_${prefix}">${histCount}</span>` },
+  ]);
+
   return `
-    <div class="nav-tabs-custom" style="margin-bottom: 0px">
-      <ul class="nav nav-tabs">
-        <li class="active">
-          <a href="#objectsTarget_${prefix}" data-toggle="tab"><i class="fa fa-cube"></i> ${getString('Plugins_Objects')} (<span id="objCount_${prefix}">${objCount}</span>)</a>
-        </li>
-        <li>
-          <a href="#eventsTarget_${prefix}" data-toggle="tab"><i class="fa fa-bolt"></i> ${getString('Plugins_Unprocessed_Events')} (<span id="evtCount_${prefix}">${evtCount}</span>)</a>
-        </li>
-        <li>
-          <a href="#historyTarget_${prefix}" data-toggle="tab"><i class="fa fa-clock"></i> ${getString('Plugins_History')} (<span id="histCount_${prefix}">${histCount}</span>)</a>
-        </li>
-      </ul>
+    <div class="nav-tabs-custom plugin-tab-nav">
+      <ul class="nav nav-tabs">${navItems}</ul>
     </div>
   `;
 }
@@ -616,8 +501,11 @@ function generateDataTable(prefix, tableType, colDefinitions) {
   // Generate HTML for a DataTable and associated buttons for a given table type
   const headersHtml = colDefinitions.map(colDef => `<th class="${colDef.css_classes}">${getString(`${prefix}_${colDef.column}_name`)}</th>`).join('');
 
+  const skelHtml = skelPluginsTable;
+
   return `
-    <div id="${tableType.toLowerCase()}Target_${prefix}" class="tab-pane ${tableType == "Objects" ? "active":""}">
+    <div id="${tableType.toLowerCase()}Target_${prefix}" class="tab-pane plugin-tab-pane ${tableType == "Objects" ? "active":""}">
+      <div id="skel-${tableType.toLowerCase()}Target_${prefix}" class="skel-plugins-tab-pane">${skelHtml}</div>
       <table id="${tableType.toLowerCase()}Table_${prefix}" class="display table table-striped table-stretched" data-my-dbtable="Plugins_${tableType}">
         <thead><tr>${headersHtml}</tr></thead>
       </table>
@@ -629,6 +517,14 @@ function generateDataTable(prefix, tableType, colDefinitions) {
   `;
 }
 
+/**
+ * Build (or, if already built, refresh) the Objects/Events/History
+ * DataTables for one plugin - the active sub-tab immediately, the other two
+ * on their own shown.bs.tab. Safe to call more than once per prefix.
+ * @param {string} prefix - The plugin's unique_prefix.
+ * @param {object[]} colDefinitions - This plugin's visible database_column_definitions.
+ * @param {object} pluginObj - The full plugin definition from plugins.json.
+ */
 function initializeDataTables(prefix, colDefinitions, pluginObj) {
   const mac        = $("#txtMacFilter").val();
   const foreignKey = (mac && mac !== "--") ? mac : null;
@@ -639,18 +535,22 @@ function initializeDataTables(prefix, colDefinitions, pluginObj) {
     { tableId: `historyTable_${prefix}`, gqlField: 'pluginsHistory', countId: `histCount_${prefix}`, badgeId: null },
   ];
 
+  /**
+   * Build tableId's DataTable on first call; on any later call, refresh its
+   * data in place instead of no-op'ing (the whole point of this fix).
+   */
   function buildDT(tableId, gqlField, countId, badgeId) {
     if ($.fn.DataTable.isDataTable(`#${tableId}`)) {
-      return; // already initialized
+      // Already built - refresh in place (keep current page/sort) instead of
+      // leaving it stuck on whatever its first-ever fetch returned.
+      $(`#${tableId}`).DataTable().ajax.reload(null, false);
+      return;
     }
+    const skelId = `#skel-${tableId.replace('Table_', 'Target_')}`;
     $(`#${tableId}`).DataTable({
+      ...getStandardDataTableOptions(skelId),
       processing: true,
       serverSide: true,
-      paging:     true,
-      searching:  true,
-      ordering:   false,
-      pageLength: 25,
-      lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
       createdRow: function(row, data) {
         $(row).attr('data-my-index', data.index);
       },
@@ -690,10 +590,14 @@ function initializeDataTables(prefix, colDefinitions, pluginObj) {
       // This sub-tab is the currently active one — initialize immediately
       buildDT(cfg.tableId, cfg.gqlField, cfg.countId, cfg.badgeId);
     } else if ($subPane.closest('.tab-pane').length) {
-      // Defer until shown
-      $(`a[href="${href}"]`).one('shown.bs.tab', function() {
-        buildDT(cfg.tableId, cfg.gqlField, cfg.countId, cfg.badgeId);
-      });
+      // Build on first shown, refresh (via buildDT's reload branch) on every
+      // one after - namespaced + off() first since initializeDataTables()
+      // itself can now run more than once (see generateTabs()).
+      $(`a[href="${href}"]`)
+        .off('shown.bs.tab.pluginsCore')
+        .on('shown.bs.tab.pluginsCore', function() {
+          buildDT(cfg.tableId, cfg.gqlField, cfg.countId, cfg.badgeId);
+        });
     }
   });
 }
@@ -857,5 +761,18 @@ else
 {
   initFields();
 }
+
+function hidePluginsSkeleton() {
+  $('#plugins-skeleton').fadeOut(0, function() { $(this).hide(); });
+}
+
+function showPluginsSkeleton() {
+  var $skel = $('#plugins-skeleton');
+  $skel.stop(true, true).fadeIn();
+}
+
+window.addEventListener('load', function() {
+  setTimeout(function() { hidePluginsSkeleton(); hideSpinner(); }, 15000);
+});
 
 </script>

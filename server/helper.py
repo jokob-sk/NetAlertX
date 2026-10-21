@@ -17,7 +17,7 @@ import ipaddress
 
 import conf
 from const import applicationPath, fullConfPath, fullDbPath, dbPath, confPath, apiPath
-from logger import mylog, logResult
+from logger import mylog
 
 # Register NetAlertX directories using runtime configuration
 INSTALL_PATH = applicationPath
@@ -70,7 +70,7 @@ def initialiseFile(pathToCheck, defaultFile):
                 mylog("none", ["[Setup] (" + defaultFile + ") copied over successfully to (" + pathToCheck + ")."],)
 
             # write stdout and stderr into .log files for debugging if needed
-            logResult(stdout, stderr)  # TO-DO should be changed to mylog
+            # logResult(stdout, stderr)  # TO-DO should be changed to mylog
 
         except subprocess.CalledProcessError as e:
             # An error occured, handle it
@@ -159,7 +159,7 @@ def get_setting(key):
     try:
         fileModifiedTime = os.path.getmtime(settingsFile)
     except FileNotFoundError:
-        mylog("none", [f"[Settings] ⚠ File not found: {settingsFile}"])
+        mylog("none", [f"[Settings] ⚠ Settings file not found: {settingsFile} (backend may still be initializing)"])
         return None
 
     mylog("trace", f"[Import table_settings.json] checking table_settings.json file SETTINGS_LASTCACHEDATE: {SETTINGS_LASTCACHEDATE} fileModifiedTime: {fileModifiedTime}")
@@ -197,7 +197,7 @@ def get_setting(key):
 
 # -------------------------------------------------------------------------------
 #  Return setting value
-def get_setting_value(key):
+def get_setting_value(key, default=""):
     """
     Retrieve a setting value from configuration.
 
@@ -208,13 +208,16 @@ def get_setting_value(key):
 
     Args:
         key (str): The setting key to look up.
+        default (Any): Value to return when the key is not found. Defaults
+            to "" for backwards compatibility with call sites that already
+            treat an empty string as "missing".
 
     Returns:
-        Any: The Python-typed setting value, or an empty string if not found.
+        Any: The Python-typed setting value, or `default` if not found.
     """
 
-    # Returns empty string if not found
-    value = ""
+    # Returns default if not found
+    value = default
 
     # lookup key in secondary cache
     if key in SETTINGS_SECONDARYCACHE:
@@ -299,7 +302,7 @@ def setting_value_to_python_type(set_type, set_value):
 
     elif dataType == "integer" and (elementType == "input" or elementType == "select"):
         # handle storing/retrieving boolean values as 1/0
-        if set_value.lower() not in ["true", "false"] and isinstance(set_value, str):
+        if isinstance(set_value, str) and set_value.lower() not in ["true", "false"]:
             value = int(set_value)
 
         elif isinstance(set_value, bool):
@@ -313,7 +316,12 @@ def setting_value_to_python_type(set_type, set_value):
 
     # boolean handling
     elif dataType == "boolean" and elementType == "input":
-        value = set_value.lower() in ["true", "1"]
+        if isinstance(set_value, str):
+            value = set_value.lower() in ["true", "1"]
+        elif isinstance(set_value, bool):
+            value = set_value
+        else:
+            value = str(set_value).lower() in ["true", "1"]
 
     # array handling
     elif dataType == "array" and elementType == "select":
@@ -642,12 +650,15 @@ def is_random_mac(mac):
 
 
 # -------------------------------------------------------------------------------
-# Helper function to calculate number of children
-def get_number_of_children(mac, devices):
-    # Count children by checking devParentMAC for each device
-    return sum(
-        1 for dev in devices if dev.get("devParentMAC", "").strip() == mac.strip()
-    )
+def count_children_by_parent_mac(devices):
+    """Return {parentMac: childCount} for a device list, keyed by devParentMAC exactly
+    as stored (already lowercased upstream by normalize_mac(), so no case-folding here)."""
+    counts = {}
+    for dev in devices:
+        parent_mac = dev.get("devParentMAC", "").strip()
+        if parent_mac:
+            counts[parent_mac] = counts.get(parent_mac, 0) + 1
+    return counts
 
 
 # -------------------------------------------------------------------------------

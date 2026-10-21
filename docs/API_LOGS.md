@@ -12,14 +12,13 @@ Only specific, pre-approved log files can be purged for security and stability r
 
 **Query Parameter:**
 
-* `file` → The name of the log file to purge (e.g., `app.log`, `stdout.log`)
+* `file` → The name of the log file to purge (e.g., `app.log`)
 
 **Allowed Files:**
 
 ```
 app.log
 IP_changes.log
-stdout.log
 stderr.log
 app.php_errors.log
 execution_queue.log

@@ -13,7 +13,7 @@ An  installer script for deploying NetAlertX on Proxmox VE (Debian-based) system
 
 ## Download and run the installer
 ```bash
-wget https://raw.githubusercontent.com/jokob-sk/NetAlertX/refs/heads/main/install/proxmox/proxmox-install-netalertx.sh -O proxmox-install-netalertx.sh && chmod +x proxmox-install-netalertx.sh && ./proxmox-install-netalertx.sh
+wget https://raw.githubusercontent.com/netalertx/NetAlertX/refs/heads/main/install/proxmox/proxmox-install-netalertx.sh -O proxmox-install-netalertx.sh && chmod +x proxmox-install-netalertx.sh && ./proxmox-install-netalertx.sh
 ```
 
 ## 📋 What This Installer Does

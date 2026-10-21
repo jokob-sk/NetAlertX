@@ -44,6 +44,7 @@ Please check the relevant option(s):
 - [ ] I have tested my changes locally
 - [ ] I have updated relevant documentation (if applicable)
 - [ ] I have verified my changes do not break existing behavior
+- [ ] If this PR adds/modifies a plugin, it passes the [Conventions Checklist](../../docs/PLUGINS_DEV.md#conventions-checklist)
 - [ ] I am willing to respond to requested changes and feedback
 
 ---

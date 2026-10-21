@@ -10,7 +10,7 @@ body:
   attributes:
     value: |
       **Important:** For security reasons, please do **not** post sensitive security issues publicly in the issue tracker.
-      Instead, send details to our security contact email: [jokob@duck.com](mailto:jokob@duck.com).
+      Instead, send details to our security contact email: [support@netalertx.com](mailto:support@netalertx.com).
 
       We appreciate your responsible disclosure.
 - type: textarea
@@ -27,6 +27,6 @@ body:
   attributes:
     label: Have you sent this report via email to the security contact?
     options:
-      - label: Yes, I have sent the details to jokob@duck.com
+      - label: Yes, I have sent the details to support@netalertx.com
         required: true
       - label: Not yet, I will send it after opening this issue

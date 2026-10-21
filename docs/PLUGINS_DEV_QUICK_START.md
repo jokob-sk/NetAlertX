@@ -14,9 +14,10 @@ Get a working plugin up and running in 5 minutes.
 Start from the template to get the basic structure:
 
 ```bash
-cd /workspaces/NetAlertX/front/plugins
+cd /workspaces/NetAlertX/server/plugins
 cp -r __template my_plugin
 cd my_plugin
+mv rename_me.py script.py
 ```
 
 ### 2. Update `config.json` Identifiers
@@ -47,7 +48,7 @@ Edit `my_plugin/script.py` and implement your data collection logic:
 import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../server'))
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../plugins'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../server/plugins'))
 
 from plugin_helper import Plugin_Objects, mylog
 from helper import get_setting_value
@@ -104,7 +105,7 @@ Edit the `RUN` and `CMD` settings in `config.json`:
 {
   "function": "CMD",
   "type": {"dataType":"string", "elements": [{"elementType": "input", "elementOptions": [], "transformers": []}]},
-  "default_value": "python3 /app/front/plugins/my_plugin/script.py",
+  "default_value": "python3 /app/server/plugins/my_plugin/script.py",
   "localized": ["name", "description"],
   "name": [{"language_code":"en_us", "string": "Command"}],
   "description": [{"language_code":"en_us", "string": "Command to execute"}]
@@ -117,7 +118,7 @@ Edit the `RUN` and `CMD` settings in `config.json`:
 
 ```bash
 # Test the script directly
-python3 /workspaces/NetAlertX/front/plugins/my_plugin/script.py
+python3 /workspaces/NetAlertX/server/plugins/my_plugin/script.py
 
 # Check the results
 cat /tmp/log/plugins/last_result.MYPLN.log
@@ -143,7 +144,7 @@ ls -la /tmp/log/plugins/last_result.MYPLN.log
 cat /tmp/log/plugins/last_result.MYPLN.log
 
 # Check backend logs for errors
-tail -f /tmp/log/stdout.log | grep "my_plugin\|MYPLN"
+tail -f /tmp/log/app.log | grep "my_plugin\|MYPLN"
 ```
 
 ## Next Steps
@@ -160,10 +161,10 @@ Now that you have a working basic plugin:
 
 | Issue | Solution |
 |-------|----------|
-| "Module not found" errors | Ensure `sys.path` includes `/app/server` and `/app/front/plugins` |
+| "Module not found" errors | Ensure `sys.path` includes `/app/server` and `/app/server/plugins` |
 | Settings not appearing | Restart backend and clear browser cache |
-| Results not showing up | Check `/tmp/log/plugins/*.log` and `/tmp/log/stdout.log` for errors |
-| Permission denied | Plugin runs in container, use absolute paths like `/app/front/plugins/...` |
+| Results not showing up | Check `/tmp/log/plugins/*.log` and `/tmp/log/app.log` for errors |
+| Permission denied | Plugin runs in container, use absolute paths like `/app/server/plugins/...` |
 
 ## Resources
 

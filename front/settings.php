@@ -67,62 +67,59 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
 <script src="lib/bcrypt/bcrypt.min.js"></script>
 
 
-<div id="settingsPage" class="content-wrapper">
+<div id="settingsPage" class="content-wrapper spinnerTarget">
 
-<a style="cursor:pointer">
-  <span>
-    <i id='toggleSettings' onclick="toggleAllSettings()" class="settings-expand-icon fa fa-angle-double-down"></i>
-  </span>
-</a>
+<?php require 'php/templates/skel_settings.php'; ?>
+
 
 <!-- Content header--------------------------------------------------------- -->
 
     <section class="content-header">
 
-    <div  class ="bg-white color-palette box box-solid box-primary  col-sm-12  panel panel-default panel-title" >
+    <div  class ="bg-white color-palette col-sm-12  panel-title" >
 
       <a data-toggle="collapse" href="#settingsOverview">
-        <div class ="settings-group col-sm-12 panel-heading panel-title">
+        <div class ="settings-group col-sm-12 ">
             <i class="<?= lang("settings_enabled_icon");?>"></i>  <?= lang("settings_enabled");?>
         </div>
       </a>
         <div id="settingsOverview" class="panel-collapse collapse in">
-          <div class="panel-body"></div>
+          <div id="settingsOverviewPanelBody"></div>
         <div class =" col-sm-12 " id=""></div>
       </div>
     </section>
 
     <div class="content settingswrap " id="accordion_gen">
 
-      <div class ="bg-grey-dark color-palette panel panel-default col-sm-12  box-default box-info" id="core_content_header" >
+      <div class ="bg-grey-dark color-palette  col-sm-12  box-default box-info" id="core_content_header" >
           <div class ="settings-group col-sm-12">
             <i class="<?= lang("settings_core_icon");?>"></i>  <?= lang("settings_core_label");?>
           </div>
           <div class =" col-sm-12" id="core_content"></div>
       </div>
 
-      <div class ="bg-grey-dark color-palette panel panel-default col-sm-12   box-default box-info" id="system_content_header" >
+      <div class ="bg-grey-dark color-palette col-sm-12   box-default box-info" id="system_content_header" >
           <div class ="settings-group col-sm-12">
             <i class="<?= lang("settings_system_icon");?>"></i>  <?= lang("settings_system_label");?>
           </div>
           <div class =" col-sm-12" id="system_content"></div>
       </div>
 
-      <div class ="bg-grey-dark color-palette  panel panel-default col-sm-12   box-default box-info" id="device_scanners_content_header" >
+      <div class ="bg-grey-dark color-palette  col-sm-12   box-default box-info" id="device_scanners_content_header" >
           <div class ="settings-group col-sm-12">
             <i class="<?= lang("settings_device_scanners_icon");?>"></i>  <?= lang("settings_device_scanners_label");?>
           </div>
           <div class =" col-sm-12" id="device_scanner_content"> <?= lang("settings_device_scanners_info");?> </div>
       </div>
 
-      <div class ="bg-grey-dark color-palette  panel panel-default col-sm-12   box-default box-info" id="other_scanners_content_header">
+      <div class ="bg-grey-dark color-palette  col-sm-12   box-default box-info" id="other_scanners_content_header">
           <div class ="settings-group col-sm-12">
             <i class="<?= lang("settings_other_scanners_icon");?>"></i>  <?= lang("settings_other_scanners_label");?>
           </div>
           <div class =" col-sm-12" id="other_content"></div>
       </div>
 
-      <div class ="bg-grey-dark color-palette  panel panel-default col-sm-12   box-default box-info" id="publishers_content_header" >
+      <div class ="bg-grey-dark color-palette  col-sm-12   box-default box-info" id="publishers_content_header" >
           <div class ="settings-group col-sm-12">
             <i class="<?= lang("settings_publishers_icon");?>"></i>  <?= lang("settings_publishers_label");?>
           </div>
@@ -284,7 +281,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
         },
         error: function (xhr, status, error) {
             console.error("Error:", error);
-            // Handle any errors
+            hideSettingsSkeleton();
         }
     });
   }
@@ -328,25 +325,27 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
 
     overviewSections.forEach((section) => {
 
-      overviewSections_html += `<div class="overview-section col-sm-12" id="${section}">
+      const sectionHtml = overviewSectionsHtml[index];
+
+      if (sectionHtml.trim()) {
+        overviewSections_html += `<div class="overview-section col-sm-12" id="${section}">
                                   <div class="col-sm-12 " title="${getString("settings_"+section)}">
                                     <a href="#${section}_content_header">
                                       <div class="overview-group col-sm-12 col-xs-12">
-
                                         <i title="${section}" class="${getString("settings_"+section+"_icon")}"></i>
-
                                         ${getString("settings_"+section+"_label")}
                                       </div>
                                     </a>
                                   </div>
                                   <div class="col-sm-12">
-                                    ${overviewSectionsHtml[index]}
+                                    ${sectionHtml}
                                   </div>
                                 </div>`
+      }
       index++;
     });
 
-    $('#settingsOverview .panel-body').append(overviewSections_html);
+    $('#settingsOverview #settingsOverviewPanelBody').append(overviewSections_html);
 
     // Display warning
     if(schedulesAreSynchronized(enabledDeviceScanners, pluginsData) == false)
@@ -384,7 +383,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
           <div class="table_cell bold">
             <i class="fa fa-book fa-sm"></i>
             ${getString(prefix+'_description')}
-            <a href="https://github.com/netalertx/NetAlertX/tree/main/front/plugins/${getPluginCodeName(pluginsData, prefix)}" target="_blank">
+            <a href="https://docs.netalertx.com/plugins/${getPluginCodeName(pluginsData, prefix)}" target="_blank">
             ${getString('Gen_ReadDocs')}
             </a>
           </div>
@@ -396,9 +395,10 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
                   <a data-toggle="collapse" data-parent="#accordion_gen" href="#${prefix}">
                     <div class="panel-heading">
                       <h4 class="panel-title">
-                        <div class="col-sm-1 col-xs-1">${getString(prefix+"_icon")}   </div>
-                        <div class="col-sm-10 col-xs-8">${getString(prefix+"_display_name")} </div>
-                        <div class="col-sm-1 col-xs-1">${enabledHtml} </div>
+                        <div class="col-sm-1 col-xs-1">${getString(prefix+"_icon")}</div>
+                        <div class="col-sm-3 col-xs-6">${prefix}</div>
+                        <div class="col-sm-7 hideOnMobile">${getString(prefix+"_display_name")}</div>
+                        <div class="col-sm-1 col-xs-3">${enabledHtml}</div>
                       </h4>
                     </div>
                   </a>
@@ -439,7 +439,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
         // constructing final HTML for the setting
         setHtml = ""
 
-        if(set["setGroup"] == prefix)
+        if(set["setGroup"] == prefix )
         {
           // hide metadata by default by assigning it a special class
           isMetadata ? metadataClass = 'metadata' : metadataClass = '';
@@ -536,7 +536,24 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
     initSelect2();
     initHoverNodeInfo();
     hideSpinner();
+    hideSettingsSkeleton();
 
+  }
+
+  // ----------------------------------------------------------------
+  function hideSettingsSkeleton() {
+    var $skel = $('#settings-skeleton');
+    if (!$skel.length) return;
+    $('#settingsPage').removeClass('settings-loading');
+    $skel.fadeOut(10, function() { $(this).hide(); });
+  }
+
+  // ----------------------------------------------------------------
+  function showSettingsSkeleton() {
+    var $skel = $('#settings-skeleton');
+    if (!$skel.length) return;
+    $('#settingsPage').addClass('settings-loading');
+    $skel.stop(true, true).fadeIn(10);
   }
 
   // display the name of the first person
@@ -603,22 +620,51 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
           url: "php/server/util.php",
           data: {
             function: 'savesettings',
+            csrf_token: <?= json_encode(getCsrfToken()) ?>,
             settings: JSON.stringify(settingsArray) },
             success: function(data, textStatus) {
 
-              if(data == "OK")
-              {
-                // showMessage (getString("settings_saved"), 5000, "modal_grey");
+              // Parse response: support both legacy "OK" string and new JSON format
+              let saveSucceeded = false;
+              let requiresReloadWait = true; // safe default
+
+              if (data === "OK") {
+                saveSucceeded = true;
+              } else {
+                let parsed = null;
+                try { parsed = (typeof data === 'object') ? data : JSON.parse(data); } catch(e) {}
+                if (parsed && parsed.success === true) {
+                  saveSucceeded = true;
+                  requiresReloadWait = parsed.requiresReloadWait === true;
+                }
+              }
+
+              if (saveSucceeded) {
                 // Remove navigation prompt "Are you sure you want to leave..."
                 window.onbeforeunload = null;
 
-                // Reloads the current page
-                // setTimeout("clearCache()", 5000);
-
                 write_notification(`[Settings] Settings saved by the user`, 'info')
 
-                clearCache()
-              } else{
+                // Show the pending indicator immediately (optimistic - a save
+                // just succeeded, so "pending" is correct by definition) and
+                // persist it across navigation/reload as a plain boolean
+                // cookie, not localStorage (clearCache() below clears
+                // localStorage, which would wipe it immediately). Resolution
+                // is handled entirely by sse_manager.js's existing
+                // settingsImported-vs-INIT_TIMESTAMP check (step 4 of
+                // handleStateUpdate()), which clears this same cookie the
+                // moment the backend's SSE push confirms the import landed -
+                // nothing here polls or compares timestamps.
+                setCookie("settingsPendingReload", "true", 60);
+                $('#settingsPendingReload').removeClass('myhidden');
+                updateNavPendingDot();
+
+                if (requiresReloadWait) {
+                  clearCache()
+                } else {
+                  showMessage(getString("settings_saved_background"), 5000, "modal_green");
+                }
+              } else {
                 // something went wrong
                 write_notification("[Important] Please take a screenshot of the Console tab in the browser (F12) and next error. Submit it (with the nginx and php error logs) as a new issue here: https://github.com/netalertx/NetAlertX/issues", 'interrupt')
                 write_notification(data, 'interrupt')
@@ -653,6 +699,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
     {
       showMessage (getString("settings_readonly"), 10000, "modal_red");
       console.log(`app.conf seems to be read only (canRWConfig: ${canReadAndWriteConfig})`);
+      hideSettingsSkeleton();
     } else
     {
       // check if config file has been updated
@@ -667,10 +714,10 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
 
 
         // check if displayed settings are outdated
-        if(appState["showSpinner"] || fileModificationTime > importedMiliseconds)
+        if(isSettingsPending(appState, fileModificationTime))
         {
           showSpinner("settings_old")
-
+          showSettingsSkeleton()
           setTimeout("handleLoadingDialog()", 1000);
 
         } else
@@ -681,9 +728,7 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
         humanReadable = (new Date(importedMiliseconds)).toLocaleString("en-UK", { timeZone: "<?php echo $timeZone?>" });
         document.getElementById('lastImportedTime').innerHTML = humanReadable;
       })
-
     }
-
   }
 
 
@@ -707,9 +752,10 @@ $settingsJSON_DB = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX
     }
   }
 
-
   showSpinner()
   handleLoadingDialog()
+  // Fallback: hide skeleton after 15s in case of unexpected error
+  setTimeout(hideSettingsSkeleton, 15000)
 
 
 

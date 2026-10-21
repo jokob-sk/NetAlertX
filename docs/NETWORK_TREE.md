@@ -27,7 +27,7 @@ Set its **Type** to a valid network type — such as `Router` or `Gateway`.
 3. Save the device.
 4. Go to the **Network** page — supported device types will appear as tabs.
 5. Use the **Assign** button to connect unassigned devices to a network node.
-6. If the **Port** is `0` or empty, a Wi-Fi icon is shown. Otherwise, an Ethernet icon appears.
+6. The connection icon is chosen automatically: devices with a recorded **SSID** get a Wi-Fi icon; otherwise a numeric **Port** (including `0`) gets an Ethernet icon; with neither, a question-mark icon is shown. See [Connection Icons & Line Styles](#connection-icons--line-styles) below for the full rules, including when lines are dashed or dotted.
 
 > [!NOTE]
 > Use [bulk editing](./DEVICES_BULK_EDITING.md) with _CSV Export_ to fix `Internet` root assignments or update many devices at once.
@@ -99,6 +99,44 @@ You can confirm that `raspberrypi` now acts as a network device in two places:
 > This means devices with `devParentRelType` set to `nic` or `virtual` will not be shown.
 > All devices, regardless of relationship type, are always accessible in the **All devices** view.
 
+---
+
+## Connection Icons & Line Styles
+
+Every node's connection icon and the line drawn from it to its parent are computed automatically each time the tree renders, from the device's `devSSID` and `Parent Port` fields, plus its `Relationship type`. None of this is configured directly — set those fields on the device details page (see [step 1](#1-set-device-type-and-parent)) and the tree reflects them.
+
+### Icon: Wi-Fi, Ethernet, or question mark
+
+Checked in this order for every node:
+
+1. **Wi-Fi icon** — the device has a non-empty **SSID** recorded (`devSSID`).
+2. **Ethernet icon** — no SSID, and **Parent Port** holds a numeric value. `0` counts as numeric; a blank or non-numeric port does not.
+3. **Question-mark icon** — neither of the above: no SSID and no numeric port.
+
+> [!NOTE]
+> SSID is checked first. A device with an SSID always gets the Wi-Fi icon, even if it also has a numeric Parent Port set.
+
+### Line style: solid, dashed, or dotted
+
+Checked in this order for each connection (child → parent):
+
+1. **Dotted** — the connection's **Relationship type** is `virtual`, regardless of port or SSID.
+2. **Solid** — not `virtual`, and the child has a numeric Parent Port (the same condition that gives it the Ethernet icon above).
+3. **Dashed** — everything else: typically Wi-Fi connections, or any connection with no port set.
+
+### Line color: by Relationship type
+
+Relationship type also sets the line's color, independent of the style rules above:
+
+| Relationship type | Line color | Line style |
+|---|---|---|
+| `child` (standard connection) | <span style="color:#f39c12">■</span> Yellow (`#f39c12`) | Solid or dashed, per port |
+| `nic` | <span style="color:#dd4b39">■</span> Red (`#dd4b39`) | Solid or dashed, per port |
+| `virtual` | <span style="color:#0060df">■</span> Blue (`#0060df`) | Always dotted |
+| `logical` | <span style="color:#00a65a">■</span> Green (`#00a65a`) | Solid or dashed, per port |
+| unset or any other value | <span style="color:#5B5B66">■</span> Grey (`#5B5B66`) | Solid or dashed, per port |
+
+Hovering over a node in the tree shows its relationship type and other connection details as a tooltip.
 
 ## Troubleshooting
 

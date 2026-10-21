@@ -68,8 +68,8 @@ ENV NETALERTX_APP=${INSTALL_DIR}
 ENV NETALERTX_DATA=/data
 ENV NETALERTX_CONFIG=${NETALERTX_DATA}/config
 ENV NETALERTX_FRONT=${NETALERTX_APP}/front
-ENV NETALERTX_PLUGINS=${NETALERTX_FRONT}/plugins
 ENV NETALERTX_SERVER=${NETALERTX_APP}/server
+ENV NETALERTX_PLUGINS=${NETALERTX_SERVER}/plugins
 ENV NETALERTX_API=/tmp/api
 ENV NETALERTX_DB=${NETALERTX_DATA}/db
 ENV NETALERTX_DB_FILE=${NETALERTX_DB}/app.db
@@ -89,7 +89,6 @@ ENV LOG_STDERR=${NETALERTX_LOG}/stderr.log
 ENV LOG_APP_PHP_ERRORS=${NETALERTX_LOG}/app.php_errors.log
 ENV LOG_EXECUTION_QUEUE=${NETALERTX_LOG}/execution_queue.log
 ENV LOG_REPORT_OUTPUT_JSON=${NETALERTX_LOG}/report_output.json
-ENV LOG_STDOUT=${NETALERTX_LOG}/stdout.log
 ENV LOG_CRON=${NETALERTX_LOG}/cron.log
 ENV LOG_NGINX_ERROR=${NETALERTX_LOG}/nginx-error.log
 
@@ -135,7 +134,7 @@ ENV NETALERTX_USER=netalertx NETALERTX_GROUP=netalertx
 ENV LANG=C.UTF-8
 
 
-RUN apk add --no-cache bash mtr libbsd zip lsblk tzdata curl arp-scan iproute2 iproute2-ss nmap fping \
+RUN apk add --no-cache bash mtr libbsd zip lsblk tzdata curl arp-scan iproute2 iproute2-ss iw nmap fping \
     nmap-scripts traceroute nbtscan net-tools net-snmp-tools bind-tools awake ca-certificates \
     sqlite php83 php83-fpm php83-cgi php83-curl php83-sqlite3 php83-session python3 py3-psutil envsubst \
     nginx supercronic shadow su-exec jq && \
@@ -179,6 +178,7 @@ RUN for vfile in .VERSION; do \
     apk add --no-cache libcap && \
     setcap cap_net_raw,cap_net_admin+eip /usr/bin/nmap && \
     setcap cap_net_raw,cap_net_admin+eip /usr/bin/arp-scan && \
+    setcap cap_net_raw,cap_net_admin+eip /usr/sbin/iw && \
     setcap cap_net_raw,cap_net_admin,cap_net_bind_service+eip /usr/bin/nbtscan && \
     setcap cap_net_raw,cap_net_admin+eip /usr/bin/traceroute && \
     setcap cap_net_raw,cap_net_admin+eip "$(readlink -f ${VIRTUAL_ENV_BIN}/python)" && \

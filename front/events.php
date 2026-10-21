@@ -6,7 +6,8 @@ require 'php/templates/header.php';
   showSpinner(); // Show initial page loading spinner
 </script>
 
-<div class="content-wrapper eventsPage">
+<div class="content-wrapper eventsPage spinnerTarget" id="eventsPage">
+<?php require 'php/templates/skel_events.php'; ?>
   <section class="content">
 
     <!-- ---------------- Top small boxes (Event shortcuts) ---------------- -->
@@ -58,7 +59,7 @@ require 'php/templates/header.php';
           </div>
 
           <div class="box-body table-responsive">
-            <table id="tableEvents" class="spinnerTarget table table-bordered table-hover table-striped">
+            <table id="tableEvents" class="table table-bordered table-hover table-striped">
               <thead>
                 <tr>
                   <th><?= lang('Events_TableHead_Order'); ?></th>
@@ -154,11 +155,13 @@ function initializeDatatable() {
             recordsFiltered: response.recordsFiltered || 0
           });
           hideSpinner();
+          hideEventsSkeleton();
         },
         error: function (xhr, status, error) {
           console.error("Error fetching session events:", status, error, xhr.responseText);
           callback({ data: [], recordsTotal: 0, recordsFiltered: 0 });
           hideSpinner();
+          hideEventsSkeleton();
         }
       });
     },
@@ -167,9 +170,15 @@ function initializeDatatable() {
       { targets: [0,5,6,7,8,10,11,12,13], visible: false },
       { targets: [7], orderData: [8] },
       { targets: [9], orderData: [10] },
-      { targets: [1], createdCell: (td, cellData, rowData) => {
-          // Device column as link
-          $(td).html(`<b><a href="deviceDetails.php?mac=${rowData[13]}">${cellData}</a></b>`);
+      // Use `render` (not `createdCell`) so encodeSpecialChars runs before
+      // DataTables sets td.innerHTML, preventing devName XSS execution.
+      // devName is null for a deleted device's still-shown historical event
+      // (Events_Devices LEFT JOINs Devices) - fall back to the MAC (row[13])
+      // instead of rendering the literal string "null".
+      { targets: [1], render: function (data, type, row) {
+          if (type !== 'display') { return data; }
+          const label = (data === null || data === undefined || data === '') ? row[13] : data;
+          return `<b><a href="deviceDetails.php?mac=${row[13]}">${encodeSpecialChars(label)}</a></b>`;
       }},
       { targets: [3], createdCell: (td, cellData) => $(td).html(localizeTimestamp(cellData)) },
       { targets: [4,5,6,7], createdCell: (td, cellData) => $(td).html(translateHTMLcodes(cellData)) }
@@ -251,4 +260,12 @@ function getEvents(type) {
   showSpinner();
   table.ajax.reload(null, true); // reset to page 1
 }
+
+function hideEventsSkeleton() {
+  $('#events-skeleton').fadeOut(0, function () { $(this).remove(); });
+}
+
+window.addEventListener('load', function () {
+  setTimeout(hideEventsSkeleton, 15000);
+});
 </script>

@@ -12,7 +12,7 @@
     "python.testing.autoTestDiscoverOnSaveEnabled": true,
     // Let the Python extension invoke pytest via the interpreter; avoid hardcoded paths
     // Removed python.testing.pytestPath and legacy pytest.command overrides
-    
+
     "terminal.integrated.defaultProfile.linux": "zsh",
     "terminal.integrated.profiles.linux": {
       "zsh": {
@@ -32,5 +32,10 @@
     "--line-length=180"
   ],
   "chat.useAgentSkills": true,
+  "chat.tools.terminal.autoApprove": {
+    "test": true,
+    "git check-ignore": true,
+    "mkdir": true
+  },
 
 }

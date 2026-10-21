@@ -208,6 +208,108 @@ def test_devices_by_status(client, api_token, test_mac):
         delete_dummy(client, api_token, test_mac)
 
 
+def test_devices_by_status_pagination(client, api_token):
+    """limit/offset must page through the same set ORDER BY devMac gives
+    unpaginated, with no gaps or duplicates, and must reject invalid values.
+    Doesn't assume an otherwise-empty DB: reconstructs the full 'my' list from
+    pages and compares it to the unpaginated response instead of asserting
+    exact positions for the 3 dummies.
+    """
+    macs = [f"aa:bb:cc:dd:ee:0{i}" for i in (1, 2, 3)]
+    for mac in macs:
+        create_dummy(client, api_token, mac)
+
+    try:
+        full_resp = client.get("/devices/by-status?status=my", headers=auth_headers(api_token))
+        assert full_resp.status_code == 200
+        full_macs = [d["id"] for d in full_resp.json]
+        assert set(macs).issubset(set(full_macs))
+
+        # Page through the full set in halves and confirm the reassembled
+        # list matches the unpaginated one exactly (no gaps/duplicates).
+        total = len(full_macs)
+        half = (total + 1) // 2
+        page1 = client.get(
+            f"/devices/by-status?status=my&limit={half}&offset=0",
+            headers=auth_headers(api_token),
+        ).json
+        page2 = client.get(
+            f"/devices/by-status?status=my&limit={total - half}&offset={half}",
+            headers=auth_headers(api_token),
+        ).json
+        paged_macs = [d["id"] for d in page1] + [d["id"] for d in page2]
+        assert paged_macs == full_macs
+
+        # offset alone (no limit) must still take effect, not be silently
+        # dropped - regression guard for the LIMIT -1 OFFSET ? fallback.
+        offset_only = client.get(
+            f"/devices/by-status?status=my&offset={half}",
+            headers=auth_headers(api_token),
+        ).json
+        assert [d["id"] for d in offset_only] == full_macs[half:]
+
+        # Invalid limit/offset are rejected, not silently clamped.
+        resp_bad_limit = client.get(
+            "/devices/by-status?status=my&limit=0", headers=auth_headers(api_token)
+        )
+        assert resp_bad_limit.status_code == 422
+
+        resp_bad_offset = client.get(
+            "/devices/by-status?status=my&offset=-1", headers=auth_headers(api_token)
+        )
+        assert resp_bad_offset.status_code == 422
+    finally:
+        for mac in macs:
+            delete_dummy(client, api_token, mac)
+
+
+def test_get_all_devices_pagination(client, api_token):
+    """limit/offset on GET /devices must page through the same set the
+    unpaginated response gives, ordered by devMac, with no gaps or
+    duplicates, and must reject invalid values."""
+    macs = [f"aa:bb:cc:dd:ff:0{i}" for i in (1, 2, 3)]
+    for mac in macs:
+        create_dummy(client, api_token, mac)
+
+    try:
+        full_resp = client.get("/devices", headers=auth_headers(api_token))
+        assert full_resp.status_code == 200
+        full_macs = [d["devMac"] for d in full_resp.json["devices"]]
+        assert set(macs).issubset(set(full_macs))
+
+        total = len(full_macs)
+        half = (total + 1) // 2
+        page1 = client.get(
+            f"/devices?limit={half}&offset=0", headers=auth_headers(api_token)
+        ).json["devices"]
+        page2 = client.get(
+            f"/devices?limit={total - half}&offset={half}",
+            headers=auth_headers(api_token),
+        ).json["devices"]
+        paged_macs = [d["devMac"] for d in page1] + [d["devMac"] for d in page2]
+        assert paged_macs == full_macs
+
+        # offset alone (no limit) must still take effect.
+        offset_only = client.get(
+            f"/devices?offset={half}", headers=auth_headers(api_token)
+        ).json["devices"]
+        assert [d["devMac"] for d in offset_only] == full_macs[half:]
+
+        # Invalid limit/offset are rejected, not silently clamped.
+        resp_bad_limit = client.get(
+            "/devices?limit=0", headers=auth_headers(api_token)
+        )
+        assert resp_bad_limit.status_code == 422
+
+        resp_bad_offset = client.get(
+            "/devices?offset=-1", headers=auth_headers(api_token)
+        )
+        assert resp_bad_offset.status_code == 422
+    finally:
+        for mac in macs:
+            delete_dummy(client, api_token, mac)
+
+
 def test_delete_test_devices(client, api_token):
 
     # Delete by MAC

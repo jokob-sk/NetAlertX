@@ -146,13 +146,6 @@ def append_file_binary(file_path, input_data):
         file.write(input_data)
 
 
-def logResult(stdout, stderr):
-    if stderr is not None:
-        append_file_binary(logPath + "/stderr.log", stderr)
-    if stdout is not None:
-        append_file_binary(logPath + "/stdout.log", stdout)
-
-
 def append_line_to_file(pPath, pText):
     if sys.version_info < (3, 0):
         file = io.open(pPath, mode="a", encoding="utf-8")

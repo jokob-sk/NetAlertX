@@ -15,6 +15,48 @@ Plugins communicate with NetAlertX by writing results to a **pipe-delimited log 
 
 **Required Columns:** 9 (mandatory) + up to 4 optional helper columns = 13 total
 
+
+## Using `plugin_helper.py`
+
+The easiest way to ensure correct output is to use the [`plugin_helper.py`](https://github.com/netalertx/NetAlertX/blob/main/server/plugins/plugin_helper.py) library:
+
+```python
+from plugin_helper import Plugin_Objects
+
+# Initialize with your plugin's prefix
+plugin_objects = Plugin_Objects("YOURPREFIX")
+
+# Add objects
+plugin_objects.add_object(
+    objectPrimaryId="device_id",
+    objectSecondaryId="192.168.1.1",
+    DateTime="2023-01-02 15:56:30",
+    watchedValue1="online",
+    watchedValue2="null",
+    watchedValue3="null",
+    watchedValue4="null",
+    Extra="Additional data",
+    ForeignKey="aa:bb:cc:dd:ee:ff",
+    helpVal1="null",
+    helpVal2="null",
+    helpVal3="null",
+    helpVal4="null"
+)
+
+Please note unavailable values need to be set to `"null"` 
+
+# Write results (handles formatting, sanitization, and file creation)
+plugin_objects.write_result_file()
+```
+
+The library automatically:
+
+- Validates data types
+- Sanitizes string values
+- Normalizes MAC addresses
+- Writes to the correct file location
+- Creates the file in `/tmp/log/plugins/last_result.<PREFIX>.log`
+
 ## Column Specification
 
 > [!NOTE]
@@ -42,6 +84,8 @@ Plugins communicate with NetAlertX by writing results to a **pipe-delimited log 
 | 10 | `helpVal2` | string | *conditional* | Helper value 2. If used, all help values must be supplied |
 | 11 | `helpVal3` | string | *conditional* | Helper value 3. If used, all help values must be supplied |
 | 12 | `helpVal4` | string | *conditional* | Helper value 4. If used, all help values must be supplied |
+
+> **Note:** `plugin_helper.py`'s `Plugin_Object.__init__` defaults an omitted/`None` `helpVal1-4` to `""` - a real `0` or `False` you pass explicitly is preserved as-is (checked via `is not None`, not truthiness), same as `watchedValue1-4`.
 
 ## Usage Guide
 
@@ -83,6 +127,39 @@ This allows NetAlertX to:
 - Display the object on the device details page
 - Send notifications when the parent device is involved
 - Link events across plugins
+
+
+### Target columns for config.json
+
+Typically, target columns would be pointing to the `CurrentScan` table, so, e.g. `scanSite` or `scanLastIP`. This mapping is defined in the `config.json` of the given plugin. As of writing this article, the `CurrentScan` table is defined as follows:
+
+```sql
+CREATE TABLE CurrentScan (
+                                scanMac STRING(50) NOT NULL COLLATE NOCASE,
+                                scanLastIP STRING(50) NOT NULL COLLATE NOCASE,
+                                scanVendor STRING(250),
+                                scanSourcePlugin STRING(10),
+                                scanName STRING(250),
+                                scanLastQuery STRING(250),
+                                scanLastConnection STRING(250),
+                                scanSyncHubNode STRING(50),
+                                scanSite STRING(250),
+                                scanSSID STRING(250),
+                                scanVlan STRING(250),
+                                scanParentMAC STRING(250),
+                                scanParentPort STRING(250),
+                                scanType STRING(250),
+                                scanCreatesDevice BOOLEAN NOT NULL DEFAULT (1) CHECK (scanCreatesDevice IN (0, 1)),
+                                scanNotificationMode STRING(10) NOT NULL DEFAULT ('normal'),
+                                scanPresence BOOLEAN NOT NULL DEFAULT (1) CHECK (scanPresence IN (0, 1))
+)
+```
+
+As the documentation might become outdated, it's good practice to check the latest definition of the `CurrentScan` table in `server/db/db_upgrade.py`'s `ensure_CurrentScan()` (the version that actually runs) in the code base. `app.sql` bootstraps the schema for every fresh install, but `CurrentScan` is one of the few tables `ensure_CurrentScan()` unconditionally drops and recreates on every startup, so `app.sql`'s copy of it never actually persists.
+
+### Import Behavior Columns
+
+Three optional `CurrentScan` columns — `scanCreatesDevice`, `scanNotificationMode`, `scanPresence` — control whether a row can create a device, whether it counts as a live presence signal, and whether its notifications are suppressed. Only relevant if your plugin maps to `mapped_to_table: "CurrentScan"`; all three default to today's behavior if never mapped. See **[Plugin Import Behavior](PLUGINS_IMPORT_BEHAVIOR.md)** for the full contract — value tables, precedence rules, decision flowcharts, and worked scenarios.
 
 ## Examples
 
@@ -134,45 +211,6 @@ device|null|2023-01-02 15:56:30|status|null|null|null|null|null|h1|h2|h3|h4
 device|null|2023-01-02 15:56:30|status|null|null|null|null|null
 ```
 
-## Using `plugin_helper.py`
-
-The easiest way to ensure correct output is to use the [`plugin_helper.py`](../front/plugins/plugin_helper.py) library:
-
-```python
-from plugin_helper import Plugin_Objects
-
-# Initialize with your plugin's prefix
-plugin_objects = Plugin_Objects("YOURPREFIX")
-
-# Add objects
-plugin_objects.add_object(
-    objectPrimaryId="device_id",
-    objectSecondaryId="192.168.1.1",
-    DateTime="2023-01-02 15:56:30",
-    watchedValue1="online",
-    watchedValue2=None,
-    watchedValue3=None,
-    watchedValue4=None,
-    Extra="Additional data",
-    ForeignKey="aa:bb:cc:dd:ee:ff",
-    helpVal1=None,
-    helpVal2=None,
-    helpVal3=None,
-    helpVal4=None
-)
-
-# Write results (handles formatting, sanitization, and file creation)
-plugin_objects.write_result_file()
-```
-
-The library automatically:
-
-- Validates data types
-- Sanitizes string values
-- Normalizes MAC addresses
-- Writes to the correct file location
-- Creates the file in `/tmp/log/plugins/last_result.<PREFIX>.log`
-
 ## De-duplication
 
 The core runs **de-duplication once per hour** on the `Plugins_Objects` table:
@@ -186,6 +224,7 @@ The core runs **de-duplication once per hour** on the `Plugins_Objects` table:
 **Required Format:** `YYYY-MM-DD HH:MM:SS`
 
 **Examples:**
+
 - `2023-01-02 15:56:30` ✅
 - `2023-1-2 15:56:30` ❌ (missing leading zeros)
 - `2023-01-02T15:56:30` ❌ (wrong separator)
@@ -243,11 +282,12 @@ cat /tmp/log/plugins/last_result.YOURPREFIX.log | awk -F'|' '{print NF}' | sort 
 
 **Check core processing in logs:**
 ```bash
-tail -f /tmp/log/stdout.log | grep -i "YOURPREFIX\|Plugins_Objects"
+tail -f /tmp/log/app.log | grep -i "YOURPREFIX\|Plugins_Objects"
 ```
 
 ## See Also
 
+- [Plugin Import Behavior](PLUGINS_IMPORT_BEHAVIOR.md) - `scanCreatesDevice`/`scanNotificationMode`/`scanPresence`, for plugins mapping to `CurrentScan`
 - [Plugin Settings System](PLUGINS_DEV_SETTINGS.md) - How to accept user input
 - [Data Sources](PLUGINS_DEV_DATASOURCES.md) - Different data source types
 - [Debugging Plugins](DEBUG_PLUGINS.md) - Troubleshooting plugin issues

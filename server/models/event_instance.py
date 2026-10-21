@@ -136,21 +136,34 @@ class EventInstance:
         mylog("debug", f"[Events] Created event for {mac} ({event_type})")
         return {"success": True, "message": f"Created event for {mac}"}
 
-    def getEvents(self, mac=None):
+    def getEvents(self, mac=None, limit=None, offset=None):
         """
-        Fetch all events, or events for a specific MAC if provided.
-        Returns list of events.
+        Fetch all events, or events for a specific MAC if provided, ordered by
+        eveDateTime descending. Returns every matching event if limit is omitted.
         """
         conn = self._conn()
         cur = conn.cursor()
 
+        # rowid DESC is a tiebreaker for events sharing the same eveDateTime
+        # (only second precision) - without it, LIMIT/OFFSET pages aren't
+        # guaranteed to reconstruct the same order as the unpaginated query.
         if mac:
-            sql = "SELECT * FROM Events WHERE eveMac=? ORDER BY eveDateTime DESC"
-            cur.execute(sql, (mac,))
+            sql = "SELECT * FROM Events WHERE eveMac=? ORDER BY eveDateTime DESC, rowid DESC"
+            params = [mac]
         else:
-            sql = "SELECT * FROM Events ORDER BY eveDateTime DESC"
-            cur.execute(sql)
+            sql = "SELECT * FROM Events ORDER BY eveDateTime DESC, rowid DESC"
+            params = []
 
+        if limit is not None:
+            sql += " LIMIT ? OFFSET ?"
+            params.extend([limit, offset or 0])
+        elif offset is not None:
+            # SQLite's unlimited-limit form - an offset with no limit still
+            # needs a LIMIT clause for OFFSET to take effect.
+            sql += " LIMIT -1 OFFSET ?"
+            params.append(offset)
+
+        cur.execute(sql, params)
         rows = cur.fetchall()
         events = [row_to_json(list(r.keys()), r) for r in rows]
 

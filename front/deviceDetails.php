@@ -21,11 +21,12 @@
 </script>
 
 <!-- Page ------------------------------------------------------------------ -->
-  <div class="content-wrapper">
+  <div class="content-wrapper" id="deviceDetailsPage">
+
+    <?php require 'php/templates/skel_device_details.php'; ?>
 
 <!-- Content header--------------------------------------------------------- -->
     <section class="content-header">
-      <?php require 'php/templates/modals.php'; ?>
 
       <h1 id="pageTitle">
         &nbsp<small>Quering device info...</small>
@@ -70,6 +71,14 @@
                     </span>
                 </a>
                 </li>
+              <li>
+                <a id="tabSessionInfo" href="#panSessionInfo" data-toggle="tab">
+                  <i class="fa fa-square-poll-horizontal"></i>
+                    <span class="dev-detail-tab-name">
+                      <?= lang('DevDetail_SessionInfo_Title');?>
+                    </span>
+                </a>
+                </li>
                 <li>
                 <a id="tabTools"    href="#panTools"    data-toggle="tab">
                   <i class="fa fa-screwdriver-wrench"></i>
@@ -102,11 +111,28 @@
                     </span>
                 </a>
                 </li>
-              <li>
-                <a id="tabPlugins"  href="#panPlugins"  data-toggle="tab">
+              <li class="tab-sources-li">
+                <a id="tabSources"  href="#panSources"  data-toggle="tab">
                   <i class="fa fa-plug"></i>
                     <span class="dev-detail-tab-name">
-                      <?= lang('DevDetail_Tab_Plugins');?>
+                      <?= lang('DevDetail_Tab_Sources');?>
+                    </span>
+                </a>
+                <div class="dropdown sources-view-toggle sources-view-toggle-inline">
+                  <a href="#" id="sourcesViewToggle" class="dropdown-toggle" data-toggle="dropdown" data-view="plugin">
+                    <i class="fa fa-puzzle-piece"></i>
+                  </a>
+                  <ul id="sourcesViewMenu" class="dropdown-menu dropdown-menu-right">
+                    <li><a href="#" data-view="plugin" onclick="setSourcesView('plugin'); return false;"><i class="fa fa-puzzle-piece"></i> <?= lang('DevDetail_Sources_PluginView');?></a></li>
+                    <li><a href="#" data-view="field" onclick="setSourcesView('field'); return false;"><i class="fa fa-list"></i> <?= lang('DevDetail_Sources_FieldView');?></a></li>
+                  </ul>
+                </div>
+                </li>
+              <li>
+                <a id="tabHistory" href="#panHistory" data-toggle="tab">
+                  <i class="fa fa-clock-rotate-left"></i>
+                    <span class="dev-detail-tab-name">
+                      <?= lang('device_history_tab_title');?>
                     </span>
                 </a>
                 </li>
@@ -123,56 +149,59 @@
               </div>
             </ul>
 
-            <div class="tab-content spinnerTarget" style="min-height: 430px;">
-
-<!-- tab page 1 ------------------------------------------------------------ -->
-
+            <div class="tab-content spinnerTarget" >
               <div class="tab-pane fade" id="panDetails">
                 <?php
                   require 'deviceDetailsEdit.php';
                 ?>
               </div>
-
-<!-- tab page 2 ------------------------------------------------------------ -->
-              <div class="tab-pane fade table-responsive" id="panSessions">
+              <div class="tab-pane fade" id="panSessionInfo">
+                <?php
+                  require 'deviceDetailsSessionInfo.php';
+                ?>
+              </div>
+              <div class="tab-pane fade" id="panSessions">
               <?php
                   require 'deviceDetailsSessions.php';
                 ?>
               </div>
-
-<!-- tab page "Tools" ------------------------------------------------------------ -->
-
               <div class="tab-pane fade" id="panTools">
                 <?php
                   require 'deviceDetailsTools.php';
                 ?>
               </div>
-
-<!-- tab page 3 ------------------------------------------------------------ -->
-              <div class="tab-pane fade table-responsive" id="panPresence">
+              <div class="tab-pane fade" id="panPresence">
                 <?php
                   // Include the other page
                   include 'deviceDetailsPresence.php';
                 ?>
               </div>
-
-<!-- tab page 4 ------------------------------------------------------------ -->
-              <div class="tab-pane fade table-responsive" id="panEvents">
+              <div class="tab-pane fade " id="panEvents">
               <?php
                   // Include the other page
                   include 'deviceDetailsEvents.php';
                 ?>
               </div>
-
-<!-- tab page 7 ------------------------------------------------------------ -->
-              <div class="tab-pane fade table-responsive" id="panPlugins">
-                <?php
-                  // Include the other page
-                  include 'pluginsCore.php';
-                ?>
+              <div class="tab-pane fade" id="panSources">
+                <div id="sourcesPluginView">
+                  <?php
+                    // Include the other page
+                    include 'pluginsCore.php';
+                  ?>
+                </div>
+                <div id="sourcesFieldView" style="display:none;">
+                  <?php
+                    include 'pluginsFieldView.php';
+                  ?>
+                </div>
               </div>
 
-            </div>
+              <div class="tab-pane fade" id="panHistory">
+                <?php
+                  // Include the other page
+                  include 'changeLogCore.php';
+                ?>
+              </div>
             <!-- /.tab-content -->
           </div>
           <!-- /.nav-tabs-custom -->
@@ -224,6 +253,151 @@ switch ($UI_THEME) {
   var tab                 = 'tabDetails'
   var selectedTab         = 'tabDetails';
   var emptyArr            = ['undefined', "", undefined, null];
+
+  // -----------------------------------------------------------------------------
+  // Shared Sources data cache: Field View and the Session Info tab's Known IPs
+  // chip list both read the same pluginsObjects(objectPrimaryId = mac) query -
+  // keyed by mac so a second caller gets the cached promise, not a second
+  // network call. Neither consumer should issue its own pluginsObjects query.
+  const _sourcesFieldDataCache = {};
+
+  /**
+   * Fetch (or return the cached/in-flight promise for) this mac's pluginsObjects
+   * entries - shared by Field View and the Session Info tab's Known IPs chip list.
+   * @param {string} mac
+   * @returns {Promise<object[]>} Rejects on an ajax failure or a GraphQL-level error.
+   */
+  function getSourcesFieldData(mac) {
+    if (_sourcesFieldDataCache[mac]) {
+      return _sourcesFieldDataCache[mac];
+    }
+
+    const apiToken = getSetting("API_TOKEN");
+    const apiBaseUrl = getApiBase();
+
+    const query = `
+      query PluginsObjectsForMac($options: PluginQueryOptionsInput) {
+        pluginsObjects(options: $options) {
+          entries {
+            plugin objectSecondaryId
+            watchedValue1 watchedValue2 watchedValue3 watchedValue4
+            status dateTimeChanged
+          }
+        }
+      }
+    `;
+
+    const promise = $.ajax({
+      method: "POST",
+      url: `${apiBaseUrl}/graphql`,
+      headers: { "Authorization": `Bearer ${apiToken}`, "Content-Type": "application/json" },
+      data: JSON.stringify({
+        query,
+        variables: { options: { filters: [{ filterColumn: "objectPrimaryId", filterValue: mac }] } }
+      }),
+      dataType: "json"
+    }).then(function(response) {
+      if (response.errors) {
+        console.error("[Sources] pluginsObjects GraphQL errors:", response.errors);
+        // Reject (not resolve with []) - an empty-but-successful result would
+        // skip the cache eviction below, permanently poisoning this mac's
+        // entry with no way to retry.
+        throw new Error("pluginsObjects GraphQL error");
+      }
+      return response.data.pluginsObjects.entries;
+    });
+
+    // Don't cache a failed request forever - a transient failure (e.g. the
+    // GraphQL server not up yet on first page load) would otherwise poison
+    // this mac's entry for the rest of the page's life, with no way to retry.
+    promise.catch(() => { delete _sourcesFieldDataCache[mac]; });
+
+    _sourcesFieldDataCache[mac] = promise;
+    return promise;
+  }
+
+  // -----------------------------------------------------------------------------
+  // Shared field_views lookup: both Field View and the Session Info tab's Known
+  // IPs chip list need to know, PER PLUGIN, which exact Plugins_Objects column
+  // (objectSecondaryId/watchedValue1-4) holds a given field's value - that
+  // mapping is computed server-side (get_plugin_columns_for_field()) and shipped
+  // in plugins.json's field_views block.
+  let _fieldViewDefinitionsCache = null;
+
+  /**
+   * Fetch (or return the cached) field_views block from plugins.json - which
+   * plugin/column answers each DEVICE_FIELD_VIEWS field. Shared by Field View
+   * and the Session Info tab's Known IPs chip list, so neither one falls back
+   * to "grab whichever column happens to be non-empty" and silently picks up
+   * unrelated data (e.g. a port number) from a plugin never registered for the field.
+   * @returns {Promise<object>}
+   */
+  async function getFieldViewDefinitions() {
+    if (_fieldViewDefinitionsCache) {
+      return _fieldViewDefinitionsCache;
+    }
+    const response = await fetch(`php/server/query_json.php?file=${encodeURIComponent('plugins.json')}&nocache=${Date.now()}`);
+    if (!response.ok) throw new Error('Failed to load plugins.json');
+    const json = await response.json();
+    _fieldViewDefinitionsCache = json.field_views || {};
+    return _fieldViewDefinitionsCache;
+  }
+
+  /**
+   * Resolve a field's value for one plugin's pluginsObjects entry, using the
+   * exact column role field_views registered for that plugin - not a fallback
+   * chain over whichever watchedValue happens to be non-empty.
+   * @param {{plugin: string, column: string}[]} fieldColumns
+   * @param {object} entry - One pluginsObjects entry.
+   * @returns {*} The entry's value for this field, or undefined if entry's plugin isn't registered for it.
+   */
+  function resolveFieldValueForPlugin(fieldColumns, entry) {
+    const match = fieldColumns.find(c => c.plugin === entry.plugin);
+    return match ? entry[match.column] : undefined;
+  }
+
+  // -----------------------------------------------------------------------------
+  // Sources tab: Plugin View / Field View toggle. Plugin View is the default
+  // and the fallback for anyone who's never touched the toggle, matching
+  // today's only behavior.
+  /**
+   * Switch the Sources tab between Plugin View and Field View: toggles the two
+   * panes, updates the toggle button's icon/data-view, and persists the choice.
+   * ?tab=<plugin_prefix> (an existing deep-link into Plugin View) and
+   * ?field=<field_key> (Field View) are two separate URL params on purpose -
+   * neither should have to disambiguate the other's value.
+   * @param {('plugin'|'field')} view
+   */
+  function setSourcesView(view) {
+    const isField = view === 'field';
+    $('#sourcesFieldView').toggle(isField);
+    $('#sourcesPluginView').toggle(!isField);
+    $('#sourcesViewToggle')
+      .attr('data-view', view)
+      .find('i').attr('class', isField ? 'fa fa-list' : 'fa fa-puzzle-piece');
+    setCache('activeSourcesView', view);
+  }
+
+  /**
+   * Set the Sources tab's initial view on page load, from (in priority order)
+   * the ?field= URL param, the ?tab= URL param, the cached last-used view, or
+   * the 'plugin' default.
+   */
+  function initSourcesViewToggle() {
+    const urlParams = new URLSearchParams(window.location.search);
+
+    if (urlParams.has('field')) {
+      setSourcesView('field');
+      return;
+    }
+    if (urlParams.has('tab')) {
+      setSourcesView('plugin');
+      return;
+    }
+
+    const cached = getCache('activeSourcesView');
+    setSourcesView(!emptyArr.includes(cached) ? cached : 'plugin');
+  }
 
 // -----------------------------------------------------------------------------
 function main () {
@@ -282,6 +456,7 @@ function recordSwitch(direction) {
       '<?= lang('Gen_Cancel');?>', '<?= lang('Gen_Okay');?>', performSwitch, direction);
   } else
   {
+    showSpinner();
     performSwitch(direction)
   }
 }
@@ -307,7 +482,10 @@ function updateChevrons(currentMac) {
       pos = refreshedList.findIndex(item => item.devMac === currentMac);
 
       if (pos === -1) {
-        console.error('Still not found after re-cache:', currentMac);
+        console.warn('Device not found in device list after re-cache — hiding navigation controls:', currentMac);
+        $('#txtRecord').hide();
+        $('#btnPrevious').hide();
+        $('#btnNext').hide();
         return;
       }
 
@@ -499,26 +677,9 @@ async function renderSmallBoxes() {
     }
 }
 
-function updateDevicePageName(mac) {
-  let name = getDevDataByMac(mac, "devName");
-  let owner = getDevDataByMac(mac, "devOwner");
-
-  // If data is missing, re-cache and retry once
-  if (mac != 'new' && (name === null|| owner === null)) {
-    console.warn("Device not found in cache, retrying after re-cache:", mac);
-    showSpinner();
-    cacheDevices(true).then(() => {
-      hideSpinner();
-      // Retry after successful cache
-      updateDevicePageName(mac);
-    }).catch((err) => {
-      hideSpinner();
-      console.error("Failed to refresh devices:", err);
-    });
-    return; // Exit early to avoid showing bad data
-  }
-
-  // Page title - Name
+// ----------------------------------------
+// Write device name/owner into page title DOM. Pure DOM side-effect, no data fetching.
+function applyDevicePageTitle(mac, name, owner) {
   let pageTitleText;
 
   if (mac === "new") {
@@ -530,12 +691,12 @@ function updateDevicePageName(mac) {
           `<i class="fa fa-circle-info"></i> ` + getString("Gen_create_new_device_info")
       );
       $('#devicePageInfoPlc').show();
-  } else if (!owner || name.toString().includes(owner)) {
-      pageTitleText = name;
+  } else if (!owner || (name && name.toString().includes(owner))) {
+      pageTitleText = encodeSpecialChars(name ?? getString("DevDetail_EveandAl_NewDevice"));
       $('#pageTitle').html(pageTitleText);
       $('#devicePageInfoPlc').hide();
   } else {
-      pageTitleText = `${name} (${owner})`;
+      pageTitleText = `${encodeSpecialChars(name ?? getString("DevDetail_EveandAl_NewDevice"))} (${encodeSpecialChars(owner)})`;
       $('#pageTitle').html(pageTitleText);
       $('#devicePageInfoPlc').hide();
   }
@@ -544,12 +705,55 @@ function updateDevicePageName(mac) {
   $('title').html(pageTitleText + ' - ' + $('title').html());
 }
 
+// ----------------------------------------
+// Resolve device name/owner for the page title.
+// Stage 1: localStorage cache (synchronous, fast path).
+// Stage 2: one forced re-cache from table_devices.json.
+// Stage 3: REST API fallback so a direct-link visit never loops.
+async function updateDevicePageName(mac) {
+  let name  = getDevDataByMac(mac, "devName");
+  let owner = getDevDataByMac(mac, "devOwner");
+
+  // Stage 2: one re-cache attempt
+  if (mac !== 'new' && name === null) {
+    console.warn("Device not in cache, attempting re-cache:", mac);
+    showSpinner();
+    try {
+      await cacheDevices(true);
+    } catch (err) {
+      console.error("Re-cache failed:", err);
+    } finally {
+      hideSpinner();
+    }
+    name  = getDevDataByMac(mac, "devName");
+    owner = getDevDataByMac(mac, "devOwner");
+  }
+
+  // Stage 3: REST fallback — same endpoint renderSmallBoxes uses, always DB-direct
+  if (mac !== 'new' && name === null) {
+    console.warn("Device not found in cache after re-cache, falling back to REST API:", mac);
+    try {
+      const { apiBase, authHeader } = getAuthContext();
+      const res = await fetch(`${apiBase}/device/${encodeURIComponent(mac)}`, {
+        headers: authHeader
+      });
+      if (res.ok) {
+        const data = await res.json();
+        name  = data.devName  ?? null;
+        owner = data.devOwner ?? null;
+      } else {
+        console.error("REST fallback for device name returned:", res.status);
+      }
+    } catch (err) {
+      console.error("REST fallback error:", err);
+    }
+  }
+
+  applyDevicePageTitle(mac, name, owner);
+}
+
 
 //-----------------------------------------------------------------------------------
-
-
-
-
 window.onload = function() {
   // Always trigger app-init bootstrap
   if (typeof executeOnce === 'function') {
@@ -564,8 +768,39 @@ window.onload = function() {
     updateChevrons(mac);
     await renderSmallBoxes();
     main();
+    initSourcesViewToggle();
+    hideDeviceDetailsSkeleton();
   });
+
+// -----------------------------------------------------------------------------
+function hideDeviceDetailsSkeleton() {
+  $('#device-details-skeleton').fadeOut(0, function() { $(this).hide(); });
 }
+
+// -----------------------------------------------------------------------------
+function showDeviceDetailsSkeleton() {
+  var $skel = $('#device-details-skeleton');
+  $skel.stop(true, true).fadeIn(10);
+}
+
+
+// Fallback: remove main skeleton and all tab pane skeletons if init stalls
+setTimeout(function() {
+  hideDeviceDetailsSkeleton();
+  if (typeof hideDetailsTabSkeleton  === 'function') hideDetailsTabSkeleton();
+  if (typeof hideSessionsTabSkeleton === 'function') hideSessionsTabSkeleton();
+  if (typeof hidePresenceTabSkeleton === 'function') hidePresenceTabSkeleton();
+  if (typeof hideEventsTabSkeleton   === 'function') hideEventsTabSkeleton();
+  $('#skel-tab-history').hide();
+}, 15000);
+}
+
+
+// Load history when the tab becomes visible
+$(document).on('shown.bs.tab', 'a[id="tabHistory"]', function() {
+  _histPage  = 0;
+  // loadHistoryData();
+});
 
 </script>
 

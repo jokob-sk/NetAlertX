@@ -5,6 +5,7 @@
 ?>
 <!-- ----------------------------------------------------------------------- -->
 
+<?php require $_SERVER['DOCUMENT_ROOT'] . '/php/templates/skel_device_details_tab_events.php'; ?>
 
 <!-- Hide Connections -->
 <div class="col-sm-12 col-xs-12">
@@ -36,6 +37,9 @@ function loadEventsData() {
     console.warn("loadEventsData: mac not set, skipping");
     return;
   }
+
+  showEventsTabSkeleton();
+  showSpinner();
 
   const hideConnections = $('#chkHideConnectionEvents')[0].checked;
 
@@ -103,10 +107,12 @@ function loadEventsData() {
       table.draw();
 
       hideSpinner();
+      hideEventsTabSkeleton();
     },
     error: function (xhr) {
       console.error("Failed to load events", xhr.responseText);
       hideSpinner();
+      hideEventsTabSkeleton();
     }
   });
 }
@@ -177,9 +183,10 @@ function initDeviceEventsPage()
   // init page once
   if (eventsPageInitialized) return; //  ENSURE ONCE
   eventsPageInitialized = true;
-
+  
+  showEventsTabSkeleton();
   showSpinner();
-
+ 
   var eventsRows          = 10;
   var eventsHide          = true;
 
@@ -198,5 +205,13 @@ function deviceEventsPageUpdater() {
 
 deviceEventsPageUpdater();
 
+// -----------------------------------------------------------------------------
+function hideEventsTabSkeleton() {
+  $('#skel-tab-events').fadeOut(0, function() { $(this).hide(); });
+}
+function showEventsTabSkeleton() {
+  var $skel = $('#skel-tab-events');
+  $skel.stop(true, true).fadeIn(10);
+}
 
 </script>

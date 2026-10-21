@@ -3,13 +3,56 @@ name: project-navigation
 description: Reference for the NetAlertX codebase structure, key file paths, and configuration locations. Use this when exploring the codebase or looking for specific components like the backend entry point, frontend files, or database location.
 ---
 
-# Project Navigation & Structure
+# Project Navigation
 
-## Codebase Structure & Key Paths
+## Key Paths
 
-- **Source Code:** `/workspaces/NetAlertX` (mapped to `/app` in container via symlink).
-- **Backend Entry:** `server/api_server/api_server_start.py` (Flask) and `server/__main__.py`.
-- **Frontend:** `front/` (PHP/JS).
-- **Plugins:** `front/plugins/`.
-- **Config:** `/data/config/app.conf` (runtime) or `back/app.conf` (default).
-- **Database:** `/data/db/app.db` (SQLite).
+| Component | Path |
+|-----------|------|
+| Workspace root | `/workspaces/NetAlertX` |
+| Backend entry | `server/__main__.py` |
+| API server | `server/api_server/api_server_start.py` |
+| Plugin system | `server/plugin.py` |
+| Initialization | `server/initialise.py` |
+| Frontend | `front/` |
+| Frontend JS | `front/js/common.js` |
+| Frontend PHP | `front/php/server/*.php` |
+| Plugins | `server/plugins/` |
+| Plugin template | `server/plugins/__template` |
+| Database helpers | `server/db/db_helper.py` |
+| Device model | `server/models/device_instance.py` |
+| Messaging | `server/messaging/` |
+| Workflows | `server/workflows/` |
+
+## Architecture
+
+NetAlertX uses a frontend–backend architecture: the frontend runs on **PHP + Nginx** (see `front/`), the backend is implemented in **Python** (see `server/`), and scheduled tasks are managed by a **supercronic** scheduler.
+
+## Runtime Paths
+
+| Data | Path |
+|------|------|
+| Config (runtime) | `/data/config/app.conf` |
+| Config (default) | `back/app.conf` |
+| Database | `/data/db/app.db` |
+| API JSON cache | `/tmp/api/*.json` |
+| Logs | `/tmp/log/` |
+| Plugin logs | `/tmp/log/plugins/` |
+
+## Environment Variables
+
+Use these instead of hardcoding paths:
+- `NETALERTX_DB`
+- `NETALERTX_LOG`
+- `NETALERTX_CONFIG`
+- `NETALERTX_DATA`
+- `NETALERTX_APP`
+
+## Documentation
+
+| Topic | Path |
+|-------|------|
+| Plugin development | `docs/PLUGINS_DEV.md` |
+| System settings | `docs/SETTINGS_SYSTEM.md` |
+| API docs | `docs/API_*.md` |
+| Debug guides | `docs/DEBUG_*.md` |

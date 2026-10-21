@@ -6,7 +6,7 @@ from unittest.mock import patch, MagicMock
 
 # Use cwd as fallback if env var is not set, assuming running from project root
 INSTALL_PATH = os.getenv('NETALERTX_APP', os.getcwd())
-sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
+sys.path.extend([f"{INSTALL_PATH}/server/plugins", f"{INSTALL_PATH}/server"])
 
 from api_server.openapi.spec_generator import generate_openapi_spec
 from api_server.api_server_start import app

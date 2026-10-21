@@ -8,7 +8,11 @@ Sometimes, permission issues arise if your existing host directories were create
 Try starting the container with all data to be in non-persistent volumes. If this works, the issue might be related to the permissions of your persistent data mount locations on your server.
 
 ```bash
-docker run --rm --network=host \
+docker run --rm \
+  --network=host \
+  --cap-add=NET_RAW \
+  --cap-add=NET_ADMIN \
+  --cap-add=NET_BIND_SERVICE \
   -v /etc/localtime:/etc/localtime:ro \
   --tmpfs /tmp:uid=20211,gid=20211,mode=1700 \
   -e PORT=20211 \
@@ -67,7 +71,12 @@ If you use a custom `PUID` (e.g. `0`) and `GUID` (e.g. `100`) make sure you also
 1. **Run the container once as root** (`--user "0"`) to allow it to correct permissions automatically:
 
 ```bash
-docker run -it --rm --name netalertx --user "0" \
+docker run -it --rm \
+  --name netalertx \
+  --user "0" \
+  --cap-add=NET_RAW \
+  --cap-add=NET_ADMIN \
+  --cap-add=NET_BIND_SERVICE \
   -v /local_data_dir:/data \
   --tmpfs /tmp:uid=20211,gid=20211,mode=1700 \
   ghcr.io/netalertx/netalertx:latest

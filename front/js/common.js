@@ -4,7 +4,7 @@
 *
 *  common.js - Front module. Common Javascript functions
 *-------------------------------------------------------------------------------
-#  Puche 2021 / 2022+ jokob             jokob@duck.com                GNU GPLv3
+#  Puche 2021 / 2022+ jokob             support@netalertx.com                GNU GPLv3
 ----------------------------------------------------------------------------- */
 
 // -----------------------------------------------------------------------------
@@ -88,14 +88,36 @@ function deleteCookie (cookie) {
 // -----------------------------------------------------------------------------
 // cacheStrings, getString, getLangCode moved to cache.js
 
-  const tz = getSetting("TIMEZONE") || 'Europe/Berlin';
-  const LOCALE = getSetting('UI_LOCALE') || 'en-GB';
-
 // -----------------------------------------------------------------------------
 // DateTime utilities
 // -----------------------------------------------------------------------------
-function localizeTimestamp(input) {
+/**
+ * Parses a timestamp in any of several common formats (unix seconds/ms,
+ * DD/MM/YYYY, MM/DD/YYYY, ISO, RFC2822, DD-MM-YYYY) and formats it in the
+ * user's configured TIMEZONE/UI_LOCALE settings.
+ * @param {string|number} input - The timestamp to localize.
+ * @param {Intl.DateTimeFormatOptions} [dtfOptions] - Full Intl.DateTimeFormat
+ *   options object, replacing (not merging with) the default year/month/day/
+ *   hour/minute/second/hour12 shape - e.g. for a shorter chart-axis label.
+ * @returns {string} The localized, formatted timestamp.
+ */
+function localizeTimestamp(input, dtfOptions) {
 
+  // Read fresh on every call (not a module-level const): getSetting() reads
+  // a localStorage cache that clearCache() wipes before reloading, so a
+  // stale/hardcoded fallback could otherwise stick for the page's lifetime. See #1640.
+  const tz = getSetting("TIMEZONE") || 'Europe/Berlin';
+  const LOCALE = getSetting('UI_LOCALE') || 'en-GB';
+
+  // Optional second arg: full Intl.DateTimeFormat options object, replacing
+  // (not merging with) the historical year+seconds default below - e.g. a
+  // chart axis label that wants month/day/hour/minute only. Omit it for the
+  // original full-precision behavior every existing caller relies on.
+  const options = dtfOptions || {
+    year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', second: '2-digit',
+    hour12: false
+  };
 
   input = String(input || '').trim();
 
@@ -104,9 +126,7 @@ function localizeTimestamp(input) {
     const ms = input.length === 10 ? parseInt(input, 10) * 1000 : parseInt(input, 10);
     return new Intl.DateTimeFormat('default', {
       timeZone: tz,
-      year: 'numeric', month: '2-digit', day: '2-digit',
-      hour: '2-digit', minute: '2-digit', second: '2-digit',
-      hour12: false
+      ...options
     }).format(new Date(ms));
   }
 
@@ -196,9 +216,7 @@ function localizeTimestamp(input) {
     return new Intl.DateTimeFormat(LOCALE, {
       // Convert from UTC to user's configured timezone
       timeZone: tz,
-      year: 'numeric', month: '2-digit', day: '2-digit',
-      hour: '2-digit', minute: '2-digit', second: '2-digit',
-      hour12: false
+      ...options
     }).format(date);
   }
 }
@@ -357,23 +375,67 @@ function isValidJSON(jsonString) {
 }
 
 // ----------------------------------------------------
-// method to sanitize input so that HTML and other things don't break
+/**
+ * Encode special HTML characters into HTML entities.
+ *
+ * Prevents HTML injection/XSS when displaying untrusted text
+ * inside HTML content contexts.
+ *
+ * Example:
+ *   <script> -> &lt;script&gt;
+ *
+ * Note:
+ * - Intended for HTML text contexts only
+ * - Prefer using textContent or jQuery .text() when possible
+ * - Do NOT use as the sole protection for inline JS, URLs, CSS,
+ *   or unsafe innerHTML usage
+ *
+ * @param {*} str - Value to encode
+ * @returns {string} Encoded safe HTML string
+ */
 function encodeSpecialChars(str) {
-  return str
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;');
+
+    if (str === null || str === undefined) {
+        return '';
+    }
+
+    str = String(str);
+
+    return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
 }
 // ----------------------------------------------------
+/**
+ * Decode HTML entities back into normal characters.
+ *
+ * Example:
+ *   &lt;script&gt; -> <script>
+ *
+ * Warning:
+ * Decoding untrusted content and later inserting it into
+ * innerHTML or other HTML contexts can reintroduce XSS risks.
+ *
+ * @param {*} str - Value to decode
+ * @returns {string} Decoded string
+ */
 function decodeSpecialChars(str) {
-  return str
-      .replace(/&amp;/g, '&')
-      .replace(/&lt;/g, '<')
-      .replace(/&gt;/g, '>')
-      .replace(/&quot;/g, '"')
-      .replace(/&#039;/g, '\'');
+
+    if (str === null || str === undefined) {
+        return '';
+    }
+
+    str = String(str);
+
+    return str
+        .replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"')
+        .replace(/&#039;/g, '\'');
 }
 
 // ----------------------------------------------------
@@ -473,7 +535,7 @@ function createDeviceLink(input)
 {
   if(checkMacOrInternet(input))
   {
-    return `<span class="anonymizeMac"><a href="/deviceDetails.php?mac=${input}" target="_blank">${getDevDataByMac(input, "devName")}</a><span>`
+    return `<span class="anonymizeMac"><a href="/deviceDetails.php?mac=${input}" target="_blank">${encodeSpecialChars(getDevDataByMac(input, "devName"))}</a><span>`
   }
 
   return input;
@@ -749,36 +811,6 @@ function isValidIPv4(ip) {
   return ipv4Regex.test(ip);
 }
 
-
-function formatIPlong(ipAddress) {
-  if (ipAddress.includes(':') && isValidIPv6(ipAddress)) {
-    const parts = ipAddress.split(':');
-
-    return parts.reduce((acc, part, index) => {
-      if (part === '') {
-        const remainingGroups = 8 - parts.length + 1;
-        return acc << (16 * remainingGroups);
-      }
-
-      const hexValue = parseInt(part, 16);
-      return acc | (hexValue << (112 - index * 16));
-    }, 0);
-  } else {
-    // Handle IPv4 address
-    const parts = ipAddress.split('.');
-
-    if (parts.length !== 4) {
-      console.log("⚠ Invalid IPv4 address: " + ipAddress);
-      return -1; // or any other default value indicating an error
-    }
-
-    return (parseInt(parts[0]) << 24) |
-           (parseInt(parts[1]) << 16) |
-           (parseInt(parts[2]) << 8) |
-           parseInt(parts[3]);
-  }
-}
-
 // -----------------------------------------------------------------------------
 // Check if MAC is a random one
 function isRandomMAC(mac)
@@ -871,6 +903,41 @@ function isRandomMAC(mac)
 // getDevDataByMac, cacheDevices, devicesListAll_JSON moved to cache.js
 
 // -----------------------------------------------------------------------------
+/**
+ * Returns true if the backend hasn't yet confirmed importing settings as
+ * recent as referenceTimeMs (appState.settingsImported, from app_state.json).
+ * No fixed timeout: server/__main__.py's main loop only calls importConfigs()
+ * at the top of each iteration, and a full scan cycle (every plugin,
+ * potentially tens of thousands of objects) can legitimately take minutes,
+ * so this stays pending for exactly as long as the backend actually takes.
+ * Used by settings.php's own handleLoadingDialog(), passing the config
+ * file's mtime*1000 (via PHP's filemtime()) as referenceTimeMs - that page's
+ * own full-page blocking spinner, unrelated to the settingsPendingReload
+ * nav indicator (handle_pending_settings.js / sse_manager.js), which doesn't
+ * need a reference time at all since its resolution is pushed via SSE.
+ * @param {object} appState - parsed app_state.json.
+ * @param {number} referenceTimeMs - a moment (ms since epoch) that should
+ *   already be reflected in settingsImported if the backend has caught up.
+ * @returns {boolean}
+ */
+function isSettingsPending(appState, referenceTimeMs) {
+  var importedMs = parseInt(appState["settingsImported"] * 1000, 10);
+  return referenceTimeMs > importedMs;
+}
+
+// -----------------------------------------------------------------------------
+/**
+ * Shows/hides the sidebar-toggle's attention dot based on whether any
+ * .info-icon-nav badge in the sidebar is currently visible (not .myhidden) -
+ * deliberately doesn't know which badge triggered it, so a future badge
+ * lights this dot up for free without this function needing to change.
+ */
+function updateNavPendingDot() {
+  var anyVisible = $('.info-icon-nav').not('.myhidden').length > 0;
+  $('#navPendingDot').toggleClass('myhidden', !anyVisible);
+}
+
+// -----------------------------------------------------------------------------
 function isEmpty(value)
 {
   return emptyArr.includes(value)
@@ -910,41 +977,84 @@ function getGuid() {
 let spinnerTimeout = null;
 let animationTime = 300
 
-function showSpinner(stringKey = 'Loading') {
-  let text = isEmpty(stringKey) ? "Loading..." : getString(stringKey || "Loading");
+// show spinner on all clicks
+$(document).on('click', 'a', function (e) {
+    const href = this.href;
 
-  if (text == ""){
-    text = "Loading"
+    if (
+        href &&
+        this.target !== '_blank' &&
+        !this.hasAttribute('download') &&
+        this.origin === location.origin &&
+        this.pathname + this.search !== location.pathname + location.search
+    ) {
+        showSpinner();
+    }
+});
+
+function resolveSpinnerTarget(explicitTarget = null) {
+  if (explicitTarget) {
+    const explicit = $(explicitTarget);
+    if (explicit.length) {
+      return explicit;
+    }
+  }
+
+  // Prefer the active tab pane itself
+  const activePane = $(".tab-pane.active:visible");
+  if (activePane.length) {
+    // Use a direct child spinnerTarget if one exists and is visible
+    const childTarget = activePane.children(".spinnerTarget:visible").first();
+    return childTarget.length ? childTarget : activePane;
+  }
+
+  // Fall back to any visible spinnerTarget
+  const visibleTarget = $(".spinnerTarget:visible").first();
+  if (visibleTarget.length) {
+    return visibleTarget;
+  }
+
+  // Finally, cover the page
+  return $("body");
+}
+
+function showSpinner(stringKey = "Loading", target = null) {
+  let text = isEmpty(stringKey)
+    ? "Loading..."
+    : getString(stringKey || "Loading");
+
+  if (!text || !text.trim()) {
+    text = "Loading...";
   }
 
   const spinner = $("#loadingSpinner");
-  const target = $(".spinnerTarget").first(); // Only use the first one if multiple exist
+  const resolvedTarget = resolveSpinnerTarget(target);
+
+  console.log(resolvedTarget);
+  
+  // console.log(`spinnerTarget=${resolvedTarget.attr("id")} class=${resolvedTarget.attr("class")} size=${resolvedTarget.outerWidth()}x${resolvedTarget.outerHeight()} parent=${resolvedTarget.parent().outerWidth()}x${resolvedTarget.parent().outerHeight()}`)
 
   $("#loadingSpinnerText").text(text);
 
-  if (target.length) {
-    // Position relative to target
-    const offset = target.offset();
-    const width = target.outerWidth();
-    const height = target.outerHeight();
+  if (resolvedTarget.length) {
+    const offset = resolvedTarget.offset();
 
     spinner.css({
       position: "absolute",
       top: offset.top,
       left: offset.left,
-      width: width,
-      height: height,
-      zIndex: 800
+      width: resolvedTarget.outerWidth(),
+      height: resolvedTarget.outerHeight(),
+      zIndex: 9999
     });
   } else {
-    // Fullscreen fallback
     spinner.css({
       position: "fixed",
       top: 0,
       left: 0,
       width: "100%",
       height: "100%",
-      zIndex: 800
+      zIndex: 9999
     });
   }
 
@@ -954,13 +1064,14 @@ function showSpinner(stringKey = 'Loading') {
   });
 }
 
+
 function hideSpinner() {
   clearTimeout(spinnerTimeout);
   const spinner = $("#loadingSpinner");
 
   if (!spinner.length) return;
 
-  const target = $(".spinnerTarget").first();
+  const target = resolveSpinnerTarget();
 
   if (target.length) {
     // Lock position to target
@@ -974,7 +1085,7 @@ function hideSpinner() {
       left: offset.left,
       width: width,
       height: height,
-      zIndex: 800
+      zIndex: 9999
     });
   } else {
     // Fullscreen fallback
@@ -984,7 +1095,7 @@ function hideSpinner() {
       left: 0,
       width: "100%",
       height: "100%",
-      zIndex: 800
+      zIndex: 9999
     });
   }
 
@@ -1008,12 +1119,16 @@ function hideSpinner() {
 
 
 // --------------------------------------------------------
-// Calls a backend function to add a front-end event to an execution queue
+/**
+ * Queue an "update_api" ad-hoc event so the backend refreshes just the
+ * given data sources (e.g. "devices,appevents") on its next tick.
+ * @param {string} apiEndpoints - Comma-separated data source names.
+ */
 function updateApi(apiEndpoints)
 {
 
   // value has to be in format event|param. e.g. run|ARPSCAN
-  action = `${getGuid()}|update_api|${apiEndpoints}`
+  action = `update_api|${apiEndpoints}`
 
   const { token: apiToken, apiBase: apiBaseUrl, authHeader } = getAuthContext();
   const url = `${apiBaseUrl}/logs/add-to-execution-queue`;
@@ -1082,6 +1197,82 @@ function isSQLQuery(query) {
   return sqlRegex.test(query);
 }
 
+/**
+ * Lazy tab initializer
+ * - Ensures a tab is only initialized once
+ * - Waits until tab is visible in DOM
+ * - Uses polling (compatible with your existing architecture)
+ */
+
+function waitForAppReady(cb) {
+
+  if (window.__appReady) {
+    cb();
+    return;
+  }
+
+  const t = setInterval(() => {
+
+    if (window.__appReady) {
+      clearInterval(t);
+      cb();
+    }
+
+  }, 50);
+}
+
+function initLazyTab(selector, initFn, intervalMs = 200) {
+
+  const stateKey = `__lazy_init_${selector}`;
+  let initialized = false;
+
+  function runner() {
+
+    // prevent duplicate execution
+    if (initialized || window[stateKey]) return;
+
+    const $el = $(selector);
+
+    // ---------------------------------------------------------
+    // CASE 1: element does not exist → standalone page variant
+    // run immediately (no DOM dependency)
+    // ---------------------------------------------------------
+    if (!$el.length) {
+      initialized = true;
+      window[stateKey] = true;
+
+      try {
+        initFn();
+      } catch (e) {
+        console.error("Lazy init (no-element) failed:", selector, e);
+      }
+      return;
+    }
+
+    // ---------------------------------------------------------
+    // CASE 2: element exists AND is visible → run immediately
+    // ---------------------------------------------------------
+    if ($el.is(':visible')) {
+      initialized = true;
+      window[stateKey] = true;
+
+      try {
+        initFn();
+      } catch (e) {
+        console.error("Lazy init (visible) failed:", selector, e);
+      }
+      return;
+    }
+
+    // ---------------------------------------------------------
+    // CASE 3: element exists but hidden → wait for visibility
+    // (tab mode)
+    // ---------------------------------------------------------
+    setTimeout(runner, intervalMs);
+  }
+
+  runner();
+}
 
 // -------------------------------------------------------------------
 // Get corresponding plugin setting object
@@ -1215,11 +1406,50 @@ function getDevicesList()
   return devicesList;
 }
 
+// -----------------------------------------------------------------------------
+// Resolve {{fieldName}} wildcards in a template string against a device object
+// (case-insensitive field names, so {{devLastIp}} matches devLastIP). Unknown
+// fields are left as the literal "{{fieldName}}" placeholder so a typo while
+// configuring e.g. a custom property stays visible instead of silently
+// disappearing. escapeFn is applied to each substituted VALUE only (not the
+// surrounding template text) - pass encodeURIComponent when the template is a
+// URL, or leave the default identity function for plain text the caller will
+// HTML-escape itself afterwards.
+function resolveDeviceWildcards(str, device, escapeFn = (v) => v) {
+  if (!str || typeof str !== 'string' || str.indexOf('{{') === -1 || !device) {
+    return str;
+  }
+
+  const lowerCaseFields = {};
+  for (const key in device) {
+    lowerCaseFields[key.toLowerCase()] = device[key];
+  }
+
+  return str.replace(/\{\{\s*(\w+)\s*\}\}/g, (match, fieldName) => {
+    const lowerFieldName = fieldName.toLowerCase();
+    if (!(lowerFieldName in lowerCaseFields)) {
+      return match; // unknown field - leave the placeholder visible
+    }
+    const value = lowerCaseFields[lowerFieldName];
+    return escapeFn(value === null || value === undefined ? '' : String(value));
+  });
+}
+
+// -----------------------------------------------------------------------------
+// Convenience wrapper for callers that only have a MAC, not a full device
+// object already in scope - looks the device up from the cached device list.
+function resolveDeviceWildcardsByMac(str, mac, escapeFn = (v) => v) {
+  const device = getDevicesList().find(d => d.devMac === mac);
+  return device ? resolveDeviceWildcards(str, device, escapeFn) : str;
+}
+
 
 // -----------------------------------------------------------------------------
 // apply theme
 
-$(document).ready(function() {
+// Gated on callAfterAppInitialized() rather than raw $(document).ready, so this
+// can't race clearCache()'s reload and force-override the theme to Light. See #943.
+function applyTheme() {
   let theme = getSetting("UI_theme");
   if (theme) {
     theme = theme.replace("['","").replace("']","");
@@ -1236,6 +1466,10 @@ $(document).ready(function() {
   } else {
     setCookie("UI_theme", "Light");
   }
+}
+
+$(document).ready(function() {
+  callAfterAppInitialized(applyTheme);
 });
 
 // -----------------------------------------------------------

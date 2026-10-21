@@ -36,6 +36,7 @@ from urllib.parse import quote
 from flask import Blueprint, request, jsonify, Response, stream_with_context
 import requests
 from pydantic import ValidationError
+from collections import deque
 
 from helper import get_setting_value
 from logger import mylog
@@ -403,12 +404,12 @@ def map_openapi_to_mcp_tools(spec: Dict[str, Any]) -> List[Dict[str, Any]]:
                 mcp_upgrade = tool["_is_mcp"] and not existing["_is_mcp"]
                 # Upgrade if same route type but current is POST and existing is GET
                 method_upgrade = (tool["_is_mcp"] == existing["_is_mcp"]) and tool["_is_post"] and not existing["_is_post"]
-                
+
                 if mcp_upgrade or method_upgrade:
                     tools_map[original_op_id] = tool
 
     # Final cleanup: remove internal preference flags and ensure tools have the original names
-    # unless we explicitly want the suffixed ones. 
+    # unless we explicitly want the suffixed ones.
     # The user said "Eliminate Duplicate Tool Names", so we should use original_op_id as the tool name.
     final_tools = []
     _tool_name_to_operation_id: Dict[str, str] = {}
@@ -450,7 +451,7 @@ def find_route_for_tool(tool_name: str) -> Optional[Dict[str, Any]]:
 
     # Apply same preference logic as map_openapi_to_mcp_tools to ensure we pick the
     # same route definition that generated the tool schema.
-    
+
     # Priority 1: MCP routes (they have specialized paths/behavior)
     mcp_candidates = [c for c in candidates if c["path"].startswith("/mcp/")]
     pool = mcp_candidates if mcp_candidates else candidates
@@ -779,7 +780,6 @@ def _execute_tool(route: Dict[str, Any], args: Dict[str, Any]) -> Dict[str, Any]
 # =============================================================================
 # MCP RESOURCES
 # =============================================================================
-
 def get_log_dir() -> str:
     """Get the log directory from environment or settings."""
     log_dir = os.getenv("NETALERTX_LOG")
@@ -812,7 +812,7 @@ def _list_resources() -> List[Dict[str, Any]]:
 
     # Log files
     log_files = [
-        ("stdout.log", "Backend stdout log"),
+        ("app.log", "Backend log"),
         ("stderr.log", "Backend stderr log"),
         ("app_front.log", "Frontend commands log"),
         ("app.php_errors.log", "PHP errors log")
@@ -849,6 +849,7 @@ def _list_resources() -> List[Dict[str, Any]]:
 
 def _read_resource(uri: str) -> List[Dict[str, Any]]:
     """Read a resource by URI."""
+
     # Handle API Specification
     if uri == "netalertx://api/openapi.json":
         from flask import current_app
@@ -870,17 +871,22 @@ def _read_resource(uri: str) -> List[Dict[str, Any]]:
         # Security: ensure path is within log directory
         real_log_dir = os.path.realpath(log_dir)
         real_path = os.path.realpath(file_path)
-        # Use os.path.commonpath or append separator to prevent prefix attacks
+
         if not (real_path.startswith(real_log_dir + os.sep) or real_path == real_log_dir):
             return [{"uri": uri, "text": "Access denied: path outside log directory"}]
 
-        if os.path.exists(file_path):
+        if os.path.exists(real_path):
             try:
-                # Read last 500 lines to avoid overwhelming context
+                # Stream the file and retain only the last 500 lines
                 with open(real_path, "r", encoding="utf-8", errors="replace") as f:
-                    lines = f.readlines()
-                    content = "".join(lines[-500:])
-                    return [{"uri": uri, "mimeType": "text/plain", "text": content}]
+                    last_lines = deque(f, maxlen=500)
+
+                return [{
+                    "uri": uri,
+                    "mimeType": "text/plain",
+                    "text": "".join(last_lines)
+                }]
+
             except Exception as e:
                 return [{"uri": uri, "text": f"Error reading file: {e}"}]
 

@@ -11,6 +11,63 @@
 <?php
 
 // ----------------------------------------------------------
+// Database (moved here from maintenance.php - both are storage-facts)
+// ----------------------------------------------------------
+
+$dbBasePath = rtrim(getenv('NETALERTX_DB') ?: '/data/db', '/');
+$nax_db = $dbBasePath . '/app.db';
+$nax_wal = $dbBasePath . '/app.db-wal';
+$nax_db_size = file_exists($nax_db) ? number_format((filesize($nax_db) / 1000000), 2, ",", ".") . ' MB' : '0 MB';
+$nax_wal_size = file_exists($nax_wal) ? number_format((filesize($nax_wal) / 1000000), 2, ",", ".") . ' MB' : '0 MB';
+$nax_db_mod = file_exists($nax_db) ? date("F d Y H:i:s", filemtime($nax_db)) : 'N/A';
+
+// Table row counts. Read-only + existence check: a plain `new SQLite3($nax_db)`
+// with default flags would CREATE an empty app.db if the path is ever wrong/
+// missing (e.g. before first scan), and an unhandled open/query exception here
+// would previously fatal-error this entire AJAX-loaded tab, not just this box.
+$tableSizesHTML = "";
+if (is_readable($nax_db)) {
+    try {
+        $db_info_conn = new SQLite3($nax_db, SQLITE3_OPEN_READONLY);
+        $table_names_result = $db_info_conn->query("SELECT name FROM sqlite_master WHERE type='table'");
+        while ($row = $table_names_result->fetchArray(SQLITE3_ASSOC)) {
+            $tableName = $row['name'];
+            $countResult = $db_info_conn->querySingle("SELECT COUNT(*) FROM $tableName");
+            $tableSizesHTML = $tableSizesHTML . "$tableName (<b>$countResult</b>), ";
+        }
+        $db_info_conn->close();
+    } catch (Exception $e) {
+        $tableSizesHTML = '';
+    }
+}
+
+echo '<div class="box box-solid">
+            <div class="box-header">
+              <h3 class="box-title sysinfo_headline"><i class="fa fa-database"></i> ' . lang('Maintenance_Status') . '</h3>
+            </div>
+            <div class="box-body">
+              <div class="db_info_table">
+                  <div class="db_info_table_row">
+                      <div class="db_info_table_cell" style="min-width: 140px">' . lang('Maintenance_database_path') . '</div>
+                      <div class="db_info_table_cell">' . $nax_db . '</div>
+                  </div>
+                  <div class="db_info_table_row">
+                      <div class="db_info_table_cell">' . lang('Maintenance_database_size') . '</div>
+                      <div class="db_info_table_cell">' . $nax_db_size . ' (wal: ' . $nax_wal_size . ')</div>
+                  </div>
+                  <div class="db_info_table_row">
+                      <div class="db_info_table_cell">' . lang('Maintenance_database_rows') . '</div>
+                      <div class="db_info_table_cell">' . $tableSizesHTML . '</div>
+                  </div>
+                  <div class="db_info_table_row">
+                      <div class="db_info_table_cell">' . lang('Maintenance_database_lastmod') . '</div>
+                      <div class="db_info_table_cell">' . $nax_db_mod . '</div>
+                  </div>
+              </div>
+            </div>
+      </div>';
+
+// ----------------------------------------------------------
 // Storage
 // ----------------------------------------------------------
 

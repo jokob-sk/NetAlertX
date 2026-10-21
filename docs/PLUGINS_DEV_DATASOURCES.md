@@ -40,7 +40,7 @@ Execute any Linux command or Python script and capture its output.
 {
   "function": "CMD",
   "type": {"dataType": "string", "elements": [{"elementType": "input", "elementOptions": [], "transformers": []}]},
-  "default_value": "python3 /app/front/plugins/my_plugin/script.py",
+  "default_value": "python3 /app/server/plugins/my_plugin/script.py",
   "localized": ["name"],
   "name": [{"language_code": "en_us", "string": "Command"}]
 }
@@ -51,7 +51,7 @@ Execute any Linux command or Python script and capture its output.
 ```json
 {
   "function": "CMD",
-  "default_value": "bash /app/front/plugins/my_plugin/script.sh",
+  "default_value": "bash /app/server/plugins/my_plugin/script.sh",
   "localized": ["name"],
   "name": [{"language_code": "en_us", "string": "Command"}]
 }
@@ -59,7 +59,7 @@ Execute any Linux command or Python script and capture its output.
 
 ### Best Practices
 
-- **Always use absolute paths** (e.g., `/app/front/plugins/...`)
+- **Always use absolute paths** (e.g., `/app/server/plugins/...`)
 - **Use `plugin_helper.py`** for output formatting
 - **Add timeouts** via `RUN_TIMEOUT` setting (default: 60s)
 - **Log errors** to `/tmp/log/plugins/<PREFIX>.log`
@@ -344,7 +344,7 @@ Control plugin execution priority. Higher priority plugins run first.
 
 ```bash
 # Run script manually
-python3 /app/front/plugins/my_plugin/script.py
+python3 /app/server/plugins/my_plugin/script.py
 
 # Check result file
 cat /tmp/log/plugins/last_result.MYPREFIX.log
@@ -364,7 +364,7 @@ sqlite> SELECT ... ;
 
 ```bash
 # Watch backend logs
-tail -f /tmp/log/stdout.log | grep -i "data_source\|MYPREFIX"
+tail -f /tmp/log/app.log | grep -i "data_source\|MYPREFIX"
 ```
 
 ---

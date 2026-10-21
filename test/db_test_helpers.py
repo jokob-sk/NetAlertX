@@ -6,7 +6,9 @@ Import from any test subdirectory with:
     import sys, os
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
     from db_test_helpers import make_db, insert_device, minutes_ago, DummyDB, down_event_macs, make_device_dict, sync_insert_devices
+    from db_test_helpers import make_current_scan_dict, insert_current_scan_row_from_dict
     from db_test_helpers import make_plugin_db, make_plugin_dict, make_plugin_event_row, seed_plugin_object, plugin_history_rows, plugin_objects_rows, PluginFakeDB
+    from db_test_helpers import make_history_db
 """
 
 import sqlite3
@@ -17,6 +19,7 @@ from datetime import datetime, timezone, timedelta
 # Make the 'server' package importable when this module is loaded directly.
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "server"))
 from db.db_upgrade import ensure_views  # noqa: E402
+from db.db_history import ensure_deviceshistory_table, ensure_deviceshistory_triggers  # noqa: E402
 
 
 # ---------------------------------------------------------------------------
@@ -25,7 +28,7 @@ from db.db_upgrade import ensure_views  # noqa: E402
 
 CREATE_DEVICES = """
     CREATE TABLE IF NOT EXISTS Devices (
-        devMac                 TEXT PRIMARY KEY,
+        devMac                 TEXT PRIMARY KEY COLLATE NOCASE,
         devName                TEXT,
         devOwner               TEXT,
         devType                TEXT,
@@ -92,19 +95,22 @@ CREATE_EVENTS = """
 
 CREATE_CURRENT_SCAN = """
     CREATE TABLE IF NOT EXISTS CurrentScan (
-        scanMac            TEXT,
-        scanLastIP         TEXT,
-        scanVendor         TEXT,
-        scanSourcePlugin   TEXT,
-        scanName           TEXT,
-        scanLastQuery      TEXT,
-        scanLastConnection TEXT,
-        scanSyncHubNode    TEXT,
-        scanSite           TEXT,
-        scanSSID           TEXT,
-        scanParentMAC      TEXT,
-        scanParentPort     TEXT,
-        scanType           TEXT
+        scanMac              TEXT COLLATE NOCASE,
+        scanLastIP           TEXT COLLATE NOCASE,
+        scanVendor           TEXT,
+        scanSourcePlugin     TEXT,
+        scanName             TEXT,
+        scanLastQuery        TEXT,
+        scanLastConnection   TEXT,
+        scanSyncHubNode      TEXT,
+        scanSite             TEXT,
+        scanSSID             TEXT,
+        scanParentMAC        TEXT,
+        scanParentPort       TEXT,
+        scanType             TEXT,
+        scanCreatesDevice    INTEGER NOT NULL DEFAULT 1,
+        scanNotificationMode TEXT NOT NULL DEFAULT 'normal',
+        scanPresence         INTEGER NOT NULL DEFAULT 1
     )
 """
 
@@ -112,6 +118,19 @@ CREATE_SETTINGS = """
     CREATE TABLE IF NOT EXISTS Settings (
         setKey   TEXT PRIMARY KEY,
         setValue TEXT
+    )
+"""
+
+CREATE_SESSIONS = """
+    CREATE TABLE IF NOT EXISTS Sessions (
+        sesMac                    TEXT,
+        sesIp                     TEXT,
+        sesEventTypeConnection    TEXT,
+        sesDateTimeConnection     TEXT,
+        sesEventTypeDisconnection TEXT,
+        sesDateTimeDisconnection  TEXT,
+        sesStillConnected         INTEGER,
+        sesAdditionalInfo         TEXT
     )
 """
 
@@ -134,12 +153,48 @@ def make_db(sleep_minutes: int = 30) -> sqlite3.Connection:
     cur.execute(CREATE_EVENTS)
     cur.execute(CREATE_CURRENT_SCAN)
     cur.execute(CREATE_SETTINGS)
+    cur.execute(CREATE_SESSIONS)
     cur.execute(
         "INSERT OR REPLACE INTO Settings (setKey, setValue) VALUES (?, ?)",
         ("NTFPRCS_sleep_time", str(sleep_minutes)),
     )
     conn.commit()
     ensure_views(cur)
+    conn.commit()
+    return conn
+
+
+def make_history_db(dev_hist_days: int = 14,
+                    tracked: str = "['devName', 'devVendor', 'devLastIP', 'devNameSource']") -> sqlite3.Connection:
+    """
+    Return an in-memory SQLite connection with DevicesHistory fully set up.
+
+    Extends make_db() by adding the DevicesHistory table, indexes, and the
+    AFTER UPDATE / AFTER INSERT triggers. Settings rows for DEV_HIST_DAYS
+    and DEV_HIST_TRACKED are pre-inserted.
+
+    DEV_HIST_TRACKED is stored as a Python list literal string (e.g.
+    \"['devName','devVendor']\") matching the settings engine and the SQLite
+    trigger's instr(..., '''field''') membership check.
+
+    Args:
+        dev_hist_days: Value for DEV_HIST_DAYS setting (0 disables tracking).
+        tracked:       Python list literal string for DEV_HIST_TRACKED.
+    """
+    conn = make_db()
+    cur = conn.cursor()
+    cur.execute(
+        "INSERT OR REPLACE INTO Settings (setKey, setValue) VALUES (?, ?)",
+        ("DEV_HIST_DAYS", str(dev_hist_days)),
+    )
+    cur.execute(
+        "INSERT OR REPLACE INTO Settings (setKey, setValue) VALUES (?, ?)",
+        ("DEV_HIST_TRACKED", tracked),
+    )
+    conn.commit()
+    ensure_deviceshistory_table(cur)
+    conn.commit()
+    ensure_deviceshistory_triggers(cur)
     conn.commit()
     return conn
 
@@ -283,43 +338,84 @@ def sync_insert_devices(
     conn: sqlite3.Connection,
     device_data: list,
     existing_macs: set | None = None,
+    behavior: str = "copy-new",
 ) -> int:
     """
-    Schema-aware device INSERT mirroring sync.py's Mode-3 insert block.
+    Schema-aware device write mirroring sync.py's Mode-3 SYNC_BEHAVIOR block.
 
     Parameters
     ----------
     conn:
-        In-memory (or real) SQLite connection with a Devices table.
+        In-memory (or real) SQLite connection with Devices and Events tables.
     device_data:
         List of device dicts as received from table_devices.json or a node log.
     existing_macs:
-        Set of MAC addresses already present in Devices.  Rows whose devMac is
-        in this set are skipped.  Pass ``None`` (default) to insert everything.
+        Set of MAC addresses already present in Devices.  Used to compute
+        genuinely new MACs for the Events INSERT and (for ``copy-new``) to
+        filter write candidates.  Pass ``None`` to treat every device as new.
+    behavior:
+        One of ``"copy-new"`` (default), ``"carbon-copy"``, or
+        ``"hub-defaults"``.
 
-    Returns the number of rows actually inserted.
+        ``copy-new``    — INSERT OR IGNORE for new MACs only (current default).
+        ``carbon-copy`` — UPSERT (INSERT … ON CONFLICT DO UPDATE) for all MACs.
+        ``hub-defaults``— skip write entirely; hub pipeline handles new devices
+                          and their Events rows.
+
+    Returns the number of device rows written (0 for ``hub-defaults``).
+    Side-effect: inserts an Events row with eveEventType='New Device' for each
+    genuinely new MAC when behavior is ``copy-new`` or ``carbon-copy``.
     """
-    if not device_data:
+    if not device_data or behavior == "hub-defaults":
         return 0
 
     cursor = conn.cursor()
 
-    candidates = (
+    # Genuinely new MACs — drives the Events INSERT for both non-hub-defaults modes.
+    new_devices = (
         [d for d in device_data if d["devMac"] not in existing_macs]
         if existing_macs is not None
         else list(device_data)
     )
 
+    # Fire "New Device" events before the Devices INSERT pre-seeds the table.
+    if new_devices:
+        now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+        cursor.executemany(
+            """INSERT OR IGNORE INTO Events
+               (eveMac, eveIp, eveDateTime, eveEventType, eveAdditionalInfo, evePendingAlertEmail)
+               VALUES (?, ?, ?, 'New Device', ?, 1)""",
+            [(d["devMac"], d.get("devLastIP", ""), now, d.get("devVendor", ""))
+             for d in new_devices],
+        )
+
+    if behavior == "copy-new":
+        candidates = new_devices
+    else:  # carbon-copy — process all devices
+        candidates = list(device_data)
+
     if not candidates:
+        conn.commit()
         return 0
 
     cursor.execute("PRAGMA table_info(Devices)")
     db_columns = {row[1] for row in cursor.fetchall()}
 
-    insert_cols = [k for k in candidates[0].keys() if k in db_columns]
-    columns = ", ".join(insert_cols)
+    insert_cols  = [k for k in candidates[0].keys() if k in db_columns]
+    columns      = ", ".join(insert_cols)
     placeholders = ", ".join("?" for _ in insert_cols)
-    sql = f"INSERT INTO Devices ({columns}) VALUES ({placeholders})"
+
+    if behavior == "carbon-copy":
+        _CARBON_COPY_SKIP = {"devMac", "devPresentLastScan"}
+        update_cols   = [col for col in insert_cols if col not in _CARBON_COPY_SKIP]
+        update_clause = ", ".join(f"{col}=excluded.{col}" for col in update_cols)
+        sql = (
+            f"INSERT INTO Devices ({columns}) VALUES ({placeholders}) "
+            f"ON CONFLICT(devMac) DO UPDATE SET {update_clause}"
+        )
+    else:
+        sql = f"INSERT OR IGNORE INTO Devices ({columns}) VALUES ({placeholders})"
+
     values = [tuple(d.get(col) for col in insert_cols) for d in candidates]
     cursor.executemany(sql, values)
     conn.commit()
@@ -334,6 +430,80 @@ def down_event_macs(cur) -> set:
     """Return the set of MACs that have a 'Device Down' event row (lowercased)."""
     cur.execute("SELECT eveMac FROM Events WHERE eveEventType = 'Device Down'")
     return {r["eveMac"].lower() for r in cur.fetchall()}
+
+
+def insert_device_from_dict(conn: sqlite3.Connection, device: dict) -> None:
+    """Insert a device dict (as produced by make_device_dict) into Devices.
+
+    Uses INSERT OR IGNORE so duplicate MACs are silently skipped.  Accepts any
+    subset of Devices columns — only keys present in the table are written.
+    """
+    cur = conn.cursor()
+    cur.execute("PRAGMA table_info(Devices)")
+    db_columns = {row[1] for row in cur.fetchall()}
+
+    cols = [k for k in device.keys() if k in db_columns]
+    placeholders = ", ".join("?" for _ in cols)
+    col_list = ", ".join(cols)
+    values = [device[c] for c in cols]
+
+    cur.execute(
+        f"INSERT OR IGNORE INTO Devices ({col_list}) VALUES ({placeholders})",
+        values,
+    )
+    conn.commit()
+
+
+def make_current_scan_dict(mac: str = "aa:bb:cc:dd:ee:ff", **overrides) -> dict:
+    """
+    Return a CurrentScan row dict with safe defaults matching the real
+    schema's defaults (scanCreatesDevice=1, scanNotificationMode='normal',
+    scanPresence=1 — i.e. today's unconditional behavior for a plugin that
+    never heard of these columns). Pass keyword arguments to override.
+    """
+    base = {
+        "scanMac":              mac,
+        "scanLastIP":           "192.168.1.10",
+        "scanVendor":           "Acme",
+        "scanSourcePlugin":     "ARPSCAN",
+        "scanName":             "Test Device",
+        "scanLastQuery":        "2024-01-02 00:00:00",
+        "scanLastConnection":   "2024-01-02 00:00:00",
+        "scanSyncHubNode":      "",
+        "scanSite":             "",
+        "scanSSID":             "",
+        "scanParentMAC":        "",
+        "scanParentPort":       "",
+        "scanType":             "",
+        "scanCreatesDevice":    1,
+        "scanNotificationMode": "normal",
+        "scanPresence":         1,
+    }
+    base.update(overrides)
+    return base
+
+
+def insert_current_scan_row_from_dict(conn: sqlite3.Connection, row: dict) -> None:
+    """Insert a CurrentScan row dict (as produced by make_current_scan_dict).
+
+    No dedup/uniqueness — CurrentScan legitimately holds multiple rows per
+    MAC (one per contributing plugin), unlike Devices. Accepts any subset of
+    CurrentScan columns; only keys present in the table are written.
+    """
+    cur = conn.cursor()
+    cur.execute("PRAGMA table_info(CurrentScan)")
+    db_columns = {r[1] for r in cur.fetchall()}
+
+    cols = [k for k in row.keys() if k in db_columns]
+    placeholders = ", ".join("?" for _ in cols)
+    col_list = ", ".join(cols)
+    values = [row[c] for c in cols]
+
+    cur.execute(
+        f"INSERT INTO CurrentScan ({col_list}) VALUES ({placeholders})",
+        values,
+    )
+    conn.commit()
 
 
 # ---------------------------------------------------------------------------
@@ -494,7 +664,7 @@ def make_plugin_event_row(prefix: str, primary_id: str, secondary_id="sec",
                           watched1="val1", watched2="", watched3="",
                           watched4="", changed="2026-01-01 00:00:00",
                           extra="", user_data="", foreign_key="",
-                          status="not-processed"):
+                          status="not-processed", help_val1=None):
     """Build a tuple mimicking a raw plugin output row (19 columns + index)."""
     return (
         0,              # index (placeholder, not used for events)
@@ -512,7 +682,7 @@ def make_plugin_event_row(prefix: str, primary_id: str, secondary_id="sec",
         user_data,
         foreign_key,
         None,           # syncHubNodeName
-        None,           # helpVal1
+        help_val1,
         None,           # helpVal2
         None,           # helpVal3
         None,           # helpVal4

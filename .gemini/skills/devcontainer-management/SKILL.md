@@ -26,6 +26,6 @@ Prefix commands with `docker exec <CONTAINER_ID>` to run them inside the environ
 docker exec <CONTAINER_ID> bash /workspaces/NetAlertX/.devcontainer/scripts/setup.sh
 ```
 
-*Note: This script wipes `/tmp` ramdisks, resets DBs, and restarts services (python server, cron,php-fpm, nginx).*
+*Note: This script wipes `/tmp` ramdisks, ensures `/data`, `/data/config`, `/data/db` exist, and restarts services (python server, cron, php-fpm, nginx) by symlinking and running `/entrypoint.sh` (`install/production-filesystem/entrypoint.d/`). By default it does **not** delete existing database or config content - `entrypoint.d/25-first-run-db.sh` and `20-first-run-config.sh` only wipe them when `ALWAYS_FRESH_INSTALL=true` is set in the environment (default: unset/`false`, so content is preserved).*
 
 ```

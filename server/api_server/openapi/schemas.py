@@ -57,7 +57,7 @@ NOTIFICATION_LEVELS = Literal["info", "warning", "error", "alert", "interrupt"]
 ALLOWED_TABLES = Literal["Devices", "Events", "Sessions", "Settings", "CurrentScan", "Online_History", "Plugins_Objects", "Plugins_History"]
 
 ALLOWED_LOG_FILES = Literal[
-    "app.log", "app_front.log", "IP_changes.log", "stdout.log", "stderr.log",
+    "app.log", "app_front.log", "IP_changes.log", "stderr.log",
     "app.php_errors.log", "execution_queue.log", "db_is_locked.log"
 ]
 
@@ -288,6 +288,12 @@ class DeviceSearchResponse(BaseResponse):
     devices: List[DeviceInfo] = Field(default_factory=list, description="List of matching devices")
 
 
+class DeviceListAllRequest(BaseModel):
+    """Request for listing all devices, with optional pagination."""
+    limit: Optional[int] = Field(None, ge=1, le=1000, description="Max devices to return")
+    offset: Optional[int] = Field(None, ge=0, description="Number of devices to skip")
+
+
 class DeviceListRequest(BaseModel):
     """Request for listing devices by status."""
     status: Optional[Literal[
@@ -308,6 +314,8 @@ class DeviceListRequest(BaseModel):
             "- offline: Devices not present in the last scan"
         )
     )
+    limit: Optional[int] = Field(None, ge=1, le=1000, description="Max devices to return")
+    offset: Optional[int] = Field(None, ge=0, description="Number of devices to skip")
 
 
 class DeviceListResponse(RootModel):
@@ -562,6 +570,26 @@ class TriggerScanResponse(BaseResponse):
     scan_type: Optional[str] = Field(None, description="Type of scan that was triggered")
 
 
+class PauseScanRequest(BaseModel):
+    """Request to pause the automatic scan scheduler for a number of minutes."""
+    minutes: int = Field(
+        ...,
+        ge=1,
+        le=1440,
+        description="Number of minutes to pause automatic scans for (1-1440)"
+    )
+
+
+class PauseScanResponse(BaseResponse):
+    """Response for pausing the automatic scan scheduler."""
+    pause_until: Optional[str] = Field(None, description="ISO timestamp scans are paused until")
+
+
+class ResumeScanResponse(BaseResponse):
+    """Response for resuming the automatic scan scheduler."""
+    pause_until: Optional[str] = Field(None, description="Always empty; confirms the pause was cleared")
+
+
 class OpenPortsRequest(BaseModel):
     """Request for getting open ports."""
     target: str = Field(
@@ -733,7 +761,9 @@ class HealthCheckResponse(BaseResponse):
                 "storage_pct": 42,
                 "cpu_temp": 58,
                 "storage_gb": 8,
-                "mem_mb" : 8192
+                "mem_mb" : 8192,
+                "process_cpu_pct": 3.2,
+                "process_rss_mb": 142.75
             }]
         }
     )
@@ -745,6 +775,8 @@ class HealthCheckResponse(BaseResponse):
     cpu_temp: Optional[int] = Field(None, description="CPU temperature in Celsius (nullable if unavailable)")
     storage_gb: Optional[int] = Field(..., description="Storage size in GB")
     mem_mb: Optional[int] = Field(..., description="Installed memory size in MB")
+    process_cpu_pct: float = Field(..., description="NetAlertX process CPU usage percentage since the last /health call (live gauge, not a tick average)")
+    process_rss_mb: float = Field(..., description="NetAlertX process resident memory (RSS) in MB")
 
 
 # =============================================================================
@@ -772,6 +804,13 @@ class EventInfo(BaseModel):
     eveDateTime: Optional[str] = Field(None, description="Event timestamp")
     eveEventType: Optional[str] = Field(None, description="Type of event")
     evePreviousIP: Optional[str] = Field(None, description="Previous IP if changed")
+
+
+class EventListRequest(BaseModel):
+    """Request for listing events, optionally filtered by MAC, with optional pagination."""
+    mac: Optional[str] = Field(None, description="Filter by Device MAC")
+    limit: Optional[int] = Field(None, ge=1, le=1000, description="Max events to return")
+    offset: Optional[int] = Field(None, ge=0, description="Number of events to skip")
 
 
 class RecentEventsRequest(BaseModel):
@@ -920,13 +959,25 @@ class CreateNotificationRequest(BaseModel):
     content: str = Field(
         ...,
         min_length=1,
-        max_length=1024,
+        max_length=4096,
         description="Notification content"
     )
     level: NOTIFICATION_LEVELS = Field(
-        "info",
+        "alert",
         description="Notification severity level"
     )
+
+    @field_validator("content", mode="before")
+    @classmethod
+    def truncate_content(cls, v):
+        """Truncate instead of rejecting - content is often a generated
+        summary (e.g. a bulk multi-edit's affected MAC list) with no natural
+        length cap, and the notification store is a JSON file with no
+        underlying column limit that 4096 corresponds to. Losing the whole
+        write on overlength input would be worse than a truncated one."""
+        if isinstance(v, str) and len(v) > 4096:
+            return v[:4093] + "..."
+        return v
 
 
 # =============================================================================
@@ -936,9 +987,10 @@ class CreateNotificationRequest(BaseModel):
 
 class SyncPushRequest(BaseModel):
     """Request to push data to sync."""
-    data: dict = Field(..., description="Data to sync")
+    data: str = Field(..., description="Encrypted data payload (ciphertext string)")
     node_name: str = Field(..., description="Name of the node sending data")
     plugin: str = Field(..., description="Plugin identifier")
+    file_path: Optional[str] = Field(None, description="Source file path on the node")
 
 
 class SyncPullResponse(BaseResponse):

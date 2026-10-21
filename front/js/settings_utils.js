@@ -99,7 +99,7 @@ function pluginCards(prefixesOfEnabledPlugins, includeSettings) {
     });
 
     html += `
-              <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2  col-xxl-1  padding-5px">
+              <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 padding-5px">
                 <div class="small-box bg-green col-sm-12 " >
                   <div class="inner col-sm-12">
                     <a href="#${prefix}_header" onclick="toggleAllSettings('open')">
@@ -265,9 +265,31 @@ function cloneDataTableRow(el){
   // Clone the row (including its data and controls)
   let clonedRow = $(row).clone(true, true); // The true arguments copy the data and event handlers
 
+  // Use max(my-index) + 1, not rows().count(), so a clone made after a row was
+  // removed can't collide with a surviving row's index (count() shrinks on removal,
+  // indices don't get renumbered).
+  let newIndex = 0;
+  table.rows().nodes().to$().each(function () {
+    const idx = parseInt($(this).attr("my-index"));
+    if (!isNaN(idx) && idx >= newIndex) { newIndex = idx + 1; }
+  });
 
-  $(clonedRow).attr("my-index",table.rows().count())
+  $(clonedRow).attr("my-index", newIndex);
 
+  // jQuery's clone() copies every descendant id/name/data-* attribute verbatim,
+  // so the clone's inputs/select/action-icons still carry the SOURCE row's
+  // "<key>_<myIndex>" identifiers - e.g. two elements now share the same id.
+  // That breaks anything that looks an element up by id (e.g. the icon picker's
+  // document.getElementById(setKey) in showIconSelection()), which then always
+  // resolves to the first (source) row instead of the new clone. Re-key every
+  // such attribute on the clone to use the new index instead.
+  const idxSuffix = new RegExp(`_${myIndex}(?!\\d)`, 'g');
+  clonedRow.find('[id], [name], [data-myparam-setkey], [data-myparam]').each(function () {
+    ['id', 'name', 'data-myparam-setkey', 'data-myparam'].forEach(attr => {
+      const v = $(this).attr(attr);
+      if (v) { $(this).attr(attr, v.replace(idxSuffix, `_${newIndex}`)); }
+    });
+  });
 
   console.log(clonedRow);
 
@@ -330,6 +352,26 @@ function addViaPopupForm(element) {
 }
 
 // ---------------------------------------------------------
+// Commit a value as a new interactive option on a target select,
+// shared by addList (typed value) and addIconViaModal (pasted/encoded value)
+function appendListOption(toId, value, label = value) {
+  const newOption = $("<option class='interactable-option'></option>")
+    .attr("value", value)
+    .text(label);
+
+  // add new option
+  $(`#${toId}`).append(newOption);
+
+  // Initialize interaction options only for the newly added option
+  initListInteractionOptions(newOption);
+
+  // flag something changes to prevent navigating from page
+  settingsChanged();
+
+  return newOption;
+}
+
+// ---------------------------------------------------------
 // Add item to list
 function addList(element, clearInput = true) {
   const fromId = $(element).attr("my-input-from");
@@ -339,23 +381,33 @@ function addList(element, clearInput = true) {
 
   console.log(`fromId | toId | input : ${fromId} | ${toId} | ${input}`);
 
-  const newOption = $("<option class='interactable-option'></option>")
-    .attr("value", input)
-    .text(input);
-
-  // add new option
-  $(`#${toId}`).append(newOption);
+  appendListOption(toId, input);
 
   // clear input
   if (clearInput) {
     $(`#${fromId}`).val("");
   }
+}
 
-  // Initialize interaction options only for the newly added option
-  initListInteractionOptions(newOption);
+// ---------------------------------------------------------
+// Add a new icon to a target select by pasting raw SVG/Font-Awesome HTML
+// in a modal and base64-encoding it automatically, instead of requiring
+// the value to already be base64-encoded in the (hidden) input.
+function addIconViaModal(button) {
+  const toId = $(button).attr("my-input-to");
 
-  // flag something changes to prevent navigating from page
-  settingsChanged();
+  showModalInput(
+    '<i class="fa fa-square-plus pointer"></i> ' + getString('DevDetail_button_AddIcon'),
+    getString('DevDetail_button_AddIcon_Help'),
+    getString('Gen_Cancel'),
+    getString('Gen_Okay'),
+    () => {
+      const raw = $('#modal-input-textarea').val();
+      const encoded = btoa(raw.replace(/"/g, "'"));
+      appendListOption(toId, encoded);
+    },
+    null
+  );
 }
 
 // ---------------------------------------------------------
@@ -770,7 +822,7 @@ function reverseTransformers(val, transformers) {
         break;
       case "deviceChip":
         mac = val  // value is mac
-        val =  `${getDevDataByMac(mac, "devName")}`
+        val =  encodeSpecialChars(getDevDataByMac(mac, "devName"))
         break;
       case "deviceRelType":
         val =  val; // nothing to do
@@ -961,7 +1013,7 @@ function generateOptions(options, valuesArray, targetField, transformers, placeh
     // Always include selected if options are used as a source
     let selected = options.length !== 0 && valuesArray.includes(item.id) ? 'selected' : '';
 
-    optionsHtml += `<option class="${cssClass}" value="${item.id}" ${selected}>${labelName}</option>`;
+    optionsHtml += `<option class="${cssClass}" value="${encodeSpecialChars(item.id)}" ${selected}>${encodeSpecialChars(labelName)}</option>`;
   });
 
 
@@ -1059,6 +1111,16 @@ function collectSetting(prefix, setCodeName, setType, settingsArray) {
 
   // Map of handlers
   const handlers = {
+      textarea: () => {
+          let value = $(`#${setCodeName}`).val();
+      
+          // Only escape multiline plain text values
+          if (dataType === "string") {
+              value = JSON.stringify(value).slice(1, -1);
+          }
+      
+          return applyTransformers(value, transformers);
+      },
       datatableString: () => {
           const value = collectTableData(`#${setCodeName}_table`);
           return btoa(JSON.stringify(value));
@@ -1091,9 +1153,26 @@ function collectSetting(prefix, setCodeName, setType, settingsArray) {
       },
       none: () => "",
       json: () => {
-          let value = $(`#${setCodeName}`).val();
-          value = applyTransformers(value, transformers);
-          return JSON.stringify(value, null, 2);
+        let value = $(`#${setCodeName}`).val();
+
+        value = applyTransformers(value, transformers);
+    
+        try {
+            value = JSON.parse(value);
+        } catch (e) {
+            console.error(`[collectSetting] Invalid JSON for ${setCodeName}`, e);
+            return value;
+        }
+    
+        value = JSON.stringify(value, null, 2)
+        .replace(/\btrue\b/g, "True")
+        .replace(/\bfalse\b/g, "False")
+        .replace(/\bnull\b/g, "None");
+
+        console.log("---------------")
+        console.log(value)
+
+        return value;
       },
       fallback: () => {
           console.error(`[collectSetting] Couldn't determine how to handle (${setCodeName}|${dataType}|${opts.inputType})`);
@@ -1106,17 +1185,20 @@ function collectSetting(prefix, setCodeName, setType, settingsArray) {
   let handlerKey;
   if (dataType === "string" && elementType === "datatable") {
       handlerKey = "datatableString";
+  } else if (dataType === "json") {
+    handlerKey = "json";
+  } 
+  else if (elementType === "textarea") {
+    handlerKey = "textarea";
   } else if (dataType === "string" ||
             (dataType === "integer" && (opts.inputType === "number" || opts.inputType === "text"))) {
-      handlerKey = "simpleValue";
+    handlerKey = "simpleValue";
   } else if (opts.inputType === "checkbox") {
       handlerKey = "checkbox";
   } else if (dataType === "array") {
       handlerKey = "array";
   } else if (dataType === "none") {
       handlerKey = "none";
-  } else if (dataType === "json") {
-      handlerKey = "json";
   } else {
       handlerKey = "fallback";
   }
@@ -1162,19 +1244,23 @@ function generateFormHtml(settingsData, set, overrideValue, overrideOptions, ori
   const setKey = set['setKey'];
   const setType = set['setType'];
 
-    // if (setKey == 'UNIFIAPI_site_name') {
+  // if (setKey == 'NTFPRCS_TEXT_TEMPLATE_down_devices') {
 
-    //   console.log("==== DEBUG OUTPUT BELOW 1 ====");
-    //   console.log("populateFromOverrides: " + populateFromOverrides);
-    //   console.log(setType);
-    //   console.log(setKey);
-    //   console.log("overrideValue:" + overrideValue);
-    //   console.log("inVal:" + inVal);
-    //   console.log("set['setValue']:" + set['setValue']);
-    // }
+  //   console.log("==== DEBUG OUTPUT BELOW 1 ====");
+  //   console.log("populateFromOverrides: " + populateFromOverrides);
+  //   console.log(setType);
+  //   console.log(setKey);
+  //   console.log("overrideValue:" + overrideValue);
+  //   console.log("inVal:" + inVal);
+  //   console.log("set['setValue']:" + set['setValue']);
+  //   console.log("overrideValue stringify:", JSON.stringify(overrideValue));
+  //   console.log("inVal stringify:", JSON.stringify(inVal));
+  //   console.log("set['setValue'] stringify:", JSON.stringify(set['setValue']));
+  // }
 
   // Parse the setType JSON string
   // console.log(processQuotes(setType));
+  // console.log(setType);
 
   const setTypeObject = JSON.parse(processQuotes(setType))
   const dataType = setTypeObject.dataType;
@@ -1211,7 +1297,7 @@ function generateFormHtml(settingsData, set, overrideValue, overrideOptions, ori
     // Override value
     let val = valRes;
 
-    // if (setKey == 'UNIFIAPI_site_name') {
+    // if (setKey == 'NTFPRCS_TEXT_TEMPLATE_down_devices') {
 
     //   console.log("==== DEBUG OUTPUT BELOW 2 ====");
     //   console.log(setType);

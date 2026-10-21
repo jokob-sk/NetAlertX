@@ -19,7 +19,7 @@ Network monitoring & alerting. Provides inventory, awareness, insight, categoriz
 - **Backend Config:** `/data/config/app.conf`
 - **Data (SQLite):** `/data/db/app.db`; helpers in `server/db/*`
 - **Frontend (Nginx + PHP + JS):** `front/`
-- **Plugins (Python):** `front/plugins/*` with `config.json` manifests
+- **Plugins (Python):** `server/plugins/*` with `config.json` manifests
 
 ## Skills
 
@@ -27,6 +27,7 @@ Procedural knowledge lives in `.github/skills/`. Load the appropriate skill when
 
 | Task | Skill |
 |------|-------|
+| Find or cross-reference any skill | `skills-overview` |
 | Run tests, check failures | `testing-workflow` |
 | Start/stop/restart services | `devcontainer-services` |
 | Wipe database, fresh start | `database-reset` |
@@ -34,6 +35,7 @@ Procedural knowledge lives in `.github/skills/`. Load the appropriate skill when
 | Build Docker images | `docker-build` |
 | Reprovision devcontainer | `devcontainer-setup` |
 | Create or run plugins | `plugin-run-development` |
+| Write or review a plugin README | `plugin-readme` |
 | Analyze PR comments | `pr-analysis` |
 | Clean Docker resources | `docker-prune` |
 | Generate devcontainer configs | `devcontainer-configs` |
@@ -42,6 +44,9 @@ Procedural knowledge lives in `.github/skills/`. Load the appropriate skill when
 | Settings and config | `settings-management` |
 | Find files and paths | `project-navigation` |
 | Coding standards | `code-standards` |
+| Devices table write paths, SQLite triggers, audit logging, `*Source` attribution | `database-patterns` |
+| `process_scan()` call order, CurrentScan/Events/Sessions internals, device presence lifecycle | `scan-pipeline` |
+| Write a PRD, design doc, or feature proposal | `prd-writing` |
 
 ## Execution Protocol
 

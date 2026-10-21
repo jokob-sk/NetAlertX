@@ -77,6 +77,17 @@ echo '   Network intruder and presence detector.
 
 '
 set -u
+
+# Set APP_CONF_OVERRIDE based on GRAPHQL_PORT if not already set.
+# Must run before the entrypoint.d loop below - 35-apply-conf-override.sh
+# (which writes APP_CONF_OVERRIDE to app_conf_override.json for the Python
+# app to read) lives in that loop, so deriving APP_CONF_OVERRIDE afterwards
+# means it never gets picked up on a fresh volume.
+if [ -n "${GRAPHQL_PORT:-}" ] && [ -z "${APP_CONF_OVERRIDE:-}" ]; then
+    export APP_CONF_OVERRIDE='{"GRAPHQL_PORT":"'"${GRAPHQL_PORT}"'"}'
+    >&2 echo "APP_CONF_OVERRIDE detected (set from GRAPHQL_PORT)"
+fi
+
 FAILED_STATUS=""
 echo "Startup pre-checks"
 for script in "${ENTRYPOINT_CHECKS}"/*; do
@@ -126,13 +137,6 @@ if [ -n "${FAILED_STATUS}" ]; then
         exit "${FAILED_STATUS}"
     fi
 fi
-
-# Set APP_CONF_OVERRIDE based on GRAPHQL_PORT if not already set
-if [ -n "${GRAPHQL_PORT:-}" ] && [ -z "${APP_CONF_OVERRIDE:-}" ]; then
-    export APP_CONF_OVERRIDE='{"GRAPHQL_PORT":"'"${GRAPHQL_PORT}"'"}'
-    >&2 echo "APP_CONF_OVERRIDE detected (set from GRAPHQL_PORT)"
-fi
-
 
 # Exit after checks if in check-only mode (for testing)
 if [ "${NETALERTX_CHECK_ONLY:-0}" -eq 1 ]; then

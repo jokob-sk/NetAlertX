@@ -151,7 +151,6 @@ The authoritative field update logic prevents plugin overwrites:
 ## See Also
 
 - [Device locking](./DEVICE_FIELD_LOCK.md)
-- [Device source fields](./DEVICE_SOURCE_FIELDS.md)
+- [Device source fields - Authoritative updates](./DEVICE_SOURCE_FIELDS.md)
 - [API Device Endpoints Documentation](./API_DEVICE.md)
-- [Authoritative Field Updates System](./PLUGINS_DEV.md#authoritative-fields)
 - [Plugin Configuration Reference](./PLUGINS_DEV_CONFIG.md)

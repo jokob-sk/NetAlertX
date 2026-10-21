@@ -280,7 +280,12 @@ services:
 Run the container with the `--user "0"` parameter. Please note, some systems will require the manual approach below.
 
 ```sh
-docker run -it --rm --name netalertx --user "0" \
+docker run -it --rm \
+  --name netalertx \
+  --user "0" \
+  --cap-add=NET_RAW \
+  --cap-add=NET_ADMIN \
+  --cap-add=NET_BIND_SERVICE \
   -v /local_data_dir/config:/app/config \
   -v /local_data_dir/db:/app/db \
   -v /local_data_dir:/data \

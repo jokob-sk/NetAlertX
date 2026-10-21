@@ -139,3 +139,29 @@ def apply_events_filters(data, options):
         ]
 
     return data
+
+
+def extract_paging(options):
+    if not options:
+        return {
+            "page": 1,
+            "limit": 50,
+            "offset": 0,
+            "sort": [],
+            "search": None
+        }
+
+    page = getattr(options, "page", 1) or 1
+    limit = getattr(options, "limit", 50) or 50
+    search = getattr(options, "search", None)
+    sort = getattr(options, "sort", []) or []
+
+    offset = (page - 1) * limit
+
+    return {
+        "page": page,
+        "limit": limit,
+        "offset": offset,
+        "sort": sort,
+        "search": search
+    }

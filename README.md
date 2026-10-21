@@ -1,6 +1,6 @@
 [![Docker Size](https://img.shields.io/docker/image-size/jokobsk/netalertx?label=Size&logo=Docker&color=0aa8d2&logoColor=fff&style=for-the-badge)](https://hub.docker.com/r/jokobsk/netalertx)
 [![Docker Pulls](https://img.shields.io/docker/pulls/jokobsk/netalertx?label=Pulls&logo=docker&color=0aa8d2&logoColor=fff&style=for-the-badge)](https://hub.docker.com/r/jokobsk/netalertx)
-[![GitHub Release](https://img.shields.io/github/v/release/netalertx/NetAlertX?color=0aa8d2&logoColor=fff&logo=GitHub&style=for-the-badge)](https://github.com/netalertx/NetAlertX/releases)
+[![GitHub Release](https://img.shields.io/github/v/release/netalertx/NetAlertX?color=0aa8d2&logoColor=fff&logo=GitHub&style=for-the-badge&label=latest)](https://github.com/netalertx/NetAlertX/releases)
 [![Discord](https://img.shields.io/discord/1274490466481602755?color=0aa8d2&logoColor=fff&logo=Discord&style=for-the-badge)](https://discord.gg/NczTUTWyRr)
 [![Home Assistant](https://img.shields.io/badge/Repo-blue?logo=home-assistant&style=for-the-badge&color=0aa8d2&logoColor=fff&label=Add)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Falexbelgium%2Fhassio-addons)
 
@@ -21,14 +21,11 @@
 </details>
 
 
-Centralized network visibility and continuous asset discovery.
+NetAlertX is a network visibility and asset intelligence platform for homelabs, IT teams, MSPs, and distributed environments. It provides centralized network visibility and continuous asset discovery across remote sites, VLANs, branch offices, and segmented networks from a single interface.
 
-Monitor devices, detect change, and stay aware across distributed networks.
+NetAlertX gives you a real-time source of truth for connected devices, helps identify shadow IT and unauthorized hardware, supports compliance initiatives, and automates operational workflows across distributed customer environments.
 
-NetAlertX provides a centralized "Source of Truth" (NSoT) for network infrastructure. Maintain a real-time inventory of every connected device, identify Shadow IT and unauthorized hardware to maintain regulatory compliance, and automate compliance workflows across distributed sites.
-
-NetAlertX is designed to bridge the gap between simple network scanning and complex SIEM tools, providing actionable insights without the overhead.
-
+Use NetAlertX to spot shadow IT, unauthorized hardware, IPAM drift, and other changes that matter to service teams. With multi-site sync, reporting, workflows, and webhooks, it helps MSPs stay ahead of problems without the overhead of a full NMS or SIEM.
 
 ## Table of Contents
 
@@ -43,7 +40,7 @@ NetAlertX is designed to bridge the gap between simple network scanning and comp
 ## Quick Start
 
 > [!WARNING]
-> ⚠️ **Important:** The docker-compose has recently changed. Carefully read the [Migration guide](https://docs.netalertx.com/MIGRATION/?h=migrat#12-migration-from-netalertx-v25524) for detailed instructions.
+> **Important:** If upgrading an older installation read the [Migration guide](https://docs.netalertx.com/MIGRATION/) for detailed instructions - it lists each migration scenario by version, so pick the one matching your installed version.
 
 Start NetAlertX in seconds with Docker:
 
@@ -51,6 +48,9 @@ Start NetAlertX in seconds with Docker:
 docker run -d \
   --network=host \
   --restart unless-stopped \
+  --cap-add=NET_RAW \
+  --cap-add=NET_ADMIN \
+  --cap-add=NET_BIND_SERVICE \
   -v /local_data_dir:/data \
   -v /etc/localtime:/etc/localtime:ro \
   --tmpfs /tmp:uid=20211,gid=20211,mode=1700 \
@@ -76,14 +76,14 @@ For Home Assistant users: [Click here to add NetAlertX](https://my.home-assistan
 For other install methods, check the [installation docs](#documentation)
 
 ---
-### || [Docker guide](https://docs.netalertx.com/DOCKER_INSTALLATION) || [Releases](https://github.com/netalertx/NetAlertX/releases) || [Docs](https://docs.netalertx.com/) || [Plugins](https://docs.netalertx.com/PLUGINS) || [Website](https://netalertx.com)
+### || [Docker guide](https://docs.netalertx.com/DOCKER_INSTALLATION) || [Releases](https://github.com/netalertx/NetAlertX/releases) || [Docs](https://docs.netalertx.com/) || [Plugins](https://docs.netalertx.com/PLUGINS_OVERVIEW) || [Website](https://netalertx.com)
 ---
 
 ## Features
 
 ### Discovery & Asset Intelligence
 
-Continuous monitoring for unauthorized asset discovery, connection state changes, and IP address management (IPAM) drift. Discovery & scan methods include: **arp-scan**,  **Pi-hole - DB import**,  **Pi-hole - DHCP leases import**, **Generic DHCP leases import**, **UNIFI controller import**, **SNMP-enabled router import**. Check the [Plugins](https://docs.netalertx.com/PLUGINS#readme) docs for a full list of avaliable plugins.
+Continuous monitoring for unauthorized asset discovery, connection state changes, and IP address management (IPAM) drift. Discovery & scan methods include: **arp-scan**,  **Pi-hole - DB import**,  **Pi-hole - DHCP leases import**, **Generic DHCP leases import**, **UNIFI controller import**, **SNMP-enabled router import**. Check the [Plugins](https://docs.netalertx.com/PLUGINS_OVERVIEW#readme) docs for a full list of avaliable plugins.
 
 ### Notification gateways
 
@@ -92,11 +92,15 @@ Send notifications to more than 80+ services, including Telegram via [Apprise](h
 ### Integrations and Plugins
 
 Feed your data and device changes into [Home Assistant](https://docs.netalertx.com/HOME_ASSISTANT), read [API endpoints](https://docs.netalertx.com/API), or use [Webhooks](https://docs.netalertx.com/WEBHOOK_N8N) to setup custom automation flows. You can also
-build your own scanners with the [Plugin system](https://docs.netalertx.com/PLUGINS#readme) in as little as [15 minutes](https://www.youtube.com/watch?v=cdbxlwiWhv8).
+build your own scanners with the [Plugin system](https://docs.netalertx.com/PLUGINS_OVERVIEW#readme) in as little as [15 minutes](https://www.youtube.com/watch?v=cdbxlwiWhv8).
 
 ### Workflows
 
 The [workflows module](https://docs.netalertx.com/WORKFLOWS) automates IT governance by enforcing device categorization and cleanup policies. Whether you need to assign newly discovered devices to a specific Network Node, auto-group devices from a given vendor, unarchive a device if detected online, or automatically delete devices, this module provides the flexibility to tailor the automations to your needs.
+
+### MSP & Multi-Site Monitoring
+
+NetAlertX enables centralized monitoring across remote sites and isolated environments through Sync Nodes for VLANs and branch offices, providing unified visibility of assets across multiple networks. It supports [NOC-style wallboard dashboards](https://docs.netalertx.com/ADVISORY_EYES_ON_GLASS/), [Prometheus metrics export](https://docs.netalertx.com/API_METRICS/), workflow automation for device governance, and distributed discovery with centralized alerting for scalable network operations.
 
 
 ## Documentation
@@ -126,6 +130,15 @@ Compliance & Hardening:
 
 See [Security Best Practices](https://github.com/netalertx/NetAlertX/security) for more details.
 
+## Designed for MSPs, NOCs & Distributed Networks
+
+NetAlertX supports centralized monitoring across VLANs, branch offices, customer environments, isolated networks, and remote sites.
+
+Using [Sync Nodes](https://docs.netalertx.com/ADVISORY_MULTI_SITE_MONITORING), distributed collectors securely send device inventory and network visibility data back to a central hub, enabling unified monitoring, alerting, and asset tracking across all locations.
+
+This provides MSPs and NOCs with a single operational view of many independent networks, without requiring direct access or centralized scanning infrastructure.
+
+Common deployments include MSP wallboards, NOC dashboards, multi-site inventory monitoring, and remote office discovery.
 
 ## FAQ
 
@@ -157,38 +170,21 @@ Check the [GitHub Issues](https://github.com/netalertx/NetAlertX/issues) for the
 ## Everything else
 <!--- --------------------------------------------------------------------- --->
 
-<a href="https://trendshift.io/repositories/12670" target="_blank"><img src="https://trendshift.io/api/badge/repositories/12670" alt="jokob-sk%2FNetAlertX | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
+<a href="https://trendshift.io/repositories/19712" target="_blank"><img src="https://trendshift.io/api/badge/repositories/19712" alt="jokob-sk%2FNetAlertX | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
 
-### 📧 Get notified what's new
+### Get notified what's new
 
 Get notified about a new release, what new functionality you can use and about breaking changes.
 
 ![Follow and star][follow_star]
 
-### 🔀 Other Alternative Apps
+### Other Alternative Apps
 
 - [Fing](https://www.fing.com/) - Network scanner app for your Internet security (Commercial, Phone App, Proprietary hardware)
 - [NetBox](https://netboxlabs.com/) - The gold standard for Network Source of Truth (NSoT) and IPAM.
 - [Zabbix](https://www.zabbix.com/) or [Nagios](https://www.nagios.org/) - Strong focus on infrastructure monitoring.
+- [Domotz](https://www.domotz.com/) - Commercial network monitoring and remote management platform aimed at MSPs, IT teams, and multi-site environments.
 - [NetAlertX](https://netalertx.com) - The streamlined, discovery-focused choice for real-time asset intelligence and noise-free alerting.
-
-### 💙 Donations
-
-Thank you to everyone who appreciates this tool and donates.
-
-<details>
-  <summary>Click for more ways to donate</summary>
-
-  <hr>
-
-  | [![GitHub](https://i.imgur.com/emsRCPh.png)](https://github.com/sponsors/jokob-sk) | [![Buy Me A Coffee](https://i.imgur.com/pIM6YXL.png)](https://www.buymeacoffee.com/jokobsk) |
-  | --- | --- |
-  - Bitcoin: `1N8tupjeCK12qRVU2XrV17WvKK7LCawyZM`
-  - Ethereum: `0x6e2749Cb42F4411bc98501406BdcD82244e3f9C7`
-
-  📧 Email me at [jokob@duck.com](mailto:jokob@duck.com?subject=NetAlertX) if you want to get in touch or if I should add other sponsorship platforms.
-
-</details>
 
 ### 🏗 Contributors
 
@@ -196,7 +192,7 @@ This project would be nothing without the amazing work of the community, with sp
 
 > [pucherot/Pi.Alert](https://github.com/pucherot/Pi.Alert) (the original creator of PiAlert), [leiweibau](https://github.com/leiweibau/Pi.Alert): Dark mode (and much more), [Macleykun](https://github.com/Macleykun) (Help with Dockerfile clean-up), [vladaurosh](https://github.com/vladaurosh) for Alpine re-base help, [Final-Hawk](https://github.com/Final-Hawk) (Help with NTFY, styling and other fixes), [TeroRERO](https://github.com/terorero) (Spanish translations), [Data-Monkey](https://github.com/Data-Monkey), (Split-up of the python.py file and more), [cvc90](https://github.com/cvc90) (Spanish translation and various UI work) to name a few. Check out all the [amazing contributors](https://github.com/netalertx/NetAlertX/graphs/contributors).
 
-### 🌍 Translations
+### Translations
 
 Proudly using [Weblate](https://hosted.weblate.org/projects/pialert/). Help out and suggest languages in the [online portal of Weblate](https://hosted.weblate.org/projects/pialert/core/).
 

@@ -1,8 +1,10 @@
+import html
 import json
 import re
 import uuid
 import socket
 from yattag import indent
+from yattag.indentation import XMLTokenError
 from json2table import convert
 
 # Register NetAlertX modules
@@ -16,7 +18,6 @@ from helper import (
     get_setting_value,
     getBuildTimeStampAndVersion,
 )
-from messaging.in_app import write_notification
 from messaging.notification_sections import SECTION_ORDER
 from utils.datetime_utils import timeNowUTC, timeNowTZ, get_timezone_offset
 
@@ -126,9 +127,14 @@ class NotificationInstance:
             mail_text = mail_text.replace("REPORT_DASHBOARD_URL", self.serverUrl)
             mail_html = mail_html.replace("REPORT_DASHBOARD_URL", self.serverUrl)
 
+            # Preheaders for preview
+            preheaders = []
+
             # Generate TEXT & HTML for each notification section
             for section in SECTION_ORDER:
-                html, text = construct_notifications(self.JSON, section)
+                html, text, preheader = construct_notifications(self.JSON, section)
+                if preheader:
+                    preheaders.append(preheader)
                 placeholder = f"{section.upper()}_TABLE"
                 mail_text = mail_text.replace(placeholder, text + "\n")
                 mail_html = mail_html.replace(placeholder, html)
@@ -141,9 +147,7 @@ class NotificationInstance:
                 mail_html, conf.REPORT_DASHBOARD_URL + "/deviceDetails.php?mac="
             )
 
-            final_html = indent(
-                mail_html, indentation="    ", newline="\r\n", indent_text=True
-            )
+            final_html = finalize_html(mail_html, preheaders)
 
             send_api(self.JSON, final_text, final_html)
 
@@ -157,6 +161,7 @@ class NotificationInstance:
             self.HTML = final_html
 
             # Notify frontend
+            from messaging.in_app import write_notification  # lazy import to avoid Flask dep at module level
             write_notification(f"Report:{self.GUID}", "alert", self.DateTimeCreated)
 
             self.upsert()
@@ -276,24 +281,23 @@ class NotificationInstance:
 # -----------------------------------------------------------------------------
 # Reporting
 # -----------------------------------------------------------------------------
-
-
 # ------------------------------------------------------------------------------
 def construct_notifications(JSON, section):
     jsn = JSON[section]
 
     # Return if empty
     if jsn == []:
-        return "", ""
+        return "", "", ""
 
     tableTitle = JSON[section + "_meta"]["title"]
     headers = JSON[section + "_meta"]["columnNames"]
 
     html = ""
     text = ""
+    preheader_preview = ""
 
     table_attributes = {
-        "style": "border-collapse: collapse; font-size: 12px; color:#70707",
+        "style": "border-collapse: collapse; font-size: 12px; color: #70707;",
         "width": "100%",
         "cellspacing": 0,
         "cellpadding": "3px",
@@ -320,11 +324,15 @@ def construct_notifications(JSON, section):
             text = tableTitle + "\n---------\n"
 
         # Convert a JSON into an HTML table
+        html_data = escape_html_rows(jsn)
         html = convert(
-            {"data": jsn},
+            {"data": html_data},
             build_direction=build_direction,
             table_attributes=table_attributes,
         )
+
+        # pre-header in emails (html) to show a more valuable preview
+        preheader_preview = build_preheader(tableTitle, jsn, headers)
 
         # Cleanup the generated HTML table notification
         html = (
@@ -357,7 +365,7 @@ def construct_notifications(JSON, section):
         for header in headers:
             html = format_table(html, header, thProps)
 
-    return html, text
+    return html, text, preheader_preview
 
 
 # -----------------------------------------------------------------------------
@@ -378,3 +386,65 @@ def format_table(html, thValue, props, newThValue=""):
     return html.replace(
         "<th>" + thValue + "</th>", "<th " + props + " >" + newThValue + "</th>"
     )
+
+
+# -----------------------------------------------------------------------------
+# Escape free-text values before embedding them into notification HTML
+def escape_html_rows(rows):
+    """Return a copy of notification rows with only string values HTML-escaped."""
+    return [
+        {
+            key: html.escape(value) if isinstance(value, str) else value
+            for key, value in row.items()
+        }
+        for row in rows
+    ]
+
+
+# -----------------------------------------------------------------------------
+# Finalize HTML and tolerate pretty-print failures
+def finalize_html(mail_html, preheaders):
+    """Insert an escaped preheader and pretty-print HTML, falling back to raw HTML on XML errors."""
+    # Add preheader for inbox preview after all links have been generated.
+    # Invisible padding prevents email clients from showing the start of the email body.
+    preheader = " • ".join(html.escape(entry) for entry in preheaders)
+    padding = (" &zwnj;&#8199;" * 47)
+
+    mail_html = mail_html.replace(
+        "PREHEADER",
+        preheader + padding,
+    )
+
+    try:
+        return indent(
+            mail_html, indentation="    ", newline="\r\n", indent_text=True
+        )
+    except XMLTokenError as err:
+        mylog(
+            "none",
+            f"[Notification] Failed to pretty-print HTML report, sending unindented HTML instead: {err}",
+        )
+        return mail_html
+
+
+# -----------------------------------------------------------------------------
+# Pre-header Preview
+def build_preheader(tableTitle, jsn, headers):
+    previews = []
+
+    # pre-headers for email previews
+    preview_fields = headers[:3]
+
+    for entry in jsn[:3]:
+        vals = [
+            str(entry[h])
+            for h in preview_fields
+            if entry.get(h)
+        ]
+        previews.append(" • ".join(vals))
+
+    suffix = ""
+    if len(jsn) > 3:
+        suffix = f" (+{len(jsn) - 3} more)"
+
+    return f"{tableTitle}: " + "; ".join(previews) + suffix

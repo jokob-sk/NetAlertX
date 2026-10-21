@@ -66,7 +66,7 @@ let wfEnabledOptions = [
 ];
 
 let operatorTypes = [
-  "equals", "contains" , "regex"
+  "equals", "not_equals", "contains", "not_contains", "regex"
 ];
 
 let actionTypes = [
@@ -107,6 +107,7 @@ function getData() {
   })
   .always(function () {
     hideSpinner(); // Ensure the spinner is hidden in all cases
+    hideWorkflowsSkeleton();
   });
 }
 
@@ -295,8 +296,86 @@ function generateWorkflowUI(wf, wfIndex) {
     });
 
 
-    // Dropdown for action.type
-    let $actionDropdown= createEditableDropdown(
+    // how big should the background icon be — computed after all content decisions
+    let numberOfLines = 1
+
+    // ------------------------------------------------------------------
+    // Target selector — shown first so user picks the target before the action
+    // Applies to update_field and delete_device actions
+    // ------------------------------------------------------------------
+    if (action.type == "update_field" || action.type == "delete_device") {
+      let currentStrategy = (action.target && action.target.strategy) ? action.target.strategy : "triggering_device";
+
+      let $targetDropdown = createEditableDropdown(
+        `[${wfIndex}].actions[${actionIndex}].target.strategy`,
+        getString("WF_Action_target"),
+        ["triggering_device", "query"],
+        currentStrategy,
+        `wf-${wfIndex}-actionIndex-${actionIndex}-target-strategy`
+      );
+
+      $actionEl.append($targetDropdown);
+
+      // Conditional query conditions sub-form
+      let $targetConditionsWrap = $("<div>", {
+        class: `action-target-conditions panel col-sm-12 col-sx-12 ${currentStrategy === "query" ? "" : "hidden"}`,
+        id: `wf-${wfIndex}-actionIndex-${actionIndex}-target-conditions-wrap`
+      });
+
+      let $targetConditionsTitle = $("<div>", { class: "section-title" })
+        .append($("<i>", { class: "fa-solid fa-crosshairs" }))
+        .append(` ${getString("WF_Action_target_conditions")}:`);
+
+      let $tokenHint = $("<div>", { class: "text-muted inline-hint small col-sm-12 col-xs-12" })
+        .html(getString("WF_Action_token_hint"));
+
+      $targetConditionsWrap.append($targetConditionsTitle);
+      $targetConditionsWrap.append($tokenHint);
+
+      let targetConditions = (action.target && action.target.conditions) ? action.target.conditions : [];
+      let targetBasePath = `[${wfIndex}].actions[${actionIndex}].target`;
+
+      $.each(targetConditions, function(tcIdx, tc) {
+        let $tcRow = createTargetConditionRow(wfIndex, actionIndex, tcIdx, tc, targetBasePath);
+        $targetConditionsWrap.append($tcRow);
+      });
+
+      let $addTargetCondBtn = $("<div>", {
+        class: "pointer add-target-condition green-hover-text col-sm-12",
+        wfIndex: wfIndex,
+        actionIndex: actionIndex
+      }).append($("<i>", { class: "fa-solid fa-plus" })).append(` ${getString("WF_Add_Condition")}`);
+
+      $targetConditionsWrap.append($addTargetCondBtn);
+      $actionEl.append($targetConditionsWrap);
+
+      // Show/hide conditions sub-form when strategy dropdown changes
+      $targetDropdown.find("select").on("change", function() {
+        let val = $(this).val();
+        let $wrap = $(`#wf-${wfIndex}-actionIndex-${actionIndex}-target-conditions-wrap`);
+        if (val === "query") {
+          $wrap.removeClass("hidden");
+        } else {
+          $wrap.addClass("hidden");
+          // Strip target.conditions from the in-memory object when switching away from query
+          let wfs = getWorkflowsJson();
+          if (wfs[wfIndex] && wfs[wfIndex].actions[actionIndex] && wfs[wfIndex].actions[actionIndex].target) {
+            delete wfs[wfIndex].actions[actionIndex].target.conditions;
+          }
+          updateWorkflowsJson(wfs);
+        }
+      });
+
+      // numberOfLines: 1 (target dropdown) = 1 base for both action types
+      // query mode adds: 1 (section title+hint) + N×3 (each condition: field/op/value) + 1 (add btn)
+      let conditionLines = currentStrategy === "query"
+        ? 2 + (targetConditions.length * 3)
+        : 0;
+      numberOfLines = 1 + conditionLines;
+    }
+
+    // Dropdown for action.type — rendered after target so user reads: who → what
+    let $actionDropdown = createEditableDropdown(
       `[${wfIndex}].actions[${actionIndex}].type`,
       getString("WF_Action_type"),
       actionTypes,
@@ -304,15 +383,13 @@ function generateWorkflowUI(wf, wfIndex) {
       `wf-${wfIndex}-actionIndex-${actionIndex}-type`
     );
 
-
     $actionEl.append($actionDropdown);
-
-    // how big should the background icon be
-    let numberOfLines = 1
+    numberOfLines += 1;
 
     if(action.type == "update_field")
     {
-      numberOfLines = 3
+      // +2 for field dropdown and value input rows
+      numberOfLines += 2;
 
       // Dropdown for action.field
       let $fieldDropdown = createEditableDropdown(
@@ -356,7 +433,8 @@ function generateWorkflowUI(wf, wfIndex) {
     $actionRemoveButtonWrap.append($actionRemoveButton);
 
     let $actionIcon = $("<i>", {
-      class: `fa-solid  fa-person-running fa-flip-horizontal bckg-icon-${numberOfLines}-line `
+      class: `fa-solid fa-person-running fa-flip-horizontal bckg-icon-base`,
+      style: `font-size: ${numberOfLines * 3}em`
     });
 
     $actionEl.prepend($actionIcon)
@@ -719,6 +797,57 @@ function createEditableInput(jsonPath, labelText, value, id, className = "") {
   $wrapper.append($label)
   $wrapper.append($inputWrapper.append($input))
   return $wrapper;
+}
+
+// --------------------------------------
+// Render a single row in a target-conditions sub-form (cross-device query targeting v2)
+function createTargetConditionRow(wfIndex, actionIndex, tcIdx, tc, targetBasePath) {
+  let basePath = `${targetBasePath}.conditions[${tcIdx}]`;
+
+  let $row = $("<div>", { class: "panel col-sm-12 col-sx-12 target-condition-row" });
+
+  let $icon = $("<i>", { class: "fa-solid fa-crosshairs bckg-icon-3-line" });
+  $row.append($icon);
+
+  let $inner = $("<div>", { class: "col-sm-11 col-sx-12" });
+
+  let $fieldDropdown = createEditableDropdown(
+    `${basePath}.field`,
+    getString("WF_Condition_field"),
+    fieldOptions,
+    tc.field || "",
+    `wf-${wfIndex}-act-${actionIndex}-tc-${tcIdx}-field`
+  );
+
+  let $operatorDropdown = createEditableDropdown(
+    `${basePath}.operator`,
+    getString("WF_Condition_operator"),
+    operatorTypes,
+    tc.operator || "equals",
+    `wf-${wfIndex}-act-${actionIndex}-tc-${tcIdx}-operator`
+  );
+
+  let $valueInput = createEditableInput(
+    `${basePath}.value`,
+    getString("WF_Condition_value"),
+    tc.value || "",
+    `wf-${wfIndex}-act-${actionIndex}-tc-${tcIdx}-value`,
+    "condition-value-input"
+  );
+
+  $inner.append($fieldDropdown).append($operatorDropdown).append($valueInput);
+
+  let $removeWrap = $("<div>", { class: "button-container col-sm-1 col-sx-12" });
+  let $removeBtn = $("<div>", {
+    class: "pointer red-hover-text remove-target-condition",
+    wfIndex: wfIndex,
+    actionIndex: actionIndex,
+    tcIdx: tcIdx
+  }).append($("<i>", { class: "fa-solid fa-trash" }));
+  $removeWrap.append($removeBtn);
+
+  $row.append($inner).append($removeWrap);
+  return $row;
 }
 
 // --------------------------------------
@@ -1097,15 +1226,23 @@ function getEmptyWorkflowJson()
 // Save workflows JSON
 function saveWorkflows()
 {
+  showSpinner();
   // encode for import
   appConfBase64 = btoa(JSON.stringify(getWorkflowsJson()))
 
   // import
-  $.post('php/server/query_replace_config.php', { base64data: appConfBase64, fileName: "workflows.json" }, function(msg) {
-    console.log(msg);
-    // showMessage(msg);
-    write_notification(`[WF]: ${msg}`, 'interrupt');
-  });
+  $.post('php/server/query_replace_config.php', { base64data: appConfBase64, fileName: "workflows.json", csrf_token: <?= json_encode(getCsrfToken()) ?> })
+    .done(function(msg) {
+      console.log(msg);
+      write_notification(`[WF]: ${msg}`, 'interrupt');
+    })
+    .fail(function(jqXHR, textStatus, errorThrown) {
+      console.warn("Failed to save workflows.json:", textStatus, errorThrown);
+      write_notification(`[WF]: Save failed (${textStatus})`, 'interrupt');
+    })
+    .always(function() {
+      hideSpinner();
+    });
 }
 
 // ---------------------------------------------------
@@ -1168,6 +1305,42 @@ $(document).on("click", ".remove-action", function () {
     removeAction(getWorkflowsJson(), wfIndex, actionIndex);
 });
 
+// Event Listeners for target condition rows (v2 cross-device targeting)
+$(document).on("click", ".add-target-condition", function () {
+    let wfIndex = parseInt($(this).attr("wfIndex"), 10);
+    let actionIndex = parseInt($(this).attr("actionIndex"), 10);
+    let wfs = getWorkflowsJson();
+
+    if (!wfs[wfIndex].actions[actionIndex].target) {
+        wfs[wfIndex].actions[actionIndex].target = { strategy: "query", conditions: [] };
+    }
+    if (!wfs[wfIndex].actions[actionIndex].target.conditions) {
+        wfs[wfIndex].actions[actionIndex].target.conditions = [];
+    }
+
+    wfs[wfIndex].actions[actionIndex].target.conditions.push({
+        field: fieldOptions[0],
+        operator: "equals",
+        value: ""
+    });
+
+    updateWorkflowsJson(wfs);
+    renderWorkflows();
+});
+
+$(document).on("click", ".remove-target-condition", function () {
+    let wfIndex = parseInt($(this).attr("wfIndex"), 10);
+    let actionIndex = parseInt($(this).attr("actionIndex"), 10);
+    let tcIdx = parseInt($(this).attr("tcIdx"), 10);
+    let wfs = getWorkflowsJson();
+
+    if (wfs[wfIndex].actions[actionIndex].target && wfs[wfIndex].actions[actionIndex].target.conditions) {
+        wfs[wfIndex].actions[actionIndex].target.conditions.splice(tcIdx, 1);
+        updateWorkflowsJson(wfs);
+        renderWorkflows();
+    }
+});
+
 // Event Listeners for Removing Condition Groups
 $(document).on("click", ".remove-condition-group", function () {
     let wfIndex = $(this).attr("wfindex");
@@ -1201,8 +1374,18 @@ $(document).ready(function() {
 // --------------------------------------
 // Initialize
 $(document).ready(function () {
-  getData();
+  // Wait for full app init (strings + plugin strings) before rendering.
+  // Without this guard getString() returns undefined during cold init.
+  callAfterAppInitialized(getData);
 });
 
+function hideWorkflowsSkeleton() {
+  hideSpinner();
+  $('#workflows-skeleton').fadeOut(0, function() { $(this).remove(); });
+}
+
+window.addEventListener('load', function() {
+  setTimeout(hideWorkflowsSkeleton, 15000);
+});
 
 </script>

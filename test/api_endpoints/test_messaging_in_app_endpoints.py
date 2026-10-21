@@ -107,6 +107,46 @@ def test_delete_single_notification(client, api_token, notification_guid):
     assert resp.json.get("success") is True
 
 
+def test_write_notification_truncates_overlong_content(client, api_token):
+    """A notification whose content exceeds 4096 chars (e.g. a bulk multi-edit's
+    generated MAC-list summary, selecting hundreds of devices) must be
+    truncated, not rejected outright - silently dropping the whole
+    notification loses the audit trail of what the bulk action did."""
+    overlong = "[Multi edit] Executed \"update\" matching \"" + ",".join(
+        f"{i:04x}:{i:04x}:{i:04x}" for i in range(300)
+    ) + "\""
+    assert len(overlong) > 4096
+
+    resp = client.post(
+        "/messaging/in-app/write",
+        json={"content": overlong, "level": "info"},
+        headers=auth_headers(api_token)
+    )
+    assert resp.status_code == 200
+    assert resp.json.get("success") is True
+
+    resp = client.get("/messaging/in-app/unread", headers=auth_headers(api_token))
+    stored = next((n["content"] for n in resp.json if n["content"].startswith("[Multi edit]")), None)
+    assert stored is not None
+    assert len(stored) == 4096
+    assert stored.endswith("...")
+    assert stored.startswith(overlong[:100])
+
+
+def test_write_notification_at_exact_limit_unchanged(client, api_token):
+    exactly_4096 = "x" * 4096
+    resp = client.post(
+        "/messaging/in-app/write",
+        json={"content": exactly_4096, "level": "info"},
+        headers=auth_headers(api_token)
+    )
+    assert resp.status_code == 200
+
+    resp = client.get("/messaging/in-app/unread", headers=auth_headers(api_token))
+    stored = next((n["content"] for n in resp.json if n["content"].startswith("xxx")), None)
+    assert stored == exactly_4096  # untouched - no trailing "..."
+
+
 def test_delete_all_notifications(client, api_token, random_content):
     # Add a notification first
     client.post("/messaging/in-app/write", json={"content": random_content}, headers=auth_headers(api_token))

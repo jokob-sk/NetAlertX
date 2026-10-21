@@ -1,0 +1,2033 @@
+{
+  "code_name": "newdev_template",
+  "template_type": "database-entry",
+  "unique_prefix": "NEWDEV",
+  "plugin_type": "core",
+  "enabled": true,
+  "data_source": "template",
+  "show_ui": false,
+  "localized": [
+    "display_name",
+    "description",
+    "icon"
+  ],
+  "display_name": [
+    {
+      "language_code": "en_us",
+      "string": "New Devices"
+    }
+  ],
+  "description": [
+    {
+      "language_code": "en_us",
+      "string": "The template used for new devices."
+    }
+  ],
+  "icon": [
+    {
+      "language_code": "en_us",
+      "string": "<i class=\"fa fa-plus\"></i>"
+    }
+  ],
+  "settings": [
+    {
+      "function": "ignored_MACs",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "placeholder": "Enter value"
+              },
+              {
+                "suffix": "_in"
+              },
+              {
+                "cssClasses": "col-sm-10"
+              },
+              {
+                "prefillValue": "null"
+              }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              {
+                "sourceSuffixes": [
+                  "_in"
+                ]
+              },
+              {
+                "separator": ""
+              },
+              {
+                "cssClasses": "col-xs-12"
+              },
+              {
+                "onClick": "addList(this, false)"
+              },
+              {
+                "getStringKey": "Gen_Add"
+              }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "select",
+            "elementHasInputValue": 1,
+            "elementOptions": [
+              {
+                "multiple": "true"
+              },
+              {
+                "readonly": "true"
+              },
+              {
+                "editable": "true"
+              }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              {
+                "sourceSuffixes": []
+              },
+              {
+                "separator": ""
+              },
+              {
+                "cssClasses": "col-xs-6"
+              },
+              {
+                "onClick": "removeAllOptions(this)"
+              },
+              {
+                "getStringKey": "Gen_Remove_All"
+              }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              {
+                "sourceSuffixes": []
+              },
+              {
+                "separator": ""
+              },
+              {
+                "cssClasses": "col-xs-6"
+              },
+              {
+                "onClick": "removeFromList(this)"
+              },
+              {
+                "getStringKey": "Gen_Remove_Last"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": [],
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Ignored MACs"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "List of MACs to ignore. Use <code>%</code> as a wildcard. Ignored devices will not be shown anywhere in the UI or notifications. <br/><br/>For example <code>02:42:ac:%</code> to filter out docker containers."
+        }
+      ]
+    },
+    {
+      "function": "ignored_IPs",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "placeholder": "Enter value"
+              },
+              {
+                "suffix": "_in"
+              },
+              {
+                "cssClasses": "col-sm-10"
+              },
+              {
+                "prefillValue": "null"
+              }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              {
+                "sourceSuffixes": [
+                  "_in"
+                ]
+              },
+              {
+                "separator": ""
+              },
+              {
+                "cssClasses": "col-xs-12"
+              },
+              {
+                "onClick": "addList(this, false)"
+              },
+              {
+                "getStringKey": "Gen_Add"
+              }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "select",
+            "elementHasInputValue": 1,
+            "elementOptions": [
+              {
+                "multiple": "true"
+              },
+              {
+                "readonly": "true"
+              },
+              {
+                "editable": "true"
+              }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              {
+                "sourceSuffixes": []
+              },
+              {
+                "separator": ""
+              },
+              {
+                "cssClasses": "col-xs-6"
+              },
+              {
+                "onClick": "removeAllOptions(this)"
+              },
+              {
+                "getStringKey": "Gen_Remove_All"
+              }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              {
+                "sourceSuffixes": []
+              },
+              {
+                "separator": ""
+              },
+              {
+                "cssClasses": "col-xs-6"
+              },
+              {
+                "onClick": "removeFromList(this)"
+              },
+              {
+                "getStringKey": "Gen_Remove_Last"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": [],
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Ignored IPs"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "List of IPs to ignore. Use <code>%</code> as a wildcard. Ignored devices will not be shown anywhere in the UI or notifications. <br/><br/>For example <code>192.168.3.%</code> to filter out an IP range. (<code>%</code> matches any sequence of characters (including none) and <code>_</code> matches exactly one character."
+        }
+      ]
+    },
+    {
+      "function": "NAME_CLEANUP_REGEX",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "placeholder": "Enter value"
+              },
+              {
+                "suffix": "_in"
+              },
+              {
+                "cssClasses": "col-sm-10"
+              },
+              {
+                "prefillValue": "null"
+              }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              {
+                "sourceSuffixes": [
+                  "_in"
+                ]
+              },
+              {
+                "separator": ""
+              },
+              {
+                "cssClasses": "col-xs-12"
+              },
+              {
+                "onClick": "addList(this, false)"
+              },
+              {
+                "getStringKey": "Gen_Add"
+              }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "select",
+            "elementHasInputValue": 1,
+            "elementOptions": [
+              {
+                "multiple": "true"
+              },
+              {
+                "readonly": "true"
+              },
+              {
+                "editable": "true"
+              }
+            ],
+            "transformers": [
+              "base64"
+            ]
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              {
+                "sourceSuffixes": []
+              },
+              {
+                "separator": ""
+              },
+              {
+                "cssClasses": "col-xs-6"
+              },
+              {
+                "onClick": "removeFromList(this)"
+              },
+              {
+                "getStringKey": "Gen_Remove_Last"
+              }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              {
+                "sourceSuffixes": []
+              },
+              {
+                "separator": ""
+              },
+              {
+                "cssClasses": "col-xs-6"
+              },
+              {
+                "onClick": "removeAllOptions(this)"
+              },
+              {
+                "getStringKey": "Gen_Remove_All"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": [
+        "XC5fYWlycGxheQ==",
+        "XC5fdGNw",
+        "XC5sb2NhbGRvbWFpbg==",
+        "XC5sb2NhbA==",
+        "XC5fZXNwaG9tZWxpYg==",
+        "XC5fZ29vZ2xlY2FzdA==",
+        "XC5sYW4=",
+        "XC5ob21lXC5hcnBh",
+        "XC5ob21l",
+        "LVthLWZBLUYwLTldezMyfQ==",
+        "Iy4q",
+        "XC4k"
+      ],
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Name Cleanup REGEX"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "All the newly discovered device names are cleaned up by applying the following REGEX expression in this order. All the below are replaced by a blank string."
+        }
+      ]
+    },
+    {
+      "function": "IP_MATCH_NAME",
+      "type": {
+        "dataType": "boolean",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "type": "checkbox"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": true,
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Name IP match"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "If checked, the application will guess the name also by IPs, not only MACs. This approach works if your IPs are mostly static."
+        }
+      ]
+    },
+    {
+      "function": "replace_preset_icon",
+      "type": {
+        "dataType": "boolean",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "type": "checkbox"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": false,
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Overwrite Preset Icon"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "If checked, the application replaces the preset icon in <code>NEWDEV_devIcon</code> with a pre-assigned vendor or device icon if found. If this is checked, avoid manually assigning this icon to devices, as it may be replaced."
+        }
+      ]
+    },
+    {
+      "function": "devMac",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "readonly": "true"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 50,
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "MAC"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The MAC address of the device. Uneditable - Autodetected. Database column name: <code>devMac</code>."
+        }
+      ]
+    },
+    {
+      "function": "devLastIP",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 50,
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Last IP"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The last known IP address of the device. Uneditable - Autodetected. Database column name: <code>devLastIP</code>."
+        }
+      ]
+    },
+    {
+      "function": "devName",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "readonly": "true"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 50,
+      "default_value": "(unknown)",
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Name"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The name of the device. If the value is set to <code>(unknown)</code> or <code>(name not found)</code> the application will try to discover the name of the device. Database column name: <code>devName</code>."
+        }
+      ]
+    },
+    {
+      "function": "devIcon",
+      "events": [
+        "copy_icons",
+        "add_icon",
+        "select_icon"
+      ],
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "span",
+            "elementOptions": [
+              {
+                "cssClasses": "input-group-addon iconPreview"
+              },
+              {
+                "getStringKey": "Gen_SelectIcon"
+              },
+              {
+                "customId": "NEWDEV_devIcon_preview"
+              }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "select",
+            "elementHasInputValue": 1,
+            "elementOptions": [
+              {
+                "cssClasses": "iconInputVal myhidden"
+              },
+              {
+                "onChange": "updateIconPreview(this)"
+              },
+              {
+                "customParams": "NEWDEV_devIcon,NEWDEV_devIcon_preview"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": "",
+      "options": [
+        "{value}"
+      ],
+      "options_params": [
+        {
+          "name": "value",
+          "type": "sql",
+          "value": "WITH RECURSIVE SettingsIcons AS (SELECT REPLACE(REPLACE(REPLACE(setValue, '[', ''), ']', ''), '''', '') AS icon_list FROM Settings WHERE setKey = 'UI_ICONS'), SplitIcons AS (SELECT TRIM(SUBSTR(icon_list, 1, INSTR(icon_list || ',', ',') - 1)) AS icon, SUBSTR(icon_list, INSTR(icon_list || ',', ',') + 1) AS remaining_icons FROM SettingsIcons WHERE icon_list <> '' UNION ALL SELECT TRIM(SUBSTR(remaining_icons, 1, INSTR(remaining_icons || ',', ',') - 1)) AS icon, SUBSTR(remaining_icons, INSTR(remaining_icons || ',', ',') + 1) AS remaining_icons FROM SplitIcons WHERE remaining_icons <> '') SELECT DISTINCT * FROM (SELECT icon as name, icon as id  FROM SplitIcons UNION SELECT  '❌None' AS name, '' AS id  UNION SELECT devIcon AS name, devIcon AS id FROM Devices WHERE devIcon <> '') AS combined_results;"
+        }
+      ],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Icon"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The icon associated with the device. Check the <a href=\"https://docs.netalertx.com/ICONS\" target=\"_blank\">documentation on icons</a> for more details.  Database column name: <code>devIcon</code>."
+        }
+      ]
+    },
+    {
+      "function": "devOwner",
+      "events": [
+        "add_option"
+      ],
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 30,
+      "default_value": "",
+      "options": [
+        "{value}"
+      ],
+      "options_params": [
+        {
+          "name": "value",
+          "type": "sql",
+          "value": "SELECT DISTINCT '' as id, '❌None' as name UNION SELECT devOwner as id, devOwner as name FROM (SELECT devOwner FROM Devices) AS all_devices ORDER BY id;"
+        }
+      ],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Owner"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The owner of the device. Database column name: <code>devOwner</code>."
+        }
+      ]
+    },
+    {
+      "function": "devType",
+      "events": [
+        "add_option"
+      ],
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 30,
+      "default_value": "",
+      "options": [
+        "{value}"
+      ],
+      "options_params": [
+        {
+          "name": "value",
+          "type": "sql",
+          "value": "SELECT DISTINCT 9 as ord, devType as id, devType as name FROM Devices WHERE devType NOT IN ('', 'Smartphone', 'Tablet', 'Laptop', 'Mini PC', 'PC', 'Printer', 'Server', 'Singleboard Computer (SBC)', 'NAS', 'Domotic', 'IP Camera', 'Game Console', 'SmartTV', 'TV Decoder', 'Virtual Assistance', 'Clock', 'House Appliance', 'Phone', 'Radio', 'AP', 'Gateway', 'Firewall', 'Hypervisor', 'Powerline', 'Switch', 'WLAN', 'PLC', 'Router', 'USB LAN Adapter', 'USB WIFI Adapter') UNION SELECT 0 as ord, '', '❌None' UNION SELECT 1 as ord, '-----', '-- 📱Handhelds --' UNION SELECT 1 as ord, 'Smartphone', 'Smartphone' UNION SELECT 1 as ord, 'Tablet', 'Tablet' UNION SELECT 2 as ord, '-----', '-- 💻Computers --' UNION SELECT 2 as ord, 'Laptop', 'Laptop' UNION SELECT 2 as ord, 'Mini PC', 'Mini PC' UNION SELECT 2 as ord, 'PC', 'PC' UNION SELECT 2 as ord, 'Printer', 'Printer' UNION SELECT 2 as ord, 'Server', 'Server' UNION SELECT 2 as ord, 'Singleboard Computer (SBC)', 'Singleboard Computer (SBC)' UNION SELECT 2 as ord, 'NAS', 'NAS' UNION SELECT 3 as ord, '-----', '-- 🏠Smart home --' UNION SELECT 3 as ord, 'Domotic', 'Domotic' UNION SELECT 3 as ord, 'IP Camera', 'IP Camera' UNION SELECT 3 as ord, 'Game Console', 'Game Console' UNION SELECT 3 as ord, 'SmartTV', 'SmartTV' UNION SELECT 3 as ord, 'TV Decoder', 'TV Decoder' UNION SELECT 3 as ord, 'Virtual Assistance', 'Virtual Assistance' UNION SELECT 4 as ord, '-----', '-- Wired --' UNION SELECT 4 as ord, 'Clock', 'Clock' UNION SELECT 4 as ord, 'House Appliance', 'House Appliance' UNION SELECT 4 as ord, 'Phone', 'Phone' UNION SELECT 4 as ord, 'Radio', 'Radio' UNION SELECT 5 as ord, '-----', '-- 📡Network nodes --' UNION SELECT 5 as ord, 'AP', 'AP' UNION SELECT 5 as ord, 'Gateway', 'Gateway' UNION SELECT 5 as ord, 'Firewall', 'Firewall' UNION SELECT 5 as ord, 'Hypervisor', 'Hypervisor' UNION SELECT 5 as ord, 'Powerline', 'Powerline' UNION SELECT 5 as ord, 'Switch', 'Switch' UNION SELECT 5 as ord, 'WLAN', 'WLAN' UNION SELECT 5 as ord, 'PLC', 'PLC' UNION SELECT 5 as ord, 'Router', 'Router' UNION SELECT 5 as ord, 'USB LAN Adapter', 'USB LAN Adapter' UNION SELECT 5 as ord, 'USB WIFI Adapter', 'USB WIFI Adapter' UNION SELECT 9 as ord, '-----', '-- ⚙Custom --' UNION SELECT 10 as ord, '-----', '-----' UNION SELECT 10 as ord, 'Other', 'Other' ORDER BY 1,2;"
+        },
+        {
+          "name": "uilang",
+          "type": "setting",
+          "value": "UI_LANG"
+        }
+      ],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Type"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The type of the device. Custom Network device types from the <code>NETWORK_DEVICE_TYPES</code> setting are not automatically added, you need to add it via the <code>+</code> button onthe device itself. Database column name: <code>devType</code>."
+        }
+      ]
+    },
+    {
+      "function": "devVendor",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 250,
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Vendor"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The vendor of the device. If set to empty or <code>(unknown)</code> the app will try to auto-detect it. Database column name: <code>devVendor</code>."
+        }
+      ]
+    },
+    {
+      "function": "devFavorite",
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "type": "checkbox"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": 0,
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Favorite Device"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Indicates whether the device is marked as a favorite. Database column name: <code>devFavorite</code>."
+        }
+      ]
+    },
+    {
+      "function": "devGroup",
+      "events": [
+        "add_option"
+      ],
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 10,
+      "default_value": "",
+      "options": [
+        "{value}"
+      ],
+      "options_params": [
+        {
+          "name": "value",
+          "type": "sql",
+          "value": "SELECT DISTINCT '' as id, '❌None' as name UNION SELECT devGroup as id, devGroup as name FROM (SELECT devGroup FROM Devices WHERE devGroup <> '' ) AS all_devices ORDER BY id;"
+        }
+      ],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Group"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The group to which the device belongs. Database column name: <code>devGroup</code>."
+        }
+      ]
+    },
+    {
+      "function": "devLocation",
+      "events": [
+        "add_option"
+      ],
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 250,
+      "default_value": "",
+      "options": [
+        "{value}"
+      ],
+      "options_params": [
+        {
+          "name": "value",
+          "type": "sql",
+          "value": "SELECT DISTINCT '' AS id, '❌None' AS name UNION SELECT devLocation AS id, devLocation AS name FROM Devices WHERE devLocation NOT IN ('', 'null') AND devLocation IS NOT NULL ORDER BY id;"
+        }
+      ],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Location"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The location of the device. Database column name: <code>devLocation</code>."
+        }
+      ]
+    },
+    {
+      "function": "devComments",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "textarea",
+            "elementOptions": [],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Comments"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Additional comments or notes about the device. Database column name: <code>devComments</code>."
+        }
+      ]
+    },
+    {
+      "function": "devFirstConnection",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "readonly": "true"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "format": "date-time",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "First Seen"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The date and time of the first connection with the device. Uneditable - Autodetected. Database column name: <code>devFirstConnection</code>."
+        }
+      ]
+    },
+    {
+      "function": "devLastConnection",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "readonly": "true"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "format": "date-time",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Last Seen"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The date and time of the last seen connection with the device. Uneditable - Autodetected. Database column name: <code>devLastConnection</code>."
+        }
+      ]
+    },
+    {
+      "function": "devStaticIP",
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "type": "checkbox"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": 0,
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Static IP"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Indicates whether the device has a static IP address. Database column name: <code>devStaticIP</code>."
+        }
+      ]
+    },
+    {
+      "function": "devScan",
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "type": "checkbox"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": 1,
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Scan device"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Select if the device should be scanned. Database column name: <code>devScan</code>."
+        }
+      ]
+    },
+    {
+      "function": "devLogEvents",
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "type": "checkbox"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": 1,
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Log Events"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Indicates whether events related to the device shouldbe logged. Database column name: <code>devLogEvents</code>."
+        }
+      ]
+    },
+    {
+      "function": "devAlertEvents",
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "type": "checkbox"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": 1,
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Alert Events"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Indicates whether events related to the device should trigger alerts. The default value of the <code>Alert Events</code> checkbox. Down and New Device notifications are always sent unless unselected in <code>NTFPRCS_INCLUDED_SECTIONS</code>. Database column name: <code>devAlertEvents</code>."
+        }
+      ]
+    },
+    {
+      "function": "devAlertDown",
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "type": "checkbox"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": 0,
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Alert Down"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Indicates whether an alert should be triggered when the device goes down. The device has to be down for longer than the time set in the <b>Alert Down After</b> <code>NTFPRCS_alert_down_time</code> setting. Database column name: <code>devAlertDown</code>."
+        }
+      ]
+    },
+    {
+      "function": "devCanSleep",
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "type": "checkbox"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": 0,
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Can Sleep"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "When enabled, the device will appear as <em>Sleeping</em> instead of <em>Down</em> or <em>Off-line</em> while it has been absent for less than the <b>Sleep Window</b> (<code>NTFPRCS_sleep_time</code>). Once the sleep window expires the device becomes subject to the normal <code>Alert Down</code> condition. Database column name: <code>devCanSleep</code>."
+        }
+      ]
+    },
+    {
+      "function": "devSkipRepeated",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": 0,
+      "options": [
+        "{value}"
+      ],
+      "options_params": [
+        {
+          "name": "value",
+          "type": "sql",
+          "value": "SELECT '0' as id, '0 (notify all)' as name UNION SELECT '168' as id, '1 week' as name UNION SELECT '24' as id, '1 day' as name UNION SELECT '8' as id, '8 h' as name UNION SELECT '1' as id, '1 h' as name"
+        }
+      ],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Skip Repeated"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Enter number of <b>hours</b> for which repeated notifications should be ignored for. If you select <code>0</code> then you get notified on all events. Database column name: <code>devSkipRepeated</code>."
+        }
+      ]
+    },
+    {
+      "function": "devLastNotification",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "readonly": "true"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "format": "date-time",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Last Notification"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The date and time of the last notification sent for the device. Uneditable - Autodetected. Database column name: <code>devLastNotification</code>."
+        }
+      ]
+    },
+    {
+      "function": "devPresentLastScan",
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "type": "checkbox"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": 1,
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Present Last Scan"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Indicates whether the device was present in a scan. Database column name: <code>devPresentLastScan</code>."
+        }
+      ]
+    },
+    {
+      "function": "devIsNew",
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "type": "checkbox"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": 1,
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "New Device"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Indicates whether the device is considered a new device. The default value of the <code>New Device</code> checkbox. If checked this will show the New status for the device and include it in lists when the New Devices filter is active. Doesn't affect notifications. Database column name: <code>devIsNew</code>."
+        }
+      ]
+    },
+    {
+      "function": "devIsArchived",
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "type": "checkbox"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": 0,
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Archived"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Indicates whether the device is archived. If you archive a device and the device is offline it will be hidden from My Devices. Database column name: <code>devIsArchived</code>."
+        }
+      ]
+    },
+    {
+      "function": "devParentMAC",
+      "events": [
+        "go_to_node",
+        "go_to_device"
+      ],
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": "",
+      "options": [
+        "{value}"
+      ],
+      "options_params": [
+        {
+          "name": "value",
+          "type": "sql",
+          "value": "SELECT '❌None' as name, '' as id UNION SELECT devName as name, devMac as id FROM Devices WHERE devIsArchived == 0 AND EXISTS (SELECT 1 FROM Settings WHERE setKey = 'NETWORK_DEVICE_TYPES' AND LOWER(setValue) LIKE '%' || LOWER(devType) || '%' AND devType <> '')"
+        },
+        {
+          "name": "target_macs",
+          "type": "setting",
+          "value": "KNWN_target_macs"
+        }
+      ],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Parent Node"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The MAC address of the Parent network node. Database column name: <code>devParentMAC</code>."
+        }
+      ]
+    },
+    {
+      "function": "devParentRelType",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [],
+            "transformers": ["deviceRelType"]
+          }
+        ]
+      },
+      "default_value": "default",
+      "options": [
+        "default",
+        "child",
+        "logical",
+        "nic",
+        "virtual"
+      ],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Relationship Type"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Defines the relationship between this device and its parent. Selecting <code>nic</code> links it as a network interface, allowing the parent’s online status to be evaluated using its <code>devReqNicsOnline</code> (“Require NICs Online”) setting. Some relationship types may hide the device from lists; see the <code>UI_hide_rel_types</code> setting for details. Database column name: <code>devParentRelType</code>."
+        }
+      ]
+    },
+    {
+      "function": "devParentPort",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": 0,
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Parent Node Port"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The port number of the network node. Database column name: <code>devParentPort</code>."
+        }
+      ]
+    },
+    {
+      "function": "devChildrenDynamic",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [{ "multiple": "true", "orderable": "true", "readonly": "true" }],
+            "transformers": ["deviceChip"]
+          }
+        ]
+      },
+      "default_value": [],
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Children Nodes"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Children nodes assigned to this device. Navigate to the child device directly to edit the relationship and details. Database column name: <code>N/A</code> (evaluated dynamically)."
+        }
+      ]
+    },
+    {
+      "function": "devSSID",
+      "events": [
+        "add_option"
+      ],
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": "",
+      "options": [
+        "{value}"
+      ],
+      "options_params": [
+        {
+          "name": "value",
+          "type": "sql",
+          "value": "SELECT DISTINCT '' as id, '❌None' as name UNION SELECT devSSID as id, devSSID as name FROM (SELECT devSSID FROM Devices) AS all_devices ORDER BY id;"
+        }
+      ],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "SSID"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The network SSID. Database column name: <code>devSSID</code>."
+        }
+      ]
+    },
+    {
+      "function": "devSite",
+      "events": [
+        "add_option"
+      ],
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": "",
+      "options": [
+        "{value}"
+      ],
+      "options_params": [
+        {
+          "name": "value",
+          "type": "sql",
+          "value": "SELECT DISTINCT '' AS id, '❌None' AS name UNION SELECT devSite AS id, devSite AS name FROM Devices WHERE devSite NOT IN ('', 'null') AND devSite IS NOT NULL ORDER BY id;"
+        }
+      ],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Network Site"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The network site. Database column name: <code>devSite</code>."
+        }
+      ]
+    },
+    {
+      "function": "devVlan",
+      "events": [
+        "add_option"
+      ],
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 50,
+      "default_value": "",
+       "options": [
+        "{value}"
+      ],
+      "options_params": [
+        {
+          "name": "value",
+          "type": "sql",
+          "value": "SELECT DISTINCT '' as id, '❌None' as name UNION SELECT devVlan as id, devVlan as name FROM (SELECT devVlan FROM Devices) AS all_devices ORDER BY id;"
+        }
+      ],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "VLAN"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The VLAN identifier or name the device belongs to. Database column name: <code>devVlan</code>."
+        }
+      ]
+    },
+    {
+      "function": "devSyncHubNode",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "readonly": "true"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 50,
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Sync Node"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The name of the Sync Node. Uneditable - Auto-populated via the <a href=\"https://github.com/netalertx/NetAlertX/blob/main/server/plugins/sync/README.md\" target=\"_blank\">Sync plugin</a> if enabled. Database column name: <code>devSyncHubNode</code>."
+        }
+      ]
+    },
+    {
+      "function": "devCustomProps",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "datatable",
+            "elementHasInputValue": 1,
+            "elementOptions": [
+              {
+                "columns": [
+                  {
+                    "settingKey": "CUSTPROP_icon",
+                    "optionsOverride": "setting.CUSTPROP_icon",
+                    "typeOverride": {
+                      "dataType": "string",
+                      "elements": [
+                        {
+                          "elementType": "span",
+                          "elementOptions": [
+                            {
+                              "cssClasses": "input-group-addon iconPreview"
+                            },
+                            {
+                              "getStringKey": "Gen_SelectIcon"
+                            },
+                            {
+                              "customId": "CUSTPROP_icon_preview"
+                            }
+                          ],
+                          "transformers": []
+                        },
+                        {
+                          "elementType": "select",
+                          "elementHasInputValue": 1,
+                          "elementOptions": [
+                            {
+                              "cssClasses": "iconInputVal myhidden"
+                            },
+                            {
+                              "onChange": "updateIconPreview(this)"
+                            },
+                            {
+                              "customParams": "CUSTPROP_icon,CUSTPROP_icon_preview"
+                            }
+                          ],
+                          "transformers": []
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "settingKey": "CUSTPROP_type",
+                    "optionsOverride": "setting.CUSTPROP_type",
+                    "typeOverride": {
+                      "dataType": "string",
+                      "elements": [
+                        {
+                          "elementType": "select",
+                          "elementOptions": [],
+                          "transformers": []
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "settingKey": "CUSTPROP_name"
+                  },
+                  {
+                    "settingKey": "CUSTPROP_args"
+                  },
+                  {
+                    "settingKey": "CUSTPROP_notes"
+                  },
+                  {
+                    "settingKey": "CUSTPROP_show"
+                  },
+                  {
+                    "settingKey": "CUSTPROP_actions"
+                  }
+                ]
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": "WwogIFsKICAgIHsKICAgICAgIkNVU1RQUk9QX2ljb24iOiAiUEdrZ1kyeGhjM005SW1aaGN5Qm1ZUzEwY21GemFDMWhiSFFpUGp3dmFUND0iCiAgICB9LAogICAgewogICAgICAiQ1VTVFBST1BfdHlwZSI6ICJkZWxldGVfZGV2IgogICAgfSwKICAgIHsKICAgICAgIkNVU1RQUk9QX25hbWUiOiAiIgogICAgfSwKICAgIHsKICAgICAgIkNVU1RQUk9QX2FyZ3MiOiAiRGVsZXRlIGRldmljZSIKICAgIH0sCiAgICB7CiAgICAgICJDVVNUUFJPUF9ub3RlcyI6ICIiCiAgICB9LAogICAgewogICAgICAiQ1VTVFBST1Bfc2hvdyI6IHRydWUKICAgIH0KICBdCl0=",
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Properties"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Custom device properties to store additional data or to perform an action on the device. Check the <a href=\"https://docs.netalertx.com/CUSTOM_PROPERTIES\" target=\"_blank\">documentation on Custom Properties</a> for additional details. Database column name: <code>devCustomProps</code>."
+        }
+      ]
+    },
+    {
+      "function": "devFQDN",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "readonly": "true"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 50,
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "FQDN"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Fully Qualified Domain Name - Autodetected and Uneditable. Can be auto-refreshed by enabling the <code>REFRESH_FQDN</code> setting. Database column name: <code>devFQDN</code>."
+        }
+      ]
+    },
+    {
+      "function": "devReqNicsOnline",
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "type": "checkbox"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": 0,
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Require NICs Online"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Determines whether this device is considered online only when <strong>all associated NICs</strong> are online. To configure this, navigate to the child devices, assign the <code>nic</code> relationship, and set this device as the <strong>Parent node</strong>. If enabled, every associated NIC must be online for the device to be considered online. If disabled, the device is considered online when <strong>any NIC</strong> is online. Database column name: <code>devReqNicsOnline</code>."
+        }
+      ]
+    },
+    {
+      "function": "devChildrenNicsDynamic",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [{ "multiple": "true", "orderable": "true", "readonly": "true" }],
+            "transformers": ["deviceChip"]
+          }
+        ]
+      },
+      "default_value": [],
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "NICs"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Children nodes with the <code>nic</code> Relationship Type. Navigate to the child device directly to edit the relationship and details. Database column name: <code>N/A</code> (evaluated dynamically)."
+        }
+      ]
+    },
+    {
+      "function": "devPrimaryIPv4",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "readonly": "true"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 50,
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Primary IPv4"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The primary IPv4 address of the device. Uneditable - Automatically maintained from scan results. Database column name: <code>devPrimaryIPv4</code>."
+        }
+      ]
+    },
+    {
+      "function": "devPrimaryIPv6",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "readonly": "true"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 50,
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Primary IPv6"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The primary IPv6 address of the device. Uneditable - Automatically maintained from scan results. Database column name: <code>devPrimaryIPv6</code>."
+        }
+      ]
+    },
+    {
+      "function": "devForceStatus",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": "dont_force",
+      "options": [
+        "dont_force" ,
+        "online",
+        "offline"
+      ],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Force Status"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Force the device online/offline status: <code>online</code> always online, <code>offline</code> always offline, <code>dont_force</code> auto-detect. Database column name: <code>devForceStatus</code>."
+        }
+      ]
+    }
+  ],
+  "required": [],
+  "additionalProperties": false
+}

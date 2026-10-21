@@ -4,7 +4,7 @@
 #
 #  header.php - Front module. Common header to all the web pages
 #-------------------------------------------------------------------------------
-#  Puche 2021 / 2022+ jokob             jokob@duck.com                GNU GPLv3
+#  Puche 2021 / 2022+ jokob             support@netalertx.com                GNU GPLv3
 #--------------------------------------------------------------------------- -->
 
 <?php
@@ -46,6 +46,7 @@
   <script>window.NAX_APP_VERSION = "<?php echo trim(file_exists('/app/.VERSION') ? file_get_contents('/app/.VERSION') : 'dev'); ?>";</script>
   <script src="js/cache.js?v=<?php include 'php/templates/version.php'; ?>"></script>
   <script src="js/common.js?v=<?php include 'php/templates/version.php'; ?>"></script>
+  <script src="js/plugin_column_render.js?v=<?php include 'php/templates/version.php'; ?>"></script>
   <script src="js/app-init.js?v=<?php include 'php/templates/version.php'; ?>"></script>
   <script src="js/sse_manager.js?v=<?php include 'php/templates/version.php'; ?>"></script>
   <script src="js/api.js?v=<?php include 'php/templates/version.php'; ?>"></script>
@@ -54,6 +55,7 @@
   <script src="js/db_methods.js?v=<?php include 'php/templates/version.php'; ?>"></script>
   <script src="js/settings_utils.js?v=<?php include 'php/templates/version.php'; ?>"></script>
   <script src="js/device.js?v=<?php include 'php/templates/version.php'; ?>"></script>
+  <script src="js/scan_control.js?v=<?php include 'php/templates/version.php'; ?>"></script>
 
   <!-- iCheck -->
 
@@ -151,7 +153,7 @@
   <div class="nax_semitransparent-panel"></div>
   <div class="panel panel-default nax_spinner">
     <table>
-      <td id="loadingSpinnerText" width="130px" ></td>
+      <td id="loadingSpinnerText" width="130px">Loading...</td>
       <td><i class="fa-solid fa-spinner fa-spin-pulse"></i></td>
     </table>
   </div>
@@ -184,6 +186,10 @@
       <!-- Sidebar toggle button-->
       <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
         <i class="fa-solid fa-bars"></i>
+        <!-- Lit whenever any .info-icon-nav badge in the (possibly collapsed/
+             off-canvas) sidebar is showing - a new release, a pending settings
+             reload, or any future badge - without this needing to know which. -->
+        <span id="navPendingDot" class="nav-pending-dot bg-orange myhidden" title="<?= lang('nav_pending_dot');?>"></span>
       </a>
 
       <!-- ticker message  Placeholder for ticker announcement messages -->
@@ -208,11 +214,17 @@
           <li>
             <a id="fullscreen-button" href='#' role="button" span class='fa fa-arrows-alt' onclick='toggleFullscreen()'></a>
           </li>
+          <!-- Pause / Resume automatic scans -->
+          <li>
+            <a id="pause-resume-button" href="#" role="button" title="<?= lang('Header_PauseScans_Tooltip') ?>" onclick="togglePauseScans(); return false;">
+              <i id="pause-resume-icon" class="fa-solid fa-pause"></i>
+            </a>
+          </li>
           <!-- Notifications -->
           <li>
             <a id="notifications-button" href='userNotifications.php' role="button" span class='fa-solid fa-bell'></a>
             <span  id="unread-notifications-bell-count" title="" class="badge bg-red unread-notifications-bell" >0</span>
-          </li>
+          </li>         
           <!-- Server Status -->
           <li>
             <a onclick="setCache('activeMaintenanceTab', 'tab_Logging_id')" href="maintenance.php#tab_Logging">
@@ -288,7 +300,7 @@
       <ul class="sidebar-menu" data-widget="tree">
 
         <li class=" treeview  <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('devices.php', 'deviceDetails.php') ) ){ echo 'active menu-open'; } ?>">
-          <a href="#"  onclick="openUrl(['./devices.php', './deviceDetails.php'])">
+          <a href="devices.php"  onclick="openUrl(['./devices.php', './deviceDetails.php'])">
 
           <i class="fa fa-fw fa-laptop"></i> <span><?= lang('Navigation_Devices');?></span>
             <span class="pull-right-container">
@@ -332,14 +344,14 @@
 
         <!-- Monitoring menu item -->
 
-        <li class=" treeview <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('presence.php', 'report.php', 'events.php', 'userNotifications.php' ) ) ){ echo 'active menu-open'; } ?>">
+        <li class=" treeview <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('presence.php', 'report.php', 'events.php', 'userNotifications.php', 'changeLog.php' ) ) ){ echo 'active menu-open'; } ?>">
           <a href="#">
           <i class="fa fa-fw fa-chart-bar"></i> <span><?= lang('Navigation_Monitoring');?></span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>
           </a>
-          <ul class="treeview-menu " style="display: <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('presence.php', 'report.php', 'events.php', 'userNotifications.php' ) ) ){ echo 'block'; } else {echo 'none';} ?>;">
+          <ul class="treeview-menu " style="display: <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('presence.php', 'report.php', 'events.php', 'userNotifications.php', 'changeLog.php' ) ) ){ echo 'block'; } else {echo 'none';} ?>;">
             <li>
               <a href="presence.php">  <?= lang("Navigation_Presence");?> </a>
             </li>
@@ -352,6 +364,9 @@
             <li>
               <a href="userNotifications.php"> <?= lang("Navigation_Notifications");?> </a>
             </li>
+            <li>
+              <a href="changeLog.php"> <?= lang("Navigation_ChangeHistory");?> </a>
+            </li>
 
           </ul>
         </li>
@@ -363,7 +378,7 @@
 
         <!-- Maintenance menu item -->
         <li class=" treeview  <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('maintenance.php') ) ){ echo 'active menu-open'; } ?>">
-          <a href="#" onclick="openUrl(['./maintenance.php'])">
+          <a href="#">
           <!-- NEW version available -->
           <div class="info-icon-nav myhidden" id="version" title="<?= lang('new_version_available');?>" data-build-time="<?php echo file_get_contents( "buildtimestamp.txt");?>">
             <i class="fa-solid fa-rocket fa-beat"></i>
@@ -391,7 +406,11 @@
 
         <!-- Settings menu item -->
         <li class=" treeview  <?php if (in_array (basename($_SERVER['SCRIPT_NAME']), array('settings.php') ) ){ echo 'active menu-open'; } ?>">
-          <a href="#" onclick="openUrl(['./settings.php'])">
+          <a href="settings.php" onclick="openUrl(['./settings.php'])">
+          <!-- Settings saved, backend still applying them -->
+          <div class="info-icon-nav myhidden" id="settingsPendingReload" title="<?= lang('settings_pending_reload');?>">
+            <i class="fa-solid fa-floppy-disk fa-beat"></i>
+          </div>
           <i class="fa fa-fw fa-cog"></i> <span><?= lang('Navigation_Settings');?></span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
@@ -464,6 +483,9 @@
              <li>
               <a href="systeminfo.php#panInitCheck" onclick="setCache('activeSysinfoTab','tabInitCheck');initializeTabs()">  <?= lang("Maintenance_InitCheck");?> </a>
             </li>
+            <li>
+              <a href="systeminfo.php#panPerformance" onclick="setCache('activeSysinfoTab','tabPerformance');initializeTabs()"><?= lang('Systeminfo_Performance');?></a>
+            </li>
           </ul>
         </li>
 
@@ -479,15 +501,13 @@
 
   function toggleFullscreen() {
 
-   if (document.fullscreenElement) {
-     document.exitFullscreen();
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+      }
+    else {
+      document.documentElement.requestFullscreen();
     }
-   else {
-     document.documentElement.requestFullscreen();
-	}
    }
-
-  //--------------------------------------------------------------
 
   // Update server time in the header
   update_servertime()

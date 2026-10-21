@@ -1,82 +1,87 @@
-# Home Assistant integration overview
+# Home Assistant integration
 
-NetAlertX comes with MQTT support, allowing you to show all detected devices as devices in Home Assistant. It also supplies a collection of stats, such as number of online devices.
+NetAlertX includes MQTT support, allowing detected devices to appear as devices in Home Assistant. It also publishes various statistics, such as the number of online devices.
 
 > [!TIP]
-> You can install NetAlertX also as a Home Assistant addon [![Home Assistant](https://img.shields.io/badge/Repo-blue?logo=home-assistant&style=for-the-badge&color=0aa8d2&logoColor=fff&label=Add)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Falexbelgium%2Fhassio-addons) via the [alexbelgium/hassio-addons](https://github.com/alexbelgium/hassio-addons/) repository. This is only possible if you run a supervised instance of Home Assistant. If not, you can still run NetAlertX in a separate Docker container and follow this guide to configure MQTT.
+> You can also install NetAlertX as a Home Assistant Add-on via the [![Home Assistant](https://img.shields.io/badge/Repo-blue?logo=home-assistant\&style=for-the-badge\&color=0aa8d2\&logoColor=fff\&label=Add)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Falexbelgium%2Fhassio-addons) from the [alexbelgium/hassio-addons](https://github.com/alexbelgium/hassio-addons/) repository. This is only available for supervised Home Assistant installations. If you're running Home Assistant Container or Home Assistant Core, you can instead run NetAlertX in a separate Docker container. 
 
-## ⚠ Note
+> [!WARNING]
+>
+> * Device discovery in Home Assistant takes approximately 10 seconds **per device**.
+> * Devices removed from NetAlertX are not automatically removed from Home Assistant. Use [MQTT Explorer](https://mqtt-explorer.com/) to delete them from the MQTT broker if required.
+> * For performance reasons, device definitions are not always fully synchronized. To force a complete synchronization, delete the MQTT Plugin Objects as described in the [MQTT plugin](https://docs.netalertx.com/plugins/_publisher_mqtt#forcing-an-update) documentation.
 
-- Please note that discovery takes about ~10s per device.
-- Deleting of devices is not handled automatically. Please use [MQTT Explorer](https://mqtt-explorer.com/) to delete devices in the broker (Home Assistant), if needed.
-- For optimization reasons, the devices are not always fully synchronized. You can delete Plugin objects as described in the [MQTT plugin](https://github.com/netalertx/NetAlertX/tree/main/front/plugins/_publisher_mqtt#forcing-an-update) docs to force a full synchronization.
+## Mosquitto MQTT setup
 
+1. Enable the Mosquitto MQTT integration in Home Assistant by following the [official documentation](https://www.home-assistant.io/integrations/mqtt/).
+2. Create an MQTT username and password on your broker.
+3. Record the following information for configuring NetAlertX:
 
-## 🧭 Guide
+   * MQTT host URL (usually your Home Assistant IP address)
+   * MQTT broker port
+   * Username
+   * Password
 
-> 💡 This guide was tested only with the Mosquitto MQTT broker
+4. Open **NetAlertX** → **Settings** → **MQTT**.
 
-1. Enable Mosquitto MQTT in Home Assistant by following the [documentation](https://www.home-assistant.io/integrations/mqtt/)
-
-2. Configure a user name and password on your broker.
-
-3. Note down the following details that you will need to configure NetAlertX:
-
-      - MQTT host url (usually your Home Assistant IP)
-      - MQTT broker port
-      - User
-      - Password
-
-4. Open the _NetAlertX_ > _Settings_ > _MQTT_ settings group
-
-      - Enable MQTT
-      - Fill in the details from above
-      - Fill in remaining settings as per description
-      - set MQTT_RUN to schedule or on_notification depending on requirements
+   * Enable MQTT.
+   * Enter the broker details from the previous step.
+   * Configure the remaining settings as needed.
+   * Set `MQTT_RUN` to either `schedule` or `on_notification`, depending on your requirements.
 
 ![Configuration Example][configuration]
 
-## 📷 Screenshots
+### Screenshots
 
-  | ![Screen 1][sensors] | ![Screen 2][history] |
-  |----------------------|----------------------|
-  | ![Screen 3][list] | ![Screen 4][overview] |
+| ![Screen 1][sensors] | ![Screen 2][history]  |
+| -------------------- | --------------------- |
+| ![Screen 3][list]    | ![Screen 4][overview] |
 
-
-  [configuration]:   ./img/HOME_ASISSTANT/HomeAssistant-Configuration.png           "configuration"
-  [sensors]:         ./img/HOME_ASISSTANT/HomeAssistant-Device-as-Sensors.png       "sensors"
-  [history]:         ./img/HOME_ASISSTANT/HomeAssistant-Device-Presence-History.png "history"
-  [list]:            ./img/HOME_ASISSTANT/HomeAssistant-Devices-List.png            "list"
-  [overview]:        ./img/HOME_ASISSTANT/HomeAssistant-Overview-Card.png           "overview"
+[configuration]: ./img/HOME_ASSISTANT/HomeAssistant-Configuration.png "configuration"
+[sensors]: ./img/HOME_ASSISTANT/HomeAssistant-Device-as-Sensors.png "sensors"
+[history]: ./img/HOME_ASSISTANT/HomeAssistant-Device-Presence-History.png "history"
+[list]: ./img/HOME_ASSISTANT/HomeAssistant-Devices-List.png "list"
+[overview]: ./img/HOME_ASSISTANT/HomeAssistant-Overview-Card.png "overview"
 
 ## Troubleshooting
 
-If you can't see all devices detected, run `sudo arp-scan  --interface=eth0 192.168.1.0/24` (change these based on your setup, read [Subnets](./SUBNETS.md) docs for details). This command has to be executed the NetAlertX container, not in the Home Assistant container.
+### Missing devices
 
-You can access the NetAlertX container via Portainer on your host or via ssh. The container name will be something like `addon_db21ed7f_netalertx` (you can copy the `db21ed7f_netalertx` part from the browser when accessing the UI of NetAlertX).
+If some devices do not appear in Home Assistant, first verify that NetAlertX can detect them by running:
 
-## Accessing the NetAlertX container via SSH
+```bash
+sudo arp-scan --interface=eth0 192.168.1.0/24
+```
 
-1. Log into your Home Assistant host via SSH
+Replace the interface and subnet with values appropriate for your environment (see the [Subnets](./SUBNETS.md) documentation).
+
+Run this command **inside the NetAlertX container**, not inside the Home Assistant container.
+
+### Accessing the NetAlertX container
+
+You can access the NetAlertX container via Portainer on your host or via SSH. The container name will be something like `addon_db21ed7f_netalertx` (you can copy the `db21ed7f_netalertx` part from the browser URL when accessing the NetAlertX web interface).
+
+1. Log into your Home Assistant host via SSH.
 
 ```bash
 local@local:~ $ ssh pi@192.168.1.9
 ```
-2. Find the NetAlertX container name, in this case `addon_db21ed7f_netalertx`
+
+2. Find the NetAlertX container name.
 
 ```bash
 pi@raspberrypi:~ $ sudo docker container ls | grep netalertx
 06c540d97f67   ghcr.io/alexbelgium/netalertx-armv7:25.3.1                   "/init"               6 days ago      Up 6 days (healthy)    addon_db21ed7f_netalertx
 ```
 
-3. SSH into the NetAlertX cointainer
+3. Open a shell inside the NetAlertX container.
 
 ```bash
-pi@raspberrypi:~ $ sudo docker exec -it addon_db21ed7f_netalertx  /bin/sh
+pi@raspberrypi:~ $ sudo docker exec -it addon_db21ed7f_netalertx /bin/sh
 / #
 ```
 
-4. Execute a test `asrp-scan` scan
+4. Run a test `arp-scan`.
 
 ```bash
 / # sudo arp-scan --ignoredups --retry=6 192.168.1.0/24 --interface=eth0
@@ -89,4 +94,4 @@ Starting arp-scan 1.10.0 with 256 hosts (https://github.com/royhills/arp-scan)
 ...
 ```
 
-If your result doesn't contain results similar to the above, double check your subnet, interface and if you are dealing with an inaccessible network segment, read the [Remote networks documentation](./REMOTE_NETWORKS.md).
+If your output does not contain devices similar to those shown above, verify that your subnet configuration is correct (see the [Subnets](./SUBNETS.md) documentation), that you are scanning the correct network interface, and that the network segment is reachable. If the devices are located on a different or remote network, refer to the [Remote Networks](./REMOTE_NETWORKS.md) documentation.

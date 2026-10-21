@@ -36,7 +36,7 @@ There is also an in-app Help / FAQ section that should be answering frequently a
 - [Better name resolution with Reverse DNS](./REVERSE_DNS.md)
 - [Network treemap configuration](./NETWORK_TREE.md)
 - [Backups](./BACKUPS.md)
-- [Plugins overview](/docs/PLUGINS.md)
+- [Plugins overview](./PLUGINS_OVERVIEW.md)
 
 #### 🐛 Debugging help & tips
 

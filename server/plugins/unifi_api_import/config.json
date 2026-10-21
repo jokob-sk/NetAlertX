@@ -1,0 +1,854 @@
+{
+  "code_name": "unifi_api_import",
+  "unique_prefix": "UNIFIAPI",
+  "plugin_type": "device_scanner",
+  "execution_order": "Layer_0",
+  "enabled": true,
+  "data_source": "script",
+  "mapped_to_table": "CurrentScan",
+  "data_filters": [
+    {
+      "compare_column": "objectPrimaryId",
+      "compare_operator": "==",
+      "compare_field_id": "txtMacFilter",
+      "compare_js_template": "'{value}'.toString()",
+      "compare_use_quotes": true
+    }
+  ],
+  "show_ui": true,
+  "localized": [
+    "display_name",
+    "description",
+    "icon"
+  ],
+  "display_name": [
+    {
+      "language_code": "en_us",
+      "string": "UniFi import (API)"
+    }
+  ],
+  "description": [
+    {
+      "language_code": "en_us",
+      "string": "This plugin is used to import devices from an UNIFI controller via the Site Manager API."
+    }
+  ],
+  "icon": [
+    {
+      "language_code": "en_us",
+      "string": "<i class=\"fa-solid fa-shield-halved\"></i>"
+    }
+  ],
+  "params": [],
+  "settings": [
+    {
+      "function": "RUN",
+      "events": [
+        "run"
+      ],
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": "disabled",
+      "options": [
+        "disabled",
+        "once",
+        "schedule"
+      ],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "When to run"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "When the plugin should run. Good options are <code>schedule</code>, <code>once</code>."
+        }
+      ]
+    },
+    {
+      "function": "RUN_SCHD",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "span",
+            "elementOptions": [
+              {
+                "cssClasses": "input-group-addon validityCheck"
+              },
+              {
+                "getStringKey": "Gen_ValidIcon"
+              }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "focusout": "validateRegex(this)"
+              },
+              {
+                "base64Regex": "Xig/OlwqfCg/OlswLTldfFsxLTVdWzAtOV18WzAtOV0rLVswLTldKyg/Oi9bMC05XSspP3xcKi9bMC05XSspKSg/OiwoPzpbMC05XXxbMS01XVswLTldfFswLTldKy1bMC05XSsoPzovWzAtOV0rKT98XCovWzAtOV0rKSkqXHMrKD86XCp8KD86WzAtOV18MVswLTldfDJbMC0zXXxbMC05XSstWzAtOV0rKD86L1swLTldKyk/fFwqL1swLTldKykpKD86LCg/OlswLTldfDFbMC05XXwyWzAtM118WzAtOV0rLVswLTldKyg/Oi9bMC05XSspP3xcKi9bMC05XSspKSpccysoPzpcKnwoPzpbMS05XXxbMTJdWzAtOV18M1swMV18WzAtOV0rLVswLTldKyg/Oi9bMC05XSspP3xcKi9bMC05XSspKSg/OiwoPzpbMS05XXxbMTJdWzAtOV18M1swMV18WzAtOV0rLVswLTldKyg/Oi9bMC05XSspP3xcKi9bMC05XSspKSpccysoPzpcKnwoPzpbMS05XXwxWzAtMl18WzAtOV0rLVswLTldKyg/Oi9bMC05XSspP3xcKi9bMC05XSspKSg/OiwoPzpbMS05XXwxWzAtMl18WzAtOV0rLVswLTldKyg/Oi9bMC05XSspP3xcKi9bMC05XSspKSpccysoPzpcKnwoPzpbMC02XXxbMC02XS1bMC02XSg/Oi9bMC05XSspP3xcKi9bMC05XSspKSg/OiwoPzpbMC02XXxbMC02XS1bMC02XSg/Oi9bMC05XSspP3xcKi9bMC05XSspKSok"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": "*/5 * * * *",
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Schedule"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Only enabled if you select <code>schedule</code> in the <a href=\"#UNIFIAPI_RUN\"><code>UNIFIAPI_RUN</code> setting</a>. Make sure you enter the schedule in the correct cron-like format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>). For example entering <code>0 4 * * *</code> will run the scan after 4 am in the <a onclick=\"toggleAllSettings()\" href=\"#TIMEZONE\"><code>TIMEZONE</code> you set above</a>. Will be run NEXT time the time passes."
+        }
+      ]
+    },
+    {
+      "function": "CMD",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "readonly": "true"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": "python3 /app/server/plugins/unifi_api_import/unifi_api_import.py",
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Command"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Command to run. This can not be changed"
+        }
+      ]
+    },
+    {
+      "function": "RUN_TIMEOUT",
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "type": "number"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": 10,
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Run timeout"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Maximum time in seconds to wait for the script to finish. If this time is exceeded the script is aborted."
+        }
+      ]
+    },
+    {
+      "function": "sites",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "button",
+            "elementOptions": [
+              {
+                "sourceSuffixes": []
+              },
+              {
+                "separator": ""
+              },
+              {
+                "cssClasses": "col-xs-12"
+              },
+              {
+                "onClick": "addViaPopupForm(this)"
+              },
+              {
+                "getStringKey": "Gen_Add"
+              }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "select",
+            "elementHasInputValue": 1,
+            "elementOptions": [
+              {
+                "multiple": "true"
+              },
+              {
+                "readonly": "true"
+              },
+              {
+                "editable": "true"
+              },
+              {
+                "popupForm": [
+                  {
+                    "function": "UNIFIAPI_site_name",
+                    "type": {
+                      "dataType": "string",
+                      "elements": [
+                        {
+                          "elementType": "input",
+                          "elementOptions": [
+                            {
+                              "placeholder": "Enter value"
+                            },
+                            {
+                              "cssClasses": "col-sm-10"
+                            }
+                          ],
+                          "transformers": []
+                        }
+                      ]
+                    },
+                    "default_value": "default",
+                    "options": [],
+                    "localized": [
+                      "name",
+                      "description"
+                    ],
+                    "name": [
+                      {
+                        "language_code": "en_us",
+                        "string": "Site name"
+                      }
+                    ],
+                    "description": [
+                      {
+                        "language_code": "en_us",
+                        "string": "The name of your site. Use a descriptive name."
+                      }
+                    ]
+                  },
+                  {
+                    "function": "UNIFIAPI_base_url",
+                    "type": {
+                      "dataType": "string",
+                      "elements": [
+                        {
+                          "elementType": "input",
+                          "elementOptions": [
+                            {
+                              "placeholder": "https://host_ip/proxy/network/integration/"
+                            },
+                            {
+                              "cssClasses": "col-sm-10"
+                            }
+                          ],
+                          "transformers": []
+                        }
+                      ]
+                    },
+                    "default_value": "default",
+                    "options": [],
+                    "localized": [
+                      "name",
+                      "description"
+                    ],
+                    "name": [
+                      {
+                        "language_code": "en_us",
+                        "string": "Base URL"
+                      }
+                    ],
+                    "description": [
+                      {
+                        "language_code": "en_us",
+                        "string": "You can find your base url in the UniFi Site Manager in <i>Settings -> Control Plane -> Integrations</i> in the <i>API Request Format</i> section, (e.g. <code>https://host_ip/proxy/network/integration/</code>)."
+                      }
+                    ]
+                  },
+                  {
+                    "function": "UNIFIAPI_api_version",
+                    "type": {
+                      "dataType": "string",
+                      "elements": [
+                        {
+                          "elementType": "input",
+                          "elementOptions": [
+                            {
+                              "placeholder": "v1"
+                            },
+                            {
+                              "cssClasses": "col-sm-10"
+                            }
+                          ],
+                          "transformers": []
+                        }
+                      ]
+                    },
+                    "default_value": "default",
+                    "options": [],
+                    "localized": [
+                      "name",
+                      "description"
+                    ],
+                    "name": [
+                      {
+                        "language_code": "en_us",
+                        "string": "API version"
+                      }
+                    ],
+                    "description": [
+                      {
+                        "language_code": "en_us",
+                        "string": "The version of the API (e.g.: <code>v1</code>)."
+                      }
+                    ]
+                  },
+                  {
+                    "function": "UNIFIAPI_api_key",
+                    "type": {
+                      "dataType": "string",
+                      "elements": [
+                        {
+                          "elementType": "input",
+                          "elementOptions": [
+                            {
+                              "placeholder": "Enter value"
+                            },
+                            {
+                              "cssClasses": "col-sm-10"
+                            }
+                          ],
+                          "transformers": []
+                        }
+                      ]
+                    },
+                    "default_value": "default",
+                    "options": [],
+                    "localized": [
+                      "name",
+                      "description"
+                    ],
+                    "name": [
+                      {
+                        "language_code": "en_us",
+                        "string": "API key"
+                      }
+                    ],
+                    "description": [
+                      {
+                        "language_code": "en_us",
+                        "string": "You can get an API key in your UniFi Site Manager in <i>Settings -> Control Plane -> Integrations</i>."
+                      }
+                    ]
+                  },
+                  {
+                    "function": "UNIFIAPI_verify_ssl",
+                    "type": {
+                      "dataType": "boolean",
+                      "elements": [
+                        {
+                          "elementType": "input",
+                          "elementOptions": [
+                            {
+                              "type": "checkbox"
+                            }
+                          ],
+                          "transformers": []
+                        }
+                      ]
+                    },
+                    "default_value": 1,
+                    "options": [],
+                    "localized": [
+                      "name",
+                      "description"
+                    ],
+                    "name": [
+                      {
+                        "language_code": "en_us",
+                        "string": "Verify SSL"
+                      }
+                    ],
+                    "description": [
+                      {
+                        "language_code": "en_us",
+                        "string": "Disable if you do not have an SSL certificate set up."
+                      }
+                    ]
+                  }
+                ],
+                "transformers": []
+              }
+            ],
+            "transformers": [
+              "name|base64"
+            ]
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              {
+                "sourceSuffixes": []
+              },
+              {
+                "separator": ""
+              },
+              {
+                "cssClasses": "col-xs-6"
+              },
+              {
+                "onClick": "removeFromList(this)"
+              },
+              {
+                "getStringKey": "Gen_Remove_Last"
+              }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              {
+                "sourceSuffixes": []
+              },
+              {
+                "separator": ""
+              },
+              {
+                "cssClasses": "col-xs-6"
+              },
+              {
+                "onClick": "removeAllOptions(this)"
+              },
+              {
+                "getStringKey": "Gen_Remove_All"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": [],
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Sites"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "UniFi site configurations. Use a unique name for each site. You can find necessary details to configure this in your controller under <i>Settings -> Control Plane -> Integrations</i>."
+        }
+      ]
+    },
+    {
+      "function": "SET_ALWAYS",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [{ "multiple": "true", "orderable": "true" }],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": ["devMac", "devLastIP", "devName", "devParentMAC"],
+      "options": [
+        "devMac",
+        "devLastIP",
+        "devName",
+        "devParentMAC"
+      ],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Set always columns"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "These columns are treated as authoritative and will overwrite existing values, including those set by other plugins, unless the current value was explicitly set by the user (<code>Source = USER</code> or <code>Source = LOCKED</code>)."
+        }
+      ]
+    },
+    {
+      "function": "SET_EMPTY",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [{ "multiple": "true", "orderable": "true" }],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": [],
+      "options": [
+        "devMac",
+        "devLastIP",
+        "devName",
+        "devParentMAC",
+        "devType",
+        "devSourcePlugin"
+      ],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Set empty columns"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "These columns are only overwritten if they are empty (<code>NULL</code> / empty string) or if their Source is set to <code>NEWDEV</code>"
+        }
+      ]
+    }
+  ],
+  "database_column_definitions": [
+    {
+      "column": "index",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "none",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Index"
+        }
+      ]
+    },
+    {
+      "column": "objectPrimaryId",
+      "mapped_to_column": "scanMac",
+      "css_classes": "col-sm-3",
+      "show": true,
+      "type": "device_name_mac",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "MAC (name)"
+        }
+      ]
+    },
+    {
+      "column": "objectSecondaryId",
+      "mapped_to_column": "scanLastIP",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "device_ip",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "IP"
+        }
+      ]
+    },
+    {
+      "column": "watchedValue1",
+      "mapped_to_column": "scanName",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Name"
+        }
+      ]
+    },
+    {
+      "column": "watchedValue2",
+      "mapped_to_column": "scanType",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Device Type"
+        }
+      ]
+    },
+    {
+      "column": "watchedValue3",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Connected"
+        }
+      ]
+    },
+    {
+      "column": "watchedValue4",
+      "mapped_to_column": "scanParentMAC",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "device_mac",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Parent"
+        }
+      ]
+    },
+    {
+      "column": "helpVal1",
+      "mapped_to_column": "scanSite",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Site"
+        }
+      ]
+    },
+    {
+      "column": "helpVal2",
+      "css_classes": "col-sm-2",
+      "show": false,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "VLAN ID"
+        }
+      ]
+    },
+    {
+      "column": "helpVal3",
+      "css_classes": "col-sm-2",
+      "show": false,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "VLAN name"
+        }
+      ]
+    },
+    {
+      "column": "helpVal4",
+      "css_classes": "col-sm-2",
+      "show": false,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "WAN name"
+        }
+      ]
+    },
+    {
+      "column": "Dummy",
+      "mapped_to_column": "scanSourcePlugin",
+      "mapped_to_column_data": {
+        "value": "UNIFIAPI"
+      },
+      "css_classes": "col-sm-2",
+      "show": false,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Scan method"
+        }
+      ]
+    },
+    {
+      "column": "dateTimeCreated",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Created"
+        }
+      ]
+    },
+    {
+      "column": "dateTimeChanged",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Changed"
+        }
+      ]
+    },
+    {
+      "column": "status",
+      "css_classes": "col-sm-1",
+      "show": true,
+      "type": "replace",
+      "default_value": "",
+      "options": [
+        {
+          "equals": "watched-not-changed",
+          "replacement": "<div style='text-align:center'><i class='fa-solid fa-square-check'></i><div></div>"
+        },
+        {
+          "equals": "watched-changed",
+          "replacement": "<div style='text-align:center'><i class='fa-solid fa-triangle-exclamation'></i></div>"
+        },
+        {
+          "equals": "new",
+          "replacement": "<div style='text-align:center'><i class='fa-solid fa-circle-plus'></i></div>"
+        },
+        {
+          "equals": "missing-in-last-scan",
+          "replacement": "<div style='text-align:center'><i class='fa-solid fa-question'></i></div>"
+        }
+      ],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Status"
+        }
+      ]
+    }
+  ]
+}

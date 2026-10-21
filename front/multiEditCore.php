@@ -251,7 +251,7 @@
         $select.append(
             devicesList
                 .filter(d => d.devMac && d.devName)
-                .map(d => `<option value="${d.devMac}">${d.devName}</option>`)
+                .map(d => `<option value="${d.devMac}">${encodeSpecialChars(d.devName)}</option>`)
                 .join('')
         ).trigger('change');
     }
@@ -537,7 +537,9 @@ function deleteSelectedDevices()
 }
 
 
-getData();
+// Wait for full app init (strings + plugin strings) before rendering.
+// Without this guard getString() returns undefined during cold init.
+callAfterAppInitialized(getData);
 
 
 </script>

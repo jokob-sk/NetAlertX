@@ -16,6 +16,7 @@ from config_paths import (
     PLUGINS_PATH_WITH_TRAILING_SEP,
     REPORT_TEMPLATES_PATH_WITH_TRAILING_SEP,
 )
+from db.device_filter_columns import build_devices_filters_sql
 
 # ===============================================================================
 # PATHS
@@ -69,48 +70,7 @@ sql_devices_all =   """
                     """
 
 sql_appevents = """select * from AppEvents order by dateTimeCreated desc"""
-sql_devices_filters = f"""
-                    SELECT DISTINCT 'devSite' AS columnName, devSite AS columnValue, devSite AS columnLabel
-                        FROM Devices WHERE devSite NOT IN ({NULL_EQUIVALENTS_SQL}) AND devSite IS NOT NULL
-                    UNION
-                    SELECT DISTINCT 'devSourcePlugin' AS columnName, devSourcePlugin AS columnValue, devSourcePlugin AS columnLabel
-                        FROM Devices WHERE devSourcePlugin NOT IN ({NULL_EQUIVALENTS_SQL}) AND devSourcePlugin IS NOT NULL
-                    UNION
-                    SELECT DISTINCT 'devOwner' AS columnName, devOwner AS columnValue, devOwner AS columnLabel
-                        FROM Devices WHERE devOwner NOT IN ({NULL_EQUIVALENTS_SQL}) AND devOwner IS NOT NULL
-                    UNION
-                    SELECT DISTINCT 'devType' AS columnName, devType AS columnValue, devType AS columnLabel
-                        FROM Devices WHERE devType NOT IN ({NULL_EQUIVALENTS_SQL}) AND devType IS NOT NULL
-                    UNION
-                    SELECT DISTINCT 'devGroup' AS columnName, devGroup AS columnValue, devGroup AS columnLabel
-                        FROM Devices WHERE devGroup NOT IN ({NULL_EQUIVALENTS_SQL}) AND devGroup IS NOT NULL
-                    UNION
-                    SELECT DISTINCT 'devLocation' AS columnName, devLocation AS columnValue, devLocation AS columnLabel
-                        FROM Devices WHERE devLocation NOT IN ({NULL_EQUIVALENTS_SQL}) AND devLocation IS NOT NULL
-                    UNION
-                    SELECT DISTINCT 'devVendor' AS columnName, devVendor AS columnValue, devVendor AS columnLabel
-                        FROM Devices WHERE devVendor NOT IN ({NULL_EQUIVALENTS_SQL}) AND devVendor IS NOT NULL
-                    UNION
-                    SELECT DISTINCT 'devSyncHubNode' AS columnName, devSyncHubNode AS columnValue, devSyncHubNode AS columnLabel
-                        FROM Devices WHERE devSyncHubNode NOT IN ({NULL_EQUIVALENTS_SQL}) AND devSyncHubNode IS NOT NULL
-                    UNION
-                    SELECT DISTINCT 'devVlan' AS columnName, devVlan AS columnValue, devVlan AS columnLabel
-                        FROM Devices WHERE devVlan NOT IN ({NULL_EQUIVALENTS_SQL}) AND devVlan IS NOT NULL
-                    UNION
-                    SELECT 'devParentMAC' AS columnName, d.devParentMAC AS columnValue,
-                           COALESCE(p.devName, d.devParentMAC) AS columnLabel
-                        FROM Devices d
-                        LEFT JOIN Devices p ON LOWER(p.devMac) = LOWER(d.devParentMAC)
-                        WHERE d.devParentMAC NOT IN ({NULL_EQUIVALENTS_SQL}) AND d.devParentMAC IS NOT NULL
-                        GROUP BY d.devParentMAC COLLATE NOCASE
-                    UNION
-                    SELECT DISTINCT 'devParentRelType' AS columnName, devParentRelType AS columnValue, devParentRelType AS columnLabel
-                        FROM Devices WHERE devParentRelType NOT IN ({NULL_EQUIVALENTS_SQL}) AND devParentRelType IS NOT NULL
-                    UNION
-                    SELECT DISTINCT 'devSSID' AS columnName, devSSID AS columnValue, devSSID AS columnLabel
-                        FROM Devices WHERE devSSID NOT IN ({NULL_EQUIVALENTS_SQL}) AND devSSID IS NOT NULL
-                    ORDER BY columnName;
-                    """
+sql_devices_filters = build_devices_filters_sql(NULL_EQUIVALENTS_SQL)
 
 sql_devices_stats = f"""
                     SELECT
@@ -136,6 +96,45 @@ sql_plugins_stats = """SELECT 'objects' AS tableName, plugin, COUNT(*) AS cnt FR
 sql_language_strings = "SELECT  * FROM Plugins_Language_Strings"
 sql_notifications_all = "SELECT  * FROM Notifications"
 sql_online_history = "SELECT  * FROM Online_History"
+
+# Resource_History read-side views (System Info -> Performance tab).
+# hour/day return raw per-tick rows (cheap indexed range scan); week/month
+# roll up at query time into hourly buckets (SUM for additive IO bytes,
+# AVG for CPU%/RSS/duration) - no pre-aggregated rollup table, see
+# resource-usage-history PRD Design §4. Deltas are already stored per-row
+# by insert_resource_history(), so no LAG()/window function is needed here.
+sql_resource_history_hour = """
+                    SELECT resDateTime, resCpuPercent, resRssMb, resIoReadBytes,
+                           resIoWriteBytes, resScanDurationMs, resTickFailed
+                    FROM Resource_History
+                    WHERE resDateTime >= datetime('now', '-1 hour')
+                    ORDER BY resDateTime
+                    """
+sql_resource_history_day = """
+                    SELECT resDateTime, resCpuPercent, resRssMb, resIoReadBytes,
+                           resIoWriteBytes, resScanDurationMs, resTickFailed
+                    FROM Resource_History
+                    WHERE resDateTime >= datetime('now', '-1 day')
+                    ORDER BY resDateTime
+                    """
+
+
+sql_resource_history_bucketed_template = """
+                    SELECT
+                        strftime('%Y-%m-%d %H:00:00', resDateTime) AS bucket,
+                        AVG(resCpuPercent) AS resCpuPercent,
+                        AVG(resRssMb) AS resRssMb,
+                        SUM(resIoReadBytes) AS resIoReadBytes,
+                        SUM(resIoWriteBytes) AS resIoWriteBytes,
+                        AVG(resScanDurationMs) AS resScanDurationMs,
+                        MAX(resTickFailed) AS resTickFailed
+                    FROM Resource_History
+                    WHERE resDateTime >= datetime('now', '-{days} day')
+                    GROUP BY bucket
+                    ORDER BY bucket
+                    """
+sql_resource_history_week = sql_resource_history_bucketed_template.format(days=7)
+sql_resource_history_month = sql_resource_history_bucketed_template.format(days=30)
 sql_plugins_events = "SELECT  * FROM Plugins_Events"
 sql_plugins_history = "SELECT  * FROM Plugins_History ORDER BY dateTimeChanged DESC"
 sql_new_devices = """SELECT * FROM (

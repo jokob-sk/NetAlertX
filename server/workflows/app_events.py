@@ -162,7 +162,28 @@ class AppEvent_obj:
         self.db.commitDB()
 
 
-# Manage prefixes of column names
+# ---------------------------------------------------------------------------
+# AppEvents query helpers
+# ---------------------------------------------------------------------------
+
+def get_unprocessed(db):
+    """Return all unprocessed AppEvents rows ordered by creation time."""
+    return db.sql.execute("""
+        SELECT * FROM AppEvents
+        WHERE appEventProcessed = 0
+        ORDER BY dateTimeCreated ASC
+    """).fetchall()
+
+
+def mark_processed(db, event_index):
+    """Mark a single AppEvent row as processed and commit."""
+    db.sql.execute(
+        'UPDATE AppEvents SET appEventProcessed = 1 WHERE "index" = ?',
+        (event_index,),
+    )
+    db.commitDB()
+
+
 def manage_prefix(field, event):
     if event == "delete":
         return field.replace("NEW.", "OLD.")

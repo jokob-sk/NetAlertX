@@ -1,1 +1,0 @@
-Plugins docs have been relocated. Check the new [Plugins Overview location](/docs/PLUGINS.md). 

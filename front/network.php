@@ -1,6 +1,5 @@
 <?php
   require 'php/templates/header.php';
-  require 'php/templates/modals.php';
 ?>
 
 <!-- Page ------------------------------------------------------------------ -->
@@ -64,7 +63,6 @@
   require 'php/templates/footer.php';
 ?>
 
-<!-- <script src="lib/treeviz/bundle.js"></script> -->
 <script src="lib/treeviz/treeviz.iife.js"></script>
 
 <!-- Network Topology JavaScript Modules -->

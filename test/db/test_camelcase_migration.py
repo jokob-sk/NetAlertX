@@ -20,7 +20,7 @@ import os
 import sqlite3
 
 INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
-sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
+sys.path.extend([f"{INSTALL_PATH}/server/plugins", f"{INSTALL_PATH}/server"])
 
 from db.db_upgrade import migrate_to_camelcase  # noqa: E402
 

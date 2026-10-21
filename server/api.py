@@ -21,10 +21,15 @@ from const import (
     sql_language_strings,
     sql_notifications_all,
     sql_online_history,
+    sql_resource_history_hour,
+    sql_resource_history_day,
+    sql_resource_history_week,
+    sql_resource_history_month,
     sql_devices_filters,
     defaultWebPort,
 )
 from db.db_helper import get_sql_devices_tiles
+from db.plugin_field_views import build_field_views_payload
 from logger import mylog
 from helper import write_file, get_setting_value
 from utils.datetime_utils import timeNowUTC
@@ -59,7 +64,10 @@ def update_api(
     app_state = updateState()
 
     # Save plugins
-    write_file(apiPath + "plugins.json", json.dumps({"data": all_plugins}))
+    write_file(
+        apiPath + "plugins.json",
+        json.dumps({"data": all_plugins, "field_views": build_field_views_payload(all_plugins)}),
+    )
 
     # Prepare database tables we want to expose
     dataSourcesSQLs = [
@@ -75,6 +83,10 @@ def update_api(
         ["plugins_language_strings", sql_language_strings],
         ["notifications", sql_notifications_all],
         ["online_history", sql_online_history],
+        ["resource_history_hour", sql_resource_history_hour],
+        ["resource_history_day", sql_resource_history_day],
+        ["resource_history_week", sql_resource_history_week],
+        ["resource_history_month", sql_resource_history_month],
         ["devices_tiles", get_sql_devices_tiles()],
         ["devices_filters", sql_devices_filters],
         ["custom_endpoint", conf.API_CUSTOM_SQL],

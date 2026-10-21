@@ -45,7 +45,8 @@ class app_state_class:
         appVersion=None,
         buildTimestamp=None,
         last_scan_run=None,
-        next_scan_time=None
+        next_scan_time=None,
+        pause_until=None
     ):
         """
         Initialize the application state, optionally overwriting previous values.
@@ -93,6 +94,7 @@ class app_state_class:
             self.buildTimestamp         = previousState.get("buildTimestamp", "")
             self.last_scan_run          = previousState.get("last_scan_run", "")
             self.next_scan_time         = previousState.get("next_scan_time", "")
+            self.pause_until            = previousState.get("pause_until", "")
         else:  # init first time values
             self.settingsSaved          = 0
             self.settingsImported       = 0
@@ -107,6 +109,7 @@ class app_state_class:
             self.buildTimestamp         = ""
             self.last_scan_run          = ""
             self.next_scan_time         = ""
+            self.pause_until            = ""
 
         # Overwrite with provided parameters if supplied
         if settingsSaved is not None:
@@ -148,6 +151,9 @@ class app_state_class:
                 self.next_scan_time = next_scan_time
             else:
                 self.next_scan_time = ""
+        # "" explicitly clears the pause (resume); a truthy value sets/extends it
+        if pause_until is not None:
+            self.pause_until = pause_until
         # check for new version every hour and if currently not running new version
         if self.isNewVersion is False and self.isNewVersionChecked + 3600 < int(
             timeNowUTC(as_string=False).timestamp()
@@ -182,7 +188,9 @@ class app_state_class:
                     appVersion=self.appVersion,
                     buildTimestamp=self.buildTimestamp,
                     last_scan_run=self.last_scan_run,
-                    next_scan_time=self.next_scan_time
+                    next_scan_time=self.next_scan_time,
+                    pause_until=self.pause_until,
+                    pluginsStates=self.pluginsStates
                 )
             except Exception as e:
                 mylog("none", [f"[app_state] SSE broadcast: {e}"])
@@ -202,7 +210,8 @@ def updateState(newState = None,
                 appVersion=None,
                 buildTimestamp=None,
                 last_scan_run=None,
-                next_scan_time=None):
+                next_scan_time = None,
+                pause_until = None):
     """
     Convenience method to create or update the app state.
 
@@ -218,6 +227,7 @@ def updateState(newState = None,
         buildTimestamp (str, optional): Build timestamp.
         last_scan_run (str, optional): ISO timestamp of last backend scan run.
         next_scan_time (str, optional): ISO timestamp of next scheduled device_scanner run.
+        pause_until (str, optional): ISO timestamp scans are paused until; "" clears the pause.
 
     Returns:
         app_state_class: Updated state object.
@@ -233,7 +243,8 @@ def updateState(newState = None,
         appVersion,
         buildTimestamp,
         last_scan_run,
-        next_scan_time
+        next_scan_time,
+        pause_until
     )
 
 

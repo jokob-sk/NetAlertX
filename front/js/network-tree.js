@@ -11,39 +11,58 @@ var deviceListGlobal = null;
 var myTree;
 
 /**
+ * Build an index of children grouped by parent MAC in a single pass,
+ * so getChildren() doesn't have to rescan the full device list per node.
+ * @param {Array} list - Full device list
+ * @returns {Map<string, Array>} parentMac (lowercased) -> array of child devices
+ */
+function buildChildrenIndex(list)
+{
+    const index = new Map();
+    for (var i in list) {
+      const item = list[i];
+      const parentMac = item.devParentMAC?.toLowerCase() || "";       // null-safe
+      if (parentMac != "") {
+        if (!index.has(parentMac)) index.set(parentMac, []);
+        index.get(parentMac).push(item);
+      }
+    }
+    return index;
+}
+
+/**
  * Recursively get children nodes and build a tree
  * @param {Object} node - Current node
- * @param {Array} list - Full device list
+ * @param {Map} childrenIndex - Index built by buildChildrenIndex()
  * @param {string} path - Path to current node
  * @param {Array} visited - Visited nodes (for cycle detection)
  * @returns {Object} Tree node with children
  */
-function getChildren(node, list, path, visited = [])
+function getChildren(node, childrenIndex, path, visited = [])
 {
     var children = [];
+    const nodeMac = node.devMac?.toLowerCase() || "";               // null-safe
 
     // Check for infinite recursion by seeing if the node has been visited before
-    if (visited.includes(node.devMac.toLowerCase())) {
+    if (visited.includes(nodeMac)) {
         console.error("Infinite recursion detected at node:", node.devMac);
         write_notification("[ERROR] ⚠ Infinite recursion detected. You probably have assigned the Internet node to another children node or to itself. Please open a new issue on GitHub and describe how you did it.", 'interrupt')
         return { error: "Infinite recursion detected", node: node.devMac };
     }
 
     // Add current node to visited list
-    visited.push(node.devMac.toLowerCase());
+    visited.push(nodeMac);
 
-    // Loop through all items to find children of the current node
-    for (var i in list) {
-      const item = list[i];
-      const parentMac = item.devParentMAC?.toLowerCase() || "";       // null-safe
-      const nodeMac = node.devMac?.toLowerCase() || "";               // null-safe
-
-      if (parentMac != "" && parentMac == nodeMac && !hiddenMacs.includes(parentMac)) {
+    // Look up this node's children directly instead of scanning the full list
+    if (!hiddenMacs.includes(nodeMac)) {
+      const candidates = childrenIndex.get(nodeMac) || [];
+      for (var i in candidates) {
+        const item = candidates[i];
 
         visibleNodesCount++;
 
         // Process children recursively, passing a copy of the visited list
-        children.push(getChildren(list[i], list, path + ((path == "") ? "" : '|') + parentMac, visited));
+        children.push(getChildren(item, childrenIndex, path + ((path == "") ? "" : '|') + nodeMac, visited));
       }
     }
 
@@ -81,6 +100,7 @@ function getChildren(node, list, path, visited = [])
         devParentRelType: node.devParentRelType,
         devVlan: node.devVlan,
         devSSID: node.devSSID,
+        devIsEthernet: !isNaN(node.devParentPort) && node.devParentPort !== "",
         hiddenChildren: hiddenMacs.includes(node.devMac),
         qty: children.length,
         children: children
@@ -99,6 +119,7 @@ function getHierarchy()
   parentNodesCount = 0;
 
   let internetNode = null;
+  const childrenIndex = buildChildrenIndex(deviceListGlobal);
 
   for(i in deviceListGlobal)
   {
@@ -106,7 +127,7 @@ function getHierarchy()
     {
       internetNode = deviceListGlobal[i];
 
-      return (getChildren(internetNode, deviceListGlobal, ''))
+      return (getChildren(internetNode, childrenIndex, ''))
       break;
     }
   }
@@ -208,7 +229,7 @@ function initTree(myHierarchy)
     // override original value
     let screenWidthEm = pxToEm(finalWidthPx);
 
-        // handle canvas and node size if only a few nodes
+    // handle canvas and node size if only a few nodes
     emSize > 1 ? emSize = 1 : emSize = emSize;
 
     let nodeHeightPx = emToPx(emSize*1);
@@ -231,7 +252,14 @@ function initTree(myHierarchy)
 
         (!emptyArr.includes(nodeData.data.devParentPort)) ? port = nodeData.data.devParentPort : port = "";
 
-        (port == "" || port == 0 || port == 'None' ) ? portBckgIcon = `<i class="fa fa-wifi"></i>` : portBckgIcon = `<i class="fa fa-ethernet"></i>`;
+        if (nodeData.data.devSSID !== ""){
+          portBckgIcon = `<i class="fa fa-wifi"></i>`;
+        } else if (nodeData.data.devIsEthernet) {
+          portBckgIcon = `<i class="fa fa-ethernet"></i>`;
+        } else {
+          portBckgIcon = `<i class="fa-solid fa-circle-question"></i>`;
+        }          
+          
 
         portHtml = (port == "" || port == 0 || port == 'None' ) ? " &nbsp " : port;
 
@@ -253,7 +281,7 @@ function initTree(myHierarchy)
         // generate +/- icon if node has children nodes
         collapseExpandHtml = nodeData.data.hasChildren ?
                       `<div class="netCollapse"
-                            style="font-size:${nodeHeightPx/2}px;top:${Math.floor(nodeHeightPx / 4)}px"
+                            style="font-size:${nodeHeightPx/2}px;margin-top:-${nodeHeightPx - Math.floor(nodeHeightPx / 4)}px"
                             data-mytreepath="${nodeData.data.path}"
                             data-mytreemac="${nodeData.data.devMac}">
                         <i class="fa fa-${collapseExpandIcon} pointer"></i>
@@ -278,14 +306,14 @@ function initTree(myHierarchy)
                               onclick="handleNodeClick(this)"
                               data-mac="${nodeData.data.devMac}"
                               data-parentMac="${nodeData.data.devParentMAC}"
-                              data-name="${nodeData.data.devName}"
+                              data-name="${encodeSpecialChars(nodeData.data.devName)}"
                               data-ip="${nodeData.data.devLastIP}"
                               data-mac="${nodeData.data.devMac}"
                               data-vendor="${nodeData.data.devVendor}"
                               data-type="${nodeData.data.devType}"
                               data-devIsNetworkNodeDynamic="${nodeData.data.devIsNetworkNodeDynamic}"
-                              data-lastseen="${nodeData.data.devLastConnection}"
-                              data-firstseen="${nodeData.data.devFirstConnection}"
+                              data-lastseen="${localizeTimestamp(nodeData.data.devLastConnection)}"
+                              data-firstseen="${localizeTimestamp(nodeData.data.devFirstConnection)}"
                               data-relationship="${nodeData.data.devParentRelType}"
                               data-flapping="${nodeData.data.devFlapping}"
                               data-sleeping="${nodeData.data.devIsSleeping || 0}"
@@ -298,7 +326,7 @@ function initTree(myHierarchy)
                           >
                             <div class="netNodeText">
                               <strong><span>${devicePort}  <span class="${badgeConf.cssText}">${deviceIcon}</span></span>
-                                <span class="spanNetworkTree anonymizeDev" style="width:${nodeWidthPx-50}px">${nodeData.data.devName}</span>
+                                <span class="spanNetworkTree anonymizeDev" style="width:${nodeWidthPx-50}px">${encodeSpecialChars(nodeData.data.devName)}</span>
                                 ${networkHardwareIcon}
                               </strong>
                             </div>
@@ -318,6 +346,17 @@ function initTree(myHierarchy)
       idKey: "devMac",
       hasFlatData: false,
       relationnalField: "children",
+      linkStyle: (nodeData) => {
+        // Return "solid", "dashed", "dotted", or "dashdot"
+        // Can vary per link based on node data:
+        if(nodeData.data.devParentRelType == "virtual")
+        {
+          return "dotted";
+        } else
+        {
+          return nodeData.data.devIsEthernet ? "solid" : "dashed";
+        }        
+      },
       linkLabel: {
       render: (parent, child) => {
         // Return text or HTML to display on the connection line

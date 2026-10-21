@@ -6,7 +6,7 @@
 #
 #  Back module. Network scanner
 # -------------------------------------------------------------------------------
-#  Puche 2021 / 2022+ jokob             jokob@duck.com                GNU GPLv3
+#  Puche 2021 / 2022+ jokob             support@netalertx.com                GNU GPLv3
 # -------------------------------------------------------------------------------
 
 
@@ -18,17 +18,19 @@
 import sys
 import time
 import datetime
+import math
 from pathlib import Path
 
 # Register NetAlertX modules
 import conf
 from const import fullConfPath, sql_new_devices
 from logger import mylog
-from helper import filePermissions
-from utils.datetime_utils import timeNowUTC
+from helper import filePermissions, get_setting_value
+from utils.datetime_utils import timeNowUTC, is_datetime_future, normalizeTimeStamp
 from app_state import updateState
 from api import update_api, check_activity, update_GUI_port
 from scan.session_events import process_scan
+from scan.resource_history import get_process_cpu_times_and_io, insert_resource_history
 from initialise import importConfigs, renameSettings
 from database import DB
 from messaging.reporting import get_notifications
@@ -97,6 +99,10 @@ def main():
     all_plugins = None
     pm = None
 
+    # Tracks the last "remaining minutes" value broadcast while paused, so we only
+    # call updateState() when the displayed countdown minute actually changes.
+    last_paused_minute_broadcast = None
+
     # -- SETTINGS BACKWARD COMPATIBILITY START --
     # rename settings that have changed names due to code cleanup or migration to plugins
     renameSettings(Path(fullConfPath))
@@ -122,113 +128,157 @@ def main():
         # Update API endpoints
         update_api(db, all_plugins, False)
 
-        # proceed if 1 minute passed
-        if conf.last_scan_run + datetime.timedelta(minutes=1) < conf.loop_start_time:
-            # last time any scan or maintenance/upkeep was run
-            conf.last_scan_run = loop_start_time
+        # Pause gate: skip the automatic scheduled-scan block below while paused.
+        # Manually-triggered scans (handled by check_and_run_user_event() above) are unaffected.
+        pause_until_dt = normalizeTimeStamp(updateState().pause_until)
 
-            # Header (also broadcasts last_scan_run to frontend via SSE / app_state.json)
-            updateState("Process: Start",
-                        last_scan_run=loop_start_time.replace(microsecond=0).isoformat(),
-                        next_scan_time="")
+        if pause_until_dt and is_datetime_future(pause_until_dt):
+            remaining_minutes = math.ceil((pause_until_dt - timeNowUTC(as_string=False)).total_seconds() / 60)
 
-            # Timestamp
-            startTime = loop_start_time
-            startTime = startTime.replace(microsecond=0)
+            if remaining_minutes != last_paused_minute_broadcast:
+                updateState(f"Process: Paused for {remaining_minutes} min")
+                last_paused_minute_broadcast = remaining_minutes
 
-            # Check if any plugins need to run on schedule
-            pm.run_plugin_scripts("schedule")
-
-            # Compute the next scheduled run time AFTER schedule check (which updates last_next_schedule)
-            # Only device_scanner plugins have meaningful next_scan times for user display
-            scanner_prefixes = {p["unique_prefix"] for p in all_plugins if p.get("plugin_type") == "device_scanner"}
-            scanner_next = [s.last_next_schedule for s in conf.mySchedules if s.service in scanner_prefixes]
-
-            # Get the earliest next scan time across all device scanners and broadcast.
-            # updateState validates the value is in the future before storing/broadcasting.
-            if scanner_next:
-                next_scan_dt = min(scanner_next)
-                updateState(next_scan_time=next_scan_dt.replace(microsecond=0).isoformat())
-
-            # determine run/scan type based on passed time
-            # --------------------------------------------
-
-            # Runs plugin scripts which are set to run every time after a scans finished
-            pm.run_plugin_scripts("always_after_scan")
-
-            # process all the scanned data into new devices
-            processScan = updateState("Check scan").processScan
-            mylog("debug", [f"[MAIN] processScan: {processScan}"])
-
-            if processScan is True:
-                mylog("debug", "[MAIN] start processing scan results")
-                process_scan(db)
-                updateState("Scan processed", None, None, None, None, False)
-
-            # Name resolution
-            # --------------------------------------------
-
-            # Check if new devices found (created by process_scan)
-            sql.execute(sql_new_devices)
-            newDevices = sql.fetchall()
-            db.commitDB()
-
-            # If new devices were found, run all plugins registered to be run when new devices are found
-            # Run these before name resolution so plugins like NSLOOKUP that are configured
-            # for `on_new_device` can populate names used in the notifications below.
-            if len(newDevices) > 0:
-                pm.run_plugin_scripts("on_new_device")
-
-            # run plugins before notification processing (e.g. Plugins to discover device names)
-            pm.run_plugin_scripts("before_name_updates")
-
-            # Resolve devices names (will pick up results from on_new_device plugins above)
-            mylog("debug", "[Main] Resolve devices names")
-            update_devices_names(pm)
-
-            # Notification handling
-            # ----------------------------------------
-
-            # send all configured notifications
-            final_json = get_notifications(db)
-
-            # Write the notifications into the DB
-            notification = NotificationInstance(db)
-            notificationObj = notification.create(final_json, "")
-
-            # ------------------------------------------------------------------------------
-            # Run all enabled publisher gateways (notification delivery)
-            # ------------------------------------------------------------------------------
-            # Design notes:
-            # - The eve_PendingAlertEmail flag is only cleared *after* a notification is sent.
-            # - If no notification is sent (HasNotifications == False), the flag stays set,
-            #   meaning the event may still trigger alerts later depending on user settings
-            #   (e.g. down-event reporting, delay timers, plugin conditions).
-            # - A pending flag means “still under evaluation,” not “missed.”
-            #   It will clear automatically once its event is included in a sent alert.
-            # ------------------------------------------------------------------------------
-            if notificationObj.HasNotifications:
-                pm.run_plugin_scripts("on_notification")
-                notification.setAllProcessed()
-
-                # Only clear pending email flags and plugins_events once notifications are sent.
-                notification.clearPendingEmailFlag()
-
-            else:
-                # If there are no notifications to process,
-                # we still need to clear all plugin events to prevent database growth if
-                # no notification gateways are configured
-                notification.clearPluginEvents()
-                mylog("verbose", ["[Notification] No changes to report"])
-
-            # Commit SQL
-            db.commitDB()
-
-            mylog("verbose", ["[MAIN] Process: Idle"])
         else:
-            # do something
-            # mylog('verbose', ['[MAIN] Waiting to start next loop'])
-            updateState("Process: Idle")
+            if last_paused_minute_broadcast is not None:
+                # Pause expired naturally (not via /scan/resume) - clear it and resume normal state
+                updateState("Process: Idle", pause_until="")
+                last_paused_minute_broadcast = None
+
+            # proceed if 1 minute passed
+            if conf.last_scan_run + datetime.timedelta(minutes=1) < conf.loop_start_time:
+                # last time any scan or maintenance/upkeep was run
+                conf.last_scan_run = loop_start_time
+
+                # Resource-usage sampling: brackets the whole schedule-tick block
+                # below (run_plugin_scripts("schedule") through process_scan()),
+                # not just the scan pipeline itself - plugin subprocess execution
+                # happens in this window and is the class of cost this history
+                # exists to catch. Gated on MAINT_PERF_DAYS so a disabled install
+                # pays no sampling cost at all (see scan/resource_history.py).
+                # Defensive: an empty/corrupted setting value must disable this
+                # optional feature, not raise and kill the whole main loop -
+                # this sits outside the try/finally below, so an uncaught
+                # ValueError/TypeError here would have no safety net at all.
+                try:
+                    resource_history_enabled = int(get_setting_value("MAINT_PERF_DAYS", 30)) != 0
+                except (TypeError, ValueError):
+                    resource_history_enabled = False
+                resource_pre = get_process_cpu_times_and_io() if resource_history_enabled else None
+                tick_start_monotonic = time.monotonic()
+                tick_failed = False
+
+                try:
+                    # Header (also broadcasts last_scan_run to frontend via SSE / app_state.json)
+                    updateState("Process: Start",
+                                last_scan_run=loop_start_time.replace(microsecond=0).isoformat(),
+                                next_scan_time="")
+
+                    # Timestamp
+                    startTime = loop_start_time
+                    startTime = startTime.replace(microsecond=0)
+
+                    # Check if any plugins need to run on schedule
+                    pm.run_plugin_scripts("schedule")
+
+                    # Compute the next scheduled run time AFTER schedule check (which updates last_next_schedule)
+                    # Only device_scanner plugins have meaningful next_scan times for user display
+                    scanner_prefixes = {p["unique_prefix"] for p in all_plugins if p.get("plugin_type") == "device_scanner"}
+                    scanner_next = [s.last_next_schedule for s in conf.mySchedules if s.service in scanner_prefixes]
+
+                    # Get the earliest next scan time across all device scanners and broadcast.
+                    # updateState validates the value is in the future before storing/broadcasting.
+                    if scanner_next:
+                        next_scan_dt = min(scanner_next)
+                        updateState(next_scan_time=next_scan_dt.replace(microsecond=0).isoformat())
+
+                    # determine run/scan type based on passed time
+                    # --------------------------------------------
+
+                    # Runs plugin scripts which are set to run every time after a scans finished
+                    pm.run_plugin_scripts("always_after_scan")
+
+                    # process all the scanned data into new devices
+                    processScan = updateState("Check scan").processScan
+                    mylog("debug", [f"[MAIN] processScan: {processScan}"])
+
+                    if processScan is True:
+                        mylog("debug", "[MAIN] start processing scan results")
+                        process_scan(db, all_plugins)
+                        updateState("Scan processed", None, None, None, None, False)
+                except Exception:
+                    tick_failed = True
+                    raise
+                finally:
+                    if resource_history_enabled:
+                        duration_ms = int((time.monotonic() - tick_start_monotonic) * 1000)
+                        resource_post = get_process_cpu_times_and_io()
+                        insert_resource_history(db, resource_pre, resource_post, duration_ms, tick_failed)
+
+                # Name resolution
+                # --------------------------------------------
+
+                # Check if new devices found (created by process_scan)
+                sql.execute(sql_new_devices)
+                newDevices = sql.fetchall()
+                db.commitDB()
+
+                # If new devices were found, run all plugins registered to be run when new devices are found
+                # Run these before name resolution so plugins like NSLOOKUP that are configured
+                # for `on_new_device` can populate names used in the notifications below.
+                if len(newDevices) > 0:
+                    pm.run_plugin_scripts("on_new_device")
+
+                # run plugins before notification processing (e.g. Plugins to discover device names)
+                pm.run_plugin_scripts("before_name_updates")
+
+                # Resolve devices names (will pick up results from on_new_device plugins above)
+                mylog("debug", "[Main] Resolve devices names")
+                update_devices_names(pm)
+
+                # Notification handling
+                # ----------------------------------------
+
+                # send all configured notifications
+                final_json = get_notifications(db)
+
+                # Write the notifications into the DB
+                notification = NotificationInstance(db)
+                notificationObj = notification.create(final_json, "")
+
+                # ------------------------------------------------------------------------------
+                # Run all enabled publisher gateways (notification delivery)
+                # ------------------------------------------------------------------------------
+                # Design notes:
+                # - The eve_PendingAlertEmail flag is only cleared *after* a notification is sent.
+                # - If no notification is sent (HasNotifications == False), the flag stays set,
+                #   meaning the event may still trigger alerts later depending on user settings
+                #   (e.g. down-event reporting, delay timers, plugin conditions).
+                # - A pending flag means “still under evaluation,” not “missed.”
+                #   It will clear automatically once its event is included in a sent alert.
+                # ------------------------------------------------------------------------------
+                if notificationObj.HasNotifications:
+                    pm.run_plugin_scripts("on_notification")
+                    notification.setAllProcessed()
+
+                    # Only clear pending email flags and plugins_events once notifications are sent.
+                    notification.clearPendingEmailFlag()
+
+                else:
+                    # If there are no notifications to process,
+                    # we still need to clear all plugin events to prevent database growth if
+                    # no notification gateways are configured
+                    notification.clearPluginEvents()
+                    mylog("verbose", ["[Notification] No changes to report"])
+
+                # Commit SQL
+                db.commitDB()
+
+                mylog("verbose", ["[MAIN] Process: Idle"])
+            else:
+                # do something
+                # mylog('verbose', ['[MAIN] Waiting to start next loop'])
+                updateState("Process: Idle")
 
         # WORKFLOWS handling
         # ----------------------------------------

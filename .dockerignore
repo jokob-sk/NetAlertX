@@ -13,3 +13,6 @@ CONTRIBUTING
 FUNDING.yml
 config/.gitignore
 db/.gitignore
+**/__pycache__
+**/*.pyc
+**/*.pyo

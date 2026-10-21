@@ -10,6 +10,17 @@ CREATE TABLE IF NOT EXISTS Online_History (
             offlineDevices INTEGER,
             PRIMARY KEY("index" AUTOINCREMENT)
           );
+CREATE TABLE IF NOT EXISTS Resource_History (
+            "index"           INTEGER PRIMARY KEY AUTOINCREMENT,
+            resDateTime       TEXT NOT NULL,
+            resCpuPercent     REAL,
+            resRssMb          REAL,
+            resIoReadBytes    INTEGER,
+            resIoWriteBytes   INTEGER,
+            resScanDurationMs INTEGER,
+            resTickFailed     INTEGER NOT NULL DEFAULT 0
+          );
+CREATE INDEX IF NOT EXISTS idx_reshist_datetime ON Resource_History(resDateTime);
 CREATE TABLE Devices (
               devMac STRING (50) PRIMARY KEY NOT NULL COLLATE NOCASE,
               devName STRING (50) NOT NULL DEFAULT "(unknown)",
@@ -164,9 +175,13 @@ CREATE TABLE CurrentScan (
                                 scanVlan STRING(250),
                                 scanParentMAC STRING(250),
                                 scanParentPort STRING(250),
+                                scanFQDN STRING(250),
                                 scanType STRING(250),
-                                UNIQUE(scanMac)
+                                scanCreatesDevice BOOLEAN NOT NULL DEFAULT (1) CHECK (scanCreatesDevice IN (0, 1)),
+                                scanNotificationMode STRING(10) NOT NULL DEFAULT ('normal'),
+                                scanPresence BOOLEAN NOT NULL DEFAULT (1) CHECK (scanPresence IN (0, 1))
                             );
+CREATE INDEX idx_currentscan_scanmac ON CurrentScan(scanMac);
 CREATE TABLE IF NOT EXISTS AppEvents (
                 "index" INTEGER PRIMARY KEY AUTOINCREMENT,
                 guid TEXT UNIQUE,
@@ -220,6 +235,8 @@ CREATE INDEX IDX_dev_Favorite ON Devices (devFavorite);
 CREATE INDEX IDX_dev_LastIP ON Devices (devLastIP);
 CREATE INDEX IDX_dev_NewDevice ON Devices (devIsNew);
 CREATE INDEX IDX_dev_Archived ON Devices (devIsArchived);
+CREATE INDEX idx_dev_guid ON Devices(devGUID);
+CREATE INDEX idx_plobj_guid ON Plugins_Objects(objectGuid);
 CREATE UNIQUE INDEX IF NOT EXISTS idx_events_unique
 ON Events (
     eveMac,

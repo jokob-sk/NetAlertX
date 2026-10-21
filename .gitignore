@@ -19,6 +19,18 @@ db/pialert.db
 db/app.db
 front/log/*
 /log/*
+.gemini/internal-docs/PRDs/*
+!.gemini/internal-docs/PRDs/.gitkeep
+!.gemini/internal-docs/PRDs/completed
+!.gemini/internal-docs/PRDs/to_review
+.gemini/internal-docs/PRDs/completed/*
+!.gemini/internal-docs/PRDs/completed/.gitkeep
+.gemini/internal-docs/PRDs/to_review/*
+!.gemini/internal-docs/PRDs/to_review/.gitkeep
+.gemini/internal-docs/research/*
+!.gemini/internal-docs/research/.gitkeep
+.gemini/internal-docs/research_old/*
+!.gemini/internal-docs/research_old/.gitkeep
 /log/plugins/*
 front/api/*
 /api/*
@@ -28,10 +40,13 @@ front/api/*
 **/plugins/heartbeat/*
 **/%40eaDir/
 **/@eaDir/
+.claude/settings.local.json
+.claude/scheduled_tasks.lock
 
 __pycache__/
 *.py[cod]
 *$py.class
+.pytest_cache/
 
 **/last_result.log
 **/script.log

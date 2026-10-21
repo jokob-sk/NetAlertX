@@ -42,6 +42,14 @@ DATETIME_FIELDS = {
 # Placeholders:
 #   {condition}          — optional WHERE clause appended by condition builder
 #   {alert_down_minutes} — runtime value, only used by down_devices
+#
+# Every section here reads through Events_Devices, which LEFT JOINs Devices
+# onto Events - a device's pending event survives deleting the device (Events
+# is kept as a persistent audit trail, not cleaned up on delete), so the join
+# still returns that row with every Devices-sourced column NULL. The
+# `devMac IS NOT NULL` guard in each template below is what excludes that
+# orphaned row from notifications; it does not affect the underlying Events
+# row itself, which the events.php page still shows.
 # ---------------------------------------------------------------------------
 SQL_TEMPLATES = {
     "new_devices": """
@@ -52,10 +60,14 @@ SQL_TEMPLATES = {
             devLastIP as eveIp,
             eveDateTime,
             eveEventType,
-            devComments
+            devComments,
+            devVlan,
+            devSite,
+            devSSID
         FROM Events_Devices
         WHERE evePendingAlertEmail = 1
           AND eveEventType = 'New Device' {condition}
+          AND devMac IS NOT NULL
         ORDER BY eveDateTime
     """,
     "down_devices": """
@@ -66,11 +78,15 @@ SQL_TEMPLATES = {
             eveIp,
             eveDateTime,
             eveEventType,
-            devComments
+            devComments,
+            devVlan,
+            devSite,
+            devSSID
         FROM Events_Devices AS down_events
         WHERE evePendingAlertEmail = 1
           AND down_events.eveEventType = 'Device Down'
           AND eveDateTime < datetime('now', '-{alert_down_minutes} minutes')
+          AND down_events.devMac IS NOT NULL
           AND NOT EXISTS (
               SELECT 1
               FROM Events AS connected_events
@@ -88,10 +104,14 @@ SQL_TEMPLATES = {
             reconnected_devices.eveIp,
             reconnected_devices.eveDateTime,
             reconnected_devices.eveEventType,
-            devComments
+            devComments,
+            devVlan,
+            devSite,
+            devSSID
         FROM Events_Devices AS reconnected_devices
         WHERE reconnected_devices.eveEventType = 'Down Reconnected'
           AND reconnected_devices.evePendingAlertEmail = 1
+          AND reconnected_devices.devMac IS NOT NULL
           AND NOT EXISTS (
               SELECT 1 FROM Events AS newer
               WHERE newer.eveMac = reconnected_devices.eveMac
@@ -109,10 +129,14 @@ SQL_TEMPLATES = {
             devLastIP as eveIp,
             eveDateTime,
             eveEventType,
-            devComments
+            devComments,
+            devVlan,
+            devSite,
+            devSSID
         FROM Events_Devices
         WHERE evePendingAlertEmail = 1
           AND eveEventType IN ({event_types}) {condition}
+          AND devMac IS NOT NULL
         ORDER BY eveDateTime
     """,
     "plugins": """

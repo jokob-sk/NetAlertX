@@ -1,11 +1,29 @@
 import sqlite3
 from logger import mylog, Logger
 from helper import get_setting_value
+from server.plugins.plugin_helper import normalize_mac
 from models.device_instance import DeviceInstance
 from models.plugin_object_instance import PluginObjectInstance
+from workflows.constants import BOOLEAN_COLUMNS, TOKEN_RE
 
 # Make sure log level is initialized correctly
 Logger(get_setting_value("LOG_LEVEL"))
+
+
+def interpolate_tokens(value, trigger_device):
+    """Replace every ``{{trigger.COLUMN}}`` placeholder in *value* with the
+    corresponding field from *trigger_device* (a plain dict).
+
+    Unknown columns are left as-is so callers can log them separately.
+    """
+    if not isinstance(value, str):
+        return value
+
+    def _replace(match):
+        col = match.group(1)
+        return str(trigger_device.get(col, match.group(0)))
+
+    return TOKEN_RE.sub(_replace, value)
 
 
 class Action:
@@ -14,100 +32,150 @@ class Action:
     def __init__(self, trigger):
         self.trigger = trigger
 
-    def execute(self, obj):
-        """Executes the action on the given object."""
+    def get_object(self):
+        """Safely get and normalize the trigger object."""
+        obj = getattr(self.trigger, "object", None)
+
+        if isinstance(obj, sqlite3.Row):
+            obj = dict(obj)
+
+        return obj
+
+    def execute(self):
         raise NotImplementedError("Subclasses must implement execute()")
 
 
 class UpdateFieldAction(Action):
-    """Action to update a specific field of an object."""
+    """Action to update a specific field of a device.
 
-    def __init__(self, db, field, value, trigger):
-        super().__init__(trigger)  # Call the base class constructor
+    When *target_device* is supplied the action operates on that device rather
+    than the one that raised the event, enabling cross-device targeting (v2).
+    *trigger* is still required for context / logging.
+    """
+
+    def __init__(self, db, field, value, trigger, target_device=None):
+        super().__init__(trigger)
         self.field = field
         self.value = value
         self.db = db
+        self.target_device = target_device
 
     def execute(self):
-        mylog("verbose", f"[WF] Updating field '{self.field}' to '{self.value}' for event object {self.trigger.object_type}")
+        # Resolve the device to operate on
+        obj = self.target_device if self.target_device is not None else self.get_object()
 
-        obj = self.trigger.object
-
-        # convert to dict for easeir handling
         if isinstance(obj, sqlite3.Row):
-            obj = dict(obj)  # Convert Row object to a standard dictionary
+            obj = dict(obj)
 
-        processed = False
+        if obj is None:
+            mylog("none", "[WF] UpdateFieldAction: target device no longer exists")
+            return None
 
-        # currently unused
-        if isinstance(obj, dict) and "objectGuid" in obj:
-            mylog("debug", f"[WF] Updating Object '{obj}' ")
-            plugin_instance = PluginObjectInstance()
-            plugin_instance.updateField(obj["objectGuid"], self.field, self.value)
-            processed = True
+        # Interpolate {{trigger.X}} tokens in the value using the triggering device
+        trigger_obj = self.get_object() or {}
+        final_value = interpolate_tokens(self.value, trigger_obj)
 
-        elif isinstance(obj, dict) and "devGUID" in obj:
-            mylog("debug", f"[WF] Updating Device '{obj}' ")
-            device_instance = DeviceInstance()
-            device_instance.updateField(obj["devGUID"], self.field, self.value)
-            processed = True
+        # Cast to int for boolean CHECK columns to satisfy SQLite constraints
+        if self.field in BOOLEAN_COLUMNS:
+            try:
+                final_value = int(final_value)
+            except (ValueError, TypeError):
+                mylog("none", [f"[WF] Cannot cast value '{final_value}' to int for boolean field '{self.field}' — skipping"])
+                return None
 
-        if not processed:
-            mylog("none", f"[WF] Could not process action for object: {obj}")
+        mylog("verbose", f"[WF] Updating field '{self.field}' to '{final_value}' on device {obj.get('devGUID', '?')}")
 
-        return obj
+        if "objectGuid" in obj:
+            mylog("debug", f"[WF] Updating Object '{obj}'")
+            PluginObjectInstance().updateField(obj["objectGuid"], self.field, final_value)
+            return obj
+
+        if "devGUID" in obj:
+            # Guard: if mutating devMac, normalize the value and archive any
+            # existing device already holding that MAC before writing to avoid
+            # a PK UNIQUE constraint violation.
+            if self.field == "devMac":
+                final_value = normalize_mac(final_value)
+                self._archive_conflicting_mac(final_value, obj["devGUID"])
+
+            mylog("debug", f"[WF] Updating Device '{obj.get('devGUID')}'")
+            DeviceInstance().updateField(obj["devGUID"], self.field, final_value)
+            return obj
+
+        mylog("none", f"[WF] UpdateFieldAction: unsupported object format: {obj}")
+        return None
+
+    def _archive_conflicting_mac(self, new_mac, current_guid):
+        """If another device already holds *new_mac*, archive it before the
+        primary-key mutation so SQLite's UNIQUE constraint is not violated."""
+        normalized = normalize_mac(new_mac)
+        existing = DeviceInstance().getByMac(normalized)
+        if existing and existing.get("devGUID") != current_guid:
+            mylog("none", [
+                f"[WF] Archiving conflicting device {existing['devGUID']} "
+                f"(MAC {normalized}) before devMac update"
+            ])
+            DeviceInstance().updateField(existing["devGUID"], "devIsArchived", 1)
 
 
 class DeleteObjectAction(Action):
-    """Action to delete an object."""
+    """Action to delete a device or plugin object.
 
-    def __init__(self, db, trigger):
-        super().__init__(trigger)  # Call the base class constructor
+    When *target_device* is supplied the action deletes that device rather than
+    the one that raised the event, enabling cross-device targeting (v2).
+    """
+
+    def __init__(self, db, trigger, target_device=None):
+        super().__init__(trigger)
         self.db = db
+        self.target_device = target_device
 
     def execute(self):
-        mylog("verbose", f"[WF] Deleting event object {self.trigger.object_type}")
+        obj = self.target_device if self.target_device is not None else self.get_object()
 
-        obj = self.trigger.object
-
-        # convert to dict for easeir handling
         if isinstance(obj, sqlite3.Row):
-            obj = dict(obj)  # Convert Row object to a standard dictionary
+            obj = dict(obj)
 
-        processed = False
+        if obj is None:
+            mylog("none", "[WF] DeleteObjectAction: target device no longer exists")
+            return None
 
-        # currently unused
-        if isinstance(obj, dict) and "objectGuid" in obj:
-            mylog("debug", f"[WF] Updating Object '{obj}' ")
-            plugin_instance = PluginObjectInstance()
-            plugin_instance.delete(obj["objectGuid"])
-            processed = True
+        mylog("verbose", f"[WF] Deleting device {obj.get('devGUID', obj.get('objectGuid', '?'))}")
 
-        elif isinstance(obj, dict) and "devGUID" in obj:
-            mylog("debug", f"[WF] Updating Device '{obj}' ")
-            device_instance = DeviceInstance()
-            device_instance.delete(obj["devGUID"])
-            processed = True
+        if "objectGuid" in obj:
+            mylog("debug", f"[WF] Deleting Object '{obj}'")
+            PluginObjectInstance().delete(obj["objectGuid"])
+            return obj
 
-        if not processed:
-            mylog("none", f"[WF] Could not process action for object: {obj}")
+        if "devGUID" in obj:
+            mylog("debug", f"[WF] Deleting Device '{obj.get('devGUID')}'")
+            DeviceInstance().delete(obj["devGUID"])
+            return obj
 
-        return obj
+        mylog("none", f"[WF] DeleteObjectAction: unsupported object format: {obj}")
+        return None
 
 
 class RunPluginAction(Action):
     """Action to run a specific plugin."""
 
-    def __init__(self, plugin_name, params, trigger):  # Add trigger
-        super().__init__(trigger)  # Call parent constructor
+    def __init__(self, db, plugin_name, params, trigger):
+        super().__init__(trigger)
+        self.db = db
         self.plugin_name = plugin_name
         self.params = params
 
     def execute(self):
-        obj = self.trigger.object
+        obj = self.get_object()
 
-        mylog("verbose", f"Executing plugin '{self.plugin_name}' with parameters {self.params} for object {obj}")
-        # PluginManager.run(self.plugin_name, self.parameters)
+        if obj is None:
+            mylog("none", "[WF] Object no longer exists")
+            return None
+
+        mylog("verbose", f"[WF] Executing plugin '{self.plugin_name}' with parameters {self.params} for object {obj}")
+
+        # PluginManager.run(self.plugin_name, self.params)
+
         return obj
 
 
@@ -115,14 +183,21 @@ class SendNotificationAction(Action):
     """Action to send a notification."""
 
     def __init__(self, method, message, trigger):
-        super().__init__(trigger)  # Call parent constructor
-        self.method = method  # Fix attribute name
+        super().__init__(trigger)
+        self.method = method
         self.message = message
 
     def execute(self):
-        obj = self.trigger.object
-        mylog("verbose", f"Sending notification via '{self.method}': {self.message} for object {obj}")
+        obj = self.get_object()
+
+        if obj is None:
+            mylog("none", "[WF] Object no longer exists")
+            return None
+
+        mylog("verbose", f"[WF] Sending notification via '{self.method}': {self.message} for object {obj}")
+
         # NotificationManager.send(self.method, self.message)
+
         return obj
 
 
@@ -132,7 +207,6 @@ class ActionGroup:
     def __init__(self, actions):
         self.actions = actions
 
-    def execute(self, obj):
+    def execute(self):
         for action in self.actions:
-            action.execute(obj)
-        return obj
+            action.execute()

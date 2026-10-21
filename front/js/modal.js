@@ -208,7 +208,12 @@ function showModalPopupForm(
           }
         }
 
-        const fieldOptionsOverride = field.type?.elements[0]?.elementOptions || [];
+        // For select elements use field.options (the selectable values); for all other
+        // element types fall back to elementOptions (used for input attributes like placeholder).
+        const elementType = field.type?.elements[0]?.elementType;
+        const fieldOptionsOverride = (elementType === 'select' && field.options?.length)
+          ? field.options
+          : (field.type?.elements[0]?.elementOptions || []);
         const setValue = initialValue;
         const setType = JSON.stringify(field.type);
         const setEvents = field.events || [];  // default to empty array if missing

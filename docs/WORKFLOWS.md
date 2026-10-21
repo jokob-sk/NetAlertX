@@ -23,6 +23,7 @@ Triggers define the event that activates a workflow. They monitor changes to obj
 > Workflows not running? Check the [Workflows debugging](./WORKFLOWS_DEBUGGING.md) guide how to troubleshoot triggers and conditions.
 
 #### Example Trigger:
+
 - **Object Type**: `Devices`
 - **Event Type**: `update`
 
@@ -38,7 +39,9 @@ Conditions determine whether a workflow should proceed based on certain criteria
 > To better understand how to use specific Device fields, please read through the [Database overview](./DATABASE.md) guide.
 
 #### Example Condition:
+
 - **Logic**: `AND`
+
   - **Field**: `devVendor`
   - **Operator**: `contains` (case in-sensitive)
   - **Value**: `Google`
@@ -53,8 +56,16 @@ Actions define the tasks that the workflow will perform once the conditions are 
 
 You can include multiple actions that should execute once the conditions are met.
 
+#### Target device for the Actions
+
+You can change the target of the actions of the workflows. You can either target the device that triggered by selecting the **Apply action to** to `triggering_device`, or target multiple devices by selecting `query` in the **Apply action to** dropdown.
+
+![Action target](./img/WORKFLOWS/actions_target.png)
+
 #### Example Action:
+
 - **Action Type**: `update_field`
+
   - **Field**: `devIsNew`
   - **Value**: `0`
 

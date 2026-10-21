@@ -17,8 +17,8 @@ description: Navigate the NetAlertX codebase structure. Use this when asked abou
 | Frontend | `front/` |
 | Frontend JS | `front/js/common.js` |
 | Frontend PHP | `front/php/server/*.php` |
-| Plugins | `front/plugins/` |
-| Plugin template | `front/plugins/__template` |
+| Plugins | `server/plugins/` |
+| Plugin template | `server/plugins/__template` |
 | Database helpers | `server/db/db_helper.py` |
 | Device model | `server/models/device_instance.py` |
 | Messaging | `server/messaging/` |

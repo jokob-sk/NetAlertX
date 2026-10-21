@@ -1,20 +1,20 @@
+
 <span class="helpIcon">
     <a target="_blank" href="https://docs.netalertx.com/WORKFLOWS_DEBUGGING">
       <i class="fa fa-circle-question"></i>
     </a>
-  </span>
-<section class="content">
+</span>
+<?php require 'php/templates/skel_app_events.php'; ?>
+<section class="content">  
   <div class="nav-tabs-custom app-event-content" style="margin-bottom: 0px;">
     <ul id="tabs-location" class="nav nav-tabs col-sm-2 hidden">
       <li class="left-nav"><a class="col-sm-12" href="#" id="" data-toggle="tab">Events</a></li>
     </ul>
-    <div id="tabs-content-location" class="tab-content col-sm-12">
+    <div id="tabs-content-location" class="tab-content col-sm-12 table-responsive">
       <table class="table table-striped" id="appevents-table" data-my-dbtable="AppEvents"></table>
     </div>
-  </div>
+  </div>  
 </section>
-
-
 
 <script>
 
@@ -116,6 +116,7 @@ $(document).ready(function () {
           });
 
           hideSpinner();
+          hideAppEventsSkeleton();
         },
         error: function () {
           callback({
@@ -181,8 +182,14 @@ $(document).ready(function () {
       }
     ]
   });
+});
 
+function hideAppEventsSkeleton() {
+  $('#skel-app-events').fadeOut(0, function () { $(this).remove(); });
+}
 
+window.addEventListener('load', function () {
+  setTimeout(hideAppEventsSkeleton, 15000);
 });
 
 

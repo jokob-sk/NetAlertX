@@ -9,7 +9,9 @@ from const import vendorsPath, vendorsPathNewest, sql_generateGuid, NULL_EQUIVAL
 from models.device_instance import DeviceInstance
 from scan.name_resolution import NameResolver
 from scan.device_heuristics import guess_icon, guess_type
+from scan.presence import current_scan_presence_condition, nic_derived_presence_condition
 from db.db_helper import sanitize_SQL_input, list_to_where, safe_int
+from db.db_upgrade import PARENT_MAC_SENTINELS
 from db.authoritative_handler import (
     get_overwrite_sql_clause,
     can_overwrite_field,
@@ -201,30 +203,36 @@ def update_presence_from_CurrentScan(db):
     sql = db.sql
     mylog("debug", "[Update Devices] - Updating devPresentLastScan")
 
-    # Mark present if exists in CurrentScan
-    sql.execute("""
+    # Mark present only if a CurrentScan row for this MAC actually asserts presence
+    # (scanPresence = 1). A row can exist purely as identity/inventory data
+    # (scanPresence = 0, e.g. a DHCP reservation) without claiming the device is
+    # online right now - "abstain, not override": any other row for the same MAC
+    # that does assert presence still wins via this same predicate.
+    sql.execute(f"""
         UPDATE Devices
         SET devPresentLastScan = 1
-        WHERE EXISTS (
-            SELECT 1 FROM CurrentScan
-            WHERE devMac = scanMac
-        )
+        WHERE {current_scan_presence_condition("devMac")}
     """)
 
-    # Mark not present if not in CurrentScan
-    sql.execute("""
+    # Mark not present if no CurrentScan row for this MAC asserts presence
+    sql.execute(f"""
         UPDATE Devices
         SET devPresentLastScan = 0
-        WHERE NOT EXISTS (
-            SELECT 1 FROM CurrentScan
-            WHERE devMac = scanMac
-        )
+        WHERE NOT {current_scan_presence_condition("devMac")}
     """)
 
 
 def update_devLastConnection_from_CurrentScan(db):
     """
-    Update devLastConnection to current time for all devices seen in CurrentScan.
+    Update devLastConnection to current time for devices with a presence-
+    asserting CurrentScan row (scanPresence = 1) - a row that only carries
+    identity/inventory data (scanPresence = 0) must not make an offline
+    device look recently connected. Same predicate as
+    update_presence_from_CurrentScan(); found missing this check during
+    review of a shipped commit - see scan-pipeline-hardening.md. Also
+    advances devLastConnection for a parent device whose presence is
+    NIC-derived this cycle (nic_derived_presence_condition()) - it has no
+    direct CurrentScan row of its own, but is not actually offline.
     """
     sql = db.sql
     startTime = timeNowUTC()
@@ -233,10 +241,8 @@ def update_devLastConnection_from_CurrentScan(db):
     sql.execute(f"""
         UPDATE Devices
         SET devLastConnection = '{startTime}'
-        WHERE EXISTS (
-            SELECT 1 FROM CurrentScan
-            WHERE devMac = scanMac
-        )
+        WHERE ({current_scan_presence_condition("devMac")}
+               OR {nic_derived_presence_condition("Devices.devMac")})
     """)
 
 
@@ -346,39 +352,59 @@ def update_devices_data_from_scan(db):
 
 def update_ipv4_ipv6(db):
     """
-    Fill devPrimaryIPv4 and devPrimaryIPv6 based on devLastIP.
-    Skips empty devLastIP and preserves existing values for the other version.
+    Fill devPrimaryIPv4 and devPrimaryIPv6 from CurrentScan directly, ranking each
+    scanMac's rows independently per address family (not per plugin, not via the
+    single already-reduced devLastIP) so a device reporting both families in the
+    same scan cycle - dual-stack, the normal case on any modern network, not an
+    edge case - gets both fields populated from that one cycle instead of only
+    whichever family happened to win devLastIP's single-value reduction.
+    Skips empty/presence-suppressed rows and preserves existing values for a
+    family not refreshed this cycle.
     """
     sql = db.sql
-    mylog("debug", "[Update Devices] Updating devPrimaryIPv4 / devPrimaryIPv6 from devLastIP")
+    mylog("debug", "[Update Devices] Updating devPrimaryIPv4 / devPrimaryIPv6 from CurrentScan")
 
-    devices = sql.execute("SELECT devMac, devLastIP FROM Devices").fetchall()
-    records_to_update = []
+    rows = sql.execute(f"""
+        WITH ranked AS (
+            SELECT
+                scanMac,
+                scanLastIP,
+                CASE WHEN instr(scanLastIP, ':') > 0 THEN 'v6' ELSE 'v4' END AS family,
+                ROW_NUMBER() OVER (
+                    PARTITION BY scanMac, CASE WHEN instr(scanLastIP, ':') > 0 THEN 'v6' ELSE 'v4' END
+                    ORDER BY scanLastConnection DESC
+                ) AS family_rn
+            FROM CurrentScan
+            WHERE scanLastIP NOT IN ({NULL_EQUIVALENTS_SQL})
+              AND scanMac NOT IN ({NULL_EQUIVALENTS_SQL})
+              AND scanPresence = 1
+        )
+        SELECT scanMac, family, scanLastIP FROM ranked ORDER BY scanMac, family, family_rn
+    """).fetchall()
 
-    for device in devices:
-        last_ip = device["devLastIP"]
-        # Keeping your specific skip logic
-        if not last_ip or last_ip.lower() in ("", "null", "(unknown)", "(Unknown)"):
+    per_mac = {}
+    for row in rows:
+        mac, family, ip = row["scanMac"], row["family"], row["scanLastIP"]
+        if family in per_mac.get(mac, {}):
+            # Already have a valid candidate for this (mac, family) from a more-
+            # recent row (rows arrive ordered by family_rn) - a malformed *newer*
+            # scanLastIP (passes the SQL-side ':' family heuristic but fails real
+            # IP parsing below) must not block an older, valid one for the same
+            # mac/family from being used instead.
             continue
-
-        ipv4, ipv6 = None, None
         try:
-            ip_obj = ipaddress.ip_address(last_ip)
-            if ip_obj.version == 4:
-                ipv4 = last_ip
-            else:
-                ipv6 = last_ip
+            ipaddress.ip_address(ip)  # defensive re-validation of the SQL-side family classification
         except ValueError:
             continue
+        per_mac.setdefault(mac, {})[family] = ip
 
-        records_to_update.append((ipv4, ipv6, device["devMac"]))
+    records_to_update = [
+        (v.get("v4"), v.get("v6"), mac) for mac, v in per_mac.items()
+    ]
 
     if records_to_update:
         # We use COALESCE(?, Column) so that if the first arg is NULL,
         # it keeps the current value of the column.
-
-        # mylog("none", f"[Update Devices] Updated records_to_update: {records_to_update}")
-
         sql.executemany(
             """
             UPDATE Devices
@@ -510,7 +536,7 @@ def update_vendors_from_mac(db):
 
 
 # -------------------------------------------------------------------------------
-def save_scanned_devices(db):
+def save_own_device(db):
     sql = db.sql  # TO-DO
 
     # Add Local MAC of default local interface
@@ -550,17 +576,22 @@ def save_scanned_devices(db):
 
 # -------------------------------------------------------------------------------
 def print_scan_stats(db):
+    """
+    Log diagnostic scan-cycle counts (devices detected, new devices, down
+    alerts, new connections, disconnections, IP changes, per-plugin scan
+    method counts) at verbose/trace log levels. No return value.
+    """
     sql = db.sql  # TO-DO
 
     query = f"""
     SELECT
         (SELECT COUNT(*) FROM CurrentScan) AS devices_detected,
         (SELECT COUNT(*) FROM CurrentScan WHERE NOT EXISTS (SELECT 1 FROM Devices WHERE devMac = scanMac)) AS new_devices,
-        (SELECT COUNT(*) FROM DevicesView WHERE devAlertDown != 0 AND devIsSleeping = 0 AND NOT EXISTS (SELECT 1 FROM CurrentScan WHERE devMac = scanMac)) AS down_alerts,
+        (SELECT COUNT(*) FROM DevicesView WHERE devAlertDown != 0 AND devIsSleeping = 0 AND NOT EXISTS (SELECT 1 FROM CurrentScan WHERE scanMac = devMac)) AS down_alerts,
         (SELECT COUNT(*) FROM DevicesView
             WHERE devAlertDown != 0 AND devCanSleep = 0
             AND devPresentLastScan = 1
-            AND NOT EXISTS (SELECT 1 FROM CurrentScan WHERE devMac = scanMac)
+            AND NOT EXISTS (SELECT 1 FROM CurrentScan WHERE scanMac = devMac)
         ) AS new_down_alerts,
         (SELECT COUNT(*) FROM Devices WHERE devPresentLastScan = 0) AS new_connections,
         (SELECT COUNT(*) FROM Devices WHERE devPresentLastScan = 1 AND NOT EXISTS (SELECT 1 FROM CurrentScan WHERE devMac = scanMac)) AS disconnections,
@@ -580,6 +611,20 @@ def print_scan_stats(db):
 
     sql.execute(query)
     stats = sql.fetchall()
+
+    # guard against empty resuolts crashing on stats[0] access below
+    if not stats:
+        stats = [{
+            "devices_detected": 0,
+            "new_devices": 0,
+            "down_alerts": 0,
+            "new_down_alerts": 0,
+            "new_connections": 0,
+            "disconnections": 0,
+            "ip_changes": 0,
+            "scanSourcePlugin": None,
+            "scan_method_count": 0,
+        }]
 
     mylog("verbose", f"[Scan Stats] Devices Detected.......: {stats[0]['devices_detected']}",)
     mylog("verbose", f"[Scan Stats] New Devices............: {stats[0]['new_devices']}")
@@ -632,17 +677,33 @@ def create_new_devices(db):
     # Insert events for new devices from CurrentScan (not yet in Devices)
 
     mylog("debug", '[New Devices] Insert "New Device" Events')
+    # One row per MAC via GROUP BY - a plain SELECT could produce a row per
+    # distinct scanLastIP/scanVendor when plugins disagree, and Events'
+    # unique index includes eveIp so those wouldn't dedupe. MIN() is just a
+    # deterministic tie-break; update_devices_data_from_scan()/FIELD_SPECS
+    # decides which plugin's value actually wins, separately.
     query_new_device_events = f"""
     INSERT OR IGNORE INTO Events  (
         eveMac, eveIp, eveDateTime,
         eveEventType, eveAdditionalInfo,
         evePendingAlertEmail
     )
-    SELECT DISTINCT scanMac, scanLastIP, '{startTime}', 'New Device', scanVendor, 1
-    FROM CurrentScan
-    WHERE NOT EXISTS (
+    SELECT agg.scanMac, agg.scanLastIP, '{startTime}', 'New Device', agg.scanVendor,
+        CASE WHEN agg.scanQuiet = 1 THEN 0 ELSE 1 END
+    FROM (
+        SELECT scanMac,
+               MAX(scanCreatesDevice) AS scanCreates,
+               MAX(CASE WHEN scanNotificationMode = 'quiet' THEN 1 ELSE 0 END) AS scanQuiet,
+               MIN(scanLastIP) AS scanLastIP,
+               MIN(scanVendor) AS scanVendor
+        FROM CurrentScan
+        GROUP BY scanMac
+    ) agg
+    WHERE agg.scanCreates = 1
+      AND agg.scanMac NOT IN ({NULL_EQUIVALENTS_SQL})
+      AND NOT EXISTS (
         SELECT 1 FROM Devices
-        WHERE devMac = scanMac
+        WHERE devMac = agg.scanMac
     )
     """
 
@@ -652,20 +713,28 @@ def create_new_devices(db):
 
     mylog("debug", "[New Devices] Insert Connection into session table")
 
+    # One row per MAC among presence-asserting rows - Sessions has no
+    # uniqueness constraint, so an unaggregated SELECT would open a duplicate
+    # row whenever two plugins report different scanLastIP/scanVendor.
     sql.execute(f"""INSERT INTO Sessions (
                         sesMac, sesIp, sesEventTypeConnection, sesDateTimeConnection,
                         sesEventTypeDisconnection, sesDateTimeDisconnection,
                         sesStillConnected, sesAdditionalInfo
                     )
-                    SELECT scanMac, scanLastIP, 'Connected', '{startTime}', NULL, NULL, 1, scanVendor
-                    FROM CurrentScan
+                    SELECT agg.scanMac, agg.scanLastIP, 'Connected', '{startTime}', NULL, NULL, 1, agg.scanVendor
+                    FROM (
+                        SELECT scanMac, MIN(scanLastIP) AS scanLastIP, MIN(scanVendor) AS scanVendor
+                        FROM CurrentScan
+                        WHERE scanPresence = 1
+                        GROUP BY scanMac
+                    ) agg
                     WHERE EXISTS (
                         SELECT 1 FROM Devices
-                        WHERE devMac = scanMac
+                        WHERE devMac = agg.scanMac
                     )
                     AND NOT EXISTS (
                         SELECT 1 FROM Sessions
-                        WHERE sesMac = scanMac AND sesStillConnected = 1
+                        WHERE sesMac = agg.scanMac AND sesStillConnected = 1
                     )
                     """)
 
@@ -691,7 +760,14 @@ def create_new_devices(db):
                         devReqNicsOnline
                         """
 
-    newDevDefaults = f"""{safe_int("NEWDEV_devAlertEvents")},
+    # Two variants of the same defaults, differing only in the alert-related
+    # leading two fields - devAlertDown/devAlertEvents are seeded to 0 instead
+    # of the NEWDEV_* globals when this MAC is quiet, so Down/Disconnected
+    # notifications are suppressed for the device's whole lifecycle "for free"
+    # through the existing devAlertDown/devAlertEvents gates in insert_events(),
+    # without needing an ongoing per-cycle re-classification (creation-time-only
+    # "quiet", not an import-owned ongoing policy - see the PRD's decision on this).
+    newDevDefaults_normal = f"""{safe_int("NEWDEV_devAlertEvents")},
                         {safe_int("NEWDEV_devAlertDown")},
                         {safe_int("NEWDEV_devPresentLastScan")},
                         {safe_int("NEWDEV_devIsArchived")},
@@ -709,12 +785,67 @@ def create_new_devices(db):
                         {safe_int("NEWDEV_devReqNicsOnline")}
                         """
 
-    # Fetch data from CurrentScan skipping ignored devices by IP and MAC
-    query = """SELECT scanMac, scanName, scanVendor, scanSourcePlugin, scanLastIP, scanSyncHubNode, scanParentMAC, scanParentPort, scanSite, scanSSID, scanType
-                FROM CurrentScan """
+    newDevDefaults_quiet = f"""0,
+                        0,
+                        {safe_int("NEWDEV_devPresentLastScan")},
+                        {safe_int("NEWDEV_devIsArchived")},
+                        {safe_int("NEWDEV_devIsNew")},
+                        {safe_int("NEWDEV_devSkipRepeated")},
+                        {safe_int("NEWDEV_devScan")},
+                        '{sanitize_SQL_input(get_setting_value("NEWDEV_devOwner"))}',
+                        {safe_int("NEWDEV_devFavorite")},
+                        '{sanitize_SQL_input(get_setting_value("NEWDEV_devGroup"))}',
+                        '{sanitize_SQL_input(get_setting_value("NEWDEV_devComments"))}',
+                        {safe_int("NEWDEV_devLogEvents")},
+                        '{sanitize_SQL_input(get_setting_value("NEWDEV_devLocation"))}',
+                        '{sanitize_SQL_input(get_setting_value("NEWDEV_devCustomProps"))}',
+                        '{sanitize_SQL_input(get_setting_value("NEWDEV_devParentRelType"))}',
+                        {safe_int("NEWDEV_devReqNicsOnline")}
+                        """
+
+    # Most-restrictive-wins across every row for a MAC, one GROUP BY pass -
+    # matches the aggregate used for the "New Device" Events insert above.
+    quiet_macs = {
+        str(row[0]).lower()
+        for row in sql.execute("""
+            SELECT scanMac
+            FROM CurrentScan
+            GROUP BY scanMac
+            HAVING SUM(CASE WHEN scanNotificationMode = 'quiet' THEN 1 ELSE 0 END) > 0
+        """).fetchall()
+    }
+
+    # Fetch data from CurrentScan skipping ignored devices by IP and MAC.
+    # scanCreatesDevice = 1 filter is most-permissive-wins: a MAC with at
+    # least one contributing row asserting creation still gets created, even
+    # if another row for the same MAC says 0 (enrich-only). Rows for
+    # already-existing devices pass through harmlessly too - the INSERT OR
+    # IGNORE below is already a no-op for them regardless of this filter.
+    # scanMac NOT IN NULL_EQUIVALENTS blocks creating a device from a blank/
+    # null-equivalent MAC - a plugin reporting a row it can't originate a
+    # device from (no real MAC available) should set scanCreatesDevice = 0
+    # itself, but this is the backstop for one that doesn't.
+    query = f"""SELECT scanMac, scanName, scanVendor, scanSourcePlugin, scanLastIP, scanSyncHubNode, scanParentMAC, scanParentPort, scanSite, scanSSID, scanType
+                FROM CurrentScan WHERE scanCreatesDevice = 1 AND scanMac NOT IN ({NULL_EQUIVALENTS_SQL})"""
 
     mylog("debug", f"[New Devices] Collecting New Devices Query: {query}")
     current_scan_data = sql.execute(query).fetchall()
+
+    # Resolve the default Parent Node setting once and guard against it pointing
+    # to a MAC that no longer exists (e.g. that device was since deleted) -
+    # falling back to unset rather than seeding new devices with a dangling reference.
+    default_parent_mac_setting = get_setting_value("NEWDEV_devParentMAC")
+    if default_parent_mac_setting and default_parent_mac_setting.lower() not in PARENT_MAC_SENTINELS:
+        existing_device_macs = {
+            str(row[0]).lower() for row in sql.execute("SELECT devMac FROM Devices").fetchall() if row[0]
+        }
+        if default_parent_mac_setting.lower() not in existing_device_macs:
+            mylog(
+                "verbose",
+                f"[New Devices] NEWDEV_devParentMAC '{default_parent_mac_setting}' no longer "
+                "exists in Devices - treating as unset",
+            )
+            default_parent_mac_setting = ""
 
     for row in current_scan_data:
         (
@@ -730,6 +861,10 @@ def create_new_devices(db):
             scanSSID,
             scanType,
         ) = row
+
+        newDevDefaults = (
+            newDevDefaults_quiet if scanMac.lower() in quiet_macs else newDevDefaults_normal
+        )
 
         # Preserve raw values to determine source attribution
         raw_name = str(scanName).strip() if scanName else ""
@@ -757,7 +892,7 @@ def create_new_devices(db):
             scanParentMAC
             if scanParentMAC and scanMac.lower() != "internet"
             else (
-                get_setting_value("NEWDEV_devParentMAC")
+                default_parent_mac_setting
                 if scanMac.lower() != "internet"
                 else "null"
             )
@@ -971,7 +1106,7 @@ def update_devices_names(pm):
         (resolver.resolve_nbtlookup, "NBTSCAN"),
     ]
 
-    def resolve_devices(devices, resolve_both_name_and_fqdn=True):
+    def resolve_devices(devices, resolve_both_name_and_fqdn=True, active_labels=None):
         """
         Attempts to resolve device names and/or FQDNs using available strategies.
 
@@ -979,6 +1114,10 @@ def update_devices_names(pm):
             devices (list): List of devices to resolve.
             resolve_both_name_and_fqdn (bool): If True, resolves both name and FQDN.
                                                If False, resolves only FQDN.
+            active_labels (set|None): If provided, only strategies whose label is in
+                                      this set are tried. Used by Step 1b to prevent
+                                      non-SET_ALWAYS plugins from short-circuiting
+                                      SET_ALWAYS ones.
 
         Returns:
             recordsToUpdate (list): List of
@@ -997,6 +1136,8 @@ def update_devices_names(pm):
 
             # Attempt each resolution strategy in order
             for resolve_fn, label in strategies:
+                if active_labels is not None and label not in active_labels:
+                    continue
                 resolved = resolve_fn(device["devMac"], device["devLastIP"])
 
                 # Extract values
@@ -1089,6 +1230,71 @@ def update_devices_names(pm):
                     WHERE devMac = ?""",
                 plugin_records,
             )
+
+    # --- Step 1b: Re-resolve already-named devices for SET_ALWAYS plugins ---
+    # If any name-resolution plugin declares devName in SET_ALWAYS, it should be
+    # able to overwrite names set by lower-priority plugins.  Step 1 only covers
+    # unknown devices, so we run a second pass here limited to devices that:
+    #   - already have a name (not unknown/empty), AND
+    #   - are not USER/LOCKED protected
+    # recordsNotFound is intentionally discarded: if resolution fails, the
+    # existing name is kept as-is.
+    name_resolution_plugins = [label for _, label in strategies]
+    set_always_plugins = [
+        p for p in name_resolution_plugins
+        if "devName" in get_plugin_authoritative_settings(p).get("set_always", [])
+    ]
+
+    if not set_always_plugins:
+        mylog("debug", "[Update Device Name] SET_ALWAYS re-resolve: skipped (no name-resolution plugin has devName in SET_ALWAYS)")
+    else:
+        resolvableDevices = device_handler.getResolvable()
+        mylog("debug", f"[Update Device Name] SET_ALWAYS re-resolve: active plugins={set_always_plugins}, candidate devices={len(resolvableDevices)}")
+
+        if resolvableDevices:
+            recordsToUpdate, _, fs, notFound = resolve_devices(resolvableDevices, active_labels=set(set_always_plugins))
+
+            res_string = f"{fs['DIGSCAN']}/{fs['AVAHISCAN']}/{fs['NSLOOKUP']}/{fs['NBTSCAN']}"
+            mylog("verbose", f"[Update Device Name] SET_ALWAYS re-resolve - Found (DIG/AVAHI/NSL/NBT): {len(recordsToUpdate)} ({res_string}), Not Found: {notFound}")
+
+            records_by_plugin = {}
+            for entry in recordsToUpdate:
+                records_by_plugin.setdefault(entry[1], []).append(entry)
+
+            total_updated = 0
+            for plugin_label, plugin_records in records_by_plugin.items():
+                plugin_settings = get_plugin_authoritative_settings(plugin_label)
+                name_clause = get_overwrite_sql_clause(
+                    "devName", "devNameSource", plugin_settings
+                )
+                fqdn_clause = get_overwrite_sql_clause(
+                    "devFQDN", "devFQDNSource", plugin_settings
+                )
+
+                sql.executemany(
+                    f"""UPDATE Devices
+                        SET devName = CASE
+                            WHEN {name_clause} THEN ?
+                            ELSE devName
+                        END,
+                            devNameSource = CASE
+                            WHEN {name_clause} THEN ?
+                            ELSE devNameSource
+                        END,
+                            devFQDN = CASE
+                            WHEN {fqdn_clause} THEN ?
+                            ELSE devFQDN
+                        END,
+                            devFQDNSource = CASE
+                            WHEN {fqdn_clause} THEN ?
+                            ELSE devFQDNSource
+                        END
+                        WHERE devMac = ?""",
+                    plugin_records,
+                )
+                total_updated += sql.rowcount
+
+            mylog("verbose", f"[Update Device Name] SET_ALWAYS re-resolve - DB rows updated: {total_updated}")
 
     # --- Step 2: Optionally refresh FQDN for all devices ---
     if get_setting_value("REFRESH_FQDN"):
@@ -1185,9 +1391,17 @@ def update_devPresentLastScan_based_on_nics(db):
         if nics:
             nic_statuses = [nic.get("devPresentLastScan") == 1 for nic in nics]
             if req_all:
-                new_present = int(all(nic_statuses))
+                nic_online = all(nic_statuses)
             else:
-                new_present = int(any(nic_statuses))
+                nic_online = any(nic_statuses)
+
+            if original == 1:
+                # Parent was directly detected this scan — NIC children cannot
+                # force it offline. Leave new_present = original (no change).
+                pass
+            else:
+                # Parent was not directly detected — NICs determine presence.
+                new_present = 1 if nic_online else 0
 
         # Only add update if changed
         if original != new_present:
@@ -1283,41 +1497,100 @@ def check_mac_or_internet(input_str):
         return False
 
 
-# -------------------------------------------------------------------------------
-# Lookup unknown vendors on devices
-def query_MAC_vendor(pMAC):
-    pMACstr = str(pMAC)
+# ------------------------------------------------------------------------------
+# Vendor database cache
+#
+# The IEEE OUI database is loaded into memory on first use to avoid repeatedly
+# opening and linearly scanning the vendors file for every MAC address lookup.
+# The cache is automatically rebuilt if the selected vendors file changes or is
+# updated on disk.
+# ------------------------------------------------------------------------------
+_vendor_cache = None
+_vendor_cache_path = None
+_vendor_cache_mtime = None
 
-    filePath = vendorsPath
 
-    if os.path.isfile(vendorsPathNewest):
-        filePath = vendorsPathNewest
+# ------------------------------------------------------------------------------
+def _load_vendor_cache():
+    """
+    Load the MAC vendor database into an in-memory dictionary.
 
-    # Check MAC parameter
-    mac = pMACstr.replace(":", "").lower()
-    if len(pMACstr) != 17 or len(mac) != 12:
-        return -2  # return -2 if ignored MAC
+    The cache maps the first six hexadecimal characters of a MAC address
+    (the OUI prefix) to the corresponding vendor name.
 
-    # Search vendor in HW Vendors DB
-    mac_start_string6 = mac[0:6]
+    The cache is only rebuilt when:
+      - It has not been loaded yet.
+      - The selected vendors file changes.
+      - The vendors file modification time changes.
+
+    Returns:
+        None
+    """
+    global _vendor_cache, _vendor_cache_path, _vendor_cache_mtime
+
+    file_path = vendorsPathNewest if os.path.isfile(vendorsPathNewest) else vendorsPath
 
     try:
-        with open(filePath, "r") as f:
-            for line in f:
-                line_lower = (
-                    line.lower()
-                )  # Convert line to lowercase for case-insensitive matching
-                if line_lower.startswith(mac_start_string6):
-                    parts = line.split("\t", 1)
-                    if len(parts) > 1:
-                        vendor = parts[1].strip()
-                        mylog("debug", [f"[Vendor Check] Found '{vendor}' for '{pMAC}' in {vendorsPath}"], )
-                        return vendor
-                    else:
-                        mylog("debug", [f'[Vendor Check] ⚠ ERROR: Match found, but line could not be processed: "{line_lower}"'],)
-                        return -1
+        mtime = os.path.getmtime(file_path)
+    except OSError:
+        mtime = None
 
-        return -1  # MAC address not found in the database
+    # Cache is already up-to-date.
+    if (
+        _vendor_cache is not None and _vendor_cache_path == file_path and _vendor_cache_mtime == mtime
+    ):
+        return
+
+    cache = {}
+
+    try:
+        with open(file_path, "r") as f:
+            for line in f:
+                parts = line.rstrip("\n").split("\t", 1)
+
+                # Expected format:
+                #   <OUI>\t<Vendor Name>
+                if len(parts) == 2:
+                    cache[parts[0].lower()] = parts[1]
+
     except FileNotFoundError:
-        mylog("none", [f"[Vendor Check] ⚠ ERROR: Vendors file {vendorsPath} not found."])
-        return -1
+        mylog("none", [f"[Vendor Check] ⚠ ERROR: Vendors file '{file_path}' not found."])
+
+    _vendor_cache = cache
+    _vendor_cache_path = file_path
+    _vendor_cache_mtime = mtime
+
+
+# ------------------------------------------------------------------------------
+def query_MAC_vendor(pMAC):
+    """
+    Look up the hardware vendor for a MAC address.
+
+    The lookup uses an in-memory cache of the IEEE OUI database for O(1)
+    performance. The vendor database is loaded on first use and automatically
+    reloaded if the underlying file changes.
+
+    Args:
+        pMAC (str): MAC address in the format 'AA:BB:CC:DD:EE:FF'.
+
+    Returns:
+        str: Vendor name if found.
+        -1 : Vendor not found or vendor database unavailable.
+        -2 : Invalid MAC address format.
+    """
+    pMACstr = str(pMAC)
+    mac = pMACstr.replace(":", "").lower()
+
+    # Validate expected MAC address format.
+    if len(pMACstr) != 17 or len(mac) != 12:
+        return -2
+
+    _load_vendor_cache()
+
+    vendor = _vendor_cache.get(mac[:6])
+
+    if vendor:
+        mylog("debug", [f"[Vendor Check] Found '{vendor}' for '{pMAC}'"])
+        return vendor
+
+    return -1

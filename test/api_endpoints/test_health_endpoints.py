@@ -6,7 +6,7 @@ import pytest
 from unittest.mock import patch
 
 INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
-sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
+sys.path.extend([f"{INSTALL_PATH}/server/plugins", f"{INSTALL_PATH}/server"])
 
 from helper import get_setting_value  # noqa: E402
 from api_server.api_server_start import app  # noqa: E402

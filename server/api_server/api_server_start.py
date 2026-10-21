@@ -2,22 +2,25 @@ import threading
 import time
 import sys
 import os
+from datetime import timedelta
 
 # flake8: noqa: E402
 
 from flask import Flask, redirect, request, jsonify, url_for, Response
 from models.device_instance import DeviceInstance  # noqa: E402
+from models.device_history_instance import DevicesHistoryInstance  # noqa: E402
 from flask_cors import CORS
 from werkzeug.exceptions import HTTPException
 
 # Register NetAlertX directories
 INSTALL_PATH = os.getenv("NETALERTX_APP", "/app")
-sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
+sys.path.extend([f"{INSTALL_PATH}/server/plugins", f"{INSTALL_PATH}/server"])
 
 from logger import mylog  # noqa: E402 [flake8 lint suppression]
 from helper import get_setting_value, get_env_setting_value, getBuildTimeStampAndVersion  # noqa: E402 [flake8 lint suppression]
 from db.db_helper import get_date_from_period  # noqa: E402 [flake8 lint suppression]
 from app_state import updateState  # noqa: E402 [flake8 lint suppression]
+from utils.datetime_utils import timeNowUTC  # noqa: E402 [flake8 lint suppression]
 from auth.manager import AuthManager  # noqa: E402 [flake8 lint suppression]
 
 from .graphql_endpoint import devicesSchema  # noqa: E402 [flake8 lint suppression]
@@ -72,6 +75,7 @@ from .openapi.validation import validate_request  # noqa: E402 [flake8 lint supp
 from .openapi.schemas import (  # noqa: E402 [flake8 lint suppression]
     DeviceSearchRequest, DeviceSearchResponse,
     DeviceListRequest, DeviceListResponse,
+    DeviceListAllRequest,
     DeviceListWrapperResponse,
     DeviceExportResponse,
     DeviceUpdateRequest,
@@ -83,6 +87,7 @@ from .openapi.schemas import (  # noqa: E402 [flake8 lint suppression]
     DeviceImportResponse, UpdateDeviceColumnRequest,
     LockDeviceFieldRequest, UnlockDeviceFieldsRequest,
     CopyDeviceRequest, TriggerScanRequest,
+    PauseScanRequest, PauseScanResponse, ResumeScanResponse,
     OpenPortsRequest,
     OpenPortsResponse, WakeOnLanRequest,
     WakeOnLanResponse, TracerouteRequest,
@@ -99,6 +104,7 @@ from .openapi.schemas import (  # noqa: E402 [flake8 lint suppression]
     DbQueryUpdateRequest, DbQueryDeleteRequest,
     AddToQueueRequest, GetSettingResponse,
     RecentEventsRequest, SetDeviceAliasRequest,
+    EventListRequest,
     LanguagesResponse,
     PluginStatsResponse,
     LoginRequest, LoginResponse,
@@ -220,9 +226,6 @@ def is_authorized():
         mylog("verbose", [msg])
 
     return is_authorized_result
-
-
-
 
 
 @app.route('/mcp/sse', methods=['GET', 'POST', 'OPTIONS'])
@@ -672,14 +675,30 @@ def api_device_open_ports(payload=None):
 @validate_request(
     operation_id="get_all_devices",
     summary="Get All Devices",
-    description="Retrieve a list of all devices in the system. Returns all records. No pagination supported.",
+    description="Retrieve a list of all devices in the system, ordered by devMac. Returns every device if limit is omitted.",
+    request_model=DeviceListAllRequest,
     response_model=DeviceListWrapperResponse,
+    query_params=[{
+        "name": "limit",
+        "in": "query",
+        "required": False,
+        "description": "Max devices to return",
+        "schema": {"type": "integer", "minimum": 1, "maximum": 1000}
+    }, {
+        "name": "offset",
+        "in": "query",
+        "required": False,
+        "description": "Number of devices to skip",
+        "schema": {"type": "integer", "minimum": 0}
+    }],
     tags=["devices"],
     auth_callable=is_authorized
 )
-def api_get_devices(payload=None):
+def api_get_devices(payload: DeviceListAllRequest = None):
+    limit = payload.limit if payload else request.args.get("limit", type=int)
+    offset = payload.offset if payload else request.args.get("offset", type=int)
     device_handler = DeviceInstance()
-    devices = device_handler.getAll_AsResponse()
+    devices = device_handler.getAll_AsResponse(limit, offset)
     return jsonify({"success": True, "devices": devices})
 
 
@@ -812,6 +831,20 @@ def api_devices_totals(payload=None):
     return jsonify(device_handler.getTotals())
 
 
+@app.route("/devices/history/filters", methods=["GET"])
+@validate_request(
+    operation_id="get_device_history_filters",
+    summary="Get Device History Filter Values",
+    description="Return distinct changedBy and changedColumn values available in DevicesHistory. Optionally scope to a single device with ?devGUID=<guid>.",
+    tags=["devices"],
+    auth_callable=is_authorized
+)
+def api_devices_history_filters(payload=None):
+    dev_guid = request.args.get("devGUID") or None
+    filters = DevicesHistoryInstance().get_available_filter_values(devGUID=dev_guid)
+    return jsonify({"success": True, "data": filters})
+
+
 @app.route("/devices/totals/named", methods=["GET"])
 @validate_request(
     operation_id="get_device_totals_named",
@@ -854,6 +887,18 @@ def api_devices_totals_named(payload=None):
             "connected", "down", "favorites", "new", "archived", "all", "my",
             "offline"
         ]}
+    }, {
+        "name": "limit",
+        "in": "query",
+        "required": False,
+        "description": "Max devices to return",
+        "schema": {"type": "integer", "minimum": 1, "maximum": 1000}
+    }, {
+        "name": "offset",
+        "in": "query",
+        "required": False,
+        "description": "Number of devices to skip",
+        "schema": {"type": "integer", "minimum": 0}
     }],
     links={
         "GetOpenPorts": {
@@ -881,8 +926,10 @@ def api_devices_totals_named(payload=None):
 )
 def api_devices_by_status(payload: DeviceListRequest = None):
     status = payload.status if payload else request.args.get("status")
+    limit = payload.limit if payload else request.args.get("limit", type=int)
+    offset = payload.offset if payload else request.args.get("offset", type=int)
     device_handler = DeviceInstance()
-    return jsonify(device_handler.getByStatus(status))
+    return jsonify(device_handler.getByStatus(status, limit, offset))
 
 
 @app.route('/devices/search', methods=['POST'])
@@ -1191,6 +1238,44 @@ def api_trigger_scan(payload=None):
     queue.add_event(action)
 
     return jsonify({"success": True, "message": f"Scan triggered for type: {scan_type}"}), 200
+
+
+@app.route("/scan/pause", methods=["POST"])
+@validate_request(
+    operation_id="pause_scan_scheduler",
+    summary="Pause Scan Scheduler",
+    description="Pause the automatic scheduled scan loop for a number of minutes. "
+                 "Manually-triggered scans (e.g. /nettools/trigger-scan) are not affected.",
+    request_model=PauseScanRequest,
+    response_model=PauseScanResponse,
+    tags=["nettools"],
+    validation_error_code=400,
+    auth_callable=is_authorized
+)
+def api_pause_scan(payload=None):
+    minutes = payload.minutes
+
+    pause_until = (timeNowUTC(as_string=False) + timedelta(minutes=minutes)).replace(microsecond=0).isoformat()
+
+    updateState(f"Process: Paused for {minutes} min", pause_until=pause_until)
+
+    return jsonify({"success": True, "message": f"Scans paused for {minutes} minutes", "pause_until": pause_until}), 200
+
+
+@app.route("/scan/resume", methods=["POST"])
+@validate_request(
+    operation_id="resume_scan_scheduler",
+    summary="Resume Scan Scheduler",
+    description="Clear any active scan pause and resume the automatic scan scheduler. Idempotent — "
+                 "succeeds even if scans were not paused.",
+    response_model=ResumeScanResponse,
+    tags=["nettools"],
+    auth_callable=is_authorized
+)
+def api_resume_scan(payload=None):
+    updateState("Process: Idle", pause_until="")
+
+    return jsonify({"success": True, "message": "Scans resumed", "pause_until": ""}), 200
 
 
 # def trigger_scan(scan_type):
@@ -1513,22 +1598,37 @@ def api_delete_all_events(payload=None):
 @validate_request(
     operation_id="get_all_events",
     summary="Get Events",
-    description="Retrieve a list of events, optionally filtered by MAC. Returns all matching records. No pagination supported.",
+    description="Retrieve a list of events, optionally filtered by MAC, ordered by eveDateTime descending. Returns every matching record if limit is omitted.",
+    request_model=EventListRequest,
     query_params=[{
         "name": "mac",
         "description": "Filter by Device MAC",
         "required": False,
         "schema": {"type": "string"}
+    }, {
+        "name": "limit",
+        "in": "query",
+        "required": False,
+        "description": "Max events to return",
+        "schema": {"type": "integer", "minimum": 1, "maximum": 1000}
+    }, {
+        "name": "offset",
+        "in": "query",
+        "required": False,
+        "description": "Number of events to skip",
+        "schema": {"type": "integer", "minimum": 0}
     }],
     response_model=BaseResponse,
     tags=["events"],
     auth_callable=is_authorized
 )
-def api_get_events(payload=None):
+def api_get_events(payload: EventListRequest = None):
     try:
-        mac = request.args.get("mac")
+        mac = payload.mac if payload else request.args.get("mac")
+        limit = payload.limit if payload else request.args.get("limit", type=int)
+        offset = payload.offset if payload else request.args.get("offset", type=int)
         event_handler = EventInstance()
-        events = event_handler.getEvents(mac)
+        events = event_handler.getEvents(mac, limit, offset)
         return jsonify({"success": True, "count": len(events), "events": events})
     except (ValueError, RuntimeError) as e:
         mylog("verbose", [f"[api_get_events] Error: {e}"])
@@ -1846,15 +1946,11 @@ def metrics(payload=None):
     tags=["messaging"],
     auth_callable=is_authorized
 )
-def api_write_notification(payload=None):
-    data = request.json or {}
-    content = data.get("content")
-    level = data.get("level", "alert")
-
-    if not content:
-        return jsonify({"success": False, "message": "ERROR: Missing parameters", "error": "Missing content"}), 400
-
-    write_notification(content, level)
+def api_write_notification(payload: CreateNotificationRequest = None):
+    # Use the validated payload, not the raw request body - CreateNotificationRequest's
+    # truncate_content validator runs against payload.content; re-reading request.json
+    # directly would silently bypass it and store the untruncated original.
+    write_notification(payload.content, payload.level)
     return jsonify({"success": True})
 
 
@@ -2047,7 +2143,7 @@ def check_auth(payload=None):
 @validate_request(
     operation_id="check_health",
     summary="System Health Check",
-    description="Retrieve system vitality metrics including database size, memory pressure, system load, disk usage, and CPU temperature.",
+    description="Retrieve system vitality metrics including database size, memory pressure, system load, disk usage, CPU temperature, and the NetAlertX process's own CPU%/RSS.",
     response_model=HealthCheckResponse,
     tags=["system", "health"],
     auth_callable=is_authorized
@@ -2119,6 +2215,36 @@ def api_plugin_stats(payload=None):
     handler = PluginObjectInstance()
     data = handler.getStats(foreign_key)
     return jsonify({"success": True, "data": data})
+
+
+# --------------------------
+# Plugin Run endpoint
+# --------------------------
+@app.route("/plugin/<prefix>/run", methods=["POST"])
+@validate_request(
+    operation_id="run_plugin",
+    summary="Run Plugin",
+    description="Manually trigger an on-demand run of a plugin by its unique prefix, regardless of its "
+                 "configured RUN schedule (e.g. used by the 'Run Plugin' device custom property action).",
+    path_params=[{
+        "name": "prefix",
+        "description": "Plugin unique prefix (e.g. NMAPDEV, ARPSCAN)",
+        "schema": {"type": "string"}
+    }],
+    response_model=BaseResponse,
+    tags=["plugins"],
+    validation_error_code=400,
+    auth_callable=is_authorized
+)
+def api_run_plugin(prefix, payload=None):
+    loaded_plugins = get_setting_value('LOADED_PLUGINS')
+    if prefix not in loaded_plugins:
+        return jsonify({"success": False, "error": f"Invalid plugin. Must be one of: {', '.join(loaded_plugins)}"}), 400
+
+    queue = UserEventsQueueInstance()
+    queue.add_event(f"run|{prefix}")
+
+    return jsonify({"success": True, "message": f"Run triggered for plugin: {prefix}"}), 200
 
 
 # --------------------------

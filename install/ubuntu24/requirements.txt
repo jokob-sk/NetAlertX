@@ -1,10 +1,11 @@
+cryptography<40
 openwrt-luci-rpc
 asusrouter
 aiohttp
 graphene
 flask
 flask-cors
-unifi-sm-api>=0.2.3
+unifi-sm-api>=0.2.6
 tplink-omada-client
 wakeonlan
 pycryptodome
@@ -23,6 +24,12 @@ dnspython
 librouteros
 yattag
 zeroconf
+simplejson
+future
+six
+urllib3
+httplib2
 psutil
 freebox-api
+pydantic>=2.0,<3.0
 fritzconnection>=1.15.1

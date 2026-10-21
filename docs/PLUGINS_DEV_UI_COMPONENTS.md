@@ -7,6 +7,7 @@ Configure how your plugin's data is displayed in the NetAlertX web interface.
 Plugin results are displayed in the UI via the **Plugins page** and **Device details tabs**. You control the appearance and functionality of these displays by defining `database_column_definitions` in your plugin's `config.json`.
 
 Each column definition specifies:
+
 - Which data field to display
 - How to render it (label, link, color-coded badge, etc.)
 - What CSS classes to apply
@@ -275,6 +276,7 @@ Replaces specific values with display strings or HTML.
 ```
 
 **Output Examples:**
+
 - `"online"` → 🟢 Online
 - `"offline"` → 🔴 Offline
 - `"idle"` → 🟡 Idle

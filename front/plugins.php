@@ -1,16 +1,15 @@
 <?php
 
-  require 'php/templates/header.php';  
-  require 'php/templates/modals.php'; 
+  require 'php/templates/header.php';
 ?>
 
 <!-- Page ------------------------------------------------------------------ -->
-<div class="content-wrapper integrations-plugins">
+<div class="content-wrapper integrations-plugins" id="pluginsPage">
 
 <?php
   require 'pluginsCore.php';
 ?>
-        
+
 </div>
 
 <?php

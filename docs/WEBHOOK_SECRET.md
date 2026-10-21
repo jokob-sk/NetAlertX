@@ -5,7 +5,7 @@
 
 
 > [!NOTE]
-> You need to enable the `WEBHOOK` plugin first in order to follow this guide. See the [Plugins guide](./PLUGINS.md) for details.
+> You need to enable the `WEBHOOK` plugin first in order to follow this guide. See the [Plugins guide](./PLUGINS_OVERVIEW.md) for details.
 
 ## How does the signing work?
 

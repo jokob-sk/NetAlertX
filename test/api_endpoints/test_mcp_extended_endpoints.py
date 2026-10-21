@@ -177,7 +177,7 @@ def test_get_all_events(mock_get, client, api_token):
     response = client.get('/events?mac=00:11:22:33:44:55', headers=auth_headers(api_token))
     assert response.status_code == 200
     assert response.json["success"] is True
-    mock_get.assert_called_with("00:11:22:33:44:55")
+    mock_get.assert_called_with("00:11:22:33:44:55", None, None)
 
 
 @patch('models.event_instance.EventInstance.deleteEventsOlderThan')
@@ -440,7 +440,7 @@ def test_sync_get(mock_handle, client, api_token):
 def test_sync_post(mock_handle, client, api_token):
     """Test POST /sync."""
     mock_handle.return_value = ({"success": True}, 200)
-    payload = {"data": {}, "node_name": "node1", "plugin": "test"}
+    payload = {"data": "encrypted_payload_string", "node_name": "node1", "plugin": "test"}
     response = client.post('/sync',
                            json=payload,
                            headers=auth_headers(api_token))

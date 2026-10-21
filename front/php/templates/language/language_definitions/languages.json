@@ -8,6 +8,7 @@
         { "code": "de_de", "display": "German (de_de)" },
         { "code": "es_es", "display": "Spanish (es_es)" },
         { "code": "fa_fa", "display": "Farsi (fa_fa)" },
+        { "code": "hu_hu", "display": "Hungarian (hu_hu)" },
         { "code": "id_id", "display": "Indonesian (id_id)" },
         { "code": "fr_fr", "display": "French (fr_fr)" },
         { "code": "fi_fi", "display": "Finnish (fi_fi)" },

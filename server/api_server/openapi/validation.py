@@ -55,7 +55,9 @@ def validate_request(
 
     Features:
     - Auto-registers the endpoint with the OpenAPI spec generator.
-    - Validates JSON body against `request_model` (for POST/PUT).
+    - Validates JSON body against `request_model` (for POST/PUT/PATCH/DELETE).
+    - Validates query parameters against `request_model` for GET requests.
+    - Allows HEAD requests to pass through without request validation.
     - Injects the validated Pydantic model as the first argument to the view function.
     - Supports auth_callable to check permissions before validation.
     - Returns 422 (default) if validation fails.
@@ -171,6 +173,10 @@ def validate_request(
                             "error": "Invalid query parameters",
                             "message": "Unable to process query parameters"
                         }), 400
+                elif request.method == "HEAD":
+                    # HEAD requests do not contain a meaningful request body and should
+                    # behave like GET without running query/body validation.
+                    pass
                 else:
                     # Unsupported HTTP method with a request_model - fail explicitly
                     mylog("verbose", [f"[Validation] Unsupported HTTP method {request.method} for {operation_id} with request_model"])

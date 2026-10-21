@@ -10,15 +10,21 @@ from db.db_helper import get_table_json, json_obj
 from workflows.app_events import AppEvent_obj
 from db.db_upgrade import (
     ensure_column,
+    ensure_table_columns,
     ensure_CurrentScan,
+    ensure_Resource_History,
     ensure_plugins_tables,
     ensure_Parameters,
     ensure_Settings,
     ensure_Indexes,
     ensure_mac_lowercase_triggers,
+    ensure_dangling_parentmac_cleanup_trigger,
+    cleanup_existing_dangling_parentmac,
+    cleanup_existing_default_devParentRelType,
     migrate_to_camelcase,
     migrate_timestamps_to_utc,
 )
+from db.db_history import ensure_deviceshistory_table, ensure_deviceshistory_triggers
 
 
 class DB:
@@ -68,6 +74,11 @@ class DB:
             # The WAL journaling mode uses a write-ahead log instead of a
             # rollback journal to implement transactions.
             self.sql_connection.execute("pragma journal_mode=WAL;")
+            # Wait up to 5s for a lock before raising "database is locked",
+            # matching get_temp_db_connection()'s value - without this, any
+            # collision with a concurrent writer (e.g. a PHP request) fails
+            # immediately instead of retrying internally.
+            self.sql_connection.execute("PRAGMA busy_timeout=5000;")
             # When synchronous is NORMAL (1), the SQLite database engine will
             # still sync at the most critical moments,
             # but less often than in FULL mode.
@@ -199,6 +210,23 @@ class DB:
             # before ensure_plugins_tables which uses IF NOT EXISTS with new names)
             migrate_to_camelcase(self.sql)
 
+            # Backfill Events/Sessions/Notifications columns that may be
+            # missing from an older app.sql snapshot - same drift-repair
+            # pattern as the Devices columns above, generalized instead of
+            # duplicated (see scan-pipeline-hardening.md Design §3). Must run
+            # after the camelCase migration above, or a pre-migration table's
+            # old-style column names would make every new-style column look
+            # "missing" and get added alongside the stale ones.
+            #
+            # AppEvents is deliberately NOT in this list: AppEvent_obj(self)
+            # below unconditionally drops and recreates it on every startup
+            # (its own equivalent of ensure_CurrentScan()'s drop/recreate
+            # pattern), so backfilling it here would be wasted work on a
+            # table about to be discarded a few lines later.
+            for _drift_table in ("Events", "Sessions", "Notifications"):
+                if not ensure_table_columns(self.sql, _drift_table):
+                    raise RuntimeError(f"ensure_table_columns({_drift_table}) failed")
+
             # Settings table setup
             ensure_Settings(self.sql)
 
@@ -214,6 +242,9 @@ class DB:
             # CurrentScan table setup
             ensure_CurrentScan(self.sql)
 
+            # Resource_History table setup
+            ensure_Resource_History(self.sql)
+
             # Views are created in importConfigs() after settings are committed,
             # so NTFPRCS_sleep_time is available when the view is built.
             # ensure_views is NOT called here.
@@ -224,6 +255,16 @@ class DB:
             # Normalization triggers
             ensure_mac_lowercase_triggers(self.sql)
 
+            # Prevent/repair dangling devParentMAC references left by deleted devices
+            cleanup_existing_dangling_parentmac(self.sql)
+
+            # Repair devParentRelType='[]' left by the array/string default_value mismatch
+            cleanup_existing_default_devParentRelType(self.sql)
+
+            # Device history table + audit triggers
+            ensure_deviceshistory_table(self.sql)
+            ensure_deviceshistory_triggers(self.sql)
+
             # commit changes
             self.commitDB()
         except Exception as e:
@@ -233,6 +274,13 @@ class DB:
 
         # Init the AppEvent database table
         AppEvent_obj(self)
+
+        # AppEvent_obj.drop_all_triggers() wipes every trigger in the DB
+        # (including trg_devhist_* and trg_clear_dangling_parentmac_on_delete)
+        # as part of its clean-start routine. Re-create them here so they survive.
+        ensure_deviceshistory_triggers(self.sql)
+        ensure_dangling_parentmac_cleanup_trigger(self.sql)
+        self.commitDB()
 
     def get_table_as_json(self, sqlQuery, parameters=None):
         """

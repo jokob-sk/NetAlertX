@@ -12,7 +12,7 @@ from logger import mylog  # noqa: E402 [flake8 lint suppression]
 from const import apiPath, NULL_EQUIVALENTS  # noqa: E402 [flake8 lint suppression]
 from helper import (  # noqa: E402 [flake8 lint suppression]
     is_random_mac,
-    get_number_of_children,
+    count_children_by_parent_mac,
     format_ip_long,
     get_setting_value,
 )
@@ -26,22 +26,158 @@ from .graphql_types import (  # noqa: E402 [flake8 lint suppression]
     PluginQueryOptionsInput, PluginEntry,
     PluginsObjectsResult, PluginsEventsResult, PluginsHistoryResult,
     EventQueryOptionsInput, EventEntry, EventsResult,
+    DeviceHistoryChange, GroupedDeviceHistory, DeviceHistoryResult,
 )
 from .graphql_helpers import (  # noqa: E402 [flake8 lint suppression]
     mixed_type_sort_key,
     apply_common_pagination,
     apply_plugin_filters,
     apply_events_filters,
+    extract_paging
 )
+from models.device_history_instance import DevicesHistoryInstance  # noqa: E402
 
 folder = apiPath
+
+# Device fields holding a dotted/colon IP address string — sorted numerically (via
+# format_ip_long), not lexicographically, so e.g. 192.168.1.15 sorts before 192.168.1.105.
+# devIpLong is excluded: it already holds the pre-computed long value as a decimal
+# string, which mixed_type_sort_key sorts numerically on its own.
+_IP_SORT_FIELDS = {"devLastIP", "devPrimaryIPv4", "devPrimaryIPv6"}
+
+
+def _ip_sort_key(value):
+    """Sort key for an IP-address field: (0, long_value) for a real address,
+    (1, 0) for empty/unparseable - mirrors mixed_type_sort_key's bucketing
+    (valid values sort before the empty bucket in ascending order, and Python's
+    sorted(reverse=True) flips both together) instead of relying on
+    format_ip_long's -1 sentinel, which put blanks *before* real addresses in
+    ascending order - the opposite of every other column's convention."""
+    long_value = format_ip_long(value) if value else -1
+    if long_value < 0:
+        return (1, 0)
+    return (0, long_value)
+
 
 # In-memory cache for lang strings
 _langstrings_cache = {}        # caches lists per file (core JSON or plugin)
 _langstrings_cache_mtime = {}  # tracks last modified times
 
 
+def _to_graphql_history(groups):
+    """Convert DevicesHistoryInstance grouped dicts to GraphQL ObjectType instances."""
+    result = []
+    for g in groups:
+        changes = [
+            DeviceHistoryChange(
+                changedColumn=c["changedColumn"],
+                oldValue=c["oldValue"],
+                newValue=c["newValue"],
+            )
+            for c in g["changes"]
+        ]
+        result.append(GroupedDeviceHistory(
+            devGUID=g["devGUID"],
+            timestamp=g["timestamp"],
+            changedBy=g["changedBy"],
+            changes=changes,
+        ))
+    return result
+
+
 class Query(ObjectType):
+    # --- DEVICE HISTORY ---
+    deviceHistoryGrouped = Field(
+        DeviceHistoryResult,
+        devGUID=String(required=False, description="Device GUID to fetch history for"),
+        changedColumn=String(description="Filter to groups containing this field change"),
+        changedBy=String(description="Filter to a specific attribution source"),
+        options=PageQueryOptionsInput(description="Paging, sorting, filtering options"),
+    )
+
+    def resolve_deviceHistoryGrouped(
+            self,
+            info,
+            devGUID=None,
+            changedColumn=None,
+            changedBy=None,
+            options=None):
+        """
+        Return grouped device history.
+
+        If `devGUID` is provided, results are restricted to a single device.
+        If omitted, history across all devices is returned.
+
+        This resolver supports:
+            - Optional filtering by device GUID, change column, and attribution source
+            - Pagination via `options` (page/limit/offset)
+            - Sorting at the grouped event level
+            - Full-text search across history fields (if enabled in backend)
+
+        Internally:
+            - Raw history rows are fetched from the database
+            - Rows are grouped in Python by (timestamp, changedBy, devGUID)
+            - Sorting is applied to grouped events
+            - Pagination is applied after grouping
+
+        Args:
+            info: GraphQL execution context
+            devGUID (str | None): Optional device GUID filter
+            changedColumn (str | None): Filter to only events containing this column
+            changedBy (str | None): Filter by attribution source
+            options (PageQueryOptionsInput | None): Paging, sorting, and search options
+
+        Returns:
+            DeviceHistoryResult: Grouped history events and total count
+        """
+        try:
+            mylog("none", f"[HISTORY] unified resolver devGUID={devGUID} changedColumn={changedColumn} changedBy={changedBy}")
+
+            h = DevicesHistoryInstance()
+            paging = extract_paging(options)
+
+            if devGUID:
+                groups = h.get_grouped_history(
+                    devGUID=devGUID,
+                    changedColumn=changedColumn,
+                    changedBy=changedBy,
+                    limit=paging["limit"],
+                    offset=paging["offset"],
+                    sort=paging["sort"],
+                    search=paging["search"],
+                )
+
+                total = h.get_total_group_count(
+                    devGUID=devGUID,
+                    changedColumn=changedColumn,
+                    changedBy=changedBy,
+                    search=paging["search"]
+                )
+            else:
+                groups = h.get_all_grouped_history(
+                    changedColumn=changedColumn,
+                    changedBy=changedBy,
+                    limit=paging["limit"],
+                    offset=paging["offset"],
+                    sort=paging["sort"],
+                    search=paging["search"],
+                )
+
+                total = h.get_total_group_count(
+                    changedColumn=changedColumn,
+                    changedBy=changedBy,
+                    search=paging["search"]
+                )
+
+            return DeviceHistoryResult(
+                history=_to_graphql_history(groups),
+                count=total,
+            )
+
+        except Exception as e:
+            mylog("none", f"[graphql] unified resolver error: {e}")
+            return DeviceHistoryResult(history=[], count=0)
+
     # --- DEVICES ---
     devices = Field(DeviceResult, options=PageQueryOptionsInput())
 
@@ -62,10 +198,11 @@ class Query(ObjectType):
         ]
 
         # Add dynamic fields to each device
+        children_counts = count_children_by_parent_mac(devices_data)
         for device in devices_data:
             device["devIsRandomMac"] = 1 if is_random_mac(device["devMac"]) else 0
-            device["devParentChildrenCount"] = get_number_of_children(
-                device["devMac"], devices_data
+            device["devParentChildrenCount"] = children_counts.get(
+                device["devMac"].strip(), 0
             )
             # Return as string — IPv4 long values can exceed Int's signed 32-bit max (2,147,483,647)
             device["devIpLong"] = str(format_ip_long(device.get("devLastIP", "")))
@@ -275,15 +412,24 @@ class Query(ObjectType):
             # sorting
             if options.sort:
                 for sort_option in options.sort:
-                    devices_data = sorted(
-                        devices_data,
-                        key=lambda x: mixed_type_sort_key(
-                            x.get(sort_option.field).lower()
-                            if isinstance(x.get(sort_option.field), str)
-                            else x.get(sort_option.field)
-                        ),
-                        reverse=(sort_option.order.lower() == "desc"),
-                    )
+                    field = sort_option.field
+                    if field in _IP_SORT_FIELDS:
+                        # Numeric sort so e.g. 192.168.1.15 sorts before 192.168.1.105
+                        devices_data = sorted(
+                            devices_data,
+                            key=lambda x: _ip_sort_key(x.get(field)),
+                            reverse=(sort_option.order.lower() == "desc"),
+                        )
+                    else:
+                        devices_data = sorted(
+                            devices_data,
+                            key=lambda x: mixed_type_sort_key(
+                                x.get(field).lower()
+                                if isinstance(x.get(field), str)
+                                else x.get(field)
+                            ),
+                            reverse=(sort_option.order.lower() == "desc"),
+                        )
 
             # capture total count after all the filtering and searching, BEFORE pagination
             total_count = len(devices_data)
@@ -421,7 +567,7 @@ class Query(ObjectType):
         langStrings = []
 
         # --- CORE JSON FILES ---
-        language_folder = '/app/front/php/templates/language/'
+        language_folder = INSTALL_PATH + '/front/php/templates/language/'
         if os.path.exists(language_folder):
             for filename in os.listdir(language_folder):
                 if filename.endswith('.json') and filename != 'languages.json':
@@ -491,15 +637,48 @@ class Query(ObjectType):
             langStrings = [ls for ls in langStrings if ls.langStringKey == langStringKey]
 
         # --- Fallback to en_us if enabled and requested lang is missing ---
+        # Build a lookup map once without modifying the cached language lists.
         if fallback_to_en and langCode and langCode != "en_us":
+            en_map = {}
+
+            en_us_path = os.path.join(language_folder, "en_us.json")
+
+            try:
+                # get modified time and compared to cached data modified time
+                en_us_mtime = os.path.getmtime(en_us_path)
+
+                if ("core_en_us" not in _langstrings_cache or _langstrings_cache_mtime.get("core_en_us") != en_us_mtime):
+                    with open(en_us_path, "r", encoding="utf-8") as f:
+                        data = json.load(f)
+
+                    _langstrings_cache["core_en_us"] = [
+                        LangString(
+                            langCode="en_us",
+                            langStringKey=k,
+                            langStringText=v
+                        )
+                        for k, v in data.items()
+                    ]
+                    _langstrings_cache_mtime["core_en_us"] = en_us_mtime
+
+            except (FileNotFoundError, json.JSONDecodeError) as e:
+                mylog("none", f"[graphql_schema] Error loading en_us fallback file: {e}")
+
+            # Index core English strings
+            for e in _langstrings_cache.get("core_en_us", []):
+                en_map.setdefault(e.langStringKey, e)
+
+            # Index English plugin strings (do not overwrite core strings)
+            for p in _langstrings_cache.get("plugin", []):
+                if p.langCode == "en_us":
+                    en_map.setdefault(p.langStringKey, p)
+
+            # Replace empty translations with their English equivalent
             for i, ls in enumerate(langStrings):
                 if not ls.langStringText:  # empty string triggers fallback
-                    # try to get en_us version
-                    en_list = _langstrings_cache.get("core_en_us", [])
-                    en_list += [p for p in _langstrings_cache.get("plugin", []) if p.langCode == "en_us"]
-                    en_fallback = [e for e in en_list if e.langStringKey == ls.langStringKey]
+                    en_fallback = en_map.get(ls.langStringKey)
                     if en_fallback:
-                        langStrings[i] = en_fallback[0]
+                        langStrings[i] = en_fallback
 
         mylog('trace', f'[graphql_schema] Collected {len(langStrings)} language strings (langCode={langCode}, key={langStringKey}, fallback_to_en={fallback_to_en})')
 

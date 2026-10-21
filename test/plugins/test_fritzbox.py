@@ -21,9 +21,10 @@ import pytest
 
 _ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 _SERVER = os.path.join(_ROOT, "server")
-_PLUGIN_DIR = os.path.join(_ROOT, "front", "plugins", "fritzbox")
+_PLUGINS = os.path.join(_ROOT, "server", "plugins")
+_PLUGIN_DIR = os.path.join(_ROOT, "server", "plugins", "fritzbox")
 
-for _p in [_ROOT, _SERVER, _PLUGIN_DIR]:
+for _p in [_ROOT, _SERVER, _PLUGINS, _PLUGIN_DIR]:
     if _p not in sys.path:
         sys.path.insert(0, _p)
 

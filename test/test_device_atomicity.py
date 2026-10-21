@@ -17,10 +17,12 @@ from unittest.mock import patch
 
 # Add server and plugins to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'server'))
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'front', 'plugins'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'server', 'plugins'))
+sys.path.insert(0, os.path.dirname(__file__))
 
 from models.device_instance import DeviceInstance  # noqa: E402 [flake8 lint suppression]
 from plugin_helper import normalize_mac  # noqa: E402 [flake8 lint suppression]
+from db_test_helpers import CREATE_DEVICES  # noqa: E402 [flake8 lint suppression]
 
 
 class TestDeviceAtomicity(unittest.TestCase):
@@ -37,51 +39,15 @@ class TestDeviceAtomicity(unittest.TestCase):
         conn.row_factory = sqlite3.Row
         cur = conn.cursor()
 
-        # Create Devices table with source-tracking columns
-        cur.execute("""
-            CREATE TABLE Devices (
-                devMac TEXT PRIMARY KEY,
-                devName TEXT,
-                devOwner TEXT,
-                devType TEXT,
-                devVendor TEXT,
-                devIcon TEXT,
-                devFavorite INTEGER DEFAULT 0,
-                devGroup TEXT,
-                devLocation TEXT,
-                devComments TEXT,
-                devParentMAC TEXT,
-                devParentPort TEXT,
-                devSSID TEXT,
-                devSite TEXT,
-                devStaticIP INTEGER DEFAULT 0,
-                devScan INTEGER DEFAULT 0,
-                devAlertEvents INTEGER DEFAULT 0,
-                devAlertDown INTEGER DEFAULT 0,
-                devCanSleep INTEGER DEFAULT 0,
-                devParentRelType TEXT DEFAULT 'default',
-                devReqNicsOnline INTEGER DEFAULT 0,
-                devSkipRepeated INTEGER DEFAULT 0,
-                devIsNew INTEGER DEFAULT 0,
-                devIsArchived INTEGER DEFAULT 0,
-                devLastConnection TEXT,
-                devFirstConnection TEXT,
-                devLastIP TEXT,
-                devGUID TEXT,
-                devCustomProps TEXT,
-                devSourcePlugin TEXT,
-                devNameSource TEXT,
-                devTypeSource TEXT,
-                devVendorSource TEXT,
-                devIconSource TEXT,
-                devGroupSource TEXT,
-                devLocationSource TEXT,
-                devCommentsSource TEXT,
-                devMacSource TEXT,
-                devVlan TEXT,
-                devForceStatus STRING DEFAULT NULL
-            )
-        """)
+        # Create Devices table with source-tracking columns - reuses the
+        # canonical schema shared by the rest of the suite rather than a
+        # local copy (the local copy this replaced had drifted: it declared
+        # devTypeSource/devIconSource/devGroupSource/devLocationSource/
+        # devCommentsSource, none of which exist in
+        # server/db/schema/app.sql or are read/written by any production
+        # code - source tracking only exists for the fields CREATE_DEVICES
+        # actually declares, e.g. devNameSource/devVendorSource/devMacSource).
+        cur.execute(CREATE_DEVICES)
         conn.commit()
         conn.close()
 
@@ -147,10 +113,9 @@ class TestDeviceAtomicity(unittest.TestCase):
         cur = conn.cursor()
         cur.execute("""
             INSERT INTO Devices (
-                devMac, devName, devOwner, devType,
-                                devNameSource, devTypeSource
-            ) VALUES (?, ?, ?, ?, ?, ?)
-                    """, (test_mac, "Old Name", "Old Owner", "Desktop", "PLUGIN", "PLUGIN"))
+                devMac, devName, devOwner, devType, devNameSource
+            ) VALUES (?, ?, ?, ?, ?)
+                    """, (test_mac, "Old Name", "Old Owner", "Desktop", "PLUGIN"))
         conn.commit()
         conn.close()
 
@@ -193,10 +158,9 @@ class TestDeviceAtomicity(unittest.TestCase):
         cur = conn.cursor()
         cur.execute("""
             INSERT INTO Devices (
-                devMac, devName, devOwner, devType,
-                                devNameSource, devTypeSource
-            ) VALUES (?, ?, ?, ?, ?, ?)
-                    """, (test_mac, "Original Name", "Original Owner", "Desktop", "PLUGIN", "PLUGIN"))
+                devMac, devName, devOwner, devType, devNameSource
+            ) VALUES (?, ?, ?, ?, ?)
+                    """, (test_mac, "Original Name", "Original Owner", "Desktop", "PLUGIN"))
         conn.commit()
         conn.close()
 

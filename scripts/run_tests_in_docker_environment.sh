@@ -71,6 +71,22 @@ for i in $(seq 1 $WAIT_SECONDS); do
 done
 
 
+# --- 7b. Wait for Flask backend (port 20212) to be ready ---
+echo "--- Waiting for Flask backend on port 20212 to be ready ---"
+BACKEND_WAIT=60
+for i in $(seq 1 $BACKEND_WAIT); do
+    if docker exec netalertx-test-container curl -sf --max-time 5 http://127.0.0.1:20212/docs >/dev/null 2>&1; then
+        echo "--- Flask backend is ready! ---"
+        break
+    fi
+    if [ "$i" -eq "$BACKEND_WAIT" ]; then
+        echo "--- Warning: Flask backend did not become ready after $BACKEND_WAIT seconds, proceeding anyway ---"
+        docker logs netalertx-test-container
+    fi
+    echo "    ... waiting for backend ($i/$BACKEND_WAIT)"
+    sleep 1
+done
+
 # --- 8. Manipulate Database for Flaky Test ---
 echo "--- Inserting 'internet' device into database for flaky test ---"
 docker exec netalertx-test-container /bin/bash -c " \

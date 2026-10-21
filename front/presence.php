@@ -21,7 +21,9 @@
 </script>
 
 <!-- Page ------------------------------------------------------------------ -->
-  <div class="content-wrapper">
+  <div class="content-wrapper" id="presencePage">
+
+<?php require 'php/templates/skel_presence.php'; ?>
 
 <!-- Main content ---------------------------------------------------------- -->
     <section class="content">
@@ -127,9 +129,11 @@
 
 <!-- Calendar -------------------------------------------------------------- -->
       <div class="row">
+        
         <div class="col-lg-12 col-sm-12 col-xs-12">
+        
           <div id="tableDevicesBox" class="box" style="min-height: 500px">
-
+            
             <!-- box-header -->
             <div class="box-header">
               <h3 id="tableDevicesTitle" class="box-title text-gray">Devices</h3>
@@ -144,6 +148,11 @@
                   <div class="presenceOnlinePastMiss presenceKeyBoxes"></div> <?= lang('Presence_Key_OnlinePastMiss');?>
                 </span>
               </div>
+              <span class="helpIcon">
+                <a target="_blank" href="https://docs.netalertx.com/DEVICE_PRESENCE">
+                  <i class="fa fa-circle-question"></i>
+                </a>
+              </span>
             </div>
 
             <!-- box-body -->
@@ -151,6 +160,21 @@
 
               <!-- Calendar -->
               <div id="calendar"></div>
+
+              <!-- Presence pager - same markup/classes DataTables generates for its own Previous/Next
+                   (wrapped in .dataTables_wrapper so the same vendor CSS right-aligns it identically) -->
+              <div class="dataTables_wrapper">
+                <div class="dataTables_paginate">
+                  <ul class="pagination">
+                    <li id="presencePrev" class="paginate_button previous disabled">
+                      <a href="#" onclick="changePresencePage(-1); return false;"><?= lang('Gen_Prev');?></a>
+                    </li>
+                    <li id="presenceNext" class="paginate_button next disabled">
+                      <a href="#" onclick="changePresencePage(1); return false;"><?= lang('Gen_Next');?></a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
             </div>
 
           </div>
@@ -201,6 +225,8 @@ switch ($UI_THEME) {
 <script>
 
   var deviceStatus = 'all';
+  var presencePage = 0;
+  var presenceRequestSeq = 0;
 
   // Read parameters & Initialize components
   main();
@@ -321,7 +347,7 @@ function initializeCalendar () {
 
     resourceRender: function (resourceObj, labelTds, bodyTds) {
       labelTds.find('span.fc-cell-text').html (
-      '<b><a href="deviceDetails.php?mac='+ resourceObj.id+ '" class="">'+ resourceObj.title +'</a></b>');
+      '<b><a href="deviceDetails.php?mac='+ resourceObj.id+ '" class="">'+ encodeSpecialChars(resourceObj.title) +'</a></b>');
 
       // Resize heihgt
       // $(".fc-content table tbody tr .fc-widget-content div").addClass('fc-resized-row');
@@ -344,6 +370,7 @@ function initializeCalendar () {
           showSpinner();
         } else {
           hideSpinner();
+          hidePresenceSkeleton();
         }
     }
 
@@ -410,6 +437,11 @@ function getDevicesTotals () {
 
 // -----------------------------------------------------------------------------
 function getDevicesPresence (status) {
+  // Reset to the first page whenever a new status is selected (not on Prev/Next)
+  if (status !== deviceStatus) {
+    presencePage = 0;
+  }
+
   // Save status selected
   deviceStatus = status;
 
@@ -454,7 +486,7 @@ function getDevicesPresence (status) {
   // Set title and color
   $('#tableDevicesTitle')[0].className = 'box-title text-'+ color;
   $('#tableDevicesBox')[0].className = 'box box-'+ color;
-  $('#tableDevicesTitle').html (tableTitle);
+  $('#tableDevicesTitle').html (`${tableTitle}  ${getString("Device_TableHead_PresentLastScan")}`);
 
   const apiToken = getSetting("API_TOKEN");
 
@@ -463,7 +495,14 @@ function getDevicesPresence (status) {
   // -----------------------------
   // Load Devices as Resources
   // -----------------------------
-  const devicesUrl = `${apiBaseUrl}/devices/by-status?status=${deviceStatus}`;
+  const pageSize = parseInt(getSetting("UI_DEFAULT_PAGE_SIZE"));
+  const devicesUrl = `${apiBaseUrl}/devices/by-status?status=${deviceStatus}`
+    + `&limit=${pageSize + 1}&offset=${presencePage * pageSize}`;
+
+  // Tag this request so a stale response (e.g. a fast Next-then-Prev click
+  // whose first request resolves after the second) can be discarded instead
+  // of overwriting the page the user is actually looking at.
+  const requestSeq = ++presenceRequestSeq;
 
   $.ajax({
     url: devicesUrl,
@@ -472,14 +511,25 @@ function getDevicesPresence (status) {
       "Authorization": `Bearer ${apiToken}`
     },
     success: function(devices) {
+      // A newer request has been fired since this one went out - discard.
+      if (requestSeq !== presenceRequestSeq) {
+        return;
+      }
+
+      // Peek-ahead: requested one extra device to know if there's a next page
+      // without a separate count request.
+      const hasNextPage = devices.length > pageSize;
+      const pageDevices = hasNextPage ? devices.slice(0, pageSize) : devices;
+
       // FullCalendar expects resources array
-      const resources = devices.map(dev => ({
+      const resources = pageDevices.map(dev => ({
         id: dev.devMac,
         title: dev.devName
       }));
 
       $('#calendar').fullCalendar('option', 'resources', resources);
       $('#calendar').fullCalendar('refetchResources');
+      updatePresencePagerControls(hasNextPage);
     }
   });
 
@@ -507,6 +557,32 @@ function getDevicesPresence (status) {
   });
 };
 
+// -----------------------------------------------------------------------------
+// Move the presence resources page by delta (-1 = Prev, 1 = Next) and reload.
+function changePresencePage (delta) {
+  const button = delta < 0 ? $('#presencePrev') : $('#presenceNext');
+  if (button.hasClass('disabled')) {
+    return;
+  }
+  presencePage = Math.max(0, presencePage + delta);
+  getDevicesPresence(deviceStatus);
+}
 
+// -----------------------------------------------------------------------------
+// Enable/disable the Prev/Next pager buttons (DataTables' own convention:
+// a "disabled" class on the <li>, not a disabled attribute on the <a>).
+function updatePresencePagerControls (hasNextPage) {
+  $('#presencePrev').toggleClass('disabled', presencePage === 0);
+  $('#presenceNext').toggleClass('disabled', !hasNextPage);
+}
+
+function hidePresenceSkeleton() {
+  hideSpinner();
+  $('#presence-skeleton').fadeOut(0, function() { $(this).remove(); });
+}
+
+window.addEventListener('load', function() {
+  setTimeout(hidePresenceSkeleton, 15000);
+});
 
 </script>

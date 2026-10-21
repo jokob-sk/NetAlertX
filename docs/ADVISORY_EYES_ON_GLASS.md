@@ -4,6 +4,9 @@ For Managed Service Providers (MSPs) and Network Operations Centers (NOC), "Eyes
 
 ![filters](./img/ADVISORIES/filters.png)
 
+> [!TIP]
+> If you are using Grafana check the `/metrics` endpoint that exposes **Prometheus-compatible metrics** for NetAlertX, including aggregate device counts and per-device status. See the [Metrics API endpoint](./API_METRICS.md) documentation for details.
+
 ---
 
 ### 1. Configure Auto-Refresh for Live Monitoring
@@ -21,7 +24,7 @@ Static dashboards are the enemy of real-time response. NetAlertX allows you to f
 An MSP's focus is on what is *broken*, not what is working. Hide the noise to increase reaction speed.
 
 * **Hide Unnecessary Blocks:** Under UI Settings, disable dashboard blocks that don't provide immediate utility, such as **Online presence** or **Tiles**.
-* **Hide virtual connections:** You can specify which relationships shoudl be hidden from the main view to remove any virtual devices that are not essential from your views.
+* **Hide virtual connections:** You can specify which relationships should be hidden from the main view to remove any virtual devices that are not essential from your views.
 * **Browser Full-Screen:** Use the built-in "Full Screen" toggle in the top bar to remove browser chrome (URL bars/tabs) for a cleaner "Wallboard" look.
 
 ### 3. Creating Custom NOC Views

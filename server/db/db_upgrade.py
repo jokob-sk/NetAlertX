@@ -3,6 +3,7 @@ from zoneinfo import ZoneInfo
 import datetime as dt
 from logger import mylog  # noqa: E402 [flake8 lint suppression]
 from messaging.in_app import write_notification  # noqa: E402 [flake8 lint suppression]
+from db.schema_columns import TABLE_COLUMNS  # noqa: E402 [flake8 lint suppression]
 
 
 # Define the expected Devices table columns (hardcoded base schema) [v26.1/2.XX]
@@ -81,7 +82,7 @@ def ensure_column(sql, table: str, column_name: str, column_type: str) -> bool:
             return True  # Already exists
 
         # Validate that this column is in the expected schema
-        expected = EXPECTED_DEVICES_COLUMNS if table == "Devices" else []
+        expected = EXPECTED_DEVICES_COLUMNS if table == "Devices" else TABLE_COLUMNS.get(table, {})
         if not expected or column_name not in expected:
             msg = (
                 f"[db_upgrade] ⚠ ERROR: Column '{column_name}' is not in expected schema - "
@@ -100,6 +101,37 @@ def ensure_column(sql, table: str, column_name: str, column_type: str) -> bool:
     except Exception as e:
         mylog("none", [f"[db_upgrade] ERROR while adding '{column_name}': {e}"])
         return False
+
+
+def ensure_table_columns(sql, table: str) -> bool:
+    """
+    Backfill every column in TABLE_COLUMNS[table] (server/db/schema_columns.py)
+    that's missing from the live table, via ensure_column() - the same
+    drift-repair pattern Devices already has, generalized instead of
+    hand-writing one ensure_column() call per column per table (the mirrored
+    duplication that pattern would otherwise reintroduce - see
+    scan-pipeline-hardening.md Design §3).
+
+    Skips silently (returns True) if the table doesn't exist yet - these
+    four tables are normally created by app.sql's first-run bootstrap before
+    this ever runs, but this must not turn a not-yet-created table into a
+    hard failure that rolls back the whole initDB() transaction.
+    """
+    columns = TABLE_COLUMNS.get(table)
+    if not columns:
+        mylog("none", [f"[db_upgrade] ensure_table_columns: no column list registered for '{table}'"])
+        return False
+
+    sql.execute("SELECT name FROM sqlite_master WHERE type='table' AND name=?", (table,))
+    if not sql.fetchone():
+        mylog("debug", [f"[db_upgrade] ensure_table_columns: '{table}' does not exist yet, skipping"])
+        return True
+
+    ok = True
+    for column_name, column_type in columns.items():
+        if not ensure_column(sql, table, column_name, column_type):
+            ok = False
+    return ok
 
 
 def ensure_mac_lowercase_triggers(sql):
@@ -143,6 +175,100 @@ def ensure_mac_lowercase_triggers(sql):
 
     except Exception as e:
         mylog("none", [f"[db_upgrade] ERROR while ensuring MAC triggers: {e}"])
+        return False
+
+
+# Sentinel devParentMAC values that are never actual device references
+PARENT_MAC_SENTINELS = ("", "internet", "null")
+
+
+def ensure_dangling_parentmac_cleanup_trigger(sql):
+    """
+    Ensures a trigger exists that clears devParentMAC/devParentMACSource on any
+    device that referenced a device MAC which was just deleted, preventing
+    dangling Parent Node references.
+
+    Note: this intentionally does NOT touch the NEWDEV_devParentMAC setting.
+    Settings are sourced from app.conf and get re-imported verbatim on every
+    restart (see importConfigs()), so a DB-only fix here would be silently
+    reverted. Stale NEWDEV_devParentMAC values are instead guarded against at
+    the point of use in create_new_devices() (server/scan/device_handling.py).
+    """
+    try:
+        sql.execute(
+            "SELECT name FROM sqlite_master WHERE type='trigger' AND name='trg_clear_dangling_parentmac_on_delete'"
+        )
+        if not sql.fetchone():
+            mylog("verbose", ["[db_upgrade] Creating trigger 'trg_clear_dangling_parentmac_on_delete'"])
+            sql.execute("""
+                CREATE TRIGGER trg_clear_dangling_parentmac_on_delete
+                AFTER DELETE ON Devices
+                FOR EACH ROW
+                WHEN OLD.devMac IS NOT NULL AND OLD.devMac != ''
+                BEGIN
+                    UPDATE Devices
+                    SET devParentMAC = '', devParentMACSource = ''
+                    WHERE LOWER(devParentMAC) = LOWER(OLD.devMac);
+                END;
+            """)
+
+        return True
+
+    except Exception as e:
+        mylog("none", [f"[db_upgrade] ERROR while ensuring dangling parentMAC trigger: {e}"])
+        return False
+
+
+def cleanup_existing_dangling_parentmac(sql) -> bool:
+    """
+    One-time/idempotent cleanup for installations that already have devParentMAC
+    values pointing to a MAC no longer present in Devices. The delete trigger
+    only prevents new dangling references going forward, so this repairs data
+    left over from before the trigger existed.
+    """
+    try:
+        sentinel_list = ", ".join(f"'{v}'" for v in PARENT_MAC_SENTINELS)
+
+        sql.execute(f"""
+            UPDATE Devices
+            SET devParentMAC = '', devParentMACSource = ''
+            WHERE devParentMAC IS NOT NULL
+              AND LOWER(devParentMAC) NOT IN ({sentinel_list})
+              AND LOWER(devParentMAC) NOT IN (SELECT LOWER(devMac) FROM Devices)
+        """)
+        if sql.rowcount > 0:
+            mylog("verbose", [f"[db_upgrade] Cleared {sql.rowcount} dangling devParentMAC reference(s)"])
+
+        return True
+
+    except Exception as e:
+        mylog("none", [f"[db_upgrade] ERROR while cleaning up dangling parentMAC references: {e}"])
+        return False
+
+
+def cleanup_existing_default_devParentRelType(sql) -> bool:
+    """
+    One-time/idempotent cleanup for installations created before this setting's
+    config.json declared "dataType": "array" with a plain-string default_value
+    ("default", not a JSON array) - setting_value_to_python_type() failed to
+    json.loads() that default, logged a decode error on every scan, and wrote
+    the literal string '[]' into devParentRelType for every new device. Repairs
+    rows already stamped with '[]'; the type/default_value mismatch itself is
+    fixed in server/plugins/newdev_template/config.json.
+    """
+    try:
+        sql.execute("""
+            UPDATE Devices
+            SET devParentRelType = 'default'
+            WHERE devParentRelType = '[]'
+        """)
+        if sql.rowcount > 0:
+            mylog("verbose", [f"[db_upgrade] Fixed {sql.rowcount} device(s) with devParentRelType='[]'"])
+
+        return True
+
+    except Exception as e:
+        mylog("none", [f"[db_upgrade] ERROR while cleaning up devParentRelType='[]': {e}"])
         return False
 
 
@@ -424,6 +550,42 @@ def ensure_Indexes(sql) -> bool:
             "idx_dev_parentmac",
             "CREATE INDEX idx_dev_parentmac ON Devices(devParentMAC)",
         ),
+        (
+            "idx_ses_lower_mac_date",
+            """
+            CREATE INDEX idx_ses_lower_mac_date
+            ON Sessions(LOWER(sesMac), sesDateTimeConnection, sesDateTimeDisconnection, sesStillConnected)
+            """,
+        ),
+        (
+            "idx_eve_lower_mac_date_type",
+            """
+            CREATE INDEX idx_eve_lower_mac_date_type
+            ON Events(LOWER(eveMac), eveDateTime, eveEventType)
+            """,
+        ),
+        (
+            "idx_dev_lower_mac",
+            """
+            CREATE INDEX idx_dev_lower_mac
+            ON Devices(LOWER(devMac))
+            """,
+        ),
+        (
+            "idx_dev_lower_parentmac",
+            """
+            CREATE INDEX idx_dev_lower_parentmac
+            ON Devices(LOWER(devParentMAC))
+            """,
+        ),
+        (
+            "idx_dev_guid",
+            "CREATE INDEX idx_dev_guid ON Devices(devGUID)",
+        ),
+        (
+            "idx_plobj_guid",
+            "CREATE INDEX idx_plobj_guid ON Plugins_Objects(objectGuid)",
+        ),
         # Optional filter indexes
         ("idx_dev_site", "CREATE INDEX idx_dev_site ON Devices(devSite)"),
         ("idx_dev_group", "CREATE INDEX idx_dev_group ON Devices(devGroup)"),
@@ -437,11 +599,8 @@ def ensure_Indexes(sql) -> bool:
         (
             "idx_plugins_plugin_mac_ip",
             "CREATE INDEX idx_plugins_plugin_mac_ip ON Plugins_Objects(plugin, objectPrimaryId, objectSecondaryId)",
-        ),  # Issue #1251: Optimize name resolution lookup
+        ),
         # Plugins_History: covers both the db_cleanup window function
-        # (PARTITION BY plugin ORDER BY dateTimeChanged DESC) and the
-        # API query (SELECT * … ORDER BY dateTimeChanged DESC).
-        # Without this, both ops do a full 48k-row table sort on every cycle.
         (
             "idx_plugins_history_plugin_dt",
             "CREATE INDEX idx_plugins_history_plugin_dt ON Plugins_History(plugin, dateTimeChanged DESC)",
@@ -479,9 +638,46 @@ def ensure_CurrentScan(sql) -> bool:
                                 scanParentMAC STRING(250),
                                 scanParentPort STRING(250),
                                 scanFQDN STRING(250),
-                                scanType STRING(250)
+                                scanType STRING(250),
+                                scanCreatesDevice BOOLEAN NOT NULL DEFAULT (1) CHECK (scanCreatesDevice IN (0, 1)),
+                                scanNotificationMode STRING(10) NOT NULL DEFAULT ('normal'),
+                                scanPresence BOOLEAN NOT NULL DEFAULT (1) CHECK (scanPresence IN (0, 1))
                             );
                         """)
+    # scanMac has no uniqueness constraint - multiple plugins commonly report
+    # the same MAC in one cycle (e.g. arp_scan + nslookup), so every lookup
+    # keyed on scanMac (update_presence_from_CurrentScan, insert_events, the
+    # LatestDeviceScan/LatestEventsPerMAC views) was a full table scan without
+    # this. ensure_CurrentScan() itself only runs once, at app startup
+    # (DB.initDB() -> __main__.py) - each scan cycle only does
+    # DELETE FROM CurrentScan (session_events.py), which does not drop the
+    # table or its index, so this index is built once and then maintained
+    # incrementally, not rebuilt every cycle. Still cheap insurance against
+    # O(n^2) scans at NOC-scale device counts (10k+ in real deployments).
+    sql.execute("CREATE INDEX IF NOT EXISTS idx_currentscan_scanmac ON CurrentScan(scanMac);")
+
+    return True
+
+
+def ensure_Resource_History(sql) -> bool:
+    """
+    Ensures the Resource_History table and its datetime index exist.
+
+    Parameters:
+    - sql: database cursor or connection wrapper (must support execute() and fetchall()).
+    """
+    sql.execute(""" CREATE TABLE IF NOT EXISTS Resource_History (
+                                "index"           INTEGER PRIMARY KEY AUTOINCREMENT,
+                                resDateTime       TEXT NOT NULL,
+                                resCpuPercent     REAL,
+                                resRssMb          REAL,
+                                resIoReadBytes    INTEGER,
+                                resIoWriteBytes   INTEGER,
+                                resScanDurationMs INTEGER,
+                                resTickFailed     INTEGER NOT NULL DEFAULT 0
+                            );
+                        """)
+    sql.execute("CREATE INDEX IF NOT EXISTS idx_reshist_datetime ON Resource_History(resDateTime);")
 
     return True
 

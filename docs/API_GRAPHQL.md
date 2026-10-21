@@ -3,6 +3,7 @@
 GraphQL queries are **read-optimized for speed**. Data may be slightly out of date until the file system cache refreshes. The GraphQL endpoints allow you to access the following objects:
 
 * Devices
+* Device History (change audit log)
 * Settings
 * Events
 * PluginsObjects
@@ -414,4 +415,102 @@ curl 'http://host:GRAPHQL_PORT/graphql' \
 * The `setOverriddenByEnv` flag helps identify setting values that are locked at container runtime.
 * Plugin queries scope `dbCount` to the requested `plugin`/`foreignKey` so badge counts reflect per-plugin totals.
 * The schema is **read-only** — updates must be performed through other APIs or configuration management. See the other [API](API.md) endpoints for details.
+
+---
+
+## Device History Queries
+
+Device field change history is stored in `DevicesHistory` and exposed via two queries. History tracking is controlled by `DEV_HIST_DAYS` (retention window) and `DEV_HIST_TRACKED` (list of audited columns). Set `DEV_HIST_DAYS = 0` to disable tracking entirely.
+
+### `deviceHistoryGrouped` — Single Device
+
+Returns grouped change events for one device. Events are grouped by `(timestamp, changedBy)` so that simultaneous field changes are returned as a single object.
+
+```graphql
+query DeviceHistory($devGUID: String!, $changedColumn: String, $changedBy: String, $limit: Int, $offset: Int) {
+  deviceHistoryGrouped(
+    devGUID: $devGUID
+    changedColumn: $changedColumn
+    changedBy: $changedBy
+    limit: $limit
+    offset: $offset
+  ) {
+    count
+    history {
+      devGUID
+      timestamp
+      changedBy
+      changes {
+        changedColumn
+        oldValue
+        newValue
+      }
+    }
+  }
+}
+```
+
+#### Parameters
+
+| Parameter       | Type     | Required | Description                                                          |
+|-----------------|----------|----------|----------------------------------------------------------------------|
+| `devGUID`       | `String` | No       | GUID of the device to fetch history for                              |
+| `changedColumn` | `String` | No       | Filter to groups containing a change to this specific column         |
+| `changedBy`     | `String` | No       | Filter to a specific attribution source (`USER`, `ARPSCAN`, etc.)    |
+| `limit`         | `Int`    | No       | Max grouped events to return (default `50`)                          |
+| `offset`        | `Int`    | No       | Grouped-event offset for pagination (default `0`)                    |
+
+#### Response fields
+
+| Field                      | Description                                                                 |
+|----------------------------|-----------------------------------------------------------------------------|
+| `count`                    | Total number of grouped events matching the filters (use for pagination)    |
+| `history[].devGUID`        | Device GUID                                                                 |
+| `history[].timestamp`      | UTC timestamp of the change event                                           |
+| `history[].changedBy`      | Attribution: `USER`, plugin prefix (e.g. `ARPSCAN`), or `system`            |
+| `history[].changes[].changedColumn` | Column name that changed                                           |
+| `history[].changes[].oldValue`      | Value before the change (`null` for new devices)                   |
+| `history[].changes[].newValue`      | Value after the change                                              |
+
+#### `curl` Example
+
+```sh
+curl -X POST http://localhost:20212/graphql \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_API_TOKEN" \
+  -d '{
+    "query": "query($devGUID:String!,$limit:Int,$offset:Int){deviceHistoryGrouped(devGUID:$devGUID,limit:$limit,offset:$offset){count history{timestamp changedBy changes{changedColumn oldValue newValue}}}}",
+    "variables": {
+      "devGUID": "your-device-guid-here",
+      "limit": 25,
+      "offset": 0
+    }
+  }'
+```
+
+---
+
+
+
+---
+
+### Filter Values Endpoint
+
+To populate dynamic filter dropdowns, fetch available `changedBy` and `changedColumn` values via the REST endpoint:
+
+```sh
+GET /devices/history/filters?devGUID=<guid>   # scoped to one device
+GET /devices/history/filters                   # all devices
+```
+
+Response:
+```json
+{
+  "success": true,
+  "data": {
+    "changedBy": ["ARPSCAN", "USER", "VNDRPDT", "system"],
+    "changedColumn": ["devLastIP", "devName", "devNameSource", "devVendor"]
+  }
+}
+```
 

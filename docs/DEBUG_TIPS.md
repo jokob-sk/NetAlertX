@@ -67,7 +67,7 @@ Sometimes specific log sections are needed to debug issues. The Devices and Curr
 2. Wait for the issue to occur.
 3. Search for `================ DEVICES table content  ================` in your logs.
 4. Search for `================ CurrentScan table content  ================` in your logs.
-5. Open a new issue and post (redacted) output into the issue description (or send to the netalertx@gmail.com email if sensitive data present).
+5. Open a new issue and post (redacted) output into the issue description (or send to the support@netalertx.com email if sensitive data present).
 6. Please set `LOG_LEVEL` to `debug` or lower.
 
 ## Common issues

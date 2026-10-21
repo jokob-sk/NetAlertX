@@ -1,0 +1,773 @@
+{
+  "code_name": "ui_settings",
+  "unique_prefix": "UI",
+  "plugin_type": "core",
+  "enabled": true,
+  "data_source": "template",
+  "show_ui": false,
+  "localized": ["display_name", "description", "icon"],
+  "display_name": [
+    {
+      "language_code": "en_us",
+      "string": "UI Settings"
+    }
+  ],
+  "description": [
+    {
+      "language_code": "en_us",
+      "string": "Plugin to adjust UI settings."
+    }
+  ],
+  "icon": [
+    {
+      "language_code": "en_us",
+      "string": "<i class=\"fa fa-paint-roller\"></i>"
+    }
+  ],
+  "params": [],
+  "settings": [
+    {
+      "function": "LOCALE",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": "en-GB",
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Locale"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "The locale used to format dates that are displayed in the UI."
+        }
+      ]
+    },
+    {
+      "function": "NOT_RANDOM_MAC",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              { "placeholder": "Enter value" },
+              { "suffix": "_in" },
+              { "cssClasses": "col-sm-10" },
+              { "prefillValue": "null" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": ["_in"] },
+              { "separator": "" },
+              { "cssClasses": "col-xs-12" },
+              { "onClick": "addList(this,false)" },
+              { "getStringKey": "Gen_Add" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "select",
+            "elementHasInputValue": 1,
+            "elementOptions": [
+              { "multiple": "true" },
+              { "readonly": "true" },
+              { "editable": "true" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": [] },
+              { "separator": "" },
+              { "cssClasses": "col-xs-6" },
+              { "onClick": "removeAllOptions(this)" },
+              { "getStringKey": "Gen_Remove_All" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": [] },
+              { "separator": "" },
+              { "cssClasses": "col-xs-6" },
+              { "onClick": "removeFromList(this)" },
+              { "getStringKey": "Gen_Remove_Last" }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 50,
+      "default_value": [],
+      "options": [],
+      "localized": [],
+      "name": [
+        {
+          "string": "_GLOBAL_LANG_FILES_"
+        }
+      ],
+      "description": [
+        {
+          "string": "_GLOBAL_LANG_FILES_"
+        }
+      ]
+    },
+    {
+      "function": "ICONS",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              { "placeholder": "Enter value" },
+              { "suffix": "_in" },
+              { "cssClasses": "col-sm-10" },
+              { "prefillValue": "null" },
+              { "type": "hidden" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": ["_in"] },
+              { "separator": "" },
+              { "cssClasses": "col-xs-12" },
+              { "onClick": "addIconViaModal(this)" },
+              { "getStringKey": "Gen_Add" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "select",
+            "elementHasInputValue": 1,
+            "elementOptions": [
+              { "multiple": "true" },
+              { "readonly": "true" },
+              { "editable": "true" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": [] },
+              { "separator": "" },
+              { "cssClasses": "col-xs-6" },
+              { "onClick": "removeAllOptions(this)" },
+              { "getStringKey": "Gen_Remove_All" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": [] },
+              { "separator": "" },
+              { "cssClasses": "col-xs-6" },
+              { "onClick": "removeFromList(this)" },
+              { "getStringKey": "Gen_Remove_Last" }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 50,
+      "default_value": [
+        "PGkgY2xhc3M9ImZhIGZhLWNvbXB1dGVyIj48L2k+",
+        "PGkgY2xhc3M9ImZhIGZhLWV0aGVybmV0Ij48L2k+",
+        "PGkgY2xhc3M9ImZhIGZhLWdhbWVwYWQiPjwvaT4=",
+        "PGkgY2xhc3M9ImZhIGZhLWdsb2JlIj48L2k+",
+        "PGkgY2xhc3M9ImZhIGZhLWxhcHRvcCI+PC9pPg==",
+        "PGkgY2xhc3M9ImZhIGZhLWxpZ2h0YnVsYiI+PC9pPg==",
+        "PGkgY2xhc3M9ImZhIGZhLXNoaWVsZCI+PC9pPg==",
+        "PGkgY2xhc3M9ImZhIGZhLXdpZmkiPjwvaT4=",
+        "PGkgY2xhc3M9ImZhIGZhLWdhbWVwYWQiPjwvaT4=",
+        "PGkgY2xhc3M9ImZhLXNvbGlkIGZhLXByaW50Ij48L2k+",
+        "PGkgY2xhc3M9ImZhLXNvbGlkIGZhLW1vYmlsZSI+PC9pPg==",
+        "PGkgY2xhc3M9ImZhLXNvbGlkIGZhLWhhcmQtZHJpdmUiPjwvaT4=",
+        "PGkgY2xhc3M9ImZhLXNvbGlkIGZhLXNlcnZlciI+PC9pPg==",
+        "PGkgY2xhc3M9ImZhLWJyYW5kcyBmYS1hbmRyb2lkIj48L2k+"
+      ],
+      "options": [],
+      "localized": [],
+      "name": [
+        {
+          "string": "_GLOBAL_LANG_FILES_"
+        }
+      ],
+      "description": [
+        {
+          "string": "_GLOBAL_LANG_FILES_"
+        }
+      ]
+    },
+    {
+      "function": "SCAN_PAUSE",
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "number" }],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 50,
+      "default_value": 30,
+      "options": [],
+      "localized": [],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Scan pause duration"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "How long (in minutes) should scans be paused when the user clicks the Pause button. Accepts values from <code>1</code> to <code>1440</code>."
+        }
+      ]
+    },
+    {
+      "function": "REFRESH",
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "number" }],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 50,
+      "default_value": 0,
+      "options": [],
+      "localized": [],
+      "name": [
+        {
+          "string": "_GLOBAL_LANG_FILES_"
+        }
+      ],
+      "description": [
+        {
+          "string": "_GLOBAL_LANG_FILES_"
+        }
+      ]
+    },
+    {
+      "function": "DEFAULT_PAGE_SIZE",
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "number" }],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 50,
+      "default_value": 20,
+      "options": [],
+      "localized": [],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Default page size"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Default number of items shown in tables per page, for example in the Devices lists."
+        }
+      ]
+    },
+    {
+      "function": "DEV_SECTIONS",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [{ "multiple": "true", "orderable": "true" }],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 50,
+      "default_value": [],
+      "options": ["Tile Cards", "Device Presence"],
+      "localized": [],
+      "name": [
+        {
+          "string": "_GLOBAL_LANG_FILES_"
+        }
+      ],
+      "description": [
+        {
+          "string": "_GLOBAL_LANG_FILES_"
+        }
+      ]
+    },
+    {
+      "function": "PRESENCE",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [{ "multiple": "true", "orderable": "true" }],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 50,
+      "default_value": ["online", "down", "offline", "archived"],
+      "options": ["online", "down", "offline", "archived"],
+      "localized": [],
+      "name": [
+        {
+          "string": "_GLOBAL_LANG_FILES_"
+        }
+      ],
+      "description": [
+        {
+          "string": "_GLOBAL_LANG_FILES_"
+        }
+      ]
+    },
+    {
+      "function": "MY_DEVICES",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [{ "multiple": "true", "orderable": "true" }],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 50,
+      "default_value": ["online", "offline", "archived", "new", "down"],
+      "options": ["online", "offline", "archived", "new", "down", "all"],
+      "localized": [],
+      "name": [
+        {
+          "string": "_GLOBAL_LANG_FILES_"
+        }
+      ],
+      "description": [
+        {
+          "string": "_GLOBAL_LANG_FILES_"
+        }
+      ]
+    },
+    {
+      "function": "device_columns",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [{ "multiple": "true", "orderable": "true" }],
+            "transformers": ["getString"]
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": [] },
+              { "separator": "" },
+              { "cssClasses": "col-xs-4" },
+              { "onClick": "selectAll(this)" },
+              { "getStringKey": "Gen_Add_All" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": [] },
+              { "separator": "" },
+              { "cssClasses": "col-xs-4" },
+              { "onClick": "unselectAll(this)" },
+              { "getStringKey": "Gen_Remove_All" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": [] },
+              { "separator": "" },
+              { "cssClasses": "col-xs-4" },
+              { "onClick": "selectChange(this)" },
+              { "getStringKey": "Gen_Change" }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 50,
+      "default_value": [
+        "Device_TableHead_Icon",
+        "Device_TableHead_Name",
+        "Device_TableHead_Type",
+        "Device_TableHead_LastIP",
+        "Device_TableHead_Status",
+        "Device_TableHead_MAC_full",
+        "Device_TableHead_SourcePlugin",
+        "Device_TableHead_CustomProps"
+      ],
+      "options": [
+        "Device_TableHead_Name",
+        "Device_TableHead_Owner",
+        "Device_TableHead_Type",
+        "Device_TableHead_Icon",
+        "Device_TableHead_Favorite",
+        "Device_TableHead_Group",
+        "Device_TableHead_FirstSession",
+        "Device_TableHead_LastSession",
+        "Device_TableHead_LastIP",
+        "Device_TableHead_MAC",
+        "Device_TableHead_Status",
+        "Device_TableHead_MAC_full",
+        "Device_TableHead_LastIPOrder",
+        "Device_TableHead_Rowid",
+        "Device_TableHead_Parent_MAC",
+        "Device_TableHead_Connected_Devices",
+        "Device_TableHead_Location",
+        "Device_TableHead_Vendor",
+        "Device_TableHead_Port",
+        "Device_TableHead_GUID",
+        "Device_TableHead_SyncHubNodeName",
+        "Device_TableHead_NetworkSite",
+        "Device_TableHead_SSID",
+        "Device_TableHead_SourcePlugin",
+        "Device_TableHead_PresentLastScan",
+        "Device_TableHead_AlertDown",
+        "Device_TableHead_CustomProps",
+        "Device_TableHead_FQDN",
+        "Device_TableHead_ParentRelType",
+        "Device_TableHead_ReqNicsOnline",
+        "Device_TableHead_Vlan",
+        "Device_TableHead_IPv4",
+        "Device_TableHead_IPv6",
+        "Device_TableHead_Flapping",
+        "Device_TableHead_Comments",
+        "Device_TableHead_AlertEvents",
+        "Device_TableHead_CanSleep",
+        "Device_TableHead_StaticIP"
+      ],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Device Columns"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Columns and their order that are shown on the Devices page. Drag and drop to order the columns, click <code>x</code> to remove columns. You can also click into the field to selectivelly add fields. The <code>Name</code> and <code>Status</code> fields are required."
+        }
+      ]
+    },
+    {
+      "function": "columns_filters",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [{ "multiple": "true", "orderable": "true" }],
+            "transformers": ["getString"]
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": [] },
+              { "separator": "" },
+              { "cssClasses": "col-xs-4" },
+              { "onClick": "selectAll(this)" },
+              { "getStringKey": "Gen_Add_All" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": [] },
+              { "separator": "" },
+              { "cssClasses": "col-xs-4" },
+              { "onClick": "unselectAll(this)" },
+              { "getStringKey": "Gen_Remove_All" }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              { "sourceSuffixes": [] },
+              { "separator": "" },
+              { "cssClasses": "col-xs-4" },
+              { "onClick": "selectChange(this)" },
+              { "getStringKey": "Gen_Change" }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 50,
+      "default_value": [
+        "Device_TableHead_Type",
+        "Device_TableHead_SyncHubNodeName",
+        "Device_TableHead_SourcePlugin"
+      ],
+      "options": [
+        "Device_TableHead_Owner",
+        "Device_TableHead_Type",
+        "Device_TableHead_Group",
+        "Device_TableHead_Location",
+        "Device_TableHead_Vendor",
+        "Device_TableHead_SyncHubNodeName",
+        "Device_TableHead_NetworkSite",
+        "Device_TableHead_SSID",
+        "Device_TableHead_SourcePlugin",
+        "Device_TableHead_ParentRelType",
+        "Device_TableHead_Parent_MAC",
+        "Device_TableHead_Vlan"
+      ],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Column Filters"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Column filters that should be displayed in the main Devices screen. Drag and drop to change the order. Remove all to hide the Filters section."
+        }
+      ]
+    },
+    {
+      "function": "shown_cards",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [{ "multiple": "true", "orderable": "true" }],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 50,
+      "default_value": [
+        "my_devices",
+        "connected",
+        "favorites",
+        "new",
+        "down",
+        "archived"
+      ],
+      "options": [
+        "my_devices",
+        "connected",
+        "favorites",
+        "new",
+        "down",
+        "archived",
+        "offline",
+        "all"
+      ],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Tiles to Show"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Which tiles to show on the top of the Devices page."
+        }
+      ]
+    },
+    {
+      "function": "hide_rel_types",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [{ "multiple": "true", "orderable": "true" }],
+            "transformers": []
+          }
+        ]
+      },
+      "maxLength": 50,
+      "default_value": [
+        "nic",
+        "virtual"
+      ],
+      "options": [
+        "child",
+        "logical",
+        "nic",
+        "virtual"
+      ],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Relationships to hide"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Specifies which device relationships to their parent node should be hidden from the devices lists. Devices with a matching <code>devParentRelType</code> will be excluded from most lists."
+        }
+      ]
+    },
+    {
+      "function": "hide_empty",
+      "type": {
+        "dataType": "boolean",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "checkbox" }],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": false,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Hide empty tiles"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Hide Tiles in the Devices pages with zero results."
+        }
+      ]
+    },
+    {
+      "function": "theme",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [{ "multiple": "false", "orderable": "false" }],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": "Light",
+      "options": ["Light","Dark","System"],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Theme"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "UI theme to use. System will auto switch between Light and Dark."
+        }
+      ]
+    },
+    {
+      "function": "TOPOLOGY_ORDER",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [{ "multiple": "false", "orderable": "false" }],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": "Name",
+      "options": ["Name","Port"],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Order by in Network"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Based on which value should the network topology view be ordered."
+        }
+      ]
+    },
+    {
+      "function": "WAIT_FOR_SETTINGS",
+      "type": {
+        "dataType": "boolean",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [{ "type": "checkbox" }],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": false,
+      "options": [],
+      "localized": ["name", "description"],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Wait for settings reload"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "When enabled, the UI blocks after saving settings until the backend finishes reloading. When disabled (default), the UI returns immediately for most changes and only waits when plugin configuration changes."
+        }
+      ]
+    }
+  ]
+}

@@ -80,7 +80,7 @@ volumes:
   ![Build](./img/SYNOLOGY/09_Run_and_build.png)
 
 10. Navigate to `<Synology URL>:20211` (or your custom port).
-11. Read the [Subnets](./SUBNETS.md) and [Plugins](/docs/PLUGINS.md) docs to complete your setup.
+11. Read the [Subnets](./SUBNETS.md) and [Plugins](./PLUGINS_OVERVIEW.md) docs to complete your setup.
 
 ## Solving permission issues
 

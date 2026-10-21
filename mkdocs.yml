@@ -5,21 +5,20 @@ edit_uri: blob/main/docs/
 docs_dir: docs
 use_directory_urls: true
 site_description: >-
-  The main documentation resource for NetAlertX - a network scanner and presence detector
+  The main documentation resource for NetAlertX - Network visibility & Asset intelligence application
 # static_dir: docs/img
 nav:
   - Home: index.md
-
   - Installation:
       - Installation options: INSTALLATION.md
       - Quick setup: INITIAL_SETUP.md
       - Docker:
-        - Docker Guide: DOCKER_INSTALLATION.md
+        - Docker guide: DOCKER_INSTALLATION.md
         - Docker Compose: DOCKER_COMPOSE.md
-        - Docker File Permissions: FILE_PERMISSIONS.md
-        - Docker Updates: UPDATES.md
-        - Docker Maintenance: DOCKER_MAINTENANCE.md
-      - Docker Startup Troubleshooting:
+        - Docker file permissions: FILE_PERMISSIONS.md
+        - Docker updates: UPDATES.md
+        - Docker maintenance: DOCKER_MAINTENANCE.md
+      - Docker startup troubleshooting:
         - ARP flux sysctls: docker-troubleshooting/arp-flux-sysctls.md
         - Aufs capabilities: docker-troubleshooting/aufs-capabilities.md
         - Excessive capabilities: docker-troubleshooting/excessive-capabilities.md
@@ -33,96 +32,106 @@ nav:
         - Read only: docker-troubleshooting/read-only-filesystem.md
         - Running as root: docker-troubleshooting/running-as-root.md
       - Other:
-        - Synology Guide: SYNOLOGY_GUIDE.md
+        - Synology guide: SYNOLOGY_GUIDE.md
         - Portainer Stacks: DOCKER_PORTAINER.md
-        - Community Guides: COMMUNITY_GUIDES.md
+        - Community guides: COMMUNITY_GUIDES.md
         - Bare-metal (Experimental): HW_INSTALL.md
-        - Migration Guide: MIGRATION.md
+        - Migration guide: MIGRATION.md
       - Help:
         - Common issues: COMMON_ISSUES.md
   - Setup:
       - Getting started:
         - Subnets: SUBNETS.md
-        - Enable Plugins: PLUGINS.md
-        - Pi-hole Guide: PIHOLE_GUIDE.md
-        - Home Assistant: HOME_ASSISTANT.md
-        - Emails: SMTP.md
+        - Enable Plugins: PLUGINS_OVERVIEW.md
+        - Plugins reference: plugins/
         - Backups: BACKUPS.md
-        - Security Features: SECURITY_FEATURES.md
-        - Security Considerations: SECURITY.md
+        - Security features: SECURITY_FEATURES.md
+        - Security considerations: SECURITY.md
       - Advanced guides:
-        - Remote Networks: REMOTE_NETWORKS.md
-        - Notifications Guide: NOTIFICATIONS.md
-        - Notification Text Templates: NOTIFICATION_TEMPLATES.md
+        - Remote networks: REMOTE_NETWORKS.md
+        - Notifications guide: NOTIFICATIONS.md
+        - Notification text templates: NOTIFICATION_TEMPLATES.md
         - Custom PUID/GUID: PUID_PGID_SECURITY.md
-        - Name Resolution: NAME_RESOLUTION.md
-        - Authelia: AUTHELIA.md
-        - Performance: PERFORMANCE.md
+        - Name resolution: NAME_RESOLUTION.md
+        - Authelia guide: AUTHELIA.md
+        - Performance guide: PERFORMANCE.md
         - Reverse DNS: REVERSE_DNS.md
-        - Reverse Proxy: REVERSE_PROXY.md
-        - Webhooks (n8n): WEBHOOK_N8N.md
+        - Reverse proxy: REVERSE_PROXY.md
         - Workflows: WORKFLOWS.md
-        - Workflow Examples: WORKFLOW_EXAMPLES.md
+        - Workflow examples: WORKFLOW_EXAMPLES.md
         - Docker Swarm: DOCKER_SWARM.md
-      - Best practice advisories:
-        - Eyes on glass: ADVISORY_EYES_ON_GLASS.md
-        - Multi-network monitoring: ADVISORY_MULTI_NETWORK.md
+      - Best practice guides:
+        - NOC / Eyes-on-glass dashboard: ADVISORY_EYES_ON_GLASS.md
+        - Multi-network (VLAN / routing) monitoring: ADVISORY_MULTI_NETWORK.md
+        - Multi-site (MSP / customer / branch) monitoring: ADVISORY_MULTI_SITE_MONITORING.md
       - Help:
         - Common issues: COMMON_ISSUES.md
         - Random MAC: RANDOM_MAC.md
-        - Incorrect Offline Detection: FIX_OFFLINE_DETECTION.md
   - Device guides:
-      - Editing Devices:
+      - Editing devices:
         - Management: DEVICE_MANAGEMENT.md
-        - Bulk Editing: DEVICES_BULK_EDITING.md
-        - Custom Properties: CUSTOM_PROPERTIES.md
-        - Device Display Settings: DEVICE_DISPLAY_SETTINGS.md
-        - Session Info: SESSION_INFO.md
-        - Field Lock/Unlock: DEVICE_FIELD_LOCK.md
-      - Icons and Topology:
+        - Bulk editing: DEVICES_BULK_EDITING.md
+        - Custom properties: CUSTOM_PROPERTIES.md
+        - Device display settings: DEVICE_DISPLAY_SETTINGS.md
+        - Device views filtering: DEVICE_FILTERS.md
+        - Session info: SESSION_INFO.md
+        - Field Lock/Unlock: DEVICE_FIELD_LOCK.md        
+      - Device auditing:
+        - Change log: DEVICE_CHANGE_LOG.md
+        - Presence: DEVICE_PRESENCE.md
+        - Device source fields: DEVICE_SOURCE_FIELDS.md
+      - Icons and network topology:
         - Icons: ICONS.md
-        - Network Topology: NETWORK_TREE.md
+        - Network topology: NETWORK_TREE.md
+  - Other guides:
+      - Pi-hole guide: PIHOLE_GUIDE.md
+      - Home Assistant: HOME_ASSISTANT.md
+      - Common email services: SMTP.md 
+      - Rest import: REST_IMPORT.md 
+      - Webhooks (n8n): WEBHOOK_N8N.md
   - Troubleshooting:
-      - General Tips: DEBUG_TIPS.md
-      - Common Issues: COMMON_ISSUES.md
-      - Inspecting Logs: LOGGING.md
-      - API Server Issues: DEBUG_API_SERVER.md
-      - Invalid JSON Issues: DEBUG_INVALID_JSON.md
-      - PHP Issues: DEBUG_PHP.md
-      - Plugin Issues: DEBUG_PLUGINS.md
-      - Web UI Port Issues: WEB_UI_PORT_DEBUG.md
-      - Workflows Issues: WORKFLOWS_DEBUGGING.md
+      - General tips: DEBUG_TIPS.md
+      - Common issues: COMMON_ISSUES.md
+      - Inspecting logs: LOGGING.md
+      - API server issues: DEBUG_API_SERVER.md
+      - Invalid JSON issues: DEBUG_INVALID_JSON.md
+      - PHP backend issues: DEBUG_PHP.md
+      - Plugin issues: DEBUG_PLUGINS.md
+      - Web UI port issues: WEB_UI_PORT_DEBUG.md
+      - Workflows issues: WORKFLOWS_DEBUGGING.md
+      - Incorrect offline detection: FIX_OFFLINE_DETECTION.md
   - Development:
       - Plugin and app development:
-        - Environment Setup: DEV_ENV_SETUP.md
+        - Environment setup: DEV_ENV_SETUP.md
         - Builds: BUILDS.md
         - Devcontainer: DEV_DEVCONTAINER.md
-        - Devcontainer Ports: DEV_PORTS_HOST_MODE.md
-        - Custom Plugins:
+        - Devcontainer ports: DEV_PORTS_HOST_MODE.md
+        - Custom plugins:
           - Overview: PLUGINS_DEV.md
-          - Quick Start: PLUGINS_DEV_QUICK_START.md
-          - Data Contract: PLUGINS_DEV_DATA_CONTRACT.md
-          - Settings System: PLUGINS_DEV_SETTINGS.md
-          - Data Sources: PLUGINS_DEV_DATASOURCES.md
-          - UI Components: PLUGINS_DEV_UI_COMPONENTS.md
-          - Config Lifecycle: PLUGINS_DEV_CONFIG.md
-        - Frontend Development: FRONTEND_DEVELOPMENT.md
+          - Quick start: PLUGINS_DEV_QUICK_START.md
+          - Data contract: PLUGINS_DEV_DATA_CONTRACT.md
+          - Import behavior: PLUGINS_IMPORT_BEHAVIOR.md
+          - Settings system: PLUGINS_DEV_SETTINGS.md
+          - Data sources: PLUGINS_DEV_DATASOURCES.md
+          - UI components: PLUGINS_DEV_UI_COMPONENTS.md
+          - Config lifecycle: PLUGINS_DEV_CONFIG.md
+        - Frontend development: FRONTEND_DEVELOPMENT.md
         - Database: DATABASE.md
         - Settings: SETTINGS_SYSTEM.md
         - Versions: VERSIONS.md
-        - Icon and Type guessing: DEVICE_HEURISTICS.md
+        - Icon and type guessing: DEVICE_HEURISTICS.md
       - API:
         - Overview: API.md
-        - Devices Collection: API_DEVICES.md
+        - Devices collection: API_DEVICES.md
         - Device: API_DEVICE.md
-        - Device Field Lock: API_DEVICE_FIELD_LOCK.md
+        - Device field Lock: API_DEVICE_FIELD_LOCK.md
         - Sessions: API_SESSIONS.md
         - Settings: API_SETTINGS.md
         - Events: API_EVENTS.md
         - Messaging in-app: API_MESSAGING_IN_APP.md
         - Metrics: API_METRICS.md
-        - Net Tools: API_NETTOOLS.md
-        - Online History: API_ONLINEHISTORY.md
+        - Net tools: API_NETTOOLS.md
+        - Online history: API_ONLINEHISTORY.md
         - Sync: API_SYNC.md
         - Logs: API_LOGS.md
         - SSE: API_SSE.md
@@ -132,7 +141,7 @@ nav:
         - Tests: API_TESTS.md
         - SUPERSEDED OLD API Overview: API_OLD.md
       - Integrations:
-        - Webhook Secret: WEBHOOK_SECRET.md
+        - Webhook secret: WEBHOOK_SECRET.md
         - Helper scripts: HELPER_SCRIPTS.md
 
 
@@ -198,6 +207,7 @@ theme:
         icon: material/lightbulb-outline
         name: Switch to dark mode
 markdown_extensions:
+  - tables
   - admonition
   - pymdownx.superfences
   - pymdownx.highlight
@@ -220,6 +230,14 @@ plugins:
   - gh-admonitions
   - search
   - glightbox
+  - gen-files:
+      scripts:
+        - docs/gen_plugin_pages.py
+  - literate-nav:
+      nav_file: SUMMARY.md
+  - redirects:
+      redirect_maps:
+        'PLUGINS.md': 'PLUGINS_OVERVIEW.md'
 
 # Custom CSS
 extra_css:

@@ -19,7 +19,7 @@ For best results, ensure the following name resolution plugins are enabled:
 
 You can check which plugins are active in your _Settings_ section and enable any that are missing.
 
-There are other plugins that can supply device names as well, but they rely on bespoke hardware and services. See [Plugins overview](./PLUGINS.md) for details and look for plugins with name discovery (🆎) features.
+There are other plugins that can supply device names as well, but they rely on bespoke hardware and services. See [Plugins overview](./PLUGINS_OVERVIEW.md) for details and look for plugins with name discovery (🆎) features.
 
 ## Checking Logs
 

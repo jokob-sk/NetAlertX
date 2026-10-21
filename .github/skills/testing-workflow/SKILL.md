@@ -28,7 +28,7 @@ Tests live in `test/` directory. App code is under `server/`.
 PYTHONPATH is preconfigured to include the following which should meet all needs:
 - `/app` # the primary location where python runs in the production system
 - `/app/server` # symbolic link to /wprkspaces/NetAlertX/server
-- `/app/front/plugins` # symbolic link to /workspaces/NetAlertX/front/plugins
+- `/app/server/plugins` # symbolic link to /workspaces/NetAlertX/server/plugins
 - `/opt/venv/lib/pythonX.Y/site-packages`
 - `/workspaces/NetAlertX/test`
 - `/workspaces/NetAlertX/server`
@@ -59,3 +59,49 @@ docker buildx build -t netalertx-test .
 ```
 
 This takes ~30 seconds unless venv stage changes (~90s).
+
+## Pitfall: `sys.modules` Stubbing Leaks Across Test Files
+
+Some plugin tests (e.g. `test/plugins/test_ntfy_custom_headers.py`) stub NetAlertX
+modules (`conf`, `helper`, `models.notification_instance`, etc.) via
+`sys.modules[name] = fake_module` so the plugin script can be imported standalone,
+outside the container. Because `sys.modules` is a single process-wide cache shared
+by the whole pytest session, a fake module inserted by one test file silently
+shadows the real module for every other test file collected afterwards — pytest
+imports all test files during collection, before any test runs, so this can happen
+regardless of alphabetical/directory order.
+
+Symptom: `AttributeError: <module 'models.notification_instance'> does not have
+the attribute 'get_setting_value'` (or similar) in an unrelated test file, where
+the module repr has no `from '<path>'` suffix — a giveaway that a stub, not the
+real module, was resolved.
+
+Fix pattern: track which module names your stub actually inserted, and pop them
+back out of `sys.modules` immediately after the one-time import that needed them
+(the already-imported script keeps its bound names regardless):
+
+```python
+_stubbed_module_names = []
+
+def _stub(name, **attrs):
+    if name not in sys.modules:
+        mod = types.ModuleType(name)
+        for k, v in attrs.items():
+            setattr(mod, k, v)
+        sys.modules[name] = mod
+        _stubbed_module_names.append(name)
+
+# ... _stub(...) calls, then the one-time import ...
+import ntfy
+
+for _name in _stubbed_module_names:
+    sys.modules.pop(_name, None)
+```
+
+Reproduce cross-file pollution locally by running the suspect file together with
+the affected one in a single pytest invocation (order matters less than you'd
+think — collection happens for all files first):
+
+```bash
+pytest test/plugins/test_ntfy_custom_headers.py test/backend/test_notification_templates.py -v
+```

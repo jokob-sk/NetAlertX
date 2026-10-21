@@ -75,4 +75,73 @@ The retrieved token MUST be used in all subsequent API or test calls requiring a
 If tests fail with 403 Forbidden or empty tokens:
 1. Verify server is running and use the setup script (`/workspaces/NetAlertX/.devcontainer/scripts/setup.sh`) if required.
 2. Verify `app.conf` inside the container: `cat /data/config/app.conf`
-3. Verify Python can read it: `python3 -c "from helper import get_setting_value; print(get_setting_value('API_TOKEN'))"`
+
+## Check for Pre-Existing Failures
+
+Before attributing failures to your changes, check what was already broken:
+
+```bash
+cd /workspaces/NetAlertX; pytest test/ --tb=no -q 2>&1 | tail -20
+```
+
+Do not fix pre-existing failures unless that is the explicit goal.
+
+## PYTHONPATH
+
+The test environment is pre-configured with:
+- `/app` — primary location where Python runs in production
+- `/app/server` — symlink to `/workspaces/NetAlertX/server`
+- `/app/server/plugins` — symlink to `/workspaces/NetAlertX/server/plugins`
+- `/opt/venv/lib/pythonX.Y/site-packages`
+- `/workspaces/NetAlertX/test`
+- `/workspaces/NetAlertX/server`
+- `/workspaces/NetAlertX`
+- `/usr/lib/pythonX.Y/site-packages`
+
+## Docker Test Image
+
+If the Dockerfile or dependencies changed, rebuild the test image before running:
+
+```bash
+docker buildx build -t netalertx-test .
+```
+
+Takes ~30 seconds; ~90 seconds if the venv stage changed.
+
+## Pitfall: `sys.modules` Stubbing Leaks Across Test Files
+
+Some plugin tests (e.g. `test/plugins/test_ntfy_custom_headers.py`) stub NetAlertX
+modules (`conf`, `helper`, `models.notification_instance`, etc.) via
+`sys.modules[name] = fake_module` so the plugin script can be imported standalone,
+outside the container. Because `sys.modules` is a single process-wide cache shared
+by the whole pytest session, a fake module inserted by one test file silently
+shadows the real module for every other test file collected afterwards — pytest
+imports all test files during collection, before any test runs, so this can happen
+regardless of alphabetical/directory order.
+
+Symptom: `AttributeError: <module 'models.notification_instance'> does not have
+the attribute 'get_setting_value'` (or similar) in an unrelated test file, where
+the module repr has no `from '<path>'` suffix — a giveaway that a stub, not the
+real module, was resolved.
+
+Fix pattern: track which module names your stub actually inserted, and pop them
+back out of `sys.modules` immediately after the one-time import that needed them
+(the already-imported script keeps its bound names regardless):
+
+```python
+_stubbed_module_names = []
+
+def _stub(name, **attrs):
+    if name not in sys.modules:
+        mod = types.ModuleType(name)
+        for k, v in attrs.items():
+            setattr(mod, k, v)
+        sys.modules[name] = mod
+        _stubbed_module_names.append(name)
+
+# ... _stub(...) calls, then the one-time import ...
+import ntfy
+
+for _name in _stubbed_module_names:
+    sys.modules.pop(_name, None)
+```

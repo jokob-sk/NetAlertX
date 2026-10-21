@@ -55,7 +55,7 @@ A combined approach greatly improves detection robustness:
 * `ICMP` (ping)
 * `NMAPDEV` (nmap)
 
-This hybrid strategy increases reliability, especially for down detection and alerting. See [other plugins](./PLUGINS.md) that might be compatible with your setup. See benefits and drawbacks of individual scan methods in their respective docs.
+This hybrid strategy increases reliability, especially for down detection and alerting. See [other plugins](./PLUGINS_OVERVIEW.md) that might be compatible with your setup. See benefits and drawbacks of individual scan methods in their respective docs.
 
 ## Results
 

@@ -89,10 +89,10 @@ echo '<div class="box box-solid">
 
 // Network ----------------------------------------------------------
 echo '<div class="box box-solid">
-            <div class="box-header">
-              <h3 class="box-title sysinfo_headline"><i class="fas fa-ethernet"></i> ' . lang('Systeminfo_Network') . '</h3>
-            </div>
-            <div class="box-body">
+      <div class="box-header">
+        <h3 class="box-title sysinfo_headline"><i class="fas fa-ethernet"></i> ' . lang('Systeminfo_Network') . '</h3>
+      </div>
+      <div class="box-body">
 			<div class="row">
 			  <div class="col-sm-3 sysinfo_network_a">' . lang('Systeminfo_Network_IP') . '</div>
 			  <div class="col-sm-9 sysinfo_network_b" id="external-ip">' .$externalIp. '</div>
@@ -335,6 +335,18 @@ function loadInterfaces() {
                     </tr>
                 `);
             });
+
+            if ($.fn.DataTable.isDataTable('#networkTable')) {
+                $('#networkTable').DataTable().destroy();
+            }
+
+            $('#networkTable').DataTable({
+                searching: true,
+                order: [[0, "desc"]],
+                initComplete: function() {
+                    hideSpinner();
+                }
+            });
         },
         error: function(xhr) {
             const tbody = $("#networkTable tbody");
@@ -355,17 +367,6 @@ $(document).ready(function() {
   });
 
   loadInterfaces();
-
-  setTimeout(() => {
-    // Available IPs datatable
-    $('#networkTable').DataTable({
-      searching: true,
-      order: [[0, "desc"]],
-      initComplete: function(settings, json) {
-          hideSpinner(); // Called after the DataTable is fully initialized
-      }
-    });
-  }, 200);
 });
 
 </script>

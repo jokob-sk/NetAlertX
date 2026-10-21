@@ -1,0 +1,1460 @@
+{
+  "code_name": "rest_import",
+  "unique_prefix": "RSTIMPRT",
+  "plugin_type": "device_scanner",
+  "execution_order": "Layer_0",
+  "enabled": true,
+  "data_source": "script",
+  "mapped_to_table": "CurrentScan",
+  "data_filters": [
+    {
+      "compare_column": "objectPrimaryId",
+      "compare_operator": "==",
+      "compare_field_id": "txtMacFilter",
+      "compare_js_template": "'{value}'.toString()",
+      "compare_use_quotes": true
+    }
+  ],
+  "show_ui": true,
+  "localized": [
+    "display_name",
+    "description",
+    "icon"
+  ],
+  "display_name": [
+    {
+      "language_code": "en_us",
+      "string": "REST Import"
+    }
+  ],
+  "description": [
+    {
+      "language_code": "en_us",
+      "string": "Import devices from any REST API that returns JSON. Supports GET and POST, Basic and Bearer authentication, and flexible field mapping."
+    }
+  ],
+  "icon": [
+    {
+      "language_code": "en_us",
+      "string": "<i class=\"fa-solid fa-cloud-arrow-down\"></i>"
+    }
+  ],
+  "params": [],
+  "settings": [
+    {
+      "function": "RUN",
+      "events": [
+        "run"
+      ],
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": "disabled",
+      "options": [
+        "disabled",
+        "once",
+        "schedule"
+      ],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "When to run"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "When the plugin should run. Good options are <code>schedule</code> or <code>once</code>."
+        }
+      ]
+    },
+    {
+      "function": "RUN_SCHD",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "span",
+            "elementOptions": [
+              {
+                "cssClasses": "input-group-addon validityCheck"
+              },
+              {
+                "getStringKey": "Gen_ValidIcon"
+              }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "focusout": "validateRegex(this)"
+              },
+              {
+                "base64Regex": "Xig/OlwqfCg/OlswLTldfFsxLTVdWzAtOV18WzAtOV0rLVswLTldKyg/Oi9bMC05XSspP3xcKi9bMC05XSspKSg/OiwoPzpbMC05XXxbMS01XVswLTldfFswLTldKy1bMC05XSsoPzovWzAtOV0rKT98XCovWzAtOV0rKSkqXHMrKD86XCp8KD86WzAtOV18MVswLTldfDJbMC0zXXxbMC05XSstWzAtOV0rKD86L1swLTldKyk/fFwqL1swLTldKykpKD86LCg/OlswLTldfDFbMC05XXwyWzAtM118WzAtOV0rLVswLTldKyg/Oi9bMC05XSspP3xcKi9bMC05XSspKSpccysoPzpcKnwoPzpbMS05XXxbMTJdWzAtOV18M1swMV18WzAtOV0rLVswLTldKyg/Oi9bMC05XSspP3xcKi9bMC05XSspKSg/OiwoPzpbMS05XXxbMTJdWzAtOV18M1swMV18WzAtOV0rLVswLTldKyg/Oi9bMC05XSspP3xcKi9bMC05XSspKSpccysoPzpcKnwoPzpbMS05XXwxWzAtMl18WzAtOV0rLVswLTldKyg/Oi9bMC05XSspP3xcKi9bMC05XSspKSg/OiwoPzpbMS05XXwxWzAtMl18WzAtOV0rLVswLTldKyg/Oi9bMC05XSspP3xcKi9bMC05XSspKSpccysoPzpcKnwoPzpbMC02XXxbMC02XS1bMC02XSg/Oi9bMC05XSspP3xcKi9bMC05XSspKSg/OiwoPzpbMC02XXxbMC02XS1bMC02XSg/Oi9bMC05XSspP3xcKi9bMC02XSspKSok"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": "*/5 * * * *",
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Schedule"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Only used when <code>RSTIMPRT_RUN</code> is set to <code>schedule</code>. Standard cron format (e.g. validate at <a href=\"https://crontab.guru/\" target=\"_blank\">crontab.guru</a>)."
+        }
+      ]
+    },
+    {
+      "function": "CMD",
+      "type": {
+        "dataType": "string",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "readonly": "true"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": "python3 /app/server/plugins/rest_import/rest_import.py",
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Command"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Command to run. This cannot be changed."
+        }
+      ]
+    },
+    {
+      "function": "RUN_TIMEOUT",
+      "type": {
+        "dataType": "integer",
+        "elements": [
+          {
+            "elementType": "input",
+            "elementOptions": [
+              {
+                "type": "number"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": 30,
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Run timeout"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "Maximum seconds to wait for all imports to complete before aborting."
+        }
+      ]
+    },
+    {
+      "function": "imports",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "button",
+            "elementOptions": [
+              {
+                "sourceSuffixes": []
+              },
+              {
+                "separator": ""
+              },
+              {
+                "cssClasses": "col-xs-12"
+              },
+              {
+                "onClick": "addViaPopupForm(this)"
+              },
+              {
+                "getStringKey": "Gen_Add"
+              }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "select",
+            "elementHasInputValue": 1,
+            "elementOptions": [
+              {
+                "multiple": "true"
+              },
+              {
+                "readonly": "true"
+              },
+              {
+                "editable": "true"
+              },
+              {
+                "popupForm": [
+                  {
+                    "function": "RSTIMPRT_name",
+                    "type": {
+                      "dataType": "string",
+                      "elements": [
+                        {
+                          "elementType": "input",
+                          "elementOptions": [
+                            {
+                              "placeholder": "e.g. OPNsense DHCP"
+                            },
+                            {
+                              "cssClasses": "col-sm-10"
+                            }
+                          ],
+                          "transformers": []
+                        }
+                      ]
+                    },
+                    "default_value": "",
+                    "options": [],
+                    "localized": [
+                      "name",
+                      "description"
+                    ],
+                    "name": [
+                      {
+                        "language_code": "en_us",
+                        "string": "Name"
+                      }
+                    ],
+                    "description": [
+                      {
+                        "language_code": "en_us",
+                        "string": "Friendly name for this import definition. Shown in logs."
+                      }
+                    ]
+                  },
+                  {
+                    "function": "RSTIMPRT_url",
+                    "type": {
+                      "dataType": "string",
+                      "elements": [
+                        {
+                          "elementType": "input",
+                          "elementOptions": [
+                            {
+                              "placeholder": "https://host/api/endpoint"
+                            },
+                            {
+                              "cssClasses": "col-sm-10"
+                            }
+                          ],
+                          "transformers": []
+                        }
+                      ]
+                    },
+                    "default_value": "",
+                    "options": [],
+                    "localized": [
+                      "name",
+                      "description"
+                    ],
+                    "name": [
+                      {
+                        "language_code": "en_us",
+                        "string": "URL"
+                      }
+                    ],
+                    "description": [
+                      {
+                        "language_code": "en_us",
+                        "string": "Full URL of the REST endpoint."
+                      }
+                    ]
+                  },
+                  {
+                    "function": "RSTIMPRT_method",
+                    "type": {
+                      "dataType": "string",
+                      "elements": [
+                        {
+                          "elementType": "select",
+                          "elementOptions": [
+                            {
+                              "cssClasses": "col-sm-10"
+                            }
+                          ],
+                          "transformers": []
+                        }
+                      ]
+                    },
+                    "default_value": "GET",
+                    "options": [
+                      "GET",
+                      "POST"
+                    ],
+                    "localized": [
+                      "name",
+                      "description"
+                    ],
+                    "name": [
+                      {
+                        "language_code": "en_us",
+                        "string": "Method"
+                      }
+                    ],
+                    "description": [
+                      {
+                        "language_code": "en_us",
+                        "string": "HTTP method to use when calling the endpoint."
+                      }
+                    ]
+                  },
+                  {
+                    "function": "RSTIMPRT_verify_ssl",
+                    "type": {
+                      "dataType": "boolean",
+                      "elements": [
+                        {
+                          "elementType": "input",
+                          "elementOptions": [
+                            {
+                              "type": "checkbox"
+                            }
+                          ],
+                          "transformers": []
+                        }
+                      ]
+                    },
+                    "default_value": 1,
+                    "options": [],
+                    "localized": [
+                      "name",
+                      "description"
+                    ],
+                    "name": [
+                      {
+                        "language_code": "en_us",
+                        "string": "Verify SSL"
+                      }
+                    ],
+                    "description": [
+                      {
+                        "language_code": "en_us",
+                        "string": "Disable if the endpoint does not have a valid certificate."
+                      }
+                    ]
+                  },
+                  {
+                    "function": "RSTIMPRT_auth_type",
+                    "type": {
+                      "dataType": "string",
+                      "elements": [
+                        {
+                          "elementType": "select",
+                          "elementOptions": [
+                            {
+                              "cssClasses": "col-sm-10"
+                            }
+                          ],
+                          "transformers": []
+                        }
+                      ]
+                    },
+                    "default_value": "none",
+                    "options": [
+                      "none",
+                      "basic",
+                      "bearer"
+                    ],
+                    "localized": [
+                      "name",
+                      "description"
+                    ],
+                    "name": [
+                      {
+                        "language_code": "en_us",
+                        "string": "Auth Type"
+                      }
+                    ],
+                    "description": [
+                      {
+                        "language_code": "en_us",
+                        "string": "Authentication type. Use <code>basic</code> for username/password, <code>bearer</code> for token."
+                      }
+                    ]
+                  },
+                  {
+                    "function": "RSTIMPRT_username",
+                    "type": {
+                      "dataType": "string",
+                      "elements": [
+                        {
+                          "elementType": "input",
+                          "elementOptions": [
+                            {
+                              "placeholder": "Username or API Key"
+                            },
+                            {
+                              "cssClasses": "col-sm-10"
+                            }
+                          ],
+                          "transformers": []
+                        }
+                      ]
+                    },
+                    "default_value": "",
+                    "options": [],
+                    "localized": [
+                      "name",
+                      "description"
+                    ],
+                    "name": [
+                      {
+                        "language_code": "en_us",
+                        "string": "Username / API Key"
+                      }
+                    ],
+                    "description": [
+                      {
+                        "language_code": "en_us",
+                        "string": "Used when Auth Type is <code>basic</code>."
+                      }
+                    ]
+                  },
+                  {
+                    "function": "RSTIMPRT_password",
+                    "type": {
+                      "dataType": "string",
+                      "elements": [
+                        {
+                          "elementType": "input",
+                          "elementOptions": [
+                            {
+                              "placeholder": "Password or API Secret"
+                            },
+                            {
+                              "cssClasses": "col-sm-10"
+                            }
+                          ],
+                          "transformers": []
+                        }
+                      ]
+                    },
+                    "default_value": "",
+                    "options": [],
+                    "localized": [
+                      "name",
+                      "description"
+                    ],
+                    "name": [
+                      {
+                        "language_code": "en_us",
+                        "string": "Password / API Secret"
+                      }
+                    ],
+                    "description": [
+                      {
+                        "language_code": "en_us",
+                        "string": "Used when Auth Type is <code>basic</code>."
+                      }
+                    ]
+                  },
+                  {
+                    "function": "RSTIMPRT_bearer_token",
+                    "type": {
+                      "dataType": "string",
+                      "elements": [
+                        {
+                          "elementType": "input",
+                          "elementOptions": [
+                            {
+                              "placeholder": "Bearer token"
+                            },
+                            {
+                              "cssClasses": "col-sm-10"
+                            }
+                          ],
+                          "transformers": []
+                        }
+                      ]
+                    },
+                    "default_value": "",
+                    "options": [],
+                    "localized": [
+                      "name",
+                      "description"
+                    ],
+                    "name": [
+                      {
+                        "language_code": "en_us",
+                        "string": "Bearer Token"
+                      }
+                    ],
+                    "description": [
+                      {
+                        "language_code": "en_us",
+                        "string": "Used when Auth Type is <code>bearer</code>."
+                      }
+                    ]
+                  },
+                  {
+                    "function": "RSTIMPRT_headers",
+                    "type": {
+                      "dataType": "string",
+                      "elements": [
+                        {
+                          "elementType": "input",
+                          "elementOptions": [
+                            {
+                              "placeholder": "Accept: application/json"
+                            },
+                            {
+                              "cssClasses": "col-sm-10"
+                            }
+                          ],
+                          "transformers": []
+                        }
+                      ]
+                    },
+                    "default_value": "",
+                    "options": [],
+                    "localized": [
+                      "name",
+                      "description"
+                    ],
+                    "name": [
+                      {
+                        "language_code": "en_us",
+                        "string": "Custom Headers"
+                      }
+                    ],
+                    "description": [
+                      {
+                        "language_code": "en_us",
+                        "string": "Optional. One <code>Key: Value</code> pair per line. Sent with every request."
+                      }
+                    ]
+                  },
+                  {
+                    "function": "RSTIMPRT_post_body",
+                    "type": {
+                      "dataType": "string",
+                      "elements": [
+                        {
+                          "elementType": "input",
+                          "elementOptions": [
+                            {
+                              "placeholder": "Optional JSON body for POST requests"
+                            },
+                            {
+                              "cssClasses": "col-sm-10"
+                            }
+                          ],
+                          "transformers": []
+                        }
+                      ]
+                    },
+                    "default_value": "",
+                    "options": [],
+                    "localized": [
+                      "name",
+                      "description"
+                    ],
+                    "name": [
+                      {
+                        "language_code": "en_us",
+                        "string": "POST Body"
+                      }
+                    ],
+                    "description": [
+                      {
+                        "language_code": "en_us",
+                        "string": "Optional JSON body sent with POST requests. Leave blank for no body."
+                      }
+                    ]
+                  },
+                  {
+                    "function": "RSTIMPRT_device_path",
+                    "type": {
+                      "dataType": "string",
+                      "elements": [
+                        {
+                          "elementType": "input",
+                          "elementOptions": [
+                            {
+                              "placeholder": "rows"
+                            },
+                            {
+                              "cssClasses": "col-sm-10"
+                            }
+                          ],
+                          "transformers": []
+                        }
+                      ]
+                    },
+                    "default_value": "",
+                    "options": [],
+                    "localized": [
+                      "name",
+                      "description"
+                    ],
+                    "name": [
+                      {
+                        "language_code": "en_us",
+                        "string": "Device List Path"
+                      }
+                    ],
+                    "description": [
+                      {
+                        "language_code": "en_us",
+                        "string": "Dot-separated path to the array of device records in the JSON response. Example: <code>rows</code> or <code>data.devices</code>. Leave blank if the response is already an array."
+                      }
+                    ]
+                  },
+                  {
+                    "function": "RSTIMPRT_scanMac",
+                    "type": {
+                      "dataType": "string",
+                      "elements": [
+                        {
+                          "elementType": "input",
+                          "elementOptions": [
+                            {
+                              "placeholder": "e.g. hwaddr"
+                            },
+                            {
+                              "cssClasses": "col-sm-10"
+                            }
+                          ],
+                          "transformers": []
+                        }
+                      ]
+                    },
+                    "default_value": "",
+                    "options": [],
+                    "localized": [
+                      "name",
+                      "description"
+                    ],
+                    "name": [
+                      {
+                        "language_code": "en_us",
+                        "string": "MAC Address"
+                      }
+                    ],
+                    "description": [
+                      {
+                        "language_code": "en_us",
+                        "string": "API field containing the MAC address. Required unless Fake MAC is enabled."
+                      }
+                    ]
+                  },
+                  {
+                    "function": "RSTIMPRT_scanLastIP",
+                    "type": {
+                      "dataType": "string",
+                      "elements": [
+                        {
+                          "elementType": "input",
+                          "elementOptions": [
+                            {
+                              "placeholder": "e.g. address"
+                            },
+                            {
+                              "cssClasses": "col-sm-10"
+                            }
+                          ],
+                          "transformers": []
+                        }
+                      ]
+                    },
+                    "default_value": "",
+                    "options": [],
+                    "localized": [
+                      "name",
+                      "description"
+                    ],
+                    "name": [
+                      {
+                        "language_code": "en_us",
+                        "string": "IP Address"
+                      }
+                    ],
+                    "description": [
+                      {
+                        "language_code": "en_us",
+                        "string": "API field containing the IP address."
+                      }
+                    ]
+                  },
+                  {
+                    "function": "RSTIMPRT_scanName",
+                    "type": {
+                      "dataType": "string",
+                      "elements": [
+                        {
+                          "elementType": "input",
+                          "elementOptions": [
+                            {
+                              "placeholder": "e.g. hostname"
+                            },
+                            {
+                              "cssClasses": "col-sm-10"
+                            }
+                          ],
+                          "transformers": []
+                        }
+                      ]
+                    },
+                    "default_value": "",
+                    "options": [],
+                    "localized": [
+                      "name",
+                      "description"
+                    ],
+                    "name": [
+                      {
+                        "language_code": "en_us",
+                        "string": "Device Name"
+                      }
+                    ],
+                    "description": [
+                      {
+                        "language_code": "en_us",
+                        "string": "API field containing the device name or hostname."
+                      }
+                    ]
+                  },
+                  {
+                    "function": "RSTIMPRT_scanVendor",
+                    "type": {
+                      "dataType": "string",
+                      "elements": [
+                        {
+                          "elementType": "input",
+                          "elementOptions": [
+                            {
+                              "placeholder": "e.g. mac_info"
+                            },
+                            {
+                              "cssClasses": "col-sm-10"
+                            }
+                          ],
+                          "transformers": []
+                        }
+                      ]
+                    },
+                    "default_value": "",
+                    "options": [],
+                    "localized": [
+                      "name",
+                      "description"
+                    ],
+                    "name": [
+                      {
+                        "language_code": "en_us",
+                        "string": "Vendor"
+                      }
+                    ],
+                    "description": [
+                      {
+                        "language_code": "en_us",
+                        "string": "API field containing the device vendor or manufacturer."
+                      }
+                    ]
+                  },
+                  {
+                    "function": "RSTIMPRT_scanSSID",
+                    "type": {
+                      "dataType": "string",
+                      "elements": [
+                        {
+                          "elementType": "input",
+                          "elementOptions": [
+                            {
+                              "placeholder": "e.g. wlan"
+                            },
+                            {
+                              "cssClasses": "col-sm-10"
+                            }
+                          ],
+                          "transformers": []
+                        }
+                      ]
+                    },
+                    "default_value": "",
+                    "options": [],
+                    "localized": [
+                      "name",
+                      "description"
+                    ],
+                    "name": [
+                      {
+                        "language_code": "en_us",
+                        "string": "SSID"
+                      }
+                    ],
+                    "description": [
+                      {
+                        "language_code": "en_us",
+                        "string": "API field containing the wireless SSID."
+                      }
+                    ]
+                  },
+                  {
+                    "function": "RSTIMPRT_scanType",
+                    "type": {
+                      "dataType": "string",
+                      "elements": [
+                        {
+                          "elementType": "input",
+                          "elementOptions": [
+                            {
+                              "placeholder": "e.g. device_type"
+                            },
+                            {
+                              "cssClasses": "col-sm-10"
+                            }
+                          ],
+                          "transformers": []
+                        }
+                      ]
+                    },
+                    "default_value": "",
+                    "options": [],
+                    "localized": [
+                      "name",
+                      "description"
+                    ],
+                    "name": [
+                      {
+                        "language_code": "en_us",
+                        "string": "Device Type"
+                      }
+                    ],
+                    "description": [
+                      {
+                        "language_code": "en_us",
+                        "string": "API field containing the device type."
+                      }
+                    ]
+                  },
+                  {
+                    "function": "RSTIMPRT_scanParentMAC",
+                    "type": {
+                      "dataType": "string",
+                      "elements": [
+                        {
+                          "elementType": "input",
+                          "elementOptions": [
+                            {
+                              "placeholder": "e.g. parent_mac"
+                            },
+                            {
+                              "cssClasses": "col-sm-10"
+                            }
+                          ],
+                          "transformers": []
+                        }
+                      ]
+                    },
+                    "default_value": "",
+                    "options": [],
+                    "localized": [
+                      "name",
+                      "description"
+                    ],
+                    "name": [
+                      {
+                        "language_code": "en_us",
+                        "string": "Parent MAC"
+                      }
+                    ],
+                    "description": [
+                      {
+                        "language_code": "en_us",
+                        "string": "API field containing the parent device MAC address."
+                      }
+                    ]
+                  },
+                  {
+                    "function": "RSTIMPRT_scanParentPort",
+                    "type": {
+                      "dataType": "string",
+                      "elements": [
+                        {
+                          "elementType": "input",
+                          "elementOptions": [
+                            {
+                              "placeholder": "e.g. port"
+                            },
+                            {
+                              "cssClasses": "col-sm-10"
+                            }
+                          ],
+                          "transformers": []
+                        }
+                      ]
+                    },
+                    "default_value": "",
+                    "options": [],
+                    "localized": [
+                      "name",
+                      "description"
+                    ],
+                    "name": [
+                      {
+                        "language_code": "en_us",
+                        "string": "Parent Port"
+                      }
+                    ],
+                    "description": [
+                      {
+                        "language_code": "en_us",
+                        "string": "API field containing the port on the parent device."
+                      }
+                    ]
+                  },
+                  {
+                    "function": "RSTIMPRT_scanSite",
+                    "type": {
+                      "dataType": "string",
+                      "elements": [
+                        {
+                          "elementType": "input",
+                          "elementOptions": [
+                            {
+                              "placeholder": "e.g. site"
+                            },
+                            {
+                              "cssClasses": "col-sm-10"
+                            }
+                          ],
+                          "transformers": []
+                        }
+                      ]
+                    },
+                    "default_value": "",
+                    "options": [],
+                    "localized": [
+                      "name",
+                      "description"
+                    ],
+                    "name": [
+                      {
+                        "language_code": "en_us",
+                        "string": "Site"
+                      }
+                    ],
+                    "description": [
+                      {
+                        "language_code": "en_us",
+                        "string": "API field containing the site name."
+                      }
+                    ]
+                  },
+                  {
+                    "function": "RSTIMPRT_scanVlan",
+                    "type": {
+                      "dataType": "string",
+                      "elements": [
+                        {
+                          "elementType": "input",
+                          "elementOptions": [
+                            {
+                              "placeholder": "e.g. vlan"
+                            },
+                            {
+                              "cssClasses": "col-sm-10"
+                            }
+                          ],
+                          "transformers": []
+                        }
+                      ]
+                    },
+                    "default_value": "",
+                    "options": [],
+                    "localized": [
+                      "name",
+                      "description"
+                    ],
+                    "name": [
+                      {
+                        "language_code": "en_us",
+                        "string": "VLAN"
+                      }
+                    ],
+                    "description": [
+                      {
+                        "language_code": "en_us",
+                        "string": "API field containing the VLAN identifier."
+                      }
+                    ]
+                  },
+                  {
+                    "function": "RSTIMPRT_fake_mac",
+                    "type": {
+                      "dataType": "boolean",
+                      "elements": [
+                        {
+                          "elementType": "input",
+                          "elementOptions": [
+                            {
+                              "type": "checkbox"
+                            }
+                          ],
+                          "transformers": []
+                        }
+                      ]
+                    },
+                    "default_value": 0,
+                    "options": [],
+                    "localized": [
+                      "name",
+                      "description"
+                    ],
+                    "name": [
+                      {
+                        "language_code": "en_us",
+                        "string": "Generate Fake MAC"
+                      }
+                    ],
+                    "description": [
+                      {
+                        "language_code": "en_us",
+                        "string": "When enabled, a deterministic fake MAC is generated from the IP address if the MAC field is missing or invalid. Requires a valid IP mapping."
+                      }
+                    ]
+                  }
+                ],
+                "transformers": []
+              }
+            ],
+            "transformers": [
+              "name|base64"
+            ]
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              {
+                "sourceSuffixes": []
+              },
+              {
+                "separator": ""
+              },
+              {
+                "cssClasses": "col-xs-6"
+              },
+              {
+                "onClick": "removeFromList(this)"
+              },
+              {
+                "getStringKey": "Gen_Remove_Last"
+              }
+            ],
+            "transformers": []
+          },
+          {
+            "elementType": "button",
+            "elementOptions": [
+              {
+                "sourceSuffixes": []
+              },
+              {
+                "separator": ""
+              },
+              {
+                "cssClasses": "col-xs-6"
+              },
+              {
+                "onClick": "removeAllOptions(this)"
+              },
+              {
+                "getStringKey": "Gen_Remove_All"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": [],
+      "options": [],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "REST Imports"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "List of REST import definitions. Each entry is one endpoint with its own authentication and field mapping."
+        }
+      ]
+    },
+    {
+      "function": "SET_ALWAYS",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [
+              {
+                "multiple": "true",
+                "orderable": "true"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": [
+        "devMac",
+        "devLastIP"
+      ],
+      "options": [
+        "devMac",
+        "devLastIP",
+        "devName",
+        "devVendor",
+        "devSite",
+        "devType",
+        "devParentMAC",
+        "devParentPort",
+        "devVlan"
+      ],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Set always columns"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "These columns are treated as authoritative and will overwrite existing values, including those set by other plugins, unless the current value was explicitly set by the user (<code>Source = USER</code> or <code>Source = LOCKED</code>)."
+        }
+      ]
+    },
+    {
+      "function": "SET_EMPTY",
+      "type": {
+        "dataType": "array",
+        "elements": [
+          {
+            "elementType": "select",
+            "elementOptions": [
+              {
+                "multiple": "true",
+                "orderable": "true"
+              }
+            ],
+            "transformers": []
+          }
+        ]
+      },
+      "default_value": [],
+      "options": [
+        "devMac",
+        "devLastIP",
+        "devName",
+        "devVendor",
+        "devSite",
+        "devType",
+        "devParentMAC",
+        "devParentPort"
+      ],
+      "localized": [
+        "name",
+        "description"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Set empty columns"
+        }
+      ],
+      "description": [
+        {
+          "language_code": "en_us",
+          "string": "These columns are only overwritten if they are currently empty (<code>NULL</code> / empty string) or their source is <code>NEWDEV</code>."
+        }
+      ]
+    }
+  ],
+  "database_column_definitions": [
+    {
+      "column": "index",
+      "css_classes": "col-sm-1",
+      "show": true,
+      "type": "none",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Index"
+        }
+      ]
+    },
+    {
+      "column": "objectPrimaryId",
+      "mapped_to_column": "scanMac",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "device_name_mac",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "MAC"
+        }
+      ]
+    },
+    {
+      "column": "objectSecondaryId",
+      "mapped_to_column": "scanLastIP",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "device_ip",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "IP"
+        }
+      ]
+    },
+    {
+      "column": "watchedValue1",
+      "mapped_to_column": "scanName",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Name"
+        }
+      ]
+    },
+    {
+      "column": "watchedValue2",
+      "mapped_to_column": "scanVendor",
+      "css_classes": "col-sm-2",
+      "show": true,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Vendor"
+        }
+      ]
+    },
+    {
+      "column": "watchedValue3",
+      "mapped_to_column": "scanSSID",
+      "css_classes": "col-sm-2",
+      "show": false,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "SSID"
+        }
+      ]
+    },
+    {
+      "column": "watchedValue4",
+      "mapped_to_column": "scanType",
+      "css_classes": "col-sm-2",
+      "show": false,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Type"
+        }
+      ]
+    },
+    {
+      "column": "helpVal1",
+      "mapped_to_column": "scanParentMAC",
+      "css_classes": "col-sm-2",
+      "show": false,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Parent MAC"
+        }
+      ]
+    },
+    {
+      "column": "helpVal2",
+      "mapped_to_column": "scanParentPort",
+      "css_classes": "col-sm-2",
+      "show": false,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Parent Port"
+        }
+      ]
+    },
+    {
+      "column": "helpVal3",
+      "mapped_to_column": "scanSite",
+      "css_classes": "col-sm-2",
+      "show": false,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Site"
+        }
+      ]
+    },
+    {
+      "column": "helpVal4",
+      "mapped_to_column": "scanVlan",
+      "css_classes": "col-sm-2",
+      "show": false,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "VLAN"
+        }
+      ]
+    },
+    {
+      "column": "Dummy",
+      "mapped_to_column": "scanSourcePlugin",
+      "mapped_to_column_data": {
+        "value": "RSTIMPRT"
+      },
+      "css_classes": "col-sm-0",
+      "show": false,
+      "type": "label",
+      "default_value": "",
+      "options": [],
+      "localized": [
+        "name"
+      ],
+      "name": [
+        {
+          "language_code": "en_us",
+          "string": "Source"
+        }
+      ]
+    }
+  ]
+}

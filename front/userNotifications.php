@@ -14,21 +14,22 @@ require 'php/templates/header.php';
 </script>
 
 <div id="notifications" class="content-wrapper">
-  <section class="content">
+<?php require 'php/templates/skel_notifications.php'; ?>
+  <section class="content table-responsive">
     <div class="notification-box box box-gray col-xs-12" >
       <div class="box-header">
        <h3 class="box-title text-aqua"><?= lang('Notifications_All');?></h3>
       </div>
-      <div class="box-body table-responsive">
+      <div class=" ">
         <table id="notificationsTable" class="table table-bordered table-hover table-striped display">
           <thead>
             <tr>
-              <th>Timestamp</th>
-              <th>Level</th>
-              <th>Content</th>
+              <th><?= lang('gen_timestamp');?></th>
+              <th><?= lang('gen_level');?></th>
+              <th><?= lang('gen_content');?></th>
               <th>GUID</th>
-              <th>Read</th>
-              <th>Actions</th>
+              <th><?= lang('gen_read');?></th>
+              <th><?= lang('gen_actions');?></th>
             </tr>
           </thead>
           <tbody>
@@ -74,6 +75,7 @@ require 'php/templates/header.php';
 
   $(document).ready(function() {
     const table = $('#notificationsTable').DataTable({
+      "autoWidth": false,
       "pageLength": parseInt(getSetting("UI_DEFAULT_PAGE_SIZE")),
       'lengthMenu'   : getLengthMenu(parseInt(getSetting("UI_DEFAULT_PAGE_SIZE"))),
       "columns": [
@@ -85,6 +87,12 @@ require 'php/templates/header.php';
                 result = result.split('+')[0]; // Remove timezone offset
             }
 
+            // Keep sortable value for DataTables
+            if (type === "sort" || type === "type" || type !== "display") {
+                return result;
+            }
+
+            // Display localized date only
             result = localizeTimestamp(result);
 
             return result;
@@ -168,6 +176,7 @@ require 'php/templates/header.php';
     ,
     initComplete: function(settings, json) {
         hideSpinner(); // Called after the DataTable is fully initialized
+        hideNotificationsSkeleton();
     }});
 
     fetchData(function(data) {
@@ -214,6 +223,14 @@ require 'php/templates/header.php';
 
 
   });
+
+function hideNotificationsSkeleton() {
+  $('#notifications-skeleton').fadeOut(0, function () { $(this).remove(); });
+}
+
+window.addEventListener('load', function () {
+  setTimeout(hideNotificationsSkeleton, 15000);
+});
 
 </script>
 

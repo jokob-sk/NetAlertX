@@ -134,7 +134,7 @@ function loadDeviceTable({ sql, containerSelector, tableId, wrapperHtml = null, 
           width: '15%',
           render: function (name, type, device) {
             return `<a href="./deviceDetails.php?mac=${device.devMac}" target="_blank">
-                      <b class="anonymize">${name || '-'}</b>
+                      <b class="anonymize">${encodeSpecialChars(name || '-')}</b>
                     </a>`;
           }
         },

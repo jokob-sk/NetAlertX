@@ -21,8 +21,13 @@ class Condition:
         appEvent_value = (
             trigger.event[self.field] if self.field in trigger.event.keys() else None
         )
+        # trigger.object is None when the referenced Devices/Plugins_Objects row no
+        # longer exists by the time this event is processed (e.g. deleted between
+        # AppEvent creation and workflow processing) - fall back to the event value only.
         eveObj_value = (
-            trigger.object[self.field] if self.field in trigger.object.keys() else None
+            trigger.object[self.field]
+            if trigger.object is not None and self.field in trigger.object.keys()
+            else None
         )
 
         # proceed only if value found
@@ -36,8 +41,12 @@ class Condition:
         # process based on operators
         if self.operator == "equals":
             result = str(obj_value) == str(self.value)
+        elif self.operator == "not_equals":
+            result = str(obj_value) != str(self.value)
         elif self.operator == "contains":
             result = str(self.value).lower() in str(obj_value).lower()
+        elif self.operator == "not_contains":
+            result = str(self.value).lower() not in str(obj_value).lower()
         elif self.operator == "regex":
             result = bool(re.match(self.value, str(obj_value)))
         else:
@@ -52,7 +61,7 @@ class ConditionGroup:
     """Handles condition groups with AND, OR logic, supporting nested groups."""
 
     def __init__(self, group_json):
-        mylog("verbose", f"[WF] ConditionGroup json.dumps(group_json): {json.dumps(group_json)}")
+        mylog("trace", f"[WF] ConditionGroup json.dumps(group_json): {json.dumps(group_json)}")
 
         self.logic = group_json.get("logic", "AND").upper()
         self.conditions = []
@@ -72,5 +81,5 @@ class ConditionGroup:
             return any(results)
         else:
             m = f"[WF] ConditionGroup unsupported logic: {self.logic}"
-            mylog("verbose", [m])
+            mylog("none", [m])
             raise ValueError(m)

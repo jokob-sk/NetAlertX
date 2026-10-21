@@ -4,7 +4,7 @@
 *
 *  ui_components.js - Front module. Common UI components
 *-------------------------------------------------------------------------------
-#  jokob             jokob@duck.com                GNU GPLv3
+#  jokob             support@netalertx.com                GNU GPLv3
 ----------------------------------------------------------------------------- */
 
 
@@ -102,6 +102,22 @@ function initializeTabsShared(options) {
   }
 }
 
+
+/**
+ * Build the <li> markup for a Bootstrap sub-tab nav strip from a list of tab
+ * descriptors. Shared by pluginsCore.php's per-plugin Objects/Events/History
+ * sub-tabs and pluginsFieldView.php's per-field Plugin Objects sub-tab so
+ * both produce identical nav-tabs-custom <li>/<a> markup.
+ * @param {Array<{href: string, icon: string, label: string, badgeHtml?: string, active?: boolean}>} tabs
+ * @returns {string} Concatenated <li> markup for a <ul class="nav nav-tabs">.
+ */
+function buildTabNavItems(tabs) {
+  return tabs.map(t => `
+    <li class="${t.active ? 'active' : ''}">
+      <a href="${t.href}" data-toggle="tab"><i class="fa ${t.icon}"></i> ${t.label}${t.badgeHtml ? ` (${t.badgeHtml})` : ''}</a>
+    </li>
+  `).join('');
+}
 
 // -------------------------------------------------------------------
 // Utility function to generate a random API token in the format t_<random string of specified length>
@@ -549,8 +565,14 @@ function goToDevice(mac, newtab = false) {
 
 
 // --------------------------------------------------------
-// Updating the execution queue in in modal pop-up
-function updateModalState() {
+/**
+ * Poll execution_queue.log into the ad-hoc-event modal until it's empty or a
+ * safety cap is hit (was: polled forever with no stop condition).
+ * @param {number} [elapsedMs=0] - Total time already spent polling.
+ */
+function updateModalState(elapsedMs = 0) {
+  const MAX_POLL_MS = 60000; // safety net - stop after 1 minute regardless
+
   setTimeout(function() {
       // Fetch the content from the log file using an AJAX request
       $.ajax({
@@ -560,7 +582,10 @@ function updateModalState() {
               // Update the content of the HTML element (e.g., a div with id 'logContent')
               $('#'+modalEventStatusId).html(data);
 
-              updateModalState();
+              if (data.trim() === '' || elapsedMs + 2000 >= MAX_POLL_MS) {
+                return; // queue drained (or safety net hit) - stop polling
+              }
+              updateModalState(elapsedMs + 2000);
           },
           error: function() {
               // Handle error, such as the file not being found
@@ -971,6 +996,9 @@ function renderDeviceLink(data, container, useName = false) {
   // Build and return badge parts
   const badge = badgeFromDevice(device);
 
+  // Decode once (with a safe fallback) and reuse for both the chip and hover preview
+  const decodedIcon = safeAtob(device.devIcon);
+
   // badge class and hover-info class to container
   $(container)
     .addClass(`${badge.cssClass} hover-node-info`)
@@ -980,8 +1008,8 @@ function renderDeviceLink(data, container, useName = false) {
       'data-mac': device.devMac,
       'data-vendor': device.devVendor,
       'data-type': device.devType,
-      'data-lastseen': device.devLastConnection,
-      'data-firstseen': device.devFirstConnection,
+      'data-lastseen': localizeTimestamp(device.devLastConnection),
+      'data-firstseen': localizeTimestamp(device.devFirstConnection),
       'data-relationship': device.devParentRelType,
       'data-status': device.devStatus,
       'data-flapping': device.devFlapping,
@@ -989,21 +1017,32 @@ function renderDeviceLink(data, container, useName = false) {
       'data-alertdown': device.devAlertDown,
       'data-sleeping': device.devIsSleeping || 0,
       'data-archived': device.devIsArchived || 0,
-      'data-isnew':    device.devIsNew       || 0,
-      'data-icon': device.devIcon
+      'data-isnew':    device.devIsNew      || 0,
+      'data-icon': decodedIcon
     });
 
   return `
     <a href="${badge.url}" target="_blank">
       <span class="custom-chip">
-        <span class="iconPreview">${atob(device.devIcon)}</span>
-        ${useName ? device.devName : data.text}
+        <span class="iconPreview">${decodedIcon}</span>
+        ${useName ? encodeSpecialChars(device.devName) : data.text}
         <span>
           (${badge.iconHtml})
         </span>
       </span>
     </a>
   `;
+}
+
+// ------------------------------------------
+// Base64-decode a devIcon value, tolerating missing/empty/malformed input
+function safeAtob(value) {
+  if (!value) return '';
+  try {
+    return atob(value);
+  } catch (e) {
+    return '';
+  }
 }
 
 // ------------------------------------------
@@ -1063,7 +1102,7 @@ function initHoverNodeInfo() {
 
       const html = `
         <div>
-          <b> <div class="iconPreview">${atob(icon)}</div> </b><b class="devName"> ${name}</b><br>
+          <b> <div class="iconPreview">${safeAtob(icon) || ''}</div> </b><b class="devName"> ${encodeSpecialChars(name)}</b><br>
         </div>
         <hr/>
         <div class="line">
@@ -1164,5 +1203,5 @@ function getLengthMenu(newEntry) {
   return [values, labels];
 }
 
-
+window.__appReady = true;
 console.log("init ui_components.js")

@@ -1,10 +1,10 @@
 <!-- ---------------------------------------------------------------------------
 #  NetAlertX
-#  Open Source Network Guard / WIFI & LAN intrusion detector 
+#  Open Source Network Guard / WIFI & LAN intrusion detector
 #
 #  notificacion.php - Front module. Common notification & modal window
 #-------------------------------------------------------------------------------
-#  Puche 2021 / 2022+ jokob             jokob@duck.com                GNU GPLv3
+#  Puche 2021 / 2022+ jokob             support@netalertx.com                GNU GPLv3
 #--------------------------------------------------------------------------- -->
 
 <!-- Modal Ok -->
@@ -129,7 +129,7 @@
 
       <div id="modal-form-message" class="modal-body"> Modal message </div>
 
-      <div id="modal-form-plc"></div>
+      <div id="modal-form-plc" style="overflow-y: auto; max-height: 60vh; padding: 0 15px;"></div>
 
       <div class="modal-footer">
         <button id="modal-form-cancel" type="button" class="btn btn-outline pull-left" style="min-width: 80px;" data-dismiss="modal"> Cancel </button>

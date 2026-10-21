@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>NetAlertX network topology regression fixture</title>
+<link rel="stylesheet" href="/front/lib/bootstrap/bootstrap.min.css">
+<link rel="stylesheet" href="/front/lib/AdminLTE/dist/css/AdminLTE.css">
+<link rel="stylesheet" href="/front/lib/font-awesome/all.min.css">
+<link rel="stylesheet" href="/front/css/app.css">
+<body>
+<style>body { background: #fff; }</style>
+<h1>Network topology — discussion #1379</h1>
+<div class="networkTable"><div id="networkTree"></div></div>
+<script src="/front/lib/jquery/jquery.min.js"></script>
+<script src="/front/lib/treeviz/treeviz.iife.js"></script>
+<script src="/front/js/network-tree.js"></script>
+<script>
+var emptyArr = [null, undefined, ""];
+var clicks = [];
+/** Provide a neutral device badge for fixed fixture data. */
+function badgeFromDevice() { return {cssText: ""}; }
+/** Return the fixed, trusted fixture labels. */
+function encodeSpecialChars(value) { return String(value); }
+/** Keep fixture timestamps independent of locale. */
+function localizeTimestamp(value) { return value; }
+/** Provide a fixed link color for visual assertions. */
+function getRelationshipConf() { return {color: "#336c87"}; }
+/** Attach the production collapse handlers after initialization. */
+function hideSpinner() { attachTreeEvents(); }
+/** Record node clicks for pointer interaction assertions. */
+function handleNodeClick(node) { clicks.push(node.dataset.mac); }
+/** Remove the collapsed MAC using the application helper contract. */
+function removeItemFromArray(items, item) { items.splice(items.indexOf(item), 1); }
+deviceListGlobal = [
+  {devMac: "internet", devName: "Internet", devParentMAC: "", devIsNetworkNodeDynamic: 1},
+  {devMac: "aa:bb:cc:dd:ee:01", devName: "Router", devParentMAC: "internet", devIsNetworkNodeDynamic: 1},
+  {devMac: "aa:bb:cc:dd:ee:02", devName: "Laptop", devParentMAC: "aa:bb:cc:dd:ee:01", devParentPort: "1"},
+  {devMac: "aa:bb:cc:dd:ee:03", devName: "Phone", devParentMAC: "aa:bb:cc:dd:ee:01", devSSID: "Home Wi-Fi"}
+].map(device => ({devIcon: btoa('<i class="fa fa-desktop"></i>'), devSSID: "", devParentPort: "", devLastIP: "192.0.2.1", devVendor: "Test", devType: "Device", devParentRelType: "wired", devVlan: "", ...device}));
+initTree(getHierarchy());
+</script>
+</body></html>

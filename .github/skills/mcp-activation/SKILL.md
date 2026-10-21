@@ -7,9 +7,14 @@ description: Enables live interaction with the NetAlertX runtime. This skill con
 
 This skill configures the environment to expose the Model Context Protocol (MCP) server to AI agents running inside the devcontainer.
 
+## Prerequisites
+
+1. **Devcontainer connected:** You must be working inside the NetAlertX devcontainer.
+2. **Backend running:** The Python backend must be running — it generates `app.conf` containing the API token. Use the `devcontainer-services` skill if it's not running.
+
 ## Usage
 
-This skill assumes you are already running within the NetAlertX devcontainer. 
+This skill assumes you are already running within the NetAlertX devcontainer.
 
 1.  **Generate Configurations:**
     Run the configuration generation script to extract the API Token and update the VS Code MCP settings.

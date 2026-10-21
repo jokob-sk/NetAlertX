@@ -1,16 +1,21 @@
-name: 🧪 Manual Test Suite Selector
+name: 🧪 Test Suite
 
 on:
+  pull_request:
+    branches:
+      - main
+  schedule:
+    - cron: '0 2 * * *' # Daily at 02:00 UTC
   workflow_dispatch:
     inputs:
       run_all:
         description: '✅ Run ALL tests (overrides individual selectors)'
         type: boolean
-        default: false
+        default: true
       run_scan:
         description: '📂 scan/ (Scan, Logic, Locks, IPs)'
         type: boolean
-        default: true
+        default: false
       run_api:
         description: '📂 api_endpoints/ & server/ (Endpoints & Server)'
         type: boolean
@@ -52,32 +57,55 @@ jobs:
 
       - name: Build Test Path Command
         id: builder
+        env:
+          INPUT_EVENT_NAME: ${{ github.event_name }}
+          INPUT_RUN_ALL: ${{ github.event.inputs.run_all }}
+          INPUT_RUN_SCAN: ${{ github.event.inputs.run_scan }}
+          INPUT_RUN_API: ${{ github.event.inputs.run_api }}
+          INPUT_RUN_BACKEND: ${{ github.event.inputs.run_backend }}
+          INPUT_RUN_DOCKER_ENV: ${{ github.event.inputs.run_docker_env }}
+          INPUT_RUN_LDAP: ${{ github.event.inputs.run_ldap }}
+          INPUT_RUN_UI: ${{ github.event.inputs.run_ui }}
+          INPUT_RUN_PLUGINS: ${{ github.event.inputs.run_plugins }}
+          INPUT_RUN_ROOT_FILES: ${{ github.event.inputs.run_root_files }}
         run: |
           PATHS=""
 
-          # run_all overrides everything
-          if [ "${{ github.event.inputs.run_all }}" == "true" ]; then
+          # pull_request and scheduled runs always execute the full test suite
+          if [ "$INPUT_EVENT_NAME" == "pull_request" ] || [ "$INPUT_EVENT_NAME" == "schedule" ]; then
+            echo "📅 Scheduled/PR run - executing full test suite"
+            echo "final_paths=test/" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # Manual 'Run ALL' overrides individual selectors
+          if [ "$INPUT_RUN_ALL" == "true" ]; then
+            echo "🧪 Manual 'Run ALL' selected"
             echo "final_paths=test/" >> $GITHUB_OUTPUT
             exit 0
           fi
 
           # Folder Mapping with 'test/' prefix
-          if [ "${{ github.event.inputs.run_scan }}" == "true" ]; then PATHS="$PATHS test/scan/"; fi
-          if [ "${{ github.event.inputs.run_api }}" == "true" ]; then PATHS="$PATHS test/api_endpoints/ test/server/"; fi
-          if [ "${{ github.event.inputs.run_backend }}" == "true" ]; then PATHS="$PATHS test/backend/ test/db/"; fi
-          if [ "${{ github.event.inputs.run_docker_env }}" == "true" ]; then PATHS="$PATHS test/docker_tests/"; fi
-          if [ "${{ github.event.inputs.run_ldap }}" == "true" ]; then PATHS="$PATHS test/server/test_ldap_provider.py test/server/test_ldap_provider_env.py test/ui/test_ui_ldap_login.py test/docker_tests/test_ldap_ui.py"; fi
-          if [ "${{ github.event.inputs.run_ui }}" == "true" ]; then PATHS="$PATHS test/ui/"; fi
-          if [ "${{ github.event.inputs.run_plugins }}" == "true" ]; then PATHS="$PATHS test/plugins/"; fi
+          if [ "$INPUT_RUN_SCAN" == "true" ]; then PATHS="$PATHS test/scan/"; fi
+          if [ "$INPUT_RUN_API" == "true" ]; then PATHS="$PATHS test/api_endpoints/ test/server/"; fi
+          if [ "$INPUT_RUN_BACKEND" == "true" ]; then PATHS="$PATHS test/backend/ test/db/"; fi
+          if [ "$INPUT_RUN_DOCKER_ENV" == "true" ]; then PATHS="$PATHS test/docker_tests/"; fi
+          if [ "$INPUT_RUN_LDAP" == "true" ]; then PATHS="$PATHS test/server/test_ldap_provider.py test/server/test_ldap_provider_env.py test/ui/test_ui_ldap_login.py test/docker_tests/test_ldap_ui.py"; fi
+          if [ "$INPUT_RUN_UI" == "true" ]; then PATHS="$PATHS test/ui/"; fi
+          if [ "$INPUT_RUN_PLUGINS" == "true" ]; then PATHS="$PATHS test/plugins/"; fi
 
           # Root Files Mapping (files sitting directly in /test/)
-          if [ "${{ github.event.inputs.run_root_files }}" == "true" ]; then
+          if [ "$INPUT_RUN_ROOT_FILES" == "true" ]; then
             PATHS="$PATHS test/test_device_atomicity.py test/test_mcp_disablement.py test/test_plugin_helper.py test/test_wol_validation.py"
           fi
 
           # If nothing is selected, default to the whole test folder
-          if [ -z "$PATHS" ]; then PATHS="test/"; fi
+          if [ -z "$PATHS" ]; then
+            echo "ℹ️ No test groups selected - defaulting to full test suite"
+            PATHS="test/"
+          fi
 
+          echo "🎯 Selected test paths: $PATHS"
           echo "final_paths=$PATHS" >> $GITHUB_OUTPUT
 
       - name: Run Docker Integration Script

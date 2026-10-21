@@ -307,7 +307,7 @@ mkdir -p "${INSTALL_DIR}"/log/plugins
 chown -R www-data:www-data "${INSTALL_DIR}"/log/plugins
 
 # Create the execution_queue.log file if it doesn't exist
-touch ${INSTALL_DIR}/log/{app.log,execution_queue.log,app_front.log,app.php_errors.log,stderr.log,stdout.log,db_is_locked.log}
+touch ${INSTALL_DIR}/log/{app.log,execution_queue.log,app_front.log,app.php_errors.log,stderr.log,db_is_locked.log}
 touch ${INSTALL_DIR}/api/user_notifications.json
 chown -R www-data:www-data "${INSTALL_DIR}"/log "${INSTALL_DIR}"/api
 chmod -R ug+rwX "${INSTALL_DIR}"/log "${INSTALL_DIR}"/api
@@ -319,7 +319,7 @@ chown www-data:www-data "${INSTALL_DIR}/log" "${INSTALL_DIR}/api"
 mkdir -p "${INSTALL_DIR}/log/plugins"
 
 # Create log and api files directly as the www-data user to ensure correct ownership from the start.
-sudo -u www-data touch ${INSTALL_DIR}/log/{app.log,execution_queue.log,app_front.log,app.php_errors.log,stderr.log,stdout.log,db_is_locked.log}
+sudo -u www-data touch ${INSTALL_DIR}/log/{app.log,execution_queue.log,app_front.log,app.php_errors.log,stderr.log,db_is_locked.log}
 sudo -u www-data touch ${INSTALL_DIR}/api/user_notifications.json
 
 # Set final permissions for all created files and directories.

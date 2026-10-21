@@ -56,6 +56,23 @@ hide:
 
 ---
 
+## What is NetAlertX?
+
+NetAlertX continuously discovers the devices on your network, builds a living asset inventory, detects changes, and alerts you when something important happens.
+
+Whether you're monitoring a home network, homelab, business, or remote site, NetAlertX helps answer questions like:
+
+- What devices are currently connected?
+- Has a new or unknown device appeared?
+- Which servers or services are offline?
+- Has a device changed IP address, hostname, or open ports?
+- When was a device first or last seen?
+
+Unlike packet analyzers or firewall appliances, NetAlertX focuses on **network visibility**, **asset discovery**, **change detection**, **historical tracking**, and **automation**.
+
+> [!TIP]
+> **New to NetAlertX?** Start with **[Where NetAlertX Fits](./WHERE_NETALERTX_FITS)** to understand how it complements the rest of your network tools.
+
 ## Help and Support
 
 If you need help or run into issues, here are some resources to guide you:

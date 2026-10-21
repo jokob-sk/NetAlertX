@@ -7,7 +7,7 @@
 # NetAlertX - Network Visibility & Asset Intelligence Framework
 
 ---
-### || [Docker guide](https://docs.netalertx.com/DOCKER_INSTALLATION) || [Releases](https://github.com/netalertx/NetAlertX/releases) || [Docs](https://docs.netalertx.com/) || [Plugins](https://docs.netalertx.com/PLUGINS) || [Website](https://netalertx.com)
+### || [Docker guide](https://docs.netalertx.com/DOCKER_INSTALLATION) || [Releases](https://github.com/netalertx/NetAlertX/releases) || [Docs](https://docs.netalertx.com/) || [Plugins](https://docs.netalertx.com/PLUGINS_OVERVIEW) || [Website](https://netalertx.com)
 ---
 
 <a href="https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/docs/img/GENERAL/github_social_image.jpg" target="_blank">
@@ -22,21 +22,25 @@ Head to [https://netalertx.com/](https://netalertx.com/) for more gifs and scree
 ## 📕 Basic Usage
 
 > [!WARNING]
-> You will have to run the container on the `host` network and specify `SCAN_SUBNETS` unless you use other [plugin scanners](https://docs.netalertx.com/PLUGINS). The initial scan can take a few minutes, so please wait 5-10 minutes for the initial discovery to finish.
+> You will have to run the container on the `host` network and specify `SCAN_SUBNETS` unless you use other [plugin scanners](https://docs.netalertx.com/PLUGINS_OVERVIEW). The initial scan can take a few minutes, so please wait 5-10 minutes for the initial discovery to finish.
 
 ```bash
-docker run -d --rm --network=host \
+docker run -d --rm \
+  --network=host \
+  --cap-add=NET_RAW \
+  --cap-add=NET_ADMIN \
+  --cap-add=NET_BIND_SERVICE \
   -v /local_data_dir:/data \
-  -v /etc/localtime:/etc/localtime \
+  -v /etc/localtime:/etc/localtime:ro \
   --tmpfs /tmp:uid=${NETALERTX_UID:-20211},gid=${NETALERTX_GID:-20211},mode=1700 \
   -e PORT=20211 \
-  -e APP_CONF_OVERRIDE={"GRAPHQL_PORT":"20214"} \
+  -e APP_CONF_OVERRIDE='{"GRAPHQL_PORT":"20214"}' \
   ghcr.io/netalertx/netalertx:latest
 ```
 
 > Runtime UID/GID: The image defaults to a service user `netalertx` (UID/GID 20211). A separate readonly lock owner also uses UID/GID 20211 for 004/005 immutability. You can override the runtime UID/GID at build (ARG) or run (`--user` / compose `user:`) but must align writable mounts (`/data`, `/tmp*`) and tmpfs `uid/gid` to that choice.
 
-See alternative [docked-compose examples](https://docs.netalertx.com/DOCKER_COMPOSE).
+See alternative [docker-compose examples](https://docs.netalertx.com/DOCKER_COMPOSE).
 
 ### Default ports
 
@@ -53,7 +57,7 @@ See alternative [docked-compose examples](https://docs.netalertx.com/DOCKER_COMP
 | `PGID`      |Runtime GID override  |  `20211` |
 | `PORT`      |Port of the web interface  |  `20211` |
 | `LISTEN_ADDR`      |Set the specific IP Address for the listener address for the nginx webserver (web interface). This could be useful when using multiple subnets to hide the web interface from all untrusted networks. |  `0.0.0.0` |
-|`LOADED_PLUGINS` | Default [plugins](https://docs.netalertx.com/PLUGINS) to load. Plugins cannot be loaded with `APP_CONF_OVERRIDE`, you need to use this variable instead and then specify the plugins settings with `APP_CONF_OVERRIDE`. |  `["PIHOLE","ASUSWRT"]` |
+|`LOADED_PLUGINS` | Default [plugins](https://docs.netalertx.com/PLUGINS_OVERVIEW) to load. Plugins cannot be loaded with `APP_CONF_OVERRIDE`, you need to use this variable instead and then specify the plugins settings with `APP_CONF_OVERRIDE`. |  `["PIHOLE","ASUSWRT"]` |
 |`APP_CONF_OVERRIDE` | JSON override for settings (except `LOADED_PLUGINS`).   |  `{"SCAN_SUBNETS":"['192.168.1.0/24 --interface=eth1']","GRAPHQL_PORT":"20212"}` |
 |`ALWAYS_FRESH_INSTALL` | ⚠ If `true` will delete the content of the `/db` & `/config` folders. For testing purposes. Can be coupled with [watchtower](https://github.com/containrrr/watchtower) to have an always freshly installed `netalertx`/`netalertx-dev` image.   |    `true` |
 
@@ -70,7 +74,7 @@ See alternative [docked-compose examples](https://docs.netalertx.com/DOCKER_COMP
 | ✅ | `/etc/localtime:/etc/localtime:ro` | Ensuring the timezone is the same as on the server.  |
 | | `:/tmp/log` |  Logs folder useful for debugging if you have issues setting up the container  |
 | | `:/tmp/api` |  The [API endpoint](https://docs.netalertx.com/API) containing static (but regularly updated) json and other files. Path configurable via `NETALERTX_API` environment variable.   |
-| | `:/app/front/plugins/<plugin>/ignore_plugin` | Map a file `ignore_plugin` to ignore a plugin. Plugins can be soft-disabled via settings. More in the [Plugin docs](https://docs.netalertx.com/PLUGINS).  |
+| | `:/app/server/plugins/<plugin>/ignore_plugin` | Map a file `ignore_plugin` to ignore a plugin. Plugins can be soft-disabled via settings. More in the [Plugin docs](https://docs.netalertx.com/PLUGINS_OVERVIEW).  |
 | | `:/etc/resolv.conf` | Use a custom `resolv.conf` file for [better name resolution](https://docs.netalertx.com/REVERSE_DNS).  |
 
 ### Folder structure
@@ -127,4 +131,4 @@ You can read or watch several [community configuration guides](https://docs.neta
 - Bitcoin: `1N8tupjeCK12qRVU2XrV17WvKK7LCawyZM`
 - Ethereum: `0x6e2749Cb42F4411bc98501406BdcD82244e3f9C7`
 
-> 📧 Email me at [netalertx@gmail.com](mailto:netalertx@gmail.com?subject=NetAlertX Donations) if you want to get in touch or if I should add other sponsorship platforms.
+> 📧 Email me at [support@netalertx.com](mailto:support@netalertx.com?subject=NetAlertX Donations) if you want to get in touch or if I should add other sponsorship platforms.

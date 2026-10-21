@@ -3,9 +3,9 @@ import random
 import pytest
 
 INSTALL_PATH = "/app"
-sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
+sys.path.extend([f"{INSTALL_PATH}/server/plugins", f"{INSTALL_PATH}/server"])
 
-from helper import get_setting_value  # noqa: E402 [flake8 lint suppression]
+from helper import get_setting_value, count_children_by_parent_mac, format_ip_long  # noqa: E402 [flake8 lint suppression]
 from api_server.api_server_start import app  # noqa: E402 [flake8 lint suppression]
 
 
@@ -77,6 +77,91 @@ def test_graphql_post_devices(client, api_token):
     assert "devices" in data
     assert isinstance(data["devices"]["devices"], list)
     assert isinstance(data["devices"]["count"], int)
+
+
+def test_graphql_devices_parent_children_count_matches_recount(client, api_token):
+    """devParentChildrenCount for every returned device must match an independent
+    recount of the same response (regression guard for the O(n^2)->O(n) rewrite of
+    resolve_devices()/count_children_by_parent_mac() in graphql_endpoint.py/helper.py).
+
+    Not seeded against a freshly-created fixture pair: table_devices.json (what
+    resolve_devices() reads) is only refreshed by the periodic update_api() loop,
+    not synchronously on a POST /device/<mac> create - a create-then-query test
+    would be flaky against snapshot staleness. Recomputing from the response
+    itself avoids that while still exercising the real resolver wiring.
+    """
+    query = {
+        "query": """
+        {
+            devices {
+                devices {
+                    devMac
+                    devParentMAC
+                    devParentChildrenCount
+                }
+                count
+            }
+        }
+        """
+    }
+    resp = client.post("/graphql", json=query, headers=auth_headers(api_token))
+    assert resp.status_code == 200
+
+    devices = resp.get_json()["data"]["devices"]["devices"]
+    expected_counts = count_children_by_parent_mac(
+        [{"devParentMAC": d["devParentMAC"]} for d in devices]
+    )
+
+    for device in devices:
+        expected = expected_counts.get((device["devMac"] or "").strip(), 0)
+        assert device["devParentChildrenCount"] == expected, (
+            f"devMac={device['devMac']}: expected {expected}, "
+            f"got {device['devParentChildrenCount']}"
+        )
+
+
+@pytest.mark.parametrize("field", ["devLastIP", "devPrimaryIPv4", "devPrimaryIPv6"])
+@pytest.mark.parametrize("order", ["ASC", "DESC"])
+def test_graphql_devices_sort_by_ip_is_numeric(client, api_token, field, order):
+    """Sorting devices by an IP field must order numerically (e.g. 192.168.1.15
+    before 192.168.1.105), not lexicographically, in both directions - and a
+    device with no value for that field must consistently land after every
+    real address in ASC and before every real address in DESC (matching
+    mixed_type_sort_key's convention for every other column), not wherever
+    format_ip_long's -1-for-empty sentinel happens to fall in raw numeric
+    order. Regression guard for #1797.
+
+    Not seeded: reuses whatever devices already exist (see the docstring on
+    test_graphql_devices_parent_children_count_matches_recount for why this
+    file avoids create-then-query against table_devices.json).
+    """
+    query = {
+        "query": f"""
+        {{
+            devices(options: {{sort: [{{field: "{field}", order: "{order}"}}]}}) {{
+                devices {{
+                    {field}
+                }}
+            }}
+        }}
+        """
+    }
+    resp = client.post("/graphql", json=query, headers=auth_headers(api_token))
+    assert resp.status_code == 200
+
+    values = [d[field] for d in resp.get_json()["data"]["devices"]["devices"]]
+
+    # Blank-value placement, independent of the non-blank values' numeric order:
+    # False (non-blank) sorts before True (blank), so a properly-grouped ASC
+    # result is already in sorted(is_blank) order; DESC is the reverse of that.
+    is_blank = [not v for v in values]
+    expected_blank_order = sorted(is_blank, reverse=(order == "DESC"))
+    assert is_blank == expected_blank_order, f"blank {field} values not grouped correctly for {order}: {values}"
+
+    # Non-blank values must be in real numeric IP order for the requested direction.
+    non_blank_longs = [format_ip_long(v) for v in values if v]
+    expected = sorted(non_blank_longs, reverse=(order == "DESC"))
+    assert non_blank_longs == expected
 
 
 # --- SETTINGS TESTS ---

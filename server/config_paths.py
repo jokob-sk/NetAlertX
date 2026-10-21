@@ -77,7 +77,7 @@ LOG_PATH = _resolve_env_path("NETALERTX_LOG", TMP_PATH / "log")
 FRONT_PATH = APP_PATH / "front"
 SERVER_PATH = APP_PATH / "server"
 BACK_PATH = APP_PATH / "back"
-PLUGINS_PATH = FRONT_PATH / "plugins"
+PLUGINS_PATH = SERVER_PATH / "plugins"
 REPORT_TEMPLATES_PATH = FRONT_PATH / "report_templates"
 
 API_PATH_WITH_TRAILING_SEP = ensure_trailing_sep(API_PATH)

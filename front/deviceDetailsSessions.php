@@ -6,6 +6,7 @@
 
 <!-- ----------------------------------------------------------------------- -->
 
+<?php require $_SERVER['DOCUMENT_ROOT'] . '/php/templates/skel_device_details_tab_sessions.php'; ?>
 
 <!-- Datatable Session -->
 <table id="tableSessions" class="table table-bordered table-hover table-striped ">
@@ -56,9 +57,6 @@ function initializeSessionsDatatable (sessionsRows) {
 
             if (!cellData.includes("missing event") && !cellData.includes("..."))
             {
-              if (cellData.includes("+")) { // Check if timezone offset is present
-                cellData = cellData.split('+')[0]; // Remove timezone offset
-              }
               // console.log(cellData);
               result = localizeTimestamp(cellData);
             } else
@@ -100,6 +98,7 @@ function loadSessionsData() {
   const table = $('#tableSessions').DataTable();
   let period = $("#period").val()
 
+  showSessionsTabSkeleton();
   showSpinner();
 
   // Build API base
@@ -133,10 +132,12 @@ function loadSessionsData() {
 
       table.draw();
       hideSpinner();
+      hideSessionsTabSkeleton();
     },
     error: function (xhr, status, err) {
       console.error("Failed to load sessions:", err, xhr.responseText);
       hideSpinner();
+      hideSessionsTabSkeleton();
     }
   });
 }
@@ -176,5 +177,15 @@ function deviceSessionsPageUpdater() {
 
 // start updater
 deviceSessionsPageUpdater();
+
+// -----------------------------------------------------------------------------
+function hideSessionsTabSkeleton() {
+  $('#skel-tab-sessions').fadeOut(0, function() { $(this).hide(); });
+}
+
+function showSessionsTabSkeleton() {
+  var $skel = $('#skel-tab-sessions');
+  $skel.stop(true, true).fadeIn(10);
+}
 
 </script>

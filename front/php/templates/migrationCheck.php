@@ -1,6 +1,4 @@
-<?php 
-
-  require 'php/templates/modals.php'; 
+<?php
   //------------------------------------------------------------------------------
   // check if authenticated
   require_once  $_SERVER['DOCUMENT_ROOT'] . '/php/templates/security.php';
@@ -14,7 +12,7 @@ $configFile = '/home/pi/pialert/conf/pialert.conf';
 $databaseFile = '/home/pi/pialert/db/pialert.db';
 
 if (file_exists($configFile) || file_exists($databaseFile)) {
-    
+
     echo 'true';
 
 } else {echo 'false'; }

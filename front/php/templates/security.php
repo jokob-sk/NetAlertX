@@ -5,6 +5,35 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
+/**
+ * Return this session's CSRF token, generating one on first use.
+ */
+function getCsrfToken(): string {
+    if (empty($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+
+    return $_SESSION['csrf_token'];
+}
+
+/**
+ * Halt the request with a 403 JSON response unless $_POST['csrf_token']
+ * matches this session's token. Guards every state-changing PHP endpoint
+ * that relies on the ambient session cookie rather than a request body
+ * credential - without this, a cross-site POST can reuse a logged-in
+ * operator's session to trigger the same action (CWE-352).
+ */
+function requireCsrfToken(): void {
+    $submittedToken = $_POST['csrf_token'] ?? '';
+
+    if (!is_string($submittedToken) || !hash_equals(getCsrfToken(), $submittedToken)) {
+        http_response_code(403);
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'error' => 'Invalid CSRF token']);
+        exit();
+    }
+}
+
 // Constants
 $configFolderPath = rtrim(getenv('NETALERTX_CONFIG') ?: '/data/config', '/');
 $legacyConfigPath = $_SERVER['DOCUMENT_ROOT'] . "/../config/app.conf";
@@ -28,7 +57,14 @@ function getConfigLine($pattern, $config_lines) {
 
 function getConfigValue($pattern, $config_lines, $delimiter = "'") {
     $line = preg_grep($pattern, $config_lines);
-    return !empty($line) ? explode($delimiter, array_values($line)[0])[1] : '';
+    if (empty($line)) {
+        return '';
+    }
+    // encode_python_string() (front/php/server/util.php) doubles backslashes
+    // before writing to app.conf so they round-trip through the Python-style
+    // single-quoted literal unchanged - undo that here, or a password/token
+    // containing a literal backslash never compares equal to what was saved.
+    return str_replace('\\\\', '\\', explode($delimiter, array_values($line)[0])[1]);
 }
 
 function redirect($url) {

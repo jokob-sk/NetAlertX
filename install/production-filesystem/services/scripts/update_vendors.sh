@@ -7,7 +7,7 @@ set -euo pipefail
 #
 #  update_vendors.sh - Back module. IEEE Vendors db update
 # ------------------------------------------------------------------------------
-#  Puche 2021 / 2022+ jokob             jokob@duck.com                GNU GPLv3
+#  Puche 2021 / 2022+ jokob             support@netalertx.com                GNU GPLv3
 # ------------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------

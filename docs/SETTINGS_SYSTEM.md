@@ -32,9 +32,40 @@ The App generates two `app.conf` entries for every setting (Since version 23.8+)
 > [!NOTE]
 > This is the preferred way adding settings going forward. I'll be likely migrating all app settings into plugin-based settings.
 
-Plugin settings are loaded dynamically from the `config.json` of individual plugins. If a setting isn't defined in the `app.conf` file, it is initialized via the `default_value` property of a setting from the `config.json` file. Check the [Plugins documentation](https://docs.netalertx.com/PLUGINS#-setting-object-structure), section `⚙ Setting object structure` for details on the structure of the setting.
+Plugin settings are loaded dynamically from the `config.json` of individual plugins. If a setting isn't defined in the `app.conf` file, it is initialized via the `default_value` property of a setting from the `config.json` file. Check the [Plugins documentation](https://docs.netalertx.com/PLUGINS_OVERVIEW#-setting-object-structure), section `⚙ Setting object structure` for details on the structure of the setting.
 
 ![Screen 1][screen1]
+
+### Localization
+
+Every setting must have localized language strings.
+
+If the language strings are **not** defined directly inside `config.json`, they must exist in `en_us.json`.
+
+For example, for:
+
+```text
+UI_DEV_SECTIONS
+```
+
+add:
+
+```json
+"UI_DEV_SECTIONS_name": "Hide device sections",
+"UI_DEV_SECTIONS_description": "Select which UI elements to hide on the Devices page."
+```
+
+When using external language files, `config.json` must reference:
+
+```json
+"name": [
+  {
+    "string": "_GLOBAL_LANG_FILES_"
+  }
+]
+```
+
+This tells NetAlertX to resolve the display name from the language files.
 
 ### Settings Process flow
 

@@ -20,7 +20,15 @@
     --color-yellow: #f39c12;
     --color-red: #dd4b39;
     --color-gray: #8c8c8c;
+    --color-darkgray: #3f3e3e;
+    --color-lightgray: #bec5cb;
     --color-white: #fff;
+    --skel-base: #353c42;
+    --skel-shine: #272c30;
+    --skel-section: #272c30;
+    --skel-panel-bg: #272c30;
+    --skel-border: #2a323e;
+    --skel-bg: #353c42;
   }
 
   :root {
@@ -402,6 +410,13 @@
     color: var(--color-white);
   }
 
+  .btn-outline:hover
+  {
+    border: 1px solid var(--color-black);
+    background-color: var(--color-black);;
+    color: var(--color-white);
+  }
+
   /* Used in debug log page */
   .log-red {
     color: #ff4038;
@@ -502,6 +517,25 @@
     color: #bec5cb;
     border: 1px solid #171c20;
   }
+  .sources-view-toggle .dropdown-toggle {
+    color: #8e959b;
+  }
+  .sources-view-toggle .dropdown-toggle:hover,
+  .sources-view-toggle .dropdown-toggle:focus {
+    color: var(--color-lightgray);
+  }
+  #sourcesViewMenu {
+    background-color: #4c5761;
+    border: 1px solid #171c20;
+  }
+  #sourcesViewMenu > li > a {
+    color: var(--color-lightgray);
+  }
+  #sourcesViewMenu > li > a:hover,
+  #sourcesViewMenu > li > a:focus {
+    background-color: #353c42;
+    color: var(--color-lightgray);
+  }
   .table-striped > tbody > tr:nth-of-type(2n + 1) {
     background-color: #2d343a;
   }
@@ -511,6 +545,9 @@
     background-color: #3e464c;
     border: 1px solid #353c42;
     color: #bec5cb;
+  }
+  #settingsPage .panel-heading:hover {
+    background-color: #272c30;
   }
   .box.box-solid.box-info,
   .box.box-solid.box-info > .box-header {
@@ -617,6 +654,9 @@
     background-color: #353c42;
     border-color: #888888;
   }
+  #txtRecord:hover {
+    color: var(--color-lightgray);
+  }
   .table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
     background-color: var(--datatable-bgcolor);
     color: var(--fbc-white);
@@ -718,10 +758,10 @@
   color:#000;
 }
 
-.btn:hover
+/* .btn:hover
 {
   color: var(--color-white);
-}
+} */
 
 
 .logs, .log-area textarea
@@ -732,3 +772,4 @@
   font-size: .85em;
   cursor: pointer;
 }
+

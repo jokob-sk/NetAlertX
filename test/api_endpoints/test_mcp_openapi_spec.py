@@ -29,7 +29,7 @@ from api_server.openapi.schema_converter import pydantic_to_json_schema
 from api_server.mcp_endpoint import map_openapi_to_mcp_tools
 
 INSTALL_PATH = os.getenv('NETALERTX_APP', '/app')
-sys.path.extend([f"{INSTALL_PATH}/front/plugins", f"{INSTALL_PATH}/server"])
+sys.path.extend([f"{INSTALL_PATH}/server/plugins", f"{INSTALL_PATH}/server"])
 
 
 class TestPydanticSchemas:

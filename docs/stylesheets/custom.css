@@ -14,6 +14,19 @@
  * limitations under the License.
  */
 
+ :root {
+  --color-white: #fff;
+  --color-aqua: #00c0ef;
+  --color-lightblue: #3c8dbc;
+  --color-blue: #0060df;
+  --color-green: #00a65a;
+  --color-yellow: #f39c12;
+  --color-red: #dd4b39;
+  --color-gray: #8c8c8c;
+  --color-darkgray: #3f3e3e;
+  --color-lightgray: #bec5cb;
+  --color-black: #000;
+}
 
 /* --- HERO SECTION --- */
 .hero-wrapper {
@@ -59,6 +72,30 @@ p.hero-description {
   width: 100%;
   height: auto;
   object-fit: contain;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .hero-wrapper {
+    flex-direction: column-reverse; /* image first, text second */
+    align-items: center;
+  }
+
+  .hero-content {
+    max-width: 100%;
+    text-align: center;
+  }
+
+  .hero-image {
+    max-width: 100%;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-logo-crisp {
+    max-width: 600px;
+    width: 100%;
+    height: auto;
+  }
 }
 
 /* --- PROMO CARDS --- */
@@ -118,4 +155,26 @@ p.hero-description {
 .promo-button:hover,
 .learn-more-btn:hover {
   opacity: 0.8;
+}
+
+/* key presence styles */
+.presenceOnlineNow{
+  background-color: var(--color-green);
+}
+
+.presenceOnlinePast{
+  background-color: var(--color-blue);
+}
+
+.presenceOnlinePastMiss{
+  background-color: var(--color-yellow);
+}
+
+.presenceKeyBoxes
+{
+  width: 10px;
+  height: 10px;
+  display: inline-block;
+  /* background: #fff; */
+  opacity: .75;
 }

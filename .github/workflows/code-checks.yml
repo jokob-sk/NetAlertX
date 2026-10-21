@@ -114,3 +114,51 @@ jobs:
           echo "🐳 Running Docker-based tests..."
           chmod +x ./scripts/run_tests_in_docker_environment.sh
           ./scripts/run_tests_in_docker_environment.sh
+
+  check-skill-pairs:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🔍 Check for skill-pair drift
+        continue-on-error: true
+        run: python3 scripts/check_skill_pairs.py "origin/${{ github.base_ref }}"
+
+  check-devcontainer-dockerfile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔍 Check .devcontainer/Dockerfile is up to date
+        run: |
+          echo "Regenerating .devcontainer/Dockerfile from the root Dockerfile + .devcontainer/resources/devcontainer-Dockerfile..."
+          cp .devcontainer/Dockerfile /tmp/devcontainer-dockerfile-committed
+          bash .devcontainer/scripts/generate-configs.sh
+
+          if ! diff -q /tmp/devcontainer-dockerfile-committed .devcontainer/Dockerfile > /dev/null; then
+            echo "❌ .devcontainer/Dockerfile is stale."
+            echo "It's generated from the root Dockerfile and .devcontainer/resources/devcontainer-Dockerfile,"
+            echo "not hand-edited. Run 'bash .devcontainer/scripts/generate-configs.sh' locally and commit the result."
+            echo
+            diff /tmp/devcontainer-dockerfile-committed .devcontainer/Dockerfile || true
+            exit 1
+          fi
+          echo "✅ .devcontainer/Dockerfile is up to date."
+
+  check-dependency-mirroring:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🔍 Check for dependency-mirroring gaps
+        continue-on-error: true
+        run: python3 scripts/check_dependency_mirroring.py "origin/${{ github.base_ref }}"

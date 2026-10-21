@@ -4,13 +4,14 @@
 #
 #  app.css - Front module. CSS styles
 #-------------------------------------------------------------------------------
-#  Puche 2021 / 2022+ jokob             jokob@duck.com                GNU GPLv3
+#  Puche 2021 / 2022+ jokob             support@netalertx.com                GNU GPLv3
 ----------------------------------------------------------------------------- */
 
 /* -----------------------------------------------------------------------------
    Global Variables
 ----------------------------------------------------------------------------- */
 :root {
+    --color-white: #fff;
     --color-aqua: #00c0ef;
     --color-lightblue: #3c8dbc;
     --color-blue: #0060df;
@@ -18,6 +19,8 @@
     --color-yellow: #f39c12;
     --color-red: #dd4b39;
     --color-gray: #8c8c8c;
+    --color-darkgray: #3f3e3e;
+    --color-lightgray: #bec5cb;
     --color-black: #000;
 }
 
@@ -34,15 +37,15 @@ h5
 a[target="_blank"] {
     position: relative;
     display: inline-block; /* Needed for positioning */
-    padding-right: 0.6em;    /* Space for the icon */
+    padding-right: 0.55em;    /* Space for the icon */
   }
 
   a[target="_blank"]::after {
     content: '↗';
     position: absolute;
     top: 0;
-    right: 0;
-    font-size: 0.75em;
+    right: 0.3em;
+    font-size: 0.6em;
     line-height: 1;
   }
 
@@ -244,7 +247,8 @@ a[target="_blank"] {
 
 .main-footer {
     padding: 5px;
-    color: gray;
+    z-index: 10000;
+    position: inherit; 
 }
 
 .header-server-time
@@ -314,6 +318,10 @@ body
     width: 150px;
 }
 
+.fixed .main-header
+{
+    z-index: 10001;
+}
 
 .navbar-nav > .user-menu .user-image
 {
@@ -327,6 +335,7 @@ body
 .main-sidebar,
 .left-side {
     width: 150px;
+    z-index: 10000;
 }
 
 .content-wrapper,
@@ -334,7 +343,6 @@ body
 .main-footer {
     margin-left: 150px;
 }
-
 
 @media (max-width: 767px) {
     .main-header .logo {
@@ -652,15 +660,15 @@ hr
 .btn-outline:hover
 {
   border: 1px solid var(--color-black);
-  background: transparent;
-  color: var(--color-black);
+  background-color: var(--color-black);
+  color: var(--color-white);
 }
 
 .btn-outline
 {
-  border: 1px solid var(--color-gray);
-  background: transparent;
-  color: var(--color-gray);
+  border: 1px solid var(--color-darkgray);
+  background-color: var(--color-white);
+  color: var(--color-darkgray);
 }
 
 /* -----------------------------------------------------------------------------
@@ -722,6 +730,11 @@ hr
     display: none;
     margin-left: auto;
     margin-right: auto;
+}
+
+.modal
+{
+    z-index: 12000;
 }
 
 .modal_green
@@ -988,9 +1001,35 @@ height: 50px;
     opacity: .75;
 }
 
+#presencePage .helpIcon{
+    top: 2px;
+    display: initial;
+    font-size: x-small;
+}
+
+.calendarHelpIcon{
+    display: block;
+    position: absolute;
+    font-size: x-small;
+    top: 5px;
+}
+
 /* --------------------------------------------------------- */
 /*                         report                            */
 /* --------------------------------------------------------- */
+
+#notifications
+{
+    display: flex;
+}
+
+/* The wrapper above is a flex container, so the content section shrinks to
+   its content width unless stretched; make it span the full page like the
+   other Monitoring pages (#1762). */
+#notifications .content
+{
+    width: 100%;
+}
 
 #notificationData
 {
@@ -1069,6 +1108,8 @@ height: 50px;
 #settingsPage
 {
     display: grid;
+    margin-top: 50px;
+    padding-top: 0px;
 }
 
 
@@ -1083,6 +1124,7 @@ height: 50px;
 .settingswrap
 {
     margin-bottom: 100px;
+    padding-top: 0px;
 }
 
 .settingswrap .metadata
@@ -1178,8 +1220,10 @@ height: 50px;
 /* Settings */
 
 #settingsPage .overview-setting-value{
-    display:unset;
-
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: smaller;
 }
 
 .overview-setting-value-wrap
@@ -1228,7 +1272,7 @@ height: 50px;
 
 }
 #settingsPage .panel-heading:hover{
-    background-color: #272c30;
+    background-color: #e8e8e8;
 }
 
 .settings-expand-icon {
@@ -1417,6 +1461,7 @@ textarea[readonly],
     grid-template-columns: repeat(auto-fit, minmax(125px, 1fr));
     gap: 0.75em;
     padding: 0.5em 0;
+    padding-top: 0;
 }
 
 #columnFilters::before,
@@ -1545,6 +1590,11 @@ textarea[readonly],
     height: 1.5em;
 }
 
+#nextScanEta
+{
+    padding-left: 1.5em;
+}
+
 .info-icon-nav
 {
     top: -6px;
@@ -1552,6 +1602,26 @@ textarea[readonly],
     z-index: 1;
     left: 4px;
     font-size: smaller;
+}
+
+.main-header .sidebar-toggle
+{
+    /* .nav-pending-dot below needs a positioned ancestor to anchor to -
+       .sidebar-toggle has none by default (AdminLTE.css only sets float:left),
+       so without this it escapes to the nearest positioned element elsewhere
+       on the page instead of sitting on the toggle icon itself. */
+    position: relative;
+}
+
+.nav-pending-dot
+{
+    position: absolute;
+    top: 14px;
+    right: 10px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
 }
 
 .drag
@@ -1832,12 +1902,19 @@ textarea[readonly],
 
 #modal-ok
 {
-    z-index: 1051; /*highest priority*/
+    z-index: 11051; /*highest priority*/
 }
 
 #modal-form-plc
 {
     display: grid;
+}
+
+@media (min-width: 768px) {
+  .modal-dialog {
+    width: 750px;
+    margin: 30px auto;
+  }
 }
 
 /* ----------------------------------------------------------------- */
@@ -1867,6 +1944,8 @@ textarea[readonly],
 
 #networkTree .box
 {
+    /* Positioned HTML inside SVG foreignObject is misplaced by WebKit. */
+    position:static;
     border-width:1px;
     border-top-color:grey;
     padding:0px;
@@ -1889,7 +1968,7 @@ textarea[readonly],
 }
 #networkTree .netNodeText
 {
-    position: absolute;
+    position: static;
 }
 #networkTree .netPort
 {
@@ -1900,7 +1979,8 @@ textarea[readonly],
 
 #networkTree .portBckgIcon
 {
-    opacity: 0.3;
+    color: var(--color-gray);
+    color: color-mix(in srgb, currentColor 30%, transparent);
     display: initial;
     float: left;
     width: 1em;
@@ -1977,8 +2057,8 @@ textarea[readonly],
 
 #networkTree .netCollapse
 {
-    position: absolute;
-    right: 0;
+    position: static;
+    float: right;
     margin-right: -3px;
 }
 
@@ -2001,9 +2081,12 @@ textarea[readonly],
 
 #networkTree .network-hw-icon
 {
-    position: absolute;
+    position: static;
+    display: inline-block;
     margin-left: -0.4em;
-    opacity: 0.3;
+    /* Alpha in the color avoids WebKit's foreignObject opacity layer bug. */
+    color: var(--color-gray);
+    color: color-mix(in srgb, currentColor 30%, transparent);
     margin-top: 0.1em;
 }
 
@@ -2090,6 +2173,9 @@ textarea[readonly],
     {
         display: none;
     }
+}
+
+@media (max-width: 1135px) {
     .dev-detail-tab-name
     {
         display: none;
@@ -2130,11 +2216,33 @@ textarea[readonly],
 .plugin-content
 {
     padding-bottom: 0px;
+    margin-bottom: 0px;
+}
+
+/* Its col-sm-2/col-sm-10 children float without a .row wrapper, so without
+   this the container collapses to 0 height and the floated content bleeds
+   past it instead of being contained. */
+.plugin-content:before,
+.plugin-content:after
+{
+    content: " ";
+    display: table;
+}
+
+.plugin-content:after
+{
+    clear: both;
 }
 
 .plugin-content .nav-tabs li a
 {
     border-right-width: 0px;
+}
+
+#tabs-content-location-wrap,
+#field-tabs-content-location-wrap
+{
+    padding: 10px;
 }
 
 #tabs-content-location-wrap
@@ -2151,6 +2259,11 @@ textarea[readonly],
     padding-right: 0px;
     z-index: 2;
     background-color: inherit !important;
+}
+
+#field-tabs-location
+{
+    padding-right: 0px;
 }
 
 .plugin-content #tabs-content-location
@@ -2173,6 +2286,111 @@ textarea[readonly],
 .plugins-description
 {
     padding-top: 20px;
+    padding-left: 5px;
+}
+
+.pluginsCore .helpIcon
+{
+    margin-left: -15px;
+    font-size: x-small;
+}
+
+.field-view-content
+{
+    position: relative;
+    min-height: 300px;
+}
+
+.plugin-tab-nav
+{
+    margin-bottom: 0px;
+}
+
+/* #navDevice .tab-content resets padding to 0px for the whole device-details
+   tab area - outrank it explicitly (same specificity otherwise, source order
+   would decide) so Sources tab's two sub-views keep their padding. */
+#navDevice #tabs-content-location .tab-content,
+#navDevice #field-tabs-content-location .tab-content
+{
+    padding: 10px;
+}
+
+.plugin-tab-pane
+{
+    position: relative;
+}
+
+.skel-plugins-tab-pane
+{
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1;
+}
+
+.plugin-no-data
+{
+    padding: 15px;
+}
+
+.field-pane-table
+{
+    width: 100%;
+}
+
+.tab-sources-li
+{
+    position: relative;
+}
+
+#tabSources
+{
+    transition: padding-right 0.15s ease;
+}
+
+.tab-sources-li.active #tabSources
+{
+    padding-right: 40px;
+}
+
+.sources-view-toggle-inline
+{
+    display: none;
+    position: absolute;
+    top: 12px;
+    right: 10px;
+}
+
+.tab-sources-li.active .sources-view-toggle-inline
+{
+    display: inline-block;
+}
+
+.sources-view-toggle .dropdown-toggle
+{
+    cursor: pointer;
+    color: #444;
+}
+
+.sources-view-toggle .dropdown-toggle:hover,
+.sources-view-toggle .dropdown-toggle:focus
+{
+    color: #999;
+}
+
+.pluginsCore .tab-content
+{
+    padding-left: 5px;
+}
+
+.pluginsCore .tab-content .row
+{
+    margin: 0px;
+}
+
+.plugin-obj-purge{
+    padding: 5px;
 }
 
 /*Hidden special button*/
@@ -2243,7 +2461,7 @@ textarea[readonly],
 ----------------------------------------------------------------------------- */
 #loadingSpinner {
     position: fixed;
-    z-index: 1000;
+    z-index: 9999;
     /* top: 0; */
     /* left: 0; */
     /* width: 100%; */
@@ -2252,7 +2470,6 @@ textarea[readonly],
     transition: opacity 0.3s ease-in-out;
     pointer-events: none;
     display: block;
-    z-index: 800;
 }
 
 .fa-spinner
@@ -2330,6 +2547,17 @@ textarea[readonly],
 #workflowContainerWrap .panel-collapse
 {
     padding: 5px;
+}
+
+.workflows .add-target-condition
+{
+    margin: 10px;
+    text-align: center;
+}
+
+.workflows .inline-hint
+{
+    margin: 5px;
 }
 
 .workflows
@@ -2424,6 +2652,24 @@ textarea[readonly],
     color: var(--color-green) !important;
 }
 
+.workflows .add-condition, .workflows .add-condition-group, .workflows .add-target-condition
+{
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+}
+
+.workflows .action-target-conditions
+{
+    opacity: 0.8;
+}
+
+.workflows .bckg-icon-base
+{
+    display: block;
+    position: absolute;
+    opacity: 0.1;
+    right: 0.1em;
+}
 .workflows .bckg-icon-1-line
 {
     font-size: 3em;
@@ -2484,6 +2730,36 @@ textarea[readonly],
 }
 
 /* -----------------------------------------------------------------------------
+   InitCheck
+----------------------------------------------------------------------------- */
+#panInitCheck .row
+{
+    width: 100%;
+}
+
+#panInitCheck.active
+{
+    display: flow-root;
+}
+
+.init-check-button
+{
+  margin: 0;
+  position: relative;
+  left: 50%;
+  -ms-transform: translate(-50%, 0%);
+  transform: translate(-50%, 0%);
+}
+
+/* -----------------------------------------------------------------------------
+   Sys info
+----------------------------------------------------------------------------- */
+#appEvents
+{
+    display: flow-root;
+}
+
+/* -----------------------------------------------------------------------------
    Floating edit button
 ----------------------------------------------------------------------------- */
 #multiEditPlc
@@ -2499,21 +2775,47 @@ table.dataTable tbody > tr.selected
 }
 
 /* -----------------------------------------------------------------------------
-   Donations
+   Device -> Details
 ----------------------------------------------------------------------------- */
-.donations .box
+#panDetails
 {
-    padding:15px;
-    margin-bottom: 0px;
+    padding:10px;
 }
-.donations .box-header
+
+/* -----------------------------------------------------------------------------
+   Device -> Tools
+----------------------------------------------------------------------------- */
+#panTools
 {
-    color:15px;
+    padding:10px;
 }
-.donations h3
+
+/* -----------------------------------------------------------------------------
+   Device -> Sessions
+----------------------------------------------------------------------------- */
+#panSessions
 {
-    margin-top: 10px;
+    padding:10px;
 }
+
+
+/* -----------------------------------------------------------------------------
+   Device -> Presence
+----------------------------------------------------------------------------- */
+#panPresence
+{
+    padding:10px;
+}
+
+/* -----------------------------------------------------------------------------
+   Device -> Events
+----------------------------------------------------------------------------- */
+#panEvents
+{
+    padding:10px;
+}
+
+
 /* -----------------------------------------------------------------------------
    Field Lock/Unlock Buttons & Source Indicators
 ----------------------------------------------------------------------------- */
@@ -2546,3 +2848,252 @@ table.dataTable tbody > tr.selected
     color: #8c8c8c;
     background-color: rgba(140, 140, 140, 0.05);
 }
+
+/* -----------------------------------------------------------------------------
+   Change log
+----------------------------------------------------------------------------- */
+
+.change-log .helpIcon{
+    font-size: x-small;
+    top: 0px; 
+}
+
+#panHistory .change-log .helpIcon{
+    left: 15px;
+    font-size: x-small;
+    top: 45px;
+}
+
+#panHistory
+{
+    min-height:850px
+}
+
+#navDevice .tab-content
+{
+    padding:0px;
+}
+
+.changeLogFilter{
+    display:flex; 
+    gap:10px; 
+    flex-wrap:wrap; 
+    align-items:center;
+    padding:5px;
+}
+
+#changeHistoryPage .box
+{
+    margin-bottom:0px
+}
+
+#changeHistoryPage .change-log-skeleton-class
+{
+    padding: 15px;
+    width: auto;
+}
+
+/* -----------------------------------------------------------------------------
+   Loading Skeletons
+----------------------------------------------------------------------------- */
+
+/* Custom properties (overridden in dark-patch.css for Dark/System themes) */
+:root {
+    --skel-base:     #e2e2e2;
+    --skel-shine:    #f0f0f0;
+    --skel-section:  #d4d4d4;
+    --skel-panel-bg: #fff;
+    --skel-border:   #ddd;
+    --skel-bg:       #fff;
+}
+
+@keyframes settingsShimmer {
+    0%   { background-position: -600px 0; }
+    100% { background-position:  600px 0; }
+}
+
+.skel-shimmer {
+    background: linear-gradient(
+        90deg,
+        var(--skel-base)  25%,
+        var(--skel-shine) 50%,
+        var(--skel-base)  75%
+    );
+    background-size: 600px 100%;
+    animation: settingsShimmer 1.5s infinite linear;
+    border-radius: 3px;
+    display: inline-block;
+}
+
+/* Positioning anchors */
+#settingsPage, #devicesPage, #deviceDetailsPage,
+#eventsPage, #presencePage, #reportPage, #notifications, #wf-content-wrapper, #pluginsPage,
+#panDetails, #panSessions, #panPresence, #panEvents, #appEvents, #panSessionInfo {
+    position: relative;
+}
+
+#tab_DBTools, #tab_BackupRestore, #tab_Logging, #tab_multiEdit { position: relative; min-height: 320px; }
+
+/* Page-level overlay base */
+#settings-skeleton, #devices-skeleton, #device-details-skeleton,
+#events-skeleton, #presence-skeleton, #report-skeleton, #skel-app-events, #change-log-skeleton,
+#notifications-skeleton, #workflows-skeleton, #plugins-skeleton, .skel-tab-pane {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: var(--skel-bg);
+}
+#settings-skeleton, #devices-skeleton, #device-details-skeleton,
+#events-skeleton, #presence-skeleton, #report-skeleton, #skel-app-events,
+#notifications-skeleton, #workflows-skeleton, #plugins-skeleton { z-index: 50; }
+.skel-tab-pane           { z-index: 10; min-height: 400px; background-color: var(--skel-panel-bg);}
+#settings-skeleton       { margin: 15px; min-height: 500px; }
+#devices-skeleton        { margin: 15px; top: 50px; min-height: 500px; }
+#skel-app-events         { margin: 15px; top: 50px; min-height: 500px; z-index: inherit;}
+#device-details-skeleton { margin: 15px; top: 42px; padding: 10px }
+#events-skeleton         { margin: 15px; top: 50px; min-height: 500px; }
+#presence-skeleton       { margin: 15px; top: 50px; min-height: 500px; }
+#report-skeleton         { margin: 15px; top: 50px; min-height: 400px; }
+#notifications-skeleton  { margin: 15px; top: 50px; min-height: 400px; }
+#workflows-skeleton      { top: 50px; width: 770px; margin: 0 auto; min-height: 300px; }
+#plugins-skeleton        { top: 50px; padding: 0; min-height: 400px; }
+#change-log-skeleton     { display: block;  min-height: 400px;  z-index: 1; position: absolute; margin-left: 15px; padding-top: 15px; width:100%;}
+#skel-tab-sessions, #skel-tab-events, #skel-tab-presence { padding: 20px;}
+
+/* Hide scrollbars */
+#skel-tab-sessions, #skel-tab-events, #skel-tab-presence {
+    overflow: hidden; /* Hides the scrollbar */
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+    scrollbar-width: none; /* Firefox */
+}
+#skel-tab-sessions::-webkit-scrollbar, #skel-tab-events::-webkit-scrollbar, #skel-tab-presence::-webkit-scrollbar {
+    display: none; /* Safari and Chrome */
+}
+
+/* Bordered containers */
+.skel-overview-panel, .skel-section, .skel-plugin-block,
+.skel-chart-box, .skel-table-box,
+.skel-detail-info-panel, .skel-detail-form, .skel-tabs-bar {
+    border: 1px none var(--skel-border);
+}
+
+/* Clipped rounded containers */
+.skel-overview-panel, .skel-section, .skel-plugin-block,
+.skel-chart-box, .skel-table-box, .skel-tile {
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+/* Section-toned backgrounds */
+.skel-overview-heading, .skel-section-header, .skel-plugin-header,
+.skel-box-header, .skel-table-header-row, .skel-tile, .skel-tabs-bar {
+    background: var(--skel-section);
+}
+
+#pluginsPage .skel-table-box, .plugin-content .skel-table-box { background: var(--skel-bg); }
+
+/* Panel-toned backgrounds */
+.skel-overview-body, .skel-overview-header, .skel-plugin-body,
+.skel-detail-info-panel, .skel-detail-form {
+    background: var(--skel-panel-bg);
+}
+
+/* Flex rows with vertical centering */
+.skel-overview-heading, .skel-overview-header, .skel-section-header, .skel-plugin-header,
+.skel-box-header, .skel-table-header-row, .skel-setting-row, .skel-tr, .skel-form-row,
+.skel-tile-icon-area {
+    display: flex;
+    align-items: center;
+}
+
+/* Standard header bar height + padding */
+.skel-overview-heading, .skel-overview-header, .skel-section-header, .skel-box-header {
+    height: 44px;
+    padding: 0 15px;
+}
+
+/* Row separator borders */
+.skel-setting-row, .skel-tr, .skel-form-row { border-bottom: 1px solid var(--skel-border); }
+.skel-setting-row:last-child, .skel-tr:last-child, .skel-form-row:last-of-type { border-bottom: none; }
+
+/* Standard data row spacing */
+.skel-setting-row, .skel-tr { gap: 10px; padding: 11px 15px; }
+
+/* Thin-line height (14px) */
+.skel-line, .skel-cell-name, .skel-cell-desc, .skel-th, .skel-form-label { height: 14px; }
+
+/* Non-growing primitives */
+.skel-line, .skel-icon-block, .skel-cell-name, .skel-cell-desc, .skel-form-label { flex-shrink: 0; }
+
+/* Filling cells (flex: 1) */
+.skel-tile-inner, .skel-th, .skel-td, .skel-cell-input, .skel-form-input { flex: 1; }
+
+/* ----- Settings --------------------------------------------------------- */
+.skel-overview-panel    { margin-bottom: 10px; }
+.skel-overview-heading  { gap: 12px; }
+.skel-overview-body     { padding: 12px; }
+.skel-overview-card     { min-width: 100%; height: 76px; border-radius: 4px; padding: 5px;}
+.skel-section           { margin-bottom: 8px; }
+.skel-overview-header   { gap: 14px; }
+.skel-section-header    { gap: 14px; }
+.skel-plugin-block      { margin: 8px; }
+.skel-plugin-header     { height: 48px; padding: 0 15px; gap: 14px; }
+.skel-icon-block        { width: 22px; height: 16px; }
+.skel-cell-name         { width: 20%; }
+.skel-cell-desc         { width: 36%; }
+.skel-cell-input        { height: 32px; }
+
+/* ----- Devices ---------------------------------------------------------- */
+.skel-tile-row          { margin-right: -30px;  margin-left: -30px;}
+.skel-tile              { display: flex; height: 80px; margin-bottom: 15px;}
+#device-details-skeleton .skel-tile { display: flex; height: 45px; }
+.skel-tile-inner        { display: flex; flex-direction: column; padding: 12px 15px; justify-content: center; gap: 10px; }
+.skel-tile-num          { height: 26px; width: 55%; }
+.skel-tile-label        { height: 13px; width: 75%; }
+.skel-tile-icon-area    { width: 70px; justify-content: center; background: var(--skel-base); opacity: 0.6; }
+.skel-tile-icon-shape   { width: 38px; height: 38px; border-radius: 50%; }
+.skel-chart-box         { margin-bottom: 12px; }
+.skel-box-header        { gap: 12px; border-bottom: 1px solid var(--skel-border); }
+.skel-chart-body        { height: 220px; border-radius: 0; display: block; width: 100%; }
+.skel-table-header-row  { gap: 10px; padding: 10px 15px; border-bottom: 2px solid var(--skel-border); }
+.skel-td                { height: 13px; }
+
+/* ----- Device Details --------------------------------------------------- */
+.skel-detail-header     { margin-bottom: 0px; }
+.skel-detail-title      { height: 26px; width: 42%; margin-bottom: 0px; }
+.skel-detail-info-panel { display: flex; gap: 0; padding: 14px; border-radius: 4px; margin-bottom: 15px; max-width: 400px; }
+.skel-tabs-bar          { display: flex; gap: 4px; padding: 8px 10px 0; border-radius: 4px 4px 0 0; border-bottom: none; }
+.skel-tab               { height: 34px; width: 100px; border-radius: 4px 4px 0 0; flex-shrink: 0; }
+.skel-detail-form       { border-top: none; border-radius: 0 0 4px 4px; padding: 20px 15px; }
+.skel-detail-form-tab   { border-top: none; border-radius: 0 0 4px 4px; padding: 20px 15px; margin: -10px; }
+.skel-form-row          { gap: 15px; padding: 9px 0; }
+.skel-form-label        { width: 18%; min-width: 100px; }
+.skel-form-input        { height: 32px; }
+.skel-form-footer       { display: flex; justify-content: flex-end; gap: 10px; padding-top: 15px; }
+.skel-form-footer-left  { display: flex; justify-content: flex-start; gap: 10px; padding-top: 15px; }
+.skel-form-btn          { height: 34px; width: 100px; }
+
+/* ----- Workflows -------------------------------------------------------- */
+.skel-workflow-card     { border: 1px solid var(--skel-border); border-radius: 4px; margin-bottom: 8px; overflow: hidden; }
+.skel-workflow-header   { display: flex; align-items: center; height: 48px; padding: 0 15px; background: var(--skel-section); }
+
+/* ----- AppEvents -------------------------------------------------------- */
+#skel-app-event      { display: flex; gap: 0; min-height: 400px; }
+
+/* ----- Plugins ---------------------------------------------------------- */
+.skel-plugins-wrap      { display: flex; gap: 0; min-height: 400px; }
+.skel-plugins-nav       { flex-shrink: 0; border-right: 1px solid var(--skel-border); padding: 8px 0; }
+.skel-plugins-nav-item  { display: flex; align-items: center; padding: 9px 15px; border-bottom: 1px solid var(--skel-border); }
+.skel-plugins-nav-item:last-child { border-bottom: none; }
+.skel-plugins-body      { flex: 1; padding: 0; }
+
+/* ----- Systeminfo tabs -------------------------------------------------- */
+.skel-info-tab          { padding: 15px; min-height: 360px; }
+.skel-info-tab          { margin: -10px;}
+
+/* ----- ChangeLog tabs -------------------------------------------------- */
+#panHistory .change-log-skeleton-class { width: calc(100% - 30px); padding: 5px; top: auto;}
+
+/* ===== /Loading Skeleton ===== */
+

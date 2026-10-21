@@ -1,20 +1,20 @@
 <?php
 
-  require 'php/templates/header.php';  
-  require 'php/templates/modals.php'; 
+  require 'php/templates/header.php';
 ?>
 <!-- ----------------------------------------------------------------------- -->
- 
+
 
 <!-- Page ------------------------------------------------------------------ -->
-<div class="content-wrapper">
+<div id="appEvents" class="content-wrapper">
 
 <?php
    require 'appEventsCore.php';
 ?>
 
-        
+
 </div>
+
 
 <?php
   require 'php/templates/footer.php';

@@ -156,6 +156,48 @@ def get_storage_gb():
 
 
 # ===============================================================================
+# Process Vitality (NetAlertX's own process, not the host)
+# ===============================================================================
+
+# Non-blocking cpu_percent() needs one persistent Process object to mean anything
+# ("since the last time this was called") - this object is dedicated to /health only,
+# never shared with the tick-scoped sampler in scan/resource_history.py, so the two
+# measurement paths can't interfere with each other.
+_health_process = psutil.Process()
+
+
+def get_process_cpu_percent():
+    """
+    CPU% for the NetAlertX process since the last time this was called - a live
+    gauge for /health, not a tick-scoped measurement (see scan/resource_history.py's
+    tick-scoped sampler for that).
+
+    Returns:
+        float: CPU utilization percentage, or 0.0 on error.
+    """
+    try:
+        return _health_process.cpu_percent(interval=None)
+    except (psutil.Error, AttributeError) as e:
+        mylog("verbose", [f"[health] Error reading process CPU%: {e}"])
+        return 0.0
+
+
+def get_process_rss_mb():
+    """
+    Resident memory (RSS) for the current process, in MB - a point-in-time
+    snapshot, not a delta (RSS doesn't accumulate the way CPU-time/IO do).
+
+    Returns:
+        float: RSS in MB, or 0.0 on error.
+    """
+    try:
+        return round(psutil.Process().memory_info().rss / (1024 * 1024), 2)
+    except (psutil.Error, AttributeError) as e:
+        mylog("verbose", [f"[health] Error reading process RSS: {e}"])
+        return 0.0
+
+
+# ===============================================================================
 # Aggregator
 # ===============================================================================
 
@@ -174,4 +216,6 @@ def get_health_status():
         "cpu_temp": get_cpu_temp(),
         "storage_gb": get_storage_gb(),
         "mem_mb": get_mem_mb(),
+        "process_cpu_pct": get_process_cpu_percent(),
+        "process_rss_mb": get_process_rss_mb(),
     }

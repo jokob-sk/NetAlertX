@@ -1,6 +1,5 @@
 <?php
   require 'php/templates/header.php';
-  require 'php/templates/modals.php';
 ?>
 
 <!-- Page ------------------------------------------------------------------ -->
@@ -12,43 +11,6 @@
 <script>
   showSpinner();
 </script>
-
-<?php
-
-// Size and last mod of DB ------------------------------------------------------
-
-$dbBasePath = rtrim(getenv('NETALERTX_DB') ?: '/data/db', '/');
-$nax_db = $dbBasePath . '/app.db';
-$nax_wal = $dbBasePath . '/app.db-wal';
-$nax_db_size = file_exists($nax_db) ? number_format((filesize($nax_db) / 1000000),2,",",".") . ' MB' : '0 MB';
-$nax_wal_size = file_exists($nax_wal) ? number_format((filesize($nax_wal) / 1000000),2,",",".") . ' MB' : '0 MB';
-$nax_db_mod = file_exists($nax_db) ? date ("F d Y H:i:s", filemtime($nax_db)) : 'N/A';
-
-
-// Table sizes -----------------------------------------------------------------
-
-$tableSizesHTML = "";
-
-// Open a connection to the SQLite database
-$db = new SQLite3($nax_db);
-
-// Retrieve the table names from sqlite_master
-$query = "SELECT name FROM sqlite_master WHERE type='table'";
-$result = $db->query($query);
-
-// Iterate over the tables and get the row counts
-while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
-    $tableName = $row['name'];
-    $query = "SELECT COUNT(*) FROM $tableName";
-    $countResult = $db->querySingle($query);
-    $tableSizesHTML = $tableSizesHTML . "$tableName (<b>$countResult</b>), ";
-}
-
-// Close the database connection
-$db->close();
-
-
-?>
 
       <div class="row">
           <div class="col-md-12">
@@ -84,30 +46,6 @@ $db->close();
                         <div class="db_info_table_cell" style="min-width: 140px"><?= lang('Maintenance_Running_Version');?></div>
                         <div class="db_info_table_cell">
                           <span data-plc="version"></span>
-                        </div>
-                    </div>
-                    <div class="db_info_table_row">
-                        <div class="db_info_table_cell" style="min-width: 140px"><?= lang('Maintenance_database_path');?></div>
-                        <div class="db_info_table_cell">
-                            <?php echo $nax_db;?>
-                        </div>
-                    </div>
-                    <div class="db_info_table_row">
-                        <div class="db_info_table_cell"><?= lang('Maintenance_database_size');?></div>
-                        <div class="db_info_table_cell">
-                            <?php echo $nax_db_size;?> (wal: <?php echo $nax_wal_size;?>)
-                        </div>
-                    </div>
-                    <div class="db_info_table_row">
-                        <div class="db_info_table_cell"><?= lang('Maintenance_database_rows');?></div>
-                        <div class="db_info_table_cell">
-                            <?php echo $tableSizesHTML;?>
-                        </div>
-                    </div>
-                    <div class="db_info_table_row">
-                        <div class="db_info_table_cell"><?= lang('Maintenance_database_lastmod');?></div>
-                        <div class="db_info_table_cell">
-                            <?php echo $nax_db_mod;?>
                         </div>
                     </div>
                 </div>
@@ -146,60 +84,62 @@ $db->close();
       </ul>
     <div class="tab-content spinnerTarget">
         <div class="tab-pane active" id="tab_DBTools">
-                <div class="db_info_table">
-                    <div class="db_info_table_row">
-                        <div class="db_tools_table_cell_a" >
-                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteMAC" onclick="askDeleteDevicesWithEmptyMACs()"><?= lang('Maintenance_Tool_del_empty_macs');?></button>
-                        </div>
-                        <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_del_empty_macs_text');?></div>
-                    </div>
-                    <div class="db_info_table_row">
-                        <div class="db_tools_table_cell_a" >
-                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteMAC" onclick="askDeleteAllDevices()"><?= lang('Maintenance_Tool_del_alldev');?></button>
-                        </div>
-                        <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_del_alldev_text');?></div>
-                    </div>
-                    <div class="db_info_table_row">
-                        <div class="db_tools_table_cell_a" >
-                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteUnknown" onclick="askDeleteUnknown()"><?= lang('Maintenance_Tool_del_unknowndev');?></button>
-                        </div>
-                        <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_del_unknowndev_text');?></div>
-                    </div>
-                    <div class="db_info_table_row">
-                        <div class="db_tools_table_cell_a" >
-                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteEvents" onclick="askDeleteEvents()"><?= lang('Maintenance_Tool_del_allevents');?></button>
-                        </div>
-                        <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_del_allevents_text');?></div>
-                    </div>
-                    <div class="db_info_table_row">
-                        <div class="db_tools_table_cell_a" >
-                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteEvents30" onclick="askDeleteEvents30()"><?= lang('Maintenance_Tool_del_allevents30');?></button>
-                        </div>
-                        <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_del_allevents30_text');?></div>
-                    </div>
-                    <div class="db_info_table_row">
-                        <div class="db_tools_table_cell_a" >
-                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnUnlockFields" onclick="askUnlockFields()"><?= lang('Maintenance_Tool_UnlockFields');?></button>
-                        </div>
-                        <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_UnlockFields_text');?></div>
-                    </div>
-                    <div class="db_info_table_row">
-                        <div class="db_tools_table_cell_a" >
-                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteActHistory" onclick="askDeleteActHistory()"><?= lang('Maintenance_Tool_del_ActHistory');?></button>
-                        </div>
-                        <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_del_ActHistory_text');?></div>
-                    </div>
-                    <div class="db_info_table_row">
-                        <div class="db_tools_table_cell_a" >
-                            <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnRestartServer" onclick="askRestartBackend()"><?= lang('Maint_RestartServer');?></button>
-                        </div>
-                        <div class="db_tools_table_cell_b"><?= lang('Maint_Restart_Server_noti_text');?></div>
-                    </div>
-                </div>
+          <?php require 'php/templates/skel_tab_maint_dbtools.php'; ?>
+          <div class="db_info_table">
+              <div class="db_info_table_row">
+                  <div class="db_tools_table_cell_a" >
+                      <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteMAC" onclick="askDeleteDevicesWithEmptyMACs()"><?= lang('Maintenance_Tool_del_empty_macs');?></button>
+                  </div>
+                  <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_del_empty_macs_text');?></div>
+              </div>
+              <div class="db_info_table_row">
+                  <div class="db_tools_table_cell_a" >
+                      <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteMAC" onclick="askDeleteAllDevices()"><?= lang('Maintenance_Tool_del_alldev');?></button>
+                  </div>
+                  <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_del_alldev_text');?></div>
+              </div>
+              <div class="db_info_table_row">
+                  <div class="db_tools_table_cell_a" >
+                      <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteUnknown" onclick="askDeleteUnknown()"><?= lang('Maintenance_Tool_del_unknowndev');?></button>
+                  </div>
+                  <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_del_unknowndev_text');?></div>
+              </div>
+              <div class="db_info_table_row">
+                  <div class="db_tools_table_cell_a" >
+                      <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteEvents" onclick="askDeleteEvents()"><?= lang('Maintenance_Tool_del_allevents');?></button>
+                  </div>
+                  <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_del_allevents_text');?></div>
+              </div>
+              <div class="db_info_table_row">
+                  <div class="db_tools_table_cell_a" >
+                      <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteEvents30" onclick="askDeleteEvents30()"><?= lang('Maintenance_Tool_del_allevents30');?></button>
+                  </div>
+                  <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_del_allevents30_text');?></div>
+              </div>
+              <div class="db_info_table_row">
+                  <div class="db_tools_table_cell_a" >
+                      <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnUnlockFields" onclick="askUnlockFields()"><?= lang('Maintenance_Tool_UnlockFields');?></button>
+                  </div>
+                  <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_UnlockFields_text');?></div>
+              </div>
+              <div class="db_info_table_row">
+                  <div class="db_tools_table_cell_a" >
+                      <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnDeleteActHistory" onclick="askDeleteActHistory()"><?= lang('Maintenance_Tool_del_ActHistory');?></button>
+                  </div>
+                  <div class="db_tools_table_cell_b"><?= lang('Maintenance_Tool_del_ActHistory_text');?></div>
+              </div>
+              <div class="db_info_table_row">
+                  <div class="db_tools_table_cell_a" >
+                      <button type="button" class="btn btn-default pa-btn pa-btn-delete bg-red dbtools-button" id="btnRestartServer" onclick="askRestartBackend()"><?= lang('Maint_RestartServer');?></button>
+                  </div>
+                  <div class="db_tools_table_cell_b"><?= lang('Maint_Restart_Server_noti_text');?></div>
+              </div>
+          </div>
         </div>
 
         <!-- ---------------------------Backup restore -------------------------------------------- -->
         <div class="tab-pane" id="tab_BackupRestore">
+          <?php require 'php/templates/skel_tab_maint_backup.php'; ?>
           <div class="db_info_table">
             <div class="db_info_table_row">
               <div class="db_tools_table_cell_a" >
@@ -241,6 +181,7 @@ $db->close();
         </div>
         <!-- ---------------------------Logging-------------------------------------------- -->
         <div class="tab-pane" id="tab_Logging">
+          <?php require 'php/templates/skel_tab_maint_logging.php'; ?>
           <div class="container">
             <div class="row actions">
               <div class="col-sm-2">
@@ -273,6 +214,7 @@ $db->close();
 
         <!-- ---------------------------Bulk edit -------------------------------------------- -->
         <div class="tab-pane" id="tab_multiEdit">
+            <?php require 'php/templates/skel_tab_maint_multiedit.php'; ?>
             <div class="db_info_table">
                 <div class="box box-solid">
                     <?php
@@ -566,7 +508,7 @@ function UploadConfig()
   appConfBase64 = btoa(appConf)
 
   // import
-  $.post('php/server/query_replace_config.php', { base64data: appConfBase64, fileName: "app.conf" }, function(msg) {
+  $.post('php/server/query_replace_config.php', { base64data: appConfBase64, fileName: "app.conf", csrf_token: <?= json_encode(getCsrfToken()) ?> }, function(msg) {
     console.log(msg);
     // showMessage(msg);
     write_notification(`[Maintenance]: ${msg}`, 'interrupt');
@@ -785,7 +727,9 @@ function initializeTabs() {
     idSuffix:    '_id',
     delay:       50
   });
-  setTimeout(() => hideSpinner(), 50);
+  setTimeout(() => {
+    hideSpinner();
+  }, 50);
 }
 
 //------------------------------------------------------------------------------
@@ -836,6 +780,7 @@ function renderLogs(customData) {
       // data: { items: JSON.stringify(customData) }, // Send customData as JSON
       success: function(response) {
         $('#logsPlc').html(response); // Replace container content with fetched HTML
+        hideMaintLoggingSkeleton();
 
         applyFilter();
 
@@ -847,6 +792,7 @@ function renderLogs(customData) {
       },
       error: function(xhr, status, error) {
         console.error('Error fetching infoboxes:', error);
+        hideMaintLoggingSkeleton();
       }
     });
   }
@@ -868,6 +814,23 @@ window.onload = function asyncFooter() {
   }
 };
 
+</script>
+
+<script>
+  function hideMaintDBToolsSkeleton()   { $('#skel-tab-maint-dbtools').fadeOut(0, function() { $(this).remove(); }); }
+  function hideMaintBackupSkeleton()    { $('#skel-tab-maint-backup').fadeOut(0, function() { $(this).remove(); }); }
+  function hideMaintLoggingSkeleton()   { $('#skel-tab-maint-logging').fadeOut(0, function() { $(this).remove(); }); }
+  function hideMaintMultiEditSkeleton() { $('#skel-tab-maint-multiedit').fadeOut(0, function() { $(this).remove(); }); }
+
+  // Static tabs: content is PHP-rendered — dismiss immediately, no waiting for onload
+  hideMaintDBToolsSkeleton();
+  hideMaintBackupSkeleton();
+  hideMaintMultiEditSkeleton();
+
+  // Logging tab: AJAX-driven — fallback timeout only
+  window.addEventListener('load', function() {
+    setTimeout(hideMaintLoggingSkeleton, 15000);
+  });
 </script>
 
 <script>

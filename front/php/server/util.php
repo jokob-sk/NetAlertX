@@ -5,7 +5,7 @@
 //
 //  util.php - Front module. Server side. Settings and utility functions
 //------------------------------------------------------------------------------
-#  Puche 2021 / 2022+ jokob             jokob@duck.com                GNU GPLv3
+#  Puche 2021 / 2022+ jokob             support@netalertx.com                GNU GPLv3
 //------------------------------------------------------------------------------
 
 require dirname(__FILE__).'/../templates/globals.php';
@@ -16,17 +16,26 @@ require dirname(__FILE__).'/../templates/skinUI.php';
 // check if authenticated
 require_once  $_SERVER['DOCUMENT_ROOT'] . '/php/templates/security.php';
 
-$FUNCTION = [];
-$SETTINGS = [];
+$FUNCTION = '';
+$SETTINGS = '';
+
+// savesettings is state-changing and must never be reachable via GET - a GET
+// URL can be triggered cross-site by a simple top-level navigation, which
+// still carries the session cookie under default SameSite=Lax behavior.
+if (($_GET['function'] ?? '') === 'savesettings') {
+  http_response_code(405);
+  header('Allow: POST');
+  header('Content-Type: application/json');
+  echo json_encode(['success' => false, 'error' => 'Method not allowed']);
+  exit();
+}
 
 // init request params
-if(array_key_exists('function', $_REQUEST) != FALSE)
-{
-  $FUNCTION = $_REQUEST['function'];
+if (array_key_exists('function', $_POST)) {
+  $FUNCTION = $_POST['function'];
 }
-if(array_key_exists('settings', $_REQUEST) != FALSE)
-{
-  $SETTINGS = $_REQUEST['settings'];
+if (array_key_exists('settings', $_POST)) {
+  $SETTINGS = $_POST['settings'];
 }
 
 
@@ -35,6 +44,7 @@ switch ($FUNCTION) {
 
   case 'savesettings':
 
+      requireCsrfToken();
       saveSettings();
       break;
 
@@ -116,7 +126,7 @@ function saveSettings()
       if ($group == $settingGroup) {
 
           if ($dataType == 'string' ) {
-              $val = encode_single_quotes($settingValue);
+              $val = encode_python_string($settingValue);
               $txt .= $setKey . "='" . $val . "'\n";
           } elseif ($dataType == 'integer') {
               $txt .= $setKey . "=" . $settingValue . "\n";
@@ -137,7 +147,7 @@ function saveSettings()
               // skipping __metadata entries (?)
               if (count($setting) > 3 && is_array($settingValue) == true) {
                   foreach ($settingValue as $val) {
-                      $temp .= "'" . encode_single_quotes($val) . "',";
+                      $temp .= "'" . encode_python_string($val) . "',";
                   }
 
                   $temp = substr_replace($temp, "", -1); // remove last comma ','
@@ -166,13 +176,72 @@ function saveSettings()
     copy($fullConfPath, $fullConfPath . ".bak");
   }
 
+  // Detect whether the frontend needs to block-wait for backend reload
+  $requiresReloadWait = getReloadWaitRequired($decodedSettings);
+
   // Open the file for writing without changing permissions
   $file = fopen($fullConfPath, "w") or die("Unable to open file!");
   fwrite($file, $txt);
   fclose($file);
 
-  echo "OK";
+  echo json_encode(['success' => true, 'requiresReloadWait' => $requiresReloadWait]);
 
+}
+
+// -------------------------------------------------------------------------------------------
+// Determines if the frontend must wait (block) for the backend to finish reloading after a
+// settings save. Blocking is required when LOADED_PLUGINS changes or UI_WAIT_FOR_SETTINGS
+// is explicitly enabled. Defaults to true (safe) on any parsing error.
+function getReloadWaitRequired($decodedSettings) {
+  $newLoadedPlugins = null;
+  $uiWaitForSettings = false;
+
+  foreach ($decodedSettings as $setting) {
+    if ($setting[1] === 'LOADED_PLUGINS') {
+      $newLoadedPlugins = $setting[3];
+    }
+    if ($setting[1] === 'UI_WAIT_FOR_SETTINGS') {
+      $uiWaitForSettings = ($setting[3] === true || $setting[3] === 1
+        || strtolower((string)$setting[3]) === 'true');
+    }
+  }
+
+  if ($uiWaitForSettings) {
+    return true;
+  }
+
+  $oldLoadedPlugins = getSettingValue('LOADED_PLUGINS');
+
+  // If the old value couldn't be read, default to blocking (safe).
+  if (strpos((string)$oldLoadedPlugins, 'Could not') !== false) {
+    return true;
+  }
+
+  return normalizePluginList($oldLoadedPlugins) !== normalizePluginList($newLoadedPlugins);
+}
+
+// -------------------------------------------------------------------------------------------
+// Normalise a plugin list value (PHP array, JSON array, or Python-style list) to a sorted
+// JSON string for reliable equality comparison.
+function normalizePluginList($value) {
+  if ($value === null || $value === '') {
+    return '[]';
+  }
+  if (is_array($value)) {
+    $arr = $value;
+  } else {
+    $arr = json_decode($value, true);
+    if (!is_array($arr)) {
+      // Handle Python-style single-quoted lists: ['A','B']
+      $jsonStr = str_replace("'", '"', (string)$value);
+      $arr = json_decode($jsonStr, true);
+    }
+    if (!is_array($arr)) {
+      return trim((string)$value);
+    }
+  }
+  sort($arr);
+  return json_encode($arr);
 }
 
 // -------------------------------------------------------------------------------------------
@@ -213,9 +282,13 @@ function getSettingValue($setKey) {
 }
 
 // -------------------------------------------------------------------------------------------
-function encode_single_quotes ($val) {
-  $result = str_replace ('\'','{s-quote}',$val);
-  return $result;
+/**
+ * Encode a string for use inside a single-quoted Python literal in app.conf.
+ * Doubles backslashes so they round-trip unchanged, and replaces ' with the
+ * legacy {s-quote} placeholder that the backend converts back per use.
+ */
+function encode_python_string($val) {
+  return str_replace(['\\', '\''], ['\\\\', '{s-quote}'], $val);
 }
 // -------------------------------------------------------------------------------------------
 // Helper function to send notifications via the backend API endpoint

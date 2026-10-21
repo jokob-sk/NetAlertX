@@ -37,7 +37,7 @@ This includes settings for:
 
 ### Device Data
 
-Stored in `/data/config/devices_<timestamp>.csv` or `/data/config/devices.csv`, created by the [CSV Backup `CSVBCKP` Plugin](https://github.com/netalertx/NetAlertX/tree/main/front/plugins/csv_backup).
+Stored in `/data/config/devices_<timestamp>.csv` or `/data/config/devices.csv`, created by the [CSV Backup `CSVBCKP` Plugin](https://docs.netalertx.com/plugins/csv_backup).
 Contains:
 
 * Device names, icons, and categories
