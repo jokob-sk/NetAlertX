@@ -23,6 +23,7 @@ from utils.plugin_utils import (
     resolve_wildcards_arr,
     handle_empty,
     decode_and_rename_files,
+    get_sync_hub_node_name,
     primary_id_is_mac
 )
 from models.notification_instance import NotificationInstance
@@ -484,10 +485,8 @@ def execute_plugin(db, all_plugins, plugin):
                 # cleanup - select only lines containing a separator to filter out unnecessary data
                 newLines = list(filter(lambda x: "|" in x, newLines))
 
-                # Store e.g. Node_1 from last_result.<prefix>.encoded.Node_1.1.log
-                tmp_SyncHubNodeName = ""
-                if len(filename.split(".")) > 3:
-                    tmp_SyncHubNodeName = filename.split(".")[2]
+                # e.g. Node_1 from last_result.<prefix>.decoded.Node_1.1.log
+                tmp_SyncHubNodeName = get_sync_hub_node_name(filename)
 
                 for line in newLines:
                     columns = line.split("|")

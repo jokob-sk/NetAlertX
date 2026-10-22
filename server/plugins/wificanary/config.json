@@ -611,7 +611,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "The WiFi interface to scan with, e.g. <code>wlan0</code>. Station mode is enough - no monitor mode needed. Required."
+          "string": "The WiFi interface to scan with, e.g. <code>wlan0</code>. Station mode is enough - no monitor mode needed. Leave blank on a sync hub without WiFi to only process detections synced from nodes."
         }
       ]
     },
