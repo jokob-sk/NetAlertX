@@ -408,9 +408,9 @@ def test_two_trusted_bssids_same_ssid_no_false_positive():
 
 
 def test_out_of_range_extender_does_not_make_clone_absent_baseline():
-    # Main AP + extender, each its own entry; only the main AP is in range.
-    # An open clone is a plain evil twin - the protected network is up, so
-    # the out-of-range extender must not also raise absent_baseline_clone.
+    """With a main AP + extender trusted and only the main AP in range, an open
+    clone is a plain evil_twin - the out-of-range extender must not also raise
+    absent_baseline_clone, since the protected network is up."""
     trusted = [
         {'ssid': 'HomeWiFi', 'bssid': 'aa:bb:cc:11:22:33', 'security_set': {'wpa2', 'wpa3'}},
         {'ssid': 'HomeWiFi', 'bssid': '44:55:66:aa:bb:cc', 'security_set': {'wpa2', 'wpa3'}},
@@ -424,8 +424,9 @@ def test_out_of_range_extender_does_not_make_clone_absent_baseline():
 
 
 def test_clone_with_every_trusted_radio_absent_is_absent_baseline():
-    # Same pair, neither radio in range - now the clone really is standing
-    # in for a missing baseline.
+    """With neither trusted radio of the pair in range, a weaker clone is
+    flagged as absent_baseline_clone - it really is standing in for a missing
+    baseline."""
     trusted = [
         {'ssid': 'HomeWiFi', 'bssid': 'aa:bb:cc:11:22:33', 'security_set': {'wpa2', 'wpa3'}},
         {'ssid': 'HomeWiFi', 'bssid': '44:55:66:aa:bb:cc', 'security_set': {'wpa2', 'wpa3'}},

@@ -386,8 +386,9 @@ def run_plugin(command, set_RUN_TIMEOUT, plugin):
 
 
 # -------------------------------------------------------------------------------
-# Executes the plugin command specified in the setting with the function specified as CMD
 def execute_plugin(db, all_plugins, plugin):
+    """Run the plugin's CMD setting (script or SQL), then load its result files -
+    including ones received from sync nodes - into the plugin tables."""
     sql = db.sql
 
     # ------- necessary settings check  --------
