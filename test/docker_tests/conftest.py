@@ -29,7 +29,7 @@ def _clean_test_mounts(project_root: pathlib.Path) -> None:
         cmd = [
             "docker", "run", "--rm",
             "-v", f"{project_root}:/work",
-            "alpine:3.22",
+            "alpine:3.24",
             "rm", "-rf", "/work/test_mounts"
         ]
         subprocess.run(

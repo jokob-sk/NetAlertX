@@ -15,7 +15,7 @@
 
 
 SOURCE_DIR=${SOURCE_DIR:-/workspaces/NetAlertX}
-PY_SITE_PACKAGES="${VIRTUAL_ENV:-/opt/venv}/lib/python3.12/site-packages"
+PY_SITE_PACKAGES="${VIRTUAL_ENV:-/opt/venv}/lib/python3.14/site-packages"
 
 LOG_FILES=(
   LOG_APP
