@@ -15,6 +15,7 @@ Runs a periodic passive WiFi scan (`iw scan`, no monitor mode) and flags rogue A
 - Enable the plugin (`WIFICANARY_RUN` → `schedule`) and set a schedule in `WIFICANARY_RUN_SCHD`.
 - A detection creates a new, dangerous-by-default `Devices` entry for the rogue BSSID (even though it never associated with your network) - turn off `WIFICANARY_IMPORT_ON` if you'd rather tune your trusted-AP list against the plugin's history first, without devices being created yet.
 - Pwnagotchi and WiFi Pineapple signature checks run unconditionally, regardless of `WIFICANARY_trusted_aps`.
+- No WiFi on your main NetAlertX host? Run this plugin on a small WiFi-capable node (e.g. a Raspberry Pi) and push its findings with the [Sync Hub](../sync/README.md) plugin (`SYNC_plugins` = `WIFICANARY`). On the hub, load `WIFICANARY` too with `WIFICANARY_RUN` → `schedule` and `WIFICANARY_IFACE` left **blank**: it skips the local scan (hub-only mode) but its run is what makes core ingest the detections synced from the node, tagged with the node's name.
 - If a detected rogue BSSID turns out to already be a device NetAlertX knows from another source (ARP, DHCP, an importer...), the finding is escalated in place - the reason is rewritten to name the known device, and the motor gets a `_known_device` suffix (e.g. `evil_twin_known_device`) so a [Workflow](https://docs.netalertx.com/WORKFLOWS) rule can route it to a more urgent channel than a stranger's radio.
 
 ### Notes

@@ -407,6 +407,35 @@ def test_two_trusted_bssids_same_ssid_no_false_positive():
     assert wificanary.check_trusted_aps(aps, trusted) == []
 
 
+def test_out_of_range_extender_does_not_make_clone_absent_baseline():
+    """With a main AP + extender trusted and only the main AP in range, an open
+    clone is a plain evil_twin - the out-of-range extender must not also raise
+    absent_baseline_clone, since the protected network is up."""
+    trusted = [
+        {'ssid': 'HomeWiFi', 'bssid': 'aa:bb:cc:11:22:33', 'security_set': {'wpa2', 'wpa3'}},
+        {'ssid': 'HomeWiFi', 'bssid': '44:55:66:aa:bb:cc', 'security_set': {'wpa2', 'wpa3'}},
+    ]
+    aps = [
+        _ap('aa:bb:cc:11:22:33', 'HomeWiFi', 'wpa3'),
+        _ap('ff:ee:dd:99:88:77', 'HomeWiFi', 'open'),
+    ]
+    found = wificanary.check_trusted_aps(aps, trusted)
+    assert {d['motor'] for d in found} == {'evil_twin'}
+
+
+def test_clone_with_every_trusted_radio_absent_is_absent_baseline():
+    """With neither trusted radio of the pair in range, a weaker clone is
+    flagged as absent_baseline_clone - it really is standing in for a missing
+    baseline."""
+    trusted = [
+        {'ssid': 'HomeWiFi', 'bssid': 'aa:bb:cc:11:22:33', 'security_set': {'wpa2', 'wpa3'}},
+        {'ssid': 'HomeWiFi', 'bssid': '44:55:66:aa:bb:cc', 'security_set': {'wpa2', 'wpa3'}},
+    ]
+    aps = [_ap('ff:ee:dd:99:88:77', 'HomeWiFi', 'open')]
+    found = wificanary.check_trusted_aps(aps, trusted)
+    assert {d['motor'] for d in found} == {'absent_baseline_clone'}
+
+
 def test_trusted_extender_with_stricter_main_ap_not_flagged_as_clone():
     # Regression (CodeRabbit): a main AP entry requiring a *stronger*
     # accepted set (wpa3 only) than a separately-trusted extender (wpa2)
@@ -679,6 +708,8 @@ def test_main_returns_early_without_iface():
             wificanary.main()
             mock_scan.assert_not_called()
             wificanary.plugin_objects.add_object.assert_not_called()
+            # hub-only mode still writes an (empty) result file so the run completes normally
+            wificanary.plugin_objects.write_result_file.assert_called_once()
 
 
 def test_main_end_to_end_one_detection():

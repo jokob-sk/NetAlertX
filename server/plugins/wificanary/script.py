@@ -58,7 +58,10 @@ def main():
 
     iface = get_setting_value('WIFICANARY_IFACE')
     if not iface:
-        mylog('none', [f'[{pluginName}] WIFICANARY_IFACE is not set - nothing to scan'])
+        # Hub-only mode (e.g. a sync hub with no WiFi hardware): no local scan,
+        # but the run itself still matters - core processes the results synced
+        # from WIFICANARY nodes after this script exits.
+        mylog('verbose', [f'[{pluginName}] WIFICANARY_IFACE not set - hub-only mode, skipping local scan'])
         plugin_objects.write_result_file()
         return 0
 
@@ -263,8 +266,13 @@ def check_trusted_aps(aps, trusted_aps):
 
     for trust in trusted_aps:
         matches = [ap for ap in aps if ap['ssid'] == trust['ssid']]
-        other_trusted_bssids = trusted_bssids_by_ssid.get(trust['ssid'], set()) - {trust['bssid']}
-        baseline_bssid_seen = any(ap['bssid'] == trust['bssid'] for ap in matches) if trust['bssid'] else True
+        ssid_trusted_bssids = trusted_bssids_by_ssid.get(trust['ssid'], set())
+        other_trusted_bssids = ssid_trusted_bssids - {trust['bssid']}
+        # The baseline counts as present if ANY trusted radio for this SSID
+        # is visible, not just this entry's own: with a main AP + extender
+        # pair, an out-of-range extender while the main AP is up isn't an
+        # "absent baseline" - the clone is a plain evil twin.
+        baseline_bssid_seen = any(ap['bssid'] in ssid_trusted_bssids for ap in matches) if trust['bssid'] else True
         accepted = trust['security_set']
         expected_desc = ' or '.join(sorted(accepted))
 
