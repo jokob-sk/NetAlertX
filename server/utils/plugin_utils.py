@@ -346,6 +346,17 @@ def decode_and_rename_files(file_dir, file_prefix):
     return files_to_process
 
 
+# -------------------------------------------------------------------
+def get_sync_hub_node_name(filename):
+    """Return the sync node name embedded in a received plugin result file name
+    (last_result.<PREFIX>.<encoded|decoded>.<NodeName>.<N>.log), or "" for a
+    local result file such as last_result.<PREFIX>.log."""
+    parts = filename.split(".")
+    if len(parts) >= 6 and parts[2] in ("encoded", "decoded"):
+        return ".".join(parts[3:-2])  # node names may themselves contain dots
+    return ""
+
+
 # ------------------------------------------------------------------
 # Retrieve the value for a plugin's setting, prioritizing user-defined values over defaults.
 def get_set_value_for_init(plugin, c_d, setting_key):
