@@ -82,9 +82,18 @@ volumes:
 10. Navigate to `<Synology URL>:20211` (or your custom port).
 11. Read the [Subnets](./SUBNETS.md) and [Plugins](./PLUGINS_OVERVIEW.md) docs to complete your setup.
 
-## Solving permission issues
+## Solving permission issues (2 devices visible)
 
-  See also the [Permission overview guide](./FILE_PERMISSIONS.md).
+Some Synology setups don't support `--cap-add` properly. This usually results in seeing only 2 devices and the following error shows when running `ARPSCAN`:
+
+```bash
+You don't have permission to perform this capture on that device
+(socket: Operation not permitted)
+```
+
+To fix this you might need to set the container as ptiviledged `privileged: true` and run as root by setting a custom `PUID` and `PGID`.
+
+See [running as root](./FILE_PERMISSIONS.md) for more details.
 
 ### Configuring the permissions via SSH
 

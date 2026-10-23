@@ -29,7 +29,7 @@ Temporary directory used during Docker image building:
 - Deleted after build to reduce image size
 - Only exists during container creation
 
-### `/opt/venv/lib/python3.12/site-packages/aiofreebox` - Certificate Storage
+### `/opt/venv/lib/python3.14/site-packages/aiofreebox` - Certificate Storage
 Contains SSL certificates required for secure communication with Freebox OS devices. The aiofreebox Python package uses these certificates to authenticate and establish encrypted connections when integrating with Freebox routers for network device discovery.
 
 Contains certificates for the aiofreebox package, which communicates with Freebox OS devices.

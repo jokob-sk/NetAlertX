@@ -51,6 +51,9 @@ See alternative [docker-compose examples](https://docs.netalertx.com/DOCKER_COMP
 
 ### Docker environment variables
 
+> [!NOTE]
+> If you see only 2 devices, you might need to run the container as root by setting a custom `PUID` and `PGID` as some systems don't support `--cap-add` properly, such as some Synology setups. See [running as root](https://docs.netalertx.com/FILE_PERMISSIONS/#running-as-root).
+
 | Variable | Description | Example/Default Value |
 | :------------- |:------------------------| -----:|
 | `PUID`      |Runtime UID override, set to `0` to run as root. |  `20211` |
@@ -127,8 +130,3 @@ You can read or watch several [community configuration guides](https://docs.neta
 
 | [![GitHub](https://i.imgur.com/emsRCPh.png)](https://github.com/sponsors/jokob-sk) | [![Buy Me A Coffee](https://i.imgur.com/pIM6YXL.png)](https://www.buymeacoffee.com/jokobsk) |
 | --- | --- |
-
-- Bitcoin: `1N8tupjeCK12qRVU2XrV17WvKK7LCawyZM`
-- Ethereum: `0x6e2749Cb42F4411bc98501406BdcD82244e3f9C7`
-
-> 📧 Email me at [support@netalertx.com](mailto:support@netalertx.com?subject=NetAlertX Donations) if you want to get in touch or if I should add other sponsorship platforms.

@@ -399,7 +399,7 @@
           }
         ]
       },
-      "default_value": "sudo nmap -sn -PR -oX - ",
+      "default_value": "sudo nmap --privileged -sn -PR -oX - ",
       "options": [],
       "localized": [
         "name",
@@ -414,7 +414,7 @@
       "description": [
         {
           "language_code": "en_us",
-          "string": "Arguments to run nmap-scan with. Recommended and tested only with the setting: <br/> <code>sudo nmap -sn -PR -oX - </code>. <br/><br/> Note: The plugin attaches the interface and network mask, for example <code> -e eth1 192.168.1.0/24</code> and performs a separate scan for each interface specified in the <a onclick=\"toggleAllSettings()\" href=\"#SCAN_SUBNETS\"><code>SCAN_SUBNETS</code> setting</a>."
+          "string": "Arguments to run nmap-scan with. Recommended and tested only with the setting: <br/> <code>sudo nmap --privileged -sn -PR -oX - </code>. <br/><br/> Note: The plugin attaches the interface and network mask, for example <code> -e eth1 192.168.1.0/24</code> and performs a separate scan for each interface specified in the <a onclick=\"toggleAllSettings()\" href=\"#SCAN_SUBNETS\"><code>SCAN_SUBNETS</code> setting</a>."
         }
       ]
     },

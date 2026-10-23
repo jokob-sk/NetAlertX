@@ -144,9 +144,20 @@ def get_internet_IP(DIG_GET_IP_ARG):
 
 # -------------------------------------------------------------------------------
 def fallback_check_ip():
-    """Fallback mechanism using `curl ifconfig.me/ip`."""
+    """Retrieve the public IP via curl when the dig lookup found none.
+
+    Returns (IP, cmd_output), or no_internet_ip if the result is not a valid IPv4.
+    """
     try:
-        cmd_output = subprocess.check_output(['curl', '-s', 'ifconfig.me/ip'], text=True).strip()
+        # -4 is load-bearing: the check below accepts only IPv4, so an
+        # unforced request on a dual-stack host can return the public IPv6
+        # address and be discarded as invalid. Time limits keep a hung call
+        # from consuming the plugin runner's whole INTRNT_RUN_TIMEOUT budget.
+        cmd_output = subprocess.check_output(
+            ['curl', '-4', '-fsS', '--connect-timeout', '3', '--max-time', '8',
+             'https://ifconfig.me/ip'],
+            text=True, timeout=10
+        ).strip()
         if cmd_output and re.match(r"^\d{1,3}(\.\d{1,3}){3}$", cmd_output):
             mylog('verbose', [f'[{pluginName}] Fallback IP retrieved via curl: {cmd_output}'])
             return cmd_output, f'Fallback via curl: "{cmd_output}"'

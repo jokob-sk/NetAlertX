@@ -388,7 +388,7 @@ def _seed_volume_text_file(
         [
             "-v",
             f"{volume_name}:/data",
-            "alpine:3.22",
+            "alpine:3.24",
             "sh",
             "-c",
             f"set -eu; mkdir -p \"$(dirname '{container_path}')\"; cat > '{container_path}'; chmod {chmod_mode} '{container_path}'",
@@ -417,7 +417,7 @@ def _volume_has_file(volume_name: str, container_path: str) -> bool:
             "host",
             "-v",
             f"{volume_name}:/data",
-            "alpine:3.22",
+            "alpine:3.24",
             "sh",
             "-c",
             f"test -f '{container_path}'",
@@ -943,7 +943,7 @@ def test_missing_app_conf_triggers_seed(tmp_path: pathlib.Path) -> None:
         check_conf = subprocess.run(
             [
                 "docker", "run", "--rm", "-v", f"{vol}:/data",
-                "alpine:3.22", "cat", "/data/config/app.conf"
+                "alpine:3.24", "cat", "/data/config/app.conf"
             ],
             capture_output=True, text=True, timeout=SUBPROCESS_TIMEOUT_SECONDS
         )
@@ -984,7 +984,7 @@ def test_first_run_dynamic_subnet(tmp_path: pathlib.Path) -> None:
     cmd = [
         "docker", "run", "--rm",
         "-v", f"{paths['app_config']}:/mnt",
-        "alpine:3.22",
+        "alpine:3.24",
         "cat", "/mnt/app.conf"
     ]
     read_result = subprocess.run(cmd, capture_output=True, text=True, timeout=SUBPROCESS_TIMEOUT_SECONDS)
